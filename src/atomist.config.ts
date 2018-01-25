@@ -7,7 +7,7 @@
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
+ * Unless required by applkicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
@@ -18,6 +18,7 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { FindReferencedGitHubIssue } from "./handlers/events/FindReferencedGitHubIssue";
+import { ScanOnPush } from "./handlers/events/ScanOnPush";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -33,6 +34,7 @@ export const configuration: Configuration = {
     ],
     events: [
         () => new FindReferencedGitHubIssue(),
+        ScanOnPush,
     ],
     token,
     http: {

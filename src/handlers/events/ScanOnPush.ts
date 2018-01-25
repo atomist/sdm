@@ -28,7 +28,7 @@ import { OnPush } from "../../typings/types";
 import Push = OnPush.Push;
 
 @EventHandler("Scan code on PR",
-    GraphQL.subscriptionFromFile("../../../graphql/subscription/OnPush.graphql"))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
 export class ScanOnPush implements HandleEvent<OnPush.Push> {
 
     public handle(event: EventFired<OnPush.Push>, ctx: HandlerContext): Promise<HandlerResult> {
