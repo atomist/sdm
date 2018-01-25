@@ -1,0 +1,22 @@
+subscription OnPush {
+    Push(branch: "master") {
+        id,
+        repo {
+            owner,
+            name,
+            channels {
+                name,
+                id
+            }
+        },
+        commits {
+            sha,
+            message,
+            author {
+                _id
+                login
+                name
+            },
+        }
+    }
+}

@@ -24,7 +24,7 @@ import { FindReferencedGitHubIssue } from "../../../src/handlers/events/FindRefe
 
 LoggingConfig.format = "cli";
 
-describe("FindReferencedGitHubIssue", () => {
+describe("OnPush", () => {
 
     const findIssue = new FindReferencedGitHubIssue();
 
