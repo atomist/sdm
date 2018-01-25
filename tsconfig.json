@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "newLine": "LF",
+        "target": "ES6",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "jsx": "React",
+        "declaration": true,
+        "sourceMap": true,
+        "outDir": "build",
+        "rootDir": ".",
+        "lib": [
+            "DOM",
+            "ES2017",
+            "DOM.Iterable",
+            "ScriptHost",
+            "esnext.asynciterable"
+        ],
+        "strict": true,
+        "strictNullChecks": false,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    },
+    "exclude": [
+        "build",
+        "node_modules"
+    ],
+    "compileOnSave": true,
+    "buildOnSave": false,
+    "atom": {
+        "rewriteTsconfig": false
+    }
+}

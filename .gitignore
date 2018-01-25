@@ -1,0 +1,14 @@
+/build/
+/src/typings
+node_modules/
+*.js
+npm-debug.log
+*.d.ts
+*.js.map
+
+.idea/
+*.iml
+.idea/workspace.xml
+/release
+graphql.config.json
+git-info.json
