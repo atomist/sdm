@@ -27,7 +27,7 @@ const token = process.env.GITHUB_TOKEN;
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: [], // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: [ "T5964N9B7"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         () => new HelloWorld(),
     ],
