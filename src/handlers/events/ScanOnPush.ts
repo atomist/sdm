@@ -29,17 +29,18 @@ import Push = OnPush.Push;
 
 @EventHandler("Scan code on PR",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
-export class ScanOnPush implements HandleEvent<OnPush.Push> {
+export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 
-    public handle(event: EventFired<OnPush.Push>, ctx: HandlerContext): Promise<HandlerResult> {
-        const commit = event.data.commits[0];
+    public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
+        const push = event.data.Push[0];
+        const commit = push.commits[0];
         // TODO check this
 
         const msg = `Push, mothafucka: ${commit.sha} - ${commit.message}`;
         console.log(msg);
 
-        if (event.data.repo && event.data.repo.channels) {
-            const channels = event.data.repo.channels.map(c => c.name);
+        if (push.repo && push.repo.channels) {
+            const channels = push.repo.channels.map(c => c.name);
             return ctx.messageClient.addressChannels(msg, channels)
                 .then(() => Success, failure);
         } else {
