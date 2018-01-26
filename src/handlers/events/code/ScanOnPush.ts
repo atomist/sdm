@@ -24,7 +24,7 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GraphQL } from "@atomist/automation-client";
-import { OnPush } from "../../typings/types";
+import { OnPush } from "../../../typings/types";
 import Push = OnPush.Push;
 
 @EventHandler("Scan code on PR",
@@ -36,7 +36,7 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
         const commit = push.commits[0];
         // TODO check this
 
-        const msg = `Push, mothafucka: ${commit.sha} - ${commit.message}`;
+        const msg = `Saw a push: ${commit.sha} - ${commit.message}`;
         console.log(msg);
 
         if (push.repo && push.repo.channels) {
