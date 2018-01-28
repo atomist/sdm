@@ -7,5 +7,5 @@ export const davosEditor: HandleCommand<any> = editor("davos",
 
 export const addDavosFile: SimpleProjectEditor = (p, ctx, params) => {
     return ctx.messageClient.respond("Looking at it: Davos")
-        .then(() => p);
+        .then(() => p.addFile("davos", "WEF"));
 };
