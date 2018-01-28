@@ -18,7 +18,7 @@
     "url": "https://github.com/spring-team/my-flow/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "^0.5.0",
+    "@atomist/automation-client": "^0.6.5",
     "@atomist/slack-messages": "^0.12.1",
     "app-root-path": "^2.0.1"
   },

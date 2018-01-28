@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { GraphQL } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -23,7 +24,6 @@ import {
     HandlerResult,
     Success,
 } from "@atomist/automation-client/Handlers";
-import { GraphQL } from "@atomist/automation-client";
 import { OnPush } from "../../../typings/types";
 import Push = OnPush.Push;
 

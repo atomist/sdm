@@ -1,8 +1,8 @@
 
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
+import { davosEditor } from "./handlers/commands/editors/user/davosEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { FindReferencedGitHubIssue } from "./handlers/events/FindReferencedGitHubIssue";
 import { ScanOnPush } from "./handlers/events/code/ScanOnPush";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 
@@ -16,11 +16,11 @@ export const configuration: Configuration = {
     version: pj.version,
     teamIds: [ "T5964N9B7"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
-        () => new HelloWorld(),
+        HelloWorld,
+        () => davosEditor,
     ],
     events: [
         ActOnRepoCreation,
-        FindReferencedGitHubIssue,
         ScanOnPush,
     ],
     token,

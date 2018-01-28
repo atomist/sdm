@@ -7,7 +7,7 @@ export class HelloWorld implements HandleCommand {
 
     public handle(ctx: HandlerContext): Promise<any> {
         const msg: SlackMessage = {
-            text: "Hell World!",
+            text: "Hello World!",
         };
         return ctx.messageClient.respond(msg)
             .then(() => Success, failure);

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { GraphQL } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -22,7 +23,6 @@ import {
     HandlerResult,
     Success,
 } from "@atomist/automation-client/Handlers";
-import { GraphQL } from "@atomist/automation-client";
 import { OnRepoCreation } from "../../../typings/types";
 
 @EventHandler("On repo creation",
