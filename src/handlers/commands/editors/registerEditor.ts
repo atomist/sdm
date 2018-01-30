@@ -9,6 +9,7 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { EditOneOrAllParameters } from "./toclient/EditOneOrAllParameters";
 
+// TODO should this kind of thing go in a library? Not yet
 export function editor<PARAMS extends EditOneOrAllParameters = EditOneOrAllParameters>(name: string,
                                                                                        edd: (params: PARAMS) => AnyProjectEditor,
                                                                                        description: string = name,
