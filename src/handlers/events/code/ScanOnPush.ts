@@ -29,6 +29,8 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { SlackMessage } from "@atomist/slack-messages";
 import { OnPush } from "../../../typings/types";
+import { createStatus } from "../../commands/editors/toclient/ghub";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 @EventHandler("Scan code on PR",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
@@ -73,11 +75,21 @@ function addressChannelsFor(push: OnPush.Push, ctx: HandlerContext): ChannelAddr
     return msg => ctx.messageClient.addressChannels(msg, channels);
 }
 
+// TODO have steps and break out if any of them fails
 function withProject(p: GitProject, addressChannels: ChannelAddress, ctx: HandlerContext): Promise<any> {
     return p.findFile("pom.xml")
         .then(f => {
             return addressChannels("This project has a pom");
         }).catch(err => {
             return addressChannels("This project has no pom");
-        });
+        })
+        .then(() => markScanned(p.id as GitHubRepoRef));
+}
+
+function markScanned(id: GitHubRepoRef): Promise<any> {
+    // TODO hard coded status must go
+    return createStatus(process.env.GITHUB_TOKEN, id,{
+        state: "success",
+        target_url: `https://scan.atomist/com/${id.owner}/${id.repo}/${id.sha}`,
+    });
 }

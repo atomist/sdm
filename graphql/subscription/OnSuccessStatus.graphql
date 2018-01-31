@@ -1,0 +1,22 @@
+
+subscription OnSuccessStatus {
+    Status(state: success) {
+        commit {
+            sha
+            message
+            statuses {
+                state
+                targetUrl
+            }
+            repo {
+                owner
+                name
+            }
+            pushes(branch: "master") {
+                branch
+            }
+        }
+        state
+        targetUrl
+    }
+}
