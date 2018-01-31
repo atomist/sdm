@@ -24,26 +24,33 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { OnSuccessStatus } from "../../../typings/types";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { addressChannelsFor } from "./ScanOnPush";
 
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql"))
 export class ActOnSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
-        // const push = event.data.Push[0];
-        // const commit = push.commits[0];
-        // TODO check this
+
+        // TODO this is horrid
+        const commit = event.data.Status[0].commit;
 
         const msg = `Saw a success status: ${JSON.stringify(event)}`;
         console.log(msg);
 
-        // if (push.repo && push.repo.channels) {
-        //     const channels = push.repo.channels.map(c => c.name);
-        //     return ctx.messageClient.addressChannels(msg, channels)
-        //         .then(() => Success, failure);
-        // } else {
-        //     return Promise.resolve(Success);
-        // }
-        return Promise.resolve(Success);
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
+        // TODO get this from handler properly
+        const creds = {token: process.env.GITHUB_TOKEN};
+
+        //const addr = addressChannelsFor(commit.repo, ctx);
+
+        return GitCommandGitProject.cloned(creds, id)
+            .then(p => {
+                console.log("Project is p");
+                return Success;
+            });
     }
 }

@@ -31,6 +31,7 @@ import { SlackMessage } from "@atomist/slack-messages";
 import { OnPush } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import Channels = OnPush.Channels;
 
 @EventHandler("Scan code on PR",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
@@ -49,7 +50,7 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
         // TODO get this from handler properly
         const creds = {token: process.env.GITHUB_TOKEN};
 
-        const addr = addressChannelsFor(push, ctx);
+        const addr = addressChannelsFor(push.repo, ctx);
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
@@ -68,15 +69,20 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
     }
 }
 
-type ChannelAddress = (msg: string | SlackMessage) => Promise<any>;
+// TODO pull out and make generic
+export type AddressChannels = (msg: string | SlackMessage) => Promise<any>;
 
-function addressChannelsFor(push: OnPush.Push, ctx: HandlerContext): ChannelAddress {
-    const channels = push.repo.channels.map(c => c.name);
+export interface HasChannels {
+    channels?: Array<{name?: string, id?: string}>;
+}
+
+export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
+    const channels = hasChannels.channels.map(c => c.name);
     return msg => ctx.messageClient.addressChannels(msg, channels);
 }
 
 // TODO have steps and break out if any of them fails
-function withProject(p: GitProject, addressChannels: ChannelAddress, ctx: HandlerContext): Promise<any> {
+function withProject(p: GitProject, addressChannels: AddressChannels, ctx: HandlerContext): Promise<any> {
     return p.findFile("pom.xml")
         .then(f => {
             return addressChannels("This project has a pom");
