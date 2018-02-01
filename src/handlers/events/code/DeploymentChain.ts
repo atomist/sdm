@@ -1,6 +1,6 @@
+import { HandlerContext } from "@atomist/automation-client";
 import { ChildProcess } from "child_process";
 import { addressChannelsFor, HasChannels } from "../../commands/editors/toclient/addressChannels";
-import { HandlerContext } from "@atomist/automation-client";
 
 export interface ProgressLog {
     write(what: string): void;

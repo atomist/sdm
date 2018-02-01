@@ -15,20 +15,24 @@
  */
 
 import { GraphQL } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext, } from "@atomist/automation-client/Handlers";
-import { OnSuccessStatus } from "../../../typings/types";
+import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { build } from "./mavenBuild";
-import { ProgressLog, slackProgressLog } from "./DeploymentChain";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { Builder } from "./Builder";
+import { ProgressLog, slackProgressLog } from "./DeploymentChain";
+import { MavenBuilder } from "./MavenBuilder";
+import { createStatus } from "../../commands/editors/toclient/ghub";
+import { ScanBase } from "./ScanOnPush";
+import { OnScanSuccessStatus } from "../../../typings/types";
+import { ChildProcess } from "child_process";
 
-@EventHandler("On repo creation",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql"))
-export class ActOnSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
+@EventHandler("On source scan success",
+    GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
+export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext): Promise<any> {
+    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext): Promise<any> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
@@ -46,22 +50,39 @@ export class ActOnSuccessStatus implements HandleEvent<OnSuccessStatus.Subscript
         // TODO check what status
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
-                return doBuild(p, slackProgressLog(commit.repo, ctx))
+                return addr("Building. Please wait...")
+                    .then(() => doBuild(p, slackProgressLog(commit.repo, ctx)))
+                    .then(() => markBuilt(id))
                     .then(() => addr(`Finished building ${p.id.owner}/${p.id.repo}:${p.id.sha}`));
             });
     }
 }
 
 function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
-    const b = build(p);
+    const builder: Builder = new MavenBuilder();
+    const buildInProgress = builder.build(p);
     // deployment.childProcess.addListener("exit", closeListener);
-    b.stdout.on("data", what => log.write(what.toString()));
+    //b.stdout.on("data", what => log.write(what.toString()));
+    // TODO why doesn't this work with emitter
+    (buildInProgress as ChildProcess).stdout.on("data", what => log.write(what.toString()));
+
+
+    //buildInProgress.on("data", what => log.write(what.toString()));
 
     return new Promise((resolve, reject) => {
         // Pipe/use stream
-        b.on("end", resolve);
-        b.on("exit", resolve);
-        b.on("close", resolve);
-        b.on("error", reject);
+        buildInProgress.on("end", resolve);
+        buildInProgress.on("exit", resolve);
+        buildInProgress.on("close", resolve);
+        buildInProgress.on("error", reject);
+    });
+}
+
+function markBuilt(id: GitHubRepoRef): Promise<any> {
+    // TODO hard coded status must go
+    return createStatus(process.env.GITHUB_TOKEN, id, {
+        state: "success",
+        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
+        context: "build",
     });
 }

@@ -1,0 +1,27 @@
+
+subscription OnBuiltStatus {
+    Status(state: success, context: "build") {
+        commit {
+            sha
+            message
+            statuses {
+                state
+                targetUrl
+            }
+            repo {
+                owner
+                name
+                channels {
+                    name
+                    id
+                }
+            }
+            pushes(branch: "master") {
+                branch
+            }
+        }
+        state
+        targetUrl
+    }
+}
+

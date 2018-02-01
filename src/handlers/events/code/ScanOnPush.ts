@@ -28,8 +28,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPush } from "../../../typings/types";
-import { createStatus } from "../../commands/editors/toclient/ghub";
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../commands/editors/toclient/ghub";
 
 @EventHandler("Scan code on PR",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
@@ -64,11 +64,11 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 function withProject(p: GitProject, addressChannels: AddressChannels, ctx: HandlerContext): Promise<any> {
     return p.findFile("pom.xml")
         .then(f => {
-            return addressChannels("This project has a pom");
+            return addressChannels("This project has a pom: Marking as scanned")
+                .then(() => markScanned(p.id as GitHubRepoRef));
         }).catch(err => {
             return addressChannels("This project has no pom");
-        })
-        .then(() => markScanned(p.id as GitHubRepoRef));
+        });
 }
 
 export const ScanBase = "https://scan.atomist.com";
@@ -78,5 +78,6 @@ function markScanned(id: GitHubRepoRef): Promise<any> {
     return createStatus(process.env.GITHUB_TOKEN, id, {
         state: "success",
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
+        context: "scan",
     });
 }

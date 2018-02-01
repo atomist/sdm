@@ -1,5 +1,5 @@
-import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 
 export type State = "error" |  "failure" | "pending" | "success";
 

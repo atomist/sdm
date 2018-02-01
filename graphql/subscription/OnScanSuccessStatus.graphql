@@ -1,6 +1,6 @@
 
-subscription OnSuccessStatus {
-    Status(state: success) {
+subscription OnScanSuccessStatus {
+    Status(state: success, context: "scan") {
         commit {
             sha
             message

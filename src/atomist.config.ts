@@ -3,9 +3,10 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { davosEditor } from "./handlers/commands/editors/user/davosEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
+import { BuildOnScanSuccessStatus } from "./handlers/events/code/BuildOnScanSuccessStatus";
 import { ScanOnPush } from "./handlers/events/code/ScanOnPush";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
-import { ActOnSuccessStatus } from "./handlers/events/code/ActOnSuccessStatus";
+import { DeployOnBuildSuccessStatus } from "./handlers/events/code/DeployOnBuildSuccessStatus";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -22,7 +23,8 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
-        ActOnSuccessStatus,
+        BuildOnScanSuccessStatus,
+        DeployOnBuildSuccessStatus,
         ScanOnPush,
     ],
     token,
