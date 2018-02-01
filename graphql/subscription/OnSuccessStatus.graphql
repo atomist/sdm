@@ -11,6 +11,10 @@ subscription OnSuccessStatus {
             repo {
                 owner
                 name
+                channels {
+                    name
+                    id
+                }
             }
             pushes(branch: "master") {
                 branch
@@ -20,3 +24,4 @@ subscription OnSuccessStatus {
         targetUrl
     }
 }
+

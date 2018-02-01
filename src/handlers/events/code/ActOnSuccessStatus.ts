@@ -15,24 +15,20 @@
  */
 
 import { GraphQL } from "@atomist/automation-client";
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    Success,
-} from "@atomist/automation-client/Handlers";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, } from "@atomist/automation-client/Handlers";
 import { OnSuccessStatus } from "../../../typings/types";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { addressChannelsFor } from "./ScanOnPush";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { build } from "./mavenBuild";
+import { ProgressLog, slackProgressLog } from "./DeploymentChain";
+import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql"))
 export class ActOnSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
+    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext): Promise<any> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
@@ -45,12 +41,27 @@ export class ActOnSuccessStatus implements HandleEvent<OnSuccessStatus.Subscript
         // TODO get this from handler properly
         const creds = {token: process.env.GITHUB_TOKEN};
 
-        //const addr = addressChannelsFor(commit.repo, ctx);
+        const addr = addressChannelsFor(commit.repo, ctx);
 
+        // TODO check what status
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
-                console.log("Project is p");
-                return Success;
+                return doBuild(p, slackProgressLog(commit.repo, ctx))
+                    .then(() => addr(`Finished building ${p.id.owner}/${p.id.repo}:${p.id.sha}`));
             });
     }
+}
+
+function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
+    const b = build(p);
+    // deployment.childProcess.addListener("exit", closeListener);
+    b.stdout.on("data", what => log.write(what.toString()));
+
+    return new Promise((resolve, reject) => {
+        // Pipe/use stream
+        b.on("end", resolve);
+        b.on("exit", resolve);
+        b.on("close", resolve);
+        b.on("error", reject);
+    });
 }

@@ -27,11 +27,9 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { SlackMessage } from "@atomist/slack-messages";
 import { OnPush } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import Channels = OnPush.Channels;
+import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 
 @EventHandler("Scan code on PR",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
@@ -50,35 +48,16 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
         // TODO get this from handler properly
         const creds = {token: process.env.GITHUB_TOKEN};
 
-        const addr = addressChannelsFor(push.repo, ctx);
+        const communicator = addressChannelsFor(push.repo, ctx);
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
                 console.log(`Project is ${p.id}`);
-                return withProject(p, addr, ctx)
-                    .then(() => {
-                        if (push.repo && push.repo.channels) {
-                            const channels = push.repo.channels.map(c => c.name);
-                            return ctx.messageClient.addressChannels(msg, channels)
-                                .then(() => Success, failure);
-                        } else {
-                            return Success;
-                        }
-                    });
+                return withProject(p, communicator, ctx)
+                    .then(() => communicator(msg))
+                    .then(() => Success, failure);
             });
     }
-}
-
-// TODO pull out and make generic
-export type AddressChannels = (msg: string | SlackMessage) => Promise<any>;
-
-export interface HasChannels {
-    channels?: Array<{name?: string, id?: string}>;
-}
-
-export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
-    const channels = hasChannels.channels.map(c => c.name);
-    return msg => ctx.messageClient.addressChannels(msg, channels);
 }
 
 // TODO have steps and break out if any of them fails
@@ -92,10 +71,12 @@ function withProject(p: GitProject, addressChannels: AddressChannels, ctx: Handl
         .then(() => markScanned(p.id as GitHubRepoRef));
 }
 
+export const ScanBase = "https://scan.atomist.com";
+
 function markScanned(id: GitHubRepoRef): Promise<any> {
     // TODO hard coded status must go
-    return createStatus(process.env.GITHUB_TOKEN, id,{
+    return createStatus(process.env.GITHUB_TOKEN, id, {
         state: "success",
-        target_url: `https://scan.atomist/com/${id.owner}/${id.repo}/${id.sha}`,
+        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
     });
 }
