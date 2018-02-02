@@ -4,7 +4,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ProgressLog } from "./DeploymentChain";
 import EventEmitter = NodeJS.EventEmitter;
-import { ChildProcess } from "child_process";
+
+import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 
 // TODO do for local with child process
 export interface RunningBuild {
@@ -12,6 +13,8 @@ export interface RunningBuild {
     readonly stream: EventEmitter;
 
     readonly rr: RemoteRepoRef;
+
+    readonly team: string;
 
     // Log to date
     readonly log: string;
@@ -26,11 +29,10 @@ export interface Builder {
 /**
  * Superclass for build, emitting appropriate events to Atomist
  */
-export abstract class LocalBuilder {
+export abstract class LocalBuilder implements Builder {
 
     public build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log?: ProgressLog): Promise<RunningBuild> {
         return this.startBuild(creds, rr, team)
-            .then(rb => onStarted(rb))
             .then(rb => {
                 if (!!log) {
                     // TODO doesn't work
@@ -40,25 +42,62 @@ export abstract class LocalBuilder {
 
                 //rb.stream.on("end", resolve);
                 rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb))
-                    //.addListener("end", (code, signal) => onExit(code, signal, output))
-                    //.addListener("close", (code, signal) => onExit(code, signal, output))
-                    .addListener("error", err => console.log("*********** Error: " + err));
+                //.addListener("end", (code, signal) => onExit(code, signal, output))
+                //.addListener("close", (code, signal) => onExit(code, signal, output))
+                    .addListener("error", (code, signal) => onFailure(rb));
                 return rb;
-            });
+            })
+            .then(onStarted);
     }
 
     protected abstract startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string): Promise<RunningBuild>;
 }
 
-function onStarted(runningBuild: RunningBuild): Promise<RunningBuild> {
-    console.log("BUILD STARTED: Sent event to Atomist");
-    return Promise.resolve(runningBuild);
+function onStarted(runningBuild: RunningBuild) {
+    return tellAtomist(runningBuild, "STARTED", "STARTED");
+}
+
+function onSuccess(runningBuild: RunningBuild) {
+    return tellAtomist(runningBuild, "SUCCESS", "FINALIZED");
+}
+
+function onFailure(runningBuild: RunningBuild) {
+    return tellAtomist(runningBuild, "FAILURE", "FINALIZED");
+}
+
+function tellAtomist(runningBuild: RunningBuild,
+                     status: "STARTED" | "SUCCESS" | "FAILURE",
+                     phase: "STARTED" | "FINALIZED" = "FINALIZED"): Promise<RunningBuild> {
+    const url = `https://webhook.atomist.com/atomist/jenkins/teams/${runningBuild.team}`;
+    const data = {
+        name: `Build ${runningBuild.rr.sha}`,
+        duration: 3,
+        build: {
+            number: "Build",
+            scm: {
+                commit: runningBuild.rr.sha,
+                url: `https://github.com/${runningBuild.rr.owner}/${runningBuild.rr.repo}`,
+                // TODO is this required
+                branch: "master",
+            },
+            phase,
+            status,
+            full_url: `https://github.com/${runningBuild.rr.owner}/${runningBuild.rr.repo}/commit/${runningBuild.rr.sha}`,
+        },
+    };
+    console.log(`BUILD UPDATE: Sending event to Atomist at ${url}\n${JSON.stringify(data)}`);
+    return axios.post(url, data)
+        .then(() => runningBuild);
 }
 
 function onExit(code: number, signal: any, rb: RunningBuild): void {
     console.log(`BUILD exited with ${code} and signal ${signal}`);
     console.log(rb.log);
-    // do promise stuff
+    if (code === 0) {
+        onSuccess(rb);
+    }  else {
+        onFailure(rb);
+    }
 }
 
 export const ScanBase = "https://scan.atomist.com";

@@ -17,16 +17,13 @@
 import { GraphQL, MappedParameter, MappedParameters } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { Builder, RunningBuild } from "./Builder";
-import { ProgressLog, slackProgressLog } from "./DeploymentChain";
+import { slackProgressLog } from "./DeploymentChain";
 import { MavenBuilder } from "./MavenBuilder";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ScanBase } from "./ScanOnPush";
 import { OnScanSuccessStatus } from "../../../typings/types";
-import { ChildProcess } from "child_process";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build
@@ -35,10 +32,11 @@ import { ChildProcess } from "child_process";
     GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
 
-    @MappedParameter(MappedParameters.SlackTeam, false)
-    public team: string;
+    // TODO fix this
+   // @MappedParameter(MappedParameters.SlackTeam, false)
+    public team: string = "T5964N9B7";
 
-    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext): Promise<any> {
+    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
@@ -57,7 +55,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
 
         // TODO check what status
         return addr("Building. Please wait...")
-            .then(() => builder.build(creds, id, this.team, slackProgressLog(commit.repo, ctx)))
+            .then(() => builder.build(creds, id, params.team, slackProgressLog(commit.repo, ctx)))
             .then(handleBuild)
             .then(() => markBuilt(id))
             .then(() => addr(`Finished building ${id.owner}/${id.repo}:${id.sha}`));
