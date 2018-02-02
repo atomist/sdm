@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { GraphQL } from "@atomist/automation-client";
+import { GraphQL, MappedParameter, MappedParameters } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { Builder } from "./Builder";
+import { Builder, RunningBuild } from "./Builder";
 import { ProgressLog, slackProgressLog } from "./DeploymentChain";
 import { MavenBuilder } from "./MavenBuilder";
 import { createStatus } from "../../commands/editors/toclient/ghub";
@@ -28,9 +28,15 @@ import { ScanBase } from "./ScanOnPush";
 import { OnScanSuccessStatus } from "../../../typings/types";
 import { ChildProcess } from "child_process";
 
+/**
+ * See a GitHub success status with context "scan" and trigger a build
+ */
 @EventHandler("On source scan success",
     GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
+
+    @MappedParameter(MappedParameters.SlackTeam, false)
+    public team: string;
 
     public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext): Promise<any> {
 
@@ -47,34 +53,31 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
 
         const addr = addressChannelsFor(commit.repo, ctx);
 
+        const builder: Builder = new MavenBuilder();
+
         // TODO check what status
-        return GitCommandGitProject.cloned(creds, id)
-            .then(p => {
-                return addr("Building. Please wait...")
-                    .then(() => doBuild(p, slackProgressLog(commit.repo, ctx)))
-                    .then(() => markBuilt(id))
-                    .then(() => addr(`Finished building ${p.id.owner}/${p.id.repo}:${p.id.sha}`));
-            });
+        return addr("Building. Please wait...")
+            .then(() => builder.build(creds, id, this.team, slackProgressLog(commit.repo, ctx)))
+            .then(handleBuild)
+            .then(() => markBuilt(id))
+            .then(() => addr(`Finished building ${id.owner}/${id.repo}:${id.sha}`));
     }
 }
 
-function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
-    const builder: Builder = new MavenBuilder();
-    const buildInProgress = builder.build(p);
+function handleBuild(runningBuild: RunningBuild): Promise<any> {
     // deployment.childProcess.addListener("exit", closeListener);
     //b.stdout.on("data", what => log.write(what.toString()));
     // TODO why doesn't this work with emitter
-    (buildInProgress as ChildProcess).stdout.on("data", what => log.write(what.toString()));
-
+    //(runningBuild.stream as ChildProcess).stdout.on("data", what => log.write(what.toString()));
 
     //buildInProgress.on("data", what => log.write(what.toString()));
 
     return new Promise((resolve, reject) => {
         // Pipe/use stream
-        buildInProgress.on("end", resolve);
-        buildInProgress.on("exit", resolve);
-        buildInProgress.on("close", resolve);
-        buildInProgress.on("error", reject);
+        runningBuild.stream.addListener("end", resolve);
+        runningBuild.stream.addListener("exit", resolve);
+        runningBuild.stream.addListener("close", resolve);
+        runningBuild.stream.addListener("error", reject);
     });
 }
 

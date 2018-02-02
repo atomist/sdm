@@ -24,7 +24,7 @@ export const configuration: Configuration = {
     events: [
         ActOnRepoCreation,
         BuildOnScanSuccessStatus,
-        DeployOnBuildSuccessStatus,
+      //  DeployOnBuildSuccessStatus,
         ScanOnPush,
     ],
     token,

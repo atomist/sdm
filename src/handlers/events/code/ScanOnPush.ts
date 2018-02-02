@@ -31,6 +31,9 @@ import { OnPush } from "../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 
+/**
+ * Scan code on a PR. Result is setting GitHub status with context = "scan"
+ */
 @EventHandler("Scan code on PR",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
 export class ScanOnPush implements HandleEvent<OnPush.Subscription> {

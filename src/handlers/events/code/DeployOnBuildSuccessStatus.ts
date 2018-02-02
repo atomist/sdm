@@ -50,6 +50,7 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
     }
 }
 
+/*
 function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
     const builder: Builder = new MavenBuilder();
     const buildInProgress = builder.build(p);
@@ -68,6 +69,7 @@ function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
         buildInProgress.on("error", reject);
     });
 }
+*/
 
 function markBuilt(id: GitHubRepoRef): Promise<any> {
     // TODO hard coded status must go
