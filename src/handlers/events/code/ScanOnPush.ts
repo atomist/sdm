@@ -43,7 +43,7 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
         const commit = push.commits[0];
         // TODO check this
 
-        const msg = `Saw a push: ${commit.sha} - ${commit.message}`;
+        const msg = `Scanning sources after push: \`${commit.sha}\` - _${commit.message}_`;
         console.log(msg);
 
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
@@ -55,7 +55,6 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
-                console.log(`Project is ${p.id}`);
                 return withProject(p, communicator, ctx)
                     .then(() => communicator(msg))
                     .then(() => Success, failure);
@@ -66,18 +65,17 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 // TODO have steps and break out if any of them fails
 function withProject(p: GitProject, addressChannels: AddressChannels, ctx: HandlerContext): Promise<any> {
     return p.findFile("pom.xml")
-        .then(f => {
-            return addressChannels("This project has a pom: Marking as scanned")
-                .then(() => markScanned(p.id as GitHubRepoRef));
-        }).catch(err => {
-            return addressChannels("This project has no pom");
+        .then(() => markScanned(p.id as GitHubRepoRef))
+        .catch(err => {
+            // This will terminate pipeline
+            return addressChannels("This project has no pom. Cannot deploy");
         });
 }
 
 export const ScanBase = "https://scan.atomist.com";
 
 function markScanned(id: GitHubRepoRef): Promise<any> {
-    // TODO hard coded status must go
+    // TODO hard coded token must go
     return createStatus(process.env.GITHUB_TOKEN, id, {
         state: "success",
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,

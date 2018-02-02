@@ -33,7 +33,7 @@ import { OnScanSuccessStatus } from "../../../typings/types";
 export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
 
     // TODO fix this
-   // @MappedParameter(MappedParameters.SlackTeam, false)
+    // @MappedParameter(MappedParameters.SlackTeam, false)
     public team: string = "T5964N9B7";
 
     public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
@@ -54,11 +54,9 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
         const builder: Builder = new MavenBuilder();
 
         // TODO check what status
-        return addr("Building. Please wait...")
-            .then(() => builder.build(creds, id, params.team, slackProgressLog(commit.repo, ctx)))
+        return builder.build(creds, id, params.team, slackProgressLog(commit.repo, ctx))
             .then(handleBuild)
-            .then(() => markBuilt(id))
-            .then(() => addr(`Finished building ${id.owner}/${id.repo}:${id.sha}`));
+            .then(() => markBuilt(id));
     }
 }
 
@@ -67,8 +65,6 @@ function handleBuild(runningBuild: RunningBuild): Promise<any> {
     //b.stdout.on("data", what => log.write(what.toString()));
     // TODO why doesn't this work with emitter
     //(runningBuild.stream as ChildProcess).stdout.on("data", what => log.write(what.toString()));
-
-    //buildInProgress.on("data", what => log.write(what.toString()));
 
     return new Promise((resolve, reject) => {
         // Pipe/use stream

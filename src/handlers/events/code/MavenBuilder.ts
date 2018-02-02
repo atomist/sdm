@@ -10,14 +10,13 @@ export class MavenBuilder extends LocalBuilder {
     protected startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string): Promise<RunningBuild> {
         return GitCommandGitProject.cloned(creds, rr)
             .then(p => {
-                console.log(`--------------- cloned to ${p.baseDir}, team=[${team}]`);
                 const childProcess = spawn("mvn", [
                     "package",
                     "-DskipTests",
                 ], {
                     cwd: p.baseDir,
                 });
-                const rb = new YuckyBuild(rr, childProcess, team);
+                const rb = new UpdatingBuild(rr, childProcess, team);
                 childProcess.stdout.on("data", data => {
                     //console.log("Saw data " + data.to())
                     rb.l += data.toString();
@@ -28,9 +27,9 @@ export class MavenBuilder extends LocalBuilder {
 
 }
 
-class YuckyBuild implements RunningBuild {
+class UpdatingBuild implements RunningBuild {
 
-    constructor(public rr: RemoteRepoRef, public stream: ChildProcess, public team: string) {}
+    constructor(public repoRef: RemoteRepoRef, public stream: ChildProcess, public team: string) {}
 
     public l: string = "";
 

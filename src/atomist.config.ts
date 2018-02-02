@@ -1,4 +1,3 @@
-
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { davosEditor } from "./handlers/commands/editors/user/davosEditor";
@@ -16,7 +15,7 @@ const token = process.env.GITHUB_TOKEN;
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: [ "T5964N9B7"], // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: ["T5964N9B7"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         HelloWorld,
         () => davosEditor,
@@ -24,7 +23,7 @@ export const configuration: Configuration = {
     events: [
         ActOnRepoCreation,
         BuildOnScanSuccessStatus,
-      //  DeployOnBuildSuccessStatus,
+        DeployOnBuildSuccessStatus,
         ScanOnPush,
     ],
     token,

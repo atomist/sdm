@@ -3,20 +3,20 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ProgressLog } from "./DeploymentChain";
+
+import axios from "axios";
 import EventEmitter = NodeJS.EventEmitter;
 
-import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
-
-// TODO do for local with child process
+// TODO do for local with child process, or output stream
 export interface RunningBuild {
 
     readonly stream: EventEmitter;
 
-    readonly rr: RemoteRepoRef;
+    readonly repoRef: RemoteRepoRef;
 
     readonly team: string;
 
-    // Log to date
+    /** Log output so far */
     readonly log: string;
 }
 
@@ -54,35 +54,35 @@ export abstract class LocalBuilder implements Builder {
 }
 
 function onStarted(runningBuild: RunningBuild) {
-    return tellAtomist(runningBuild, "STARTED", "STARTED");
+    return updateAtomistLifecycle(runningBuild, "STARTED", "STARTED");
 }
 
 function onSuccess(runningBuild: RunningBuild) {
-    return tellAtomist(runningBuild, "SUCCESS", "FINALIZED");
+    return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED");
 }
 
 function onFailure(runningBuild: RunningBuild) {
-    return tellAtomist(runningBuild, "FAILURE", "FINALIZED");
+    return updateAtomistLifecycle(runningBuild, "FAILURE", "FINALIZED");
 }
 
-function tellAtomist(runningBuild: RunningBuild,
-                     status: "STARTED" | "SUCCESS" | "FAILURE",
-                     phase: "STARTED" | "FINALIZED" = "FINALIZED"): Promise<RunningBuild> {
+function updateAtomistLifecycle(runningBuild: RunningBuild,
+                                status: "STARTED" | "SUCCESS" | "FAILURE",
+                                phase: "STARTED" | "FINALIZED" = "FINALIZED"): Promise<RunningBuild> {
     const url = `https://webhook.atomist.com/atomist/jenkins/teams/${runningBuild.team}`;
     const data = {
-        name: `Build ${runningBuild.rr.sha}`,
+        name: `Build ${runningBuild.repoRef.sha}`,
         duration: 3,
         build: {
             number: "Build",
             scm: {
-                commit: runningBuild.rr.sha,
-                url: `https://github.com/${runningBuild.rr.owner}/${runningBuild.rr.repo}`,
+                commit: runningBuild.repoRef.sha,
+                url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
                 // TODO is this required
                 branch: "master",
             },
             phase,
             status,
-            full_url: `https://github.com/${runningBuild.rr.owner}/${runningBuild.rr.repo}/commit/${runningBuild.rr.sha}`,
+            full_url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}/commit/${runningBuild.repoRef.sha}`,
         },
     };
     console.log(`BUILD UPDATE: Sending event to Atomist at ${url}\n${JSON.stringify(data)}`);
@@ -94,8 +94,9 @@ function onExit(code: number, signal: any, rb: RunningBuild): void {
     console.log(`BUILD exited with ${code} and signal ${signal}`);
     console.log(rb.log);
     if (code === 0) {
-        onSuccess(rb);
-    }  else {
+        onSuccess(rb)
+            .then(id => setArtifact(rb.repoRef as GitHubRepoRef));
+    } else {
         onFailure(rb);
     }
 }

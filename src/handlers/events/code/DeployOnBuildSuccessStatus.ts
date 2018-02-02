@@ -27,7 +27,7 @@ import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ScanBase } from "./ScanOnPush";
 import { ChildProcess } from "child_process";
 
-@EventHandler("On successful build",
+@EventHandler("On successful build: Take the artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnBuiltStatus.graphql"))
 export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Subscription> {
 
