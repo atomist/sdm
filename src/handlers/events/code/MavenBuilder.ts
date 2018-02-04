@@ -31,7 +31,8 @@ export class MavenBuilder extends LocalBuilder {
                         version: "1",
                     };
                     // TODO this is hard coded
-                    rb._deploymentUnitStream = fs.createReadStream(`${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`);
+                    //rb._deploymentUnitStream = fs.createReadStream(`${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`);
+                    rb._deploymentUnitFile = `${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`;
                 });
                 return rb;
             });
@@ -49,6 +50,8 @@ class UpdatingBuild implements RunningBuild {
 
     public _deploymentUnitStream: Readable;
 
+    public _deploymentUnitFile: string;
+
     get log() {
         return this.l;
     }
@@ -59,6 +62,10 @@ class UpdatingBuild implements RunningBuild {
 
     get deploymentUnitStream(): Readable {
         return this._deploymentUnitStream;
+    }
+
+    get deploymentUnitFile(): string {
+        return this._deploymentUnitFile;
     }
 
 }

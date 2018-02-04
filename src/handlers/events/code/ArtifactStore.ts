@@ -12,6 +12,8 @@ export interface ArtifactStore {
      */
     store(appInfo: AppInfo, what: Stream): Promise<string>;
 
+    storeFile(appInfo: AppInfo, localFile: string): Promise<string>;
+
     retrieve(url: string): Promise<StoredArtifact>;
 }
 

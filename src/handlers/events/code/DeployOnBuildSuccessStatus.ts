@@ -46,7 +46,7 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
 
         const addr = addressChannelsFor(commit.repo, ctx);
 
-        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha}`);
+        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha} from ${event.data.Status[0].targetUrl}`);
     }
 }
 

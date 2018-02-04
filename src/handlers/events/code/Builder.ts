@@ -25,6 +25,8 @@ export interface RunningBuild {
     readonly appInfo: AppInfo;
 
     readonly deploymentUnitStream: Readable;
+
+    readonly deploymentUnitFile: string;
 }
 
 export interface Builder {
@@ -123,6 +125,11 @@ class SimpleArtifactStore implements ArtifactStore {
         return Promise.resolve("http://www.test.com");
     }
 
+    public storeFile(appInfo: AppInfo, what: string): Promise<string> {
+        console.log("Storing " + JSON.stringify(appInfo));
+        return Promise.resolve(what);
+    }
+
     public retrieve(url: string): Promise<StoredArtifact> {
         return null;
     }
@@ -133,7 +140,7 @@ const artifactStore: ArtifactStore = new SimpleArtifactStore();
 function setArtifact(rb: RunningBuild): Promise<any> {
     // TODO hard coded token must go
     const id = rb.repoRef as GitHubRepoRef;
-    return artifactStore.store(rb.appInfo, rb.deploymentUnitStream)
+    return artifactStore.storeFile(rb.appInfo, "http://" + rb.deploymentUnitFile)
         .then(target_url => createStatus(process.env.GITHUB_TOKEN, id, {
             state: "success",
             target_url,

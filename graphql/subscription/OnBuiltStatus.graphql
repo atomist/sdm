@@ -1,6 +1,6 @@
 
 subscription OnBuiltStatus {
-    Status(state: success, context: "build") {
+    Status(state: success, context: "artifact") {
         commit {
             sha
             message
