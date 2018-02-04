@@ -38,7 +38,7 @@ export interface CloudFoundryInfo {
 }
 
 /**
- * Info to send up for a cloud foundry deployment
+ * Info to send up for a deployment
  */
 export interface AppInfo {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, MappedParameter, MappedParameters } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, MappedParameter, MappedParameters } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
@@ -36,7 +36,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
     // @MappedParameter(MappedParameters.SlackTeam, false)
     public team: string = "T5964N9B7";
 
-    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
+    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
@@ -56,7 +56,10 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
         // TODO check what status
         return builder.build(creds, id, params.team, slackProgressLog(commit.repo, ctx))
             .then(handleBuild)
-            .then(() => markBuilt(id));
+            .then(() => ({
+                code: 0,
+            }));
+            //.then(() => markBuilt(id));
     }
 }
 
@@ -71,15 +74,22 @@ function handleBuild(runningBuild: RunningBuild): Promise<any> {
         runningBuild.stream.addListener("end", resolve);
         runningBuild.stream.addListener("exit", resolve);
         runningBuild.stream.addListener("close", resolve);
-        runningBuild.stream.addListener("error", reject);
+        runningBuild.stream.addListener("error", err => {
+            console.log("Saw error " + err);
+            return reject(err);
+        });
     });
 }
 
+export const BuildBase = "https://build.atomist.com";
+
+
+// TODO why does this seem to leave an error
 function markBuilt(id: GitHubRepoRef): Promise<any> {
     // TODO hard coded status must go
     return createStatus(process.env.GITHUB_TOKEN, id, {
         state: "success",
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
+        target_url: `${BuildBase}/${id.owner}/${id.repo}/${id.sha}`,
         context: "build",
     });
 }

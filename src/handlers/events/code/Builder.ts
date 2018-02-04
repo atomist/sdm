@@ -2,10 +2,12 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ProgressLog } from "./DeploymentChain";
+import { AppInfo, ProgressLog } from "./DeploymentChain";
 
 import axios from "axios";
 import EventEmitter = NodeJS.EventEmitter;
+import { Readable, Stream } from "stream";
+import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
 
 // TODO do for local with child process, or output stream
 export interface RunningBuild {
@@ -18,6 +20,11 @@ export interface RunningBuild {
 
     /** Log output so far */
     readonly log: string;
+
+    /** Available once build is complete */
+    readonly appInfo: AppInfo;
+
+    readonly deploymentUnitStream: Readable;
 }
 
 export interface Builder {
@@ -58,7 +65,11 @@ function onStarted(runningBuild: RunningBuild) {
 }
 
 function onSuccess(runningBuild: RunningBuild) {
-    return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED");
+    return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED")
+    // .then(rb => {
+    //     console.log("Running build AI = " + JSON.stringify(rb.appInfo));
+    //     return rb;
+    // });
 }
 
 function onFailure(runningBuild: RunningBuild) {
@@ -92,10 +103,10 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
 
 function onExit(code: number, signal: any, rb: RunningBuild): void {
     console.log(`BUILD exited with ${code} and signal ${signal}`);
-    console.log(rb.log);
+    //console.log(rb.log);
     if (code === 0) {
         onSuccess(rb)
-            .then(id => setArtifact(rb.repoRef as GitHubRepoRef));
+            .then(id => setArtifact(rb));
     } else {
         onFailure(rb);
     }
@@ -105,11 +116,28 @@ export const ScanBase = "https://scan.atomist.com";
 
 export const ArtifactContext = "artifact";
 
-function setArtifact(id: GitHubRepoRef): Promise<any> {
+class SimpleArtifactStore implements ArtifactStore {
+
+    public store(appInfo: AppInfo, what: Stream): Promise<string> {
+        console.log("Storing " + JSON.stringify(appInfo));
+        return Promise.resolve("http://www.test.com");
+    }
+
+    public retrieve(url: string): Promise<StoredArtifact> {
+        return null;
+    }
+}
+
+const artifactStore: ArtifactStore = new SimpleArtifactStore();
+
+function setArtifact(rb: RunningBuild): Promise<any> {
     // TODO hard coded token must go
-    return createStatus(process.env.GITHUB_TOKEN, id, {
-        state: "success",
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context: ArtifactContext,
-    });
+    const id = rb.repoRef as GitHubRepoRef;
+    return artifactStore.store(rb.appInfo, rb.deploymentUnitStream)
+        .then(target_url => createStatus(process.env.GITHUB_TOKEN, id, {
+            state: "success",
+            target_url,
+            context: ArtifactContext,
+            //description:
+        }));
 }
