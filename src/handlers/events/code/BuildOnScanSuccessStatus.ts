@@ -35,10 +35,6 @@ import { slackProgressLog } from "./ProgressLog";
     GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
 
-    // TODO fix this
-    // @MappedParameter(MappedParameters.SlackTeam, false)
-    public team: string = "T5964N9B7";
-
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
@@ -46,6 +42,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
+        const team = commit.repo.org.chatTeam.id;
 
         const msg = `Saw a success status: ${JSON.stringify(event)}`;
         console.log(msg);
@@ -59,7 +56,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
         const builder: Builder = new MavenBuilder();
 
         // TODO check what status
-        return builder.build(creds, id, params.team, slackProgressLog(commit.repo, ctx))
+        return builder.build(creds, id, team, slackProgressLog(commit.repo, ctx))
             .then(handleBuild)
             .then(() => ({
                 code: 0,
