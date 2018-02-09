@@ -19,13 +19,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnBuiltStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import {
-    AppInfo,
-    CloudFoundryInfo,
-    PivotalWebServices,
-} from "./Deployment";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ScanBase } from "./ScanOnPush";
+import { AppInfo, CloudFoundryInfo, PivotalWebServices, } from "./Deployment";
 import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
 import { slackProgressLog } from "./ProgressLog";
 
@@ -70,7 +64,11 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
                 return this.artifactCheckout(targetUrl)
                     .then(ac => {
                         console.log("Do PCF deployment of " + JSON.stringify(ac));
-                        return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog);
+                        return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog)
+                            .then(deployment => {
+                                deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
+                                return addr(`Deployed to ${deployment.url}`);
+                            });
                     });
             });
     }
@@ -98,32 +96,3 @@ const localCheckout: ArtifactCheckout = targetUrl => {
     return Promise.resolve(local);
 };
 
-/*
-function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
-    const builder: Builder = new MavenBuilder();
-    const buildInProgress = builder.build(p);
-    // deployment.childProcess.addListener("exit", closeListener);
-
-    // TODO why doesn't this work with emitter
-    (buildInProgress as ChildProcess).stdout.on("data", what => log.write(what.toString()));
-
-    //buildInProgress.on("data", what => log.write(what.toString()));
-
-    return new Promise((resolve, reject) => {
-        // Pipe/use stream
-        buildInProgress.on("end", resolve);
-        buildInProgress.on("exit", resolve);
-        buildInProgress.on("close", resolve);
-        buildInProgress.on("error", reject);
-    });
-}
-*/
-
-function markBuilt(id: GitHubRepoRef): Promise<any> {
-    // TODO hard coded status must go
-    return createStatus(process.env.GITHUB_TOKEN, id, {
-        state: "success",
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context: "build",
-    });
-}
