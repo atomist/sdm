@@ -21,15 +21,40 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnBuiltStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { Builder } from "./Builder";
-import { ProgressLog } from "./DeploymentChain";
+import {
+    AppInfo, CloudFoundryInfo, DevNullProgressLog, PivotalWebServices, ProgressLog,
+    slackProgressLog
+} from "./DeploymentChain";
 import { MavenBuilder } from "./MavenBuilder";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ScanBase } from "./ScanOnPush";
 import { ChildProcess } from "child_process";
+import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
+
+export interface DeployableArtifact extends AppInfo {
+
+    cwd: string;
+
+    filename: string;
+}
+
+export type ArtifactCheckout = (targetUrl: string) => Promise<DeployableArtifact>;
+
+export const CloudFoundryTarget: CloudFoundryInfo = {
+    ...PivotalWebServices,
+    username: "rod@atomist.com",
+    password: process.env.PIVOTAL_PASSWORD,
+    space: "development",
+    org: "springrod",
+};
 
 @EventHandler("On successful build: Take the artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnBuiltStatus.graphql"))
 export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Subscription> {
+
+    constructor(private artifactCheckout: ArtifactCheckout = localCheckout,
+                private cfDeployer: CloudFoundryDeployer = new CloudFoundryDeployer()) {
+    }
 
     public handle(event: EventFired<OnBuiltStatus.Subscription>, ctx: HandlerContext): Promise<any> {
 
@@ -45,10 +70,41 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
         const creds = {token: process.env.GITHUB_TOKEN};
 
         const addr = addressChannelsFor(commit.repo, ctx);
+        const progressLog = slackProgressLog(commit.repo, ctx);
 
-        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha} from ${event.data.Status[0].targetUrl}`);
+        const targetUrl = event.data.Status[0].targetUrl;
+        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha} from ${targetUrl}`)
+            .then(() => {
+                return this.artifactCheckout(targetUrl)
+                    .then(ac => {
+                        console.log("Do PCF deployment of " + JSON.stringify(ac));
+                        return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog);
+                    });
+            });
     }
+
 }
+
+/**
+ *
+ * @param {string} targetUrl
+ * @return {string} the directory
+ */
+const localCheckout: ArtifactCheckout = targetUrl => {
+    //Form is http:///var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-20964EBUrRVIZ077a/target/losgatos1-0.1.0-SNAPSHOT.jar
+    const lastSlash = targetUrl.lastIndexOf("/");
+    const filename = targetUrl.substr(lastSlash + 1);
+    const name = filename.substr(0, filename.indexOf("-"));
+    const version = filename.substr(name.length + 1);
+    const cwd = targetUrl.substring(7, lastSlash);
+    const local: DeployableArtifact = {
+        name,
+        version,
+        cwd,
+        filename,
+    };
+    return Promise.resolve(local);
+};
 
 /*
 function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
