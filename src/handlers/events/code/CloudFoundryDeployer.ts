@@ -1,11 +1,11 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { spawn } from "child_process";
-import { CloudFoundryInfo, Deployment } from "./Deployment";
-import { VersionedArtifact } from "./VersionedArtifact";
-import { DeployableArtifact } from "./DeployOnBuildSuccessStatus";
 import { Deployer } from "./Deployer";
+import { CloudFoundryInfo, Deployment } from "./Deployment";
+import { DeployableArtifact } from "./DeployOnBuildSuccessStatus";
 import { ProgressLog } from "./ProgressLog";
+import { VersionedArtifact } from "./VersionedArtifact";
 
 export class CloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 

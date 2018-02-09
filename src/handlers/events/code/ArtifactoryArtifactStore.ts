@@ -1,13 +1,13 @@
+import { Stream } from "stream";
 import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
 import { AppInfo } from "./Deployment";
-import { Stream } from "stream";
 
 import * as fs from "fs";
 
-var path = require("path");
-var Q = require("Q");
-var async = require("async");
-var publisher = require("artifactory-publisher");
+let path = require("path");
+let Q = require("Q");
+let async = require("async");
+let publisher = require("artifactory-publisher");
 
 const artUrlBase = `https://sforzando.jfrog.io/sforzando/libs-release/artifactory`;
 

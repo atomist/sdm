@@ -19,8 +19,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnBuiltStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { AppInfo, CloudFoundryInfo, PivotalWebServices, } from "./Deployment";
 import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
+import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
 import { slackProgressLog } from "./ProgressLog";
 
 export interface DeployableArtifact extends AppInfo {
@@ -95,4 +95,3 @@ const localCheckout: ArtifactCheckout = targetUrl => {
     };
     return Promise.resolve(local);
 };
-

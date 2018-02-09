@@ -1,6 +1,9 @@
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { AppInfo } from "./Deployment";
 
@@ -51,7 +54,7 @@ export abstract class LocalBuilder implements Builder {
                 //(rb.stream as ChildProcess).on("data", data => output += data.toString());
 
                 //rb.stream.on("end", resolve);
-                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb))
+                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, creds))
                 //.addListener("end", (code, signal) => onExit(code, signal, output))
                 //.addListener("close", (code, signal) => onExit(code, signal, output))
                     .addListener("error", (code, signal) => onFailure(rb));
@@ -68,7 +71,7 @@ function onStarted(runningBuild: RunningBuild) {
 }
 
 function onSuccess(runningBuild: RunningBuild) {
-    return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED")
+    return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED");
     // .then(rb => {
     //     console.log("Running build AI = " + JSON.stringify(rb.appInfo));
     //     return rb;
@@ -104,12 +107,12 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
         .then(() => runningBuild);
 }
 
-function onExit(code: number, signal: any, rb: RunningBuild): void {
+function onExit(code: number, signal: any, rb: RunningBuild, creds: ProjectOperationCredentials): void {
     console.log(`BUILD exited with ${code} and signal ${signal}`);
     //console.log(rb.log);
     if (code === 0) {
         onSuccess(rb)
-            .then(id => setArtifact(rb));
+            .then(id => setArtifact(rb, creds));
     } else {
         onFailure(rb);
     }
@@ -138,11 +141,11 @@ class SimpleArtifactStore implements ArtifactStore {
 
 const artifactStore: ArtifactStore = new SimpleArtifactStore();
 
-function setArtifact(rb: RunningBuild): Promise<any> {
+function setArtifact(rb: RunningBuild, creds: ProjectOperationCredentials): Promise<any> {
     // TODO hard coded token must go
     const id = rb.repoRef as GitHubRepoRef;
     return artifactStore.storeFile(rb.appInfo, "http://" + rb.deploymentUnitFile)
-        .then(target_url => createStatus(process.env.GITHUB_TOKEN, id, {
+        .then(target_url => createStatus((creds as TokenCredentials).token, id, {
             state: "success",
             target_url,
             context: ArtifactContext,

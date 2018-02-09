@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, Secret, Secrets } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { OnScanSuccessStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../commands/editors/toclient/ghub";
 import { Builder, RunningBuild } from "./Builder";
 import { MavenBuilder } from "./MavenBuilder";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { OnScanSuccessStatus } from "../../../typings/types";
 import { slackProgressLog } from "./ProgressLog";
 
 /**
@@ -35,6 +39,9 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
     // @MappedParameter(MappedParameters.SlackTeam, false)
     public team: string = "T5964N9B7";
 
+    @Secret(Secrets.OrgToken)
+    private githubToken: string;
+
     public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
         // TODO this is horrid
@@ -45,8 +52,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        // TODO get this from handler properly
-        const creds = {token: process.env.GITHUB_TOKEN};
+        const creds = {token: params.githubToken};
 
         const addr = addressChannelsFor(commit.repo, ctx);
 
@@ -82,11 +88,10 @@ function handleBuild(runningBuild: RunningBuild): Promise<any> {
 
 export const BuildBase = "https://build.atomist.com";
 
-
 // TODO why does this seem to leave an error
-function markBuilt(id: GitHubRepoRef): Promise<any> {
+function markBuilt(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
     // TODO hard coded status must go
-    return createStatus(process.env.GITHUB_TOKEN, id, {
+    return createStatus((creds as TokenCredentials).token, id, {
         state: "success",
         target_url: `${BuildBase}/${id.owner}/${id.repo}/${id.sha}`,
         context: "build",

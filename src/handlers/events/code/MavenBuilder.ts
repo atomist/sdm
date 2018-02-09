@@ -1,11 +1,11 @@
-import { ChildProcess, spawn } from "child_process";
-import { Builder, LocalBuilder, RunningBuild } from "./Builder";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { AppInfo } from "./Deployment";
+import { ChildProcess, spawn } from "child_process";
 import * as fs from "fs";
 import { Readable } from "stream";
+import { Builder, LocalBuilder, RunningBuild } from "./Builder";
+import { AppInfo } from "./Deployment";
 
 export class MavenBuilder extends LocalBuilder {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL } from "@atomist/automation-client";
+import { GraphQL, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -25,6 +25,10 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPush } from "../../../typings/types";
@@ -38,24 +42,25 @@ import { createStatus } from "../../commands/editors/toclient/ghub";
     GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
 export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 
-    public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
+    @Secret(Secrets.OrgToken)
+    private githubToken: string;
+
+    public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push: OnPush.Push = event.data.Push[0];
         const commit = push.commits[0];
-        // TODO check this
 
         const msg = `Scanning sources after push: \`${commit.sha}\` - _${commit.message}_`;
         console.log(msg);
 
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
 
-        // TODO get this from handler properly
-        const creds = {token: process.env.GITHUB_TOKEN};
+        const creds = {token: params.githubToken };
 
         const communicator = addressChannelsFor(push.repo, ctx);
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
-                return withProject(p, communicator, ctx)
+                return withProject(p, creds, communicator, ctx)
                     .then(() => communicator(msg))
                     .then(() => Success, failure);
             });
@@ -63,20 +68,21 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 }
 
 // TODO have steps and break out if any of them fails
-function withProject(p: GitProject, addressChannels: AddressChannels, ctx: HandlerContext): Promise<any> {
+function withProject(p: GitProject, creds: ProjectOperationCredentials, addressChannels: AddressChannels, ctx: HandlerContext): Promise<any> {
     return p.findFile("pom.xml")
-        .then(() => markScanned(p.id as GitHubRepoRef))
+        .then(() => markScanned(p.id as GitHubRepoRef, creds))
         .catch(err => {
             // This will terminate pipeline
+            console.log("Error was " + err);
             return addressChannels("This project has no pom. Cannot deploy");
         });
 }
 
 export const ScanBase = "https://scan.atomist.com";
 
-function markScanned(id: GitHubRepoRef): Promise<any> {
-    // TODO hard coded token must go
-    return createStatus(process.env.GITHUB_TOKEN, id, {
+function markScanned(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+    console.log(`Create status with tok=${JSON.stringify(creds)}`);
+    return createStatus((creds as TokenCredentials).token, id, {
         state: "success",
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
         context: "scan",

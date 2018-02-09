@@ -1,6 +1,6 @@
 
-import { AppInfo } from "./Deployment";
 import * as Stream from "stream";
+import { AppInfo } from "./Deployment";
 
 export interface ArtifactStore {
 
