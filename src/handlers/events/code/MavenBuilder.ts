@@ -3,7 +3,7 @@ import { Builder, LocalBuilder, RunningBuild } from "./Builder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { AppInfo } from "./DeploymentChain";
+import { AppInfo } from "./Deployment";
 import * as fs from "fs";
 import { Readable } from "stream";
 

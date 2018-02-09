@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, MappedParameter, MappedParameters } from "@atomist/automation-client";
+import { GraphQL, HandlerResult } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { Builder, RunningBuild } from "./Builder";
-import { slackProgressLog } from "./DeploymentChain";
 import { MavenBuilder } from "./MavenBuilder";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ScanBase } from "./ScanOnPush";
 import { OnScanSuccessStatus } from "../../../typings/types";
+import { slackProgressLog } from "./ProgressLog";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build

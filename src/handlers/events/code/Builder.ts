@@ -2,12 +2,13 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { AppInfo, ProgressLog } from "./DeploymentChain";
+import { AppInfo } from "./Deployment";
 
 import axios from "axios";
 import EventEmitter = NodeJS.EventEmitter;
 import { Readable, Stream } from "stream";
 import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
+import { ProgressLog } from "./ProgressLog";
 
 // TODO do for local with child process, or output stream
 export interface RunningBuild {

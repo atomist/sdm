@@ -1,14 +1,15 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
-import { CloudFoundryInfo, Deployment, ProgressLog } from "./DeploymentChain";
+import { CloudFoundryInfo, Deployment } from "./Deployment";
 import { VersionedArtifact } from "./VersionedArtifact";
 import { DeployableArtifact } from "./DeployOnBuildSuccessStatus";
+import { Deployer } from "./Deployer";
+import { ProgressLog } from "./ProgressLog";
 
-export class CloudFoundryDeployer /*implements Deployer */ {
+export class CloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
-    public deploy<P extends LocalProject>(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
+    public deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
         log.write("Analyzing application...\n");
 
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi);

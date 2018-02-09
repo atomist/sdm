@@ -1,5 +1,5 @@
 import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
-import { AppInfo } from "./DeploymentChain";
+import { AppInfo } from "./Deployment";
 import { Stream } from "stream";
 
 import * as fs from "fs";
