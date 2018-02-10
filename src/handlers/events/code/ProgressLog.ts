@@ -19,3 +19,16 @@ export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext):
         },
     };
 }
+
+export class SavingProgressLog implements ProgressLog {
+
+    private logged: string = "";
+
+    public write(what: string): void {
+        this.logged += what;
+    }
+
+    get log() {
+        return this.logged;
+    }
+}

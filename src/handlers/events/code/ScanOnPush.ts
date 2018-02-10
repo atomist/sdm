@@ -61,7 +61,7 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
                 return withProject(p, creds, communicator, ctx)
-                    .then(() => communicator(msg))
+                    //.then(() => communicator(msg))
                     .then(() => Success, failure);
             });
     }

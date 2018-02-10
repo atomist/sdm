@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { GraphQL } from "@atomist/automation-client";
+import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnBuiltStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
 import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
-import { slackProgressLog } from "./ProgressLog";
+import { SavingProgressLog, slackProgressLog } from "./ProgressLog";
+import { createGist } from "../../commands/editors/toclient/ghub";
 
 export interface DeployableArtifact extends AppInfo {
 
@@ -44,11 +45,14 @@ export const CloudFoundryTarget: CloudFoundryInfo = {
     GraphQL.subscriptionFromFile("graphql/subscription/OnBuiltStatus.graphql"))
 export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Subscription> {
 
+    @Secret(Secrets.OrgToken)
+    private githubToken: string;
+
     constructor(private artifactCheckout: ArtifactCheckout = localCheckout,
                 private cfDeployer: CloudFoundryDeployer = new CloudFoundryDeployer()) {
     }
 
-    public handle(event: EventFired<OnBuiltStatus.Subscription>, ctx: HandlerContext): Promise<any> {
+    public handle(event: EventFired<OnBuiltStatus.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
@@ -56,10 +60,11 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const addr = addressChannelsFor(commit.repo, ctx);
-        const progressLog = slackProgressLog(commit.repo, ctx);
+        const progressLog = //slackProgressLog(commit.repo, ctx);
+            new SavingProgressLog();
 
         const targetUrl = event.data.Status[0].targetUrl;
-        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha} from ${targetUrl}`)
+        return addr(`Deploying ${id.owner}/${id.repo}:${id.sha}...`)
             .then(() => {
                 return this.artifactCheckout(targetUrl)
                     .then(ac => {
@@ -67,7 +72,27 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
                         return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog)
                             .then(deployment => {
                                 deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-                                return addr(`Deployed to ${deployment.url}`);
+                                deployment.childProcess.addListener("exit", (code, signal) => {
+                                    return createGist(params.githubToken, {
+                                        description: `Deployment log for ${id.owner}/${id.repo}`,
+                                        public: true,
+                                        files: [{
+                                            path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                            content: progressLog.log
+                                        }],
+                                    }).then(gist => addr(`Deployed to ${deployment.url}: Log at ${gist}`));
+                                });
+                                deployment.childProcess.addListener("error", (code, signal) => {
+                                    return createGist(params.githubToken, {
+                                        description: `Failed deployment log for ${id.owner}/${id.repo}`,
+                                        public: true,
+                                        files: [{
+                                            path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                            content: progressLog.log
+                                        }],
+                                    }).then(gist => addr(`Failed deployment: Log at ${gist}`));
+                                });
+                                return Success;
                             });
                     });
             });

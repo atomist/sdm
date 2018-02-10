@@ -1,7 +1,7 @@
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubDotComBase, GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 
-export type State = "error" |  "failure" | "pending" | "success";
+export type State = "error" | "failure" | "pending" | "success";
 
 export interface Status {
     state: State;
@@ -14,6 +14,29 @@ export function createStatus(token: string, rr: GitHubRepoRef, status: Status): 
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
     return axios.post(url, status, config);
+}
+
+export interface Gist {
+    description: string;
+    files: Array<{ path: string, content: string }>;
+    public: boolean;
+}
+
+export function createGist(xtoken: string, gist: Gist, apiBase: string = GitHubDotComBase): AxiosPromise {
+    // TODO need the scope correct here
+    const token = process.env.GITHUB_TOKEN;
+    const config = authHeaders(token);
+    const url = `${apiBase}/gists`;
+    const data: any = {
+        description: gist.description,
+        public: gist.public,
+        files: {},
+    };
+    gist.files.forEach(f => data.files[f.path] = { content: f.content });
+    return axios.post(url, data, config)
+        .then(res => {
+            return res.data.html_url;
+        });
 }
 
 export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]> {
