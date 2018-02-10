@@ -1,5 +1,4 @@
 import { HandlerContext } from "@atomist/automation-client";
-import { ChildProcess } from "child_process";
 import { addressChannelsFor, HasChannels } from "../../commands/editors/toclient/addressChannels";
 
 export interface ProgressLog {
@@ -20,33 +19,3 @@ export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext):
         },
     };
 }
-
-export interface Deployment {
-
-    childProcess: ChildProcess;
-    url: string;
-}
-
-export interface CloudFoundryInfo {
-
-    api: string;
-    username: string;
-    password: string;
-    space: string;
-    org: string;
-
-}
-
-/**
- * Info to send up for a cloud foundry deployment
- */
-export interface AppInfo {
-
-    name: string;
-    version: string;
-}
-
-export const PivotalWebServices = { // : Partial<CloudFoundryInfo> = {
-
-    api: "https://api.run.pivotal.io",
-};

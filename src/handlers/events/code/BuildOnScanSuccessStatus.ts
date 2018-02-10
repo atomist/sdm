@@ -14,75 +14,83 @@
  * limitations under the License.
  */
 
-import { GraphQL } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, Secret, Secrets } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { Builder } from "./Builder";
-import { ProgressLog, slackProgressLog } from "./DeploymentChain";
-import { MavenBuilder } from "./MavenBuilder";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ScanBase } from "./ScanOnPush";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { OnScanSuccessStatus } from "../../../typings/types";
-import { ChildProcess } from "child_process";
+import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../commands/editors/toclient/ghub";
+import { Builder, RunningBuild } from "./Builder";
+import { MavenBuilder } from "./MavenBuilder";
+import { slackProgressLog } from "./ProgressLog";
 
+/**
+ * See a GitHub success status with context "scan" and trigger a build
+ */
 @EventHandler("On source scan success",
     GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
 
-    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext): Promise<any> {
+    @Secret(Secrets.OrgToken)
+    private githubToken: string;
+
+    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
+        const team = commit.repo.org.chatTeam.id;
 
         const msg = `Saw a success status: ${JSON.stringify(event)}`;
         console.log(msg);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        // TODO get this from handler properly
-        const creds = {token: process.env.GITHUB_TOKEN};
+        const creds = {token: params.githubToken};
 
         const addr = addressChannelsFor(commit.repo, ctx);
 
+        const builder: Builder = new MavenBuilder();
+
         // TODO check what status
-        return GitCommandGitProject.cloned(creds, id)
-            .then(p => {
-                return addr("Building. Please wait...")
-                    .then(() => doBuild(p, slackProgressLog(commit.repo, ctx)))
-                    .then(() => markBuilt(id))
-                    .then(() => addr(`Finished building ${p.id.owner}/${p.id.repo}:${p.id.sha}`));
-            });
+        return builder.build(creds, id, team, slackProgressLog(commit.repo, ctx))
+            .then(handleBuild)
+            .then(() => ({
+                code: 0,
+            }));
+            //.then(() => markBuilt(id));
     }
 }
 
-function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
-    const builder: Builder = new MavenBuilder();
-    const buildInProgress = builder.build(p);
+function handleBuild(runningBuild: RunningBuild): Promise<any> {
     // deployment.childProcess.addListener("exit", closeListener);
     //b.stdout.on("data", what => log.write(what.toString()));
     // TODO why doesn't this work with emitter
-    (buildInProgress as ChildProcess).stdout.on("data", what => log.write(what.toString()));
-
-
-    //buildInProgress.on("data", what => log.write(what.toString()));
+    //(runningBuild.stream as ChildProcess).stdout.on("data", what => log.write(what.toString()));
 
     return new Promise((resolve, reject) => {
         // Pipe/use stream
-        buildInProgress.on("end", resolve);
-        buildInProgress.on("exit", resolve);
-        buildInProgress.on("close", resolve);
-        buildInProgress.on("error", reject);
+        runningBuild.stream.addListener("end", resolve);
+        runningBuild.stream.addListener("exit", resolve);
+        runningBuild.stream.addListener("close", resolve);
+        runningBuild.stream.addListener("error", err => {
+            console.log("Saw error " + err);
+            return reject(err);
+        });
     });
 }
 
-function markBuilt(id: GitHubRepoRef): Promise<any> {
+export const BuildBase = "https://build.atomist.com";
+
+// TODO why does this seem to leave an error
+function markBuilt(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
     // TODO hard coded status must go
-    return createStatus(process.env.GITHUB_TOKEN, id, {
+    return createStatus((creds as TokenCredentials).token, id, {
         state: "success",
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
+        target_url: `${BuildBase}/${id.owner}/${id.repo}/${id.sha}`,
         context: "build",
     });
 }

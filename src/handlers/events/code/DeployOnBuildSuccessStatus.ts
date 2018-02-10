@@ -17,63 +17,81 @@
 import { GraphQL } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnBuiltStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { Builder } from "./Builder";
-import { ProgressLog } from "./DeploymentChain";
-import { MavenBuilder } from "./MavenBuilder";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ScanBase } from "./ScanOnPush";
-import { ChildProcess } from "child_process";
+import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
+import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
+import { slackProgressLog } from "./ProgressLog";
 
-@EventHandler("On successful build",
+export interface DeployableArtifact extends AppInfo {
+
+    cwd: string;
+
+    filename: string;
+}
+
+export type ArtifactCheckout = (targetUrl: string) => Promise<DeployableArtifact>;
+
+export const CloudFoundryTarget: CloudFoundryInfo = {
+    ...PivotalWebServices,
+    username: "rod@atomist.com",
+    password: process.env.PIVOTAL_PASSWORD,
+    space: "development",
+    org: "springrod",
+};
+
+@EventHandler("On successful build: Take the artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnBuiltStatus.graphql"))
 export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Subscription> {
+
+    constructor(private artifactCheckout: ArtifactCheckout = localCheckout,
+                private cfDeployer: CloudFoundryDeployer = new CloudFoundryDeployer()) {
+    }
 
     public handle(event: EventFired<OnBuiltStatus.Subscription>, ctx: HandlerContext): Promise<any> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
 
-        const msg = `Saw a success status: ${JSON.stringify(event)}`;
-        console.log(msg);
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        // TODO get this from handler properly
-        const creds = {token: process.env.GITHUB_TOKEN};
-
         const addr = addressChannelsFor(commit.repo, ctx);
+        const progressLog = slackProgressLog(commit.repo, ctx);
 
-        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha}`);
+        const targetUrl = event.data.Status[0].targetUrl;
+        return addr(`Deploy ${id.owner}/${id.repo}:${id.sha} from ${targetUrl}`)
+            .then(() => {
+                return this.artifactCheckout(targetUrl)
+                    .then(ac => {
+                        console.log("Do PCF deployment of " + JSON.stringify(ac));
+                        return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog)
+                            .then(deployment => {
+                                deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
+                                return addr(`Deployed to ${deployment.url}`);
+                            });
+                    });
+            });
     }
+
 }
 
-function doBuild(p: GitProject, log: ProgressLog): Promise<any> {
-    const builder: Builder = new MavenBuilder();
-    const buildInProgress = builder.build(p);
-    // deployment.childProcess.addListener("exit", closeListener);
-
-    // TODO why doesn't this work with emitter
-    (buildInProgress as ChildProcess).stdout.on("data", what => log.write(what.toString()));
-
-    //buildInProgress.on("data", what => log.write(what.toString()));
-
-    return new Promise((resolve, reject) => {
-        // Pipe/use stream
-        buildInProgress.on("end", resolve);
-        buildInProgress.on("exit", resolve);
-        buildInProgress.on("close", resolve);
-        buildInProgress.on("error", reject);
-    });
-}
-
-function markBuilt(id: GitHubRepoRef): Promise<any> {
-    // TODO hard coded status must go
-    return createStatus(process.env.GITHUB_TOKEN, id, {
-        state: "success",
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context: "build",
-    });
-}
+/**
+ *
+ * @param {string} targetUrl
+ * @return {string} the directory
+ */
+const localCheckout: ArtifactCheckout = targetUrl => {
+    //Form is http:///var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-20964EBUrRVIZ077a/target/losgatos1-0.1.0-SNAPSHOT.jar
+    const lastSlash = targetUrl.lastIndexOf("/");
+    const filename = targetUrl.substr(lastSlash + 1);
+    const name = filename.substr(0, filename.indexOf("-"));
+    const version = filename.substr(name.length + 1);
+    const cwd = targetUrl.substring(7, lastSlash);
+    const local: DeployableArtifact = {
+        name,
+        version,
+        cwd,
+        filename,
+    };
+    return Promise.resolve(local);
+};

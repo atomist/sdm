@@ -15,6 +15,11 @@ subscription OnScanSuccessStatus {
                     name
                     id
                 }
+                org {
+                    chatTeam {
+                        id
+                    }
+                }
             }
             pushes(branch: "master") {
                 branch
