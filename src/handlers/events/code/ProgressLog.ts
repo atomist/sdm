@@ -20,6 +20,34 @@ export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext):
     };
 }
 
+export class MultiProgressLog implements ProgressLog {
+
+    constructor(private log1: ProgressLog, private log2: ProgressLog) {}
+
+    public write(what: string): void {
+        this.log1.write(what);
+        this.log2.write(what);
+    }
+}
+
+export class TransformingProgressLog implements ProgressLog {
+
+    /**
+     *
+     * @param {ProgressLog} log
+     * @param {(what: string) => string} filter if filter returns undefined
+     * don't output anything
+     */
+    constructor(private log: ProgressLog, private filter: (what: string) => string) {}
+
+    public write(what: string): void {
+        const filtered = this.filter(what);
+        if (!!filtered) {
+            this.log.write(what);
+        }
+    }
+}
+
 export class SavingProgressLog implements ProgressLog {
 
     private logged: string = "";
