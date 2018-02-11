@@ -6,6 +6,7 @@ import { BuildOnScanSuccessStatus } from "./handlers/events/code/BuildOnScanSucc
 import { DeployOnBuildSuccessStatus } from "./handlers/events/code/DeployOnBuildSuccessStatus";
 import { ScanOnPush } from "./handlers/events/code/ScanOnPush";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
+import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -19,6 +20,7 @@ export const configuration: Configuration = {
     commands: [
         HelloWorld,
         () => davosEditor,
+        () => touchEditor,
     ],
     events: [
         ActOnRepoCreation,
