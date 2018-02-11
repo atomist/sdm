@@ -37,8 +37,8 @@ export const CloudFoundryTarget: CloudFoundryInfo = {
     ...PivotalWebServices,
     username: process.env.PIVOTAL_USER,
     password: process.env.PIVOTAL_PASSWORD,
-    space: "development",
-    org: "springrod",
+    space: process.env.PCF_SPACE,
+    org: process.env.PCF_ORG,
 };
 
 @EventHandler("Deploy published artifact",
