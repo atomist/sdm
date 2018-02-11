@@ -23,6 +23,7 @@ import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
 import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
 import { MultiProgressLog, SavingProgressLog, slackProgressLog, TransformingProgressLog } from "./ProgressLog";
 import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
+import { parseCloudFoundryLog } from "./cloudFoundryLogParser";
 
 export interface DeployableArtifact extends AppInfo {
 
@@ -79,7 +80,7 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
         //     });
         const persistentLog = new SavingProgressLog();
         const progressLog = //new MultiProgressLog(slackLog, persistentLog);
-        persistentLog;
+            persistentLog;
 
         const targetUrl = event.data.Status[0].targetUrl;
         // addr(`Deploying ${id.owner}/${id.repo}:${id.sha}...`)
@@ -92,6 +93,7 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
                             .then(deployment => {
                                 deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
                                 deployment.childProcess.addListener("exit", (code, signal) => {
+                                    const di = parseCloudFoundryLog(persistentLog.log);
                                     return createGist(params.githubToken, {
                                         description: `Deployment log for ${id.owner}/${id.repo}`,
                                         public: false,
@@ -100,7 +102,12 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
                                             content: persistentLog.log,
                                         }],
                                     })
-                                        .then(gist => setDeployStatus(params.githubToken, id, "success", gist));
+                                        .then(gist => setDeployStatus(params.githubToken, id, "success", gist))
+                                        .then(() => {
+                                            return !!di ?
+                                                setEndpointStatus(params.githubToken, id, di.endpoint) :
+                                                true;
+                                        });
 
                                 });
                                 deployment.childProcess.addListener("error", (code, signal) => {
@@ -127,6 +134,14 @@ function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, t
         state,
         target_url,
         context: "deployment",
+    });
+}
+
+function setEndpointStatus(token: string, id: GitHubRepoRef, endpoint: string): Promise<any> {
+    return createStatus(token, id, {
+        state: "success",
+        target_url: endpoint,
+        context: "endpoint",
     });
 }
 
