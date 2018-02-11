@@ -13,6 +13,7 @@ export interface Status {
 export function createStatus(token: string, rr: GitHubRepoRef, status: Status): AxiosPromise {
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
+    console.log(`Updating github status: ${url} to ${JSON.stringify(status)}`);
     return axios.post(url, status, config);
 }
 
@@ -22,7 +23,7 @@ export interface Gist {
     public: boolean;
 }
 
-export function createGist(xtoken: string, gist: Gist, apiBase: string = GitHubDotComBase): AxiosPromise {
+export function createGist(xtoken: string, gist: Gist, apiBase: string = GitHubDotComBase): Promise<string> {
     // TODO need the scope correct here
     const token = process.env.GITHUB_TOKEN;
     const config = authHeaders(token);

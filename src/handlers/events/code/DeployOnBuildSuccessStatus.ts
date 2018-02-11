@@ -17,12 +17,12 @@
 import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnBuiltStatus } from "../../../typings/types";
+import { OnBuiltStatus, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
 import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
 import { MultiProgressLog, SavingProgressLog, slackProgressLog, TransformingProgressLog } from "./ProgressLog";
-import { createGist } from "../../commands/editors/toclient/ghub";
+import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
 
 export interface DeployableArtifact extends AppInfo {
 
@@ -60,28 +60,30 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const addr = addressChannelsFor(commit.repo, ctx);
-        const slackLog = new TransformingProgressLog(
-            slackProgressLog(commit.repo, ctx),
-            // TODO this filter is CF specific
-            what => {
-                const lines = what.split("\n");
-                lines.forEach((l, i) => console.log(i + ": " + l));
-                const toLog = lines.map(l => {
-                    if (l.startsWith("urls:")) {
-                        return "http://" + what.substr(6);
-                    }
-                    if (l.startsWith("Uploading") || l.startsWith("#") || l.includes("container")) {
-                        return what;
-                    }
-                    return undefined;
-                });
-                return toLog.filter(l => !!l).join("\n");
-            });
+        // const slackLog = new TransformingProgressLog(
+        //     slackProgressLog(commit.repo, ctx),
+        //     // TODO this filter is CF specific
+        //     what => {
+        //         const lines = what.split("\n");
+        //         lines.forEach((l, i) => console.log(i + ": " + l));
+        //         const toLog = lines.map(l => {
+        //             if (l.startsWith("urls:")) {
+        //                 return "http://" + what.substr(6);
+        //             }
+        //             if (l.startsWith("Uploading") || l.startsWith("#") || l.includes("container")) {
+        //                 return what;
+        //             }
+        //             return undefined;
+        //         });
+        //         return toLog.filter(l => !!l).join("\n");
+        //     });
         const persistentLog = new SavingProgressLog();
-        const progressLog = new MultiProgressLog(slackLog, persistentLog);
+        const progressLog = //new MultiProgressLog(slackLog, persistentLog);
+        persistentLog;
 
         const targetUrl = event.data.Status[0].targetUrl;
-        return addr(`Deploying ${id.owner}/${id.repo}:${id.sha}...`)
+        // addr(`Deploying ${id.owner}/${id.repo}:${id.sha}...`)
+        return setDeployStatus(params.githubToken, id, "pending", "http://test.com")
             .then(() => {
                 return this.artifactCheckout(targetUrl)
                     .then(ac => {
@@ -89,34 +91,43 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
                         return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog)
                             .then(deployment => {
                                 deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-                                // deployment.childProcess.addListener("exit", (code, signal) => {
-                                //     return createGist(params.githubToken, {
-                                //         description: `Deployment log for ${id.owner}/${id.repo}`,
-                                //         public: true,
-                                //         files: [{
-                                //             path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                                //             content: persistentLog.log
-                                //         }],
-                                //     })
-                                //         .then(gist => addr(`Deployed to ${deployment.url}: Log at ${gist}`));
-                                // });
-                                // deployment.childProcess.addListener("error", (code, signal) => {
-                                //     return createGist(params.githubToken, {
-                                //         description: `Failed deployment log for ${id.owner}/${id.repo}`,
-                                //         public: true,
-                                //         files: [{
-                                //             path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                                //             content: persistentLog.log
-                                //         }],
-                                //     })
-                                //         .then(gist => addr(`Failed deployment: Log at ${gist}`));
-                                // });
+                                deployment.childProcess.addListener("exit", (code, signal) => {
+                                    return createGist(params.githubToken, {
+                                        description: `Deployment log for ${id.owner}/${id.repo}`,
+                                        public: false,
+                                        files: [{
+                                            path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                            content: persistentLog.log,
+                                        }],
+                                    })
+                                        .then(gist => setDeployStatus(params.githubToken, id, "success", gist));
+
+                                });
+                                deployment.childProcess.addListener("error", (code, signal) => {
+                                    return createGist(params.githubToken, {
+                                        description: `Failed deployment log for ${id.owner}/${id.repo}`,
+                                        public: false,
+                                        files: [{
+                                            path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                            content: persistentLog.log,
+                                        }],
+                                    })
+                                        .then(gist => setDeployStatus(params.githubToken, id, "failure", gist));
+                                });
                                 return Success;
                             });
                     });
             });
     }
 
+}
+
+function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, target_url: string): Promise<any> {
+    return createStatus(token, id, {
+        state,
+        target_url,
+        context: "deployment",
+    });
 }
 
 /**

@@ -48,7 +48,3 @@ export class CloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 function toUrl(name: string) {
     return `http://${name}.cfapps.io/`;
 }
-
-function toJar(ai: VersionedArtifact) {
-    return `target/${ai.artifact}-${ai.version}.jar`;
-}
