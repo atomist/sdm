@@ -7,8 +7,13 @@ import {RunningBuild } from "../../../Builder";
 import { AppInfo } from "../../../Deployment";
 import { LocalBuilder } from "../LocalBuilder";
 import { identification } from "./pomParser";
+import { ArtifactStore } from "../../../ArtifactStore";
 
 export class MavenBuilder extends LocalBuilder {
+
+    constructor(artifactStore: ArtifactStore) {
+        super(artifactStore);
+    }
 
     protected startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string): Promise<RunningBuild> {
         return GitCommandGitProject.cloned(creds, rr)

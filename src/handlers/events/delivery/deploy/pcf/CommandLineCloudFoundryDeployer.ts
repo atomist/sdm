@@ -3,9 +3,9 @@ import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { spawn } from "child_process";
 import { Deployer } from "../../Deployer";
 import { Deployment } from "../../Deployment";
-import { DeployableArtifact } from "../../DeployOnArtifactStatus";
 import { ProgressLog } from "../../ProgressLog";
 import { CloudFoundryInfo } from "./CloudFoundryTarget";
+import { DeployableArtifact } from "../../ArtifactStore";
 
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 

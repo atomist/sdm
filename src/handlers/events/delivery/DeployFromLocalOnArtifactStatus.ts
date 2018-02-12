@@ -22,33 +22,22 @@ import { OnDeployableArtifact, StatusState } from "../../../typings/types";
 import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
-import { AppInfo, TargetInfo } from "./Deployment";
+import { TargetInfo } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
-
-export interface DeployableArtifact extends AppInfo {
-
-    cwd: string;
-
-    filename: string;
-}
-
-/**
- * Function that can check out an artifact to a local directory, given a URL
- */
-export type ArtifactCheckout = (targetUrl: string) => Promise<DeployableArtifact>;
+import { ArtifactStore } from "./ArtifactStore";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
 @EventHandler("Deploy published artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnDeployableArtifact.graphql"))
-export class DeployOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnDeployableArtifact.Subscription> {
+export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnDeployableArtifact.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private artifactCheckout: ArtifactCheckout,
-                private cfDeployer: Deployer<T>,
+    constructor(private artifactStore: ArtifactStore,
+                private deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 
@@ -65,9 +54,9 @@ export class DeployOnArtifactStatus<T extends TargetInfo> implements HandleEvent
         const targetUrl = event.data.Status[0].targetUrl;
         return setDeployStatus(params.githubToken, id, "pending", "http://test.com")
             .then(() => {
-                return this.artifactCheckout(targetUrl)
+                return params.artifactStore.checkout(targetUrl)
                     .then(ac => {
-                        return this.cfDeployer.deploy(ac, params.targeter(id), progressLog)
+                        return this.deployer.deploy(ac, params.targeter(id), progressLog)
                             .then(deployment => {
                                 deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
                                 deployment.childProcess.addListener("exit", (code, signal) => {

@@ -2,7 +2,7 @@ import { Stream } from "stream";
 import { AppInfo } from "../../Deployment";
 
 import * as fs from "fs";
-import { ArtifactStore, StoredArtifact } from "../../ArtifactStore";
+import { ArtifactStore, DeployableArtifact, StoredArtifact } from "../../ArtifactStore";
 
 const path = require("path");
 const Q = require("Q");
@@ -32,6 +32,10 @@ export class ArtifactoryArtifactStore implements ArtifactStore {
     }
 
     public retrieve(url: string): Promise<StoredArtifact> {
+        return null;
+    }
+
+    public checkout(url: string): Promise<DeployableArtifact> {
         return null;
     }
 }

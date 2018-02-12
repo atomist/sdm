@@ -14,36 +14,21 @@
  * limitations under the License.
  */
 
-import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import {
+    CloudFoundryInfo,
+    EnvironmentCloudFoundryTarget
+} from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
-import { ArtifactCheckout, DeployableArtifact, DeployOnArtifactStatus } from "../../handlers/events/delivery/DeployOnArtifactStatus";
-
-/**
- *
- * @param {string} targetUrl
- * @return {string} the directory
- */
-const localCheckout: ArtifactCheckout = targetUrl => {
-    //Form is http:///var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-20964EBUrRVIZ077a/target/losgatos1-0.1.0-SNAPSHOT.jar
-    const lastSlash = targetUrl.lastIndexOf("/");
-    const filename = targetUrl.substr(lastSlash + 1);
-    const name = filename.substr(0, filename.indexOf("-"));
-    const version = filename.substr(name.length + 1);
-    const cwd = targetUrl.substring(7, lastSlash);
-    const local: DeployableArtifact = {
-        name,
-        version,
-        cwd,
-        filename,
-    };
-    return Promise.resolve(local);
-};
+import { DeployFromLocalOnArtifactStatus } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
+import { artifactStore } from "./artifactStore";
 
 /**
  * Deploy everything to the same Cloud Foundry space
- * @type {DeployOnArtifactStatus<CloudFoundryInfo>}
+ * @type {DeployFromLocalOnArtifactStatus<CloudFoundryInfo>}
  */
 export const CloudFoundryDeployOnArtifactStatus =
-    new DeployOnArtifactStatus(localCheckout,
+    new DeployFromLocalOnArtifactStatus(
+        artifactStore,
         new CommandLineCloudFoundryDeployer(),
-        () => new EnvironmentCloudFoundryTarget());
+        () => new EnvironmentCloudFoundryTarget(),
+        );
