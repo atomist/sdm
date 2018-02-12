@@ -1,8 +1,8 @@
 import { Stream } from "stream";
-import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
-import { AppInfo } from "./Deployment";
+import { AppInfo } from "../../Deployment";
 
 import * as fs from "fs";
+import { ArtifactStore, StoredArtifact } from "../../ArtifactStore";
 
 const path = require("path");
 const Q = require("Q");

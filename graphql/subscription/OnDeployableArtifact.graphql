@@ -1,5 +1,5 @@
 
-subscription OnBuiltStatus {
+subscription OnDeployableArtifact {
     Status(state: success, context: "artifact") {
         commit {
             sha

@@ -4,14 +4,14 @@ import {
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { AppInfo } from "./Deployment";
+import { createStatus } from "../../../../commands/editors/toclient/ghub";
+import { AppInfo } from "../../Deployment";
 
 import axios from "axios";
 import { Stream } from "stream";
-import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
-import { Builder, RunningBuild } from "./Builder";
-import { ProgressLog } from "./ProgressLog";
+import { ArtifactStore, StoredArtifact } from "../../ArtifactStore";
+import { Builder, RunningBuild } from "../../Builder";
+import { ProgressLog } from "../../ProgressLog";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist

@@ -3,9 +3,9 @@ import * as appRoot from "app-root-path";
 import { davosEditor } from "./handlers/commands/editors/user/davosEditor";
 import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { BuildOnScanSuccessStatus } from "./handlers/events/code/BuildOnScanSuccessStatus";
-import { DeployOnBuildSuccessStatus } from "./handlers/events/code/DeployOnBuildSuccessStatus";
-import { ScanOnPush } from "./handlers/events/code/ScanOnPush";
+import { BuildOnScanSuccessStatus } from "./handlers/events/delivery/BuildOnScanSuccessStatus";
+import { CloudFoundryDeployOnArtifactStatus } from "./handlers/events/delivery/deploy/pcf/CloudFoundryDeployOnArtifactStatus";
+import { ScanOnPush } from "./handlers/events/delivery/ScanOnPush";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 
 // tslint:disable-next-line:no-var-requires
@@ -25,7 +25,7 @@ export const configuration: Configuration = {
     events: [
         ActOnRepoCreation,
         BuildOnScanSuccessStatus,
-        DeployOnBuildSuccessStatus,
+        () => CloudFoundryDeployOnArtifactStatus,
         ScanOnPush,
     ],
     token,

@@ -3,9 +3,9 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ChildProcess, spawn } from "child_process";
 import { Readable } from "stream";
-import {RunningBuild } from "./Builder";
-import { AppInfo } from "./Deployment";
-import { LocalBuilder } from "./LocalBuilder";
+import {RunningBuild } from "../../../Builder";
+import { AppInfo } from "../../../Deployment";
+import { LocalBuilder } from "../LocalBuilder";
 import { identification } from "./pomParser";
 
 export class MavenBuilder extends LocalBuilder {

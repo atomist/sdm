@@ -1,5 +1,5 @@
 import { Deployment, TargetInfo } from "./Deployment";
-import { DeployableArtifact } from "./DeployOnBuildSuccessStatus";
+import { DeployableArtifact } from "./DeployOnArtifactStatus";
 import { ProgressLog } from "./ProgressLog";
 
 export interface Deployer<T extends TargetInfo> {

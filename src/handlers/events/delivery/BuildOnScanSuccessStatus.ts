@@ -24,8 +24,8 @@ import {
 import { OnScanSuccessStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
+import { MavenBuilder } from "./build/local/maven/MavenBuilder";
 import { Builder, RunningBuild } from "./Builder";
-import { MavenBuilder } from "./MavenBuilder";
 import { slackProgressLog } from "./ProgressLog";
 
 /**

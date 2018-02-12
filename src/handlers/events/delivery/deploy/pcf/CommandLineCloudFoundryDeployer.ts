@@ -1,13 +1,13 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { spawn } from "child_process";
-import { Deployer } from "./Deployer";
-import { CloudFoundryInfo, Deployment } from "./Deployment";
-import { DeployableArtifact } from "./DeployOnBuildSuccessStatus";
-import { ProgressLog } from "./ProgressLog";
-import { VersionedArtifact } from "./VersionedArtifact";
+import { Deployer } from "../../Deployer";
+import { Deployment } from "../../Deployment";
+import { DeployableArtifact } from "../../DeployOnArtifactStatus";
+import { ProgressLog } from "../../ProgressLog";
+import { CloudFoundryInfo } from "./CloudFoundryTarget";
 
-export class CloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
+export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
     public deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
         log.write("Analyzing application...\n");

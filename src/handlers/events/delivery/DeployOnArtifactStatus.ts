@@ -17,11 +17,12 @@
 import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnBuiltStatus, StatusState } from "../../../typings/types";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { OnDeployableArtifact, StatusState } from "../../../typings/types";
 import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
-import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
-import { parseCloudFoundryLog } from "./cloudFoundryLogParser";
-import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
+import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
+import { Deployer } from "./Deployer";
+import { AppInfo, TargetInfo } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
 
 export interface DeployableArtifact extends AppInfo {
@@ -31,29 +32,27 @@ export interface DeployableArtifact extends AppInfo {
     filename: string;
 }
 
+/**
+ * Function that can check out an artifact to a local directory, given a URL
+ */
 export type ArtifactCheckout = (targetUrl: string) => Promise<DeployableArtifact>;
 
-export const CloudFoundryTarget: CloudFoundryInfo = {
-    ...PivotalWebServices,
-    api: process.env.PCF_API,
-    username: process.env.PIVOTAL_USER,
-    password: process.env.PIVOTAL_PASSWORD,
-    space: process.env.PCF_SPACE,
-    org: process.env.PCF_ORG,
-};
-
+/**
+ * Deploy a published artifact identified in a GitHub "artifact" status.
+ */
 @EventHandler("Deploy published artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnBuiltStatus.graphql"))
-export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Subscription> {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnDeployableArtifact.graphql"))
+export class DeployOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnDeployableArtifact.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private artifactCheckout: ArtifactCheckout = localCheckout,
-                private cfDeployer: CloudFoundryDeployer = new CloudFoundryDeployer()) {
+    constructor(private artifactCheckout: ArtifactCheckout,
+                private cfDeployer: Deployer<T>,
+                private targeter: (id: RemoteRepoRef) => T) {
     }
 
-    public handle(event: EventFired<OnBuiltStatus.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
+    public handle(event: EventFired<OnDeployableArtifact.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
 
         // TODO this is horrid
         const commit = event.data.Status[0].commit;
@@ -68,8 +67,7 @@ export class DeployOnBuildSuccessStatus implements HandleEvent<OnBuiltStatus.Sub
             .then(() => {
                 return this.artifactCheckout(targetUrl)
                     .then(ac => {
-                        console.log("Do PCF deployment of " + JSON.stringify(ac));
-                        return this.cfDeployer.deploy(ac, CloudFoundryTarget, progressLog)
+                        return this.cfDeployer.deploy(ac, params.targeter(id), progressLog)
                             .then(deployment => {
                                 deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
                                 deployment.childProcess.addListener("exit", (code, signal) => {
@@ -124,24 +122,3 @@ function setEndpointStatus(token: string, id: GitHubRepoRef, endpoint: string): 
         context: "endpoint",
     });
 }
-
-/**
- *
- * @param {string} targetUrl
- * @return {string} the directory
- */
-const localCheckout: ArtifactCheckout = targetUrl => {
-    //Form is http:///var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-20964EBUrRVIZ077a/target/losgatos1-0.1.0-SNAPSHOT.jar
-    const lastSlash = targetUrl.lastIndexOf("/");
-    const filename = targetUrl.substr(lastSlash + 1);
-    const name = filename.substr(0, filename.indexOf("-"));
-    const version = filename.substr(name.length + 1);
-    const cwd = targetUrl.substring(7, lastSlash);
-    const local: DeployableArtifact = {
-        name,
-        version,
-        cwd,
-        filename,
-    };
-    return Promise.resolve(local);
-};
