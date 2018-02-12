@@ -2,11 +2,13 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { ScanOnPush } from "./handlers/events/delivery/ScanOnPush";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import { CloudFoundryDeployOnArtifactStatus } from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
+import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
+import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
+import { ScanOnPushForMaven } from "./software-delivery-machine/blueprint/scanOnPush";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -24,9 +26,11 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
+        () => ScanOnPushForMaven,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryDeployOnArtifactStatus,
-        ScanOnPush,
+        () => NotifyOnDeploy,
+        () => VerifyEndpoint,
     ],
     token,
     http: {

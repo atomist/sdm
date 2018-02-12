@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnDeployableArtifact, StatusState } from "../../../typings/types";
+import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
@@ -30,8 +30,11 @@ import { ArtifactStore } from "./ArtifactStore";
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
 @EventHandler("Deploy published artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnDeployableArtifact.graphql"))
-export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnDeployableArtifact.Subscription> {
+    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
+        __dirname, {
+            context: "artifact",
+        }))
+export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -41,10 +44,15 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 
-    public handle(event: EventFired<OnDeployableArtifact.Subscription>, ctx: HandlerContext, params: this): Promise<any> {
+    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
-        // TODO this is horrid
-        const commit = event.data.Status[0].commit;
+        const status = event.data.Status[0];
+        const commit = status.commit;
+
+        if (status.context !== "artifact") {
+            console.log(`********* Deploy got called with status context=[${status.context}]`);
+            return Promise.resolve(Success);
+        }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
