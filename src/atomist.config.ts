@@ -7,6 +7,8 @@ import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import { CloudFoundryDeployOnArtifactStatus } from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
+import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
+import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -24,9 +26,11 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
+        ScanOnPush,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryDeployOnArtifactStatus,
-        ScanOnPush,
+        () => NotifyOnDeploy,
+        () => VerifyEndpoint,
     ],
     token,
     http: {

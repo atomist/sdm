@@ -1,5 +1,5 @@
 
-subscription OnSuccessStatus($branch: String!, $context: String!) {
+subscription OnSuccessStatus($context: String!) {
     Status(state: success, context: $context) {
         commit {
             sha
@@ -17,7 +17,7 @@ subscription OnSuccessStatus($branch: String!, $context: String!) {
                     }
                 }
             }
-            pushes(branch: $branch) {
+            pushes {
                 branch
             }
         }

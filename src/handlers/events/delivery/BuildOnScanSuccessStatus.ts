@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Builder, RunningBuild } from "./Builder";
@@ -28,7 +28,6 @@ import { OnSuccessStatus } from "../../../typings/types";
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
         context: "scan",
-        branch: "master",
     }))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -48,7 +47,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
 
         if (status.context !== "scan") {
             console.log(`********* Build got called with status context=[${status.context}]`);
-            return Promise.resolve({ code: 0});
+            return Promise.resolve(Success);
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
