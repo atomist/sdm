@@ -23,7 +23,7 @@ Uploading app files from: /var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/unzip
 Uploading 348.7K, 91 files
 
 238.5K uploaded...
-                             
+
 Done uploading
 OK
 

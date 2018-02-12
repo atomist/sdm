@@ -1,7 +1,7 @@
-import { ProjectOperationCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AppInfo } from "./Deployment";
 import { Readable } from "stream";
+import { AppInfo } from "./Deployment";
 import { ProgressLog } from "./ProgressLog";
 import EventEmitter = NodeJS.EventEmitter;
 

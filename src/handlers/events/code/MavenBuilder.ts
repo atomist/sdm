@@ -5,8 +5,8 @@ import { ChildProcess, spawn } from "child_process";
 import { Readable } from "stream";
 import {RunningBuild } from "./Builder";
 import { AppInfo } from "./Deployment";
-import { identification } from "./pomParser";
 import { LocalBuilder } from "./LocalBuilder";
+import { identification } from "./pomParser";
 
 export class MavenBuilder extends LocalBuilder {
 

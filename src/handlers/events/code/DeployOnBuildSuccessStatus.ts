@@ -18,11 +18,11 @@ import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnBuiltStatus, StatusState } from "../../../typings/types";
+import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
 import { CloudFoundryDeployer } from "./CloudFoundryDeployer";
+import { parseCloudFoundryLog } from "./cloudFoundryLogParser";
 import { AppInfo, CloudFoundryInfo, PivotalWebServices } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
-import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
-import { parseCloudFoundryLog } from "./cloudFoundryLogParser";
 
 export interface DeployableArtifact extends AppInfo {
 
@@ -35,6 +35,7 @@ export type ArtifactCheckout = (targetUrl: string) => Promise<DeployableArtifact
 
 export const CloudFoundryTarget: CloudFoundryInfo = {
     ...PivotalWebServices,
+    api: process.env.PCF_API,
     username: process.env.PIVOTAL_USER,
     password: process.env.PIVOTAL_PASSWORD,
     space: process.env.PCF_SPACE,

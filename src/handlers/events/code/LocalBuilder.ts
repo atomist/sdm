@@ -10,8 +10,8 @@ import { AppInfo } from "./Deployment";
 import axios from "axios";
 import { Stream } from "stream";
 import { ArtifactStore, StoredArtifact } from "./ArtifactStore";
-import { ProgressLog } from "./ProgressLog";
 import { Builder, RunningBuild } from "./Builder";
+import { ProgressLog } from "./ProgressLog";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist

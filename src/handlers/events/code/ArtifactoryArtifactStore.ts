@@ -4,19 +4,18 @@ import { AppInfo } from "./Deployment";
 
 import * as fs from "fs";
 
-let path = require("path");
-let Q = require("Q");
-let async = require("async");
-let publisher = require("artifactory-publisher");
+const path = require("path");
+const Q = require("Q");
+const async = require("async");
+const publisher = require("artifactory-publisher");
 
-const artUrlBase = `https://sforzando.jfrog.io/sforzando/libs-release/artifactory`;
+const artUrlBase = process.env.ARTIFACTORY_URL;
 
 const options = {
     credentials: {
-        username: "johnsonr",
-        password: "WGzqnpPMvULiYVmbgjD7Evmq",
+        username: process.env.ARTIFACTORY_USER,
+        password: process.env.ARTIFACTORY_PASSWORD,
     },
-    //proxy: ";http://localhost:8888" - to debug with Fiddler
 };
 
 export class ArtifactoryArtifactStore implements ArtifactStore {
