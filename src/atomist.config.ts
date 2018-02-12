@@ -1,12 +1,12 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
-import { davosEditor } from "./handlers/commands/editors/user/davosEditor";
 import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { BuildOnScanSuccessStatus } from "./handlers/events/delivery/BuildOnScanSuccessStatus";
-import { CloudFoundryDeployOnArtifactStatus } from "./handlers/events/delivery/deploy/pcf/CloudFoundryDeployOnArtifactStatus";
 import { ScanOnPush } from "./handlers/events/delivery/ScanOnPush";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
+import { CloudFoundryDeployOnArtifactStatus } from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
+import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
+import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -24,7 +24,7 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
-        BuildOnScanSuccessStatus,
+        () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryDeployOnArtifactStatus,
         ScanOnPush,
     ],

@@ -17,26 +17,21 @@
 import { GraphQL, HandlerResult, Secret, Secrets } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { OnScanSuccessStatus } from "../../../typings/types";
-import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { MavenBuilder } from "./build/local/maven/MavenBuilder";
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build
  */
-@EventHandler("On source scan success",
+@EventHandler("Build on source scan success",
     GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
+
+    constructor(private builder: Builder) {}
 
     public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
@@ -48,20 +43,15 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus
         console.log(msg);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         const creds = {token: params.githubToken};
 
-        const addr = addressChannelsFor(commit.repo, ctx);
+        // const addr = addressChannelsFor(commit.repo, ctx);
 
-        const builder: Builder = new MavenBuilder();
-
-        // TODO check what status
-        return builder.build(creds, id, team, slackProgressLog(commit.repo, ctx))
+        return params.builder.build(creds, id, team, slackProgressLog(commit.repo, ctx))
             .then(handleBuild)
             .then(() => ({
                 code: 0,
             }));
-            //.then(() => markBuilt(id));
     }
 }
 
@@ -80,17 +70,5 @@ function handleBuild(runningBuild: RunningBuild): Promise<any> {
             console.log("Saw error " + err);
             return reject(err);
         });
-    });
-}
-
-export const BuildBase = "https://build.atomist.com";
-
-// TODO why does this seem to leave an error
-function markBuilt(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-    // TODO hard coded status must go
-    return createStatus((creds as TokenCredentials).token, id, {
-        state: "success",
-        target_url: `${BuildBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context: "build",
     });
 }

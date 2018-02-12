@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ArtifactCheckout, DeployableArtifact, DeployOnArtifactStatus } from "../../DeployOnArtifactStatus";
-import { CommandLineCloudFoundryDeployer } from "./CommandLineCloudFoundryDeployer";
-import { CloudFoundryInfo, EnvironmentCloudFoundryTarget, PivotalWebServices } from "./CloudFoundryTarget";
+import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { ArtifactCheckout, DeployableArtifact, DeployOnArtifactStatus } from "../../handlers/events/delivery/DeployOnArtifactStatus";
 
 /**
  *
