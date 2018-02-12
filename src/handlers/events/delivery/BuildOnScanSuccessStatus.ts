@@ -17,30 +17,39 @@
 import { GraphQL, HandlerResult, Secret, Secrets } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnScanSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
+import { OnSuccessStatus } from "../../../typings/types";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build
  */
 @EventHandler("Build on source scan success",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnScanSuccessStatus.graphql"))
-export class BuildOnScanSuccessStatus implements HandleEvent<OnScanSuccessStatus.Subscription> {
+    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
+        __dirname, {
+        context: "scan",
+        branch: "master",
+    }))
+export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
     constructor(private builder: Builder) {}
 
-    public handle(event: EventFired<OnScanSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
-        // TODO this is horrid
-        const commit = event.data.Status[0].commit;
+        const status = event.data.Status[0];
+        const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
         const msg = `Saw a success status: ${JSON.stringify(event)}`;
         console.log(msg);
+
+        if (status.context !== "scan") {
+            console.log(`********* Build got called with status context=[${status.context}]`);
+            return Promise.resolve({ code: 0});
+        }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};

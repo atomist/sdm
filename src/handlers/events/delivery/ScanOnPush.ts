@@ -36,10 +36,13 @@ import { AddressChannels, addressChannelsFor } from "../../commands/editors/tocl
 import { createStatus } from "../../commands/editors/toclient/ghub";
 
 /**
- * Scan code on a PR. Result is setting GitHub status with context = "scan"
+ * Scan code on a push to master. Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code on PR",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnPush.graphql"))
+    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPush.graphql",
+        __dirname, {
+        branch: "master",
+        }))
 export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 
     @Secret(Secrets.OrgToken)

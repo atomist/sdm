@@ -1,5 +1,5 @@
-subscription OnPush {
-    Push(branch: "master") {
+subscription OnPush($branch: String!) {
+    Push(branch: $branch) {
         id,
         repo {
             owner,

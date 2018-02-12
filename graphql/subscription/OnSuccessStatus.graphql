@@ -1,13 +1,9 @@
 
-subscription OnScanSuccessStatus {
-    Status(state: success, context: "scan") {
+subscription OnSuccessStatus($branch: String!, $context: String!) {
+    Status(state: success, context: $context) {
         commit {
             sha
             message
-            statuses {
-                state
-                targetUrl
-            }
             repo {
                 owner
                 name
@@ -21,12 +17,12 @@ subscription OnScanSuccessStatus {
                     }
                 }
             }
-            pushes(branch: "master") {
+            pushes(branch: $branch) {
                 branch
             }
         }
         state
         targetUrl
+        context
     }
 }
-
