@@ -25,6 +25,7 @@ import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
 import { ArtifactStore } from "./ArtifactStore";
+import { ArtifactContext, DeploymentContext, EndpointContext } from "./Statuses";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -32,7 +33,7 @@ import { ArtifactStore } from "./ArtifactStore";
 @EventHandler("Deploy published artifact",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
-            context: "artifact",
+            context: ArtifactContext,
         }))
 export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -49,7 +50,8 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== "artifact") {
+        // TODO remove when we figure out subscription
+        if (status.context !== ArtifactContext) {
             console.log(`********* Deploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
@@ -108,7 +110,7 @@ function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, t
     return createStatus(token, id, {
         state,
         target_url,
-        context: "deployment",
+        context: DeploymentContext,
     });
 }
 
@@ -116,6 +118,6 @@ function setEndpointStatus(token: string, id: GitHubRepoRef, endpoint: string): 
     return createStatus(token, id, {
         state: "success",
         target_url: endpoint,
-        context: "endpoint",
+        context: EndpointContext,
     });
 }
