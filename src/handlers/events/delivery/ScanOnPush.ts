@@ -30,7 +30,7 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnPush, StatusState } from "../../../typings/types";
+import { OnPendingStatus, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ScanContext } from "./Statuses";
@@ -47,11 +47,11 @@ export type ProjectScanner = (p: GitProject,
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code on PR",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPush.graphql",
+    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPendingStatus.graphql",
         __dirname, {
-            branch: "master",
+            context: ScanContext,
         }))
-export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
+export class ScanOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -59,18 +59,14 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
     constructor(private projectScanner: ProjectScanner) {
     }
 
-    public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-        const push: OnPush.Push = event.data.Push[0];
-        const commit = push.commits[0];
+    public handle(event: EventFired<OnPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+        const commit = event.data.Status[0].commit;
 
-        const msg = `Scanning sources after push: \`${commit.sha}\` - _${commit.message}_`;
-        console.log(msg);
-
-        const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const creds = {token: params.githubToken};
 
-        const addressChannels = addressChannelsFor(push.repo, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {

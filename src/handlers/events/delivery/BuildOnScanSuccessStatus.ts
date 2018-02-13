@@ -20,10 +20,10 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
 import { OnSuccessStatus } from "../../../typings/types";
-import { ScanContext } from "./Statuses";
+import { ArtifactContext, ScanContext } from "./Statuses";
 
 /**
- * See a GitHub success status with context "scan" and trigger a build
+ * See a GitHub success status with context "scan" and trigger a build producing an artifact status
  */
 @EventHandler("Build on source scan success",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
@@ -49,6 +49,10 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         // TODO this should go but subscription parameters may not be working
         if (status.context !== ScanContext) {
             console.log(`********* Build got called with status context=[${status.context}]`);
+            return Promise.resolve(Success);
+        }
+        if (!status.commit.statuses.filter(s => s.state === "pending").some(s => s.context === ArtifactContext)) {
+            console.log(`********* Build got called when an artifact isn't pending!`);
             return Promise.resolve(Success);
         }
 

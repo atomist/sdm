@@ -1,8 +1,8 @@
-import { ProjectScanResult, ScanOnPush } from "../../handlers/events/delivery/ScanOnPush";
+import { ProjectScanResult, ScanOnPendingScanStatus } from "../../handlers/events/delivery/ScanOnPush";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { HandlerContext } from "@atomist/automation-client";
 
-export const ScanOnPushForMaven = new ScanOnPush(scan);
+export const ScanOnPushForMaven = new ScanOnPendingScanStatus(scan);
 
 // TODO have steps and break out if any of them fails
 async function scan(p: GitProject,

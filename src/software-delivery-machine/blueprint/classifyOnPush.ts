@@ -1,5 +1,5 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { Classification, SetupStepsOnPush } from "../../handlers/events/delivery/ClassifyOnPush";
+import { Classification, SetupStepsOnPush } from "../../handlers/events/delivery/SetupStepsOnPush";
 import { JvmService, Unknown } from "../../handlers/events/classification";
 
 export const BootClassifyOnPush = new SetupStepsOnPush(scan);

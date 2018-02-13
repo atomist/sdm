@@ -42,7 +42,7 @@ export type Classifier = (p: GitProject) => Promise<Classification>;
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
  */
-@EventHandler("Scan code on PR",
+@EventHandler("Scan code on master",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPush.graphql",
         __dirname, {
             branch: "master",

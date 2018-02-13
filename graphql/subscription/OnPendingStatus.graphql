@@ -1,6 +1,6 @@
 
-subscription OnSuccessStatus($context: String!) {
-    Status(state: success, context: $context) {
+subscription OnPendingStatus($context: String!) {
+    Status(state: pending, context: $context) {
         commit {
             sha
             message
