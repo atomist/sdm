@@ -33,14 +33,19 @@ export const CloudFoundryStagingDeployOnArtifactStatus =
         StagingDeploymentContext,
         artifactStore,
         new CommandLineCloudFoundryDeployer(),
-        () => new EnvironmentCloudFoundryTarget(),
+        () => ({
+            ...new EnvironmentCloudFoundryTarget(),
+            space: "ri-staging",
+        }),
         );
-
 
 export const CloudFoundryProductionDeployOnArtifactStatus =
     new DeployFromLocalOnArtifactStatus(
         ProductionDeploymentContext,
         artifactStore,
         new CommandLineCloudFoundryDeployer(),
-        () => new EnvironmentCloudFoundryTarget(),
+        () => ({
+            ...new EnvironmentCloudFoundryTarget(),
+            space: "ri-production",
+        }),
     );

@@ -7,7 +7,7 @@ import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classi
 import {
     CloudFoundryProductionDeployOnArtifactStatus,
     CloudFoundryStagingDeployOnArtifactStatus
-} from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
+} from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";

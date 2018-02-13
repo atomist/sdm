@@ -10,6 +10,8 @@ export class Phases {
 
     constructor(public contexts: string[]) {}
 
+    // TODO method to check whether a status is set
+
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
         return Promise.all(this.contexts.map(context => setPendingStatus(id, context, creds)));
     }

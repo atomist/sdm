@@ -58,7 +58,8 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         }
 
         // TODO pull this out as a generic thing
-        if (!status.commit.statuses.filter(s => s.state === "pending").some(s => s.context === params.ourContext)) {
+        if (!status.commit.statuses.filter(s => s.state === "pending")
+                .some(s => s.context === params.ourContext)) {
             console.log(`********* Deploy got called when [${params.ourContext}] isn't pending!`);
             return Promise.resolve(Success);
         }
