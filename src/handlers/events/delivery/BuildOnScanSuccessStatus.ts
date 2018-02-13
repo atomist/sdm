@@ -17,9 +17,9 @@
 import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
-import { OnSuccessStatus } from "../../../typings/types";
 import { ArtifactContext, ScanContext } from "./Statuses";
 
 /**

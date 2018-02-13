@@ -16,7 +16,7 @@
 
 import {
     CloudFoundryInfo,
-    EnvironmentCloudFoundryTarget
+    EnvironmentCloudFoundryTarget,
 } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import { DeployFromLocalOnArtifactStatus } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";

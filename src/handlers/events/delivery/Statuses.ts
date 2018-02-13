@@ -1,10 +1,10 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { createStatus } from "../../commands/editors/toclient/ghub";
 import { StatusState } from "../../../typings/types";
+import { createStatus } from "../../commands/editors/toclient/ghub";
 
 export class Statuses {
 

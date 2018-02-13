@@ -1,6 +1,6 @@
+import * as Stream from "stream";
 import { ArtifactStore, DeployableArtifact, StoredArtifact } from "../../ArtifactStore";
 import { AppInfo } from "../../Deployment";
-import * as Stream from "stream";
 
 /**
  * Store the artifact on local desk, relying on in memory cache

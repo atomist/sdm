@@ -3,13 +3,14 @@ import * as appRoot from "app-root-path";
 import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
+import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classifyOnPush";
 import { CloudFoundryDeployOnArtifactStatus } from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
-import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
-import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
-import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classifyOnPush";
+import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
+import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
+import { OfferPromotion } from "./software-delivery-machine/blueprint/onVerified";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -33,6 +34,7 @@ export const configuration: Configuration = {
         () => CloudFoundryDeployOnArtifactStatus,
         () => NotifyOnDeploy,
         () => VerifyEndpoint,
+        () => OfferPromotion,
     ],
     token,
     http: {

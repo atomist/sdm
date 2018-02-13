@@ -20,11 +20,11 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
+import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
-import { ArtifactStore } from "./ArtifactStore";
 import { ArtifactContext, DeploymentContext, EndpointContext } from "./Statuses";
 
 /**
