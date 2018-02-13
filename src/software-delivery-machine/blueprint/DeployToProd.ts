@@ -1,9 +1,13 @@
-import { HandleCommand, HandlerContext, Parameter, Secret, Secrets, Success } from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, Parameter, Secret, Secrets } from "@atomist/automation-client";
 import { CommandHandler } from "@atomist/automation-client/decorators";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProductionDeployPhases } from "../../handlers/events/delivery/phases/productionDeployPhases";
-import { createStatus, listStatuses } from "../../handlers/commands/editors/toclient/ghub";
+import { listStatuses, Status } from "../../handlers/commands/editors/toclient/ghub";
 import { ArtifactContext } from "../../handlers/events/delivery/Phases";
+import { deploy } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
+import { artifactStore } from "./artifactStore";
+import { EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { Deployer } from "./cloudFoundryDeployOnArtifactStatus";
 
 @CommandHandler("Promote to production")
 export class DeployToProd implements HandleCommand {
@@ -24,11 +28,17 @@ export class DeployToProd implements HandleCommand {
         const id = new GitHubRepoRef(params.owner, params.repo, params.sha);
         const creds = {token: params.githubToken};
         return ProductionDeployPhases.setAllToPending(id, creds)
-            .then(() => renewArtifactStatus(id, creds.token))
-            .then(() => Success);
+            .then(() => status(id, params.githubToken))
+            .then(status =>
+                deploy(id, params.githubToken, status.target_url, artifactStore, Deployer, ProductionCloudFoundryTargeter));
     }
 
 }
+
+const ProductionCloudFoundryTargeter = () => ({
+    ...new EnvironmentCloudFoundryTarget(),
+    space: "ri-production",
+});
 
 /**
  * Rewrite the artifact status so that we get a new event
@@ -36,14 +46,9 @@ export class DeployToProd implements HandleCommand {
  * @param {string} token
  * @return {Promise<any>}
  */
-function renewArtifactStatus(id: GitHubRepoRef, token: string): Promise<any> {
+function status(id: GitHubRepoRef, token: string): Promise<Status> {
     return listStatuses(token, id)
         .then(statuses => {
-            const artifactStatus = statuses.find(s => s.context === ArtifactContext);
-            if (!!artifactStatus) {
-                return createStatus(token, id, artifactStatus) as Promise<any>;
-            }
-            console.log("Unable to find artifact status");
-            return Promise.resolve();
+            return statuses.find(s => s.context === ArtifactContext);
         });
 }

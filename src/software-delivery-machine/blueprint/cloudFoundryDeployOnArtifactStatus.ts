@@ -24,6 +24,8 @@ import { artifactStore } from "./artifactStore";
 import { StagingDeploymentContext } from "../../handlers/events/delivery/Phases";
 import { ProductionDeploymentContext } from "../../handlers/events/delivery/phases/productionDeployPhases";
 
+export const Deployer = new CommandLineCloudFoundryDeployer();
+
 /**
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnArtifactStatus<CloudFoundryInfo>}
@@ -32,20 +34,9 @@ export const CloudFoundryStagingDeployOnArtifactStatus =
     new DeployFromLocalOnArtifactStatus(
         StagingDeploymentContext,
         artifactStore,
-        new CommandLineCloudFoundryDeployer(),
+        Deployer,
         () => ({
             ...new EnvironmentCloudFoundryTarget(),
             space: "ri-staging",
         }),
         );
-
-export const CloudFoundryProductionDeployOnArtifactStatus =
-    new DeployFromLocalOnArtifactStatus(
-        ProductionDeploymentContext,
-        artifactStore,
-        new CommandLineCloudFoundryDeployer(),
-        () => ({
-            ...new EnvironmentCloudFoundryTarget(),
-            space: "ri-production",
-        }),
-    );

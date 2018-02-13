@@ -5,7 +5,6 @@ import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classifyOnPush";
 import {
-    CloudFoundryProductionDeployOnArtifactStatus,
     CloudFoundryStagingDeployOnArtifactStatus
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
@@ -40,7 +39,7 @@ export const configuration: Configuration = {
         () => NotifyOnDeploy,
         () => VerifyEndpoint,
         () => OfferPromotion,
-        () => CloudFoundryProductionDeployOnArtifactStatus,
+      //  () => CloudFoundryProductionDeployOnArtifactStatus,
     ],
     token,
     http: {

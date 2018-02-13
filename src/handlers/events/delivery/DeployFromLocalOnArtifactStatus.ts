@@ -65,53 +65,60 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
-        const persistentLog = new SavingProgressLog();
-        const progressLog = persistentLog;
-
-        const targetUrl = event.data.Status[0].targetUrl;
-        return setDeployStatus(params.githubToken, id, "pending", "http://test.com")
-            .then(() => {
-                return params.artifactStore.checkout(targetUrl)
-                    .then(ac => {
-                        return this.deployer.deploy(ac, params.targeter(id), progressLog)
-                            .then(deployment => {
-                                deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-                                deployment.childProcess.addListener("exit", (code, signal) => {
-                                    const di = parseCloudFoundryLog(persistentLog.log);
-                                    return createGist(params.githubToken, {
-                                        description: `Deployment log for ${id.owner}/${id.repo}`,
-                                        public: false,
-                                        files: [{
-                                            path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                                            content: persistentLog.log,
-                                        }],
-                                    })
-                                        .then(gist => setDeployStatus(params.githubToken, id, "success", gist))
-                                        .then(() => {
-                                            return !!di ?
-                                                setEndpointStatus(params.githubToken, id, di.endpoint) :
-                                                true;
-                                        });
-
-                                });
-                                deployment.childProcess.addListener("error", (code, signal) => {
-                                    return createGist(params.githubToken, {
-                                        description: `Failed deployment log for ${id.owner}/${id.repo}`,
-                                        public: false,
-                                        files: [{
-                                            path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                                            content: persistentLog.log,
-                                        }],
-                                    })
-                                        .then(gist => setDeployStatus(params.githubToken, id, "failure", gist));
-                                });
-                                return Success;
-                            });
-                    });
-            });
+        return deploy(id, params.githubToken, status.targetUrl, params.artifactStore, params.deployer, params.targeter);
     }
 
+}
+
+export function deploy<T extends TargetInfo>(id: GitHubRepoRef,
+                                             githubToken: string,
+                                             targetUrl: string,
+                                             artifactStore: ArtifactStore,
+                                             deployer: Deployer<T>,
+                                             targeter: (id: RemoteRepoRef) => T) {
+    const persistentLog = new SavingProgressLog();
+    const progressLog = persistentLog;
+
+    return setDeployStatus(githubToken, id, "pending", "http://test.com")
+        .then(() => {
+            return artifactStore.checkout(targetUrl)
+                .then(ac => {
+                    return deployer.deploy(ac, targeter(id), progressLog)
+                        .then(deployment => {
+                            deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
+                            deployment.childProcess.addListener("exit", (code, signal) => {
+                                const di = parseCloudFoundryLog(persistentLog.log);
+                                return createGist(githubToken, {
+                                    description: `Deployment log for ${id.owner}/${id.repo}`,
+                                    public: false,
+                                    files: [{
+                                        path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                        content: persistentLog.log,
+                                    }],
+                                })
+                                    .then(gist => setDeployStatus(githubToken, id, "success", gist))
+                                    .then(() => {
+                                        return !!di ?
+                                            setEndpointStatus(githubToken, id, di.endpoint) :
+                                            true;
+                                    });
+
+                            });
+                            deployment.childProcess.addListener("error", (code, signal) => {
+                                return createGist(githubToken, {
+                                    description: `Failed deployment log for ${id.owner}/${id.repo}`,
+                                    public: false,
+                                    files: [{
+                                        path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                        content: persistentLog.log,
+                                    }],
+                                })
+                                    .then(gist => setDeployStatus(githubToken, id, "failure", gist));
+                            });
+                            return Success;
+                        });
+                });
+        });
 }
 
 function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, target_url: string): Promise<any> {
