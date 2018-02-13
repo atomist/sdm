@@ -9,6 +9,7 @@ import { davosEditor } from "./software-delivery-machine/commands/editors/davosE
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { ScanOnPushForMaven } from "./software-delivery-machine/blueprint/scanOnPush";
+import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classifyOnPush";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -26,6 +27,7 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
+        () => BootClassifyOnPush,
         () => ScanOnPushForMaven,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryDeployOnArtifactStatus,
