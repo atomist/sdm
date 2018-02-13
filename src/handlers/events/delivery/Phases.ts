@@ -16,11 +16,11 @@ export class Phases {
 
 }
 
-export const ScanContext = "1. scan";
-export const ArtifactContext = "2. artifact";
-export const DeploymentContext = "3. deployment:staging";
-export const EndpointContext = "4. endpoint:staging";
-export const VerifiedContext = "5. verified:staging";
+export const ScanContext = "1. code scan";
+export const ArtifactContext = "2. create artifact";
+export const StagingDeploymentContext = "3. deploy:staging";
+export const StagingEndpointContext = "4. starting endpoint:staging";
+export const StagingVerifiedContext = "5. verified:staging";
 
 function setPendingStatus(id: GitHubRepoRef, context: string, creds: ProjectOperationCredentials): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {

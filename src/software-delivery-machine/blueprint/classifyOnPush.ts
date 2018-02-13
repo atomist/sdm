@@ -1,8 +1,8 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { JvmService, Unknown } from "../../handlers/events/classification";
-import { Classification, SetupStepsOnPush } from "../../handlers/events/delivery/SetupStepsOnPush";
+import { Classification, SetupPhasesOnPush } from "../../handlers/events/delivery/SetupPhasesOnPush";
 
-export const BootClassifyOnPush = new SetupStepsOnPush(scan);
+export const BootClassifyOnPush = new SetupPhasesOnPush(scan);
 
 async function scan(p: GitProject): Promise<Classification> {
     try {

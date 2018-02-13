@@ -33,7 +33,7 @@ import { OnPush } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { JvmService } from "../classification";
-import { HttpServicePhases } from "./httpServicehases";
+import { HttpServicePhases } from "./phases/httpServicePhases";
 
 export type Classification = string;
 
@@ -47,7 +47,7 @@ export type Classifier = (p: GitProject) => Promise<Classification>;
         __dirname, {
             branch: "master",
         }))
-export class SetupStepsOnPush implements HandleEvent<OnPush.Subscription> {
+export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

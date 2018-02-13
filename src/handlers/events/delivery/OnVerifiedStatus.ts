@@ -21,7 +21,7 @@ import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import Status = OnSuccessStatus.Status;
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { EndpointContext, ScanContext, VerifiedContext } from "./Phases";
+import { StagingEndpointContext, ScanContext, StagingVerifiedContext } from "./Phases";
 
 export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: Status,
                                           addressChannels: AddressChannels,
@@ -33,7 +33,7 @@ export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: Status,
 @EventHandler("Act on verified project",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
-            context: VerifiedContext,
+            context: StagingVerifiedContext,
         }))
 export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -47,7 +47,7 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
         const status: Status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== VerifiedContext) {
+        if (status.context !== StagingVerifiedContext) {
             console.log(`********* onVerifiedStatus got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }

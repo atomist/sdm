@@ -25,7 +25,7 @@ import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
-import { ArtifactContext, DeploymentContext, EndpointContext } from "./Phases";
+import { ArtifactContext, StagingDeploymentContext, StagingEndpointContext } from "./Phases";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -110,7 +110,7 @@ function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, t
     return createStatus(token, id, {
         state,
         target_url,
-        context: DeploymentContext,
+        context: StagingDeploymentContext,
     });
 }
 
@@ -118,6 +118,6 @@ function setEndpointStatus(token: string, id: GitHubRepoRef, endpoint: string): 
     return createStatus(token, id, {
         state: "success",
         target_url: endpoint,
-        context: EndpointContext,
+        context: StagingEndpointContext,
     });
 }
