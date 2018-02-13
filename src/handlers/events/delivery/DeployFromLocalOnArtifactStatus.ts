@@ -65,12 +65,13 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return deploy(id, params.githubToken, status.targetUrl, params.artifactStore, params.deployer, params.targeter);
+        return deploy(params.ourContext, id, params.githubToken, status.targetUrl, params.artifactStore, params.deployer, params.targeter);
     }
 
 }
 
-export function deploy<T extends TargetInfo>(id: GitHubRepoRef,
+export function deploy<T extends TargetInfo>(context: string,
+                                             id: GitHubRepoRef,
                                              githubToken: string,
                                              targetUrl: string,
                                              artifactStore: ArtifactStore,
@@ -79,7 +80,7 @@ export function deploy<T extends TargetInfo>(id: GitHubRepoRef,
     const persistentLog = new SavingProgressLog();
     const progressLog = persistentLog;
 
-    return setDeployStatus(githubToken, id, "pending", "http://test.com")
+    return setDeployStatus(githubToken, id, "pending", context,"http://test.com")
         .then(() => {
             return artifactStore.checkout(targetUrl)
                 .then(ac => {
@@ -96,7 +97,7 @@ export function deploy<T extends TargetInfo>(id: GitHubRepoRef,
                                         content: persistentLog.log,
                                     }],
                                 })
-                                    .then(gist => setDeployStatus(githubToken, id, "success", gist))
+                                    .then(gist => setDeployStatus(githubToken, id, "success", context, gist))
                                     .then(() => {
                                         return !!di ?
                                             setEndpointStatus(githubToken, id, di.endpoint) :
@@ -113,7 +114,7 @@ export function deploy<T extends TargetInfo>(id: GitHubRepoRef,
                                         content: persistentLog.log,
                                     }],
                                 })
-                                    .then(gist => setDeployStatus(githubToken, id, "failure", gist));
+                                    .then(gist => setDeployStatus(githubToken, id, "failure", context, gist));
                             });
                             return Success;
                         });
@@ -121,11 +122,11 @@ export function deploy<T extends TargetInfo>(id: GitHubRepoRef,
         });
 }
 
-function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, target_url: string): Promise<any> {
+function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, context: string, target_url: string): Promise<any> {
     return createStatus(token, id, {
         state,
         target_url,
-        context: StagingDeploymentContext,
+        context,
     });
 }
 
