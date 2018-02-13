@@ -71,6 +71,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
             .then(p => params.classifier(p))
             .then(classification => {
                 if (classification === JvmService) {
+                    // TODO need to pull out hardcoding
                     return HttpServicePhases.setAllToPending(id, creds);
                 } else {
                     return Promise.resolve();

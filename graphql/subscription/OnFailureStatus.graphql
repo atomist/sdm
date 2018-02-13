@@ -1,0 +1,33 @@
+
+subscription OnFailureStatus {
+    Status(state: failure) {
+        commit {
+            sha
+            message
+            statuses {
+                context
+                description
+                state
+            }
+            repo {
+                owner
+                name
+                channels {
+                    name
+                    id
+                }
+                org {
+                    chatTeam {
+                        id
+                    }
+                }
+            }
+            pushes {
+                branch
+            }
+        }
+        state
+        targetUrl
+        context
+    }
+}

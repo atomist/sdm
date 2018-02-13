@@ -3,7 +3,7 @@ import * as appRoot from "app-root-path";
 import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
-import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classifyOnPush";
+import { PhaseSetup, PhaseCleanup } from "./software-delivery-machine/blueprint/phaseManagement";
 import {
     CloudFoundryStagingDeployOnArtifactStatus
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
@@ -32,7 +32,8 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
-        () => BootClassifyOnPush,
+        () => PhaseSetup,
+        () => PhaseCleanup,
         () => Scan,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryStagingDeployOnArtifactStatus,

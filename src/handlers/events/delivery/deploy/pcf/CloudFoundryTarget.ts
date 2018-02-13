@@ -9,6 +9,10 @@ export interface CloudFoundryInfo extends TargetInfo {
     space: string;
     org: string;
 
+    memoryMb: number;
+
+    instances: number;
+
 }
 
 export const PivotalWebServices = { // : Partial<CloudFoundryInfo> = {
@@ -27,6 +31,10 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
     public space = process.env.PCF_SPACE;
 
     public org = process.env.PCF_ORG;
+
+    public memoryMb = parseInt(process.env.PCF_MEMORY_MB, 10) || 512;
+
+    public instances = 1;
 
     get name() {
         return `PCF`;

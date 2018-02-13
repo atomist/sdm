@@ -17,8 +17,9 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
 
         /*addManifest<LocalProject>(ai, log)(proj)*/
         return runCommand(
-            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space}`,
-            {cwd: ai.cwd})// [-o ORG] [-s SPACE]`)
+            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space} ` +
+                   /*-i ${cfi.instances}*/ `-m ${cfi.memoryMb}M`,
+            {cwd: ai.cwd})
             .then(_ => {
                 console.log("Successfully logged into Cloud Foundry as [%s]", cfi.username);
                 // Turn off color so we don't have unpleasant escape codes in web stream
