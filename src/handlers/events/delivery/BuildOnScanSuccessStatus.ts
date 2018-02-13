@@ -51,6 +51,8 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
             console.log(`********* Build got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
+
+        // TODO pull this out as a generic thing
         if (!status.commit.statuses.filter(s => s.state === "pending").some(s => s.context === ArtifactContext)) {
             console.log(`********* Build got called when an artifact isn't pending!`);
             return Promise.resolve(Success);

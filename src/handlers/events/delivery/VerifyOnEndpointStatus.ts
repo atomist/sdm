@@ -21,6 +21,8 @@ import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { EndpointContext, VerifiedContext } from "./Statuses";
 
+export type EndpointVerifier = (url: string) => Promise<any>;
+
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
@@ -34,7 +36,7 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private verifier: (url: string) => Promise<any>) {
+    constructor(private verifier: EndpointVerifier) {
     }
 
     public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -53,7 +55,7 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
             .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl))
             .catch(err => {
                 // TODO write it also
-                return setVerificationStatus(params.githubToken, id, "failure", status.targetUrl)
+                return setVerificationStatus(params.githubToken, id, "failure", status.targetUrl);
             });
     }
 }

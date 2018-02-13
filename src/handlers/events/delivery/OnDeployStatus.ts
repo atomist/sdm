@@ -18,19 +18,18 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../typings/types";
-import { SavingProgressLog } from "./ProgressLog";
+import { DeploymentContext } from "./Statuses";
 import Status = OnSuccessStatus.Status;
-import { successOn } from "@atomist/automation-client/action/ActionResult";
 
 export type DeployListener = (id: GitHubRepoRef, s: Status, ctx: HandlerContext) => Promise<any>;
 
 /**
- * React to a deployment on in a GitHub "artifact" status.
+ * React to a deployment.
  */
-@EventHandler("Deploy published artifact",
+@EventHandler("React to a successful deployment",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
-            context: "deployment",
+            context: DeploymentContext,
         }))
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -45,16 +44,14 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== "deployment") {
+        if (status.context !== DeploymentContext) {
             console.log(`********* OnDeploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
 
+        console.log("&&&&&&&&&&&&&& deployment handler");
+
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
-        const persistentLog = new SavingProgressLog();
-        const progressLog = persistentLog;
-
         return params.action(id, status, ctx)
             .then(r => Success);
     }
