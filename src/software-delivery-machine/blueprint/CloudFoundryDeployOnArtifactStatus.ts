@@ -21,14 +21,26 @@ import {
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import { DeployFromLocalOnArtifactStatus } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
 import { artifactStore } from "./artifactStore";
+import { StagingDeploymentContext } from "../../handlers/events/delivery/Phases";
+import { ProductionDeploymentContext } from "../../handlers/events/delivery/phases/productionDeployPhases";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnArtifactStatus<CloudFoundryInfo>}
  */
-export const CloudFoundryDeployOnArtifactStatus =
+export const CloudFoundryStagingDeployOnArtifactStatus =
     new DeployFromLocalOnArtifactStatus(
+        StagingDeploymentContext,
         artifactStore,
         new CommandLineCloudFoundryDeployer(),
         () => new EnvironmentCloudFoundryTarget(),
         );
+
+
+export const CloudFoundryProductionDeployOnArtifactStatus =
+    new DeployFromLocalOnArtifactStatus(
+        ProductionDeploymentContext,
+        artifactStore,
+        new CommandLineCloudFoundryDeployer(),
+        () => new EnvironmentCloudFoundryTarget(),
+    );

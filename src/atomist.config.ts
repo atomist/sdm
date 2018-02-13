@@ -4,13 +4,17 @@ import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import { BootClassifyOnPush } from "./software-delivery-machine/blueprint/classifyOnPush";
-import { CloudFoundryDeployOnArtifactStatus } from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
+import {
+    CloudFoundryProductionDeployOnArtifactStatus,
+    CloudFoundryStagingDeployOnArtifactStatus
+} from "./software-delivery-machine/blueprint/CloudFoundryDeployOnArtifactStatus";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
 import { OfferPromotion } from "./software-delivery-machine/blueprint/offerPromotion";
+import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -23,6 +27,7 @@ export const configuration: Configuration = {
     teamIds: ["T5964N9B7"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         HelloWorld,
+        DeployToProd,
         () => davosEditor,
         () => touchEditor,
     ],
@@ -31,10 +36,11 @@ export const configuration: Configuration = {
         () => BootClassifyOnPush,
         () => Scan,
         () => LocalMavenBuildOnSucessStatus,
-        () => CloudFoundryDeployOnArtifactStatus,
+        () => CloudFoundryStagingDeployOnArtifactStatus,
         () => NotifyOnDeploy,
         () => VerifyEndpoint,
         () => OfferPromotion,
+        () => CloudFoundryProductionDeployOnArtifactStatus,
     ],
     token,
     http: {

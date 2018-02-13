@@ -40,7 +40,8 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private artifactStore: ArtifactStore,
+    constructor(private ourContext: string,
+                private artifactStore: ArtifactStore,
                 private deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
     }
@@ -53,6 +54,12 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         // TODO remove when we figure out subscription
         if (status.context !== ArtifactContext) {
             console.log(`********* Deploy got called with status context=[${status.context}]`);
+            return Promise.resolve(Success);
+        }
+
+        // TODO pull this out as a generic thing
+        if (!status.commit.statuses.filter(s => s.state === "pending").some(s => s.context === params.ourContext)) {
+            console.log(`********* Deploy got called when [${params.ourContext}] isn't pending!`);
             return Promise.resolve(Success);
         }
 
