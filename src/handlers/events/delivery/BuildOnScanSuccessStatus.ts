@@ -20,6 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
 import { OnSuccessStatus } from "../../../typings/types";
+import { ScanContext } from "./Statuses";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build
@@ -27,7 +28,7 @@ import { OnSuccessStatus } from "../../../typings/types";
 @EventHandler("Build on source scan success",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
-        context: "scan",
+        context: ScanContext,
     }))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -45,7 +46,8 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const msg = `Saw a success status: ${JSON.stringify(event)}`;
         console.log(msg);
 
-        if (status.context !== "scan") {
+        // TODO this should go but subscription parameters may not be working
+        if (status.context !== ScanContext) {
             console.log(`********* Build got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }

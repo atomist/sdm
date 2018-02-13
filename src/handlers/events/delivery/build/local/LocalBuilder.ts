@@ -10,6 +10,7 @@ import axios from "axios";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../ProgressLog";
+import { ArtifactContext } from "../../Statuses";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist
@@ -91,8 +92,6 @@ function onExit(code: number, signal: any, rb: RunningBuild, creds: ProjectOpera
 
 export const ScanBase = "https://scan.atomist.com";
 
-export const ArtifactContext = "artifact";
-
 function setArtifact(rb: RunningBuild, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): Promise<any> {
     // TODO hard coded token must go
     const id = rb.repoRef as GitHubRepoRef;
@@ -101,6 +100,5 @@ function setArtifact(rb: RunningBuild, creds: ProjectOperationCredentials, artif
             state: "success",
             target_url,
             context: ArtifactContext,
-            //description:
         }));
 }

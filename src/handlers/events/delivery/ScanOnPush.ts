@@ -33,7 +33,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPush, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { setPendingStatuses } from "./setPendingStatuses";
+import { DefaultStatuses, ScanContext, Statuses } from "./Statuses";
 
 export interface ProjectScanResult {
     passed: boolean;
@@ -56,7 +56,7 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private projectScanner: ProjectScanner) {
+    constructor(private projectScanner: ProjectScanner, public statuses: Statuses = DefaultStatuses) {
     }
 
     public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -72,7 +72,7 @@ export class ScanOnPush implements HandleEvent<OnPush.Subscription> {
 
         const addressChannels = addressChannelsFor(push.repo, ctx);
 
-        return setPendingStatuses(id, creds)
+        return params.statuses.setAllToPending(id, creds)
             .then(() => GitCommandGitProject.cloned(creds, id))
             .then(p => {
                 return params.projectScanner(p, ctx)
@@ -95,6 +95,6 @@ function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperat
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context: "scan",
+        context: ScanContext,
     });
 }

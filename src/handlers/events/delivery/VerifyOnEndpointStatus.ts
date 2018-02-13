@@ -19,6 +19,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
+import { EndpointContext, VerifiedContext } from "./Statuses";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -26,7 +27,7 @@ import { createStatus } from "../../commands/editors/toclient/ghub";
 @EventHandler("Check endpoint",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
-            context: "endpoint",
+            context: EndpointContext,
         }))
 export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -41,7 +42,7 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== "endpoint") {
+        if (status.context !== EndpointContext) {
             console.log(`********* Verifier got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
@@ -61,7 +62,7 @@ function setVerificationStatus(token: string, id: GitHubRepoRef, state: StatusSt
     return createStatus(token, id, {
         state,
         target_url,
-        context: "verified",
+        context: VerifiedContext,
     });
 }
 
