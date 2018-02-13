@@ -7,7 +7,7 @@ export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(
     (id, s, addressChannels) => {
         console.log("Offering promotion");
         const attachment: slack.Attachment = {
-                text: "Would you like to promote this tasty ref to prod?",
+                text: "Endpoint has been verified. Promote this build to production?",
                 fallback: "offer to promote",
                 actions: [buttonForCommand({text: "Promote to Prod"},
                     "DeployToProd",

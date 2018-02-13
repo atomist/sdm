@@ -6,7 +6,7 @@ import {
 import { StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 
-export class Statuses {
+export class Phases {
 
     constructor(public contexts: string[]) {}
 
@@ -18,11 +18,9 @@ export class Statuses {
 
 export const ScanContext = "1. scan";
 export const ArtifactContext = "2. artifact";
-export const DeploymentContext = "3. deployment";
-export const EndpointContext = "4. endpoint";
-export const VerifiedContext = "5. verified";
-
-export const DefaultStatuses = new Statuses([ScanContext, ArtifactContext, DeploymentContext, EndpointContext, VerifiedContext]);
+export const DeploymentContext = "3. deployment:staging";
+export const EndpointContext = "4. endpoint:staging";
+export const VerifiedContext = "5. verified:staging";
 
 function setPendingStatus(id: GitHubRepoRef, context: string, creds: ProjectOperationCredentials): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {

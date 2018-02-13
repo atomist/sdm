@@ -33,7 +33,7 @@ import { OnPush } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { JvmService } from "../classification";
-import { DefaultStatuses } from "./Statuses";
+import { HttpServicePhases } from "./httpServicehases";
 
 export type Classification = string;
 
@@ -71,7 +71,7 @@ export class SetupStepsOnPush implements HandleEvent<OnPush.Subscription> {
             .then(p => params.classifier(p))
             .then(classification => {
                 if (classification === JvmService) {
-                    return DefaultStatuses.setAllToPending(id, creds);
+                    return HttpServicePhases.setAllToPending(id, creds);
                 } else {
                     return Promise.resolve();
                 }

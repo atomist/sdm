@@ -21,7 +21,7 @@ import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import Status = OnSuccessStatus.Status;
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { EndpointContext, ScanContext, VerifiedContext } from "./Statuses";
+import { EndpointContext, ScanContext, VerifiedContext } from "./Phases";
 
 export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: Status,
                                           addressChannels: AddressChannels,

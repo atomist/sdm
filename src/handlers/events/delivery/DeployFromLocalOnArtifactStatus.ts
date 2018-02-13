@@ -25,7 +25,7 @@ import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { SavingProgressLog } from "./ProgressLog";
-import { ArtifactContext, DeploymentContext, EndpointContext } from "./Statuses";
+import { ArtifactContext, DeploymentContext, EndpointContext } from "./Phases";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.

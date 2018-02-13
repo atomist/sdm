@@ -33,7 +33,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPendingStatus, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ScanContext } from "./Statuses";
+import { ScanContext } from "./Phases";
 
 export interface ProjectScanResult {
     passed: boolean;

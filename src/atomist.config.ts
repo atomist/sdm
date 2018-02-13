@@ -10,7 +10,7 @@ import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDe
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
-import { OfferPromotion } from "./software-delivery-machine/blueprint/onVerified";
+import { OfferPromotion } from "./software-delivery-machine/blueprint/offerPromotion";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);

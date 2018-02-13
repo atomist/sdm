@@ -10,7 +10,7 @@ import axios from "axios";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../ProgressLog";
-import { ArtifactContext } from "../../Statuses";
+import { ArtifactContext } from "../../Phases";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist

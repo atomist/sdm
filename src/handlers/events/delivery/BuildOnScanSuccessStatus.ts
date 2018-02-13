@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
-import { ArtifactContext, ScanContext } from "./Statuses";
+import { ArtifactContext, ScanContext } from "./Phases";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status

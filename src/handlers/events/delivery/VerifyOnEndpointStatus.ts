@@ -19,7 +19,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { EndpointContext, VerifiedContext } from "./Statuses";
+import { EndpointContext, VerifiedContext } from "./Phases";
 
 export type EndpointVerifier = (url: string) => Promise<any>;
 
