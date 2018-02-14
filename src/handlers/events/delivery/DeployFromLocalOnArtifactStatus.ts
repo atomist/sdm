@@ -84,50 +84,47 @@ export function deploy<T extends TargetInfo>(context: string,
     const persistentLog = new SavingProgressLog();
     const progressLog = new MultiProgressLog(ConsoleProgressLog, persistentLog);
 
-    return setDeployStatus(githubToken, id, "pending", context, "http://test.com")
-        .then(() => {
-            return artifactStore.checkout(targetUrl)
-                .then(ac => {
-                    return deployer.deploy(ac, targeter(id), progressLog)
-                        .then(deployment => {
-                            deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-                            deployment.childProcess.addListener("exit", (code, signal) => {
-                                const di = parseCloudFoundryLog(persistentLog.log);
-                                return createGist(githubToken, {
-                                    description: `Deployment log for ${id.owner}/${id.repo}`,
-                                    public: false,
-                                    files: [{
-                                        path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                                        content: persistentLog.log,
-                                    }],
-                                })
-                                    .then(gist => setDeployStatus(githubToken, id,
-                                        code === 0 ? "success" : "failure",
-                                        context, gist))
-                                    .then(() => {
-                                        return !!di ?
-                                            setEndpointStatus(githubToken, id, endpointContext, di.endpoint) :
-                                            true;
-                                    });
+    return artifactStore.checkout(targetUrl)
+        .then(ac => {
+            return deployer.deploy(ac, targeter(id), progressLog)
+                .then(deployment => {
+                    deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
+                    deployment.childProcess.addListener("exit", (code, signal) => {
+                        const di = parseCloudFoundryLog(persistentLog.log);
+                        return createGist(githubToken, {
+                            description: `Deployment log for ${id.owner}/${id.repo}`,
+                            public: false,
+                            files: [{
+                                path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                content: persistentLog.log,
+                            }],
+                        })
+                            .then(gist => setDeployStatus(githubToken, id,
+                                code === 0 ? "success" : "failure",
+                                context, gist))
+                            .then(() => {
+                                return !!di ?
+                                    setEndpointStatus(githubToken, id, endpointContext, di.endpoint) :
+                                    true;
+                            });
 
-                            });
-                            deployment.childProcess.addListener("error", (code, signal) => {
-                                return createGist(githubToken, {
-                                    description: `Failed deployment log for ${id.owner}/${id.repo}`,
-                                    public: false,
-                                    files: [{
-                                        path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                                        content: persistentLog.log,
-                                    }],
-                                })
-                                    .then(gist => setDeployStatus(githubToken, id, "failure", context, gist));
-                            });
-                            return Success;
-                        }).catch(err => {
-                            console.log("ERROR: " + err);
-                            return setDeployStatus(githubToken, id, "failure", context, "http://www.test.com")
-                                .then(() => ({code: 1, message: err}));
-                        });
+                    });
+                    deployment.childProcess.addListener("error", (code, signal) => {
+                        return createGist(githubToken, {
+                            description: `Failed deployment log for ${id.owner}/${id.repo}`,
+                            public: false,
+                            files: [{
+                                path: `${id.owner}_${id.repo}-${id.sha}.log`,
+                                content: persistentLog.log,
+                            }],
+                        })
+                            .then(gist => setDeployStatus(githubToken, id, "failure", context, gist));
+                    });
+                    return Success;
+                }).catch(err => {
+                    console.log("ERROR: " + err);
+                    return setDeployStatus(githubToken, id, "failure", context, "http://www.test.com")
+                        .then(() => ({code: 1, message: err}));
                 });
         });
 }
