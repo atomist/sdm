@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
+import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
@@ -123,14 +123,18 @@ export async function deploy<T extends TargetInfo>(context: string,
     } catch (err) {
         console.log("ERROR: " + err);
         return setDeployStatus(githubToken, id, "failure", context, "http://www.test.com")
-            .then(() => ({code: 1, message: err}));
+            .then(() => ({code: 1, message: err.message}), statusUpdateFailure => {
+                logger.warn("Also unable to update the deploy status to failure: " + statusUpdateFailure.message);
+                return {code: 1, message: err.message};
+            });
     }
 }
 
-function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, context: string, target_url: string): Promise<any> {
+function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, context: string, targetUrl: string): Promise<any> {
+    logger.info(`Setting deploy status for ${context} to ${state} at ${targetUrl}`);
     return createStatus(token, id, {
         state,
-        target_url,
+        target_url: targetUrl,
         context,
     });
 }

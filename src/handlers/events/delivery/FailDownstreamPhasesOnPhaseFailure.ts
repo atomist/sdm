@@ -51,6 +51,6 @@ export class FailDownstreamPhasesOnPhaseFailure implements HandleEvent<OnFailure
         return params.phases.gameOver(status.context,
             currentlyPending.map(s => s.context),
             id, {token: params.githubToken})
-            .then(success);
+            .then(() => Success);
     }
 }
