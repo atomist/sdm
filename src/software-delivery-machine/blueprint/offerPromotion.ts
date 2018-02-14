@@ -3,6 +3,10 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { OnVerifiedStatus } from "../../handlers/events/delivery/OnVerifiedStatus";
 
+/**
+ * Display a button suggesting promotion to production
+ * @type {OnVerifiedStatus}
+ */
 export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(
     (id, s, addressChannels) => {
         const attachment: slack.Attachment = {

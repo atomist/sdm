@@ -4,7 +4,6 @@ import { ProjectScanResult, ScanOnPendingScanStatus } from "../../handlers/event
 
 export const Scan = new ScanOnPendingScanStatus(scan);
 
-// TODO have steps and break out if any of them fails
 async function scan(p: GitProject,
                     ctx: HandlerContext): Promise<ProjectScanResult> {
     // try {

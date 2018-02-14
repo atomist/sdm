@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets } from "@atomist/automation-client";
+import { GraphQL, Secret, Secrets, success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -28,6 +28,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as schema from "../../../typings/types";
 import { AddressChannels } from "../../commands/editors/toclient/addressChannels";
+
+import * as _ from "lodash";
 
 export type NewRepoWithCodeAction = (id: GitHubRepoRef, creds: ProjectOperationCredentials,
                                      addressChannels: AddressChannels,
@@ -60,8 +62,11 @@ export class OnFirstPushToRepo
             return Promise.resolve(Success);
         }
 
-        // TODO null check this
-        const screenName = push.after.committer.person.chatId.screenName;
+        const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");
+
+        if (!screenName) {
+            return Promise.resolve(success());
+        }
 
         const addressChannels: AddressChannels = m => ctx.messageClient.addressUsers(m, screenName);
 

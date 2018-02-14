@@ -6,6 +6,12 @@ export interface DeploymentInfo {
     endpoint: string;
 }
 
+/**
+ * Use a microgrammar to parse the Cloud Foundry log to extract the endpoint
+ * url if found
+ * @param {string} cfLog
+ * @return {DeploymentInfo}
+ */
 export function parseCloudFoundryLog(cfLog: string): DeploymentInfo {
     const r = mg.firstMatch(cfLog);
     if (isPatternMatch(r)) {

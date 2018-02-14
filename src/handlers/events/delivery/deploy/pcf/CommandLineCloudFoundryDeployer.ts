@@ -13,12 +13,7 @@ import { CloudFoundryInfo } from "./CloudFoundryTarget";
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
     public deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
-        log.write("Analyzing application...\n");
-
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi);
-        log.write(`Logging into Cloud Foundry as ${cfi.username}...\n`);
-
-        /*addManifest<LocalProject>(ai, log)(proj)*/
         return runCommand(
             `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space}`,
             {cwd: ai.cwd})

@@ -5,7 +5,6 @@ import { AppInfo } from "./Deployment";
 import { ProgressLog } from "./ProgressLog";
 import EventEmitter = NodeJS.EventEmitter;
 
-// TODO do for local with child process, or output stream
 export interface RunningBuild {
 
     readonly stream: EventEmitter;

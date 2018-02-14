@@ -49,9 +49,6 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
         const push: OnPush.Push = event.data.Push[0];
         const commit = push.commits[0];
 
-        const msg = `Classification after push: \`${commit.sha}\` - _${commit.message}_`;
-        console.log(msg);
-
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
 
         const creds = {token: params.githubToken};
