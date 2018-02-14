@@ -1,6 +1,5 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
-import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import {
@@ -29,7 +28,6 @@ export const configuration: Configuration = {
     commands: [
         HelloWorld,
         DeployToProd,
-        () => touchEditor,
         () => affirmationEditor,
         () => addCloudFoundryManifest,
     ],
