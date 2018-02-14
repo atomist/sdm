@@ -1,46 +1,42 @@
-import { logger } from "@atomist/automation-client";
-import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { spawn } from "child_process";
-import { DeployableArtifact } from "../../ArtifactStore";
-import { Deployer } from "../../Deployer";
-import { Deployment } from "../../Deployment";
-import { ProgressLog } from "../../ProgressLog";
-import { CloudFoundryInfo } from "./CloudFoundryTarget";
+import {logger} from "@atomist/automation-client";
+import {runCommand} from "@atomist/automation-client/action/cli/commandLine";
+import {spawn} from "child_process";
+import {DeployableArtifact} from "../../ArtifactStore";
+import {Deployer} from "../../Deployer";
+import {Deployment} from "../../Deployment";
+import {ProgressLog} from "../../ProgressLog";
+import {CloudFoundryInfo} from "./CloudFoundryTarget";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push
  */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
-    public deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
+    public async deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi);
-        return runCommand(
-            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space}`,
+        await runCommand(
+            `cf target -s ${cfi.space}`,
             {cwd: ai.cwd})
-            .then(_ => {
-                console.log("Successfully logged into Cloud Foundry as [%s]", cfi.username);
-                // Turn off color so we don't have unpleasant escape codes in web stream
-                return runCommand("cf config --color false", {cwd: ai.cwd});
-            })
-            .then(() => {
-                const childProcess = spawn("cf",
-                    [
-                        "push",
-                        ai.name,
-                        "-f",
-                        "../manifest.yml", // TODO this isn't elegant as it requires a whole clone
-                        "-p",
-                        ai.filename,
-                        "--random-route",
-                    ],
-                    {
-                        cwd: ai.cwd,
-                    });
-                return {
-                    childProcess,
-                    url: toUrl(ai.name),
-                };
+        console.log("Successfully selected space [%s]", cfi.space);
+        // Turn off color so we don't have unpleasant escape codes in web stream
+        await runCommand("cf config --color false", {cwd: ai.cwd});
+        const childProcess = spawn("cf",
+            [
+                "push",
+                ai.name,
+                "-f",
+                "../manifest.yml", // TODO this isn't elegant as it requires a whole clone
+                "-p",
+                ai.filename,
+                "--random-route",
+            ],
+            {
+                cwd: ai.cwd,
             });
+        return {
+            childProcess,
+            url: toUrl(ai.name),
+        };
     }
 
 }

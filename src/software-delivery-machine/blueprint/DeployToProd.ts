@@ -1,4 +1,4 @@
-import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
+import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success} from "@atomist/automation-client";
 import {CommandHandler} from "@atomist/automation-client/decorators";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {listStatuses, Status} from "../../handlers/commands/editors/toclient/ghub";
@@ -10,6 +10,7 @@ import {artifactStore} from "./artifactStore";
 import {Deployer} from "./cloudFoundryDeployOnArtifactStatus";
 import {addressSlackUsers} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
+import * as stringify from "json-stringify-safe";
 
 @CommandHandler("Promote to production", "promote to production")
 export class DeployToProd implements HandleCommand {
@@ -52,6 +53,11 @@ export class DeployToProd implements HandleCommand {
         const creds = {token: params.githubToken};
         await ProductionDeployPhases.setAllToPending(id, creds);
         const artifactStatus = await findArtifactStatus(id, params.githubToken);
+        if (!artifactStatus) {
+            await address("Did not find artifact for " + stringify(id));
+            return Success;
+        }
+
         const result = await deploy(ProductionDeployPhases.phases[0],
             ProductionDeployPhases.phases[1],
             id, params.githubToken, artifactStatus.target_url,
