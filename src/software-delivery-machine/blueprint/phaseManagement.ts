@@ -1,22 +1,23 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { JvmService, Unknown } from "../../handlers/events/classification";
-import { Classification, SetupPhasesOnPush } from "../../handlers/events/delivery/SetupPhasesOnPush";
+import { SetupPhasesOnPush } from "../../handlers/events/delivery/SetupPhasesOnPush";
 import { FailDownstreamPhasesOnPhaseFailure } from "../../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { HttpServicePhases } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { HttpServicePhases, LibraryPhases } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { Phases } from "../../handlers/events/delivery/Phases";
 
 export const PhaseSetup = new SetupPhasesOnPush(scan);
 
-async function scan(p: GitProject): Promise<Classification> {
+async function scan(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");
+        const manifest = await p.findFile("manifest.xml").catch(err => undefined);
         const contents = await f.getContent();
-        if (contents.includes("spring-boot")) {
-            return JvmService;
+        if (contents.includes("spring-boot") && !!manifest) {
+            return HttpServicePhases;
         } else {
-            return Unknown;
+            return LibraryPhases;
         }
     } catch {
-        return Unknown;
+        return undefined;
     }
 }
 

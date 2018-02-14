@@ -6,3 +6,5 @@ import { ArtifactContext, StagingDeploymentContext, StagingEndpointContext, Phas
  * @type {Phases}
  */
 export const HttpServicePhases = new Phases([ScanContext, ArtifactContext, StagingDeploymentContext, StagingEndpointContext, StagingVerifiedContext]);
+
+export const LibraryPhases = new Phases([ScanContext, ArtifactContext]);

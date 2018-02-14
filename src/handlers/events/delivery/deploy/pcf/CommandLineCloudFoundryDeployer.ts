@@ -17,8 +17,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
 
         /*addManifest<LocalProject>(ai, log)(proj)*/
         return runCommand(
-            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space} ` +
-                   /*-i ${cfi.instances}*/ `-m ${cfi.memoryMb}M`,
+            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space}`,
             {cwd: ai.cwd})
             .then(_ => {
                 console.log("Successfully logged into Cloud Foundry as [%s]", cfi.username);
@@ -29,9 +28,9 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                 const childProcess = spawn("cf",
                     [
                         "push",
-                        ai.name,
-                        "-p",
-                        ai.filename,
+                        //ai.name,
+                        //"-p",
+                        //ai.filename,
                         "--random-route",
                     ],
                     {

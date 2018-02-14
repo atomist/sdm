@@ -32,12 +32,9 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPush } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { JvmService } from "../classification";
-import { HttpServicePhases } from "./phases/httpServicePhases";
+import { Phases } from "./Phases";
 
-export type Classification = string;
-
-export type Classifier = (p: GitProject) => Promise<Classification>;
+export type Classifier = (p: GitProject) => Promise<Phases>;
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
@@ -69,10 +66,9 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => params.classifier(p))
-            .then(classification => {
-                if (classification === JvmService) {
-                    // TODO need to pull out hardcoding
-                    return HttpServicePhases.setAllToPending(id, creds);
+            .then(phases => {
+                if (!!phases) {
+                    return phases.setAllToPending(id, creds);
                 } else {
                     return Promise.resolve();
                 }
