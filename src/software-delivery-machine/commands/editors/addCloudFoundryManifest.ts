@@ -9,17 +9,17 @@ export const addCloudFoundryManifest: HandleCommand<any> = editor(
     () => addCfManifest,
     AddCloudFoundryManifestEditorName);
 
-export const addCfManifest: SimpleProjectEditor = (p, ctx, params) => {
+export const addCfManifest: SimpleProjectEditor = p => {
     return p.findFile("pom.xml")
         .then(pom => pom.getContent()
             .then(content => identification(content))
             .then(ident => {
-                return p.addFile("manifest.yml", manifestFor(ident.artifact));
+                return p.addFile("manifest.yml", javaManifestFor(ident.artifact));
             }))
         .catch(err => p);
 };
 
-const manifestFor = name => `---
+const javaManifestFor = name => `---
 applications:
 - name: ${name}
   memory: 1024M
