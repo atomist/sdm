@@ -8,7 +8,7 @@ import {
 import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
-import { OfferPromotion } from "./software-delivery-machine/blueprint/offerPromotion";
+import {OfferPromotion, offerPromotionCommand} from "./software-delivery-machine/blueprint/offerPromotion";
 import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
 import { PhaseCleanup, PhaseSetup } from "./software-delivery-machine/blueprint/phaseManagement";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
@@ -30,6 +30,7 @@ export const configuration: Configuration = {
         DeployToProd,
         () => affirmationEditor,
         () => addCloudFoundryManifest,
+        () => offerPromotionCommand,
     ],
     events: [
         ActOnRepoCreation,
