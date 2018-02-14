@@ -14,6 +14,8 @@ import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndp
 import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
 import { OfferPromotion } from "./software-delivery-machine/blueprint/offerPromotion";
 import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
+import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
+import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -29,9 +31,11 @@ export const configuration: Configuration = {
         DeployToProd,
         () => davosEditor,
         () => touchEditor,
+        () => addCloudFoundryManifest,
     ],
     events: [
         ActOnRepoCreation,
+        () => onNewRepoWithCode,
         () => PhaseSetup,
         () => PhaseCleanup,
         () => Scan,

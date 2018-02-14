@@ -25,6 +25,9 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { OnRepoCreation } from "../../../typings/types";
 
+/**
+ * A new repo has been created. We don't know if it has code.
+ */
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnRepoCreation.graphql"))
 export class ActOnRepoCreation implements HandleEvent<OnRepoCreation.Subscription> {

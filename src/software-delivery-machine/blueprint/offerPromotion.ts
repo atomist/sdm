@@ -5,7 +5,6 @@ import { HandleEvent } from "@atomist/automation-client";
 
 export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(
     (id, s, addressChannels) => {
-        console.log("Offering promotion");
         const attachment: slack.Attachment = {
                 text: "Endpoint has been verified. Promote this build to production?",
                 fallback: "offer to promote",
@@ -21,5 +20,4 @@ export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(
         };
         return addressChannels(message);
     },
-    )
-;
+);
