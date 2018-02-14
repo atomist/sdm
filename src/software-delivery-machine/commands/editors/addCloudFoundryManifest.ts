@@ -22,5 +22,6 @@ export const addCfManifest: SimpleProjectEditor = (p, ctx, params) => {
 const manifestFor = name => `---
 applications:
 - name: ${name}
-  memory: 512M
-  instances: 1`;
+  memory: 1024M
+  instances: 1
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git`;
