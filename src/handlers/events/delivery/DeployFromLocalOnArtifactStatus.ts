@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
@@ -24,8 +24,9 @@ import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
+import {ArtifactContext, currentPhaseIsStillPending, previousPhaseHitSuccess, StagingEndpointContext} from "./Phases";
+import {HttpServicePhases} from "./phases/httpServicePhases";
 import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./ProgressLog";
-import { ArtifactContext, StagingDeploymentContext, StagingEndpointContext } from "./Phases";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -52,16 +53,13 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        // TODO remove when we figure out subscription
-        if (status.context !== ArtifactContext) {
+        if (!previousPhaseHitSuccess(HttpServicePhases, params.ourContext, status)) {
             console.log(`********* Deploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
 
-        // TODO pull this out as a generic thing
-        if (!status.commit.statuses.filter(s => s.state === "pending")
-                .some(s => s.context === params.ourContext)) {
-            console.log(`********* Deploy got called when [${params.ourContext}] isn't pending!`);
+        if (!currentPhaseIsStillPending(params.ourContext, status)) {
+            console.log(`Deploy wanted to run but it wasn't pending`);
             return Promise.resolve(Success);
         }
 
@@ -70,7 +68,6 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
             id, params.githubToken, status.targetUrl,
             params.artifactStore, params.deployer, params.targeter);
     }
-
 }
 
 export function deploy<T extends TargetInfo>(context: string,

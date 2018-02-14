@@ -19,7 +19,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import { StagingEndpointContext, StagingVerifiedContext } from "./Phases";
+import {currentPhaseIsStillPending, previousPhaseHitSuccess, StagingEndpointContext, StagingVerifiedContext} from "./Phases";
+import {HttpServicePhases} from "./phases/httpServicePhases";
 
 export type EndpointVerifier = (url: string) => Promise<any>;
 
@@ -43,8 +44,13 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== StagingEndpointContext) {
-            console.log(`********* Verifier got called with status context=[${status.context}]`);
+        if (!previousPhaseHitSuccess(HttpServicePhases, StagingVerifiedContext, status)) {
+            console.log(`********* Deploy got called with status context=[${status.context}]`);
+            return Promise.resolve(Success);
+        }
+
+        if (!currentPhaseIsStillPending(StagingVerifiedContext, status)) {
+            console.log(`Deploy wanted to run but it wasn't pending`);
             return Promise.resolve(Success);
         }
 

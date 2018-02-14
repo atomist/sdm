@@ -20,7 +20,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./ProgressLog";
-import { ArtifactContext, ScanContext } from "./Phases";
+import {ArtifactContext, currentPhaseIsStillPending, previousPhaseHitSuccess, ScanContext} from "./Phases";
+import {HttpServicePhases} from "./phases/httpServicePhases";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
@@ -46,15 +47,13 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const msg = `Saw a success status: ${JSON.stringify(event)}`;
         console.log(msg);
 
-        // TODO this should go but subscription parameters may not be working
-        if (status.context !== ScanContext) {
-            console.log(`********* Build got called with status context=[${status.context}]`);
+        if (!previousPhaseHitSuccess(HttpServicePhases, ArtifactContext, status)) {
+            console.log(`********* Deploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
 
-        // TODO pull this out as a generic thing
-        if (!status.commit.statuses.filter(s => s.state === "pending").some(s => s.context === ArtifactContext)) {
-            console.log(`********* Build got called when an artifact isn't pending!`);
+        if (!currentPhaseIsStillPending(ArtifactContext, status)) {
+            console.log(`Deploy wanted to run but it wasn't pending`);
             return Promise.resolve(Success);
         }
 
