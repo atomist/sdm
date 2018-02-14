@@ -48,7 +48,6 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         }
 
         if (!currentPhaseIsStillPending(ArtifactContext, status)) {
-            console.log(`Deploy wanted to run but it wasn't pending`);
             return Promise.resolve(Success);
         }
 

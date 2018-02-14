@@ -58,11 +58,16 @@ export interface GitHubStatusAndFriends {
 }
 
 export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    return status.commit.statuses.some(s => s.state === "pending" && s.context === currentPhase);
+    const result = status.commit.statuses.some(s => s.state === "pending" && s.context === currentPhase);
+    if (!result) {
+        console.log(`${currentPhase} wanted to run but it wasn't pending`);
+    }
+    return result;
 }
 
 export function previousPhaseHitSuccess(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     if (status.state !== "success") {
+        console.log(`********* ${currentPhase} is look=[${status.state}]`);
         return false;
     }
 
@@ -72,6 +77,7 @@ export function previousPhaseHitSuccess(expectedPhases: Phases, currentPhase: Gi
         return false;
     }
     if (whereAmI === 0) {
+        logger.info(`${currentPhase} is the first step.`);
         return false;
     }
     const previousPhase = expectedPhases.phases[whereAmI - 1];

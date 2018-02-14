@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets, success } from "@atomist/automation-client";
-import {
-    EventFired,
-    EventHandler,
-    failure,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-} from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnPendingStatus, StatusState } from "../../../typings/types";
-import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ScanContext } from "./phases/httpServicePhases";
+import {GraphQL, logger, Secret, Secrets, Success, success} from "@atomist/automation-client";
+import {EventFired, EventHandler, failure, HandleEvent, HandlerContext, HandlerResult} from "@atomist/automation-client/Handlers";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
+import {GitProject} from "@atomist/automation-client/project/git/GitProject";
+import {OnPendingStatus, StatusState} from "../../../typings/types";
+import {addressChannelsFor} from "../../commands/editors/toclient/addressChannels";
+import {createStatus} from "../../commands/editors/toclient/ghub";
+import {ScanContext} from "./phases/httpServicePhases";
 
 export interface ProjectScanResult {
     passed: boolean;
@@ -60,11 +50,18 @@ export class ScanOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subs
     }
 
     public handle(event: EventFired<OnPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-        const commit = event.data.Status[0].commit;
+
+        const status = event.data.Status[0];
+        const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const creds = {token: params.githubToken};
+
+        if (status.context !== ScanContext || status.state !== "pending") {
+            logger.warn(`I was looking for ${ScanContext} being pending, but I heard about ${status.context} being ${status.state}`);
+            return Promise.resolve(Success);
+        }
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);
 

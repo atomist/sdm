@@ -45,12 +45,10 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const commit = status.commit;
 
         if (!previousPhaseHitSuccess(HttpServicePhases, StagingVerifiedContext, status)) {
-            console.log(`********* Deploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
 
         if (!currentPhaseIsStillPending(StagingVerifiedContext, status)) {
-            console.log(`Deploy wanted to run but it wasn't pending`);
             return Promise.resolve(Success);
         }
 

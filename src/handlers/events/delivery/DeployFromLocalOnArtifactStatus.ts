@@ -54,12 +54,10 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         const commit = status.commit;
 
         if (!previousPhaseHitSuccess(HttpServicePhases, params.ourContext, status)) {
-            console.log(`********* Deploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
 
         if (!currentPhaseIsStillPending(params.ourContext, status)) {
-            console.log(`Deploy wanted to run but it wasn't pending`);
             return Promise.resolve(Success);
         }
 
