@@ -63,7 +63,7 @@
     "gql:gen": "gql-gen --file node_modules/@atomist/automation-client/graph/schema.cortex.json --template typescript -m --out ./src/typings/ './graphql/**/*.graphql'",
     "lint": "tslint --format verbose --project . --exclude '{build,node_modules}/**' '**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
-    "start": "atomist-client",
+    "start": "atomist start --no-install",
     "test": "mocha --require espower-typescript/guess 'test/**/*.ts'",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals",
