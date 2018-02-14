@@ -62,7 +62,7 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
         name: `Build ${runningBuild.repoRef.sha}`,
         duration: 3,
         build: {
-            number: "Build",
+            number: `Build ${runningBuild.repoRef.sha}`,
             scm: {
                 commit: runningBuild.repoRef.sha,
                 url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,

@@ -49,8 +49,6 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
             return Promise.resolve(Success);
         }
 
-        console.log("&&&&&&&&&&&&&& deployment handler");
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         return params.action(id, status, ctx)
             .then(r => Success);
