@@ -9,19 +9,21 @@ export const addCloudFoundryManifest: HandleCommand<any> = editor(
     () => addCfManifest,
     AddCloudFoundryManifestEditorName);
 
-export const addCfManifest: SimpleProjectEditor = p => {
+export const addCfManifest: SimpleProjectEditor = (p, ctx) => {
     return p.findFile("pom.xml")
         .then(pom => pom.getContent()
             .then(content => identification(content))
             .then(ident => {
-                return p.addFile("manifest.yml", javaManifestFor(ident.artifact));
+                return p.addFile("manifest.yml", javaManifestFor(ident.artifact, ctx.teamId));
             }))
         .catch(err => p);
 };
 
-const javaManifestFor = name => `---
+const javaManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
   memory: 1024M
   instances: 1
-  buildpack: https://github.com/cloudfoundry/java-buildpack.git`;
+  buildpack: https://github.com/cloudfoundry/java-buildpack.git
+  env:
+    ATOMIST_TEAM: ${teamId}`;
