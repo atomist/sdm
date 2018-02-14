@@ -18,12 +18,13 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../typings/types";
-import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import {AddressChannels, addressChannelsFor, messageDestinations} from "../../commands/editors/toclient/addressChannels";
 import { StagingVerifiedContext } from "./phases/httpServicePhases";
 import Status = OnSuccessStatus.Status;
+import {Destination} from "@atomist/automation-client/spi/message/MessageClient";
 
 export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: Status,
-                                          addressChannels: AddressChannels,
+                                          sendMessagesHere: Destination,
                                           ctx: HandlerContext) => Promise<any>;
 
 /**
@@ -52,9 +53,8 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
 
-        return params.listener(id, status, addressChannels, ctx)
+        return params.listener(id, status, messageDestinations(commit.repo, ctx), ctx)
             .then(() => Success);
     }
 }

@@ -8,19 +8,22 @@ import {OnVerifiedStatus} from "../../handlers/events/delivery/OnVerifiedStatus"
  * @type {OnVerifiedStatus}
  */
 export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(
-    (id, s, addressChannels) => {
+    (id, s, sendMessagesHere, ctx) => {
         const messageId = "httpService:promote:prod/${id.repo}/${id.owner}/${id.sha}";
         const attachment: slack.Attachment = {
             text: "Endpoint has been verified. Promote this build to production?",
             fallback: "offer to promote",
             actions: [buttonForCommand({text: "Promote to Prod"},
                 "DeployToProd",
-                {repo: id.repo, owner: id.owner, sha: id.sha},
-            )],
+                {
+                    repo: id.repo, owner: id.owner, sha: id.sha,
+                    messageId,
+                    destinationsJson: JSON.stringify(sendMessagesHere),
+                })],
         };
         const message: slack.SlackMessage = {
             attachments: [attachment],
         };
-        return addressChannels(message, { id: messageId });
+        return ctx.messageClient.send(message, sendMessagesHere, {id: messageId});
     },
 );
