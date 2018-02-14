@@ -13,6 +13,9 @@ import {CloudFoundryInfo} from "./CloudFoundryTarget";
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
     public async deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
+        if (!ai) {
+            throw new Error("no DeployableArtifact passed in");
+        }
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi.description);
         await runCommand(
             `cf target -s ${cfi.space}`,
