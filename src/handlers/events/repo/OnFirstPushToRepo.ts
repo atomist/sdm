@@ -24,9 +24,9 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 
-import * as schema from "../../../typings/types";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import * as schema from "../../../typings/types";
 import { AddressChannels } from "../../commands/editors/toclient/addressChannels";
 
 export type NewRepoWithCodeAction = (id: GitHubRepoRef, creds: ProjectOperationCredentials,
@@ -48,14 +48,10 @@ export class OnFirstPushToRepo
     }
 
     public handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-        // const push = event.data.Push[0];
-        // const commit = push.commits[0];
-        // TODO check this
-
         const push = event.data.Push[0];
 
         if (!!push.before) {
-            console.log(`Get out here: Not a new commit on ${push.repo.name}`)
+            console.log(`Get out here: Not a new commit on ${push.repo.name}`);
             return Promise.resolve(Success);
         }
 
@@ -64,12 +60,7 @@ export class OnFirstPushToRepo
             return Promise.resolve(Success);
         }
 
-        // TODO tag it
-
-        const msg = `Saw a first push repo: ${push.repo.owner}:${push.repo.name}`;
-        console.log(msg);
-
-        // TODO be careful
+        // TODO null check this
         const screenName = push.after.committer.person.chatId.screenName;
 
         const addressChannels: AddressChannels = m => ctx.messageClient.addressUsers(m, screenName);

@@ -7,6 +7,9 @@ import { Deployment } from "../../Deployment";
 import { ProgressLog } from "../../ProgressLog";
 import { CloudFoundryInfo } from "./CloudFoundryTarget";
 
+/**
+ * Spawn a new process to use the Cloud Foundry CLI to push
+ */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
     public deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {

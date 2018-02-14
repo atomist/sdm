@@ -19,9 +19,9 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
+import {currentPhaseIsStillPending, previousPhaseHitSuccess} from "./Phases";
+import { ArtifactContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
 import { slackProgressLog } from "./ProgressLog";
-import {ArtifactContext, currentPhaseIsStillPending, previousPhaseHitSuccess, ScanContext} from "./Phases";
-import {HttpServicePhases} from "./phases/httpServicePhases";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
@@ -39,16 +39,11 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
     constructor(private builder: Builder) {}
 
     public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-
         const status = event.data.Status[0];
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
-        const msg = `Saw a success status: ${JSON.stringify(event)}`;
-        console.log(msg);
-
         if (!previousPhaseHitSuccess(HttpServicePhases, ArtifactContext, status)) {
-            console.log(`********* Deploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
 
@@ -60,8 +55,6 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        // const addr = addressChannelsFor(commit.repo, ctx);
-
         return params.builder.build(creds, id, team, slackProgressLog(commit.repo, ctx))
             .then(handleBuild)
             .then(() => ({
@@ -71,13 +64,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
 }
 
 function handleBuild(runningBuild: RunningBuild): Promise<any> {
-    // deployment.childProcess.addListener("exit", closeListener);
-    //b.stdout.on("data", what => log.write(what.toString()));
-    // TODO why doesn't this work with emitter
-    //(runningBuild.stream as ChildProcess).stdout.on("data", what => log.write(what.toString()));
-
     return new Promise((resolve, reject) => {
-        // Pipe/use stream
         runningBuild.stream.addListener("end", resolve);
         runningBuild.stream.addListener("exit", resolve);
         runningBuild.stream.addListener("close", resolve);

@@ -17,11 +17,10 @@
 import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnSuccessStatus, StatusState } from "../../../typings/types";
-import Status = OnSuccessStatus.Status;
+import { OnSuccessStatus } from "../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { StagingEndpointContext, ScanContext, StagingVerifiedContext } from "./Phases";
+import { StagingVerifiedContext } from "./phases/httpServicePhases";
+import Status = OnSuccessStatus.Status;
 
 export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: Status,
                                           addressChannels: AddressChannels,

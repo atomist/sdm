@@ -16,7 +16,7 @@ export function createStatus(token: string, rr: GitHubRepoRef, status: Status): 
     console.log(`Updating github status: ${url} to ${JSON.stringify(status)}`);
     return axios.post(url, status, config)
         .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`))
+            Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
         );
 }
 

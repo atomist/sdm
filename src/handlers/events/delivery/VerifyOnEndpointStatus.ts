@@ -19,8 +19,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
-import {currentPhaseIsStillPending, previousPhaseHitSuccess, StagingEndpointContext, StagingVerifiedContext} from "./Phases";
-import {HttpServicePhases} from "./phases/httpServicePhases";
+import {currentPhaseIsStillPending, previousPhaseHitSuccess} from "./Phases";
+import { HttpServicePhases, StagingEndpointContext, StagingVerifiedContext } from "./phases/httpServicePhases";
 
 export type EndpointVerifier = (url: string) => Promise<any>;
 
@@ -59,7 +59,6 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         return params.verifier(status.targetUrl)
             .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl))
             .catch(err => {
-                // TODO write it also
                 return setVerificationStatus(params.githubToken, id, "failure", status.targetUrl);
             });
     }

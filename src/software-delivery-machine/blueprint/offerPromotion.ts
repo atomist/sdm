@@ -1,7 +1,7 @@
+import { HandleEvent } from "@atomist/automation-client";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { OnVerifiedStatus } from "../../handlers/events/delivery/OnVerifiedStatus";
-import { HandleEvent } from "@atomist/automation-client";
 
 export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(
     (id, s, addressChannels) => {

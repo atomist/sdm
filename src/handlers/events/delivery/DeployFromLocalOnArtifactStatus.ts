@@ -24,8 +24,8 @@ import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import {ArtifactContext, currentPhaseIsStillPending, previousPhaseHitSuccess, StagingEndpointContext} from "./Phases";
-import {HttpServicePhases} from "./phases/httpServicePhases";
+import {currentPhaseIsStillPending, previousPhaseHitSuccess} from "./Phases";
+import { ArtifactContext, HttpServicePhases } from "./phases/httpServicePhases";
 import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./ProgressLog";
 
 /**

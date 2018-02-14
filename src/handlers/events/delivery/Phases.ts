@@ -6,9 +6,9 @@ import {
 import {StatusState} from "../../../typings/types";
 import {createStatus, State, Status} from "../../commands/editors/toclient/ghub";
 
-import * as _ from "lodash";
 import {logger} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
+import * as _ from "lodash";
 
 export type GitHubStatusContext = string;
 
@@ -42,13 +42,6 @@ export class Phases {
     }
 
 }
-
-// TODO move these later
-export const ScanContext = "1. code scan";
-export const ArtifactContext = "2. create artifact";
-export const StagingDeploymentContext = "3. deploy:staging";
-export const StagingEndpointContext = "4. starting endpoint:staging";
-export const StagingVerifiedContext = "5. verified:staging";
 
 function setStatus(id: GitHubRepoRef, context: string, state: State, creds: ProjectOperationCredentials): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {

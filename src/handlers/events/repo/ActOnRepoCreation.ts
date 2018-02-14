@@ -33,24 +33,7 @@ import { OnRepoCreation } from "../../../typings/types";
 export class ActOnRepoCreation implements HandleEvent<OnRepoCreation.Subscription> {
 
     public handle(event: EventFired<OnRepoCreation.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
-        // const push = event.data.Push[0];
-        // const commit = push.commits[0];
-        // TODO check this
-
         const repo = event.data.Repo[0];
-
-        // TODO tag it
-
-        const msg = `Saw a new repo: ${repo.owner}:${repo.name}`;
-        console.log(msg);
-
-        // if (push.repo && push.repo.channels) {
-        //     const channels = push.repo.channels.map(c => c.name);
-        //     return ctx.messageClient.addressChannels(msg, channels)
-        //         .then(() => Success, failure);
-        // } else {
-        //     return Promise.resolve(Success);
-        // }
         return Promise.resolve(Success);
     }
 }

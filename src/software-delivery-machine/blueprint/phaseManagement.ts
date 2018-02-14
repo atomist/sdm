@@ -1,12 +1,14 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { SetupPhasesOnPush } from "../../handlers/events/delivery/SetupPhasesOnPush";
 import { FailDownstreamPhasesOnPhaseFailure } from "../../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { HttpServicePhases, LibraryPhases } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { Phases } from "../../handlers/events/delivery/Phases";
+import { HttpServicePhases, LibraryPhases } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { SetupPhasesOnPush } from "../../handlers/events/delivery/SetupPhasesOnPush";
 
-export const PhaseSetup = new SetupPhasesOnPush(scan);
+export const PhaseSetup = new SetupPhasesOnPush(scanForPhases);
 
-async function scan(p: GitProject): Promise<Phases> {
+export const PhaseCleanup = new FailDownstreamPhasesOnPhaseFailure(HttpServicePhases);
+
+async function scanForPhases(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");
         const manifest = await p.findFile("manifest.yml").catch(err => undefined);
@@ -20,5 +22,3 @@ async function scan(p: GitProject): Promise<Phases> {
         return undefined;
     }
 }
-
-export const PhaseCleanup = new FailDownstreamPhasesOnPhaseFailure(HttpServicePhases);

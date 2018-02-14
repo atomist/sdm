@@ -1,14 +1,12 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnFirstPushToRepo } from "../../handlers/events/repo/OnFirstPushToRepo";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { AddressChannels } from "../../handlers/commands/editors/toclient/addressChannels";
 import * as slack from "@atomist/slack-messages/SlackMessages";
+import { AddressChannels } from "../../handlers/commands/editors/toclient/addressChannels";
+import { OnFirstPushToRepo } from "../../handlers/events/repo/OnFirstPushToRepo";
 import { AddCloudFoundryManifestEditorName } from "../commands/editors/addCloudFoundryManifest";
 
 export const onNewRepoWithCode = new OnFirstPushToRepo(addCloudFoundryManifest);
-
-// TODO really should invoke a button
 
 function addCloudFoundryManifest(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
     const attachment: slack.Attachment = {

@@ -3,18 +3,17 @@ import * as appRoot from "app-root-path";
 import { touchEditor } from "./handlers/commands/editors/user/touchEditor";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
-import { PhaseSetup, PhaseCleanup } from "./software-delivery-machine/blueprint/phaseManagement";
 import {
-    CloudFoundryStagingDeployOnArtifactStatus
+    CloudFoundryStagingDeployOnArtifactStatus,
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
+import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
+import { OfferPromotion } from "./software-delivery-machine/blueprint/offerPromotion";
+import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
+import { PhaseCleanup, PhaseSetup } from "./software-delivery-machine/blueprint/phaseManagement";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
-import { davosEditor } from "./software-delivery-machine/commands/editors/davosEditor";
-import { OfferPromotion } from "./software-delivery-machine/blueprint/offerPromotion";
-import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
-import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 
 // tslint:disable-next-line:no-var-requires
@@ -29,9 +28,8 @@ export const configuration: Configuration = {
     commands: [
         HelloWorld,
         DeployToProd,
-        () => davosEditor,
         () => touchEditor,
-        () => addCloudFoundryManifest
+        () => addCloudFoundryManifest,
     ],
     events: [
         ActOnRepoCreation,

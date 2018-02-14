@@ -23,15 +23,9 @@ import {
     HandlerResult,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPush } from "../../../typings/types";
-import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../commands/editors/toclient/ghub";
 import { Phases } from "./Phases";
 
 export type Classifier = (p: GitProject) => Promise<Phases>;
@@ -62,8 +56,6 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
 
         const creds = {token: params.githubToken};
 
-        const addressChannels = addressChannelsFor(push.repo, ctx);
-
         return GitCommandGitProject.cloned(creds, id)
             .then(p => params.classifier(p))
             .then(phases => {
@@ -74,14 +66,4 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
                 }
             }).then(() => Success);
     }
-}
-
-export const ClassificationBase = "https://classification.atomist.com";
-
-function setClassifyStatus(id: GitHubRepoRef, context: string, creds: ProjectOperationCredentials): Promise<any> {
-    return createStatus((creds as TokenCredentials).token, id, {
-        state: "success",
-        target_url: `${id.apiBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context,
-    });
 }

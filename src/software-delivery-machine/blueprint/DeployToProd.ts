@@ -1,12 +1,12 @@
 import { HandleCommand, HandlerContext, Parameter, Secret, Secrets } from "@atomist/automation-client";
 import { CommandHandler } from "@atomist/automation-client/decorators";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProductionDeployPhases } from "../../handlers/events/delivery/phases/productionDeployPhases";
 import { listStatuses, Status } from "../../handlers/commands/editors/toclient/ghub";
-import { ArtifactContext } from "../../handlers/events/delivery/Phases";
-import { deploy } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
-import { artifactStore } from "./artifactStore";
 import { EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { deploy } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
+import { ArtifactContext } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { ProductionDeployPhases } from "../../handlers/events/delivery/phases/productionDeployPhases";
+import { artifactStore } from "./artifactStore";
 import { Deployer } from "./cloudFoundryDeployOnArtifactStatus";
 
 @CommandHandler("Promote to production", "promote to production")
@@ -34,7 +34,7 @@ export class DeployToProd implements HandleCommand {
                     ProductionDeployPhases.phases[1],
                     id, params.githubToken, artifactStatus.target_url,
                     artifactStore, Deployer,
-                    ProductionCloudFoundryTargeter)
+                    ProductionCloudFoundryTargeter);
             });
     }
 

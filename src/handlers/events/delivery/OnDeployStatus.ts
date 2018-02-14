@@ -18,7 +18,7 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../typings/types";
-import { StagingDeploymentContext } from "./Phases";
+import { StagingDeploymentContext } from "./phases/httpServicePhases";
 import Status = OnSuccessStatus.Status;
 
 export type DeployListener = (id: GitHubRepoRef, s: Status, ctx: HandlerContext) => Promise<any>;
