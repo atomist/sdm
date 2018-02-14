@@ -11,6 +11,12 @@ export const DevNullProgressLog: ProgressLog = {
     },
 };
 
+export const ConsoleProgressLog: ProgressLog = {
+    write(what) {
+        console.log(what);
+    },
+};
+
 export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
     const add = addressChannelsFor(hasChannels, ctx);
     return {

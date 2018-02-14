@@ -28,7 +28,9 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                 const childProcess = spawn("cf",
                     [
                         "push",
-                        //ai.name,
+                        ai.name,
+                        "-f",
+                        "../manifest.yml", // TODO this isn't elegant as it requires a whole clone
                         //"-p",
                         //ai.filename,
                         "--random-route",

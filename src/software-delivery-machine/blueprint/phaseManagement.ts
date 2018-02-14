@@ -9,7 +9,7 @@ export const PhaseSetup = new SetupPhasesOnPush(scan);
 async function scan(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");
-        const manifest = await p.findFile("manifest.xml").catch(err => undefined);
+        const manifest = await p.findFile("manifest.yml").catch(err => undefined);
         const contents = await f.getContent();
         if (contents.includes("spring-boot") && !!manifest) {
             return HttpServicePhases;

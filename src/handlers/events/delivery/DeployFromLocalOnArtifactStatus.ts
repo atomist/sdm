@@ -24,7 +24,7 @@ import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import { SavingProgressLog } from "./ProgressLog";
+import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./ProgressLog";
 import { ArtifactContext, StagingDeploymentContext, StagingEndpointContext } from "./Phases";
 
 /**
@@ -78,7 +78,7 @@ export function deploy<T extends TargetInfo>(context: string,
                                              deployer: Deployer<T>,
                                              targeter: (id: RemoteRepoRef) => T) {
     const persistentLog = new SavingProgressLog();
-    const progressLog = persistentLog;
+    const progressLog = new MultiProgressLog(ConsoleProgressLog, persistentLog);
 
     return setDeployStatus(githubToken, id, "pending", context, "http://test.com")
         .then(() => {
@@ -122,7 +122,7 @@ export function deploy<T extends TargetInfo>(context: string,
                         }).catch(err => {
                             console.log("ERROR: " + err);
                             return setDeployStatus(githubToken, id, "failure", context, "http://www.test.com")
-                                .then(() =>({ code: 1, message: err}));
+                                .then(() => ({code: 1, message: err}));
                         });
                 });
         });

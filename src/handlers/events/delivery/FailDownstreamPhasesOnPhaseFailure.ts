@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnFailureStatus, OnSuccessStatus } from "../../../typings/types";
@@ -40,10 +40,10 @@ export class FailDownstreamPhasesOnPhaseFailure implements HandleEvent<OnFailure
         const status: Status = event.data.Status[0];
         const commit = status.commit;
 
-        // if (status.context !== StagingVerifiedContext) {
-        //     console.log(`********* onVerifiedStatus got called with status context=[${status.context}]`);
-        //     return Promise.resolve(Success);
-        // }
+        if (status.state !== "failure") {
+            console.log(`********* failure reported when the state was=[${status.state}]`);
+            return Promise.resolve(Success);
+        }
 
         const currentlyPending = status.commit.statuses.filter(s => s.state === "pending");
 
