@@ -1,10 +1,8 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { editor } from "../registerEditor";
-import { EditOneOrAllParameters } from "../toclient/EditOneOrAllParameters";
+import { editor } from "../../../handlers/commands/editors/registerEditor";
 
 export const affirmationEditor: HandleCommand<any> = editor(
     () => appendAffirmationToReadMe,
@@ -22,7 +20,7 @@ const affirmations = [
     "As I say yes to life, life says yes to me.",
     "Deep at the center of my being is an infinite well of love.",
     "I come from the loving space of my heart, and I know that love opens all doors.",
-]
+];
 
 function randomAffirmation() {
     return affirmations[getRandomInt(affirmations.length)];
@@ -32,9 +30,9 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToReadMe: SimpleProjectEditor = (p, ctx, params) => {
+export const appendAffirmationToReadMe: SimpleProjectEditor = (p, ctx) => {
     const affirmation = randomAffirmation();
-    return ctx.messageClient.respond("Adding to README: " + affirmation)
+    return ctx.messageClient.respond(`Adding to README: _${affirmation}_`)
         .then(() => doWithFiles(p, "README.md", f =>
             f.getContent().then(content =>
                 f.setContent(`${content}\n${affirmation}\n`))));
