@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
+import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import * as stringify from "json-stringify-safe";
 import { OnSuccessStatus, StatusState } from "../../../typings/types";
 import { createGist, createStatus } from "../../commands/editors/toclient/ghub";
 import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import {ArtifactContext, GitHubStatusContext, Phases, StagingEndpointContext} from "./Phases";
+import {ArtifactContext, currentPhaseIsStillPending, previousPhaseHitSuccess, StagingEndpointContext} from "./Phases";
 import {HttpServicePhases} from "./phases/httpServicePhases";
 import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./ProgressLog";
 
@@ -68,32 +67,6 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         return deploy(params.ourContext, params.endpointContext,
             id, params.githubToken, status.targetUrl,
             params.artifactStore, params.deployer, params.targeter);
-    }
-}
-
-function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: OnSuccessStatus.Status): boolean {
-    return status.commit.statuses.some(s => s.state === "pending" && s.context === currentPhase);
-}
-
-function previousPhaseHitSuccess(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: OnSuccessStatus.Status): boolean {
-    if (status.state !== "success") {
-        return false;
-    }
-
-    const whereAmI = expectedPhases.phases.indexOf(currentPhase);
-    if (whereAmI < 0) {
-        logger.warn(`Inconsistency! Phase ${currentPhase} is not part of Phases ${stringify(expectedPhases)}`);
-        return false;
-    }
-    if (whereAmI === 0) {
-        return false;
-    }
-    const previousPhase = expectedPhases.phases[whereAmI - 1];
-    if (previousPhase === status.context) {
-        return true;
-    } else {
-        logger.info(`${previousPhase} is right before ${currentPhase}; ignoring success of ${status.context}`);
-        return false;
     }
 }
 

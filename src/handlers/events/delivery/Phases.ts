@@ -1,12 +1,14 @@
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { StatusState } from "../../../typings/types";
-import { createStatus, State, Status } from "../../commands/editors/toclient/ghub";
+import {StatusState} from "../../../typings/types";
+import {createStatus, State, Status} from "../../commands/editors/toclient/ghub";
 
 import * as _ from "lodash";
+import {logger} from "@atomist/automation-client";
+import * as stringify from "json-stringify-safe";
 
 export type GitHubStatusContext = string;
 
@@ -54,4 +56,36 @@ function setStatus(id: GitHubRepoRef, context: string, state: State, creds: Proj
         target_url: `${id.apiBase}/${id.owner}/${id.repo}/${id.sha}`,
         context,
     });
+}
+
+export interface GitHubStatusAndFriends {
+    context?: GitHubStatusContext;
+    state?: StatusState;
+    commit?: { statuses?: Array<{ context?: GitHubStatusContext, state?: StatusState }> };
+}
+
+export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+    return status.commit.statuses.some(s => s.state === "pending" && s.context === currentPhase);
+}
+
+export function previousPhaseHitSuccess(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+    if (status.state !== "success") {
+        return false;
+    }
+
+    const whereAmI = expectedPhases.phases.indexOf(currentPhase);
+    if (whereAmI < 0) {
+        logger.warn(`Inconsistency! Phase ${currentPhase} is not part of Phases ${stringify(expectedPhases)}`);
+        return false;
+    }
+    if (whereAmI === 0) {
+        return false;
+    }
+    const previousPhase = expectedPhases.phases[whereAmI - 1];
+    if (previousPhase === status.context) {
+        return true;
+    } else {
+        logger.info(`${previousPhase} is right before ${currentPhase}; ignoring success of ${status.context}`);
+        return false;
+    }
 }
