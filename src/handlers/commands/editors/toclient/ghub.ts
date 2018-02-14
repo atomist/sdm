@@ -1,5 +1,7 @@
-import { GitHubDotComBase, GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
+import {GitHubDotComBase, GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import axios, {AxiosPromise, AxiosRequestConfig} from "axios";
+import {logger} from "@atomist/automation-client";
+import * as _ from "lodash";
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -40,6 +42,10 @@ export function createGist(xtoken: string, gist: Gist, apiBase: string = GitHubD
     return axios.post(url, data, config)
         .then(res => {
             return res.data.html_url;
+        }, gistError => {
+            logger.error("Failure creating gist at " + url + "\n" + gistError.message);
+            logger.error(_.get(gistError, "response.data", "no data"));
+            throw new Error("Failure creating gist at " + url + "\n" + gistError.message);
         });
 }
 
