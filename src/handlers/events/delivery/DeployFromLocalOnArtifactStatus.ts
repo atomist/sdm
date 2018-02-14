@@ -41,6 +41,7 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
     private githubToken: string;
 
     constructor(private ourContext: string,
+                private endpointContext: string,
                 private artifactStore: ArtifactStore,
                 private deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
@@ -65,12 +66,15 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return deploy(params.ourContext, id, params.githubToken, status.targetUrl, params.artifactStore, params.deployer, params.targeter);
+        return deploy(params.ourContext, params.endpointContext,
+            id, params.githubToken, status.targetUrl,
+            params.artifactStore, params.deployer, params.targeter);
     }
 
 }
 
 export function deploy<T extends TargetInfo>(context: string,
+                                             endpointContext: string,
                                              id: GitHubRepoRef,
                                              githubToken: string,
                                              targetUrl: string,
@@ -102,7 +106,7 @@ export function deploy<T extends TargetInfo>(context: string,
                                         context, gist))
                                     .then(() => {
                                         return !!di ?
-                                            setEndpointStatus(githubToken, id, di.endpoint) :
+                                            setEndpointStatus(githubToken, id, endpointContext, di.endpoint) :
                                             true;
                                     });
 
@@ -136,10 +140,10 @@ function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, c
     });
 }
 
-function setEndpointStatus(token: string, id: GitHubRepoRef, endpoint: string): Promise<any> {
+function setEndpointStatus(token: string, id: GitHubRepoRef, context: string, endpoint: string): Promise<any> {
     return createStatus(token, id, {
         state: "success",
         target_url: endpoint,
-        context: StagingEndpointContext,
+        context,
     });
 }

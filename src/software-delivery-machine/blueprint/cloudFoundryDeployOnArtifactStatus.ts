@@ -21,7 +21,7 @@ import {
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import { DeployFromLocalOnArtifactStatus } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
 import { artifactStore } from "./artifactStore";
-import { StagingDeploymentContext } from "../../handlers/events/delivery/Phases";
+import { StagingDeploymentContext, StagingEndpointContext } from "../../handlers/events/delivery/Phases";
 import { ProductionDeploymentContext } from "../../handlers/events/delivery/phases/productionDeployPhases";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
@@ -33,6 +33,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
 export const CloudFoundryStagingDeployOnArtifactStatus =
     new DeployFromLocalOnArtifactStatus(
         StagingDeploymentContext,
+        StagingEndpointContext,
         artifactStore,
         Deployer,
         () => ({

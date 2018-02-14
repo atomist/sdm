@@ -31,7 +31,7 @@ export const configuration: Configuration = {
         DeployToProd,
         () => davosEditor,
         () => touchEditor,
-        () => addCloudFoundryManifest,
+        () => addCloudFoundryManifest
     ],
     events: [
         ActOnRepoCreation,
@@ -44,7 +44,6 @@ export const configuration: Configuration = {
         () => NotifyOnDeploy,
         () => VerifyEndpoint,
         () => OfferPromotion,
-      //  () => CloudFoundryProductionDeployOnArtifactStatus,
     ],
     token,
     http: {

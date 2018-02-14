@@ -30,7 +30,8 @@ export class DeployToProd implements HandleCommand {
         return ProductionDeployPhases.setAllToPending(id, creds)
             .then(() => status(id, params.githubToken))
             .then(status =>
-                deploy(ProductionDeployPhases.phases[0], id, params.githubToken, status.target_url, artifactStore, Deployer, ProductionCloudFoundryTargeter));
+                deploy(ProductionDeployPhases.phases[0], ProductionDeployPhases[1],
+                    id, params.githubToken, status.target_url, artifactStore, Deployer, ProductionCloudFoundryTargeter));
     }
 
 }
