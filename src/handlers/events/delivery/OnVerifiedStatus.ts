@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnSuccessStatus } from "../../../typings/types";
-import {AddressChannels, addressChannelsFor, messageDestinations} from "../../commands/editors/toclient/addressChannels";
-import { StagingVerifiedContext } from "./phases/httpServicePhases";
-import Status = OnSuccessStatus.Status;
+import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
+import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {OnSuccessStatus, StatusState} from "../../../typings/types";
+import {messageDestinations} from "../../commands/editors/toclient/addressChannels";
+import {StagingVerifiedContext} from "./phases/httpServicePhases";
 import {Destination} from "@atomist/automation-client/spi/message/MessageClient";
+import Status = OnSuccessStatus.Status;
 
-export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: Status,
+// something independent of the particular query
+export interface StatusInfo {
+    state?: StatusState | null;
+    targetUrl?: string | null;
+    context?: string | null;
+}
+
+export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: StatusInfo,
                                           sendMessagesHere: Destination,
                                           ctx: HandlerContext) => Promise<any>;
 
