@@ -79,51 +79,38 @@ export async function deploy<T extends TargetInfo>(context: string,
     const persistentLog = new SavingProgressLog();
     const progressLog = new MultiProgressLog(ConsoleProgressLog, persistentLog);
 
-
     try {
         const ac = await artifactStore.checkout(targetUrl);
         const deployment = await deployer.deploy(ac, targeter(id), progressLog);
         const deploymentFinished = new Promise((resolve, reject) => {
-            deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
 
-            async function deployFinishedListener(code, signal) {
-                const di = parseCloudFoundryLog(persistentLog.log);
-                const gist = await createGist(githubToken, {
-                    description: `Deployment log for ${id.owner}/${id.repo}`,
-                    public: false,
-                    files: [{
-                        path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                        content: persistentLog.log,
-                    }],
-                }).catch(gistError => {
-                    logger.error("Could not create gist: " + gistError.message);
-                    return "www.nope.com";
-                });
-                return setDeployStatus(githubToken, id,
-                    code === 0 ? "success" : "failure",
-                    context, gist)
-                    .then(() => {
-                        return !!di ?
-                            setEndpointStatus(githubToken, id, endpointContext, di.endpoint) :
-                            true;
-                    })
+            async function putLogInGistAndFindEndpoint(code, signal) {
+                try {
+                    const di = parseCloudFoundryLog(persistentLog.log);
+                    const gist = await putLogInGist(id, persistentLog);
+                    await setDeployStatus(githubToken, id,
+                        code === 0 ? "success" : "failure",
+                        context, gist);
+                    await setEndpointStatus(githubToken, id, endpointContext, di.endpoint)
+                        .catch(endpointStatus => {
+                            logger.error("Could not set Endpoint status: " + endpointStatus.message);
+                            // do not fail this whole handler
+                        });
+                    resolve();
+                } catch (err) {
+                    reject(err);
+                }
+            }
+
+            async function putLogInGistAndFailStatus(code) {
+                const gist = await putLogInGist(id, persistentLog, true);
+                return setDeployStatus(githubToken, id, "failure", context, gist)
                     .then(resolve, reject);
             }
 
-            deployment.childProcess.addListener("exit", deployFinishedListener);
-            deployment.childProcess.addListener("error", (code, signal) => {
-                return createGist(githubToken, {
-                    description: `Failed deployment log for ${id.owner}/${id.repo}`,
-                    public: false,
-                    files: [{
-                        path: `${id.owner}_${id.repo}-${id.sha}.log`,
-                        content: persistentLog.log,
-                    }],
-                })
-                    .then(gist =>
-                        setDeployStatus(githubToken, id, "failure", context, gist))
-                    .then(resolve, reject);
-            });
+            deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
+            deployment.childProcess.addListener("exit", putLogInGistAndFindEndpoint);
+            deployment.childProcess.addListener("error", putLogInGistAndFailStatus);
         });
         await deploymentFinished;
         return Success;
@@ -135,6 +122,20 @@ export async function deploy<T extends TargetInfo>(context: string,
                 return {code: 1, message: err.message};
             });
     }
+}
+
+function putLogInGist(id: GitHubRepoRef, persistentLog, failed: boolean = false) {
+    return createGist(undefined, {
+        description: `${failed ? " Failed d" : "D"}eployment log for ${id.owner}/${id.repo}`,
+        public: false,
+        files: [{
+            path: `${id.owner}_${id.repo}-${id.sha}.log`,
+            content: persistentLog.log,
+        }],
+    }).catch(gistError => {
+        logger.error("Could not create gist: " + gistError.message);
+        return "www.atomist.com/sorry-but-gist-creation-failed";
+    });
 }
 
 function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, context: string, targetUrl: string): Promise<any> {
