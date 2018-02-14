@@ -31,8 +31,8 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                         ai.name,
                         "-f",
                         "../manifest.yml", // TODO this isn't elegant as it requires a whole clone
-                        //"-p",
-                        //ai.filename,
+                        "-p",
+                        ai.filename,
                         "--random-route",
                     ],
                     {
