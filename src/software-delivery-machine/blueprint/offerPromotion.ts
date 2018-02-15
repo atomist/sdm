@@ -77,7 +77,7 @@ interface RunningCommit {
 
 interface CountBySha { [key: string]: number; }
 
-async function whatIsRunning(owner: string, repo: string, everythingRunning: RunningCommit[]): Promise<CountBySha> {
+function whatIsRunning(owner: string, repo: string, everythingRunning: RunningCommit[]): CountBySha {
     const myCommits = everythingRunning.filter(c => c.repo.owner === owner && c.repo.name === repo);
     return countBy(c => c.sha, myCommits);
 }
@@ -115,7 +115,7 @@ function linkToSha(id: RemoteRepoRef, sha: string) {
 
 async function gatherEverythingRunning(ctx: HandlerContext, domain: string): Promise<graphqlTypes.WhatIsRunning.Commits[]> {
     const result = await ctx.graphClient.executeQueryFromFile<graphqlTypes.WhatIsRunning.Query, { domain: string }>(
-        "graphql/WhatIsRunning", {domain});
+        "graphql/query/WhatIsRunning", {domain});
     const runningCommits = _.flatMap(result.Application, app => app.commits);
     return runningCommits;
 }
