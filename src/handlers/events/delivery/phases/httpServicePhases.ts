@@ -1,9 +1,9 @@
 import {Phases, PlannedPhase} from "../Phases";
 
-const BaseContext = "sdm/atomist/";
-const IndependentOfEnvironment = "0-code/";
-const StagingEnvironment = "1-staging/";
-const ProductionEnvironment = "2-prod/";
+export const BaseContext = "sdm/atomist/";
+export const IndependentOfEnvironment = "0-code/";
+export const StagingEnvironment = "1-staging/";
+export const ProductionEnvironment = "2-prod/";
 
 export const ScanContext = BaseContext + IndependentOfEnvironment + "1-scan";
 export const BuiltContext = BaseContext + IndependentOfEnvironment + "2-build";
@@ -13,10 +13,10 @@ export const StagingVerifiedContext = BaseContext + StagingEnvironment + "5-veri
 
 export const ContextToName: { [key: string]: PlannedPhase } = {};
 ContextToName[ScanContext] = {context: ScanContext, name: "scan"};
-ContextToName[BuiltContext] = {context: ScanContext, name: "build"};
-ContextToName[StagingDeploymentContext] = {context: ScanContext, name: "deploy to staging"};
-ContextToName[StagingEndpointContext] = {context: ScanContext, name: "find endpoint in staging"};
-ContextToName[StagingVerifiedContext] = {context: ScanContext, name: "verify endpoint in staging"};
+ContextToName[BuiltContext] = {context: BuiltContext, name: "build"};
+ContextToName[StagingDeploymentContext] = {context: StagingDeploymentContext, name: "deploy to staging"};
+ContextToName[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in staging"};
+ContextToName[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in staging"};
 
 /**
  * Phases for an Http service

@@ -12,7 +12,7 @@ import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../log/ProgressLog";
-import { BuiltContext } from "../../phases/httpServicePhases";
+import {BuiltContext, ContextToName} from "../../phases/httpServicePhases";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist
@@ -91,5 +91,6 @@ function setBuiltContext(rb: RunningBuild, team: string, creds: ProjectOperation
                 state: "success",
                 target_url: imageUrl,
                 context: BuiltContext,
+                description: `Completed ${ContextToName[BuiltContext]}`,
             })));
 }

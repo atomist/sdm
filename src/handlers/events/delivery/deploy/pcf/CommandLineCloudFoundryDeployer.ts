@@ -18,7 +18,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         }
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi.description);
         await runCommand(
-            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space}`,
+            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`,
             {cwd: ai.cwd});
         console.log("Successfully selected space [%s]", cfi.space);
         // Turn off color so we don't have unpleasant escape codes in web stream

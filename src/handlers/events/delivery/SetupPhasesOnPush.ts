@@ -95,6 +95,8 @@ export function applyPhasesToCommit(phases: Phases) {
 
         const creds = {token: params.githubToken};
 
-        return phases.setAllToPending(id, creds).then(success);
+        await phases.setAllToPending(id, creds);
+        await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
+        return Success
     }
 }

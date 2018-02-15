@@ -26,8 +26,8 @@ import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
 import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, previousPhaseSucceeded } from "./Phases";
-import { BuiltContext, HttpServicePhases } from "./phases/httpServicePhases";
+import {currentPhaseIsStillPending, GitHubStatusAndFriends, GitHubStatusContext, Phases, previousPhaseSucceeded} from "./Phases";
+import {BuiltContext, ContextToName, HttpServicePhases} from "./phases/httpServicePhases";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -101,8 +101,10 @@ export async function deploy<T extends TargetInfo>(context: string,
                     const di = parseCloudFoundryLog(savingLog.log);
                     await progressLog.close();
                     await setDeployStatus(githubToken, id,
-                        code === 0 ? "success" : "failure", context, linkableLog.url);
-                    await setEndpointStatus(githubToken, id, endpointContext, di.endpoint)
+                        code === 0 ? "success" : "failure", context, linkableLog.url,
+                        `${code === 0 ? "Completed" : "Failed to"} ${ContextToName[context].name}`);
+                    await setEndpointStatus(githubToken, id, endpointContext, di.endpoint,
+                        `Completed ${ContextToName[endpointContext].name}`)
                         .catch(endpointStatus => {
                             logger.error("Could not set Endpoint status: " + endpointStatus.message);
                             // do not fail this whole handler
@@ -135,19 +137,28 @@ export async function deploy<T extends TargetInfo>(context: string,
     }
 }
 
-function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, context: string, targetUrl: string): Promise<any> {
+function setDeployStatus(token: string, id: GitHubRepoRef,
+                         state: StatusState,
+                         context: GitHubStatusContext,
+                         targetUrl: string,
+                         description?: string): Promise<any> {
     logger.info(`Setting deploy status for ${context} to ${state} at ${targetUrl}`);
     return createStatus(token, id, {
         state,
         target_url: targetUrl,
         context,
+        description
     });
 }
 
-function setEndpointStatus(token: string, id: GitHubRepoRef, context: string, endpoint: string): Promise<any> {
+function setEndpointStatus(token: string, id: GitHubRepoRef,
+                           context: GitHubStatusContext,
+                           endpoint: string,
+                           description?: string): Promise<any> {
     return createStatus(token, id, {
         state: "success",
         target_url: endpoint,
         context,
+        description,
     });
 }
