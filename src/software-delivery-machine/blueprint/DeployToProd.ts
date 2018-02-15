@@ -1,16 +1,24 @@
-import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success} from "@atomist/automation-client";
-import {CommandHandler} from "@atomist/automation-client/decorators";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {addressSlackUsers} from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    HandleCommand,
+    HandlerContext,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+    Success
+} from "@atomist/automation-client";
+import { CommandHandler } from "@atomist/automation-client/decorators";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { addressSlackUsers } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import * as stringify from "json-stringify-safe";
-import {listStatuses, Status} from "../../handlers/commands/editors/toclient/ghub";
-import {EnvironmentCloudFoundryTarget} from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
-import {deploy} from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
-import {BuiltContext} from "../../handlers/events/delivery/phases/httpServicePhases";
-import {ProductionDeployPhases} from "../../handlers/events/delivery/phases/productionDeployPhases";
-import {artifactStore} from "./artifactStore";
-import {Deployer} from "./cloudFoundryDeployOnArtifactStatus";
+import { listStatuses, Status } from "../../handlers/commands/editors/toclient/ghub";
+import { EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { BuiltContext } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { ProductionDeployPhases } from "../../handlers/events/delivery/phases/productionDeployPhases";
+import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
+import { sendFingerprint } from "../../handlers/commands/editors/toclient/fingerprints";
 
 @CommandHandler("Promote to production", "promote to production")
 export class DeployToProd implements HandleCommand {
@@ -58,19 +66,21 @@ export class DeployToProd implements HandleCommand {
             return Success;
         }
 
-        const result = await deploy(ProductionDeployPhases.phases[0],
-            ProductionDeployPhases.phases[1],
-            id, params.githubToken, artifactStatus.target_url,
-            artifactStore, Deployer,
-            ProductionCloudFoundryTargeter);
+        const fingerprint: Fingerprint = {
+            name: "DeployToProduction",
+            version: "1.0",
+            data: "do-it",
+            sha: "12345",
+        };
 
-        if (result.code === 0) {
-            await address(successMessage(params));
-        } else {
-            await address(tryAgainMessage(params, result.message));
-        }
+        await sendFingerprint(id, fingerprint, ctx.teamId);
+        // if (result.code === 0) {
+        //     await address(successMessage(params));
+        // } else {
+        //     await address(tryAgainMessage(params, result.message));
+        // }
 
-        return result;
+        return ctx.messageClient.respond("Deploying to production...");
     }
 }
 
