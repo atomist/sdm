@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
+import {GraphQL, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success, Success} from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -22,11 +22,13 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnPush } from "../../../typings/types";
-import { Phases } from "./Phases";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
+import {GitProject} from "@atomist/automation-client/project/git/GitProject";
+import {OnPush} from "../../../typings/types";
+import {GitHubStatusContext, Phases} from "./Phases";
+import {Parameters} from "@atomist/automation-client/decorators";
+import {tipOfDefaultBranch} from "../../commands/editors/toclient/ghub";
 
 export type Classifier = (p: GitProject) => Promise<Phases>;
 
@@ -43,7 +45,8 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private classifier: Classifier) {}
+    constructor(private classifier: Classifier) {
+    }
 
     public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push: OnPush.Push = event.data.Push[0];
@@ -62,5 +65,36 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
                     return Promise.resolve();
                 }
             }).then(() => Success);
+    }
+}
+
+
+@Parameters()
+export class ApplyPhasesParameters {
+    @Secret(Secrets.UserToken)
+    public githubToken: string;
+
+    @MappedParameter(MappedParameters.GitHubOwner)
+    public owner: string;
+
+    @MappedParameter(MappedParameters.GitHubRepository)
+    public repo: string;
+
+    @Parameter({required: false})
+    public sha?: string;
+}
+
+export function applyPhasesToCommit(phases: Phases) {
+    return async (ctx: HandlerContext,
+            params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
+
+        const sha = params.sha ? params.sha :
+            await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
+
+        const id = new GitHubRepoRef(params.owner, params.repo, sha);
+
+        const creds = {token: params.githubToken};
+
+        return phases.setAllToPending(id, creds).then(success);
     }
 }

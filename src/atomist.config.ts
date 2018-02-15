@@ -11,7 +11,7 @@ import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/bluep
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import {OfferPromotion, offerPromotionCommand, reportRunning} from "./software-delivery-machine/blueprint/offerPromotion";
 import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
-import { PhaseCleanup, PhaseSetup } from "./software-delivery-machine/blueprint/phaseManagement";
+import {applyHttpServicePhases, PhaseCleanup, PhaseSetup} from "./software-delivery-machine/blueprint/phaseManagement";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
@@ -36,6 +36,7 @@ export const configuration: Configuration = {
         () => offerPromotionCommand,
         () => reportRunning,
         StatusToApproved,
+        () => applyHttpServicePhases,
     ],
     events: [
         ActOnRepoCreation,

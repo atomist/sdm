@@ -64,3 +64,12 @@ function authHeaders(token: string): AxiosRequestConfig {
         }
         : {};
 }
+
+export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<string> {
+    // TODO: use real default branch
+    const defaultBranch = "master";
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/branches/master`;
+    return axios.get(url, config)
+        .then(ap => ap.data.commit.sha);
+}
