@@ -32,7 +32,7 @@ function getRandomInt(max) {
 
 export const appendAffirmationToReadMe: SimpleProjectEditor = (p, ctx) => {
     const affirmation = randomAffirmation();
-    return ctx.messageClient.respond(`Adding to README: _${affirmation}_`)
+    return ctx.messageClient.respond(`Adding to \`README.md\`: _${affirmation}_`)
         .then(() => doWithFiles(p, "README.md", f =>
             f.getContent().then(content =>
                 f.setContent(`${content}\n${affirmation}\n`))));
