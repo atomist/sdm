@@ -21,7 +21,7 @@ import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
 import {currentPhaseIsStillPending, previousPhaseHitSuccess} from "./Phases";
 import { ArtifactContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
-import { slackProgressLog } from "./ProgressLog";
+import { slackProgressLog } from "./log/ProgressLog";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status

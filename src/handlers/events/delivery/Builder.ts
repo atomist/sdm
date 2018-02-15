@@ -2,7 +2,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Readable } from "stream";
 import { AppInfo } from "./Deployment";
-import { ProgressLog } from "./ProgressLog";
+import { ProgressLog } from "./log/ProgressLog";
 import EventEmitter = NodeJS.EventEmitter;
 
 export interface RunningBuild {

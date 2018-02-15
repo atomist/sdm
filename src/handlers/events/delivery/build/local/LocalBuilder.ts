@@ -10,7 +10,7 @@ import axios from "axios";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ArtifactContext } from "../../phases/httpServicePhases";
-import { ProgressLog } from "../../ProgressLog";
+import { ProgressLog } from "../../log/ProgressLog";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist
@@ -20,6 +20,7 @@ export abstract class LocalBuilder implements Builder {
     constructor(private artifactStore: ArtifactStore) {
     }
 
+    // TODO use progress log
     public build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log?: ProgressLog): Promise<RunningBuild> {
         const as = this.artifactStore;
         return this.startBuild(creds, rr, team)
@@ -78,8 +79,6 @@ function onExit(code: number, signal: any, rb: RunningBuild, creds: ProjectOpera
         onFailure(rb);
     }
 }
-
-export const ScanBase = "https://scan.atomist.com";
 
 function setArtifact(rb: RunningBuild, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): Promise<any> {
     const id = rb.repoRef as GitHubRepoRef;

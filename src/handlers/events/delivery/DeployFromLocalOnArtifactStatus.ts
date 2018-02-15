@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
-import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {OnSuccessStatus, StatusState} from "../../../typings/types";
-import {createGist, createStatus} from "../../commands/editors/toclient/ghub";
-import {ArtifactStore} from "./ArtifactStore";
-import {parseCloudFoundryLog} from "./deploy/pcf/cloudFoundryLogParser";
-import {Deployer} from "./Deployer";
-import {TargetInfo} from "./Deployment";
-import {currentPhaseIsStillPending, previousPhaseHitSuccess} from "./Phases";
-import {ArtifactContext, HttpServicePhases} from "./phases/httpServicePhases";
-import {ConsoleProgressLog, MultiProgressLog, SavingProgressLog} from "./ProgressLog";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { OnSuccessStatus, StatusState } from "../../../typings/types";
+import { createStatus } from "../../commands/editors/toclient/ghub";
+import { ArtifactStore } from "./ArtifactStore";
+import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
+import { Deployer } from "./Deployer";
+import { TargetInfo } from "./Deployment";
+import { currentPhaseIsStillPending, previousPhaseHitSuccess } from "./Phases";
+import { ArtifactContext, HttpServicePhases } from "./phases/httpServicePhases";
+import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
+import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -76,21 +77,21 @@ export async function deploy<T extends TargetInfo>(context: string,
                                                    artifactStore: ArtifactStore,
                                                    deployer: Deployer<T>,
                                                    targeter: (id: RemoteRepoRef) => T) {
-    const persistentLog = new SavingProgressLog();
-    const progressLog = new MultiProgressLog(ConsoleProgressLog, persistentLog);
-
     try {
+        const linkableLog = await createLinkableProgressLog();
+        const savingLog = new SavingProgressLog();
+        const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog);
+
         const ac = await artifactStore.checkout(targetUrl);
         const deployment = await deployer.deploy(ac, targeter(id), progressLog);
         const deploymentFinished = new Promise((resolve, reject) => {
 
-            async function putLogInGistAndFindEndpoint(code, signal) {
+            async function lookForEndpointAndPersistLog(code, signal) {
                 try {
-                    const di = parseCloudFoundryLog(persistentLog.log);
-                    const gist = await putLogInGist(id, persistentLog);
+                    const di = parseCloudFoundryLog(savingLog.log);
+                    await progressLog.close();
                     await setDeployStatus(githubToken, id,
-                        code === 0 ? "success" : "failure",
-                        context, gist);
+                        code === 0 ? "success" : "failure", context, linkableLog.url);
                     await setEndpointStatus(githubToken, id, endpointContext, di.endpoint)
                         .catch(endpointStatus => {
                             logger.error("Could not set Endpoint status: " + endpointStatus.message);
@@ -102,15 +103,15 @@ export async function deploy<T extends TargetInfo>(context: string,
                 }
             }
 
-            async function putLogInGistAndFailStatus(code) {
-                const gist = await putLogInGist(id, persistentLog, true);
-                return setDeployStatus(githubToken, id, "failure", context, gist)
+            async function setFailStatusAndPersistLog() {
+                const gist = await progressLog.close();
+                return setDeployStatus(githubToken, id, "failure", context, linkableLog.url)
                     .then(resolve, reject);
             }
 
             deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-            deployment.childProcess.addListener("exit", putLogInGistAndFindEndpoint);
-            deployment.childProcess.addListener("error", putLogInGistAndFailStatus);
+            deployment.childProcess.addListener("exit", lookForEndpointAndPersistLog);
+            deployment.childProcess.addListener("error", setFailStatusAndPersistLog);
         });
         await deploymentFinished;
         return Success;
@@ -122,20 +123,6 @@ export async function deploy<T extends TargetInfo>(context: string,
                 return {code: 1, message: err.message};
             });
     }
-}
-
-function putLogInGist(id: GitHubRepoRef, persistentLog, failed: boolean = false) {
-    return createGist(undefined, {
-        description: `${failed ? " Failed d" : "D"}eployment log for ${id.owner}/${id.repo}`,
-        public: false,
-        files: [{
-            path: `${id.owner}_${id.repo}-${id.sha}.log`,
-            content: persistentLog.log,
-        }],
-    }).catch(gistError => {
-        logger.error("Could not create gist: " + gistError.message);
-        return "www.atomist.com/sorry-but-gist-creation-failed";
-    });
 }
 
 function setDeployStatus(token: string, id: GitHubRepoRef, state: StatusState, context: string, targetUrl: string): Promise<any> {

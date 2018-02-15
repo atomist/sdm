@@ -4,7 +4,7 @@ import {spawn} from "child_process";
 import {DeployableArtifact} from "../../ArtifactStore";
 import {Deployer} from "../../Deployer";
 import {Deployment} from "../../Deployment";
-import {ProgressLog} from "../../ProgressLog";
+import {ProgressLog} from "../../log/ProgressLog";
 import {CloudFoundryInfo} from "./CloudFoundryTarget";
 
 /**
@@ -18,8 +18,8 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         }
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi.description);
         await runCommand(
-            `cf target -s ${cfi.space}`,
-            {cwd: ai.cwd})
+            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p "${cfi.password}" -s ${cfi.space}`,
+            {cwd: ai.cwd});
         console.log("Successfully selected space [%s]", cfi.space);
         // Turn off color so we don't have unpleasant escape codes in web stream
         await runCommand("cf config --color false", {cwd: ai.cwd});

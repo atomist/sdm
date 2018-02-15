@@ -1,6 +1,6 @@
 import { DeployableArtifact } from "./ArtifactStore";
 import { Deployment, TargetInfo } from "./Deployment";
-import { ProgressLog } from "./ProgressLog";
+import { ProgressLog } from "./log/ProgressLog";
 
 export interface Deployer<T extends TargetInfo> {
 
