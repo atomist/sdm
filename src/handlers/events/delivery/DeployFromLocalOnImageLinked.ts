@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnImageLinked, StatusState } from "../../../typings/types";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ArtifactStore } from "./ArtifactStore";
-import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
-import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
-import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
-import {currentPhaseIsStillPending, GitHubStatusAndFriends, GitHubStatusContext, Phases, previousPhaseSucceeded} from "./Phases";
-import {BuiltContext, ContextToName, HttpServicePhases} from "./phases/httpServicePhases";
+import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
+import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {OnImageLinked, StatusState} from "../../../typings/types";
+import {createStatus} from "../../commands/editors/toclient/ghub";
+import {ArtifactStore} from "./ArtifactStore";
+import {parseCloudFoundryLog} from "./deploy/pcf/cloudFoundryLogParser";
+import {Deployer} from "./Deployer";
+import {TargetInfo} from "./Deployment";
+import {createLinkableProgressLog} from "./log/NaiveLinkablePersistentProgressLog";
+import {ConsoleProgressLog, MultiProgressLog, SavingProgressLog} from "./log/ProgressLog";
+import {currentPhaseIsStillPending, GitHubStatusAndFriends, GitHubStatusContext, Phases, PlannedPhase, previousPhaseSucceeded} from "./Phases";
+import {BuiltContext, ContextToPlannedPhase, HttpServicePhases} from "./phases/httpServicePhases";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -41,8 +41,8 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
     private githubToken: string;
 
     constructor(private phases: Phases,
-                private ourContext: string,
-                private endpointContext: string,
+                private ourPhase: PlannedPhase,
+                private endpointPhase: PlannedPhase,
                 private artifactStore: ArtifactStore,
                 private deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
@@ -64,23 +64,23 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
             siblings: imageLinked.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(params.phases, params.ourContext, statusAndFriends)) {
+        if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.ourContext, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return deploy(params.ourContext, params.endpointContext,
+        return deploy(params.ourPhase, params.endpointPhase,
             id, params.githubToken, imageLinked.image.imageName,
             params.artifactStore, params.deployer, params.targeter);
     }
 }
 
-export async function deploy<T extends TargetInfo>(context: string,
-                                                   endpointContext: string,
+export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
+                                                   endpointPhase: PlannedPhase,
                                                    id: GitHubRepoRef,
                                                    githubToken: string,
                                                    targetUrl: string,
@@ -88,6 +88,11 @@ export async function deploy<T extends TargetInfo>(context: string,
                                                    deployer: Deployer<T>,
                                                    targeter: (id: RemoteRepoRef) => T) {
     try {
+        await setDeployStatus(githubToken, id, "pending", deployPhase.context,
+            undefined, `Working on ${deployPhase.name}`)
+            .catch(err =>
+                logger.warn("Failed to update deploy status to tell people we are working on it"));
+
         const linkableLog = await createLinkableProgressLog();
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog);
@@ -101,10 +106,10 @@ export async function deploy<T extends TargetInfo>(context: string,
                     const di = parseCloudFoundryLog(savingLog.log);
                     await progressLog.close();
                     await setDeployStatus(githubToken, id,
-                        code === 0 ? "success" : "failure", context, linkableLog.url,
-                        `${code === 0 ? "Completed" : "Failed to"} ${ContextToName[context].name}`);
-                    await setEndpointStatus(githubToken, id, endpointContext, di.endpoint,
-                        `Completed ${ContextToName[endpointContext].name}`)
+                        code === 0 ? "success" : "failure", deployPhase.context, linkableLog.url,
+                        `${code === 0 ? "Completed" : "Failed to"} ${deployPhase.name}`);
+                    await setEndpointStatus(githubToken, id, endpointPhase.context, di.endpoint,
+                        `Completed ${endpointPhase.name}`)
                         .catch(endpointStatus => {
                             logger.error("Could not set Endpoint status: " + endpointStatus.message);
                             // do not fail this whole handler
@@ -117,7 +122,8 @@ export async function deploy<T extends TargetInfo>(context: string,
 
             async function setFailStatusAndPersistLog() {
                 await progressLog.close();
-                return setDeployStatus(githubToken, id, "failure", context, linkableLog.url)
+                return setDeployStatus(githubToken, id, "failure", deployPhase.context, linkableLog.url,
+                    `Failed to ${deployPhase.name}`)
                     .then(resolve, reject);
             }
 
@@ -129,7 +135,8 @@ export async function deploy<T extends TargetInfo>(context: string,
         return Success;
     } catch (err) {
         console.log("ERROR: " + err);
-        return setDeployStatus(githubToken, id, "failure", context, "http://www.test.com")
+        return setDeployStatus(githubToken, id, "failure", deployPhase.context,
+            "http://www.test.com", `Failed to ${deployPhase.name}`)
             .then(() => ({code: 1, message: err.message}), statusUpdateFailure => {
                 logger.warn("Also unable to update the deploy status to failure: " + statusUpdateFailure.message);
                 return {code: 1, message: err.message};

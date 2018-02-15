@@ -23,7 +23,7 @@ import {GitProject} from "@atomist/automation-client/project/git/GitProject";
 import {OnPendingStatus, StatusState} from "../../../typings/types";
 import {addressChannelsFor} from "../../commands/editors/toclient/addressChannels";
 import {createStatus} from "../../commands/editors/toclient/ghub";
-import {ContextToName, ScanContext} from "./phases/httpServicePhases";
+import {ContextToPlannedPhase, ScanContext} from "./phases/httpServicePhases";
 
 export interface ProjectScanResult {
     passed: boolean;
@@ -85,7 +85,7 @@ export const ScanBase = "https://scan.atomist.com";
 
 // TODO this should take a URL with detailed information
 function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperationCredentials): Promise<any> {
-    const phase = ContextToName[ScanContext];
+    const phase = ContextToPlannedPhase[ScanContext];
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,

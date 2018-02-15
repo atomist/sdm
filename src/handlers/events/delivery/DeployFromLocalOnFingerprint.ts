@@ -13,7 +13,7 @@ import { ArtifactStore } from "./ArtifactStore";
 import { Deployer } from "./Deployer";
 import { deploy } from "./DeployFromLocalOnImageLinked";
 import { TargetInfo } from "./Deployment";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, previousPhaseSucceeded } from "./Phases";
+import {currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded} from "./Phases";
 import { BuiltContext, HttpServicePhases } from "./phases/httpServicePhases";
 
 // TODO could make in common with other deployer...
@@ -26,8 +26,8 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
     private githubToken: string;
 
     constructor(private phases: Phases,
-                private ourContext: string,
-                private endpointContext: string,
+                private ourPhase: PlannedPhase,
+                private endpointPhase: PlannedPhase,
                 private artifactStore: ArtifactStore,
                 private deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
@@ -49,17 +49,17 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
             siblings: fingerprint.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(params.phases, params.ourContext, statusAndFriends)) {
+        if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.ourContext, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         logger.info("Fingerprint deployer deploying image [%s]", fingerprint.commit.image.imageName);
-        return deploy(params.ourContext, params.endpointContext,
+        return deploy(params.ourPhase, params.endpointPhase,
             id, params.githubToken,
             fingerprint.commit.image.imageName,
             params.artifactStore, params.deployer, params.targeter);

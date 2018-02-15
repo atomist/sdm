@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnSuccessStatus, StatusState } from "../../../typings/types";
-import { createStatus } from "../../commands/editors/toclient/ghub";
+import {GraphQL, HandlerResult, logger, Secret, Secrets, success, Success} from "@atomist/automation-client";
+import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {OnSuccessStatus, StatusState} from "../../../typings/types";
+import {createStatus} from "../../commands/editors/toclient/ghub";
 import {currentPhaseIsStillPending, previousPhaseSucceeded} from "./Phases";
-import { HttpServicePhases, StagingEndpointContext, StagingVerifiedContext } from "./phases/httpServicePhases";
+import {ContextToPlannedPhase, HttpServicePhases, StagingEndpointContext, StagingVerifiedContext} from "./phases/httpServicePhases";
 
 export type EndpointVerifier = (url: string) => Promise<any>;
 
@@ -44,7 +44,7 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        const statusAndFriends = { context: status.context, state: status.state, siblings: status.commit.statuses };
+        const statusAndFriends = {context: status.context, state: status.state, siblings: status.commit.statuses};
 
         if (!previousPhaseSucceeded(HttpServicePhases, StagingVerifiedContext, statusAndFriends)) {
             return Promise.resolve(Success);
@@ -57,9 +57,13 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         return params.verifier(status.targetUrl)
-            .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl))
+            .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl)
+                .then(success))
             .catch(err => {
-                return setVerificationStatus(params.githubToken, id, "failure", status.targetUrl);
+                // todo: report error in Slack? ... or load it to a log that links
+                logger.warn("Failing verification because: " + err);
+                return setVerificationStatus(params.githubToken, id, "failure", status.targetUrl)
+                    .then(success);
             });
     }
 }
@@ -69,5 +73,6 @@ function setVerificationStatus(token: string, id: GitHubRepoRef, state: StatusSt
         state,
         target_url,
         context: StagingVerifiedContext,
+        description: `${state === "success" ? "Completed" : "Failed to "} ${ContextToPlannedPhase[StagingVerifiedContext].name}`,
     });
 }

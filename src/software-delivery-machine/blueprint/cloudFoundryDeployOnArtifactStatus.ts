@@ -22,12 +22,13 @@ import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/
 import { DeployFromLocalOnFingerprint } from "../../handlers/events/delivery/DeployFromLocalOnFingerprint";
 import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
 import {
+    ContextToPlannedPhase,
     HttpServicePhases, StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../handlers/events/delivery/phases/httpServicePhases";
 import {
-    ProductionDeploymentContext, ProductionDeployPhases,
-    ProductionEndpointContext,
+    ProductionDeploymentContext, ProductionDeploymentPhase, ProductionDeployPhases,
+    ProductionEndpointContext, ProductionEndpointPhase,
 } from "../../handlers/events/delivery/phases/productionDeployPhases";
 import { OnDeployToProductionFingerprint } from "../../typings/types";
 import { artifactStore } from "./artifactStore";
@@ -41,8 +42,8 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
 export const CloudFoundryStagingDeployOnArtifactStatus =
     new DeployFromLocalOnImageLinked(
         HttpServicePhases,
-        StagingDeploymentContext,
-        StagingEndpointContext,
+        ContextToPlannedPhase[StagingDeploymentContext],
+        ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
         Deployer,
         () => ({
@@ -54,8 +55,8 @@ export const CloudFoundryStagingDeployOnArtifactStatus =
 export const CloudFoundryProductionDeployOnArtifactStatus =
     new DeployFromLocalOnFingerprint(
         ProductionDeployPhases,
-        ProductionDeploymentContext,
-        ProductionEndpointContext,
+        ProductionDeploymentPhase,
+        ProductionEndpointPhase,
         artifactStore,
         Deployer,
         () => ({
