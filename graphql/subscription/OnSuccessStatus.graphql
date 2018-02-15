@@ -29,5 +29,6 @@ subscription OnSuccessStatus($context: String!) {
         state
         targetUrl
         context
+        description
     }
 }

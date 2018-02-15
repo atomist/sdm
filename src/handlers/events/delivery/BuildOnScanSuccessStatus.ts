@@ -43,7 +43,11 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
-        const statusAndFriends = { context: status.context, state: status.state, siblings: status.commit.statuses };
+        const statusAndFriends = {
+            context: status.context,
+            state: status.state,
+            targetUrl: status.targetUrl,
+            siblings: status.commit.statuses };
 
         if (!previousPhaseSucceeded(HttpServicePhases, BuiltContext, statusAndFriends)) {
             return Promise.resolve(Success);

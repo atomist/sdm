@@ -29,5 +29,6 @@ subscription OnPendingStatus($context: String!) {
         state
         targetUrl
         context
+        description
     }
 }

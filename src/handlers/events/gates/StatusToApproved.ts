@@ -3,6 +3,7 @@ import { CommandHandler, HandleCommand, HandlerContext, Parameter, Secret, Secre
 import { createStatus, listStatuses } from "../../commands/editors/toclient/ghub";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as assert from "power-assert";
+import { ApprovalGateParam } from "./StatusApprovalGate";
 
 @CommandHandler("Transition status to approve")
 export class StatusToApproved implements HandleCommand {
@@ -39,12 +40,11 @@ export class StatusToApproved implements HandleCommand {
         assert(!!oldStatus);
 
         await createStatus(params.githubToken, id, {
-            context: oldStatus.context.replace("?", ""),
+            context: oldStatus.context,
             state: oldStatus.state,
             description: oldStatus.description,
-            target_url: oldStatus.target_url,
+            target_url: oldStatus.target_url.replace(ApprovalGateParam, ""),
         });
-        // TODO use ? in description instead
         //await deleteStatus(params.githubToken, id, oldStatus.context);
         return ctx.messageClient.respond("Approved");
     }

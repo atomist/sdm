@@ -46,6 +46,7 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
         const statusAndFriends: GitHubStatusAndFriends = {
             context: BuiltContext,
             state: "success", // builtStatus.state,
+            targetUrl: "xxx",
             siblings: fingerprint.commit.statuses,
         };
 

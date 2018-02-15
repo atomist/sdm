@@ -29,5 +29,6 @@ subscription OnAnySuccessStatus {
         state
         targetUrl
         context
+        description
     }
 }

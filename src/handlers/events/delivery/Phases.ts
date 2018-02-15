@@ -9,6 +9,7 @@ import {createStatus, State, Status} from "../../commands/editors/toclient/ghub"
 import {logger} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
+import { ApprovalGateParam } from "../gates/StatusApprovalGate";
 
 // convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
 export type GitHubStatusContext = string;
@@ -45,6 +46,19 @@ export function parseContext(context: GitHubStatusContext) {
 export class Phases {
 
     constructor(public phases: GitHubStatusContext[], private plannedPhaseByContext?: { [key: string]: PlannedPhase }) {
+    }
+
+    /**
+     * Return next phase if this is a phase
+     * @param {string} context
+     * @return {GitHubStatusContext}
+     */
+    public nextPhase(phase: string): GitHubStatusContext {
+        const index = this.phases.indexOf(phase);
+        if (index !== this.phases.length - 1) {
+            return this.phases[index + 1];
+        }
+        return undefined;
     }
 
     // TODO method to check whether a status is set
@@ -95,7 +109,7 @@ function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
         state,
         target_url: `${id.apiBase}/${id.owner}/${id.repo}/${id.sha}`,
         context,
-        description
+        description,
     });
 }
 
@@ -103,6 +117,7 @@ export interface GitHubStatusAndFriends {
 
     context: GitHubStatusContext;
     state: StatusState;
+    targetUrl: string;
     siblings: Array<{ context?: GitHubStatusContext, state?: StatusState }>;
 
 }
@@ -116,7 +131,7 @@ export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, st
 }
 
 export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    if (status.state !== "success") {
+    if (status.state !== "success" || status.targetUrl.endsWith(ApprovalGateParam)) {
         logger.info(`********* Previous state ${status.context} wasn't success, but [${status.state}]`);
         return false;
     }

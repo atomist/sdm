@@ -44,7 +44,7 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        const statusAndFriends = {context: status.context, state: status.state, siblings: status.commit.statuses};
+        const statusAndFriends = {context: status.context, state: status.state, targetUrl: status.targetUrl, siblings: status.commit.statuses};
 
         if (!previousPhaseSucceeded(HttpServicePhases, StagingVerifiedContext, statusAndFriends)) {
             return Promise.resolve(Success);

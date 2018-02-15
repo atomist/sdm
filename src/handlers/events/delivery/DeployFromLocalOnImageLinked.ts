@@ -61,6 +61,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
         const statusAndFriends: GitHubStatusAndFriends = {
             context: BuiltContext,
             state: "success", // builtStatus.state,
+            targetUrl: "xxx",
             siblings: imageLinked.commit.statuses,
         };
 

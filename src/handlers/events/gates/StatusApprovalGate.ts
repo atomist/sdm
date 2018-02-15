@@ -24,6 +24,12 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import Status = OnSuccessStatus.Status;
 
 /**
+ * Added to end of URL
+ * @type {string}
+ */
+export const ApprovalGateParam = "&atomist:approve=true";
+
+/**
  * Update a status.
  */
 @EventHandler("Approval gate",
@@ -38,7 +44,7 @@ export class StatusApprovalGate implements HandleEvent<OnAnySuccessStatus.Subscr
         const status: Status = event.data.Status[0];
         const commit = status.commit;
 
-        if (!status.context.endsWith("?")) {
+        if (!status.targetUrl.endsWith(ApprovalGateParam)) {
             console.log(`********* approval gate got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }
@@ -46,9 +52,9 @@ export class StatusApprovalGate implements HandleEvent<OnAnySuccessStatus.Subscr
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const attachment: slack.Attachment = {
-            text: `Approve ${status.context}?`,
+            text: `Approve ${status.context}`,
             fallback: "approve",
-            actions: [buttonForCommand({text: "Approval"},
+            actions: [buttonForCommand({text: `Approve ${status.context}`},
                 "StatusToApproved",
                 {
                     owner: id.owner,

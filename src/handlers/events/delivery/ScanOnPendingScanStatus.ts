@@ -24,6 +24,7 @@ import {OnPendingStatus, StatusState} from "../../../typings/types";
 import {addressChannelsFor} from "../../commands/editors/toclient/addressChannels";
 import {createStatus} from "../../commands/editors/toclient/ghub";
 import {ContextToPlannedPhase, ScanContext} from "./phases/httpServicePhases";
+import { ApprovalGateParam } from "../gates/StatusApprovalGate";
 
 export interface ProjectScanResult {
     passed: boolean;
@@ -82,13 +83,12 @@ export class ScanOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subs
 
 export const ScanBase = "https://scan.atomist.com";
 
-
 // TODO this should take a URL with detailed information
 function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperationCredentials): Promise<any> {
     const phase = ContextToPlannedPhase[ScanContext];
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
+        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`, //${ApprovalGateParam}
         context: ScanContext,
         description: `Completed ${phase.name}`,
     });

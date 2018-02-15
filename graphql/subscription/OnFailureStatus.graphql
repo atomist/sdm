@@ -29,5 +29,6 @@ subscription OnFailureStatus {
         state
         targetUrl
         context
+        description
     }
 }
