@@ -20,8 +20,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
 import { slackProgressLog } from "./log/ProgressLog";
-import {currentPhaseIsStillPending, previousPhaseHitSuccess} from "./Phases";
-import { ArtifactContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
+import {currentPhaseIsStillPending, previousPhaseSucceeded} from "./Phases";
+import { BuiltContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
@@ -43,11 +43,13 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
-        if (!previousPhaseHitSuccess(HttpServicePhases, ArtifactContext, status)) {
+        const statusAndFriends = { context: status.context, state: status.state, siblings: status.commit.statuses };
+
+        if (!previousPhaseSucceeded(HttpServicePhases, BuiltContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(ArtifactContext, status)) {
+        if (!currentPhaseIsStillPending(BuiltContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

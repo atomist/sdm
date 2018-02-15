@@ -18,7 +18,7 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnSuccessStatus, StatusState } from "../../../typings/types";
+import { OnImageLinked, StatusState } from "../../../typings/types";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
@@ -26,18 +26,16 @@ import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
 import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
-import { currentPhaseIsStillPending, previousPhaseHitSuccess } from "./Phases";
-import { ArtifactContext, HttpServicePhases } from "./phases/httpServicePhases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "./Phases";
+import { BuiltContext, HttpServicePhases } from "./phases/httpServicePhases";
 
 /**
- * Deploy a published artifact identified in a GitHub "artifact" status.
+ * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Deploy published artifact",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
-        __dirname, {
-            context: ArtifactContext,
-        }))
-export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements HandleEvent<OnSuccessStatus.Subscription> {
+@EventHandler("Deploy linked artifact",
+    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnImageLinked.graphql",
+        __dirname))
+export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -49,22 +47,33 @@ export class DeployFromLocalOnArtifactStatus<T extends TargetInfo> implements Ha
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+        const imageLinked = event.data.ImageLinked[0];
+        const commit = imageLinked.commit;
 
-        const status = event.data.Status[0];
-        const commit = status.commit;
+        // TODO doesn't work as built status isn't in, yet
+        // const builtStatus = commit.statuses.find(status => status.context === BuiltContext);
+        // if (!builtStatus) {
+        //     console.log(`Deploy: builtStatus not found`);
+        //     return Promise.resolve(Success);
+        // }
+        const statusAndFriends: GitHubStatusAndFriends = {
+            context: BuiltContext,
+            state: "success", // builtStatus.state,
+            siblings: imageLinked.commit.statuses,
+        };
 
-        if (!previousPhaseHitSuccess(HttpServicePhases, params.ourContext, status)) {
+        if (!previousPhaseSucceeded(HttpServicePhases, params.ourContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.ourContext, status)) {
+        if (!currentPhaseIsStillPending(params.ourContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         return deploy(params.ourContext, params.endpointContext,
-            id, params.githubToken, status.targetUrl,
+            id, params.githubToken, imageLinked.image.imageName,
             params.artifactStore, params.deployer, params.targeter);
     }
 }
@@ -104,7 +113,7 @@ export async function deploy<T extends TargetInfo>(context: string,
             }
 
             async function setFailStatusAndPersistLog() {
-                const gist = await progressLog.close();
+                await progressLog.close();
                 return setDeployStatus(githubToken, id, "failure", context, linkableLog.url)
                     .then(resolve, reject);
             }

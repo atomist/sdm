@@ -6,8 +6,8 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import * as stringify from "json-stringify-safe";
 import {listStatuses, Status} from "../../handlers/commands/editors/toclient/ghub";
 import {EnvironmentCloudFoundryTarget} from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
-import {deploy} from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
-import {ArtifactContext} from "../../handlers/events/delivery/phases/httpServicePhases";
+import {deploy} from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
+import {BuiltContext} from "../../handlers/events/delivery/phases/httpServicePhases";
 import {ProductionDeployPhases} from "../../handlers/events/delivery/phases/productionDeployPhases";
 import {artifactStore} from "./artifactStore";
 import {Deployer} from "./cloudFoundryDeployOnArtifactStatus";
@@ -100,6 +100,6 @@ const ProductionCloudFoundryTargeter = () => ({
 function findArtifactStatus(id: GitHubRepoRef, token: string): Promise<Status> {
     return listStatuses(token, id)
         .then(statuses => {
-            return statuses.find(s => s.context === ArtifactContext);
+            return statuses.find(s => s.context === BuiltContext);
         });
 }

@@ -52,22 +52,24 @@ function setStatus(id: GitHubRepoRef, context: string, state: State, creds: Proj
 }
 
 export interface GitHubStatusAndFriends {
-    context?: GitHubStatusContext;
-    state?: StatusState;
-    commit?: { statuses?: Array<{ context?: GitHubStatusContext, state?: StatusState }> };
+
+    context: GitHubStatusContext;
+    state: StatusState;
+    siblings: Array<{ context?: GitHubStatusContext, state?: StatusState }>;
+
 }
 
 export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const result = status.commit.statuses.some(s => s.state === "pending" && s.context === currentPhase);
+    const result = status.siblings.some(s => s.state === "pending" && s.context === currentPhase);
     if (!result) {
         console.log(`${currentPhase} wanted to run but it wasn't pending`);
     }
     return result;
 }
 
-export function previousPhaseHitSuccess(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     if (status.state !== "success") {
-        console.log(`********* ${currentPhase} is look=[${status.state}]`);
+        logger.info(`********* Previous state ${status.context} wasn't success, but [${status.state}]`);
         return false;
     }
 

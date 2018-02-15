@@ -19,7 +19,7 @@ import {
     EnvironmentCloudFoundryTarget,
 } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
-import { DeployFromLocalOnArtifactStatus } from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
+import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
 import { StagingDeploymentContext, StagingEndpointContext } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "./artifactStore";
 
@@ -27,10 +27,10 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
 
 /**
  * Deploy everything to the same Cloud Foundry space
- * @type {DeployFromLocalOnArtifactStatus<CloudFoundryInfo>}
+ * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
 export const CloudFoundryStagingDeployOnArtifactStatus =
-    new DeployFromLocalOnArtifactStatus(
+    new DeployFromLocalOnImageLinked(
         StagingDeploymentContext,
         StagingEndpointContext,
         artifactStore,

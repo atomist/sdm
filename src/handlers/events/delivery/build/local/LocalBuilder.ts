@@ -10,7 +10,9 @@ import axios from "axios";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../log/ProgressLog";
-import { ArtifactContext } from "../../phases/httpServicePhases";
+import { BuiltContext } from "../../phases/httpServicePhases";
+import { postLinkImageWebhook } from "../../../link/ImageLink";
+import { HandlerContext } from "@atomist/automation-client";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist
@@ -20,12 +22,12 @@ export abstract class LocalBuilder implements Builder {
     constructor(private artifactStore: ArtifactStore) {
     }
 
-    // TODO use progress log
+    // TODO actually use progress log
     public build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log?: ProgressLog): Promise<RunningBuild> {
         const as = this.artifactStore;
         return this.startBuild(creds, rr, team)
             .then(rb => {
-                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, creds, as))
+                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, creds, as))
                     .addListener("error", (code, signal) => onFailure(rb));
                 return rb;
             })
@@ -50,6 +52,7 @@ function onFailure(runningBuild: RunningBuild) {
 function updateAtomistLifecycle(runningBuild: RunningBuild,
                                 status: "STARTED" | "SUCCESS" | "FAILURE",
                                 phase: "STARTED" | "FINALIZED" = "FINALIZED"): Promise<RunningBuild> {
+    // TODO Use David's Abstraction?
     const url = `https://webhook.atomist.com/atomist/jenkins/teams/${runningBuild.team}`;
     const data = {
         name: `Build ${runningBuild.repoRef.sha}`,
@@ -71,21 +74,22 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
         .then(() => runningBuild);
 }
 
-function onExit(code: number, signal: any, rb: RunningBuild, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): void {
+function onExit(code: number, signal: any, rb: RunningBuild, team: string, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): void {
     if (code === 0) {
         onSuccess(rb)
-            .then(id => setArtifact(rb, creds, artifactStore));
+            .then(id => setBuiltContext(rb, team, creds, artifactStore));
     } else {
         onFailure(rb);
     }
 }
 
-function setArtifact(rb: RunningBuild, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): Promise<any> {
+function setBuiltContext(rb: RunningBuild, team: string, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): Promise<any> {
     const id = rb.repoRef as GitHubRepoRef;
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
-        .then(target_url => createStatus((creds as TokenCredentials).token, id, {
-            state: "success",
-            target_url,
-            context: ArtifactContext,
-        }));
+        .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team)
+            .then(linked => createStatus((creds as TokenCredentials).token, id, {
+                state: "success",
+                target_url: imageUrl,
+                context: BuiltContext,
+            })));
 }
