@@ -1,6 +1,7 @@
 import * as Stream from "stream";
 import { ArtifactStore, DeployableArtifact, StoredArtifact } from "../../ArtifactStore";
 import { AppInfo } from "../../Deployment";
+import { logger } from "@atomist/automation-client";
 
 /**
  * Store the artifact on local desk, relying on in memory cache
@@ -33,6 +34,8 @@ export class LocalArtifactStore implements ArtifactStore {
         return this.retrieve(url)
             .then(storedArtifact => {
                 if (!storedArtifact) {
+                    logger.error("No stored artifact for [%s]: Known=%s", url,
+                        this.entries.map(e => e.url).join(","));
                     return undefined;
                 }
 

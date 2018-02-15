@@ -6,13 +6,13 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { createStatus } from "../../../../commands/editors/toclient/ghub";
 
+import { HandlerContext } from "@atomist/automation-client";
 import axios from "axios";
+import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../log/ProgressLog";
 import { BuiltContext } from "../../phases/httpServicePhases";
-import { postLinkImageWebhook } from "../../../link/ImageLink";
-import { HandlerContext } from "@atomist/automation-client";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist

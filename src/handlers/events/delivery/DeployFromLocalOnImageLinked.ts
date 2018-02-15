@@ -26,7 +26,7 @@ import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
 import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "./Phases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, previousPhaseSucceeded } from "./Phases";
 import { BuiltContext, HttpServicePhases } from "./phases/httpServicePhases";
 
 /**
@@ -40,7 +40,8 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private ourContext: string,
+    constructor(private phases: Phases,
+                private ourContext: string,
                 private endpointContext: string,
                 private artifactStore: ArtifactStore,
                 private deployer: Deployer<T>,
@@ -63,7 +64,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
             siblings: imageLinked.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(HttpServicePhases, params.ourContext, statusAndFriends)) {
+        if (!previousPhaseSucceeded(params.phases, params.ourContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

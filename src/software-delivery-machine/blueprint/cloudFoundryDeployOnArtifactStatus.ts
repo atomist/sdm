@@ -19,8 +19,17 @@ import {
     EnvironmentCloudFoundryTarget,
 } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { DeployFromLocalOnFingerprint } from "../../handlers/events/delivery/DeployFromLocalOnFingerprint";
 import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
-import { StagingDeploymentContext, StagingEndpointContext } from "../../handlers/events/delivery/phases/httpServicePhases";
+import {
+    HttpServicePhases, StagingDeploymentContext,
+    StagingEndpointContext
+} from "../../handlers/events/delivery/phases/httpServicePhases";
+import {
+    ProductionDeploymentContext, ProductionDeployPhases,
+    ProductionEndpointContext,
+} from "../../handlers/events/delivery/phases/productionDeployPhases";
+import { OnDeployToProductionFingerprint } from "../../typings/types";
 import { artifactStore } from "./artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
@@ -31,6 +40,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  */
 export const CloudFoundryStagingDeployOnArtifactStatus =
     new DeployFromLocalOnImageLinked(
+        HttpServicePhases,
         StagingDeploymentContext,
         StagingEndpointContext,
         artifactStore,
@@ -40,3 +50,16 @@ export const CloudFoundryStagingDeployOnArtifactStatus =
             space: "ri-staging",
         }),
         );
+
+export const CloudFoundryProductionDeployOnArtifactStatus =
+    new DeployFromLocalOnFingerprint(
+        ProductionDeployPhases,
+        ProductionDeploymentContext,
+        ProductionEndpointContext,
+        artifactStore,
+        Deployer,
+        () => ({
+            ...new EnvironmentCloudFoundryTarget(),
+            space: "ri-production",
+        }),
+    );

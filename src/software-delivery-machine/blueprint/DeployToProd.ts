@@ -6,19 +6,17 @@ import {
     Parameter,
     Secret,
     Secrets,
-    Success
 } from "@atomist/automation-client";
 import { CommandHandler } from "@atomist/automation-client/decorators";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { addressSlackUsers } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import * as stringify from "json-stringify-safe";
+import { sendFingerprint } from "../../handlers/commands/editors/toclient/fingerprints";
 import { listStatuses, Status } from "../../handlers/commands/editors/toclient/ghub";
 import { EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { BuiltContext } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { ProductionDeployPhases } from "../../handlers/events/delivery/phases/productionDeployPhases";
-import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { sendFingerprint } from "../../handlers/commands/editors/toclient/fingerprints";
 
 @CommandHandler("Promote to production", "promote to production")
 export class DeployToProd implements HandleCommand {
@@ -60,18 +58,14 @@ export class DeployToProd implements HandleCommand {
         const id = new GitHubRepoRef(params.owner, params.repo, params.sha);
         const creds = {token: params.githubToken};
         await ProductionDeployPhases.setAllToPending(id, creds);
-        const artifactStatus = await findArtifactStatus(id, params.githubToken);
-        if (!artifactStatus) {
-            await address("Did not find artifact for " + stringify(id));
-            return Success;
-        }
 
         const fingerprint: Fingerprint = {
             name: "DeployToProduction",
             version: "1.0",
             data: "do-it",
             sha: "12345",
-        };
+            abbreviation: "dp",
+        } as Fingerprint; // TODO remove once we fix client
 
         await sendFingerprint(id, fingerprint, ctx.teamId);
         // if (result.code === 0) {
@@ -95,11 +89,6 @@ function workingMessage(params: DeployToProd) {
 function tryAgainMessage(params: DeployToProd, message: string) {
     return "failed";
 }
-
-const ProductionCloudFoundryTargeter = () => ({
-    ...new EnvironmentCloudFoundryTarget(),
-    space: "ri-production",
-});
 
 /**
  * Rewrite the artifact status so that we get a new event

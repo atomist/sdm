@@ -3,6 +3,7 @@ import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import {
+    CloudFoundryProductionDeployOnArtifactStatus,
     CloudFoundryStagingDeployOnArtifactStatus,
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
 import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
@@ -41,6 +42,7 @@ export const configuration: Configuration = {
         () => Scan,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryStagingDeployOnArtifactStatus,
+        () => CloudFoundryProductionDeployOnArtifactStatus,
         () => NotifyOnDeploy,
         () => VerifyEndpoint,
         () => OfferPromotion,

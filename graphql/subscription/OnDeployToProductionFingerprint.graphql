@@ -1,0 +1,39 @@
+subscription OnDeployToProductionFingerprint {
+    Fingerprint(name: "DeployToProduction") {
+        name
+        commit {
+            sha
+            message
+            author {
+                person {
+                    id
+                    name
+                    chatId {
+                        screenName
+                    }
+                }
+            }
+            image {
+                imageName
+            }
+            statuses {
+                context
+                description
+                state
+            }
+            repo {
+                owner
+                name
+                channels {
+                    name
+                    id
+                }
+                org {
+                    chatTeam {
+                        id
+                    }
+                }
+            }
+        }
+    }
+}

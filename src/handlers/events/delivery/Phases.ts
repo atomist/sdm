@@ -80,7 +80,8 @@ export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: Git
     }
     if (whereAmI === 0) {
         logger.info(`${currentPhase} is the first step.`);
-        return false;
+        // TODO is this OK?
+        return true;
     }
     const previousPhase = expectedPhases.phases[whereAmI - 1];
     if (previousPhase === status.context) {
