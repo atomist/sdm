@@ -87,6 +87,6 @@ function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperat
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`,
-        context: ScanContext,
+        context: ScanContext + "?",
     });
 }

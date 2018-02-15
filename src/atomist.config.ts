@@ -16,6 +16,8 @@ import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import {affirmationEditor} from "./software-delivery-machine/commands/editors/affirmationEditor";
+import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
+import { StatusToApproved } from "./handlers/events/gates/StatusToApproved";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -33,6 +35,7 @@ export const configuration: Configuration = {
         () => addCloudFoundryManifest,
         () => offerPromotionCommand,
         () => reportRunning,
+        StatusToApproved,
     ],
     events: [
         ActOnRepoCreation,
@@ -46,6 +49,7 @@ export const configuration: Configuration = {
         () => NotifyOnDeploy,
         () => VerifyEndpoint,
         () => OfferPromotion,
+        StatusApprovalGate,
     ],
     token,
     http: {

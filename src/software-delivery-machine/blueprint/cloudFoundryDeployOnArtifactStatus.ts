@@ -23,7 +23,7 @@ import { DeployFromLocalOnFingerprint } from "../../handlers/events/delivery/Dep
 import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
 import {
     HttpServicePhases, StagingDeploymentContext,
-    StagingEndpointContext
+    StagingEndpointContext,
 } from "../../handlers/events/delivery/phases/httpServicePhases";
 import {
     ProductionDeploymentContext, ProductionDeployPhases,

@@ -14,7 +14,6 @@ import { addressSlackUsers } from "@atomist/automation-client/spi/message/Messag
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { sendFingerprint } from "../../handlers/commands/editors/toclient/fingerprints";
 import { listStatuses, Status } from "../../handlers/commands/editors/toclient/ghub";
-import { EnvironmentCloudFoundryTarget } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { BuiltContext } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { ProductionDeployPhases } from "../../handlers/events/delivery/phases/productionDeployPhases";
 
