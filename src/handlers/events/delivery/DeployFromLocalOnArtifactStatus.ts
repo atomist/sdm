@@ -24,10 +24,10 @@ import { ArtifactStore } from "./ArtifactStore";
 import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
+import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
+import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
 import { currentPhaseIsStillPending, previousPhaseHitSuccess } from "./Phases";
 import { ArtifactContext, HttpServicePhases } from "./phases/httpServicePhases";
-import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
-import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.

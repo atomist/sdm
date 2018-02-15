@@ -71,7 +71,7 @@ export class TransformingProgressLog implements ProgressLog {
     public write(what: string) {
         const filtered = this.filter(what);
         return !!filtered ?
-            this.log.write(what):
+            this.log.write(what) :
             Promise.resolve();
     }
 

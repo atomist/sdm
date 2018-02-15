@@ -1,13 +1,20 @@
-import {HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter} from "@atomist/automation-client";
-import {addressSlackChannels, buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    HandleCommand,
+    HandleEvent,
+    HandlerContext,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
+import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { addressSlackChannels, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {OnVerifiedStatus, StatusInfo} from "../../handlers/events/delivery/OnVerifiedStatus";
-import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
-import {Parameters} from "@atomist/automation-client/decorators";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef, RepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import * as graphqlTypes from "../../typings/types";
 import * as _ from "lodash";
+import { OnVerifiedStatus, StatusInfo } from "../../handlers/events/delivery/OnVerifiedStatus";
+import * as graphqlTypes from "../../typings/types";
 
 /**
  * Display a button suggesting promotion to production
@@ -18,7 +25,7 @@ export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(presentProm
 function presentPromotionButton(id: RemoteRepoRef, s: StatusInfo, sendMessagesHere, ctx) {
     const shaLink = slack.url(id.url + "/tree/" + id.sha, id.repo);
     const endpointLink = slack.url(s.targetUrl);
-    const messageId = "httpService:promote:prod/${id.repo}/${id.owner}/${id.sha}";
+    const messageId = `httpService:promote:prod/${id.repo}/${id.owner}/${id.sha}`;
     const attachment: slack.Attachment = {
         text: `Staging endpoint verified at ${endpointLink}\nPromote ${shaLink} to production?`,
         fallback: "offer to promote",
@@ -35,7 +42,6 @@ function presentPromotionButton(id: RemoteRepoRef, s: StatusInfo, sendMessagesHe
     };
     return ctx.messageClient.send(message, sendMessagesHere, {id: messageId});
 }
-
 
 @Parameters()
 export class OfferPromotionParameters {
@@ -55,21 +61,21 @@ export class OfferPromotionParameters {
 export const offerPromotionCommand: HandleCommand<OfferPromotionParameters> =
     commandHandlerFrom((ctx: HandlerContext, params: OfferPromotionParameters) => {
             return presentPromotionButton(new GitHubRepoRef(params.owner, params.repo, params.sha),
-                undefined, addressSlackChannels(params.channel), ctx)
+                undefined, addressSlackChannels(params.channel), ctx);
         }, OfferPromotionParameters, "OfferPromotionButton", "test: suggest promoting a ref to prod",
         "please offer to promote");
 
 // how to figure out what is running in Prod
 
 interface RunningCommit {
-    sha?: string,
+    sha?: string;
     repo?: {
         owner?: string,
         name?: string,
-    }
+    };
 }
 
-type CountBySha = { [key: string]: number }
+interface CountBySha { [key: string]: number; }
 
 async function whatIsRunning(owner: string, repo: string, everythingRunning: RunningCommit[]): Promise<CountBySha> {
     const myCommits = everythingRunning.filter(c => c.repo.owner === owner && c.repo.name === repo);
@@ -82,7 +88,7 @@ function countBy<T>(f: (T) => string, data: T[]): { [key: string]: number } {
         const key = f(c);
         result[key] = (result[key] || 0) + 1;
     });
-    return result
+    return result;
 }
 
 function describeCurrentlyRunning(id: RemoteRepoRef, everythingRunning: RunningCommit[]): string {
@@ -96,7 +102,7 @@ function describeCurrentlyRunning(id: RemoteRepoRef, everythingRunning: RunningC
     }
     // there is exactly 1
     const oneSha = shas[0];
-    return `${countBySha[oneSha]} reported running at ${oneSha.substr(0, 6)} ${linkToDiff(id, oneSha, id.sha)}`
+    return `${countBySha[oneSha]} reported running at ${oneSha.substr(0, 6)} ${linkToDiff(id, oneSha, id.sha)}`;
 }
 
 function linkToDiff(id: RemoteRepoRef, start: string, end: string) {
@@ -128,7 +134,7 @@ async function runningAttachment(ctx: HandlerContext, id: RemoteRepoRef, domain:
     const attachment: slack.Attachment = {
         fallback: "stuff is running",
         text,
-        title: domain
+        title: domain,
     };
     return attachment;
 }
@@ -139,8 +145,8 @@ export const reportRunning: HandleCommand<ReportRunningParameters> = commandHand
     return Promise.all(["ri-staging", "ri-production"].map(d => runningAttachment(ctx, repoRef, d)))
         .then(attachments => {
             const message: slack.SlackMessage = {
-                attachments
+                attachments,
             };
-            return ctx.messageClient.respond(message)
+            return ctx.messageClient.respond(message);
         });
 }, ReportRunningParameters, "ReportRunning", "describe services Atomist thinks are running", "what is running");

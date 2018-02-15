@@ -9,8 +9,8 @@ import { createStatus } from "../../../../commands/editors/toclient/ghub";
 import axios from "axios";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
-import { ArtifactContext } from "../../phases/httpServicePhases";
 import { ProgressLog } from "../../log/ProgressLog";
+import { ArtifactContext } from "../../phases/httpServicePhases";
 
 /**
  * Superclass for build, emitting appropriate events to Atomist

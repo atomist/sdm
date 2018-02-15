@@ -17,10 +17,10 @@
 import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {Destination} from "@atomist/automation-client/spi/message/MessageClient";
 import {OnSuccessStatus, StatusState} from "../../../typings/types";
 import {messageDestinations} from "../../commands/editors/toclient/addressChannels";
 import {StagingVerifiedContext} from "./phases/httpServicePhases";
-import {Destination} from "@atomist/automation-client/spi/message/MessageClient";
 import Status = OnSuccessStatus.Status;
 
 // something independent of the particular query

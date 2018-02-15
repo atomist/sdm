@@ -1,6 +1,9 @@
 import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success} from "@atomist/automation-client";
 import {CommandHandler} from "@atomist/automation-client/decorators";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {addressSlackUsers} from "@atomist/automation-client/spi/message/MessageClient";
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import * as stringify from "json-stringify-safe";
 import {listStatuses, Status} from "../../handlers/commands/editors/toclient/ghub";
 import {EnvironmentCloudFoundryTarget} from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import {deploy} from "../../handlers/events/delivery/DeployFromLocalOnArtifactStatus";
@@ -8,9 +11,6 @@ import {ArtifactContext} from "../../handlers/events/delivery/phases/httpService
 import {ProductionDeployPhases} from "../../handlers/events/delivery/phases/productionDeployPhases";
 import {artifactStore} from "./artifactStore";
 import {Deployer} from "./cloudFoundryDeployOnArtifactStatus";
-import {addressSlackUsers} from "@atomist/automation-client/spi/message/MessageClient";
-import * as slack from "@atomist/slack-messages/SlackMessages";
-import * as stringify from "json-stringify-safe";
 
 @CommandHandler("Promote to production", "promote to production")
 export class DeployToProd implements HandleCommand {

@@ -1,6 +1,6 @@
+import {logger} from "@atomist/automation-client";
 import {GitHubDotComBase, GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import axios, {AxiosPromise, AxiosRequestConfig} from "axios";
-import {logger} from "@atomist/automation-client";
 import * as _ from "lodash";
 
 export type State = "error" | "failure" | "pending" | "success";

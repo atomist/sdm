@@ -1,6 +1,6 @@
 import { HandlerContext } from "@atomist/automation-client";
-import { SlackMessage } from "@atomist/slack-messages";
 import {addressSlackChannels, Destination, MessageOptions} from "@atomist/automation-client/spi/message/MessageClient";
+import { SlackMessage } from "@atomist/slack-messages";
 
 export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions) => Promise<any>;
 
