@@ -65,7 +65,7 @@ export class DeployToProd implements HandleCommand {
             data: "do-it",
             sha: "12345",
             abbreviation: "dp",
-        } as Fingerprint; // TODO remove once we fix client
+        };
 
         await sendFingerprint(id, fingerprint, ctx.teamId);
         // if (result.code === 0) {
