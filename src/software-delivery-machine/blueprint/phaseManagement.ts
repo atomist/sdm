@@ -3,6 +3,7 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../../handlers/events/delive
 import { Phases } from "../../handlers/events/delivery/Phases";
 import { HttpServicePhases, LibraryPhases } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { SetupPhasesOnPush } from "../../handlers/events/delivery/SetupPhasesOnPush";
+import {Parameters} from "@atomist/automation-client/decorators";
 
 export const PhaseSetup = new SetupPhasesOnPush(scanForPhases);
 

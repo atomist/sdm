@@ -10,17 +10,57 @@ import {logger} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 
+// convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
 export type GitHubStatusContext = string;
+
+export interface PlannedPhase {
+    context: GitHubStatusContext,
+    name: string,
+}
+
+// exported for testing
+export function parseContext(context: GitHubStatusContext) {
+    const fallback = {context, name: context};
+
+    // if it's following convention we can learn from it
+    const numberAndName = /[0-9\.]+-(.*)/;
+    const wholeContext = /^sdm\/atomist\/(.*)\/(.*)$/;
+
+    const matchWhole = context.match(wholeContext);
+    if (!matchWhole) {
+        return fallback;
+    }
+
+    const phasePart = matchWhole[2];
+    const matchPhase = phasePart.match(numberAndName);
+    if (!matchPhase) {
+        return {context, name: phasePart}
+    }
+    const name = matchPhase[1];
+
+    return {context, name}
+}
+
 
 export class Phases {
 
-    constructor(public phases: GitHubStatusContext[]) {
+    constructor(public phases: GitHubStatusContext[], private plannedPhaseByContext?: { [key: string]: PlannedPhase }) {
     }
 
     // TODO method to check whether a status is set
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        return Promise.all(this.phases.map(phase => setStatus(id, phase, "pending", creds)));
+        return Promise.all(this.phases.map(phase =>
+            setStatus(id, phase, "pending", creds,
+                `Planning to ${this.contextToPlannedPhase(phase).name}`)));
+    }
+
+    private contextToPlannedPhase(context: GitHubStatusContext) {
+        if (this.plannedPhaseByContext && this.plannedPhaseByContext[context]) {
+            return this.plannedPhaseByContext[context]
+        } else {
+            return parseContext(context);
+        }
     }
 
     /**
@@ -36,18 +76,26 @@ export class Phases {
             // Don't fail all our outstanding phases because someone else failed an unrelated phase
             return Promise.resolve();
         }
+        const failedPhaseName = this.contextToPlannedPhase(failedPhase).name;
         const phasesToReset = currentlyPending
-            .filter(phase => this.phases.indexOf(phase) > this.phases.indexOf(failedPhase));
-        return Promise.all(phasesToReset.map(context => setStatus(id, context, "failure", creds)));
+            .filter(phase => this.phases.indexOf(phase) > this.phases.indexOf(failedPhase))
+            .map(this.contextToPlannedPhase);
+        return Promise.all(phasesToReset.map(
+            p => setStatus(id, p.context, "failure", creds,
+                `Skipping ${p.name} because ${failedPhaseName} failed`)));
     }
 
 }
 
-function setStatus(id: GitHubRepoRef, context: string, state: State, creds: ProjectOperationCredentials): Promise<any> {
+function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
+                   state: State,
+                   creds: ProjectOperationCredentials,
+                   description: string = context,): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: `${id.apiBase}/${id.owner}/${id.repo}/${id.sha}`,
         context,
+        description
     });
 }
 
