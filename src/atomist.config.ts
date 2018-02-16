@@ -20,7 +20,7 @@ import {
     PhaseCleanup,
     PhaseSetup,
 } from "./software-delivery-machine/blueprint/phaseManagement";
-import { ReviewOnPush } from "./software-delivery-machine/blueprint/scanOnPush";
+import { ReviewOnPush } from "./software-delivery-machine/blueprint/reviewOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";

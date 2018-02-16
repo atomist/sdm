@@ -36,7 +36,7 @@ export type NewRepoWithCodeAction = (id: GitHubRepoRef, creds: ProjectOperationC
                                      ctx: HandlerContext) => Promise<any>;
 
 /**
- * A new repo has been created. We don't know if it has code.
+ * A new repo has been created, and it has some code in it.
  */
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnFirstPushToRepo.graphql"))
