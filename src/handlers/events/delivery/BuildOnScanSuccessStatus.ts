@@ -18,8 +18,7 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../typings/types";
-import { Builder, RunningBuild } from "./Builder";
-import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
+import { Builder } from "./Builder";
 import { currentPhaseIsStillPending, previousPhaseSucceeded } from "./Phases";
 import { BuiltContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
 
@@ -62,27 +61,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        // const progressLog = slackProgressLog(commit.repo, ctx);
-
-        const progressLog = await createLinkableProgressLog();
-
-        try {
-            await params.builder.build(creds, id, team, progressLog)
-                .then(waitForBuild);
-            return Success;
-        } finally {
-            await progressLog.close();
-        }
+        await params.builder.initiateBuild(creds, id, team)
+        return Success;
     }
-}
-
-function waitForBuild(runningBuild: RunningBuild): Promise<any> {
-    return new Promise((resolve, reject) => {
-        runningBuild.stream.addListener("end", resolve);
-        runningBuild.stream.addListener("exit", resolve);
-        runningBuild.stream.addListener("close", resolve);
-        runningBuild.stream.addListener("error", err => {
-            return reject(err);
-        });
-    });
 }

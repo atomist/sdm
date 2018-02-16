@@ -4,10 +4,9 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { ChildProcess, spawn } from "child_process";
 import { Readable } from "stream";
 import { ArtifactStore } from "../../../ArtifactStore";
-import { RunningBuild } from "../../../Builder";
 import { AppInfo } from "../../../Deployment";
-import { LinkablePersistentProgressLog, ProgressLog } from "../../../log/ProgressLog";
-import { LocalBuilder } from "../LocalBuilder";
+import { LinkableLogFactory, LinkablePersistentProgressLog } from "../../../log/ProgressLog";
+import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
 
 /**
@@ -20,12 +19,12 @@ import { identification } from "./pomParser";
  */
 export class MavenBuilder extends LocalBuilder {
 
-    constructor(artifactStore: ArtifactStore) {
-        super(artifactStore);
+    constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory) {
+        super(artifactStore, logFactory);
     }
 
     protected startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                         team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild> {
+                         team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
                 // Find the artifact info from Maven
@@ -56,7 +55,7 @@ export class MavenBuilder extends LocalBuilder {
 
 }
 
-class UpdatingBuild implements RunningBuild {
+class UpdatingBuild implements LocalBuildInProgress {
 
     constructor(public repoRef: RemoteRepoRef,
                 public stream: ChildProcess,

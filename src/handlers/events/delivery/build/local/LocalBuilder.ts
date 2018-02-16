@@ -1,52 +1,65 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-
-import { logger } from "@atomist/automation-client";
 import axios from "axios";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
-import { Builder, RunningBuild } from "../../Builder";
-import { LinkablePersistentProgressLog, ProgressLog } from "../../log/ProgressLog";
+import { Builder } from "../../Builder";
+import { LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog } from "../../log/ProgressLog";
+import { AppInfo } from "../../Deployment";
+import { Readable } from "stream";
+import EventEmitter = NodeJS.EventEmitter;
+
+export interface LocalBuildInProgress {
+
+    readonly stream: EventEmitter;
+
+    readonly repoRef: RemoteRepoRef;
+
+    readonly team: string;
+
+    /** Available once build is complete */
+    readonly appInfo: AppInfo;
+
+    readonly deploymentUnitStream: Readable;
+
+    readonly deploymentUnitFile: string;
+
+    readonly url: string;
+}
 
 /**
- * Superclass for build implemented on the automation client itself, emitting appropriate events to Atomist
+ * Superclass for build implemented on the automation client itself, emitting appropriate events to Atomist.
+ * Allows listening to a Running build
  */
 export abstract class LocalBuilder implements Builder {
 
-    constructor(private artifactStore: ArtifactStore) {
+    constructor(private artifactStore: ArtifactStore,
+                private logFactory: LinkableLogFactory) {
     }
 
-    public build(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                 team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild> {
+    public async initiateBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+                               team: string): Promise<LocalBuildInProgress> {
         const as = this.artifactStore;
-        return this.startBuild(creds, id, team, log)
-            .then(rb => {
-                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, as, log))
-                    .addListener("error", (code, signal) => onFailure(rb, log));
-                return rb;
-            })
-            .then(onStarted);
+        const log = await this.logFactory();
+
+        const rb = await this.startBuild(creds, id, team, log);
+        rb.stream.addListener("exit", (code, signal) => onExit(code === 0, rb, team, as, log))
+            .addListener("error", (code, signal) => onExit(false, rb, team, as, log));
+        await onStarted(rb);
+        return rb;
     }
 
     protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                                  team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild>;
+                                  team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress>;
 }
 
-function onStarted(runningBuild: RunningBuild) {
+function onStarted(runningBuild: LocalBuildInProgress) {
     return updateAtomistLifecycle(runningBuild, "STARTED", "STARTED");
 }
 
-async function onSuccess(runningBuild: RunningBuild, log: ProgressLog) {
-    return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED");
-}
-
-async function onFailure(runningBuild: RunningBuild, log: ProgressLog) {
-    return updateAtomistLifecycle(runningBuild, "FAILURE", "FINALIZED");
-}
-
-function updateAtomistLifecycle(runningBuild: RunningBuild,
+function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
                                 status: "STARTED" | "SUCCESS" | "FAILURE",
-                                phase: "STARTED" | "FINALIZED" = "FINALIZED"): Promise<RunningBuild> {
+                                phase: "STARTED" | "FINALIZED" = "FINALIZED"): Promise<LocalBuildInProgress> {
     // TODO Use David's Abstraction?
     const url = `https://webhook.atomist.com/atomist/jenkins/teams/${runningBuild.team}`;
     const data = {
@@ -71,19 +84,23 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
         .then(() => runningBuild);
 }
 
-function onExit(code: number, signal: any, rb: RunningBuild, team: string,
-                artifactStore: ArtifactStore,
-                log: ProgressLog): void {
-    logger.info("Build exited with code=%d and signal %s", code, signal);
-    if (code === 0) {
-        onSuccess(rb, log)
-            .then(id => linkArtifact(rb, team, artifactStore));
-    } else {
-        onFailure(rb, log);
+async function onExit(success: boolean,
+                      rb: LocalBuildInProgress, team: string,
+                      artifactStore: ArtifactStore,
+                      log: ProgressLog): Promise<any> {
+    try {
+        if (success) {
+            await updateAtomistLifecycle(rb, "SUCCESS", "FINALIZED")
+                .then(id => linkArtifact(rb, team, artifactStore));
+        } else {
+            await updateAtomistLifecycle(rb, "FAILURE", "FINALIZED");
+        }
+    } finally {
+        await log.close();
     }
 }
 
-function linkArtifact(rb: RunningBuild, team: string, artifactStore: ArtifactStore): Promise<any> {
+function linkArtifact(rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }

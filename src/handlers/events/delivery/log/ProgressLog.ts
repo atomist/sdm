@@ -114,3 +114,5 @@ export interface LinkablePersistentProgressLog extends ProgressLog {
     url: string;
 
 }
+
+export type LinkableLogFactory = () => Promise<LinkablePersistentProgressLog>;
