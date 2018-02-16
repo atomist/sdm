@@ -47,7 +47,7 @@ import { ApprovalGateParam } from "../gates/StatusApprovalGate";
         __dirname, {
             context: ScanContext,
         }))
-export class ScanOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subscription> {
+export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -97,7 +97,7 @@ function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperat
     const phase = ContextToPlannedPhase[ScanContext];
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}${ApprovalGateParam}`,
+        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`, // ${ApprovalGateParam}`,
         context: ScanContext,
         description: `Completed ${phase.name}`,
     });

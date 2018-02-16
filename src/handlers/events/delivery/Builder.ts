@@ -2,7 +2,8 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
- * Responsible for initiating a build
+ * Responsible for initiating a build. Wherever the build runs,
+ * it is responsible for emitting Atomist build events.
  */
 export interface Builder {
 

@@ -1,9 +1,9 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { clean, ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ScanOnPendingScanStatus } from "../../handlers/events/delivery/ScanOnPendingScanStatus";
+import { ReviewOnPendingScanStatus } from "../../handlers/events/delivery/ReviewOnPendingScanStatus";
 
-export const ReviewOnPush = () => new ScanOnPendingScanStatus([scan]);
+export const ReviewOnPush = () => new ReviewOnPendingScanStatus([scan]);
 
 async function scan(p: GitProject,
                     ctx: HandlerContext): Promise<ProjectReview> {

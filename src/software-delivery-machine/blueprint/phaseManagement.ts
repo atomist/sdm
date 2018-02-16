@@ -6,11 +6,11 @@ import { Phases } from "../../handlers/events/delivery/Phases";
 import { HttpServicePhases, LibraryPhases } from "../../handlers/events/delivery/phases/httpServicePhases";
 import {
     ApplyPhasesParameters,
-    applyPhasesToCommit,
+    applyPhasesToCommit, PushesToMaster,
     SetupPhasesOnPush,
 } from "../../handlers/events/delivery/SetupPhasesOnPush";
 
-export const PhaseSetup = () => new SetupPhasesOnPush(scanForPhases);
+export const PhaseSetup = () => new SetupPhasesOnPush(scanForPhases, PushesToMaster);
 
 export const PhaseCleanup = () => new FailDownstreamPhasesOnPhaseFailure(HttpServicePhases);
 

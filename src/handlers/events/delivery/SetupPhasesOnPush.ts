@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import {GraphQL, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success, Success} from "@atomist/automation-client";
-import {Parameters} from "@atomist/automation-client/decorators";
+import {
+    GraphQL,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+    Success, success
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
 import {
     EventFired,
     EventHandler,
@@ -23,33 +31,40 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
-import {GitProject} from "@atomist/automation-client/project/git/GitProject";
-import {OnPush} from "../../../typings/types";
-import {tipOfDefaultBranch} from "../../commands/editors/toclient/ghub";
-import {GitHubStatusContext, Phases} from "./Phases";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { OnAnyPush, OnPush, OnPushToAnyBranch } from "../../../typings/types";
+import { tipOfDefaultBranch } from "../../commands/editors/toclient/ghub";
+import { Phases } from "./Phases";
 
-export type Classifier = (p: GitProject) => Promise<Phases>;
+export type PhaseBuilder = (p: GitProject) => Promise<Phases>;
+
+export type PushTest = (p: OnAnyPush.Push) => boolean | Promise<boolean>;
+
+export const PushesToMaster: PushTest = p => p.branch === "master";
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code on master",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPush.graphql",
-        __dirname, {
-            branch: "master",
-        }))
-export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
+    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPushToAnyBranch.graphql",
+        __dirname))
+export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private classifier: Classifier) {
+    constructor(private phaseBuilder: PhaseBuilder, private pushTest) {
     }
 
-    public handle(event: EventFired<OnPush.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public handle(event: EventFired<OnPushToAnyBranch.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push: OnPush.Push = event.data.Push[0];
+
+        if (!this.pushTest(push)) {
+            return Promise.resolve(Success);
+        }
+
         const commit = push.commits[0];
 
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
@@ -57,7 +72,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
         const creds = {token: params.githubToken};
 
         return GitCommandGitProject.cloned(creds, id)
-            .then(p => params.classifier(p))
+            .then(p => params.phaseBuilder(p))
             .then(phases => {
                 if (!!phases) {
                     return phases.setAllToPending(id, creds);
