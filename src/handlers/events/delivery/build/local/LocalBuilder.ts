@@ -1,18 +1,12 @@
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { createStatus } from "../../../../commands/editors/toclient/ghub";
 
-import { HandlerContext, logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import axios from "axios";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../log/ProgressLog";
-import { BuiltContext, ContextToPlannedPhase } from "../../phases/httpServicePhases";
 
 /**
  * Superclass for build implemented on the automation client itself, emitting appropriate events to Atomist
@@ -82,20 +76,13 @@ function onExit(code: number, signal: any, rb: RunningBuild, team: string,
     logger.info("Build exited with code=%s and signal %s", code, signal);
     if (code === 0) {
         onSuccess(rb, log)
-            .then(id => setBuiltContext(rb, team, creds, artifactStore));
+            .then(id => linkArtifact(rb, team, artifactStore));
     } else {
         onFailure(rb, log);
     }
 }
 
-function setBuiltContext(rb: RunningBuild, team: string, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): Promise<any> {
-    const id = rb.repoRef as GitHubRepoRef;
+function linkArtifact(rb: RunningBuild, team: string, artifactStore: ArtifactStore): Promise<any> {
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
-        .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team)
-            .then(linked => createStatus((creds as TokenCredentials).token, id, {
-                state: "success",
-                target_url: imageUrl,
-                context: BuiltContext,
-                description: `Completed ${ContextToPlannedPhase[BuiltContext].name}`,
-            })));
+        .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }

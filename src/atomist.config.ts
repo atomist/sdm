@@ -28,6 +28,7 @@ import {
     breakBuildEditor,
     unbreakBuildEditor,
 } from "./software-delivery-machine/commands/editors/breakBuild";
+import { OnBuildComplete } from "./software-delivery-machine/blueprint/onBuildComplete";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -57,6 +58,7 @@ export const configuration: Configuration = {
         () => PhaseCleanup,
         () => MyFingerprinter,
         () => Scan,
+        () => OnBuildComplete,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryStagingDeployOnArtifactStatus,
         () => CloudFoundryProductionDeployOnArtifactStatus,
