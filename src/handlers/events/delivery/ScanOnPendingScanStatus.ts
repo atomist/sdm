@@ -37,6 +37,7 @@ import { OnPendingStatus, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ContextToPlannedPhase, ScanContext } from "./phases/httpServicePhases";
+import { ApprovalGateParam } from "../gates/StatusApprovalGate";
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
@@ -96,7 +97,7 @@ function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperat
     const phase = ContextToPlannedPhase[ScanContext];
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`, // ${ApprovalGateParam}
+        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}${ApprovalGateParam}`,
         context: ScanContext,
         description: `Completed ${phase.name}`,
     });

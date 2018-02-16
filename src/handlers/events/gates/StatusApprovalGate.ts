@@ -27,7 +27,10 @@ import Status = OnSuccessStatus.Status;
  * Added to end of URL
  * @type {string}
  */
-export const ApprovalGateParam = "&atomist:approve=true";
+// TODO proper make approvable
+export const ApprovalGateParam = "?atomist:approve=true";
+
+// Not currently used
 
 /**
  * Update a status.

@@ -2,7 +2,6 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
-import { StatusToApproved } from "./handlers/events/gates/StatusToApproved";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import {
     CloudFoundryProductionDeployOnArtifactStatus,
@@ -25,10 +24,7 @@ import { ReviewOnPush } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
-import {
-    breakBuildEditor,
-    unbreakBuildEditor,
-} from "./software-delivery-machine/commands/editors/breakBuild";
+import { breakBuildEditor, unbreakBuildEditor, } from "./software-delivery-machine/commands/editors/breakBuild";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -46,7 +42,6 @@ export const configuration: Configuration = {
         () => addCloudFoundryManifest,
         () => offerPromotionCommand,
         DescribeStagingAndProd,
-        StatusToApproved,
         () => applyHttpServicePhases,
         () => breakBuildEditor,
         () => unbreakBuildEditor,
@@ -65,7 +60,6 @@ export const configuration: Configuration = {
         NotifyOnDeploy,
         VerifyEndpoint,
         OfferPromotion,
-        StatusApprovalGate,
     ],
     token,
     http: {
