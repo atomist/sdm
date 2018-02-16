@@ -19,6 +19,7 @@ import {affirmationEditor} from "./software-delivery-machine/commands/editors/af
 import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
 import { StatusToApproved } from "./handlers/events/gates/StatusToApproved";
 import {reportRunning} from "./software-delivery-machine/blueprint/describeRunningServices";
+import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -44,6 +45,7 @@ export const configuration: Configuration = {
         () => onNewRepoWithCode,
         () => PhaseSetup,
         () => PhaseCleanup,
+        () => MyFingerprinter,
         () => Scan,
         () => LocalMavenBuildOnSucessStatus,
         () => CloudFoundryStagingDeployOnArtifactStatus,

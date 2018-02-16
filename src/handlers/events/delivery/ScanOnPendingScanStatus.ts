@@ -31,13 +31,12 @@ import {
     TokenCredentials
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPendingStatus, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ContextToPlannedPhase, ScanContext } from "./phases/httpServicePhases";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { ProjectReview, ReviewResult } from "@atomist/automation-client/operations/review/ReviewResult";
+import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
