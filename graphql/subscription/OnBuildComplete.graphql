@@ -2,6 +2,8 @@
 subscription OnBuildComplete {
     Build {
         buildId
+        buildUrl
+        compareUrl
         name
         status
         commit {

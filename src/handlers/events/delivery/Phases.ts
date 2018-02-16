@@ -63,14 +63,15 @@ export class Phases {
     // TODO method to check whether a status is set
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+        const self = this;
         return Promise.all(this.phases.map(phase =>
             setStatus(id, phase, "pending", creds,
-                `Planning to ${this.contextToPlannedPhase(phase).name}`)));
+                `Planning to ${self.contextToPlannedPhase(self, phase).name}`)));
     }
 
-    private contextToPlannedPhase(context: GitHubStatusContext) {
-        if (this.plannedPhaseByContext && this.plannedPhaseByContext[context]) {
-            return this.plannedPhaseByContext[context];
+    private contextToPlannedPhase(self: this, context: GitHubStatusContext) {
+        if (self.plannedPhaseByContext && this.plannedPhaseByContext[context]) {
+            return self.plannedPhaseByContext[context];
         } else {
             return parseContext(context);
         }
@@ -89,10 +90,10 @@ export class Phases {
             // Don't fail all our outstanding phases because someone else failed an unrelated phase
             return Promise.resolve();
         }
-        const failedPhaseName = this.contextToPlannedPhase(failedPhase).name;
+        const failedPhaseName = this.contextToPlannedPhase(this, failedPhase).name;
         const phasesToReset = currentlyPending
             .filter(phase => this.phases.indexOf(phase) > this.phases.indexOf(failedPhase))
-            .map(this.contextToPlannedPhase);
+            .map(p => this.contextToPlannedPhase(this, p));
         return Promise.all(phasesToReset.map(
             p => setStatus(id, p.context, "failure", creds,
                 `Skipping ${p.name} because ${failedPhaseName} failed`)));
