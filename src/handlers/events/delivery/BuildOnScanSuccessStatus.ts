@@ -70,9 +70,8 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
             await params.builder.build(creds, id, team, progressLog)
                 .then(waitForBuild);
             return Success;
-        } catch (err) {
+        } finally {
             await progressLog.close();
-            throw err;
         }
     }
 }

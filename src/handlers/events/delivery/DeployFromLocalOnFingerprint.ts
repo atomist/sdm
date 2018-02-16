@@ -3,18 +3,32 @@
  */
 
 import {
-    EventFired, EventHandler, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secret,
-    Secrets, Success,
+    EventFired,
+    EventHandler,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnDeployToProductionFingerprint, OnImageLinked } from "../../../typings/types";
+import { OnDeployToProductionFingerprint } from "../../../typings/types";
 import { ArtifactStore } from "./ArtifactStore";
+import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
-import { deploy } from "./DeployFromLocalOnImageLinked";
 import { TargetInfo } from "./Deployment";
-import {currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded} from "./Phases";
-import { BuiltContext, HttpServicePhases } from "./phases/httpServicePhases";
+import {
+    currentPhaseIsStillPending,
+    GitHubStatusAndFriends,
+    Phases,
+    PlannedPhase,
+    previousPhaseSucceeded,
+} from "./Phases";
+import { BuiltContext } from "./phases/httpServicePhases";
 
 // TODO could make in common with other deployer...
 @EventHandler("Deploy linked artifact",

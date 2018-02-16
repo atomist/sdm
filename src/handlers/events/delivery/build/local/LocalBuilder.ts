@@ -71,7 +71,7 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
 function onExit(code: number, signal: any, rb: RunningBuild, team: string,
                 artifactStore: ArtifactStore,
                 log: ProgressLog): void {
-    logger.info("Build exited with code=%s and signal %s", code, signal);
+    logger.info("Build exited with code=%d and signal %s", code, signal);
     if (code === 0) {
         onSuccess(rb, log)
             .then(id => linkArtifact(rb, team, artifactStore));
