@@ -89,7 +89,7 @@ function render(repo: RepoInfo, commits: CommitForRendering[], fullDiffLink: str
     // Limit number of commits by author to 5
     if (attachments.length > 5) {
         attachments = attachments.slice(0, 5);
-        const fullDiffDescription = "... and more! (${commits.length} total commits)";
+        const fullDiffDescription = `... and more! (${commits.length} total commits)`;
 
         const attachment: slack.Attachment = {
             title_link: fullDiffLink,
