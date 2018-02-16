@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-import {GraphQL, logger, Secret, Secrets, Success, success} from "@atomist/automation-client";
-import {EventFired, EventHandler, failure, HandleEvent, HandlerContext, HandlerResult} from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
-import {GitProject} from "@atomist/automation-client/project/git/GitProject";
-import {OnPendingStatus, StatusState} from "../../../typings/types";
-import {addressChannelsFor} from "../../commands/editors/toclient/addressChannels";
-import {createStatus} from "../../commands/editors/toclient/ghub";
-import {ContextToPlannedPhase, ScanContext} from "./phases/httpServicePhases";
-import { ApprovalGateParam } from "../gates/StatusApprovalGate";
+import * as _ from "lodash";
 
-export interface ProjectScanResult {
-    passed: boolean;
-    message?: string;
-}
-
-export type ProjectScanner = (p: GitProject,
-                              ctx: HandlerContext) => Promise<ProjectScanResult>;
+import { GraphQL, logger, Secret, Secrets, Success, success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    failure,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult
+} from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { OnPendingStatus, StatusState } from "../../../typings/types";
+import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../commands/editors/toclient/ghub";
+import { ContextToPlannedPhase, ScanContext } from "./phases/httpServicePhases";
+import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
+import { ProjectReview, ReviewResult } from "@atomist/automation-client/operations/review/ReviewResult";
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
@@ -47,10 +52,10 @@ export class ScanOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subs
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private projectScanner: ProjectScanner) {
+    constructor(private projectReviewers: ProjectReviewer[]) {
     }
 
-    public handle(event: EventFired<OnPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
         const status = event.data.Status[0];
         const commit = status.commit;
@@ -68,12 +73,16 @@ export class ScanOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subs
 
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
-                return params.projectScanner(p, ctx)
-                    .then(scanResult => {
-                        if (scanResult.passed) {
+                const consolidatedReview: Promise<ProjectReview> = Promise.all(params.projectReviewers
+                    .map(reviewer => reviewer(p, ctx, params as any)))
+                    .then(reviews => consolidate(reviews));
+                return consolidatedReview
+                    .then(review => {
+                        if (review.comments.length === 0) {
                             return markScanned(p.id as GitHubRepoRef, "success", creds);
                         } else {
-                            return addressChannels(`Scan failed: ${scanResult.message}`)
+                            // TODO might want to raise issue
+                            return addressChannels(`${review.comments} review issues found`)
                                 .then(() => markScanned(p.id as GitHubRepoRef, "failure", creds));
                         }
                     }).then(() => success());
@@ -92,4 +101,12 @@ function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperat
         context: ScanContext,
         description: `Completed ${phase.name}`,
     });
+}
+
+function consolidate(reviews: ProjectReview[]): ProjectReview {
+    // TODO check they are all the same id and that there's more than one
+    return {
+        repoId: reviews[0].repoId,
+        comments: _.flatten(reviews.map(review => review.comments)),
+    };
 }
