@@ -1,0 +1,122 @@
+
+// how to figure out what is running in Prod
+
+import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
+import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
+import {Parameters} from "@atomist/automation-client/decorators";
+import * as _ from "lodash";
+import * as graphqlTypes from "../../typings/types";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import {linkToDiff, renderDiff} from "./diffRendering";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {tipOfDefaultBranch} from "../../handlers/commands/editors/toclient/ghub";
+
+interface RunningCommit {
+    sha?: string;
+    repo?: {
+        owner?: string,
+        name?: string,
+    };
+}
+
+interface CountBySha {
+    [key: string]: number;
+}
+
+function whatIsRunning(owner: string, repo: string, everythingRunning: RunningCommit[]): CountBySha {
+    const myCommits = everythingRunning.filter(c => c.repo.owner === owner && c.repo.name === repo);
+    return countBy(c => c.sha, myCommits);
+}
+
+function countBy<T>(f: (T) => string, data: T[]): { [key: string]: number } {
+    const result = {};
+    data.forEach(c => {
+        const key = f(c);
+        result[key] = (result[key] || 0) + 1;
+    });
+    return result;
+}
+
+function describeCurrentlyRunning(id: RemoteRepoRef, countBySha: CountBySha, endDescription?: string): string {
+    const shas = Object.keys(countBySha);
+    if (shas.length === 0) {
+        return "No running services recorded";
+    }
+    return shas.map(s => `${countBySha[s]} reported running at ${linkToSha(id, s)} ${
+        s == id.sha ? (endDescription ? "(" + endDescription + ")": "") : linkToDiff(id, s, id.sha, endDescription)}`).join("\n");
+}
+
+
+function linkToSha(id: RemoteRepoRef, sha: string) {
+    return slack.url(id.url + "/tree/" + sha, sha.substr(0, 6));
+}
+
+async function gatherEverythingRunning(ctx: HandlerContext, domain: string): Promise<graphqlTypes.WhatIsRunning.Commits[]> {
+    const result = await ctx.graphClient.executeQueryFromFile<graphqlTypes.WhatIsRunning.Query, { domain: string }>(
+        "graphql/query/WhatIsRunning", {domain});
+    const runningCommits = _.flatMap(result.Application, app => app.commits);
+    return runningCommits;
+}
+
+@Parameters()
+export class ReportRunningParameters {
+
+    @Secret(Secrets.UserToken)
+    public githubToken: string;
+
+    @MappedParameter(MappedParameters.GitHubOwner)
+    public owner;
+
+    @MappedParameter(MappedParameters.GitHubRepository)
+    public repo;
+
+    @Parameter({required: false})
+    public comparisonSha: string;
+}
+
+export const Colors = {
+    "ri-staging": "#aa93c4",
+    "ri-production": "#4d9b82"
+};
+
+export async function runningAttachment(ctx: HandlerContext, token: string, id: GitHubRepoRef, domain: string, endDescription?: string): Promise<slack.Attachment[]> {
+    const countBySha = whatIsRunning(id.owner, id.repo, await gatherEverythingRunning(ctx, domain));
+    const text = describeCurrentlyRunning(id, countBySha, endDescription);
+    const attachment: slack.Attachment = {
+        fallback: "stuff is running",
+        text,
+        title: domain,
+        color: Colors[domain]
+    };
+    const onlySha = getOnlySha(countBySha);
+    if (!onlySha) {
+        return [attachment];
+    }
+    return [attachment].concat(await renderDiff(token, id, onlySha, id.sha, Colors[domain]))
+}
+
+function getOnlySha(countBySha: CountBySha) {
+    const shas = Object.keys(countBySha);
+    if (shas.length !== 1) {
+        return undefined;
+    }
+    // there is exactly 1
+    return shas[0];
+}
+
+export const reportRunning: HandleCommand<ReportRunningParameters> = commandHandlerFrom(async (ctx, params) => {
+    const sha = params.comparisonSha || await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
+
+    const repoRef = new GitHubRepoRef(params.owner, params.repo, sha);
+
+    return Promise.all(["ri-staging", "ri-production"].map(d => runningAttachment(ctx, params.githubToken, repoRef, d,
+        params.comparisonSha || "master")))
+        .then(arraysOfAttachments => {
+            const attachments = _.flatten(arraysOfAttachments);
+            const message: slack.SlackMessage = {
+                attachments,
+            };
+            return ctx.messageClient.respond(message);
+        });
+}, ReportRunningParameters, "ReportRunning", "describe services Atomist thinks are running", "what is running");

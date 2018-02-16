@@ -56,6 +56,21 @@ export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]
         .then(ap => ap.data);
 }
 
+export interface GitHubCommitsBetween {
+    commits: Array<{
+        sha: string;
+        author: { login: string };
+        commit: { message: string };
+    }>
+}
+
+export function listCommitsBetween(token: string, rr: GitHubRepoRef, startSha: string, end: string,): Promise<GitHubCommitsBetween> {
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/compare/${startSha}...${end}`;
+    return axios.get(url, config)
+        .then(ap => ap.data);
+}
+
 function authHeaders(token: string): AxiosRequestConfig {
     return token ? {
             headers: {

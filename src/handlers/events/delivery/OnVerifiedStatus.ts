@@ -32,7 +32,8 @@ export interface StatusInfo {
 
 export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: StatusInfo,
                                           sendMessagesHere: Destination,
-                                          ctx: HandlerContext) => Promise<any>;
+                                          ctx: HandlerContext,
+                                          token: string) => Promise<any>;
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -61,7 +62,7 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        return params.listener(id, status, messageDestinations(commit.repo, ctx), ctx)
+        return params.listener(id, status, messageDestinations(commit.repo, ctx), ctx, params.githubToken)
             .then(() => Success);
     }
 }
