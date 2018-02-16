@@ -1,8 +1,8 @@
 
 import { CommandHandler, HandleCommand, HandlerContext, Parameter, Secret, Secrets } from "@atomist/automation-client";
-import { createStatus, listStatuses } from "../../commands/editors/toclient/ghub";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as assert from "power-assert";
+import { createStatus, listStatuses } from "../../commands/editors/toclient/ghub";
 import { ApprovalGateParam } from "./StatusApprovalGate";
 
 @CommandHandler("Transition status to approve")

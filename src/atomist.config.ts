@@ -1,25 +1,33 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
+import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
+import { StatusToApproved } from "./handlers/events/gates/StatusToApproved";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
 import {
     CloudFoundryProductionDeployOnArtifactStatus,
     CloudFoundryStagingDeployOnArtifactStatus,
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
 import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
+import { describeStagingAndProd } from "./software-delivery-machine/blueprint/describeRunningServices";
+import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
-import {OfferPromotion, offerPromotionCommand} from "./software-delivery-machine/blueprint/offerPromotion";
+import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/offerPromotion";
 import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
-import {applyHttpServicePhases, PhaseCleanup, PhaseSetup} from "./software-delivery-machine/blueprint/phaseManagement";
+import {
+    applyHttpServicePhases,
+    PhaseCleanup,
+    PhaseSetup,
+} from "./software-delivery-machine/blueprint/phaseManagement";
 import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
-import {affirmationEditor} from "./software-delivery-machine/commands/editors/affirmationEditor";
-import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
-import { StatusToApproved } from "./handlers/events/gates/StatusToApproved";
-import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint";
-import {describeStagingAndProd} from "./software-delivery-machine/blueprint/describeRunningServices";
+import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
+import {
+    breakBuildEditor,
+    unbreakBuildEditor,
+} from "./software-delivery-machine/commands/editors/breakBuild";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -39,6 +47,8 @@ export const configuration: Configuration = {
         () => describeStagingAndProd,
         StatusToApproved,
         () => applyHttpServicePhases,
+        () => breakBuildEditor,
+        () => unbreakBuildEditor,
     ],
     events: [
         ActOnRepoCreation,

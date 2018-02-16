@@ -6,46 +6,48 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { createStatus } from "../../../../commands/editors/toclient/ghub";
 
-import { HandlerContext } from "@atomist/automation-client";
+import { HandlerContext, logger } from "@atomist/automation-client";
 import axios from "axios";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
 import { ProgressLog } from "../../log/ProgressLog";
-import {BuiltContext, ContextToPlannedPhase} from "../../phases/httpServicePhases";
+import { BuiltContext, ContextToPlannedPhase } from "../../phases/httpServicePhases";
 
 /**
- * Superclass for build, emitting appropriate events to Atomist
+ * Superclass for build implemented on the automation client itself, emitting appropriate events to Atomist
  */
 export abstract class LocalBuilder implements Builder {
 
     constructor(private artifactStore: ArtifactStore) {
     }
 
-    // TODO actually use progress log
-    public build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log?: ProgressLog): Promise<RunningBuild> {
+    public build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log: ProgressLog): Promise<RunningBuild> {
         const as = this.artifactStore;
-        return this.startBuild(creds, rr, team)
+        return this.startBuild(creds, rr, team, log)
             .then(rb => {
-                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, creds, as))
-                    .addListener("error", (code, signal) => onFailure(rb));
+                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, creds, as, log))
+                    .addListener("error", (code, signal) => onFailure(rb, log));
                 return rb;
             })
             .then(onStarted);
     }
 
-    protected abstract startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string): Promise<RunningBuild>;
+    protected abstract startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef,
+                                  team: string, log: ProgressLog): Promise<RunningBuild>;
 }
 
 function onStarted(runningBuild: RunningBuild) {
     return updateAtomistLifecycle(runningBuild, "STARTED", "STARTED");
 }
 
-function onSuccess(runningBuild: RunningBuild) {
+async function onSuccess(runningBuild: RunningBuild, log: ProgressLog) {
+    await log.close();
     return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED");
 }
 
-function onFailure(runningBuild: RunningBuild) {
+async function onFailure(runningBuild: RunningBuild, log: ProgressLog) {
+    await log.close();
     return updateAtomistLifecycle(runningBuild, "FAILURE", "FINALIZED");
 }
 
@@ -74,12 +76,15 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
         .then(() => runningBuild);
 }
 
-function onExit(code: number, signal: any, rb: RunningBuild, team: string, creds: ProjectOperationCredentials, artifactStore: ArtifactStore): void {
+function onExit(code: number, signal: any, rb: RunningBuild, team: string,
+                creds: ProjectOperationCredentials, artifactStore: ArtifactStore,
+                log: ProgressLog): void {
+    logger.info("Build exited with code=%s and signal %s", code, signal);
     if (code === 0) {
-        onSuccess(rb)
+        onSuccess(rb, log)
             .then(id => setBuiltContext(rb, team, creds, artifactStore));
     } else {
-        onFailure(rb);
+        onFailure(rb, log);
     }
 }
 

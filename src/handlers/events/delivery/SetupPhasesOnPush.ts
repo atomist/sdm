@@ -15,6 +15,7 @@
  */
 
 import {GraphQL, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success, Success} from "@atomist/automation-client";
+import {Parameters} from "@atomist/automation-client/decorators";
 import {
     EventFired,
     EventHandler,
@@ -26,9 +27,8 @@ import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHub
 import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
 import {GitProject} from "@atomist/automation-client/project/git/GitProject";
 import {OnPush} from "../../../typings/types";
-import {GitHubStatusContext, Phases} from "./Phases";
-import {Parameters} from "@atomist/automation-client/decorators";
 import {tipOfDefaultBranch} from "../../commands/editors/toclient/ghub";
+import {GitHubStatusContext, Phases} from "./Phases";
 
 export type Classifier = (p: GitProject) => Promise<Phases>;
 
@@ -68,7 +68,6 @@ export class SetupPhasesOnPush implements HandleEvent<OnPush.Subscription> {
     }
 }
 
-
 @Parameters()
 export class ApplyPhasesParameters {
     @Secret(Secrets.UserToken)
@@ -86,7 +85,7 @@ export class ApplyPhasesParameters {
 
 export function applyPhasesToCommit(phases: Phases) {
     return async (ctx: HandlerContext,
-            params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
+                  params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
 
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
@@ -97,6 +96,6 @@ export function applyPhasesToCommit(phases: Phases) {
 
         await phases.setAllToPending(id, creds);
         await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
-        return Success
-    }
+        return Success;
+    };
 }

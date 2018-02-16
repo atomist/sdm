@@ -25,10 +25,10 @@ import {
 } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import * as schema from "../../../typings/types";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import * as schema from "../../../typings/types";
 import { sendFingerprint } from "../../commands/editors/toclient/fingerprints";
 
 export type Fingerprinter = (p: GitProject) => Promise<Fingerprint>;

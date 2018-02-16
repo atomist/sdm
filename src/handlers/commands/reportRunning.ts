@@ -1,16 +1,15 @@
 // how to figure out what is running in Prod
 
 import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
-import {commandHandlerFrom, OnCommand} from "@atomist/automation-client/onCommand";
 import {Parameters} from "@atomist/automation-client/decorators";
+import {commandHandlerFrom, OnCommand} from "@atomist/automation-client/onCommand";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import * as slack from "@atomist/slack-messages/SlackMessages";
 import * as _ from "lodash";
 import * as graphqlTypes from "../../typings/types";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import * as slack from "@atomist/slack-messages/SlackMessages";
 import {linkToDiff, renderDiff} from "../../util/diffRendering";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {tipOfDefaultBranch} from "./editors/toclient/ghub";
-
 
 @Parameters()
 export class ReportRunningParameters {
@@ -28,10 +27,9 @@ export class ReportRunningParameters {
     public comparisonSha: string;
 }
 
-
 export interface ServiceDomain {
-    domain: string,
-    color: string,
+    domain: string;
+    color: string;
 }
 
 export function reportRunningCommand(serviceDomains: ServiceDomain[],
@@ -96,7 +94,6 @@ function describeCurrentlyRunning(id: RemoteRepoRef, countBySha: CountBySha, end
         s == id.sha ? (endDescription ? "(" + endDescription + ")" : "") : linkToDiff(id, s, id.sha, endDescription)}`).join("\n");
 }
 
-
 function linkToSha(id: RemoteRepoRef, sha: string) {
     return slack.url(id.url + "/tree/" + sha, sha.substr(0, 6));
 }
@@ -107,7 +104,6 @@ async function gatherEverythingRunning(ctx: HandlerContext, domain: string): Pro
     const runningCommits = _.flatMap(result.Application, app => app.commits);
     return runningCommits;
 }
-
 
 export async function runningAttachment(ctx: HandlerContext, token: string,
                                         id: GitHubRepoRef, serviceDomain: ServiceDomain,
@@ -124,7 +120,7 @@ export async function runningAttachment(ctx: HandlerContext, token: string,
     if (!onlySha) {
         return [attachment];
     }
-    return [attachment].concat(await renderDiff(token, id, onlySha, id.sha, serviceDomain.color))
+    return [attachment].concat(await renderDiff(token, id, onlySha, id.sha, serviceDomain.color));
 }
 
 function getOnlySha(countBySha: CountBySha) {
@@ -135,7 +131,3 @@ function getOnlySha(countBySha: CountBySha) {
     // there is exactly 1
     return shas[0];
 }
-
-
-
-

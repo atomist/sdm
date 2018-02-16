@@ -13,9 +13,6 @@ export interface RunningBuild {
 
     readonly team: string;
 
-    /** Log output so far */
-    readonly log: string;
-
     /** Available once build is complete */
     readonly appInfo: AppInfo;
 

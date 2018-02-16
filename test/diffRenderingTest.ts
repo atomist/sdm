@@ -8,10 +8,10 @@ describe("commit rendering", () => {
         const text = renderCommitMessage({ owner: "somewhere", name: "over" }, {
             sha: "blue",
             message: "a stripe, it's pretty",
-            author: { login: "Dorothy" }
+            author: { login: "Dorothy" },
         });
 
         console.log(text);
         assert(text.includes("a stripe"));
-    })
-})
+    });
+});

@@ -61,10 +61,10 @@ export interface GitHubCommitsBetween {
         sha: string;
         author: { login: string };
         commit: { message: string };
-    }>
+    }>;
 }
 
-export function listCommitsBetween(token: string, rr: GitHubRepoRef, startSha: string, end: string,): Promise<GitHubCommitsBetween> {
+export function listCommitsBetween(token: string, rr: GitHubRepoRef, startSha: string, end: string): Promise<GitHubCommitsBetween> {
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/compare/${startSha}...${end}`;
     return axios.get(url, config)

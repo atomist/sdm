@@ -9,6 +9,6 @@ describe("Phase handling", () => {
 
        assert.equal(result.name, "scan");
        assert.equal(result.context, ScanContext);
-   })
+   });
 
 });

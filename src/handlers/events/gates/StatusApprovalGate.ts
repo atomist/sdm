@@ -18,9 +18,9 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import * as slack from "@atomist/slack-messages/SlackMessages";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import * as slack from "@atomist/slack-messages/SlackMessages";
 import Status = OnSuccessStatus.Status;
 
 /**

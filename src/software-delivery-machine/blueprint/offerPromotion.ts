@@ -1,12 +1,12 @@
-import {HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets,} from "@atomist/automation-client";
+import {HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
 import {Parameters} from "@atomist/automation-client/decorators";
 import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {addressSlackChannels, buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {OnVerifiedStatus, StatusInfo} from "../../handlers/events/delivery/OnVerifiedStatus";
 import {runningAttachment} from "../../handlers/commands/reportRunning";
+import {OnVerifiedStatus, StatusInfo} from "../../handlers/events/delivery/OnVerifiedStatus";
 import {ProductionMauve} from "../../handlers/events/delivery/phases/productionDeployPhases";
 
 /**

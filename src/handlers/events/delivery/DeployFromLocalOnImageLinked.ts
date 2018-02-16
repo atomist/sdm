@@ -155,7 +155,7 @@ function setDeployStatus(token: string, id: GitHubRepoRef,
         state,
         target_url: targetUrl,
         context,
-        description
+        description,
     });
 }
 

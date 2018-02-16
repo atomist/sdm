@@ -1,7 +1,7 @@
 import { HandlerContext } from "@atomist/automation-client";
+import { clean, ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { ScanOnPendingScanStatus } from "../../handlers/events/delivery/ScanOnPendingScanStatus";
-import { clean, ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 
 export const Scan = new ScanOnPendingScanStatus([scan]);
 

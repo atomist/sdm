@@ -106,10 +106,10 @@ export function userUrl(repo: any, login: string): string {
 }
 
 export interface RepoInfo {
-    owner: string,
-    name: string,
+    owner: string;
+    name: string;
     org?: {
-        provider: { url?: string }
+        provider: { url?: string },
     };
 }
 
@@ -153,7 +153,6 @@ export function labelUrl(repo: any, label: string): string {
 }
 
 export const AtomistGeneratedLabel = "atomist:generated";
-
 
 /**
  * If the URL is of an image, return a Slack message attachment that
@@ -285,7 +284,6 @@ function gitHubUserMentionRegExp(ghUser?: string): RegExp {
     return new RegExp(`(^|\\W)(?:@|＠)(${userRegExp})(?![-\\w]|\\.\\w)`, "g");
 }
 
-
 export interface ChatId {
     id?: string;
     screenName?: string;
@@ -404,4 +402,3 @@ export function repoAndlabelsAndAssigneesFooter(repo: any, labels: any, assignee
     }
     return footer;
 }
-

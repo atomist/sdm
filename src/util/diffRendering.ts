@@ -1,16 +1,15 @@
-import * as slack from "@atomist/slack-messages/SlackMessages";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {avatarUrl, commitUrl, RepoInfo, truncateCommitMessage, userUrl} from "./lifecycleHelpers";
-import {listCommitsBetween} from "../handlers/commands/editors/toclient/ghub";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import {listCommitsBetween} from "../handlers/commands/editors/toclient/ghub";
+import {avatarUrl, commitUrl, RepoInfo, truncateCommitMessage, userUrl} from "./lifecycleHelpers";
 
 export function linkToDiff(id: RemoteRepoRef, start: string, end: string, endDescription?: string) {
-    return slack.url(diffUrl(id, start, end), `(Compare with ${endDescription || end.substr(0,6)})`);
+    return slack.url(diffUrl(id, start, end), `(Compare with ${endDescription || end.substr(0, 6)})`);
 }
 
 function diffUrl(id: RemoteRepoRef, start: string, end: string) {
-    return `${id.url}/compare/${start}...${end}`
+    return `${id.url}/compare/${start}...${end}`;
 }
 
 export async function renderDiff(token: string, id: GitHubRepoRef, start: string, end: string, color: string): Promise<slack.Attachment[]> {
@@ -19,7 +18,7 @@ export async function renderDiff(token: string, id: GitHubRepoRef, start: string
     const commits: CommitForRendering[] = fromGitHub.commits.map(c => ({
         message: c.commit.message,
         sha: c.sha,
-        author: c.author
+        author: c.author,
     }));
 
     console.log("Rendering " + commits.length + " commits in diff");
@@ -29,11 +28,11 @@ export async function renderDiff(token: string, id: GitHubRepoRef, start: string
 
 // exported for testing
 export interface CommitForRendering {
-    sha: string,
-    message: string
+    sha: string;
+    message: string;
     author: {
-        login: string
-    }
+        login: string,
+    };
 }
 
 function render(repo: RepoInfo, commits: CommitForRendering[], fullDiffLink: string, color: string): Promise<slack.Attachment[]> {
@@ -123,6 +122,6 @@ function render(repo: RepoInfo, commits: CommitForRendering[], fullDiffLink: str
 // exported for testing
 export function renderCommitMessage(repo: RepoInfo, commitNode: CommitForRendering): string {
     // Cut commit to 50 chars of first line
-    let m = truncateCommitMessage(commitNode.message, repo);
+    const m = truncateCommitMessage(commitNode.message, repo);
     return "`" + slack.url(commitUrl(repo, commitNode), commitNode.sha.substring(0, 7)) + "` " + m;
 }

@@ -8,6 +8,7 @@ import {RunningBuild } from "../../../Builder";
 import { AppInfo } from "../../../Deployment";
 import { LocalBuilder } from "../LocalBuilder";
 import { identification } from "./pomParser";
+import { ProgressLog } from "../../../log/ProgressLog";
 
 export class MavenBuilder extends LocalBuilder {
 
@@ -15,7 +16,7 @@ export class MavenBuilder extends LocalBuilder {
         super(artifactStore);
     }
 
-    protected startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string): Promise<RunningBuild> {
+    protected startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log: ProgressLog): Promise<RunningBuild> {
         return GitCommandGitProject.cloned(creds, rr)
             .then(p => {
                 // Find the artifact info from Maven
@@ -32,10 +33,9 @@ export class MavenBuilder extends LocalBuilder {
                         });
                         const rb = new UpdatingBuild(rr, childProcess, team);
                         childProcess.stdout.on("data", data => {
-                            rb.l += data.toString();
+                            log.write(data.toString());
                         });
                         childProcess.addListener("exit", (code, signal) => {
-                            console.log("Success at " + p.baseDir);
                             rb.ai = appId;
                             //rb._deploymentUnitStream = fs.createReadStream(`${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`);
                             rb._deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
@@ -52,17 +52,11 @@ class UpdatingBuild implements RunningBuild {
     constructor(public repoRef: RemoteRepoRef, public stream: ChildProcess, public team: string) {
     }
 
-    public l: string = "";
-
     public ai: AppInfo;
 
     public _deploymentUnitStream: Readable;
 
     public _deploymentUnitFile: string;
-
-    get log() {
-        return this.l;
-    }
 
     get appInfo(): AppInfo {
         return this.ai;

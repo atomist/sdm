@@ -15,8 +15,8 @@ import { ApprovalGateParam } from "../gates/StatusApprovalGate";
 export type GitHubStatusContext = string;
 
 export interface PlannedPhase {
-    context: GitHubStatusContext,
-    name: string,
+    context: GitHubStatusContext;
+    name: string;
 }
 
 // exported for testing
@@ -35,13 +35,12 @@ export function parseContext(context: GitHubStatusContext) {
     const phasePart = matchWhole[2];
     const matchPhase = phasePart.match(numberAndName);
     if (!matchPhase) {
-        return {context, name: phasePart}
+        return {context, name: phasePart};
     }
     const name = matchPhase[1];
 
-    return {context, name}
+    return {context, name};
 }
-
 
 export class Phases {
 
@@ -71,7 +70,7 @@ export class Phases {
 
     private contextToPlannedPhase(context: GitHubStatusContext) {
         if (this.plannedPhaseByContext && this.plannedPhaseByContext[context]) {
-            return this.plannedPhaseByContext[context]
+            return this.plannedPhaseByContext[context];
         } else {
             return parseContext(context);
         }
@@ -104,7 +103,7 @@ export class Phases {
 function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
                    state: State,
                    creds: ProjectOperationCredentials,
-                   description: string = context,): Promise<any> {
+                   description: string = context): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: `${id.apiBase}/${id.owner}/${id.repo}/${id.sha}`,

@@ -23,20 +23,20 @@ import {
     failure,
     HandleEvent,
     HandlerContext,
-    HandlerResult
+    HandlerResult,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
+import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { OnPendingStatus, StatusState } from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../commands/editors/toclient/ghub";
 import { ContextToPlannedPhase, ScanContext } from "./phases/httpServicePhases";
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
