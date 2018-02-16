@@ -6,7 +6,8 @@ import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId
 import {addressSlackChannels, buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import {OnVerifiedStatus, StatusInfo} from "../../handlers/events/delivery/OnVerifiedStatus";
-import {Colors, runningAttachment} from "./describeRunningServices";
+import {runningAttachment} from "../../handlers/commands/reportRunning";
+import {ProductionMauve} from "../../handlers/events/delivery/phases/productionDeployPhases";
 
 /**
  * Display a button suggesting promotion to production
@@ -18,9 +19,11 @@ async function presentPromotionButton(id: RemoteRepoRef, s: StatusInfo, sendMess
     const shaLink = slack.url(id.url + "/tree/" + id.sha, id.repo);
     const endpointLink = slack.url(s.targetUrl);
     const messageId = `httpService:promote:prod/${id.repo}/${id.owner}/${id.sha}`;
-    const currentlyRunning = await runningAttachment(ctx, token, id as GitHubRepoRef, "ri-production", id.sha);
+    const currentlyRunning = await runningAttachment(ctx, token, id as GitHubRepoRef,
+        {domain: "ri-production", color: ProductionMauve}, id.sha);
+
     const attachment: slack.Attachment = {
-        color: Colors["ri-production"],
+        color: ProductionMauve,
         text: `Staging endpoint verified at ${endpointLink}\nPromote ${shaLink} to production?`,
         fallback: "offer to promote",
         actions: [buttonForCommand({text: "Promote to Prod"},
@@ -58,6 +61,6 @@ export class OfferPromotionParameters {
 export const offerPromotionCommand: HandleCommand<OfferPromotionParameters> =
     commandHandlerFrom((ctx: HandlerContext, params: OfferPromotionParameters) => {
             return presentPromotionButton(new GitHubRepoRef(params.owner, params.repo, params.sha),
-                { targetUrl: "http://test.com" }, addressSlackChannels(params.channel), ctx, params.githubToken);
+                {targetUrl: "http://test.com"}, addressSlackChannels(params.channel), ctx, params.githubToken);
         }, OfferPromotionParameters, "OfferPromotionButton", "test: suggest promoting a ref to prod",
         "please offer to promote");

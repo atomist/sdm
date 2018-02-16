@@ -18,8 +18,8 @@ import { addCloudFoundryManifest } from "./software-delivery-machine/commands/ed
 import {affirmationEditor} from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
 import { StatusToApproved } from "./handlers/events/gates/StatusToApproved";
-import {reportRunning} from "./software-delivery-machine/blueprint/describeRunningServices";
 import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint";
+import {describeStagingAndProd} from "./software-delivery-machine/blueprint/describeRunningServices";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -36,7 +36,7 @@ export const configuration: Configuration = {
         () => affirmationEditor,
         () => addCloudFoundryManifest,
         () => offerPromotionCommand,
-        () => reportRunning,
+        () => describeStagingAndProd,
         StatusToApproved,
         () => applyHttpServicePhases,
     ],

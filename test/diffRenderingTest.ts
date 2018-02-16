@@ -1,6 +1,6 @@
 import "mocha";
 import * as assert from "power-assert";
-import {renderCommitMessage} from "../src/software-delivery-machine/blueprint/diffRendering";
+import {renderCommitMessage} from "../src/util/diffRendering";
 
 describe("commit rendering", () => {
     it("can render a commit", () => {

@@ -12,6 +12,7 @@ export const ProductionDeploymentPhase = { context: ProductionDeploymentContext,
 export const ProductionEndpointPhase =  { context: ProductionEndpointContext, name: "find production endpoint" };
 export const ProductionVerifiedPhase =  { context: ProductionVerifiedContext, name: "verify production endpoint" };
 
+export const ProductionMauve = "#bb5555";
 /**
  * Phases for deploying an artifact to production
  * @type {Phases}
