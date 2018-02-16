@@ -13,7 +13,7 @@ import {ProductionMauve} from "../../handlers/events/delivery/phases/productionD
  * Display a button suggesting promotion to production
  * @type {OnVerifiedStatus}
  */
-export const OfferPromotion: HandleEvent<any> = new OnVerifiedStatus(presentPromotionButton);
+export const OfferPromotion = () => new OnVerifiedStatus(presentPromotionButton);
 
 async function presentPromotionButton(id: RemoteRepoRef, s: StatusInfo, sendMessagesHere, ctx, token: string) {
     const shaLink = slack.url(id.url + "/tree/" + id.sha, id.repo);

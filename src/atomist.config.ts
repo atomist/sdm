@@ -9,18 +9,18 @@ import {
     CloudFoundryStagingDeployOnArtifactStatus,
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
 import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
-import { describeStagingAndProd } from "./software-delivery-machine/blueprint/describeRunningServices";
+import { DescribeStagingAndProd } from "./software-delivery-machine/blueprint/describeRunningServices";
 import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/offerPromotion";
-import { onNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
+import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
 import {
     applyHttpServicePhases,
     PhaseCleanup,
     PhaseSetup,
 } from "./software-delivery-machine/blueprint/phaseManagement";
-import { Scan } from "./software-delivery-machine/blueprint/scanOnPush";
+import { ReviewOnPush } from "./software-delivery-machine/blueprint/scanOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
@@ -45,7 +45,7 @@ export const configuration: Configuration = {
         () => affirmationEditor,
         () => addCloudFoundryManifest,
         () => offerPromotionCommand,
-        () => describeStagingAndProd,
+        DescribeStagingAndProd,
         StatusToApproved,
         () => applyHttpServicePhases,
         () => breakBuildEditor,
@@ -53,18 +53,18 @@ export const configuration: Configuration = {
     ],
     events: [
         ActOnRepoCreation,
-        () => onNewRepoWithCode,
-        () => PhaseSetup,
-        () => PhaseCleanup,
-        () => MyFingerprinter,
-        () => Scan,
-        () => OnBuildComplete,
-        () => LocalMavenBuildOnSucessStatus,
-        () => CloudFoundryStagingDeployOnArtifactStatus,
-        () => CloudFoundryProductionDeployOnArtifactStatus,
-        () => NotifyOnDeploy,
-        () => VerifyEndpoint,
-        () => OfferPromotion,
+        OnNewRepoWithCode,
+        PhaseSetup,
+        PhaseCleanup,
+        MyFingerprinter,
+        ReviewOnPush,
+        OnBuildComplete,
+        LocalMavenBuildOnSucessStatus,
+        CloudFoundryStagingDeployOnArtifactStatus,
+        CloudFoundryProductionDeployOnArtifactStatus,
+        NotifyOnDeploy,
+        VerifyEndpoint,
+        OfferPromotion,
         StatusApprovalGate,
     ],
     token,

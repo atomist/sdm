@@ -7,7 +7,7 @@ import { VerifyOnEndpointStatus } from "../../handlers/events/delivery/VerifyOnE
  * Make an HTTP request to the report endpoint to check
  * @type {VerifyOnEndpointStatus}
  */
-export const VerifyEndpoint = new VerifyOnEndpointStatus(
+export const VerifyEndpoint = () => new VerifyOnEndpointStatus(
     url => {
         return axios.get(url)
             .then(resp => {

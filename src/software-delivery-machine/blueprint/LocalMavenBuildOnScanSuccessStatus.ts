@@ -2,5 +2,5 @@ import { MavenBuilder } from "../../handlers/events/delivery/build/local/maven/M
 import { BuildOnScanSuccessStatus } from "../../handlers/events/delivery/BuildOnScanSuccessStatus";
 import { artifactStore } from "./artifactStore";
 
-export const LocalMavenBuildOnSucessStatus =
+export const LocalMavenBuildOnSucessStatus = () =>
     new BuildOnScanSuccessStatus(new MavenBuilder(artifactStore));

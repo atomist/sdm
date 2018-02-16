@@ -6,7 +6,7 @@ import { AddressChannels } from "../../handlers/commands/editors/toclient/addres
 import { OnFirstPushToRepo } from "../../handlers/events/repo/OnFirstPushToRepo";
 import { AddCloudFoundryManifestEditorName } from "../commands/editors/addCloudFoundryManifest";
 
-export const onNewRepoWithCode = new OnFirstPushToRepo(addCloudFoundryManifest);
+export const OnNewRepoWithCode = () => new OnFirstPushToRepo(addCloudFoundryManifest);
 
 function addCloudFoundryManifest(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
     const attachment: slack.Attachment = {
