@@ -21,7 +21,7 @@ import {
     Parameter,
     Secret,
     Secrets,
-    Success, success
+    Success
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import {
@@ -38,14 +38,17 @@ import { OnAnyPush, OnPush, OnPushToAnyBranch } from "../../../typings/types";
 import { tipOfDefaultBranch } from "../../commands/editors/toclient/ghub";
 import { Phases } from "./Phases";
 
-export type PhaseBuilder = (p: GitProject) => Promise<Phases>;
+/**
+ * Return undefined if no phases set up
+ */
+export type PhaseBuilder = (p: GitProject) => Promise<Phases | undefined>;
 
 export type PushTest = (p: OnAnyPush.Push) => boolean | Promise<boolean>;
 
 export const PushesToMaster: PushTest = p => p.branch === "master";
 
 /**
- * Scan code on a push to master. Result is setting GitHub status with context = "scan"
+ * Scan code on a push. Results in setting up phases (e.g. for delivery).
  */
 @EventHandler("Scan code on master",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPushToAnyBranch.graphql",
@@ -55,10 +58,16 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private phaseBuilder: PhaseBuilder, private pushTest) {
+    /**
+     * Find phases
+     * @param {PhaseBuilder[]} phaseBuilders first PhaseBuilder that returns
+     * phases will win
+     * @param pushTest how to determine whether to create phases for this project
+     */
+    constructor(private phaseBuilders: PhaseBuilder[], private pushTest) {
     }
 
-    public handle(event: EventFired<OnPushToAnyBranch.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push: OnPush.Push = event.data.Push[0];
 
         if (!this.pushTest(push)) {
@@ -71,15 +80,13 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
 
         const creds = {token: params.githubToken};
 
-        return GitCommandGitProject.cloned(creds, id)
-            .then(p => params.phaseBuilder(p))
-            .then(phases => {
-                if (!!phases) {
-                    return phases.setAllToPending(id, creds);
-                } else {
-                    return Promise.resolve();
-                }
-            }).then(() => Success);
+        const p = await GitCommandGitProject.cloned(creds, id);
+        const phasesFound = await Promise.all(params.phaseBuilders.map(pb => pb(p)));
+        const phases = phasesFound.find(phrase => !!phrase);
+        if (!!phases) {
+            await phases.setAllToPending(id, creds);
+        }
+        return Success;
     }
 }
 

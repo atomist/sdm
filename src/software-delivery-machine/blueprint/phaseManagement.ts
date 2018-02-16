@@ -10,11 +10,11 @@ import {
     SetupPhasesOnPush,
 } from "../../handlers/events/delivery/SetupPhasesOnPush";
 
-export const PhaseSetup = () => new SetupPhasesOnPush(scanForPhases, PushesToMaster);
+export const PhaseSetup = () => new SetupPhasesOnPush([jvmPhaseBuilder], PushesToMaster);
 
 export const PhaseCleanup = () => new FailDownstreamPhasesOnPhaseFailure(HttpServicePhases);
 
-async function scanForPhases(p: GitProject): Promise<Phases> {
+async function jvmPhaseBuilder(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");
         const manifest = await p.findFile("manifest.yml").catch(err => undefined);
