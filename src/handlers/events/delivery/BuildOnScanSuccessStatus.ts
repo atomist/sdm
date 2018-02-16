@@ -19,8 +19,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../typings/types";
 import { Builder, RunningBuild } from "./Builder";
-import { slackProgressLog } from "./log/ProgressLog";
-import {currentPhaseIsStillPending, previousPhaseSucceeded} from "./Phases";
+import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
+import { currentPhaseIsStillPending, previousPhaseSucceeded } from "./Phases";
 import { BuiltContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
 
 /**
@@ -29,16 +29,17 @@ import { BuiltContext, HttpServicePhases, ScanContext } from "./phases/httpServi
 @EventHandler("Build on source scan success",
     GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
-        context: ScanContext,
-    }))
+            context: ScanContext,
+        }))
 export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private builder: Builder) {}
+    constructor(private builder: Builder) {
+    }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
@@ -47,7 +48,8 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
             context: status.context,
             state: status.state,
             targetUrl: status.targetUrl,
-            siblings: status.commit.statuses };
+            siblings: status.commit.statuses,
+        };
 
         if (!previousPhaseSucceeded(HttpServicePhases, BuiltContext, statusAndFriends)) {
             return Promise.resolve(Success);
@@ -60,21 +62,27 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        return params.builder.build(creds, id, team, slackProgressLog(commit.repo, ctx))
-            .then(handleBuild)
-            .then(() => ({
-                code: 0,
-            }));
+        // const progressLog = slackProgressLog(commit.repo, ctx);
+
+        const progressLog = await createLinkableProgressLog();
+
+        try {
+            await params.builder.build(creds, id, team, progressLog)
+                .then(waitForBuild);
+            return Success;
+        } catch (err) {
+            await progressLog.close();
+            throw err;
+        }
     }
 }
 
-function handleBuild(runningBuild: RunningBuild): Promise<any> {
+function waitForBuild(runningBuild: RunningBuild): Promise<any> {
     return new Promise((resolve, reject) => {
         runningBuild.stream.addListener("end", resolve);
         runningBuild.stream.addListener("exit", resolve);
         runningBuild.stream.addListener("close", resolve);
         runningBuild.stream.addListener("error", err => {
-            console.log("Saw error " + err);
             return reject(err);
         });
     });

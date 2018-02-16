@@ -20,7 +20,7 @@ export abstract class LocalBuilder implements Builder {
         const as = this.artifactStore;
         return this.startBuild(creds, rr, team, log)
             .then(rb => {
-                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, creds, as, log))
+                rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, as, log))
                     .addListener("error", (code, signal) => onFailure(rb, log));
                 return rb;
             })
@@ -36,12 +36,10 @@ function onStarted(runningBuild: RunningBuild) {
 }
 
 async function onSuccess(runningBuild: RunningBuild, log: ProgressLog) {
-    await log.close();
     return updateAtomistLifecycle(runningBuild, "SUCCESS", "FINALIZED");
 }
 
 async function onFailure(runningBuild: RunningBuild, log: ProgressLog) {
-    await log.close();
     return updateAtomistLifecycle(runningBuild, "FAILURE", "FINALIZED");
 }
 
@@ -71,7 +69,7 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
 }
 
 function onExit(code: number, signal: any, rb: RunningBuild, team: string,
-                creds: ProjectOperationCredentials, artifactStore: ArtifactStore,
+                artifactStore: ArtifactStore,
                 log: ProgressLog): void {
     logger.info("Build exited with code=%s and signal %s", code, signal);
     if (code === 0) {
