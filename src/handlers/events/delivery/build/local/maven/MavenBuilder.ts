@@ -4,9 +4,9 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { ChildProcess, spawn } from "child_process";
 import { Readable } from "stream";
 import { ArtifactStore } from "../../../ArtifactStore";
-import {RunningBuild } from "../../../Builder";
+import { RunningBuild } from "../../../Builder";
 import { AppInfo } from "../../../Deployment";
-import { ProgressLog } from "../../../log/ProgressLog";
+import { LinkablePersistentProgressLog, ProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder } from "../LocalBuilder";
 import { identification } from "./pomParser";
 
@@ -24,8 +24,9 @@ export class MavenBuilder extends LocalBuilder {
         super(artifactStore);
     }
 
-    protected startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log: ProgressLog): Promise<RunningBuild> {
-        return GitCommandGitProject.cloned(creds, rr)
+    protected startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+                         team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild> {
+        return GitCommandGitProject.cloned(creds, id)
             .then(p => {
                 // Find the artifact info from Maven
                 return p.findFile("pom.xml")
@@ -39,7 +40,7 @@ export class MavenBuilder extends LocalBuilder {
                         ], {
                             cwd: p.baseDir,
                         });
-                        const rb = new UpdatingBuild(rr, childProcess, team);
+                        const rb = new UpdatingBuild(id, childProcess, team, log.url);
                         childProcess.stdout.on("data", data => {
                             log.write(data.toString());
                         });
@@ -57,7 +58,10 @@ export class MavenBuilder extends LocalBuilder {
 
 class UpdatingBuild implements RunningBuild {
 
-    constructor(public repoRef: RemoteRepoRef, public stream: ChildProcess, public team: string) {
+    constructor(public repoRef: RemoteRepoRef,
+                public stream: ChildProcess,
+                public team: string,
+                public url: string) {
     }
 
     public ai: AppInfo;

@@ -6,7 +6,7 @@ import axios from "axios";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { Builder, RunningBuild } from "../../Builder";
-import { ProgressLog } from "../../log/ProgressLog";
+import { LinkablePersistentProgressLog, ProgressLog } from "../../log/ProgressLog";
 
 /**
  * Superclass for build implemented on the automation client itself, emitting appropriate events to Atomist
@@ -16,9 +16,10 @@ export abstract class LocalBuilder implements Builder {
     constructor(private artifactStore: ArtifactStore) {
     }
 
-    public build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log: ProgressLog): Promise<RunningBuild> {
+    public build(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+                 team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild> {
         const as = this.artifactStore;
-        return this.startBuild(creds, rr, team, log)
+        return this.startBuild(creds, id, team, log)
             .then(rb => {
                 rb.stream.addListener("exit", (code, signal) => onExit(code, signal, rb, team, as, log))
                     .addListener("error", (code, signal) => onFailure(rb, log));
@@ -27,8 +28,8 @@ export abstract class LocalBuilder implements Builder {
             .then(onStarted);
     }
 
-    protected abstract startBuild(creds: ProjectOperationCredentials, rr: RemoteRepoRef,
-                                  team: string, log: ProgressLog): Promise<RunningBuild>;
+    protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+                                  team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild>;
 }
 
 function onStarted(runningBuild: RunningBuild) {
@@ -55,6 +56,8 @@ function updateAtomistLifecycle(runningBuild: RunningBuild,
             number: `Build ${runningBuild.repoRef.sha.substring(0, 7)}...`,
             scm: {
                 commit: runningBuild.repoRef.sha,
+                // TODO why doesn't this work
+                // url: runningBuild.url,
                 url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
                 // TODO is this required
                 branch: "master",

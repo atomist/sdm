@@ -2,7 +2,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Readable } from "stream";
 import { AppInfo } from "./Deployment";
-import { ProgressLog } from "./log/ProgressLog";
+import { LinkablePersistentProgressLog } from "./log/ProgressLog";
 import EventEmitter = NodeJS.EventEmitter;
 
 export interface RunningBuild {
@@ -19,10 +19,13 @@ export interface RunningBuild {
     readonly deploymentUnitStream: Readable;
 
     readonly deploymentUnitFile: string;
+
+    readonly url: string;
 }
 
 export interface Builder {
 
-    build(creds: ProjectOperationCredentials, rr: RemoteRepoRef, team: string, log?: ProgressLog): Promise<RunningBuild>;
+    build(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+          team: string, log: LinkablePersistentProgressLog): Promise<RunningBuild>;
 
 }
