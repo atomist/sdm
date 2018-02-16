@@ -17,4 +17,4 @@ export const ProductionMauve = "#bb5555";
  * Phases for deploying an artifact to production
  * @type {Phases}
  */
-export const ProductionDeployPhases = new Phases([ProductionDeploymentContext, ProductionEndpointContext]); //, ProductionVerifiedContext]);
+export const ProductionDeployPhases = new Phases([ProductionDeploymentContext, ProductionEndpointContext]); // ProductionVerifiedContext]);

@@ -86,7 +86,7 @@ function render(repo: RepoInfo, commits: CommitForRendering[], fullDiffLink: str
             attachments.push(attachment);
         });
 
-    //Limit number of commits by author to 5
+    // Limit number of commits by author to 5
     if (attachments.length > 5) {
         attachments = attachments.slice(0, 5);
         const fullDiffDescription = "... and more! (${commits.length} total commits)";

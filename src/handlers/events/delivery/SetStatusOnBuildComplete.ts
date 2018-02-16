@@ -17,12 +17,12 @@
 import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnBuildComplete } from "../../../typings/types";
-import { createStatus } from "../../commands/editors/toclient/ghub";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { OnBuildComplete } from "../../../typings/types";
+import { createStatus } from "../../commands/editors/toclient/ghub";
 
 /**
  * Set build status on complete build

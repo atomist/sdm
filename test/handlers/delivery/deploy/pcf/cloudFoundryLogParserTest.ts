@@ -14,6 +14,7 @@ describe("CloudFoundryProgressLog", () => {
 
 });
 
+/* tslint:disable */
 const l1 = `Logging into Cloud Foundry as rod@atomist.com...
 Updating app losgatos1 in org springrod / space development as rod@atomist.com...
 OK

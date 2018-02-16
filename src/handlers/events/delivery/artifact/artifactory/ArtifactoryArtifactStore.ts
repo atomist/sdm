@@ -4,6 +4,7 @@ import { AppInfo } from "../../Deployment";
 import * as fs from "fs";
 import { ArtifactStore, DeployableArtifact, StoredArtifact } from "../../ArtifactStore";
 
+/*
 const path = require("path");
 const Q = require("Q");
 const async = require("async");
@@ -39,3 +40,5 @@ export class ArtifactoryArtifactStore implements ArtifactStore {
         return null;
     }
 }
+
+*/

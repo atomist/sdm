@@ -91,7 +91,7 @@ function describeCurrentlyRunning(id: RemoteRepoRef, countBySha: CountBySha, end
         return "No running services recorded";
     }
     return shas.map(s => `${countBySha[s]} reported running at ${linkToSha(id, s)} ${
-        s == id.sha ? (endDescription ? "(" + endDescription + ")" : "") : linkToDiff(id, s, id.sha, endDescription)}`).join("\n");
+        s === id.sha ? (endDescription ? "(" + endDescription + ")" : "") : linkToDiff(id, s, id.sha, endDescription)}`).join("\n");
 }
 
 function linkToSha(id: RemoteRepoRef, sha: string) {

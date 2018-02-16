@@ -6,9 +6,9 @@ import { Readable } from "stream";
 import { ArtifactStore } from "../../../ArtifactStore";
 import {RunningBuild } from "../../../Builder";
 import { AppInfo } from "../../../Deployment";
+import { ProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder } from "../LocalBuilder";
 import { identification } from "./pomParser";
-import { ProgressLog } from "../../../log/ProgressLog";
 
 export class MavenBuilder extends LocalBuilder {
 
@@ -37,8 +37,8 @@ export class MavenBuilder extends LocalBuilder {
                         });
                         childProcess.addListener("exit", (code, signal) => {
                             rb.ai = appId;
-                            //rb._deploymentUnitStream = fs.createReadStream(`${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`);
-                            rb._deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
+                            // rb._deploymentUnitStream = fs.createReadStream(`${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`);
+                            rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
                         });
                         return rb;
                     });
@@ -54,20 +54,12 @@ class UpdatingBuild implements RunningBuild {
 
     public ai: AppInfo;
 
-    public _deploymentUnitStream: Readable;
+    public deploymentUnitStream: Readable;
 
-    public _deploymentUnitFile: string;
+    public deploymentUnitFile: string;
 
     get appInfo(): AppInfo {
         return this.ai;
-    }
-
-    get deploymentUnitStream(): Readable {
-        return this._deploymentUnitStream;
-    }
-
-    get deploymentUnitFile(): string {
-        return this._deploymentUnitFile;
     }
 
 }

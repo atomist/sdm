@@ -296,7 +296,7 @@ export interface Preferences {
 }
 
 /**
- Regular expression to find issue mentions.  There are capture
+ * Regular expression to find issue mentions.  There are capture
  * groups for the issue repository owner, repository name, and issue
  * number.  The capture groups for repository owner and name are
  * optional and therefore may be null, although if one is set, the

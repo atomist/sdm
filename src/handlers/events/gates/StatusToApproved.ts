@@ -45,7 +45,6 @@ export class StatusToApproved implements HandleCommand {
             description: oldStatus.description,
             target_url: oldStatus.target_url.replace(ApprovalGateParam, ""),
         });
-        //await deleteStatus(params.githubToken, id, oldStatus.context);
         return ctx.messageClient.respond("Approved");
     }
 }

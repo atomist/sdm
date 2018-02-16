@@ -14,6 +14,7 @@ import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerpri
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/offerPromotion";
+import { OnBuildComplete } from "./software-delivery-machine/blueprint/onBuildComplete";
 import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
 import {
     applyHttpServicePhases,
@@ -28,7 +29,6 @@ import {
     breakBuildEditor,
     unbreakBuildEditor,
 } from "./software-delivery-machine/commands/editors/breakBuild";
-import { OnBuildComplete } from "./software-delivery-machine/blueprint/onBuildComplete";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);

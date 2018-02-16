@@ -40,11 +40,9 @@ export class LocalArtifactStore implements ArtifactStore {
                 }
 
                 const targetUrl = storedArtifact.deploymentUnitUrl;
-                //Form is http:///var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-20964EBUrRVIZ077a/target/losgatos1-0.1.0-SNAPSHOT.jar
+                // Form is http:///var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-20964EBUrRVIZ077a/target/losgatos1-0.1.0-SNAPSHOT.jar
                 const lastSlash = targetUrl.lastIndexOf("/");
                 const filename = targetUrl.substr(lastSlash + 1);
-                //const name = filename.substr(0, filename.indexOf("-"));
-                //const version = filename.substr(name.length + 1);
                 const cwd = targetUrl.substring(7, lastSlash);
                 const local: DeployableArtifact = {
                     ...storedArtifact.appInfo,

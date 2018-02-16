@@ -68,10 +68,10 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
     }
 }
 
-function setVerificationStatus(token: string, id: GitHubRepoRef, state: StatusState, target_url: string): Promise<any> {
+function setVerificationStatus(token: string, id: GitHubRepoRef, state: StatusState, targetUrl: string): Promise<any> {
     return createStatus(token, id, {
         state,
-        target_url,
+        target_url: targetUrl,
         context: StagingVerifiedContext,
         description: `${state === "success" ? "Completed" : "Failed to "} ${ContextToPlannedPhase[StagingVerifiedContext].name}`,
     });

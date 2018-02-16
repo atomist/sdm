@@ -7,7 +7,7 @@ import { HttpServicePhases, LibraryPhases } from "../../handlers/events/delivery
 import {
     ApplyPhasesParameters,
     applyPhasesToCommit,
-    SetupPhasesOnPush
+    SetupPhasesOnPush,
 } from "../../handlers/events/delivery/SetupPhasesOnPush";
 
 export const PhaseSetup = () => new SetupPhasesOnPush(scanForPhases);
