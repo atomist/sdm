@@ -1,8 +1,8 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { AbstractSoftwareDeliveryMachine } from "../blueprint/AbstractSoftwareDeliveryMachine";
-import { PromotedEnvironment } from "../blueprint/DeliveryBlueprint";
+import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
+import { PromotedEnvironment } from "../sdm/DeliveryBlueprint";
 import { BuildOnScanSuccessStatus } from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
