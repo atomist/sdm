@@ -6,7 +6,11 @@ import { AddressChannels } from "../../handlers/commands/editors/toclient/addres
 import { OnFirstPushToRepo } from "../../handlers/events/repo/OnFirstPushToRepo";
 import { AddCloudFoundryManifestEditorName } from "../commands/editors/addCloudFoundryManifest";
 
-export const OnNewRepoWithCode = () => new OnFirstPushToRepo(addCloudFoundryManifest);
+export const OnNewRepoWithCode = () => new OnFirstPushToRepo([tagRepo, addCloudFoundryManifest]);
+
+async function tagRepo(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
+    return addressChannels("Going to tag repo " + JSON.stringify(id));
+}
 
 function addCloudFoundryManifest(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
     const attachment: slack.Attachment = {

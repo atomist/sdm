@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets, success } from "@atomist/automation-client";
+import { GraphQL, logger, Secret, Secrets, success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -46,10 +46,10 @@ export class OnFirstPushToRepo
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private action: NewRepoWithCodeAction) {
+    constructor(private actions: NewRepoWithCodeAction[]) {
     }
 
-    public handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push = event.data.Push[0];
 
         if (!!push.before) {
@@ -64,14 +64,18 @@ export class OnFirstPushToRepo
 
         const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");
 
+        const id = new GitHubRepoRef(push.repo.owner, push.repo.name, push.after.sha);
+
         if (!screenName) {
-            return Promise.resolve(success());
+            logger.warn("Warning: Cannot get screen name of committer for first push on %j", id);
+            return Success;
         }
 
         const addressChannels: AddressChannels = m => ctx.messageClient.addressUsers(m, screenName);
 
-        const id = new GitHubRepoRef(push.repo.owner, push.repo.name, push.after.sha);
-        return params.action(id, {token: params.githubToken}, addressChannels, ctx)
-            .then(() => Promise.resolve(Success));
+        await Promise.all(params.actions
+            .map(action => action(id, {token: params.githubToken}, addressChannels, ctx)),
+        );
+        return Success;
     }
 }
