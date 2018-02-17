@@ -34,9 +34,9 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnAnyPush, OnPush, OnPushToAnyBranch } from "../../../typings/types";
-import { tipOfDefaultBranch } from "../../commands/editors/toclient/ghub";
-import { Phases } from "./Phases";
+import { OnAnyPush, OnPush, OnPushToAnyBranch } from "../../../../typings/types";
+import { tipOfDefaultBranch } from "../../../commands/editors/toclient/ghub";
+import { Phases } from "../Phases";
 
 /**
  * Return undefined if no phases set up
@@ -51,7 +51,7 @@ export const PushesToMaster: PushTest = p => p.branch === "master";
  * Scan code on a push. Results in setting up phases (e.g. for delivery).
  */
 @EventHandler("Scan code on master",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnPushToAnyBranch.graphql",
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnPushToAnyBranch.graphql",
         __dirname))
 export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 

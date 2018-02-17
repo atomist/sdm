@@ -8,7 +8,8 @@ import {Deployment} from "../Deployment";
 import {CloudFoundryInfo} from "./CloudFoundryTarget";
 
 /**
- * Spawn a new process to use the Cloud Foundry CLI to push
+ * Spawn a new process to use the Cloud Foundry CLI to push.
+ * Note that this isn't thread safe concerning multiple logins or spaces.
  */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 

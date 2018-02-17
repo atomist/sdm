@@ -17,10 +17,10 @@
 import {GraphQL, HandlerResult, logger, Secret, Secrets, success, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {OnSuccessStatus, StatusState} from "../../../typings/types";
-import {createStatus} from "../../commands/editors/toclient/ghub";
-import {currentPhaseIsStillPending, previousPhaseSucceeded} from "./Phases";
-import {ContextToPlannedPhase, HttpServicePhases, StagingEndpointContext, StagingVerifiedContext} from "./phases/httpServicePhases";
+import {OnSuccessStatus, StatusState} from "../../../../typings/types";
+import {createStatus} from "../../../commands/editors/toclient/ghub";
+import {currentPhaseIsStillPending, previousPhaseSucceeded} from "../Phases";
+import {ContextToPlannedPhase, HttpServicePhases, StagingEndpointContext, StagingVerifiedContext} from "../phases/httpServicePhases";
 
 export type EndpointVerifier = (url: string) => Promise<any>;
 
@@ -28,7 +28,7 @@ export type EndpointVerifier = (url: string) => Promise<any>;
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
 @EventHandler("Check endpoint",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
             context: StagingEndpointContext,
         }))

@@ -14,12 +14,12 @@ import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/deploy/not
 import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/deploy/offerPromotion";
 import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint/calculateFingerprints";
 import { SemanticDiffReactor } from "./software-delivery-machine/blueprint/fingerprint/reactToFingerprintDiffs";
-import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/repo/onFirstPush";
 import {
     applyHttpServicePhases,
     PhaseCleanup,
     PhaseSetup,
-} from "./software-delivery-machine/blueprint/repo/phaseManagement";
+} from "./software-delivery-machine/blueprint/phase/phaseManagement";
+import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/repo/onFirstPush";
 import { ReviewOnPush } from "./software-delivery-machine/blueprint/review/reviewOnPush";
 import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";

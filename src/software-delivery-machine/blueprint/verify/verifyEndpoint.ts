@@ -1,6 +1,6 @@
 
 import axios from "axios";
-import { VerifyOnEndpointStatus } from "../../../handlers/events/delivery/VerifyOnEndpointStatus";
+import { VerifyOnEndpointStatus } from "../../../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 
 /**
  * Make an HTTP request to the report endpoint to check
