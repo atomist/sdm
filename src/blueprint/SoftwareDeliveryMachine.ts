@@ -10,4 +10,6 @@ export interface SoftwareDeliveryMachine extends DeliveryBlueprint {
 
     generators: Array<Maker<HandleCommand>>;
 
+    editors: Array<Maker<HandleCommand>>;
+
 }

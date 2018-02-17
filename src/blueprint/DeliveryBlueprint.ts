@@ -15,6 +15,18 @@ import { OnDeployToProductionFingerprint, OnImageLinked, OnRepoCreation, OnSucce
 import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
+ * An environment to promote into. Normally there is only one, for production
+ */
+export interface PromotedEnvironment {
+
+    name: string;
+    deploy: Maker<HandleEvent<OnDeployToProductionFingerprint.Subscription>>;
+    promote: Maker<HandleCommand>;
+    offerPromotionCommand: Maker<HandleCommand<OfferPromotionParameters>>;
+
+}
+
+/**
  * A Blueprint represents the delivery process
  */
 export interface DeliveryBlueprint extends FunctionalUnit {
@@ -33,11 +45,14 @@ export interface DeliveryBlueprint extends FunctionalUnit {
 
     phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;
 
-    // TODO can we have multiple
+    // TODO can we have multiple?
     builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
 
     onBuildComplete: Maker<SetStatusOnBuildComplete>;
 
+    /**
+     * Initial deploy
+     */
     deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
 
     notifyOnDeploy?: Maker<OnDeployStatus>;
@@ -46,14 +61,11 @@ export interface DeliveryBlueprint extends FunctionalUnit {
 
     onVerifiedStatus?: Maker<OnVerifiedStatus>;
 
-    // TODO these 3 should go together in an optional
     // TODO could have n of these?
-    deploy2: Maker<HandleEvent<OnDeployToProductionFingerprint.Subscription>>;
-    deployToProduction?: Maker<HandleCommand>;
-    offerPromotionCommand?: Maker<HandleCommand<OfferPromotionParameters>>;
+    promotedEnvironment?: PromotedEnvironment;
 
     /**
-     * Miscellaneous supporting commands
+     * Miscellaneous supporting commands needed by the event handlers etc.
      */
     supportingCommands: Array<Maker<HandleCommand>>;
 

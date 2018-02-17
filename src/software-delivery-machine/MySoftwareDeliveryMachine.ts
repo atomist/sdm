@@ -1,9 +1,9 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { AbstractSoftwareDeliveryMachine } from "../blueprint/AbstractSoftwareDeliveryMachine";
+import { PromotedEnvironment } from "../blueprint/DeliveryBlueprint";
 import { BuildOnScanSuccessStatus } from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
@@ -15,7 +15,7 @@ import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
-import { OnDeployToProductionFingerprint, OnImageLinked } from "../typings/types";
+import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
     CloudFoundryProductionDeployOnFingerprint,
@@ -24,10 +24,10 @@ import {
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { NotifyOnDeploy } from "./blueprint/deploy/notifyOnDeploy";
-import { OfferPromotion, offerPromotionCommand, OfferPromotionParameters } from "./blueprint/deploy/offerPromotion";
+import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { MyFingerprinter } from "./blueprint/fingerprint/calculateFingerprints";
 import { SemanticDiffReactor } from "./blueprint/fingerprint/reactToFingerprintDiffs";
-import { PhaseCleanup, PhaseSetup } from "./blueprint/phase/phaseManagement";
+import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { OnNewRepoWithCode } from "./blueprint/repo/onFirstPush";
 import { RunReview } from "./blueprint/review/runReview";
 import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
@@ -59,23 +59,30 @@ export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     public onVerifiedStatus: Maker<OnVerifiedStatus> = OfferPromotion;
 
-    public deployToProduction: Maker<HandleCommand> = DeployToProd;
+    public promotedEnvironment: PromotedEnvironment = {
 
-    public offerPromotionCommand: Maker<HandleCommand<OfferPromotionParameters>> = offerPromotionCommand;
+        name: "production",
 
-    // Todo subscription name is too specific?
-    public deploy2: Maker<HandleEvent<OnDeployToProductionFingerprint.Subscription>> =
-        CloudFoundryProductionDeployOnFingerprint;
+        offerPromotionCommand,
+
+        promote: DeployToProd,
+
+        deploy: CloudFoundryProductionDeployOnFingerprint,
+    };
 
     public generators: Array<Maker<HandleCommand>> = [
         () => springBootGenerator(),
     ];
+
+    public editors: Array<Maker<HandleCommand>> = [];
 
     public supportingCommands: Array<Maker<HandleCommand>> = [
         () => addCloudFoundryManifest,
         DescribeStagingAndProd,
     ];
 
-    protected possiblePhases: Phases[] = [HttpServicePhases, LibraryPhases];
+    protected get possiblePhases(): Phases[] {
+        return [HttpServicePhases, LibraryPhases];
+    }
 
 }

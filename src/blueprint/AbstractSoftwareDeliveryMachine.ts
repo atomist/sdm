@@ -13,8 +13,8 @@ import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
-import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { PromotedEnvironment } from "./DeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
@@ -22,6 +22,11 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  */
 export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
 
+    // TODO could abstract some of this more with things like Fingerprinters
+
+    /**
+     * All possible phases we can set up. Makes cleanup easier.
+     */
     protected abstract possiblePhases: Phases[];
 
     public abstract onRepoCreation?: Maker<ActOnRepoCreation>;
@@ -50,16 +55,14 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract onVerifiedStatus?: Maker<OnVerifiedStatus>;
 
-    public abstract deploy2: Maker<HandleEvent<OnDeployToProductionFingerprint.Subscription>>;
-
-    public abstract deployToProduction?: Maker<HandleCommand>;
-
-    public abstract offerPromotionCommand?: Maker<HandleCommand<OfferPromotionParameters>>;
+    public abstract promotedEnvironment?: PromotedEnvironment;
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete(BuiltContext)
 
     public abstract generators: Array<Maker<HandleCommand>>;
+
+    public abstract editors: Array<Maker<HandleCommand>>;
 
     /**
      * Miscellaneous supporting commands
@@ -78,7 +81,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
                 this.builder,
                 this.onBuildComplete,
                 this.deploy1,
-                this.deploy2,
+                !!this.promotedEnvironment ? this.promotedEnvironment.deploy : undefined,
                 this.notifyOnDeploy,
                 this.verifyEndpoint,
                 this.onVerifiedStatus,
@@ -89,8 +92,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this.generators
             .concat(this.supportingCommands)
             .concat([
-                this.deployToProduction,
-                this.offerPromotionCommand,
+                !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
+                !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,
             ]).filter(m => !!m);
     }
 
