@@ -1,4 +1,5 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { AbstractSoftwareDeliveryMachine } from "../blueprint/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../blueprint/DeliveryBlueprint";
@@ -8,7 +9,7 @@ import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhases
 import { Phases } from "../handlers/events/delivery/Phases";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { CodeInspection } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
@@ -29,7 +30,7 @@ import { MyFingerprinter } from "./blueprint/fingerprint/calculateFingerprints";
 import { SemanticDiffReactor } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { OnNewRepoWithCode } from "./blueprint/repo/onFirstPush";
-import { RunReview } from "./blueprint/review/runReview";
+import { logInspect, logReview } from "./blueprint/review/inspect";
 import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
@@ -43,8 +44,6 @@ export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
     public fingerprinter: Maker<FingerprintOnPush> = MyFingerprinter;
 
     public semanticDiffReactor: Maker<ReactToSemanticDiffsOnPushImpact> = SemanticDiffReactor;
-
-    public reviewRunner: Maker<ReviewOnPendingScanStatus> = RunReview;
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 
@@ -83,6 +82,14 @@ export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     protected get possiblePhases(): Phases[] {
         return [HttpServicePhases, LibraryPhases];
+    }
+
+    protected get projectReviewers(): ProjectReviewer[] {
+        return [logReview];
+    }
+
+    protected get codeInspections(): CodeInspection[] {
+        return [logInspect];
     }
 
 }

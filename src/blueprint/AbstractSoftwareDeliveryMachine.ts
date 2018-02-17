@@ -1,4 +1,5 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
@@ -6,7 +7,10 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuiltContext } from "../handlers/events/delivery/phases/core";
-import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import {
+    CodeInspection,
+    ReviewOnPendingScanStatus,
+} from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
@@ -37,7 +41,13 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract semanticDiffReactor?: Maker<ReactToSemanticDiffsOnPushImpact>;
 
-    public abstract reviewRunner?: Maker<ReviewOnPendingScanStatus>;
+    get reviewRunner(): Maker<ReviewOnPendingScanStatus> {
+        const reviewers = this.projectReviewers;
+        const inspections = this.codeInspections;
+        return (reviewers.length > 0 && inspections.length > 0) ?
+            () => new ReviewOnPendingScanStatus(reviewers, inspections) :
+            undefined;
+    }
 
     public abstract phaseSetup: Maker<SetupPhasesOnPush>;
 
@@ -95,6 +105,14 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
                 !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,
             ]).filter(m => !!m);
+    }
+
+    protected get projectReviewers(): ProjectReviewer[] {
+        return [];
+    }
+
+    protected get codeInspections(): CodeInspection[] {
+        return [];
     }
 
 }

@@ -16,7 +16,7 @@
 
 import * as _ from "lodash";
 
-import { GraphQL, logger, Secret, Secrets, Success, success } from "@atomist/automation-client";
+import { GraphQL, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -33,17 +33,22 @@ import {
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnPendingStatus, StatusState } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
-import { ApprovalGateParam } from "../../gates/StatusApprovalGate";
 import { ScanContext } from "../phases/core";
 import { ContextToPlannedPhase } from "../phases/httpServicePhases";
 
 /**
+ * Perform arbitrary code inspection actions
+ */
+export type CodeInspection = (p: GitProject, ctx: HandlerContext) => Promise<any>;
+
+/**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
  */
-@EventHandler("Scan code on PR",
+@EventHandler("Scan code",
     GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnPendingStatus.graphql",
         __dirname, {
             context: ScanContext,
@@ -53,7 +58,8 @@ export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Su
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private projectReviewers: ProjectReviewer[]) {
+    constructor(private projectReviewers: ProjectReviewer[],
+                private inspections: CodeInspection[]) {
     }
 
     public async handle(event: EventFired<OnPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -72,22 +78,24 @@ export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Su
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);
 
-        return GitCommandGitProject.cloned(creds, id)
-            .then(p => {
-                const consolidatedReview: Promise<ProjectReview> = Promise.all(params.projectReviewers
-                    .map(reviewer => reviewer(p, ctx, params as any)))
-                    .then(reviews => consolidate(reviews));
-                return consolidatedReview
-                    .then(review => {
-                        if (review.comments.length === 0) {
-                            return markScanned(p.id as GitHubRepoRef, "success", creds);
-                        } else {
-                            // TODO might want to raise issue
-                            return addressChannels(`${review.comments} review issues found`)
-                                .then(() => markScanned(p.id as GitHubRepoRef, "failure", creds));
-                        }
-                    }).then(() => success());
-            });
+        // TODO could parallelize both operations
+        const p = await GitCommandGitProject.cloned(creds, id);
+        const review: ProjectReview =
+            await Promise.all(params.projectReviewers
+                .map(reviewer => reviewer(p, ctx, params as any)))
+                .then(reviews => consolidate(reviews));
+        const inspections: Promise<any> =
+            Promise.all(params.inspections
+                .map(inspection => inspection(p, ctx)));
+        await inspections;
+        if (review.comments.length === 0) {
+            await markScanned(p.id as GitHubRepoRef, "success", creds);
+        } else {
+            // TODO might want to raise issue
+            await addressChannels(`${review.comments} review issues found`)
+                .then(() => markScanned(p.id as GitHubRepoRef, "failure", creds));
+        }
+        return Success;
     }
 }
 
