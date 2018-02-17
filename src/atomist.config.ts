@@ -14,18 +14,18 @@ import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/deploy/not
 import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/deploy/offerPromotion";
 import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint/calculateFingerprints";
 import { SemanticDiffReactor } from "./software-delivery-machine/blueprint/fingerprint/reactToFingerprintDiffs";
-import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
+import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/repo/onFirstPush";
 import {
     applyHttpServicePhases,
     PhaseCleanup,
     PhaseSetup,
-} from "./software-delivery-machine/blueprint/phaseManagement";
+} from "./software-delivery-machine/blueprint/repo/phaseManagement";
 import { ReviewOnPush } from "./software-delivery-machine/blueprint/review/reviewOnPush";
+import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
 import { springBootGenerator } from "./software-delivery-machine/commands/generators/spring/springBootGenerator";
-import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verify/verifyEndpoint";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);

@@ -2,17 +2,10 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { AddressChannels } from "../../handlers/commands/editors/toclient/addressChannels";
-import { OnFirstPushToRepo } from "../../handlers/events/repo/OnFirstPushToRepo";
-import { AddCloudFoundryManifestEditorName } from "../commands/editors/addCloudFoundryManifest";
+import { AddressChannels } from "../../../handlers/commands/editors/toclient/addressChannels";
+import { AddCloudFoundryManifestEditorName } from "../../commands/editors/addCloudFoundryManifest";
 
-export const OnNewRepoWithCode = () => new OnFirstPushToRepo([tagRepo, addCloudFoundryManifest]);
-
-async function tagRepo(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
-    return addressChannels("Going to tag repo " + JSON.stringify(id));
-}
-
-function addCloudFoundryManifest(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
+export function suggestAddingCloudFoundryManifest(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
     const attachment: slack.Attachment = {
             text: "Add a Cloud Foundry manifest to your new repo?",
             fallback: "add PCF manifest",

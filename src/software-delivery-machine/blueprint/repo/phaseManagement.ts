@@ -1,15 +1,15 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { FailDownstreamPhasesOnPhaseFailure } from "../../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { Phases } from "../../handlers/events/delivery/Phases";
-import { HttpServicePhases } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { FailDownstreamPhasesOnPhaseFailure } from "../../../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
+import { Phases } from "../../../handlers/events/delivery/Phases";
+import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
 import {
     ApplyPhasesParameters,
     applyPhasesToCommit, PushesToMaster,
     SetupPhasesOnPush,
-} from "../../handlers/events/delivery/SetupPhasesOnPush";
-import { LibraryPhases } from "../../handlers/events/delivery/phases/libraryPhases";
+} from "../../../handlers/events/delivery/SetupPhasesOnPush";
 
 export const PhaseSetup = () => new SetupPhasesOnPush([jvmPhaseBuilder], PushesToMaster);
 

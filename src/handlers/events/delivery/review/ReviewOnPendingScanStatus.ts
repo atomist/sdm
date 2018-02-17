@@ -37,8 +37,8 @@ import { OnPendingStatus, StatusState } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ApprovalGateParam } from "../../gates/StatusApprovalGate";
-import { ContextToPlannedPhase } from "../phases/httpServicePhases";
 import { ScanContext } from "../phases/core";
+import { ContextToPlannedPhase } from "../phases/httpServicePhases";
 
 /**
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
