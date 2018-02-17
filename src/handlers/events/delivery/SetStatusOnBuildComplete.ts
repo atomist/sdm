@@ -45,7 +45,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const builtStatus = commit.statuses.find(s => s.context === params.context);
         if (!!builtStatus && builtStatus.state === "pending") {
-            return setBuiltContext(params.context, buildStatusToGitHubStatusState(build.status),
+            await setBuiltContext(params.context, buildStatusToGitHubStatusState(build.status),
                 build.buildUrl, id, {token: params.githubToken});
         }
         return Success;

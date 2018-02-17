@@ -9,7 +9,7 @@ import {
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
 import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
 import { DescribeStagingAndProd } from "./software-delivery-machine/blueprint/describeRunningServices";
-import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint";
+import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint/calculateFingerprints";
 import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/offerPromotion";
@@ -25,6 +25,7 @@ import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndp
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor, } from "./software-delivery-machine/commands/editors/breakBuild";
+import { SemanticDiffReactor } from "./software-delivery-machine/blueprint/fingerprint/reactToFingerprintDiffs";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -60,6 +61,7 @@ export const configuration: Configuration = {
         NotifyOnDeploy,
         VerifyEndpoint,
         OfferPromotion,
+        SemanticDiffReactor
     ],
     token,
     http: {
