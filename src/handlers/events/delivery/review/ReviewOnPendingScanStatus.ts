@@ -34,7 +34,7 @@ import { ProjectReviewer } from "@atomist/automation-client/operations/review/pr
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnPendingStatus, StatusState } from "../../../../typings/types";
+import { OnAnyPendingStatus, OnPendingStatus, StatusState } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ScanContext } from "../phases/core";
@@ -49,20 +49,19 @@ export type CodeInspection = (p: GitProject, ctx: HandlerContext) => Promise<any
  * Scan code on a push to master. Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnPendingStatus.graphql",
-        __dirname, {
-            context: ScanContext,
-        }))
-export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Subscription> {
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnAnyPendingStatus.graphql",
+        __dirname))
+export class ReviewOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private projectReviewers: ProjectReviewer[],
+    constructor(private context: string,
+                private projectReviewers: ProjectReviewer[],
                 private inspections: CodeInspection[]) {
     }
 
-    public async handle(event: EventFired<OnPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
         const status = event.data.Status[0];
         const commit = status.commit;
@@ -71,8 +70,8 @@ export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Su
 
         const creds = {token: params.githubToken};
 
-        if (status.context !== ScanContext || status.state !== "pending") {
-            logger.warn(`I was looking for ${ScanContext} being pending, but I heard about ${status.context} being ${status.state}`);
+        if (status.context !== params.context || status.state !== "pending") {
+            logger.warn(`I was looking for ${params.context} being pending, but I heard about ${status.context} being ${status.state}`);
             return Promise.resolve(Success);
         }
 
@@ -89,11 +88,11 @@ export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Su
                 .map(inspection => inspection(p, ctx)));
         await inspections;
         if (review.comments.length === 0) {
-            await markScanned(p.id as GitHubRepoRef, "success", creds);
+            await markScanned(p.id as GitHubRepoRef, params.context, "success", creds);
         } else {
             // TODO might want to raise issue
             await addressChannels(`${review.comments} review issues found`)
-                .then(() => markScanned(p.id as GitHubRepoRef, "failure", creds));
+                .then(() => markScanned(p.id as GitHubRepoRef, params.context, "failure", creds));
         }
         return Success;
     }
@@ -102,8 +101,8 @@ export class ReviewOnPendingScanStatus implements HandleEvent<OnPendingStatus.Su
 export const ScanBase = "https://scan.atomist.com";
 
 // TODO this should take a URL with detailed information
-function markScanned(id: GitHubRepoRef, state: StatusState, creds: ProjectOperationCredentials): Promise<any> {
-    const phase = ContextToPlannedPhase[ScanContext];
+function markScanned(id: GitHubRepoRef, context: string, state: StatusState, creds: ProjectOperationCredentials): Promise<any> {
+    const phase = ContextToPlannedPhase[context];
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`, // ${ApprovalGateParam}`,

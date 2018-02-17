@@ -34,8 +34,11 @@ import { logInspect, logReview } from "./blueprint/review/inspect";
 import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { ScanContext } from "../handlers/events/delivery/phases/core";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
+
+    protected scanContext = ScanContext;
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 

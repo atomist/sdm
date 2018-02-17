@@ -6,7 +6,7 @@ import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatu
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { BuiltContext } from "../handlers/events/delivery/phases/core";
+import { BuiltContext, ScanContext } from "../handlers/events/delivery/phases/core";
 import {
     CodeInspection,
     ReviewOnPendingScanStatus,
@@ -57,7 +57,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         const reviewers = this.projectReviewers;
         const inspections = this.codeInspections;
         return (!!reviewers && !!inspections) ?
-            () => new ReviewOnPendingScanStatus(reviewers, inspections) :
+            () => new ReviewOnPendingScanStatus(this.scanContext, reviewers, inspections) :
             undefined;
     }
 
@@ -66,7 +66,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
         this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
-    // TODO can have more of these?
     public abstract builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
 
     public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
@@ -80,7 +79,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public abstract promotedEnvironment?: PromotedEnvironment;
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuiltContext)
+        () => new SetStatusOnBuildComplete(BuiltContext);
 
     public abstract generators: Array<Maker<HandleCommand>>;
 
@@ -118,6 +117,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
                 !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,
             ]).filter(m => !!m);
     }
+
+    protected abstract scanContext: string;
 
     protected newRepoWithCodeActions?: NewRepoWithCodeAction[];
 

@@ -41,7 +41,6 @@ export interface DeliveryBlueprint extends FunctionalUnit {
 
     phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;
 
-    // TODO can we have multiple?
     builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
 
     onBuildComplete: Maker<SetStatusOnBuildComplete>;
