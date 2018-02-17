@@ -1,8 +1,10 @@
+import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
+import { NewRepoWithCodeAction } from "../../../handlers/events/repo/OnFirstPushToRepo";
+import { publishTags } from "../../../handlers/events/repo/publishTags";
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { AddressChannels } from "../../../handlers/commands/editors/toclient/addressChannels";
-
-export async function tagRepo(id: GitHubRepoRef, creds: ProjectOperationCredentials, addressChannels: AddressChannels) {
-    return addressChannels("Going to tag repo " + JSON.stringify(id));
-}
+// TODO why doesn't curry work
+export const tagRepo: NewRepoWithCodeAction = // curry(springBootTagger)(publishTags);
+    (id,
+     creds,
+     addressChannels,
+     ctx) => publishTags(springBootTagger, id, creds, addressChannels, ctx);

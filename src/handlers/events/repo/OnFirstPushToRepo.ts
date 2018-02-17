@@ -31,7 +31,8 @@ import { AddressChannels } from "../../commands/editors/toclient/addressChannels
 
 import * as _ from "lodash";
 
-export type NewRepoWithCodeAction = (id: GitHubRepoRef, creds: ProjectOperationCredentials,
+export type NewRepoWithCodeAction = (id: GitHubRepoRef,
+                                     creds: ProjectOperationCredentials,
                                      addressChannels: AddressChannels,
                                      ctx: HandlerContext) => Promise<any>;
 
