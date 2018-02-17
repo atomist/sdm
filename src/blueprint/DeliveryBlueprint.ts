@@ -41,6 +41,7 @@ export interface DeliveryBlueprint extends FunctionalUnit {
 
     reviewRunner?: Maker<ReviewOnPendingScanStatus>;
 
+    // TODO need > 1 with different push tests
     phaseSetup: Maker<SetupPhasesOnPush>;
 
     phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;

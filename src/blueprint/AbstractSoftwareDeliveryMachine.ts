@@ -14,9 +14,12 @@ import {
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
-import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
-import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
-import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
+import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
+import { NewRepoWithCodeAction, OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
+import {
+    FingerprintDifferenceHandler,
+    ReactToSemanticDiffsOnPushImpact,
+} from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./DeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
@@ -26,25 +29,33 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  */
 export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
 
-    // TODO could abstract some of this more with things like Fingerprinters
-
     /**
      * All possible phases we can set up. Makes cleanup easier.
      */
     protected abstract possiblePhases: Phases[];
 
-    public abstract onRepoCreation?: Maker<ActOnRepoCreation>;
+    public onRepoCreation?: Maker<ActOnRepoCreation>;
 
-    public abstract onNewRepoWithCode: Maker<OnFirstPushToRepo>;
+    public get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
+        return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
+    }
 
-    public abstract fingerprinter?: Maker<FingerprintOnPush>;
+    public get fingerprinter(): Maker<FingerprintOnPush> {
+        return !!this.fingerprinters ?
+            () => new FingerprintOnPush(this.fingerprinters) :
+            undefined;
+    }
 
-    public abstract semanticDiffReactor?: Maker<ReactToSemanticDiffsOnPushImpact>;
+    public get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
+        return !!this.fingerprintDifferenceHandlers ?
+            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceHandlers) :
+            undefined;
+    }
 
     get reviewRunner(): Maker<ReviewOnPendingScanStatus> {
         const reviewers = this.projectReviewers;
         const inspections = this.codeInspections;
-        return (reviewers.length > 0 && inspections.length > 0) ?
+        return (!!reviewers && !!inspections) ?
             () => new ReviewOnPendingScanStatus(reviewers, inspections) :
             undefined;
     }
@@ -107,12 +118,14 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             ]).filter(m => !!m);
     }
 
-    protected get projectReviewers(): ProjectReviewer[] {
-        return [];
-    }
+    protected newRepoWithCodeActions?: NewRepoWithCodeAction[];
 
-    protected get codeInspections(): CodeInspection[] {
-        return [];
-    }
+    protected projectReviewers?: ProjectReviewer[];
+
+    protected codeInspections?: CodeInspection[];
+
+    protected fingerprinters?: Fingerprinter[];
+
+    protected fingerprintDifferenceHandlers?: FingerprintDifferenceHandler[];
 
 }

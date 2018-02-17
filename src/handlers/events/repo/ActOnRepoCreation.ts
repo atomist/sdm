@@ -25,6 +25,8 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { OnRepoCreation } from "../../../typings/types";
 
+export type NewRepoAction = (repo: OnRepoCreation.Repo) => Promise<any>;
+
 /**
  * A new repo has been created. We don't know if it has code.
  */
@@ -32,8 +34,11 @@ import { OnRepoCreation } from "../../../typings/types";
     GraphQL.subscriptionFromFile("graphql/subscription/OnRepoCreation.graphql"))
 export class ActOnRepoCreation implements HandleEvent<OnRepoCreation.Subscription> {
 
-    public handle(event: EventFired<OnRepoCreation.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
-        const repo = event.data.Repo[0];
-        return Promise.resolve(Success);
+    constructor(private newRepoAction: NewRepoAction) {}
+
+    public async handle(event: EventFired<OnRepoCreation.Subscription>, ctx: HandlerContext): Promise<HandlerResult> {
+        const repo: OnRepoCreation.Repo = event.data.Repo[0];
+        await this.newRepoAction(repo);
+        return Success;
     }
 }
