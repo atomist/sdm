@@ -16,23 +16,23 @@ import {
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnDeployToProductionFingerprint } from "../../../typings/types";
-import { ArtifactStore } from "./ArtifactStore";
-import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
+import { OnDeployToProductionFingerprint } from "../../../../typings/types";
+import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
     GitHubStatusAndFriends,
     Phases,
     PlannedPhase,
     previousPhaseSucceeded,
-} from "./Phases";
-import { BuiltContext } from "./phases/httpServicePhases";
+} from "../Phases";
+import { BuiltContext } from "../phases/httpServicePhases";
+import { deploy } from "./deploy";
+import { Deployer } from "./Deployer";
+import { TargetInfo } from "./Deployment";
 
 // TODO could make in common with other deployer...
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnDeployToProductionFingerprint.graphql",
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnDeployToProductionFingerprint.graphql",
         __dirname))
 export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements HandleEvent<OnDeployToProductionFingerprint.Subscription> {
 

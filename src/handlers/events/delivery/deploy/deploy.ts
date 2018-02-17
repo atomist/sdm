@@ -17,15 +17,15 @@
 import { HandlerResult, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { StatusState } from "../../../typings/types";
-import { createStatus } from "../../commands/editors/toclient/ghub";
-import { ArtifactStore } from "./ArtifactStore";
-import { parseCloudFoundryLog } from "./deploy/pcf/cloudFoundryLogParser";
+import { StatusState } from "../../../../typings/types";
+import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { ArtifactStore } from "../ArtifactStore";
+import { createLinkableProgressLog } from "../log/NaiveLinkablePersistentProgressLog";
+import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "../log/ProgressLog";
+import { GitHubStatusContext, PlannedPhase } from "../Phases";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import { createLinkableProgressLog } from "./log/NaiveLinkablePersistentProgressLog";
-import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "./log/ProgressLog";
-import { GitHubStatusContext, PlannedPhase } from "./Phases";
+import { parseCloudFoundryLog } from "./pcf/cloudFoundryLogParser";
 
 export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                                                    endpointPhase: PlannedPhase,
@@ -49,6 +49,7 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
         const deployment = await deployer.deploy(ac, targeter(id), progressLog);
         const deploymentFinished = new Promise((resolve, reject) => {
 
+            // TODO this is PCF specifi
             async function lookForEndpointAndPersistLog(code, signal) {
                 try {
                     const di = parseCloudFoundryLog(savingLog.log);

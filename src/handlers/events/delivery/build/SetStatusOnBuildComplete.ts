@@ -21,14 +21,14 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { BuildStatus, OnBuildComplete } from "../../../typings/types";
-import { createStatus, State } from "../../commands/editors/toclient/ghub";
+import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
+import { createStatus, State } from "../../../commands/editors/toclient/ghub";
 
 /**
  * Set build status on complete build
  */
 @EventHandler("Check endpoint",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnBuildComplete.graphql",
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnBuildComplete.graphql",
         __dirname))
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 

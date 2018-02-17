@@ -1,5 +1,5 @@
 
-import { TargetInfo } from "../../Deployment";
+import { TargetInfo } from "../Deployment";
 
 export interface CloudFoundryInfo extends TargetInfo {
 

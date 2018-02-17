@@ -17,16 +17,16 @@
 import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnSuccessStatus } from "../../../typings/types";
+import { OnSuccessStatus } from "../../../../typings/types";
+import { currentPhaseIsStillPending, previousPhaseSucceeded } from "../Phases";
+import { BuiltContext, HttpServicePhases, ScanContext } from "../phases/httpServicePhases";
 import { Builder } from "./Builder";
-import { currentPhaseIsStillPending, previousPhaseSucceeded } from "./Phases";
-import { BuiltContext, HttpServicePhases, ScanContext } from "./phases/httpServicePhases";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
  */
 @EventHandler("Build on source scan success",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnSuccessStatus.graphql",
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSuccessStatus.graphql",
         __dirname, {
             context: ScanContext,
         }))
@@ -61,7 +61,7 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        await params.builder.initiateBuild(creds, id, team)
+        await params.builder.initiateBuild(creds, id, team);
         return Success;
     }
 }

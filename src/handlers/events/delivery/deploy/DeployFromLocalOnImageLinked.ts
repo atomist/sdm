@@ -18,25 +18,25 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnImageLinked } from "../../../typings/types";
-import { ArtifactStore } from "./ArtifactStore";
-import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
+import { OnImageLinked } from "../../../../typings/types";
+import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
     GitHubStatusAndFriends,
     Phases,
     PlannedPhase,
     previousPhaseSucceeded,
-} from "./Phases";
-import { BuiltContext } from "./phases/httpServicePhases";
+} from "../Phases";
+import { BuiltContext } from "../phases/httpServicePhases";
+import { deploy } from "./deploy";
+import { Deployer } from "./Deployer";
+import { TargetInfo } from "./Deployment";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnImageLinked.graphql",
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnImageLinked.graphql",
         __dirname))
 export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription> {
 

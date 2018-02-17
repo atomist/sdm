@@ -2,9 +2,9 @@ import {logger} from "@atomist/automation-client";
 import {runCommand} from "@atomist/automation-client/action/cli/commandLine";
 import {spawn} from "child_process";
 import {DeployableArtifact} from "../../ArtifactStore";
-import {Deployer} from "../../Deployer";
-import {Deployment} from "../../Deployment";
 import {ProgressLog} from "../../log/ProgressLog";
+import {Deployer} from "../Deployer";
+import {Deployment} from "../Deployment";
 import {CloudFoundryInfo} from "./CloudFoundryTarget";
 
 /**

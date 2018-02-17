@@ -16,7 +16,7 @@
 
 import * as _ from "lodash";
 
-import { GraphQL, logger } from "@atomist/automation-client";
+import { GraphQL } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -62,9 +62,6 @@ export class ReactToSemanticDiffsOnPushImpact
 
     public async handle(event: EventFired<schema.OnPushImpact.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const pushImpact = event.data.PushImpact[0];
-
-        console.log("---------- Push impact");
-        logger.info("Diff: %j", pushImpact);
 
         const after = pushImpact.push.after;
         const id = new GitHubRepoRef(after.repo.owner, after.repo.name, after.sha);

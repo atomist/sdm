@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { DeployFromLocalOnFingerprint } from "../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
+import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
 } from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
-import { DeployFromLocalOnFingerprint } from "../../handlers/events/delivery/DeployFromLocalOnFingerprint";
-import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/DeployFromLocalOnImageLinked";
 import {
     ContextToPlannedPhase,
     HttpServicePhases, StagingDeploymentContext,

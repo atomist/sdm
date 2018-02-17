@@ -1,12 +1,12 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
+import { Readable } from "stream";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
-import { Builder } from "../../Builder";
+import { AppInfo } from "../../deploy/Deployment";
 import { LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog } from "../../log/ProgressLog";
-import { AppInfo } from "../../Deployment";
-import { Readable } from "stream";
+import { Builder } from "../Builder";
 import EventEmitter = NodeJS.EventEmitter;
 
 export interface LocalBuildInProgress {

@@ -21,7 +21,7 @@ import {
     Parameter,
     Secret,
     Secrets,
-    Success
+    Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import {

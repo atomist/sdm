@@ -5,9 +5,9 @@ import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHub
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {addressSlackChannels, buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {runningAttachment} from "../../handlers/commands/reportRunning";
-import {OnVerifiedStatus, StatusInfo} from "../../handlers/events/delivery/OnVerifiedStatus";
-import {ProductionMauve} from "../../handlers/events/delivery/phases/productionDeployPhases";
+import {runningAttachment} from "../../../handlers/commands/reportRunning";
+import {OnVerifiedStatus, StatusInfo} from "../../../handlers/events/delivery/OnVerifiedStatus";
+import {ProductionMauve} from "../../../handlers/events/delivery/phases/productionDeployPhases";
 
 /**
  * Display a button suggesting promotion to production

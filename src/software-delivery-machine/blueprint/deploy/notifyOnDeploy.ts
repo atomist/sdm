@@ -1,5 +1,5 @@
 
-import { OnDeployStatus } from "../../handlers/events/delivery/OnDeployStatus";
+import { OnDeployStatus } from "../../../handlers/events/delivery/deploy/OnDeployStatus";
 
 export const NotifyOnDeploy = () => new OnDeployStatus(
     (id, status, ctx) => {

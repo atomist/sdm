@@ -1,7 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import * as Stream from "stream";
 import { ArtifactStore, DeployableArtifact, StoredArtifact } from "../../ArtifactStore";
-import { AppInfo } from "../../Deployment";
+import { AppInfo } from "../../deploy/Deployment";
 
 /**
  * Store the artifact on local desk, relying on in memory cache

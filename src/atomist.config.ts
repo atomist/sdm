@@ -1,31 +1,30 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { StatusApprovalGate } from "./handlers/events/gates/StatusApprovalGate";
 import { ActOnRepoCreation } from "./handlers/events/repo/ActOnRepoCreation";
+import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/build/LocalMavenBuildOnScanSuccessStatus";
+import { OnBuildComplete } from "./software-delivery-machine/blueprint/build/onBuildComplete";
 import {
     CloudFoundryProductionDeployOnArtifactStatus,
     CloudFoundryStagingDeployOnArtifactStatus,
 } from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
-import { DeployToProd } from "./software-delivery-machine/blueprint/DeployToProd";
-import { DescribeStagingAndProd } from "./software-delivery-machine/blueprint/describeRunningServices";
+import { DeployToProd } from "./software-delivery-machine/blueprint/deploy/deployToProd";
+import { DescribeStagingAndProd } from "./software-delivery-machine/blueprint/deploy/describeRunningServices";
+import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/deploy/notifyOnDeploy";
+import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/deploy/offerPromotion";
 import { MyFingerprinter } from "./software-delivery-machine/blueprint/fingerprint/calculateFingerprints";
-import { LocalMavenBuildOnSucessStatus } from "./software-delivery-machine/blueprint/LocalMavenBuildOnScanSuccessStatus";
-import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/notifyOnDeploy";
-import { OfferPromotion, offerPromotionCommand } from "./software-delivery-machine/blueprint/offerPromotion";
-import { OnBuildComplete } from "./software-delivery-machine/blueprint/onBuildComplete";
+import { SemanticDiffReactor } from "./software-delivery-machine/blueprint/fingerprint/reactToFingerprintDiffs";
 import { OnNewRepoWithCode } from "./software-delivery-machine/blueprint/onFirstPush";
 import {
     applyHttpServicePhases,
     PhaseCleanup,
     PhaseSetup,
 } from "./software-delivery-machine/blueprint/phaseManagement";
-import { ReviewOnPush } from "./software-delivery-machine/blueprint/reviewOnPush";
-import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verifyEndpoint";
+import { ReviewOnPush } from "./software-delivery-machine/blueprint/review/reviewOnPush";
 import { addCloudFoundryManifest } from "./software-delivery-machine/commands/editors/addCloudFoundryManifest";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
-import { breakBuildEditor, unbreakBuildEditor, } from "./software-delivery-machine/commands/editors/breakBuild";
-import { SemanticDiffReactor } from "./software-delivery-machine/blueprint/fingerprint/reactToFingerprintDiffs";
+import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
+import { VerifyEndpoint } from "./software-delivery-machine/verify/verifyEndpoint";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -61,7 +60,7 @@ export const configuration: Configuration = {
         NotifyOnDeploy,
         VerifyEndpoint,
         OfferPromotion,
-        SemanticDiffReactor
+        SemanticDiffReactor,
     ],
     token,
     http: {
