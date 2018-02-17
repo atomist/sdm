@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, Secret, Secrets, success, Success} from "@atomist/automation-client";
+import { GraphQL, HandlerResult, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnFailureStatus, OnSuccessStatus } from "../../../typings/types";
@@ -48,9 +48,11 @@ export class FailDownstreamPhasesOnPhaseFailure implements HandleEvent<OnFailure
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        return params.phases.gameOver(status.context,
+        return params.phases.gameOver(
+            status.context,
             currentlyPending.map(s => s.context),
-            id, {token: params.githubToken})
+            id,
+            {token: params.githubToken})
             .then(() => Success);
     }
 }

@@ -5,6 +5,9 @@ import { BuildOnScanSuccessStatus } from "../handlers/events/delivery/build/Buil
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { Phases } from "../handlers/events/delivery/Phases";
+import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
+import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
@@ -45,8 +48,6 @@ export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 
-    public phaseCleanup: Maker<FailDownstreamPhasesOnPhaseFailure> = PhaseCleanup;
-
     public builder: Maker<BuildOnScanSuccessStatus> = LocalMavenBuildOnSucessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
@@ -74,5 +75,7 @@ export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
         () => addCloudFoundryManifest,
         DescribeStagingAndProd,
     ];
+
+    protected possiblePhases: Phases[] = [HttpServicePhases, LibraryPhases];
 
 }

@@ -7,21 +7,19 @@ import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhases
 import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
-import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { OnDeployToProductionFingerprint, OnImageLinked, OnRepoCreation, OnSuccessStatus } from "../typings/types";
+import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
  * A Blueprint represents the delivery process
  */
-export interface Blueprint {
+export interface DeliveryBlueprint extends FunctionalUnit {
 
-    // TODO allow for multiple instances of some of these, like builders?
-
-    onRepoCreation?: Maker<ActOnRepoCreation>;
+    onRepoCreation?: Maker<HandleEvent<OnRepoCreation.Subscription>>;
 
     onNewRepoWithCode: Maker<OnFirstPushToRepo>;
 
@@ -33,9 +31,12 @@ export interface Blueprint {
 
     phaseSetup: Maker<SetupPhasesOnPush>;
 
-    phaseCleanup: Maker<FailDownstreamPhasesOnPhaseFailure>;
+    phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;
 
+    // TODO can we have multiple
     builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
+
+    onBuildComplete: Maker<SetStatusOnBuildComplete>;
 
     deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
 
@@ -51,15 +52,9 @@ export interface Blueprint {
     deployToProduction?: Maker<HandleCommand>;
     offerPromotionCommand?: Maker<HandleCommand<OfferPromotionParameters>>;
 
-    onBuildComplete: Maker<SetStatusOnBuildComplete>;
-
     /**
      * Miscellaneous supporting commands
      */
     supportingCommands: Array<Maker<HandleCommand>>;
-
-    eventHandlers: Array<Maker<HandleEvent<any>>>;
-
-    commandHandlers: Array<Maker<HandleCommand>>;
 
 }

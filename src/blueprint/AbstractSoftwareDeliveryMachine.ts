@@ -4,6 +4,7 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { Phases } from "../handlers/events/delivery/Phases";
 import { BuiltContext } from "../handlers/events/delivery/phases/core";
 import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
@@ -17,9 +18,11 @@ import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus } from 
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
- * Superclass for user software delivery machinges
+ * Superclass for user software delivery machines
  */
 export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
+
+    protected abstract possiblePhases: Phases[];
 
     public abstract onRepoCreation?: Maker<ActOnRepoCreation>;
 
@@ -33,8 +36,10 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract phaseSetup: Maker<SetupPhasesOnPush>;
 
-    public abstract phaseCleanup: Maker<FailDownstreamPhasesOnPhaseFailure>;
+    public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
+        this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
+    // TODO can have more of these?
     public abstract builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
 
     public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
@@ -52,7 +57,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public abstract offerPromotionCommand?: Maker<HandleCommand<OfferPromotionParameters>>;
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuiltContext);
+        () => new SetStatusOnBuildComplete(BuiltContext)
 
     public abstract generators: Array<Maker<HandleCommand>>;
 
@@ -62,22 +67,22 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public abstract supportingCommands: Array<Maker<HandleCommand>>;
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
-        return [
-            this.onRepoCreation,
-            this.onNewRepoWithCode,
-            this.fingerprinter,
-            this.semanticDiffReactor,
-            this.reviewRunner,
-            this.phaseSetup,
-            this.phaseCleanup,
-            this.builder,
-            this.onBuildComplete,
-            this.deploy1,
-            this.deploy2,
-            this.notifyOnDeploy,
-            this.verifyEndpoint,
-            this.onVerifiedStatus,
-        ].filter(m => !!m);
+        return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
+            .concat([
+                this.onRepoCreation,
+                this.onNewRepoWithCode,
+                this.fingerprinter,
+                this.semanticDiffReactor,
+                this.reviewRunner,
+                this.phaseSetup,
+                this.builder,
+                this.onBuildComplete,
+                this.deploy1,
+                this.deploy2,
+                this.notifyOnDeploy,
+                this.verifyEndpoint,
+                this.onVerifiedStatus,
+            ]).filter(m => !!m);
     }
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
