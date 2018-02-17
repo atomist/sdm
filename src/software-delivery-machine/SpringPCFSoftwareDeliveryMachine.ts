@@ -35,7 +35,7 @@ import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
-export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
+export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 

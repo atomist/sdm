@@ -8,10 +8,9 @@ import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/Re
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
-import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import { OnDeployToProductionFingerprint, OnImageLinked, OnRepoCreation, OnSuccessStatus } from "../typings/types";
+import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
@@ -30,10 +29,6 @@ export interface PromotedEnvironment {
  * A Blueprint represents the delivery process
  */
 export interface DeliveryBlueprint extends FunctionalUnit {
-
-    onRepoCreation?: Maker<HandleEvent<OnRepoCreation.Subscription>>;
-
-    onNewRepoWithCode: Maker<OnFirstPushToRepo>;
 
     fingerprinter?: Maker<FingerprintOnPush>;
 

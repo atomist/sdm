@@ -22,6 +22,7 @@ import {
 } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./DeliveryBlueprint";
+import { NewRepoReactor } from "./NewRepoReactor";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
