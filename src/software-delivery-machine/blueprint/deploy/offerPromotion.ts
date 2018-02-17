@@ -1,13 +1,23 @@
-import {HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
-import {Parameters} from "@atomist/automation-client/decorators";
-import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {addressSlackChannels, buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    HandleCommand,
+    HandleEvent,
+    HandlerContext,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
+import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { addressSlackChannels, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {runningAttachment} from "../../../handlers/commands/reportRunning";
-import {ProductionMauve} from "../../../handlers/events/delivery/phases/productionDeployPhases";
-import {OnVerifiedStatus, StatusInfo} from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
+import { runningAttachment } from "../../../handlers/commands/reportRunning";
+import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
+import { OnVerifiedStatus, StatusInfo } from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
 
 /**
  * Display a button suggesting promotion to production
@@ -58,7 +68,7 @@ export class OfferPromotionParameters {
     public channel;
 }
 
-export const offerPromotionCommand: HandleCommand<OfferPromotionParameters> =
+export const offerPromotionCommand: Maker<HandleCommand<OfferPromotionParameters>> = () =>
     commandHandlerFrom((ctx: HandlerContext, params: OfferPromotionParameters) => {
             return presentPromotionButton(new GitHubRepoRef(params.owner, params.repo, params.sha),
                 {targetUrl: "http://test.com"}, addressSlackChannels(params.channel), ctx, params.githubToken);

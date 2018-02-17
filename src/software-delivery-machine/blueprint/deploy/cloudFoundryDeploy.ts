@@ -39,7 +39,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
-export const CloudFoundryStagingDeployOnArtifactStatus = () =>
+export const CloudFoundryStagingDeployOnImageLinked = () =>
     new DeployFromLocalOnImageLinked(
         HttpServicePhases,
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
@@ -52,7 +52,7 @@ export const CloudFoundryStagingDeployOnArtifactStatus = () =>
         }),
     );
 
-export const CloudFoundryProductionDeployOnArtifactStatus =
+export const CloudFoundryProductionDeployOnFingerprint =
     () => new DeployFromLocalOnFingerprint(
         ProductionDeployPhases,
         ProductionDeploymentPhase,
