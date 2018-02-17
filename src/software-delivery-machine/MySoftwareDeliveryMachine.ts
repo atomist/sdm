@@ -1,6 +1,6 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { Blueprint } from "../blueprint/Blueprint";
+import { AbstractSoftwareDeliveryMachine } from "../blueprint/AbstractSoftwareDeliveryMachine";
 import { BuildOnScanSuccessStatus } from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
@@ -31,7 +31,7 @@ import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
-export class MyBlueprint extends Blueprint {
+export class MySoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     public onRepoCreation: Maker<ActOnRepoCreation> = ActOnRepoCreation;
 
