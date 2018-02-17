@@ -25,7 +25,7 @@ import { addCloudFoundryManifest } from "./software-delivery-machine/commands/ed
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
 import { springBootGenerator } from "./software-delivery-machine/commands/generators/spring/springBootGenerator";
-import { VerifyEndpoint } from "./software-delivery-machine/verify/verifyEndpoint";
+import { VerifyEndpoint } from "./software-delivery-machine/blueprint/verify/verifyEndpoint";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
