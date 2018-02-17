@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import { DeployFromLocalOnFingerprint } from "../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
-import { DeployFromLocalOnImageLinked } from "../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
+import { DeployFromLocalOnFingerprint } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
+import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
-} from "../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
-import { CommandLineCloudFoundryDeployer } from "../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+} from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ContextToPlannedPhase,
-    HttpServicePhases, StagingDeploymentContext,
+    HttpServicePhases, CloudFoundryStagingDeploymentContext,
     StagingEndpointContext,
-} from "../../handlers/events/delivery/phases/httpServicePhases";
+} from "../../../handlers/events/delivery/phases/httpServicePhases";
 import {
     ProductionDeploymentContext, ProductionDeploymentPhase, ProductionDeployPhases,
     ProductionEndpointContext, ProductionEndpointPhase,
-} from "../../handlers/events/delivery/phases/productionDeployPhases";
-import { OnDeployToProductionFingerprint } from "../../typings/types";
-import { artifactStore } from "./artifactStore";
+} from "../../../handlers/events/delivery/phases/productionDeployPhases";
+import { OnDeployToProductionFingerprint } from "../../../typings/types";
+import { artifactStore } from "../artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
@@ -42,7 +42,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
 export const CloudFoundryStagingDeployOnArtifactStatus = () =>
     new DeployFromLocalOnImageLinked(
         HttpServicePhases,
-        ContextToPlannedPhase[StagingDeploymentContext],
+        ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
         Deployer,

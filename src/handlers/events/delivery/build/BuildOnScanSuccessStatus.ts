@@ -19,8 +19,9 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { currentPhaseIsStillPending, previousPhaseSucceeded } from "../Phases";
-import { BuiltContext, HttpServicePhases, ScanContext } from "../phases/httpServicePhases";
+import { HttpServicePhases } from "../phases/httpServicePhases";
 import { Builder } from "./Builder";
+import { BuiltContext, ScanContext } from "../phases/core";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status

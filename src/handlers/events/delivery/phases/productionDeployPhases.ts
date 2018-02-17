@@ -1,10 +1,10 @@
 
 import { Phases } from "../Phases";
-import {BaseContext, ContextToPlannedPhase, ProductionEnvironment} from "./httpServicePhases";
+import { BaseContext, ProductionEnvironment } from "./core";
 
 // TODO get rid of hard coding of number
 
-export const ProductionDeploymentContext = BaseContext + ProductionEnvironment + "3-deploy";
+export const ProductionDeploymentContext = BaseContext + ProductionEnvironment + "3-PCF deploy";
 export const ProductionEndpointContext = BaseContext + ProductionEnvironment + "4-endpoint";
 export const ProductionVerifiedContext = BaseContext + ProductionEnvironment + "5-verifyEndpoint";
 

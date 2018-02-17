@@ -7,7 +7,7 @@ import { OnBuildComplete } from "./software-delivery-machine/blueprint/build/onB
 import {
     CloudFoundryProductionDeployOnArtifactStatus,
     CloudFoundryStagingDeployOnArtifactStatus,
-} from "./software-delivery-machine/blueprint/cloudFoundryDeployOnArtifactStatus";
+} from "./software-delivery-machine/blueprint/deploy/cloudFoundryDeployOnArtifactStatus";
 import { DeployToProd } from "./software-delivery-machine/blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { NotifyOnDeploy } from "./software-delivery-machine/blueprint/deploy/notifyOnDeploy";
