@@ -1,6 +1,3 @@
-import { HandlerContext } from "@atomist/automation-client";
-import { addressChannelsFor, HasChannels } from "../../../commands/editors/toclient/addressChannels";
-
 export interface ProgressLog {
 
     write(what: string): void;
@@ -26,15 +23,12 @@ export const ConsoleProgressLog: ProgressLog = {
     close() { return Promise.resolve(); },
 };
 
-export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
-    const add = addressChannelsFor(hasChannels, ctx);
-    return {
-        write(msg) {
-            add(msg);
-        },
-        flush() { return Promise.resolve(); },
-        close() { return Promise.resolve(); },
-    };
+/**
+ * ProgressLog that enables log output to be checked while operation
+ * being logged is in progress, or after close
+ */
+export interface QueryableProgressLog extends ProgressLog {
+    log: string;
 }
 
 export class MultiProgressLog implements ProgressLog {
@@ -92,10 +86,6 @@ export class TransformingProgressLog implements ProgressLog {
     public close() {
         return this.log.close();
     }
-}
-
-export interface QueryableProgressLog extends ProgressLog {
-    log: string;
 }
 
 /**
