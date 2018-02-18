@@ -2,9 +2,10 @@ import {logger} from "@atomist/automation-client";
 import {runCommand} from "@atomist/automation-client/action/cli/commandLine";
 import {spawn} from "child_process";
 import {DeployableArtifact} from "../../ArtifactStore";
-import {ProgressLog} from "../../log/ProgressLog";
+import { ProgressLog, QueryableProgressLog } from "../../log/ProgressLog";
 import {Deployer} from "../Deployer";
-import {Deployment} from "../Deployment";
+import { Deployment, SimpleDeploymentInfo } from "../Deployment";
+import { parseCloudFoundryLog } from "./cloudFoundryLogParser";
 import {CloudFoundryInfo} from "./CloudFoundryTarget";
 
 /**
@@ -13,7 +14,7 @@ import {CloudFoundryInfo} from "./CloudFoundryTarget";
  */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
-    public async deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: ProgressLog): Promise<Deployment> {
+    public async deploy(ai: DeployableArtifact, cfi: CloudFoundryInfo, log: QueryableProgressLog): Promise<Deployment> {
         if (!ai) {
             throw new Error("no DeployableArtifact passed in");
         }
@@ -37,10 +38,14 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             {
                 cwd: ai.cwd,
             });
-        return {
-            childProcess,
-            url: toUrl(ai.name),
-        };
+        const d = new SimpleDeploymentInfo(childProcess);
+        childProcess.addListener("exit", () => {
+            d.deploymentInfo = parseCloudFoundryLog(log.log);
+            d.complete = true;
+            logger.info("Deployment info is %j", d.deploymentInfo);
+        });
+        childProcess.addListener("error", () => d.complete = true);
+        return d;
     }
 
 }

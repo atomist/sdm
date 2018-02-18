@@ -21,7 +21,7 @@ import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ArtifactStore } from "../ArtifactStore";
 import { createLinkableProgressLog } from "../log/NaiveLinkablePersistentProgressLog";
-import { ConsoleProgressLog, MultiProgressLog, SavingProgressLog } from "../log/ProgressLog";
+import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../log/ProgressLog";
 import { GitHubStatusContext, PlannedPhase } from "../Phases";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
@@ -43,33 +43,37 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
 
         const linkableLog = await createLinkableProgressLog();
         const savingLog = new SavingProgressLog();
-        const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog);
+        const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
         const ac = await artifactStore.checkout(targetUrl);
         const deployment = await deployer.deploy(ac, targeter(id), progressLog);
         const deploymentFinished = new Promise((resolve, reject) => {
 
-            // TODO this is PCF specifi
-            async function lookForEndpointAndPersistLog(code, signal) {
+            async function onDeploymentSuccess(code, signal) {
                 try {
-                    const di = parseCloudFoundryLog(savingLog.log);
                     await progressLog.close();
                     await setDeployStatus(githubToken, id,
-                        code === 0 ? "success" : "failure", deployPhase.context, linkableLog.url,
+                        code === 0 ? "success" : "failure",
+                        deployPhase.context,
+                        linkableLog.url,
                         `${code === 0 ? "Completed" : "Failed to"} ${deployPhase.name}`);
-                    await setEndpointStatus(githubToken, id, endpointPhase.context, di.endpoint,
-                        `Completed ${endpointPhase.name}`)
-                        .catch(endpointStatus => {
-                            logger.error("Could not set Endpoint status: " + endpointStatus.message);
-                            // do not fail this whole handler
-                        });
+                    if (deployment.deploymentInfo.endpoint) {
+                        await setEndpointStatus(githubToken, id,
+                            endpointPhase.context,
+                            deployment.deploymentInfo.endpoint,
+                            `Completed ${endpointPhase.name}`)
+                            .catch(endpointStatus => {
+                                logger.error("Could not set Endpoint status: " + endpointStatus.message);
+                                // do not fail this whole handler
+                            });
+                    }
                     resolve();
                 } catch (err) {
                     reject(err);
                 }
             }
 
-            async function setFailStatusAndPersistLog() {
+            async function onDeploymentFailure() {
                 await progressLog.close();
                 return setDeployStatus(githubToken, id, "failure", deployPhase.context, linkableLog.url,
                     `Failed to ${deployPhase.name}`)
@@ -77,8 +81,8 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
             }
 
             deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-            deployment.childProcess.addListener("exit", lookForEndpointAndPersistLog);
-            deployment.childProcess.addListener("error", setFailStatusAndPersistLog);
+            deployment.childProcess.addListener("exit", onDeploymentSuccess);
+            deployment.childProcess.addListener("error", onDeploymentFailure);
         });
         await deploymentFinished;
         return Success;

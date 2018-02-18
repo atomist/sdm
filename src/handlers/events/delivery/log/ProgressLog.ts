@@ -56,6 +56,16 @@ export class MultiProgressLog implements ProgressLog {
     public close() {
         return Promise.all(this.logs.map(log => log.close()));
     }
+
+    /**
+     * This can be cast to QueryableProgressLog if any of the logs is queryable
+     */
+    get log() {
+        const q = this.logs.find(l => !!(l as QueryableProgressLog).log);
+        if (!!q) {
+            return (q as QueryableProgressLog).log;
+        }
+    }
 }
 
 export class TransformingProgressLog implements ProgressLog {
@@ -84,10 +94,14 @@ export class TransformingProgressLog implements ProgressLog {
     }
 }
 
+export interface QueryableProgressLog extends ProgressLog {
+    log: string;
+}
+
 /**
  * Saves log to a string
  */
-export class SavingProgressLog implements ProgressLog {
+export class SavingProgressLog implements QueryableProgressLog {
 
     private logged: string = "";
 

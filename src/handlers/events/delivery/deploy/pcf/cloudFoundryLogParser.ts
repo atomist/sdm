@@ -1,10 +1,7 @@
 
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { isPatternMatch } from "@atomist/microgrammar/PatternMatch";
-
-export interface DeploymentInfo {
-    endpoint: string;
-}
+import { DeploymentInfo } from "../Deployment";
 
 /**
  * Use a microgrammar to parse the Cloud Foundry log to extract the endpoint
@@ -15,10 +12,13 @@ export interface DeploymentInfo {
 export function parseCloudFoundryLog(cfLog: string): DeploymentInfo {
     const r = mg.firstMatch(cfLog);
     if (isPatternMatch(r)) {
-        if (!r.endpoint.startsWith("http://")) {
-            r.endpoint = "http://" + r.endpoint;
+        let endpoint = r.endpoint;
+        if (!endpoint.startsWith("http://")) {
+            endpoint = "http://" + r.endpoint;
         }
-        return r;
+        return {
+            endpoint,
+        };
     }
     return undefined;
 }
