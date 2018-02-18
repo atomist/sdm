@@ -1,21 +1,21 @@
 {
-  "name": "@spring-team/my-flow",
+  "name": "@atomist/github-sdm",
   "version": "0.1.0",
   "description": "Atomist event handler example",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/spring-team/my-flow.git"
+    "url": "https://github.com/atomist/github-sdm.git"
   },
   "keywords": [
     "atomist",
     "automation",
     "github"
   ],
-  "homepage": "https://github.com/spring-team/my-flow#readme",
+  "homepage": "https://github.com/atomist/github-sdm#readme",
   "bugs": {
-    "url": "https://github.com/spring-team/my-flow/issues"
+    "url": "https://github.com/atomist/github-sdm/issues"
   },
   "dependencies": {
     "@atomist/automation-client": "https://r.atomist.com/HyEsBggNvz",
