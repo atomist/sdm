@@ -1,11 +1,19 @@
 import { HandlerContext } from "@atomist/automation-client";
-import {addressSlackChannels, Destination, MessageOptions} from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    addressSlackChannels,
+    Destination,
+    MessageOptions,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
+/**
+ * Allows us to address channels for a particular repo or any GraphQL
+ * type with channels
+ */
 export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions) => Promise<any>;
 
 export interface HasChannels {
-    channels?: Array<{name?: string, id?: string}>;
+    channels?: Array<{ name?: string }>;
 }
 
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {

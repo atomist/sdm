@@ -14,15 +14,28 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, logger, Secret, Secrets, success, Success} from "@atomist/automation-client";
-import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {OnSuccessStatus, StatusState} from "../../../../typings/types";
-import {createStatus} from "../../../commands/editors/toclient/ghub";
-import {currentPhaseIsStillPending, previousPhaseSucceeded} from "../Phases";
-import {ContextToPlannedPhase, HttpServicePhases, StagingEndpointContext, StagingVerifiedContext} from "../phases/httpServicePhases";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { OnSuccessStatus, StatusState } from "../../../../typings/types";
+import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { currentPhaseIsStillPending, previousPhaseSucceeded } from "../Phases";
+import {
+    ContextToPlannedPhase,
+    HttpServicePhases,
+    StagingEndpointContext,
+    StagingVerifiedContext,
+} from "../phases/httpServicePhases";
 
-export type EndpointVerifier = (url: string) => Promise<any>;
+/**
+ * Verify an endpoint.
+ * @param url root endpoint of the deployment
+ */
+export type EndpointVerifier = (url: string,
+                                id: GitHubRepoRef,
+                                addressChannels: AddressChannels,
+                                ctx: HandlerContext) => Promise<any>;
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -37,14 +50,22 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private verifier: EndpointVerifier) {
+    private verifiers: EndpointVerifier[];
+
+    constructor(...verifiers: EndpointVerifier[]) {
+        this.verifiers = verifiers;
     }
 
     public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        const statusAndFriends = {context: status.context, state: status.state, targetUrl: status.targetUrl, siblings: status.commit.statuses};
+        const statusAndFriends = {
+            context: status.context,
+            state: status.state,
+            targetUrl: status.targetUrl,
+            siblings: status.commit.statuses,
+        };
 
         if (!previousPhaseSucceeded(HttpServicePhases, StagingVerifiedContext, statusAndFriends)) {
             return Promise.resolve(Success);
@@ -56,13 +77,16 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        return params.verifier(status.targetUrl)
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
+
+        return Promise.all(params.verifiers.map(verifier => verifier(status.targetUrl, id, addressChannels, ctx)))
             .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl)
                 .then(success))
             .catch(err => {
                 // todo: report error in Slack? ... or load it to a log that links
                 logger.warn("Failing verification because: " + err);
-                return setVerificationStatus(params.githubToken, id, "failure", status.targetUrl)
+                return setVerificationStatus(params.githubToken, id,
+                    "failure", status.targetUrl)
                     .then(success);
             });
     }

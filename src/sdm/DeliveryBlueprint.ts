@@ -41,7 +41,11 @@ export interface DeliveryBlueprint extends FunctionalUnit {
 
     phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;
 
-    builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
+    /**
+     * Initiate build. We don't need this if there's a CI file in the
+     * project itself.
+     */
+    builder?: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
 
     onBuildComplete: Maker<SetStatusOnBuildComplete>;
 

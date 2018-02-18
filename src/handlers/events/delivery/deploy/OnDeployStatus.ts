@@ -18,10 +18,17 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { CloudFoundryStagingDeploymentContext } from "../phases/httpServicePhases";
 import Status = OnSuccessStatus.Status;
+import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { CloudFoundryStagingDeploymentContext } from "../phases/httpServicePhases";
 
-export type DeployListener = (id: GitHubRepoRef, s: Status, ctx: HandlerContext) => Promise<any>;
+/**
+ * React to a successful deployment
+ */
+export type DeployListener = (id: GitHubRepoRef,
+                              s: Status,
+                              addressChannels: AddressChannels,
+                              ctx: HandlerContext) => Promise<any>;
 
 /**
  * React to a deployment.
@@ -49,8 +56,9 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
             return Promise.resolve(Success);
         }
 
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        await Promise.all(params.actions.map(action => action(id, status, ctx)));
+        await Promise.all(params.actions.map(action => action(id, status, addressChannels, ctx)));
         return Success;
     }
 

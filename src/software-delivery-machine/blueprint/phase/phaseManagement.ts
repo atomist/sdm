@@ -13,8 +13,6 @@ import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryP
 
 export const PhaseSetup = () => new SetupPhasesOnPush([jvmPhaseBuilder], PushesToMaster);
 
-export const PhaseCleanup = () => new FailDownstreamPhasesOnPhaseFailure(HttpServicePhases);
-
 async function jvmPhaseBuilder(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");

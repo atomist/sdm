@@ -111,6 +111,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
         return this.generators
+            .concat(this.editors)
             .concat(this.supportingCommands)
             .concat([
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,

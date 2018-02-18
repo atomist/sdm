@@ -9,6 +9,7 @@ import { ScanContext } from "../handlers/events/delivery/phases/core";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { CodeInspection } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { Fingerprinter } from "../handlers/events/repo/FingerprintOnPush";
@@ -24,15 +25,14 @@ import {
 } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
-import { NotifyOnDeploy } from "./blueprint/deploy/notifyOnDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
+import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { mavenFingerprinter } from "./blueprint/fingerprint/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { tagRepo } from "./blueprint/repo/tagRepo";
 import { logInspect, logReview } from "./blueprint/review/inspect";
-import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
@@ -47,9 +47,9 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
         CloudFoundryStagingDeployOnImageLinked;
 
-    public verifyEndpoint: Maker<VerifyOnEndpointStatus> = VerifyEndpoint;
+    public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 
-    public notifyOnDeploy: Maker<OnDeployStatus> = NotifyOnDeploy;
+    public notifyOnDeploy: Maker<OnDeployStatus> = PostToDeploymentsChannel;
 
     public onVerifiedStatus: Maker<OnVerifiedStatus> = OfferPromotion;
 
