@@ -79,7 +79,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public abstract promotedEnvironment?: PromotedEnvironment;
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuiltContext);
+        () => new SetStatusOnBuildComplete(BuiltContext)
 
     public abstract generators: Array<Maker<HandleCommand>>;
 

@@ -15,31 +15,30 @@
  */
 
 import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnSuccessStatus } from "../../../../typings/types";
-import { currentPhaseIsStillPending, previousPhaseSucceeded } from "../Phases";
-import { BuiltContext, ScanContext } from "../phases/core";
-import { HttpServicePhases } from "../phases/httpServicePhases";
+import { OnAnySuccessStatus } from "../../../../typings/types";
+import { StatusSuccessHandler } from "../../StatusSuccessHandler";
+import { currentPhaseIsStillPending, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
  */
 @EventHandler("Build on source scan success",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSuccessStatus.graphql",
-        __dirname, {
-            context: ScanContext,
-        }))
-export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Subscription> {
+    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnAnySuccessStatus.graphql",
+        __dirname))
+export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private builder: Builder) {
+    constructor(public phases: Phases,
+                public ourContext: string,
+                private builder: Builder) {
     }
 
-    public async handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
@@ -51,11 +50,11 @@ export class BuildOnScanSuccessStatus implements HandleEvent<OnSuccessStatus.Sub
             siblings: status.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(HttpServicePhases, BuiltContext, statusAndFriends)) {
+        if (!previousPhaseSucceeded(params.phases, this.ourContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(BuiltContext, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(this.ourContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

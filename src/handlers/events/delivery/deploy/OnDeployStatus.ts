@@ -36,10 +36,10 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private action: DeployListener) {
+    constructor(private actions: DeployListener[]) {
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
 
         const status = event.data.Status[0];
         const commit = status.commit;
@@ -50,8 +50,8 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return params.action(id, status, ctx)
-            .then(r => Success);
+        await Promise.all(params.actions.map(action => action(id, status, ctx)));
+        return Success;
     }
 
 }

@@ -1,12 +1,11 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
-import { PromotedEnvironment } from "../sdm/DeliveryBlueprint";
 import { BuildOnScanSuccessStatus } from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
+import { ScanContext } from "../handlers/events/delivery/phases/core";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { CodeInspection } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
@@ -15,6 +14,8 @@ import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/Verif
 import { Fingerprinter } from "../handlers/events/repo/FingerprintOnPush";
 import { NewRepoWithCodeAction } from "../handlers/events/repo/OnFirstPushToRepo";
 import { FingerprintDifferenceHandler } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
+import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
+import { PromotedEnvironment } from "../sdm/DeliveryBlueprint";
 import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
@@ -34,7 +35,6 @@ import { logInspect, logReview } from "./blueprint/review/inspect";
 import { VerifyEndpoint } from "./blueprint/verify/verifyEndpoint";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { ScanContext } from "../handlers/events/delivery/phases/core";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
