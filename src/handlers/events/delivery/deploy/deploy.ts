@@ -25,7 +25,7 @@ import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgr
 import { GitHubStatusContext, PlannedPhase } from "../Phases";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import { parseCloudFoundryLog } from "./pcf/cloudFoundryLogParser";
+import { parseCloudFoundryLogForEndpoint } from "./pcf/cloudFoundryLogParser";
 
 export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                                                    endpointPhase: PlannedPhase,
@@ -35,65 +35,41 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                                                    artifactStore: ArtifactStore,
                                                    deployer: Deployer<T>,
                                                    targeter: (id: RemoteRepoRef) => T): Promise<HandlerResult> {
+    const linkableLog = await createLinkableProgressLog();
+
     try {
         await setDeployStatus(githubToken, id, "pending", deployPhase.context,
             undefined, `Working on ${deployPhase.name}`)
             .catch(err =>
                 logger.warn("Failed to update deploy status to tell people we are working on it"));
 
-        const linkableLog = await createLinkableProgressLog();
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
         const ac = await artifactStore.checkout(targetUrl);
         const deployment = await deployer.deploy(ac, targeter(id), progressLog);
-        const deploymentFinished = new Promise((resolve, reject) => {
 
-            async function onDeploymentSuccess(code, signal) {
-                try {
-                    await progressLog.close();
-                    await setDeployStatus(githubToken, id,
-                        code === 0 ? "success" : "failure",
-                        deployPhase.context,
-                        linkableLog.url,
-                        `${code === 0 ? "Completed" : "Failed to"} ${deployPhase.name}`);
-                    if (deployment.deploymentInfo.endpoint) {
-                        await setEndpointStatus(githubToken, id,
-                            endpointPhase.context,
-                            deployment.deploymentInfo.endpoint,
-                            `Completed ${endpointPhase.name}`)
-                            .catch(endpointStatus => {
-                                logger.error("Could not set Endpoint status: " + endpointStatus.message);
-                                // do not fail this whole handler
-                            });
-                    }
-                    resolve();
-                } catch (err) {
-                    reject(err);
-                }
-            }
-
-            async function onDeploymentFailure() {
-                await progressLog.close();
-                return setDeployStatus(githubToken, id, "failure", deployPhase.context, linkableLog.url,
-                    `Failed to ${deployPhase.name}`)
-                    .then(resolve, reject);
-            }
-
-            deployment.childProcess.stdout.on("data", what => progressLog.write(what.toString()));
-            deployment.childProcess.addListener("exit", onDeploymentSuccess);
-            deployment.childProcess.addListener("error", onDeploymentFailure);
-        });
-        await deploymentFinished;
-        return Success;
+        await progressLog.close();
+        await setDeployStatus(githubToken, id,
+            "success",
+            deployPhase.context,
+            linkableLog.url,
+            `Completed ${deployPhase.name}`);
+        if (deployment.endpoint) {
+            await setEndpointStatus(githubToken, id,
+                endpointPhase.context,
+                deployment.endpoint,
+                `Completed ${endpointPhase.name}`)
+                .catch(endpointStatus => {
+                    logger.error("Could not set Endpoint status: " + endpointStatus.message);
+                    // do not fail this whole handler
+                });
+        }
     } catch (err) {
-        console.log("ERROR: " + err);
-        return setDeployStatus(githubToken, id, "failure", deployPhase.context,
-            "http://www.test.com", `Failed to ${deployPhase.name}`)
-            .then(() => ({code: 1, message: err.message}), statusUpdateFailure => {
-                logger.warn("Also unable to update the deploy status to failure: " + statusUpdateFailure.message);
-                return {code: 1, message: err.message};
-            });
+        return setDeployStatus(githubToken, id, "failure",
+            deployPhase.context,
+            linkableLog.url,
+            `Failed to ${deployPhase.name}`);
     }
 }
 

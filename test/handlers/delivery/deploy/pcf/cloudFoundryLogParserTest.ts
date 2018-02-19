@@ -2,14 +2,13 @@
 import "mocha";
 
 import * as assert from "power-assert";
-import { parseCloudFoundryLog } from "../../../../../src/handlers/events/delivery/deploy/pcf/cloudFoundryLogParser";
+import { parseCloudFoundryLogForEndpoint } from "../../../../../src/handlers/events/delivery/deploy/pcf/cloudFoundryLogParser";
 
 describe("CloudFoundryProgressLog", () => {
 
     it("parses real log", () => {
-        const di = parseCloudFoundryLog(l1);
-        assert(!!di);
-        assert(di.endpoint === "http://losgatos1-cataphractic-brink.cfapps.io");
+        const endpoint = parseCloudFoundryLogForEndpoint(l1);
+        assert(endpoint === "http://losgatos1-cataphractic-brink.cfapps.io");
     });
 
 });

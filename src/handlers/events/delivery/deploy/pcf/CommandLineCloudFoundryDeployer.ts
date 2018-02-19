@@ -1,12 +1,12 @@
-import {logger} from "@atomist/automation-client";
-import {runCommand} from "@atomist/automation-client/action/cli/commandLine";
-import {spawn} from "child_process";
-import {DeployableArtifact} from "../../ArtifactStore";
-import { ProgressLog, QueryableProgressLog } from "../../log/ProgressLog";
-import {Deployer} from "../Deployer";
-import { Deployment, SimpleDeploymentInfo } from "../Deployment";
-import { parseCloudFoundryLog } from "./cloudFoundryLogParser";
-import {CloudFoundryInfo} from "./CloudFoundryTarget";
+import { logger } from "@atomist/automation-client";
+import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { spawn } from "child_process";
+import { DeployableArtifact } from "../../ArtifactStore";
+import { QueryableProgressLog } from "../../log/ProgressLog";
+import { Deployer } from "../Deployer";
+import { Deployment } from "../Deployment";
+import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
+import { CloudFoundryInfo } from "./CloudFoundryTarget";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
@@ -38,14 +38,14 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             {
                 cwd: ai.cwd,
             });
-        const d = new SimpleDeploymentInfo(childProcess);
-        childProcess.addListener("exit", () => {
-            d.deploymentInfo = parseCloudFoundryLog(log.log);
-            d.complete = true;
-            logger.info("Deployment info is %j", d.deploymentInfo);
+        childProcess.stdout.on("data", what => log.write(what.toString()));
+        childProcess.stderr.on("data", what => log.write(what.toString()));
+        return new Promise((resolve, reject) => {
+            childProcess.addListener("exit", () => {
+                resolve({ endpoint: parseCloudFoundryLogForEndpoint(log.log) });
+            });
+            childProcess.addListener("error", reject);
         });
-        childProcess.addListener("error", () => d.complete = true);
-        return d;
     }
 
 }
