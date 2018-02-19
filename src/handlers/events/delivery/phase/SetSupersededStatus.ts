@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets, Success, } from "@atomist/automation-client";
+import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -22,10 +22,10 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client/Handlers";
-import { OnPushWithBefore } from "../../../../typings/types";
-import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { OnPushWithBefore } from "../../../../typings/types";
 import { truncateCommitMessage } from "../../../../util/lifecycleHelpers";
+import { createStatus } from "../../../commands/editors/toclient/ghub";
 
 export const SupersededContext = "superseded";
 

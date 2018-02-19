@@ -15,7 +15,9 @@
  */
 
 import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
-import { CloudFoundryInfo, } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
+import { MavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/MavenDeployer";
+import { CloudFoundryInfo } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import {
     CloudFoundryStagingDeploymentContext,
     ContextToPlannedPhase,
@@ -23,8 +25,6 @@ import {
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";
-import { MavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/MavenDeployer";
-import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
 
 /**
  * Deploy everything to the same Cloud Foundry space

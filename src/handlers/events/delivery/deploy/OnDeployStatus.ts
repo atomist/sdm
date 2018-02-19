@@ -43,7 +43,10 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private actions: DeployListener[]) {
+    private actions: DeployListener[];
+
+    constructor(...actions: DeployListener[]) {
+        this.actions = actions;
     }
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {

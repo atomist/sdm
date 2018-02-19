@@ -1,7 +1,8 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
+import { DeployListener } from "../handlers/events/delivery/deploy/OnDeployStatus";
+import { SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { ScanContext } from "../handlers/events/delivery/phases/core";
@@ -14,16 +15,15 @@ import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/Verif
 import { Fingerprinter } from "../handlers/events/repo/FingerprintOnPush";
 import { NewRepoWithCodeAction } from "../handlers/events/repo/OnFirstPushToRepo";
 import { FingerprintDifferenceHandler } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
+import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
 import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
-import {
-    CloudFoundryProductionDeployOnFingerprint,
-    CloudFoundryStagingDeployOnImageLinked,
-} from "./blueprint/deploy/cloudFoundryDeploy";
+import { CloudFoundryProductionDeployOnFingerprint, } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
+import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { mavenFingerprinter } from "./blueprint/fingerprint/mavenFingerprinter";
@@ -34,9 +34,6 @@ import { tagRepo } from "./blueprint/repo/tagRepo";
 import { logInspect, logReview } from "./blueprint/review/inspect";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
-import { SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
@@ -47,12 +44,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
-    //    LocalMavenDeployOnImageLinked;
-    CloudFoundryStagingDeployOnImageLinked;
+        LocalMavenDeployOnImageLinked;
+    // CloudFoundryStagingDeployOnImageLinked;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
-
-    public notifyOnDeploy: Maker<OnDeployStatus> = PostToDeploymentsChannel;
 
     public onVerifiedStatus: Maker<OnVerifiedStatus> = OfferPromotion;
 
@@ -100,6 +95,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     protected get fingerprintDifferenceHandlers(): FingerprintDifferenceHandler[] {
         return [diff1];
+    }
+
+    protected get deploymentListeners(): DeployListener[] {
+        return [PostToDeploymentsChannel];
     }
 
     protected get supersededListeners(): SupersededListener[] {

@@ -2,15 +2,14 @@ import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
+import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
+import { OnSuperseded, SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
+import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { BuiltContext, ScanContext } from "../handlers/events/delivery/phases/core";
-import {
-    CodeReaction,
-    ReviewOnPendingScanStatus,
-} from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { BuiltContext } from "../handlers/events/delivery/phases/core";
+import { CodeReaction, ReviewOnPendingScanStatus, } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
@@ -20,13 +19,10 @@ import {
     FingerprintDifferenceHandler,
     ReactToSemanticDiffsOnPushImpact,
 } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
-import { OnImageLinked, OnSuccessStatus } from "../typings/types";
-import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
-import { NewRepoReactor } from "./NewRepoReactor";
-import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { OnSuperseded, SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
+import { OnImageLinked } from "../typings/types";
+import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
+import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
  * Superclass for user software delivery machines
@@ -69,7 +65,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     get onSuperseded(): Maker<OnSuperseded> {
-        return (!!this.supersededListeners) ?
+        return !!this.supersededListeners ?
             () => new OnSuperseded(...this.supersededListeners) :
             undefined;
     }
@@ -81,7 +77,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
 
-    public abstract notifyOnDeploy?: Maker<OnDeployStatus>;
+    public get notifyOnDeploy(): Maker<OnDeployStatus> {
+        return !!this.deploymentListeners ?
+            () => new OnDeployStatus(...this.deploymentListeners) :
+            undefined;
+    }
 
     public abstract verifyEndpoint?: Maker<VerifyOnEndpointStatus>;
 
@@ -145,5 +145,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     protected supersededListeners?: SupersededListener[];
 
     protected fingerprintDifferenceHandlers?: FingerprintDifferenceHandler[];
+
+    protected deploymentListeners?: DeployListener[];
 
 }

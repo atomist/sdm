@@ -1,17 +1,26 @@
 import { logger } from "@atomist/automation-client";
-import { spawn } from "child_process";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ChildProcess, spawn } from "child_process";
+import { DeployableArtifact } from "../../../ArtifactStore";
+import { QueryableProgressLog } from "../../../log/ProgressLog";
 import { Deployer } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
-import { QueryableProgressLog } from "../../../log/ProgressLog";
-import { DeployableArtifact } from "../../../ArtifactStore";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+
+import * as _ from "lodash";
 
 interface DeployedApp {
     id: RemoteRepoRef;
     port: number;
+    childProcess: ChildProcess;
 }
 
 const deployments: DeployedApp[] = [];
+
+const InitialPort = 8080;
+
+function nextFreePort(): number {
+    return InitialPort;
+}
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
@@ -20,7 +29,11 @@ const deployments: DeployedApp[] = [];
 export const MavenDeployer: Deployer = {
 
     async undeploy(id: RemoteRepoRef): Promise<any> {
-        throw new Error("Undeploy not yet impelmented");
+        const victim = deployments.find(d => d.id.sha === id.sha);
+        if (!!victim) {
+            victim.childProcess.kill();
+            _.remove(deployments, victim);
+        }
     },
 
     async deploy(ai: DeployableArtifact, cfi: TargetInfo, log: QueryableProgressLog): Promise<Deployment> {
@@ -28,6 +41,7 @@ export const MavenDeployer: Deployer = {
             throw new Error("no DeployableArtifact passed in");
         }
         logger.info("\n\nDeploying app [%j] to Cloud Foundry [%j]", ai, cfi.description);
+        const port = nextFreePort();
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",
@@ -41,9 +55,8 @@ export const MavenDeployer: Deployer = {
         return new Promise((resolve, reject) => {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
-                const port = 8080;
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    deployments.push({id: ai.id, port});
+                    deployments.push({id: ai.id, port, childProcess});
                     resolve({
                         endpoint: `http://localhost:${port}`,
                     });
@@ -57,4 +70,3 @@ export const MavenDeployer: Deployer = {
     },
 
 };
-

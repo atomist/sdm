@@ -3,21 +3,21 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
+import { OnSuperseded } from "../handlers/events/delivery/phase/OnSuperseded";
+import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
+import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
 import {
     OnDeployToProductionFingerprint, OnImageLinked, OnPushWithBefore, OnSuccessStatus,
-    OnSupersededStatus
+    OnSupersededStatus,
 } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
-import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { OnSuperseded } from "../handlers/events/delivery/phase/OnSuperseded";
 
 /**
  * An environment to promote into. Normally there is only one, for production
