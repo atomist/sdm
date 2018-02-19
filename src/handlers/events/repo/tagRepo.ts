@@ -1,6 +1,6 @@
+import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
 import { NewRepoWithCodeAction } from "../../../handlers/events/repo/OnFirstPushToRepo";
 import { publishTags } from "../../../handlers/events/repo/publishTags";
-import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
 
 /**
  * Tag the repo using the given tagger

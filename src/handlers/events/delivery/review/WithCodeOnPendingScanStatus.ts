@@ -30,6 +30,11 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { editOne } from "@atomist/automation-client/operations/edit/editAll";
+import { BranchCommit, commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
+import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
@@ -39,11 +44,6 @@ import { addressChannelsFor } from "../../../commands/editors/toclient/addressCh
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ScanContext } from "../phases/core";
 import { ContextToPlannedPhase } from "../phases/httpServicePhases";
-import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { editOne } from "@atomist/automation-client/operations/edit/editAll";
-import { BranchCommit, commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Perform arbitrary actions (besides reviewing and returning a structured type)

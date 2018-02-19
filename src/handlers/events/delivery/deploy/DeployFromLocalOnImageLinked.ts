@@ -58,7 +58,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
                 private ourPhase: PlannedPhase,
                 private endpointPhase: PlannedPhase,
                 private artifactStore: ArtifactStore,
-                private deployer: Deployer<T>,
+                public deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 

@@ -1,4 +1,5 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
@@ -9,7 +10,10 @@ import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupers
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuiltContext } from "../handlers/events/delivery/phases/core";
-import { CodeReaction, WithCodeOnPendingScanStatus, } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
+import {
+    CodeReaction,
+    WithCodeOnPendingScanStatus,
+} from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
@@ -23,12 +27,31 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 
 /**
  * Superclass for user software delivery machines
  */
 export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
+
+    public generators: Array<Maker<HandleCommand>> = [];
+
+    public editors: Array<Maker<HandleCommand>> = [];
+
+    private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
+
+    private projectReviewers: ProjectReviewer[] = [];
+
+    private codeReactions: CodeReaction[] = [];
+
+    private autoEditors: AnyProjectEditor[] = [];
+
+    private fingerprinters: Fingerprinter[] = [];
+
+    private supersededListeners: SupersededListener[] = [];
+
+    private fingerprintDifferenceHandlers: FingerprintDifferenceHandler[] = [];
+
+    private deploymentListeners?: DeployListener[] = [];
 
     /**
      * All possible phases we can set up. Makes cleanup easier.
@@ -42,22 +65,22 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     }
 
     public get fingerprinter(): Maker<FingerprintOnPush> {
-        return !!this.fingerprinters ?
+        return this.fingerprinters.length > 0 ?
             () => new FingerprintOnPush(this.fingerprinters) :
             undefined;
     }
 
     public get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
-        return !!this.fingerprintDifferenceHandlers ?
+        return this.fingerprintDifferenceHandlers.length > 0 ?
             () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceHandlers) :
             undefined;
     }
 
     get reviewRunner(): Maker<WithCodeOnPendingScanStatus> {
         const reviewers = this.projectReviewers;
-        const inspections = this.codeInspections;
+        const inspections = this.codeReactions;
         const autoEditors = this.autoEditors;
-        return (!!reviewers || !!inspections || !!autoEditors) ?
+        return (reviewers.length + inspections.length + autoEditors.length > 0) ?
             () => new WithCodeOnPendingScanStatus(this.scanContext, reviewers, inspections, autoEditors) :
             undefined;
     }
@@ -67,7 +90,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     get onSuperseded(): Maker<OnSuperseded> {
-        return !!this.supersededListeners ?
+        return this.supersededListeners.length > 0 ?
             () => new OnSuperseded(...this.supersededListeners) :
             undefined;
     }
@@ -80,7 +103,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
 
     public get notifyOnDeploy(): Maker<OnDeployStatus> {
-        return !!this.deploymentListeners ?
+        return this.deploymentListeners.length > 0 ?
             () => new OnDeployStatus(...this.deploymentListeners) :
             undefined;
     }
@@ -93,10 +116,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete(BuiltContext)
-
-    public abstract generators: Array<Maker<HandleCommand>>;
-
-    public abstract editors: Array<Maker<HandleCommand>>;
 
     /**
      * Miscellaneous supporting commands
@@ -134,27 +153,60 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             ]).filter(m => !!m);
     }
 
-    protected abstract scanContext: string;
+    public addGenerators(...g: Array<Maker<HandleCommand>>): this {
+        this.generators = this.generators.concat(g);
+        return this;
+    }
 
-    protected newRepoWithCodeActions?: NewRepoWithCodeAction[];
+    public addEditors(...e: Array<Maker<HandleCommand>>): this {
+        this.editors = this.editors.concat(e);
+        return this;
+    }
 
-    protected projectReviewers?: ProjectReviewer[];
+    public addNewRepoWithCodeActions(...nrc: NewRepoWithCodeAction[]): this {
+        this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(nrc);
+        return this;
+    }
 
-    protected codeInspections?: CodeReaction[];
+    public addProjectReviewers(...r: ProjectReviewer[]): this {
+        this.projectReviewers = this.projectReviewers.concat(r);
+        return this;
+    }
+
+    public addCodeReactions(...cr: CodeReaction[]): this {
+        this.codeReactions = this.codeReactions.concat(cr);
+        return this;
+    }
 
     /**
      * Editors automatically invoked on eligible commits.
      * Note: be sure that these editors check and don't call
      * infinite recursion!!
      */
-    protected autoEditors?: AnyProjectEditor[];
+    public addAutoEditors(...e: AnyProjectEditor[]): this {
+        this.autoEditors = this.autoEditors.concat(e);
+        return this;
+    }
 
-    protected fingerprinters?: Fingerprinter[];
+    public addFingerprinters(...f: Fingerprinter[]): this {
+        this.fingerprinters = this.fingerprinters.concat(f);
+        return this;
+    }
 
-    protected supersededListeners?: SupersededListener[];
+    public addSupersededListeners(...l: SupersededListener[]): this {
+        this.supersededListeners = this.supersededListeners.concat(l);
+        return this;
+    }
 
-    protected fingerprintDifferenceHandlers?: FingerprintDifferenceHandler[];
+    public addFingerprintDifferenceHandlers(...fh: FingerprintDifferenceHandler[]): this {
+        this.fingerprintDifferenceHandlers = this.fingerprintDifferenceHandlers.concat(fh);
+        return this;
+    }
 
-    protected deploymentListeners?: DeployListener[];
+    public addDeploymentListeners(...l: DeployListener[]): this {
+        this.deploymentListeners = this.deploymentListeners.concat(l);
+        return this;
+    }
 
+    protected abstract scanContext: string;
 }

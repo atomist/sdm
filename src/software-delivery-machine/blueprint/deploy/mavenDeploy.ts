@@ -30,7 +30,7 @@ import { artifactStore } from "../artifactStore";
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
-export const LocalMavenDeployOnImageLinked: () => DeployFromLocalOnImageLinked<TargetInfo> = () =>
+export const LocalMavenDeployOnImageLinked: DeployFromLocalOnImageLinked<TargetInfo> =
     new DeployFromLocalOnImageLinked(
         HttpServicePhases,
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
