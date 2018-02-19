@@ -25,6 +25,7 @@ import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { NewRepoReactor } from "./NewRepoReactor";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
+import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 
 /**
  * Superclass for user software delivery machines
@@ -64,6 +65,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract phaseSetup: Maker<SetupPhasesOnPush>;
 
+    public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
+
     public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
         this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
@@ -100,6 +103,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
                 this.semanticDiffReactor,
                 this.reviewRunner,
                 this.phaseSetup,
+                this.oldPushSuperseder,
                 this.builder,
                 this.onBuildComplete,
                 this.deploy1,

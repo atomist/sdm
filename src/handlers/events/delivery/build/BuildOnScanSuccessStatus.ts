@@ -19,7 +19,7 @@ import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-cl
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
-import { currentPhaseIsStillPending, Phases, previousPhaseSucceeded } from "../Phases";
+import { currentPhaseIsStillPending, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
 
 /**
@@ -50,7 +50,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             siblings: status.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(params.phases, this.ourContext, statusAndFriends)) {
+        if (nothingFailed(statusAndFriends) && !previousPhaseSucceeded(params.phases, this.ourContext, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

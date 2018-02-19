@@ -20,7 +20,7 @@ import { OnDeployToProductionFingerprint } from "../../../../typings/types";
 import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
-    GitHubStatusAndFriends,
+    GitHubStatusAndFriends, nothingFailed,
     Phases,
     PlannedPhase,
     previousPhaseSucceeded,
@@ -30,7 +30,7 @@ import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 
-// TODO could make in common with other deployer...
+// TODO could make more common with other deployer...
 @EventHandler("Deploy linked artifact",
     GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnDeployToProductionFingerprint.graphql",
         __dirname))
@@ -64,7 +64,7 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
             siblings: fingerprint.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
+        if (nothingFailed(statusAndFriends) && !previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

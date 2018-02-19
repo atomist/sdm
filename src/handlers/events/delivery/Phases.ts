@@ -130,6 +130,10 @@ export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, st
     return result;
 }
 
+export function nothingFailed(status: GitHubStatusAndFriends): boolean {
+    return !status.siblings.some(sib => ["failure", "error"].includes(sib.state));
+}
+
 export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     if (status.state !== "success" || status.targetUrl.endsWith(ApprovalGateParam)) {
         logger.info(`********* Previous state ${status.context} wasn't success, but [${status.state}]`);

@@ -34,7 +34,7 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnAnyPush, OnPush, OnPushToAnyBranch } from "../../../../typings/types";
+import { OnAnyPush, OnPushToAnyBranch } from "../../../../typings/types";
 import { tipOfDefaultBranch } from "../../../commands/editors/toclient/ghub";
 import { Phases } from "../Phases";
 
@@ -68,7 +68,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
     }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-        const push: OnPush.Push = event.data.Push[0];
+        const push: OnPushToAnyBranch.Push = event.data.Push[0];
 
         if (!this.pushTest(push)) {
             return Promise.resolve(Success);

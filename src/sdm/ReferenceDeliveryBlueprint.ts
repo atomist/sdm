@@ -10,9 +10,10 @@ import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/Verif
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { OnDeployToProductionFingerprint, OnImageLinked, OnPushWithBefore, OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
+import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 
 /**
  * An environment to promote into. Normally there is only one, for production
@@ -45,6 +46,11 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
     phaseSetup: Maker<SetupPhasesOnPush>;
 
     phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;
+
+    /**
+     * Do not define if you don't want old commits to be automatically superseded
+     */
+    oldPushSuperseder?: Maker<SetSupersededStatus>;
 
     /**
      * Initiate build. We don't need this if there's a CI file in the
