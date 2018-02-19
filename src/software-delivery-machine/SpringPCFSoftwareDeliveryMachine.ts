@@ -16,7 +16,7 @@ import { Fingerprinter } from "../handlers/events/repo/FingerprintOnPush";
 import { NewRepoWithCodeAction } from "../handlers/events/repo/OnFirstPushToRepo";
 import { FingerprintDifferenceHandler } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
-import { PromotedEnvironment } from "../sdm/DeliveryBlueprint";
+import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
 import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
