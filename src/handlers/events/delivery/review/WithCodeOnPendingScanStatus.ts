@@ -32,7 +32,7 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { editOne } from "@atomist/automation-client/operations/edit/editAll";
-import { BranchCommit, commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
+import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
 import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
@@ -40,7 +40,7 @@ import { ProjectReview } from "@atomist/automation-client/operations/review/Revi
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ScanContext } from "../phases/core";
 import { ContextToPlannedPhase } from "../phases/httpServicePhases";
@@ -49,7 +49,9 @@ import { ContextToPlannedPhase } from "../phases/httpServicePhases";
  * Perform arbitrary actions (besides reviewing and returning a structured type)
  * in response to the contents of this repo
  */
-export type CodeReaction = (p: GitProject, ctx: HandlerContext) => Promise<any>;
+export type CodeReaction = (p: GitProject,
+                            addressChannels: AddressChannels,
+                            ctx: HandlerContext) => Promise<any>;
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -68,7 +70,7 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
 
     constructor(private context: string,
                 private projectReviewers: ProjectReviewer[],
-                private inspections: CodeReaction[],
+                private codeReactions: CodeReaction[],
                 editors: AnyProjectEditor[] = []) {
         this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }
@@ -94,8 +96,8 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
                 .map(reviewer => reviewer(p, ctx, params as any)))
                 .then(reviews => consolidate(reviews));
         const inspections: Promise<any> =
-            Promise.all(params.inspections
-                .map(inspection => inspection(p, ctx)));
+            Promise.all(params.codeReactions
+                .map(inspection => inspection(p, addressChannels, ctx)));
         await inspections;
 
         if (params.editorChain) {

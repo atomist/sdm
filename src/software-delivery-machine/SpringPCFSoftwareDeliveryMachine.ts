@@ -6,6 +6,7 @@ import { Phases } from "../handlers/events/delivery/Phases";
 import { ScanContext } from "../handlers/events/delivery/phases/core";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
+import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
@@ -25,11 +26,12 @@ import { mavenFingerprinter } from "./blueprint/fingerprint/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
-import { logInspect, logReview } from "./blueprint/review/inspect";
+import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
 const Deploy1 = LocalMavenDeployOnImageLinked;
+
 // CloudFoundryStagingDeployOnImageLinked
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
@@ -72,8 +74,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
                 suggestAddingCloudFoundryManifest)
-
-            .addProjectReviewers(logReview).addCodeReactions(logInspect)
+            .addProjectReviewers(
+                logReview,
+                checkstyleReviewer("/Users/rodjohnson/tools/checkstyle-8.8"))
+            .addCodeReactions(logReactor)
             .addAutoEditors(
                 async p => {
                     try {
@@ -83,7 +87,6 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
                         return p.addFile("thing", "1");
                     }
                 })
-
             .addFingerprinters(mavenFingerprinter)
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
