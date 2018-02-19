@@ -19,7 +19,11 @@ const deployments: DeployedApp[] = [];
 const InitialPort = 8080;
 
 function nextFreePort(): number {
-    return InitialPort;
+    let port = InitialPort;
+    while (deployments.some(d => d.port === port)) {
+        port++;
+    }
+    return port;
 }
 
 /**
