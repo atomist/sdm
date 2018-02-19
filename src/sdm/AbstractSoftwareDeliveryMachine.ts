@@ -24,6 +24,7 @@ import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./DeliveryBlueprint";
 import { NewRepoReactor } from "./NewRepoReactor";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 
 /**
  * Superclass for user software delivery machines
@@ -66,7 +67,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
         this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
-    public abstract builder: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
+    public abstract builder: Maker<StatusSuccessHandler>;
 
     public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
 

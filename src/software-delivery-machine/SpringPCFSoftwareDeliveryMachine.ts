@@ -35,6 +35,7 @@ import { tagRepo } from "./blueprint/repo/tagRepo";
 import { logInspect, logReview } from "./blueprint/review/inspect";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
@@ -42,7 +43,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 
-    public builder: Maker<BuildOnScanSuccessStatus> = LocalMavenBuildOnSucessStatus;
+    public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
         CloudFoundryStagingDeployOnImageLinked;

@@ -12,6 +12,7 @@ import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactT
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
 import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
+import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 
 /**
  * An environment to promote into. Normally there is only one, for production
@@ -45,7 +46,7 @@ export interface DeliveryBlueprint extends FunctionalUnit {
      * Initiate build. We don't need this if there's a CI file in the
      * project itself.
      */
-    builder?: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
+    builder?: Maker<StatusSuccessHandler>;
 
     onBuildComplete: Maker<SetStatusOnBuildComplete>;
 
