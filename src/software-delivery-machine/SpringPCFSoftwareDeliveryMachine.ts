@@ -8,7 +8,7 @@ import { Phases } from "../handlers/events/delivery/Phases";
 import { ScanContext } from "../handlers/events/delivery/phases/core";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { CodeReaction } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { CodeReaction } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
@@ -35,6 +35,7 @@ import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManif
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
+import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
@@ -91,6 +92,19 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     protected get codeInspections(): CodeReaction[] {
         return [logInspect];
+    }
+
+    protected get autoEditors(): AnyProjectEditor[] {
+        return [
+            async p => {
+                try {
+                    await p.findFile("thing");
+                    return p;
+                } catch {
+                    return p.addFile("thing", "1");
+                }
+            },
+        ];
     }
 
     protected get fingerprinters(): Fingerprinter[] {

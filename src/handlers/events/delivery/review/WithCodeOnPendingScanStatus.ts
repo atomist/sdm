@@ -39,6 +39,11 @@ import { addressChannelsFor } from "../../../commands/editors/toclient/addressCh
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ScanContext } from "../phases/core";
 import { ContextToPlannedPhase } from "../phases/httpServicePhases";
+import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { editOne } from "@atomist/automation-client/operations/edit/editAll";
+import { BranchCommit, commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
+import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Perform arbitrary actions (besides reviewing and returning a structured type)
@@ -48,23 +53,27 @@ export type CodeReaction = (p: GitProject, ctx: HandlerContext) => Promise<any>;
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
+ * Run any autofix editors.
  * Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code",
     GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnAnyPendingStatus.graphql",
         __dirname))
-export class ReviewOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
+export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
+    private editorChain: ProjectEditor;
+
     constructor(private context: string,
                 private projectReviewers: ProjectReviewer[],
-                private inspections: CodeReaction[]) {
+                private inspections: CodeReaction[],
+                editors: AnyProjectEditor[] = []) {
+        this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }
 
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-
         const status = event.data.Status[0];
         const commit = status.commit;
 
@@ -88,6 +97,18 @@ export class ReviewOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus
             Promise.all(params.inspections
                 .map(inspection => inspection(p, ctx)));
         await inspections;
+
+        if (params.editorChain) {
+            // TODO parameterize this
+            const editMode: BranchCommit = {
+                branch: commit.pushes[0].branch,
+                message: "Autofixes",
+            };
+            logger.info("Editing %j with mode=%j", id, editMode);
+            await editOne(ctx, creds, params.editorChain, editMode,
+                new SimpleRepoId(id.owner, id.repo));
+        }
+
         if (review.comments.length === 0) {
             await markScanned(p.id as GitHubRepoRef, params.context, "success", creds);
         } else {

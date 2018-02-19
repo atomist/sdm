@@ -9,7 +9,7 @@ import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupers
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuiltContext } from "../handlers/events/delivery/phases/core";
-import { CodeReaction, ReviewOnPendingScanStatus, } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { CodeReaction, WithCodeOnPendingScanStatus, } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
@@ -23,6 +23,7 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 
 /**
  * Superclass for user software delivery machines
@@ -52,11 +53,12 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             undefined;
     }
 
-    get reviewRunner(): Maker<ReviewOnPendingScanStatus> {
+    get reviewRunner(): Maker<WithCodeOnPendingScanStatus> {
         const reviewers = this.projectReviewers;
         const inspections = this.codeInspections;
-        return (!!reviewers && !!inspections) ?
-            () => new ReviewOnPendingScanStatus(this.scanContext, reviewers, inspections) :
+        const autoEditors = this.autoEditors;
+        return (!!reviewers || !!inspections || !!autoEditors) ?
+            () => new WithCodeOnPendingScanStatus(this.scanContext, reviewers, inspections, autoEditors) :
             undefined;
     }
 
@@ -139,6 +141,13 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     protected projectReviewers?: ProjectReviewer[];
 
     protected codeInspections?: CodeReaction[];
+
+    /**
+     * Editors automatically invoked on eligible commits.
+     * Note: be sure that these editors check and don't call
+     * infinite recursion!!
+     */
+    protected autoEditors?: AnyProjectEditor[];
 
     protected fingerprinters?: Fingerprinter[];
 

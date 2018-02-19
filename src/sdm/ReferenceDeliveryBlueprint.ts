@@ -6,7 +6,7 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/
 import { OnSuperseded } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { ReviewOnPendingScanStatus } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
@@ -44,7 +44,7 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
     semanticDiffReactor?: Maker<ReactToSemanticDiffsOnPushImpact>;
 
-    reviewRunner?: Maker<ReviewOnPendingScanStatus>;
+    reviewRunner?: Maker<WithCodeOnPendingScanStatus>;
 
     // TODO need > 1 with different push tests
     phaseSetup: Maker<SetupPhasesOnPush>;
