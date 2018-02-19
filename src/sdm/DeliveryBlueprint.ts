@@ -27,7 +27,10 @@ export interface PromotedEnvironment {
 }
 
 /**
- * A Blueprint represents the delivery process
+ * A Blueprint represents a possible delivery process spanning
+ * phases of fingerprinting, reacting to fingerprint diffs,
+ * code review, build, deployment, endpoint verification and
+ * promotion to a production environment
  */
 export interface DeliveryBlueprint extends FunctionalUnit {
 

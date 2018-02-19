@@ -8,7 +8,7 @@ import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhases
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuiltContext, ScanContext } from "../handlers/events/delivery/phases/core";
 import {
-    CodeInspection,
+    CodeReaction,
     ReviewOnPendingScanStatus,
 } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
@@ -126,7 +126,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     protected projectReviewers?: ProjectReviewer[];
 
-    protected codeInspections?: CodeInspection[];
+    protected codeInspections?: CodeReaction[];
 
     protected fingerprinters?: Fingerprinter[];
 

@@ -8,7 +8,7 @@ import { Phases } from "../handlers/events/delivery/Phases";
 import { ScanContext } from "../handlers/events/delivery/phases/core";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { CodeInspection } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
+import { CodeReaction } from "../handlers/events/delivery/review/ReviewOnPendingScanStatus";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
@@ -88,7 +88,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         return [logReview];
     }
 
-    protected get codeInspections(): CodeInspection[] {
+    protected get codeInspections(): CodeReaction[] {
         return [logInspect];
     }
 
