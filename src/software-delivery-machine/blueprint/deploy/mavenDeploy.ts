@@ -36,7 +36,7 @@ export const LocalMavenDeployOnImageLinked: () => DeployFromLocalOnImageLinked<T
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
-        new MavenDeployer(),
+        MavenDeployer,
         () => ({
             name: "Local",
             description: "Deployment alongside local automation client",

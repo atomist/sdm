@@ -1,3 +1,5 @@
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+
 export interface Deployment {
 
     readonly endpoint?: string;
@@ -16,4 +18,6 @@ export interface AppInfo {
 
     name: string;
     version: string;
+
+    id: RemoteRepoRef;
 }

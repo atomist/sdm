@@ -23,7 +23,8 @@ export class MavenBuilder extends LocalBuilder {
         super(artifactStore, logFactory);
     }
 
-    protected startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+    protected startBuild(creds: ProjectOperationCredentials,
+                         id: RemoteRepoRef,
                          team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
@@ -31,7 +32,7 @@ export class MavenBuilder extends LocalBuilder {
                 return p.findFile("pom.xml")
                     .then(pom => pom.getContent()
                         .then(content => identification(content)))
-                    .then(va => ({...va, name: va.artifact}))
+                    .then(va => ({...va, name: va.artifact, id}))
                     .then(appId => {
                         const childProcess = spawn("mvn", [
                             "package",
