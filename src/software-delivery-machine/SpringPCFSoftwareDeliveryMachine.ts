@@ -30,10 +30,11 @@ import { mavenFingerprinter } from "./blueprint/fingerprint/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
-import { tagRepo } from "./blueprint/repo/tagRepo";
 import { logInspect, logReview } from "./blueprint/review/inspect";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
+import { tagRepo } from "../handlers/events/repo/tagRepo";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
@@ -74,7 +75,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     ];
 
     protected get newRepoWithCodeActions(): NewRepoWithCodeAction[] {
-        return [tagRepo, suggestAddingCloudFoundryManifest];
+        return [
+            tagRepo(springBootTagger),
+            suggestAddingCloudFoundryManifest
+        ];
     }
 
     protected get possiblePhases(): Phases[] {
