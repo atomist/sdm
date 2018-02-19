@@ -43,6 +43,17 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
+    /**
+     *
+     * @param {Phases} phases
+     * @param {PlannedPhase} ourPhase
+     * @param {PlannedPhase} endpointPhase
+     * @param {ArtifactStore} artifactStore
+     * @param {Deployer<T extends TargetInfo>} deployer
+     * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
+     * For example, we may wish to deploy different repos to different Cloud Foundry spaces
+     * or Kubernetes clusters
+     */
     constructor(private phases: Phases,
                 private ourPhase: PlannedPhase,
                 private endpointPhase: PlannedPhase,
