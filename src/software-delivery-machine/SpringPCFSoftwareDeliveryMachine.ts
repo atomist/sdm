@@ -1,7 +1,6 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { BuildOnScanSuccessStatus } from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
@@ -19,10 +18,7 @@ import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDelivery
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
 import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
-import {
-    CloudFoundryProductionDeployOnFingerprint,
-    CloudFoundryStagingDeployOnImageLinked,
-} from "./blueprint/deploy/cloudFoundryDeploy";
+import { CloudFoundryProductionDeployOnFingerprint, } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
@@ -36,6 +32,8 @@ import { logInspect, logReview } from "./blueprint/review/inspect";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
+import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
+import { SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
 
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
@@ -46,7 +44,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
-        CloudFoundryStagingDeployOnImageLinked;
+        LocalMavenDeployOnImageLinked;
+    //CloudFoundryStagingDeployOnImageLinked;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 
@@ -98,6 +97,15 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     protected get fingerprintDifferenceHandlers(): FingerprintDifferenceHandler[] {
         return [diff1];
+    }
+
+    protected get supersededListeners(): SupersededListener[] {
+        return [
+            (id, s) => {
+                console.log(`status ${s.commit.sha} is superseded!!!!!!!`);
+                return Promise.resolve();
+            },
+        ];
     }
 
 }

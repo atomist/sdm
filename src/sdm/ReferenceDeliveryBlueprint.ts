@@ -10,10 +10,14 @@ import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/Verif
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import { OnDeployToProductionFingerprint, OnImageLinked, OnPushWithBefore, OnSuccessStatus } from "../typings/types";
+import {
+    OnDeployToProductionFingerprint, OnImageLinked, OnPushWithBefore, OnSuccessStatus,
+    OnSupersededStatus
+} from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
+import { OnSuperseded } from "../handlers/events/delivery/phase/OnSuperseded";
 
 /**
  * An environment to promote into. Normally there is only one, for production
@@ -51,6 +55,11 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
      * Do not define if you don't want old commits to be automatically superseded
      */
     oldPushSuperseder?: Maker<SetSupersededStatus>;
+
+    /**
+     * React when a push is superseded
+     */
+    onSuperseded?: Maker<HandleEvent<OnSupersededStatus.Subscription>>;
 
     /**
      * Initiate build. We don't need this if there's a CI file in the

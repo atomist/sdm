@@ -26,6 +26,7 @@ import { NewRepoReactor } from "./NewRepoReactor";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
+import { OnSuperseded, SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
 
 /**
  * Superclass for user software delivery machines
@@ -67,6 +68,12 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
+    get onSuperseded(): Maker<OnSuperseded> {
+        return (!!this.supersededListeners) ?
+            () => new OnSuperseded(...this.supersededListeners) :
+            undefined;
+    }
+
     public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
         this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
@@ -104,6 +111,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
                 this.reviewRunner,
                 this.phaseSetup,
                 this.oldPushSuperseder,
+                this.onSuperseded,
                 this.builder,
                 this.onBuildComplete,
                 this.deploy1,
@@ -133,6 +141,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     protected codeInspections?: CodeReaction[];
 
     protected fingerprinters?: Fingerprinter[];
+
+    protected supersededListeners?: SupersededListener[];
 
     protected fingerprintDifferenceHandlers?: FingerprintDifferenceHandler[];
 

@@ -14,54 +14,31 @@
  * limitations under the License.
  */
 
-import { DeployFromLocalOnFingerprint } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
 import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
-import {
-    CloudFoundryInfo,
-    EnvironmentCloudFoundryTarget,
-} from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
-import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { CloudFoundryInfo, } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import {
     CloudFoundryStagingDeploymentContext,
     ContextToPlannedPhase,
     HttpServicePhases,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
-import {
-    ProductionDeploymentPhase,
-    ProductionDeployPhases,
-    ProductionEndpointPhase,
-} from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import { artifactStore } from "../artifactStore";
-
-export const Deployer = new CommandLineCloudFoundryDeployer();
+import { MavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/MavenDeployer";
+import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
-export const CloudFoundryStagingDeployOnImageLinked = () =>
+export const LocalMavenDeployOnImageLinked: () => DeployFromLocalOnImageLinked<TargetInfo> = () =>
     new DeployFromLocalOnImageLinked(
         HttpServicePhases,
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
-        Deployer,
+        new MavenDeployer(),
         () => ({
-            ...new EnvironmentCloudFoundryTarget(),
-            space: "ri-staging",
-        }),
-    );
-
-export const CloudFoundryProductionDeployOnFingerprint =
-    () => new DeployFromLocalOnFingerprint(
-        ProductionDeployPhases,
-        ProductionDeploymentPhase,
-        ProductionEndpointPhase,
-        artifactStore,
-        Deployer,
-        () => ({
-            ...new EnvironmentCloudFoundryTarget(),
-            space: "ri-production",
+            name: "Local",
+            description: "Deployment alongside local automation client",
         }),
     );
