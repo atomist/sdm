@@ -74,10 +74,12 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
                 suggestAddingCloudFoundryManifest)
-            .addProjectReviewers(
-                logReview,
-                checkstyleReviewer("/Users/rodjohnson/tools/checkstyle-8.8"))
-            .addCodeReactions(logReactor)
+            .addProjectReviewers(logReview);
+        const checkStylePath = process.env.CHECKSTYLE_PATH;
+        if (!!checkStylePath) {
+            this.addProjectReviewers(checkstyleReviewer(checkStylePath));
+        }
+        this.addCodeReactions(logReactor)
             .addAutoEditors(
                 async p => {
                     try {

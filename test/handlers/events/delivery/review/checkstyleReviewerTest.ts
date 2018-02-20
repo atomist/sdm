@@ -5,7 +5,7 @@ import { checkstyleReviewer } from "../../../../../src/handlers/events/delivery/
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
-const checkstylePath = "/Users/rodjohnson/tools/checkstyle-8.8";
+const checkstylePath = process.env.CHECKSTYLE_PATH;
 
 describe("checkstyleReviewer", () => {
 
