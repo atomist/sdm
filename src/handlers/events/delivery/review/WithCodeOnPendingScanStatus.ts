@@ -16,7 +16,7 @@
 
 import * as _ from "lodash";
 
-import { GraphQL, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import {GraphQL, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -25,33 +25,33 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { editOne } from "@atomist/automation-client/operations/edit/editAll";
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
-import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../../commands/editors/toclient/ghub";
-import { ScanContext } from "../phases/core";
-import { ContextToPlannedPhase } from "../phases/httpServicePhases";
-import { ApprovalGateParam } from "../../gates/StatusApprovalGate";
-import { MessagingReviewRouter } from "@atomist/spring-automation/commands/messagingReviewRouter";
-import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { successOn } from "@atomist/automation-client/action/ActionResult";
+import {SimpleRepoId} from "@atomist/automation-client/operations/common/RepoId";
+import {editOne} from "@atomist/automation-client/operations/edit/editAll";
+import {BranchCommit} from "@atomist/automation-client/operations/edit/editModes";
+import {AnyProjectEditor, ProjectEditor} from "@atomist/automation-client/operations/edit/projectEditor";
+import {chainEditors} from "@atomist/automation-client/operations/edit/projectEditorOps";
+import {ProjectReviewer} from "@atomist/automation-client/operations/review/projectReviewer";
+import {ProjectReview, ReviewComment} from "@atomist/automation-client/operations/review/ReviewResult";
+import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
+import {GitProject} from "@atomist/automation-client/project/git/GitProject";
+import {OnAnyPendingStatus, StatusState} from "../../../../typings/types";
+import {AddressChannels, addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
+import {createStatus} from "../../../commands/editors/toclient/ghub";
+import {ScanContext} from "../phases/core";
+import {ContextToPlannedPhase} from "../phases/httpServicePhases";
+import {ApprovalGateParam} from "../../gates/StatusApprovalGate";
+import {MessagingReviewRouter} from "@atomist/spring-automation/commands/messagingReviewRouter";
+import {Attachment, SlackMessage} from "@atomist/slack-messages";
+import {successOn} from "@atomist/automation-client/action/ActionResult";
 
 import * as slack from "@atomist/slack-messages";
-import { deepLink } from "@atomist/automation-client/util/gitHub";
-import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import {deepLink} from "@atomist/automation-client/util/gitHub";
+import {buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
 
 /**
  * Perform arbitrary actions (besides reviewing and returning a structured type)
@@ -97,39 +97,44 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
         }
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);
+        try {
+            const p = await GitCommandGitProject.cloned(creds, id);
+            const review: ProjectReview =
+                await Promise.all(params.projectReviewers
+                    .map(reviewer => reviewer(p, ctx, params as any)))
+                    .then(reviews => consolidate(reviews));
+            const inspections: Promise<any> =
+                Promise.all(params.codeReactions
+                    .map(inspection => inspection(p, addressChannels, ctx)));
+            await inspections;
 
-        const p = await GitCommandGitProject.cloned(creds, id);
-        const review: ProjectReview =
-            await Promise.all(params.projectReviewers
-                .map(reviewer => reviewer(p, ctx, params as any)))
-                .then(reviews => consolidate(reviews));
-        const inspections: Promise<any> =
-            Promise.all(params.codeReactions
-                .map(inspection => inspection(p, addressChannels, ctx)));
-        await inspections;
+            if (params.editorChain) {
+                // TODO parameterize this
+                const editMode: BranchCommit = {
+                    branch: commit.pushes[0].branch,
+                    message: "Autofixes",
+                };
+                logger.info("Editing %j with mode=%j", id, editMode);
+                await editOne(ctx, creds, params.editorChain, editMode,
+                    new SimpleRepoId(id.owner, id.repo));
+            }
 
-        if (params.editorChain) {
-            // TODO parameterize this
-            const editMode: BranchCommit = {
-                branch: commit.pushes[0].branch,
-                message: "Autofixes",
-            };
-            logger.info("Editing %j with mode=%j", id, editMode);
-            await editOne(ctx, creds, params.editorChain, editMode,
-                new SimpleRepoId(id.owner, id.repo));
+            if (review.comments.length === 0) {
+                await markScanned(p.id as GitHubRepoRef,
+                    params.context, "success", creds, false);
+            } else {
+                // TODO might want to raise issue
+                // Fail it??
+                await sendReviewToSlack("Review comments", review, ctx, addressChannels)
+                    .then(() => markScanned(p.id as GitHubRepoRef,
+                        params.context, "success", creds, true));
+            }
+            return Success;
+        } catch(err) {
+            await markScanned(id,
+                params.context, "error", creds, false);
+            return failure(err);
         }
-
-        if (review.comments.length === 0) {
-            await markScanned(p.id as GitHubRepoRef,
-                params.context, "success", creds, false);
-        } else {
-            // TODO might want to raise issue
-            // Fail it??
-            await sendReviewToSlack("Review comments", review, ctx, addressChannels)
-                .then(() => markScanned(p.id as GitHubRepoRef,
-                    params.context, "success", creds, true));
-        }
-        return Success;
     }
 }
 

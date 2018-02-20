@@ -35,7 +35,7 @@ export const checkstyleReviewer: (checkstylePath: string) =>
                 //if (code === 0) {
                     return extract(stdout)
                         .then(cr =>
-                            resolve(checkstyleReportToReview(p.id, cr, p.baseDir)));
+                            resolve(checkstyleReportToReview(p.id, cr, p.baseDir)), reject);
                 // }
                 // reject(code);
             });
