@@ -9,7 +9,8 @@ export async function reportFailureInterpretation(stepName: string,
                                                   interpretation: InterpretedLog,
                                                   fullLog: LinkablePersistentProgressLog & QueryableProgressLog,
                                                   id: RemoteRepoRef,
-                                                  ac: AddressChannels) {
+                                                  ac: AddressChannels,
+                                                  retryButton?: slack.Action) {
     await ac({
         text: `Failed ${stepName} of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 6))}`,
         attachments: [{
@@ -18,6 +19,7 @@ export async function reportFailureInterpretation(stepName: string,
             fallback: "relevant bits",
             text: interpretation.relevantPart,
             color: "#ff5050",
+            actions: retryButton? [retryButton] : []
         }],
     });
     if (interpretation.includeFullLog) {

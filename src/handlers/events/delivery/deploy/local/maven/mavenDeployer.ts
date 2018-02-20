@@ -1,11 +1,11 @@
-import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ChildProcess, spawn } from "child_process";
-import { DeployableArtifact } from "../../../ArtifactStore";
-import { QueryableProgressLog } from "../../../log/ProgressLog";
-import { Deployer } from "../../Deployer";
-import { Deployment, TargetInfo } from "../../Deployment";
-import { InterpretedLog } from "../../../log/InterpretedLog";
+import {logger} from "@atomist/automation-client";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {ChildProcess, spawn} from "child_process";
+import {DeployableArtifact} from "../../../ArtifactStore";
+import {QueryableProgressLog} from "../../../log/ProgressLog";
+import {Deployer} from "../../Deployer";
+import {Deployment, TargetInfo} from "../../Deployment";
+import {InterpretedLog} from "../../../log/InterpretedLog";
 
 /**
  * Ports will be reused for the same app
@@ -93,6 +93,11 @@ class MavenDeployer implements Deployer {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
+        if (!log) {
+            logger.warn("log was empty");
+            return undefined;
+        }
+
         const maybeFailedToStart = appFailedToStart(log);
         if (maybeFailedToStart) {
             return {
@@ -103,14 +108,27 @@ class MavenDeployer implements Deployer {
         }
 
         // default to maven errors
-        const relevantPart = log.split("\n")
-            .filter(l => l.startsWith("[ERROR]"))
-            .join("\n");
-        return {
-            relevantPart,
-            message: "Maven errors",
-            includeFullLog: true,
-        };
+        const maybeMavenErrors = mavenErrors(log);
+        if (maybeMavenErrors) {
+            logger.info("recognized maven error");
+            return {
+                relevantPart: maybeMavenErrors,
+                message: "Maven errors",
+                includeFullLog: true,
+            };
+        }
+
+        // or it could be this problem here
+        if (log.match(/Error checking out artifact/)) {
+            logger.info("Recognized artifact error");
+            return {
+                relevantPart: log,
+                message: "I lost the local cache. Please rebuild",
+                includeFullLog: false,
+            }
+        }
+
+        logger.info("Did not find anything to recognize in the log");
     }
 
 }
@@ -123,4 +141,12 @@ function appFailedToStart(log: string) {
     }
     const likelyLines = lines.slice(failedToStartLine + 3, failedToStartLine + 10);
     return likelyLines.join("\n");
+}
+
+function mavenErrors(log: string) {
+    if (log.match(/^\[ERROR]/m)) {
+        return log.split("\n")
+            .filter(l => l.startsWith("[ERROR]"))
+            .join("\n");
+    }
 }

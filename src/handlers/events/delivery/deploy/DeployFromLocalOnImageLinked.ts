@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { OnImageLinked } from "../../../../typings/types";
-import { ArtifactStore } from "../ArtifactStore";
+import {GraphQL, HandleCommand, HandlerResult, Secret, Secrets, success, Success} from "@atomist/automation-client";
+import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {OnImageLinked} from "../../../../typings/types";
+import {ArtifactStore} from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
     GitHubStatusAndFriends,
@@ -27,11 +27,15 @@ import {
     PlannedPhase,
     previousPhaseSucceeded,
 } from "../Phases";
-import { BuiltContext } from "../phases/core";
-import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import {BuiltContext} from "../phases/core";
+import {deploy} from "./deploy";
+import {Deployer} from "./Deployer";
+import {TargetInfo} from "./Deployment";
+import {addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
+import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
+import {EventWithCommand, RetryDeployParameters} from "../../../commands/RetryDeploy";
+import {buttonForCommand, commandName} from "@atomist/automation-client/spi/message/MessageClient";
+import {artifactStore} from "../../../../software-delivery-machine/blueprint/artifactStore";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -39,7 +43,7 @@ import { addressChannelsFor } from "../../../commands/editors/toclient/addressCh
 @EventHandler("Deploy linked artifact",
     GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnImageLinked.graphql",
         __dirname))
-export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription> {
+export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription>, EventWithCommand {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -63,9 +67,40 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 
+    public get commandName() {
+        return "RetryDeployLocal";
+    };
+
+    public correspondingCommand(): HandleCommand {
+        return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
+            return deploy({
+                deployPhase: this.ourPhase,
+                endpointPhase: this.endpointPhase,
+                id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
+                githubToken: commandParams.githubToken,
+                targetUrl: commandParams.targetUrl,
+                artifactStore: this.artifactStore,
+                deployer: this.deployer,
+                targeter: this.targeter,
+                ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
+                retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
+                    ...commandParams
+                })
+            });
+        }, RetryDeployParameters, this.commandName)
+    };
+
+
     public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const imageLinked = event.data.ImageLinked[0];
         const commit = imageLinked.commit;
+
+        const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
+            repo: commit.repo.name,
+            owner: commit.repo.owner,
+            sha: commit.sha,
+            targetUrl: imageLinked.image.imageName,
+        });
 
         // TODO doesn't work as built status isn't in, yet
         // const builtStatus = commit.statuses.find(status => status.context === BuiltContext);
@@ -89,12 +124,15 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return deploy(params.ourPhase, params.endpointPhase,
-            id, params.githubToken,
-            imageLinked.image.imageName,
-            params.artifactStore,
-            params.deployer,
-            params.targeter,
-            addressChannelsFor(commit.repo, ctx));
+        return deploy({
+            deployPhase: params.ourPhase, endpointPhase: params.endpointPhase,
+            id, githubToken: params.githubToken,
+            targetUrl: imageLinked.image.imageName,
+            artifactStore: artifactStore,
+            deployer: params.deployer,
+            targeter: params.targeter,
+            ac: addressChannelsFor(commit.repo, ctx),
+            retryButton,
+        }).then(success);
     }
 }
