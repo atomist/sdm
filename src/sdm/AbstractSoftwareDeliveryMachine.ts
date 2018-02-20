@@ -2,6 +2,7 @@ import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import {Maker, toFactory} from "@atomist/automation-client/util/constructionUtils";
+import {EventWithCommand} from "../handlers/commands/RetryDeploy";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
@@ -27,7 +28,6 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
-import {EventWithCommand} from "../handlers/commands/RetryDeploy";
 
 /**
  * Superclass for user software delivery machines
@@ -149,7 +149,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this.generators
             .concat(this.editors)
             .concat(this.supportingCommands)
-            .concat([mayHaveCommand.correspondingCommand ? () => mayHaveCommand.correspondingCommand(): undefined])
+            .concat([mayHaveCommand.correspondingCommand ? () => mayHaveCommand.correspondingCommand() : undefined])
             .concat([
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
                 !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,

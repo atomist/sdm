@@ -2,18 +2,18 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
 import { Readable } from "stream";
+import { reportFailureInterpretation } from "../../../../../util/reportFailureInterpretation";
+import { AddressChannels } from "../../../../commands/editors/toclient/addressChannels";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import {
-    LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
-    QueryableProgressLog
-} from "../../log/ProgressLog";
-import { Builder } from "../Builder";
 import EventEmitter = NodeJS.EventEmitter;
 import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../log/InterpretedLog";
-import { reportFailureInterpretation } from "../../../../../util/reportFailureInterpretation";
-import { AddressChannels } from "../../../../commands/editors/toclient/addressChannels";
+import {
+    LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
+    QueryableProgressLog,
+} from "../../log/ProgressLog";
+import { Builder } from "../Builder";
 
 export interface LocalBuildInProgress {
 

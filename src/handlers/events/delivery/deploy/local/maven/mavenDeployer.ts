@@ -2,10 +2,10 @@ import {logger} from "@atomist/automation-client";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {ChildProcess, spawn} from "child_process";
 import {DeployableArtifact} from "../../../ArtifactStore";
+import {InterpretedLog} from "../../../log/InterpretedLog";
 import {QueryableProgressLog} from "../../../log/ProgressLog";
 import {Deployer} from "../../Deployer";
 import {Deployment, TargetInfo} from "../../Deployment";
-import {InterpretedLog} from "../../../log/InterpretedLog";
 
 /**
  * Ports will be reused for the same app
@@ -103,8 +103,8 @@ class MavenDeployer implements Deployer {
             return {
                 relevantPart: maybeFailedToStart,
                 message: "Application failed to start",
-                includeFullLog: false
-            }
+                includeFullLog: false,
+            };
         }
 
         // default to maven errors
@@ -125,7 +125,7 @@ class MavenDeployer implements Deployer {
                 relevantPart: log,
                 message: "I lost the local cache. Please rebuild",
                 includeFullLog: false,
-            }
+            };
         }
 
         logger.info("Did not find anything to recognize in the log");

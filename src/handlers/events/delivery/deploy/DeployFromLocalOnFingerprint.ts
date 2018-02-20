@@ -17,6 +17,7 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
@@ -29,7 +30,6 @@ import { BuiltContext } from "../phases/core";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 
 // TODO could make more common with other deployer...
 @EventHandler("Deploy linked artifact",

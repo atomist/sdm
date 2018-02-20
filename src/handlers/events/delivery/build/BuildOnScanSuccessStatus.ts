@@ -18,10 +18,10 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnAnySuccessStatus } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { currentPhaseIsStillPending, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status

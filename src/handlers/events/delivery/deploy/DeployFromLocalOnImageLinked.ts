@@ -16,9 +16,14 @@
 
 import {GraphQL, HandleCommand, HandlerResult, Secret, Secrets, success, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
+import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {buttonForCommand, commandName} from "@atomist/automation-client/spi/message/MessageClient";
+import {artifactStore} from "../../../../software-delivery-machine/blueprint/artifactStore";
 import {OnImageLinked} from "../../../../typings/types";
+import {addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
+import {EventWithCommand, RetryDeployParameters} from "../../../commands/RetryDeploy";
 import {ArtifactStore} from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
@@ -31,11 +36,6 @@ import {BuiltContext} from "../phases/core";
 import {deploy} from "./deploy";
 import {Deployer} from "./Deployer";
 import {TargetInfo} from "./Deployment";
-import {addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
-import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
-import {EventWithCommand, RetryDeployParameters} from "../../../commands/RetryDeploy";
-import {buttonForCommand, commandName} from "@atomist/automation-client/spi/message/MessageClient";
-import {artifactStore} from "../../../../software-delivery-machine/blueprint/artifactStore";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -69,7 +69,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
 
     public get commandName() {
         return "RetryDeployLocal";
-    };
+    }
 
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
@@ -84,12 +84,11 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
                 targeter: this.targeter,
                 ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
                 retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
-                    ...commandParams
-                })
+                    ...commandParams,
+                }),
             });
-        }, RetryDeployParameters, this.commandName)
-    };
-
+        }, RetryDeployParameters, this.commandName);
+    }
 
     public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const imageLinked = event.data.ImageLinked[0];
@@ -128,7 +127,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
             deployPhase: params.ourPhase, endpointPhase: params.endpointPhase,
             id, githubToken: params.githubToken,
             targetUrl: imageLinked.image.imageName,
-            artifactStore: artifactStore,
+            artifactStore,
             deployer: params.deployer,
             targeter: params.targeter,
             ac: addressChannelsFor(commit.repo, ctx),

@@ -5,10 +5,10 @@ import { ChildProcess, spawn } from "child_process";
 import { Readable } from "stream";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
+import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../log/InterpretedLog";
 import { LinkableLogFactory, LinkablePersistentProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
-import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../log/InterpretedLog";
 
 /**
  * Build with Maven in the local automation client.
