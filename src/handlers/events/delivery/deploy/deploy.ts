@@ -28,15 +28,43 @@ import { TargetInfo } from "./Deployment";
 import { AddressChannels } from "../../../commands/editors/toclient/addressChannels";
 import { reportFailureInterpretation } from "../../../../util/reportFailureInterpretation";
 
-export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
-                                                   endpointPhase: PlannedPhase,
-                                                   id: GitHubRepoRef,
-                                                   githubToken: string,
-                                                   targetUrl: string,
-                                                   artifactStore: ArtifactStore,
-                                                   deployer: Deployer<T>,
-                                                   targeter: (id: RemoteRepoRef) => T,
-                                                   ac: AddressChannels): Promise<HandlerResult> {
+export interface DeployParams<T extends TargetInfo> {
+    deployPhase: PlannedPhase,
+    endpointPhase: PlannedPhase,
+    id: GitHubRepoRef,
+    githubToken: string,
+    targetUrl: string,
+    artifactStore: ArtifactStore,
+    deployer: Deployer<T>,
+    targeter: (id: RemoteRepoRef) => T,
+    ac: AddressChannels
+}
+function isDeployParams<T extends TargetInfo>(a: PlannedPhase | DeployParams<T>): a is DeployParams<T> {
+    return !!(a as DeployParams<T>).deployPhase
+}
+
+export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedPhase | DeployParams<T>,
+                                                   endpointPhase?: PlannedPhase,
+                                                   id?: GitHubRepoRef,
+                                                   githubToken?: string,
+                                                   targetUrl?: string,
+                                                   artifactStore?: ArtifactStore,
+                                                   deployer?: Deployer<T>,
+                                                   targeter?: (id: RemoteRepoRef) => T,
+                                                   ac?: AddressChannels): Promise<HandlerResult> {
+    let deployPhase: PlannedPhase;
+    if (isDeployParams(paramsOrDeployPhase)) {
+        deployPhase = paramsOrDeployPhase.deployPhase;
+        endpointPhase = paramsOrDeployPhase.endpointPhase;
+        id = paramsOrDeployPhase.id;
+        githubToken = paramsOrDeployPhase.githubToken;
+        targetUrl = paramsOrDeployPhase.targetUrl;
+        artifactStore = paramsOrDeployPhase.artifactStore;
+        deployer = paramsOrDeployPhase.deployer;
+        targeter = paramsOrDeployPhase.targeter;
+    } else {
+        deployPhase = paramsOrDeployPhase;
+    }
     const linkableLog = await createLinkableProgressLog();
 
     try {
