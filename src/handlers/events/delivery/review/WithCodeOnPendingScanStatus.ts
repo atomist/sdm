@@ -36,7 +36,7 @@ import { BranchCommit } from "@atomist/automation-client/operations/edit/editMod
 import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
@@ -44,6 +44,14 @@ import { AddressChannels, addressChannelsFor } from "../../../commands/editors/t
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ScanContext } from "../phases/core";
 import { ContextToPlannedPhase } from "../phases/httpServicePhases";
+import { ApprovalGateParam } from "../../gates/StatusApprovalGate";
+import { MessagingReviewRouter } from "@atomist/spring-automation/commands/messagingReviewRouter";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import { successOn } from "@atomist/automation-client/action/ActionResult";
+
+import * as slack from "@atomist/slack-messages";
+import { deepLink } from "@atomist/automation-client/util/gitHub";
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 
 /**
  * Perform arbitrary actions (besides reviewing and returning a structured type)
@@ -112,11 +120,14 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
         }
 
         if (review.comments.length === 0) {
-            await markScanned(p.id as GitHubRepoRef, params.context, "success", creds);
+            await markScanned(p.id as GitHubRepoRef,
+                params.context, "success", creds, false);
         } else {
             // TODO might want to raise issue
-            await addressChannels(`${review.comments} review issues found`)
-                .then(() => markScanned(p.id as GitHubRepoRef, params.context, "failure", creds));
+            // Fail it??
+            await sendReviewToSlack("Review comments", review, ctx, addressChannels)
+                .then(() => markScanned(p.id as GitHubRepoRef,
+                    params.context, "success", creds, true));
         }
         return Success;
     }
@@ -125,11 +136,12 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
 export const ScanBase = "https://scan.atomist.com";
 
 // TODO this should take a URL with detailed information
-function markScanned(id: GitHubRepoRef, context: string, state: StatusState, creds: ProjectOperationCredentials): Promise<any> {
+function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
+                     creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
     const phase = ContextToPlannedPhase[context];
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`, // ${ApprovalGateParam}`,
+        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}${requireApproval ? ApprovalGateParam : ""}`,
         context: ScanContext,
         description: `Completed ${phase.name}`,
     });
@@ -140,5 +152,28 @@ function consolidate(reviews: ProjectReview[]): ProjectReview {
     return {
         repoId: reviews[0].repoId,
         comments: _.flatten(reviews.map(review => review.comments)),
+    };
+}
+
+async function sendReviewToSlack(title: string, pr: ProjectReview, ctx: HandlerContext, addressChannels: AddressChannels) {
+    const mesg: SlackMessage = {
+        text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
+        attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c)),
+    };
+    await addressChannels(mesg);
+    return Success;
+}
+
+function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment): Attachment {
+    return {
+        color: "#ff0000",
+        author_name: rc.category,
+        author_icon: "https://image.shutterstock.com/z/stock-vector-an-image-of-a-red-grunge-x-572409526.jpg",
+        text: `${slack.url(deepLink(grr, rc.sourceLocation), "jump to")} ${rc.detail}`,
+        mrkdwn_in: ["text"],
+        fallback: "error",
+        actions: !!rc.fix ? [
+            buttonForCommand({text: "Fix"}, rc.fix.command, rc.fix.params),
+        ] : [],
     };
 }
