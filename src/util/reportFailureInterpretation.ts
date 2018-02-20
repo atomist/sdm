@@ -1,16 +1,17 @@
-import { LinkablePersistentProgressLog, QueryableProgressLog } from "../handlers/events/delivery/log/ProgressLog";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AddressChannels } from "../handlers/commands/editors/toclient/addressChannels";
+import {LinkablePersistentProgressLog, QueryableProgressLog} from "../handlers/events/delivery/log/ProgressLog";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {AddressChannels} from "../handlers/commands/editors/toclient/addressChannels";
 
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { InterpretedLog } from "../handlers/events/delivery/log/InterpretedLog";
+import {InterpretedLog} from "../handlers/events/delivery/log/InterpretedLog";
 
-export async function reportFailureInterpretation(interpretation: InterpretedLog,
+export async function reportFailureInterpretation(stepName: string,
+                                                  interpretation: InterpretedLog,
                                                   fullLog: LinkablePersistentProgressLog & QueryableProgressLog,
                                                   id: RemoteRepoRef,
                                                   ac: AddressChannels) {
     await ac({
-        text: `Failed deploy of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 6))}`,
+        text: `Failed ${stepName} of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 6))}`,
         attachments: [{
             title: interpretation.message || "Failure",
             title_link: fullLog.url,

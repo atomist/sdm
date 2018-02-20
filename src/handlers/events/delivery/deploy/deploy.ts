@@ -71,7 +71,7 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
         const interpretation = deployer.logInterpreter && deployer.logInterpreter(linkableLog.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
-            await reportFailureInterpretation(interpretation, linkableLog, id, ac);
+            await reportFailureInterpretation("deploy", interpretation, linkableLog, id, ac);
         }
         return setDeployStatus(githubToken, id, "failure",
             deployPhase.context,

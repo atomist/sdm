@@ -112,7 +112,7 @@ async function onExit(success: boolean,
             const interpretation = logInterpreter && logInterpreter(log.log);
             // The deployer might have information about the failure; report it in the channels
             if (interpretation) {
-                await reportFailureInterpretation(interpretation, log, rb.appInfo.id, ac);
+                await reportFailureInterpretation("build", interpretation, log, rb.appInfo.id, ac);
             }
             await updateAtomistLifecycle(rb, "FAILURE", "FINALIZED");
         }
