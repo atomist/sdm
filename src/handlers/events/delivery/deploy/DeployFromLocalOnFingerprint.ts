@@ -17,6 +17,7 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
@@ -77,6 +78,9 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
         return deploy(params.ourPhase, params.endpointPhase,
             id, params.githubToken,
             fingerprint.commit.image.imageName,
-            params.artifactStore, params.deployer, params.targeter);
+            params.artifactStore,
+            params.deployer,
+            params.targeter,
+            addressChannelsFor(commit.repo, ctx));
     }
 }

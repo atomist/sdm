@@ -1,7 +1,8 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import {Maker, toFactory} from "@atomist/automation-client/util/constructionUtils";
+import {EventWithCommand} from "../handlers/commands/RetryDeploy";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
@@ -100,7 +101,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract builder: Maker<StatusSuccessHandler>;
 
-    public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
+    public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription> & EventWithCommand>;
 
     public get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -144,9 +145,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     }
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
+        const mayHaveCommand = toFactory(this.deploy1)();
         return this.generators
             .concat(this.editors)
             .concat(this.supportingCommands)
+            .concat([mayHaveCommand.correspondingCommand ? () => mayHaveCommand.correspondingCommand() : undefined])
             .concat([
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
                 !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,

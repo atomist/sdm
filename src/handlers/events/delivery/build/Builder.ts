@@ -1,5 +1,6 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AddressChannels } from "../../../commands/editors/toclient/addressChannels";
 
 /**
  * Responsible for initiating a build. Wherever the build runs,
@@ -9,6 +10,7 @@ export interface Builder {
 
     initiateBuild(creds: ProjectOperationCredentials,
                   id: RemoteRepoRef,
+                  ac: AddressChannels,
                   team: string): Promise<any>;
 
 }

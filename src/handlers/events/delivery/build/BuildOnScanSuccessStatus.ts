@@ -18,6 +18,7 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnAnySuccessStatus } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { currentPhaseIsStillPending, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
@@ -61,7 +62,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        await params.builder.initiateBuild(creds, id, team);
+        await params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
         return Success;
     }
 }

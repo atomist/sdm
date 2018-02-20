@@ -14,27 +14,63 @@
  * limitations under the License.
  */
 
-import { HandlerResult, logger, Success } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { StatusState } from "../../../../typings/types";
-import { createStatus } from "../../../commands/editors/toclient/ghub";
-import { ArtifactStore } from "../ArtifactStore";
-import { createLinkableProgressLog } from "../log/NaiveLinkablePersistentProgressLog";
-import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../log/ProgressLog";
-import { GitHubStatusContext, PlannedPhase } from "../Phases";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
-import { parseCloudFoundryLogForEndpoint } from "./pcf/cloudFoundryLogParser";
+import {HandlerResult, logger, success} from "@atomist/automation-client";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {Action} from "@atomist/slack-messages";
+import {StatusState} from "../../../../typings/types";
+import {reportFailureInterpretation} from "../../../../util/reportFailureInterpretation";
+import {AddressChannels} from "../../../commands/editors/toclient/addressChannels";
+import {createStatus} from "../../../commands/editors/toclient/ghub";
+import {ArtifactStore} from "../ArtifactStore";
+import {createLinkableProgressLog} from "../log/NaiveLinkablePersistentProgressLog";
+import {ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog} from "../log/ProgressLog";
+import {GitHubStatusContext, PlannedPhase} from "../Phases";
+import {Deployer} from "./Deployer";
+import {TargetInfo} from "./Deployment";
 
-export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
-                                                   endpointPhase: PlannedPhase,
-                                                   id: GitHubRepoRef,
-                                                   githubToken: string,
-                                                   targetUrl: string,
-                                                   artifactStore: ArtifactStore,
-                                                   deployer: Deployer<T>,
-                                                   targeter: (id: RemoteRepoRef) => T): Promise<HandlerResult> {
+export interface DeployParams<T extends TargetInfo> {
+    deployPhase: PlannedPhase;
+    endpointPhase: PlannedPhase;
+    id: GitHubRepoRef;
+    githubToken: string;
+    targetUrl: string;
+    artifactStore: ArtifactStore;
+    deployer: Deployer<T>;
+    targeter: (id: RemoteRepoRef) => T;
+    ac: AddressChannels;
+    retryButton?: Action;
+}
+
+function isDeployParams<T extends TargetInfo>(a: PlannedPhase | DeployParams<T>): a is DeployParams<T> {
+    return !!(a as DeployParams<T>).deployPhase;
+}
+
+export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedPhase | DeployParams<T>,
+                                                   endpointPhase?: PlannedPhase,
+                                                   id?: GitHubRepoRef,
+                                                   githubToken?: string,
+                                                   targetUrl?: string,
+                                                   artifactStore?: ArtifactStore,
+                                                   deployer?: Deployer<T>,
+                                                   targeter?: (id: RemoteRepoRef) => T,
+                                                   ac?: AddressChannels): Promise<HandlerResult> {
+    let deployPhase: PlannedPhase;
+    let retryButton: Action;
+    if (isDeployParams(paramsOrDeployPhase)) {
+        deployPhase = paramsOrDeployPhase.deployPhase;
+        endpointPhase = paramsOrDeployPhase.endpointPhase;
+        id = paramsOrDeployPhase.id;
+        githubToken = paramsOrDeployPhase.githubToken;
+        targetUrl = paramsOrDeployPhase.targetUrl;
+        artifactStore = paramsOrDeployPhase.artifactStore;
+        deployer = paramsOrDeployPhase.deployer;
+        targeter = paramsOrDeployPhase.targeter;
+        ac = paramsOrDeployPhase.ac;
+        retryButton = paramsOrDeployPhase.retryButton;
+    } else {
+        deployPhase = paramsOrDeployPhase;
+    }
     const linkableLog = await createLinkableProgressLog();
 
     try {
@@ -46,8 +82,12 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
-        const ac = await artifactStore.checkout(targetUrl);
-        const deployment = await deployer.deploy(ac, targeter(id), progressLog);
+        const artifactCheckout = await artifactStore.checkout(targetUrl).catch(err => {
+            console.log("Writing to progress log");
+            progressLog.write("Error checking out artifact: " + err.message);
+            return progressLog.close().then(() => Promise.reject(err));
+        });
+        const deployment = await deployer.deploy(artifactCheckout, targeter(id), progressLog);
 
         await progressLog.close();
         await setDeployStatus(githubToken, id,
@@ -66,10 +106,16 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                 });
         }
     } catch (err) {
+        logger.error(err.message);
+        const interpretation = deployer.logInterpreter && deployer.logInterpreter(linkableLog.log);
+        // The deployer might have information about the failure; report it in the channels
+        if (interpretation) {
+            await reportFailureInterpretation("deploy", interpretation, linkableLog, id, ac, retryButton);
+        }
         return setDeployStatus(githubToken, id, "failure",
             deployPhase.context,
             linkableLog.url,
-            `Failed to ${deployPhase.name}`);
+            `Failed to ${deployPhase.name}`).then(success);
     }
 }
 

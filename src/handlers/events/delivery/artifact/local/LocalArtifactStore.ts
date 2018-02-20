@@ -4,7 +4,7 @@ import { ArtifactStore, DeployableArtifact, StoredArtifact } from "../../Artifac
 import { AppInfo } from "../../deploy/Deployment";
 
 /**
- * Store the artifact on local desk, relying on in memory cache
+ * Store the artifact on local disk, relying on in memory cache
  */
 export class LocalArtifactStore implements ArtifactStore {
 
@@ -36,7 +36,7 @@ export class LocalArtifactStore implements ArtifactStore {
                 if (!storedArtifact) {
                     logger.error("No stored artifact for [%s]: Known=%s", url,
                         this.entries.map(e => e.url).join(","));
-                    return undefined;
+                    return Promise.reject(new Error("No artifact found"));
                 }
 
                 const targetUrl = storedArtifact.deploymentUnitUrl;

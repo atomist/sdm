@@ -5,6 +5,7 @@ import { ChildProcess, spawn } from "child_process";
 import { Readable } from "stream";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
+import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../log/InterpretedLog";
 import { LinkableLogFactory, LinkablePersistentProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
@@ -17,7 +18,7 @@ import { identification } from "./pomParser";
  * vulnerability in builds of unrelated tenants getting at each others
  * artifacts.
  */
-export class MavenBuilder extends LocalBuilder {
+export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory) {
         super(artifactStore, logFactory);
@@ -52,6 +53,17 @@ export class MavenBuilder extends LocalBuilder {
                         return rb;
                     });
             });
+    }
+
+    public logInterpreter(log: string): InterpretedLog | undefined {
+        const relevantPart = log.split("\n")
+            .filter(l => l.startsWith("[ERROR]"))
+            .join("\n");
+        return {
+            relevantPart,
+            message: "Maven errors",
+            includeFullLog: true,
+        };
     }
 
 }

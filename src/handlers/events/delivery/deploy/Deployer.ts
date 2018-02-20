@@ -1,9 +1,10 @@
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { DeployableArtifact } from "../ArtifactStore";
+import { LogInterpretation } from "../log/InterpretedLog";
 import { QueryableProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo } from "./Deployment";
 
-export interface Deployer<T extends TargetInfo = TargetInfo> {
+export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
 
     /**
      * Implemented by deployers that don't sit on an infrastructure like Cloud Foundry
