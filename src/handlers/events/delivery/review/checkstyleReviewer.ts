@@ -29,6 +29,7 @@ export const checkstyleReviewer: (checkstylePath: string) =>
 
         return new Promise((resolve, reject) => {
             childProcess.on("exit", (code, signal) => {
+                // TODO: if this did not exit cleanly, report that as an error somehow
                 logger.info("Checkstyle ran on %j, code=%d, stdout=\n%s\nstderr=%s", p.id, code, stdout, stderr);
                 return extract(stdout)
                     .then(cr =>

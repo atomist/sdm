@@ -30,14 +30,6 @@ export const configuration: Configuration = {
     events: assembled.eventHandlers.concat([]),
     token,
     http: {
-        enabled: true,
-        auth: {
-            basic: {
-                enabled: false,
-            },
-            bearer: {
-                enabled: false,
-            },
-        },
-    },
+        enabled: false
+    }
 };

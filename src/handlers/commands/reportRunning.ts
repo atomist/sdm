@@ -111,7 +111,7 @@ export async function runningAttachment(ctx: HandlerContext, token: string,
     const countBySha = whatIsRunning(id.owner, id.repo, await gatherEverythingRunning(ctx, serviceDomain.domain));
     const text = describeCurrentlyRunning(id, countBySha, endDescription);
     const attachment: slack.Attachment = {
-        fallback: "stuff is running",
+        fallback: "currently running services",
         text,
         title: serviceDomain.domain,
         color: serviceDomain.color,

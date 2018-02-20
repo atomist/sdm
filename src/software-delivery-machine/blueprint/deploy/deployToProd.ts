@@ -73,7 +73,7 @@ export class DeployToProd implements HandleCommand {
         //     await address(tryAgainMessage(params, result.message));
         // }
 
-        return ctx.messageClient.respond("Deploying to production...");
+        return address("Deploying to production...");
     }
 }
 
