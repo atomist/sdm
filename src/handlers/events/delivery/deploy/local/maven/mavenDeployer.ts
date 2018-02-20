@@ -93,6 +93,16 @@ class MavenDeployer implements Deployer {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
+        const maybeFailedToStart = appFailedToStart(log);
+        if (maybeFailedToStart) {
+            return {
+                relevantPart: maybeFailedToStart,
+                message: "Application failed to start",
+                includeFullLog: false
+            }
+        }
+
+        // default to maven errors
         const relevantPart = log.split("\n")
             .filter(l => l.startsWith("[ERROR]"))
             .join("\n");
@@ -103,4 +113,14 @@ class MavenDeployer implements Deployer {
         };
     }
 
+}
+
+function appFailedToStart(log: string) {
+    const lines = log.split("\n");
+    const failedToStartLine = lines.indexOf("APPLICATION FAILED TO START");
+    if (failedToStartLine < 1) {
+        return undefined;
+    }
+    const likelyLines = lines.slice(failedToStartLine + 3, failedToStartLine + 10);
+    return likelyLines.join("\n");
 }
