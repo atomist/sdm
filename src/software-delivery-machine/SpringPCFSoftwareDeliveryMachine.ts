@@ -1,4 +1,4 @@
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
@@ -91,12 +91,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
             .addSupersededListeners(
-                (id, s) => {
-                    console
-                        .log(`status $ {s.commit.sha} is superseded!!!!!!!`);
-                    return Promise.resolve();
-                },
                 id => {
+                    logger.info("Will undeploy application %j", id);
                     return Deploy1.deployer.undeploy(id);
                 });
     }
