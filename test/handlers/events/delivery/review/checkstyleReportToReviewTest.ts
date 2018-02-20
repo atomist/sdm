@@ -2,10 +2,10 @@ import "mocha";
 
 import * as assert from "power-assert";
 
-import { extract } from "../../../../../src/handlers/events/delivery/review/checkstyleReportExtractor";
-import { xml2valid1 } from "./checkstyleReportExtractorTest";
-import { checkstyleReportToReview } from "../../../../../src/handlers/events/delivery/review/checkStyleReportToReview";
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { extract } from "../../../../../src/handlers/events/delivery/review/checkstyleReportExtractor";
+import { checkstyleReportToReview } from "../../../../../src/handlers/events/delivery/review/checkStyleReportToReview";
+import { xml2valid1 } from "./checkstyleReportExtractorTest";
 
 describe("checkstyleReportToReview", () => {
 

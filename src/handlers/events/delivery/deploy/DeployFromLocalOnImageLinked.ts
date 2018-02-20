@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandleCommand, HandlerResult, Secret, Secrets, success, Success} from "@atomist/automation-client";
-import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
-import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {buttonForCommand, commandName} from "@atomist/automation-client/spi/message/MessageClient";
-import {artifactStore} from "../../../../software-delivery-machine/blueprint/artifactStore";
-import {OnImageLinked} from "../../../../typings/types";
-import {addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
-import {EventWithCommand, RetryDeployParameters} from "../../../commands/RetryDeploy";
-import {ArtifactStore} from "../ArtifactStore";
+import { GraphQL, HandleCommand, HandlerResult, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { OnImageLinked } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
+import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,
     GitHubStatusAndFriends,
@@ -32,10 +31,10 @@ import {
     PlannedPhase,
     previousPhaseSucceeded,
 } from "../Phases";
-import {BuiltContext} from "../phases/core";
-import {deploy} from "./deploy";
-import {Deployer} from "./Deployer";
-import {TargetInfo} from "./Deployment";
+import { BuiltContext } from "../phases/core";
+import { deploy } from "./deploy";
+import { Deployer } from "./Deployer";
+import { TargetInfo } from "./Deployment";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -127,7 +126,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
             deployPhase: params.ourPhase, endpointPhase: params.endpointPhase,
             id, githubToken: params.githubToken,
             targetUrl: imageLinked.image.imageName,
-            artifactStore,
+            artifactStore: this.artifactStore,
             deployer: params.deployer,
             targeter: params.targeter,
             ac: addressChannelsFor(commit.repo, ctx),

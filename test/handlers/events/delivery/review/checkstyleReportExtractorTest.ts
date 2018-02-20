@@ -10,15 +10,17 @@ describe("checkstyleReportExtractor", () => {
         const report = await extract(xml2valid1);
         assert(!!report);
         assert(report.files.length === 2);
-        const f = report.files[0];
-        assert(f.name === "/Users/rodjohnson/tools/checkstyle-8.8/Test.java");
-        assert(f.errors.length === 2);
-        f.errors.forEach(f => assert(!!f.message, "Message must be set"));
-        f.errors.forEach(f => assert(!!f.severity, "Severity must be set"));
+        const file = report.files[0];
+        assert(file.name === "/Users/rodjohnson/tools/checkstyle-8.8/Test.java");
+        assert(file.errors.length === 2);
+        file.errors.forEach(f => assert(!!f.message, "Message must be set"));
+        file.errors.forEach(f => assert(!!f.severity, "Severity must be set"));
 
     });
 
 });
+
+/* tslint:disable */
 
 export const xml2valid1 = `<?xml version="1.0" encoding="UTF-8"?>
 <checkstyle version="8.8">
@@ -32,4 +34,3 @@ export const xml2valid1 = `<?xml version="1.0" encoding="UTF-8"?>
 </file>
 </checkstyle>
 `;
-

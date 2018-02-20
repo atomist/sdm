@@ -1,8 +1,8 @@
 
 import { CheckstyleReport, FileReport } from "./CheckstyleReport";
 
-import * as xml2js from "xml2js";
 import { promisify } from "util";
+import * as xml2js from "xml2js";
 
 export async function extract(report: string): Promise<CheckstyleReport> {
     const parser = new xml2js.Parser();

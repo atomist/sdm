@@ -1,6 +1,6 @@
-import { CheckstyleReport, FileReport } from "./CheckstyleReport";
-import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
+import { CheckstyleReport, FileReport } from "./CheckstyleReport";
 
 import * as _ from "lodash";
 
