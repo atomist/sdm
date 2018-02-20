@@ -103,13 +103,13 @@ async function onExit(success: boolean,
                       artifactStore: ArtifactStore,
                       log: LinkablePersistentProgressLog & QueryableProgressLog,
                       ac: AddressChannels,
-                      errorParser: LogInterpreter): Promise<any> {
+                      logInterpreter: LogInterpreter): Promise<any> {
     try {
         if (success) {
             await updateAtomistLifecycle(rb, "SUCCESS", "FINALIZED")
                 .then(id => linkArtifact(rb, team, artifactStore));
         } else {
-            const interpretation = errorParser && errorParser(log.log);
+            const interpretation = logInterpreter && logInterpreter(log.log);
             // The deployer might have information about the failure; report it in the channels
             if (interpretation) {
                 await reportFailureInterpretation(interpretation, log, rb.appInfo.id, ac);

@@ -92,7 +92,7 @@ class MavenDeployer implements Deployer {
         });
     }
 
-    public errorParser(log: string): InterpretedLog | undefined {
+    public logInterpreter(log: string): InterpretedLog | undefined {
         const relevantPart = log.split("\n")
             .filter(l => l.startsWith("[ERROR]"))
             .join("\n");
