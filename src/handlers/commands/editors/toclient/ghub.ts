@@ -1,7 +1,7 @@
-import {logger} from "@atomist/automation-client";
-import {GitHubDotComBase, GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import axios, {AxiosPromise, AxiosRequestConfig} from "axios";
-import * as _ from "lodash";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
+import { logger } from "@atomist/automation-client";
+import ReadStream = NodeJS.ReadStream;
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -15,38 +15,11 @@ export interface Status {
 export function createStatus(token: string, rr: GitHubRepoRef, status: Status): AxiosPromise {
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
-    console.log(`Updating github status: ${url} to ${JSON.stringify(status)}`);
+    logger.info("Updating github status: $s to %j", url, status);
     return axios.post(url, status, config)
         .catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
         );
-}
-
-export interface Gist {
-    description: string;
-    files: Array<{ path: string, content: string }>;
-    public: boolean;
-}
-
-export function createGist(xtoken: string, gist: Gist, apiBase: string = GitHubDotComBase): Promise<string> {
-    // TODO need the scope correct here
-    const token = process.env.GITHUB_TOKEN;
-    const config = authHeaders(token);
-    const url = `${apiBase}/gists`;
-    const data: any = {
-        description: gist.description,
-        public: gist.public,
-        files: {},
-    };
-    gist.files.forEach(f => data.files[f.path] = {content: f.content});
-    return axios.post(url, data, config)
-        .then(res => {
-            return res.data.html_url;
-        }, gistError => {
-            logger.error("Failure creating gist at " + url + "\n" + gistError.message);
-            logger.error(_.get(gistError, "response.data", "no data"));
-            throw new Error("Failure creating gist at " + url + "\n" + gistError.message);
-        });
 }
 
 export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]> {
@@ -54,6 +27,59 @@ export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/commits/${rr.sha}/statuses`;
     return axios.get(url, config)
         .then(ap => ap.data);
+}
+
+export interface Tag {
+    tag: string;
+    message: string;
+
+    /** Commit sha */
+    object: string;
+    type: string;
+    tagger: {
+        name: string;
+        email: string;
+        date: string;
+    };
+}
+
+export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosPromise {
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/tags`;
+    logger.info("Updating github tag: %s to %j", url, tag);
+    return axios.post(url, status, config)
+        .catch(err =>
+            Promise.reject(new Error(`Error hitting ${url} to set tag ${JSON.stringify(status)}: ${err.message}`)),
+        );
+}
+
+export interface Release {
+    tag_name: string;
+    target_commitish?: string;
+    name?: string;
+    body?: string;
+    draft?: boolean;
+    prerelease?: boolean;
+}
+
+export function createRelease(token: string, rr: GitHubRepoRef, release: Release): AxiosPromise {
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases`;
+    logger.info("Updating github release: %s to %j", url, release);
+    return axios.post(url, release, config)
+        .catch(err =>
+            Promise.reject(new Error(`Error hitting ${url} to set release ${JSON.stringify(release)}: ${err.message}`)),
+        );
+}
+
+export function uploadReleaseAsset(token: string, rr: GitHubRepoRef, releaseId: string, name: string, readSteam: ReadStream): AxiosPromise {
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases/${releaseId}/assets?name=${name}`;
+    logger.info("Updating github release asset: %s named %s to release %s", url, name, releaseId);
+    return axios.post(url, readSteam, config)
+        .catch(err =>
+            Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
+        );
 }
 
 export interface GitHubCommitsBetween {

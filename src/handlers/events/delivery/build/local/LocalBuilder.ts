@@ -1,4 +1,7 @@
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
 import { Readable } from "stream";
@@ -14,6 +17,8 @@ import {
     QueryableProgressLog,
 } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
+import { createRelease, createTag, Release, Tag } from "../../../../commands/editors/toclient/ghub";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 export interface LocalBuildInProgress {
 
@@ -48,13 +53,18 @@ export abstract class LocalBuilder implements Builder {
                                addressChannels: AddressChannels,
                                team: string): Promise<LocalBuildInProgress> {
         const as = this.artifactStore;
+        const token = (creds as TokenCredentials).token;
         const log = await this.logFactory();
 
         const rb = await this.startBuild(creds, id, team, log);
-        rb.stream.addListener("exit", (code, signal) => onExit(code === 0, rb, team, as,
+        rb.stream.addListener("exit", (code, signal) => onExit(
+            token,
+            code === 0, rb, team, as,
             log,
             addressChannels, this.logInterpreter))
-            .addListener("error", (code, signal) => onExit(false, rb, team, as,
+            .addListener("error", (code, signal) => onExit(
+                token,
+                false, rb, team, as,
                 log,
                 addressChannels, this.logInterpreter));
         await onStarted(rb);
@@ -98,7 +108,8 @@ function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
         .then(() => runningBuild);
 }
 
-async function onExit(success: boolean,
+async function onExit(token: string,
+                      success: boolean,
                       rb: LocalBuildInProgress, team: string,
                       artifactStore: ArtifactStore,
                       log: LinkablePersistentProgressLog & QueryableProgressLog,
@@ -107,7 +118,7 @@ async function onExit(success: boolean,
     try {
         if (success) {
             await updateAtomistLifecycle(rb, "SUCCESS", "FINALIZED")
-                .then(id => linkArtifact(rb, team, artifactStore));
+                .then(id => linkArtifact(token, rb, team, artifactStore));
         } else {
             const interpretation = logInterpreter && logInterpreter(log.log);
             // The deployer might have information about the failure; report it in the channels
@@ -121,7 +132,26 @@ async function onExit(success: boolean,
     }
 }
 
-function linkArtifact(rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
+async function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
+    const tag: Tag = {
+        tag: rb.appInfo.version,
+        message: rb.appInfo.version + " for release",
+        object: rb.appInfo.id.sha,
+        type: "commit",
+        tagger: {
+            name: "Atomist",
+            email: "info @atomist.com",
+            date: new Date().toDateString(),
+        },
+    };
+    // TODO cast here is a bit nasty
+    const grr = rb.appInfo.id as GitHubRepoRef;
+    await createTag(token, grr, tag);
+    const release: Release = {
+        name: rb.appInfo.version,
+        tag_name: tag.tag,
+    };
+    await createRelease(token, grr, release);
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }
