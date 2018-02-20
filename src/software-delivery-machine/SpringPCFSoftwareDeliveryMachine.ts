@@ -30,7 +30,7 @@ import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
-const Deploy1 = LocalMavenDeployOnImageLinked;
+const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
 // CloudFoundryStagingDeployOnImageLinked
 
@@ -42,7 +42,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
-    public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> = () => Deploy1;
+    public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> = () => LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 
@@ -93,7 +93,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addSupersededListeners(
                 id => {
                     logger.info("Will undeploy application %j", id);
-                    return Deploy1.deployer.undeploy(id);
+                    return LocalMavenDeployer.deployer.undeploy(id);
                 });
     }
 }

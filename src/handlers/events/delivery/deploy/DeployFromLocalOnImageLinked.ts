@@ -31,6 +31,7 @@ import { BuiltContext } from "../phases/core";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -89,7 +90,11 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         return deploy(params.ourPhase, params.endpointPhase,
-            id, params.githubToken, imageLinked.image.imageName,
-            params.artifactStore, params.deployer, params.targeter);
+            id, params.githubToken,
+            imageLinked.image.imageName,
+            params.artifactStore,
+            params.deployer,
+            params.targeter,
+            addressChannelsFor(commit.repo, ctx));
     }
 }

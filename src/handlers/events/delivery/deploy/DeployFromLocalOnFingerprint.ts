@@ -29,6 +29,7 @@ import { BuiltContext } from "../phases/core";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 
 // TODO could make more common with other deployer...
 @EventHandler("Deploy linked artifact",
@@ -77,6 +78,9 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
         return deploy(params.ourPhase, params.endpointPhase,
             id, params.githubToken,
             fingerprint.commit.image.imageName,
-            params.artifactStore, params.deployer, params.targeter);
+            params.artifactStore,
+            params.deployer,
+            params.targeter,
+            addressChannelsFor(commit.repo, ctx));
     }
 }

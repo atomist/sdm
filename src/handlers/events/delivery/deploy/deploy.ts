@@ -26,6 +26,7 @@ import { GitHubStatusContext, PlannedPhase } from "../Phases";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 import { parseCloudFoundryLogForEndpoint } from "./pcf/cloudFoundryLogParser";
+import { AddressChannels } from "../../../commands/editors/toclient/addressChannels";
 
 export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                                                    endpointPhase: PlannedPhase,
@@ -34,7 +35,8 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                                                    targetUrl: string,
                                                    artifactStore: ArtifactStore,
                                                    deployer: Deployer<T>,
-                                                   targeter: (id: RemoteRepoRef) => T): Promise<HandlerResult> {
+                                                   targeter: (id: RemoteRepoRef) => T,
+                                                   ac: AddressChannels): Promise<HandlerResult> {
     const linkableLog = await createLinkableProgressLog();
 
     try {
@@ -46,8 +48,8 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
-        const ac = await artifactStore.checkout(targetUrl);
-        const deployment = await deployer.deploy(ac, targeter(id), progressLog);
+        const artifactCheckout = await artifactStore.checkout(targetUrl);
+        const deployment = await deployer.deploy(artifactCheckout, targeter(id), progressLog);
 
         await progressLog.close();
         await setDeployStatus(githubToken, id,
