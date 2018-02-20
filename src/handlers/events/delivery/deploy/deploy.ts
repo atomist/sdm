@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import {HandlerResult, logger} from "@atomist/automation-client";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {StatusState} from "../../../../typings/types";
-import {createStatus} from "../../../commands/editors/toclient/ghub";
-import {ArtifactStore} from "../ArtifactStore";
-import {createLinkableProgressLog} from "../log/NaiveLinkablePersistentProgressLog";
-import {ConsoleProgressLog, LinkablePersistentProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog} from "../log/ProgressLog";
-import {GitHubStatusContext, PlannedPhase} from "../Phases";
-import {Deployer, InterpretedLog} from "./Deployer";
-import {TargetInfo} from "./Deployment";
-import {AddressChannels} from "../../../commands/editors/toclient/addressChannels";
-
-import * as slack from "@atomist/slack-messages/SlackMessages"
+import { HandlerResult, logger } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { StatusState } from "../../../../typings/types";
+import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { ArtifactStore } from "../ArtifactStore";
+import { createLinkableProgressLog } from "../log/NaiveLinkablePersistentProgressLog";
+import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../log/ProgressLog";
+import { GitHubStatusContext, PlannedPhase } from "../Phases";
+import { Deployer } from "./Deployer";
+import { TargetInfo } from "./Deployment";
+import { AddressChannels } from "../../../commands/editors/toclient/addressChannels";
+import { reportFailureInterpretation } from "../../../../util/reportFailureInterpretation";
 
 export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                                                    endpointPhase: PlannedPhase,
@@ -69,7 +68,7 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
                 });
         }
     } catch (err) {
-        const interpretation: InterpretedLog = deployer.errorParser && deployer.errorParser(linkableLog.log);
+        const interpretation = deployer.logInterpreter && deployer.logInterpreter(linkableLog.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
             await reportFailureInterpretation(interpretation, linkableLog, id, ac);
@@ -81,28 +80,6 @@ export async function deploy<T extends TargetInfo>(deployPhase: PlannedPhase,
     }
 }
 
-async function reportFailureInterpretation(interpretation: InterpretedLog,
-                                           fullLog: LinkablePersistentProgressLog & QueryableProgressLog,
-                                           id: RemoteRepoRef,
-                                           ac: AddressChannels) {
-    await ac({
-        text: `Failed deploy of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 6))}`,
-        attachments: [{
-            title: interpretation.message || "Failure",
-            title_link: fullLog.url,
-            fallback: "relevant bits",
-            text: interpretation.relevantPart,
-            color: "#ff5050",
-        }]
-    });
-    if (interpretation.includeFullLog) {
-        await ac({
-            content: fullLog,
-            fileType: "text",
-            fileName: `deploy-failure-${id.sha}.log`,
-        } as any);
-    }
-}
 
 function setDeployStatus(token: string, id: GitHubRepoRef,
                          state: StatusState,

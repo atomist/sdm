@@ -5,9 +5,15 @@ import { Readable } from "stream";
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import { LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog } from "../../log/ProgressLog";
+import {
+    LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
+    QueryableProgressLog
+} from "../../log/ProgressLog";
 import { Builder } from "../Builder";
 import EventEmitter = NodeJS.EventEmitter;
+import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../log/InterpretedLog";
+import { reportFailureInterpretation } from "../../../../../util/reportFailureInterpretation";
+import { AddressChannels } from "../../../../commands/editors/toclient/addressChannels";
 
 export interface LocalBuildInProgress {
 
@@ -37,17 +43,25 @@ export abstract class LocalBuilder implements Builder {
                 private logFactory: LinkableLogFactory) {
     }
 
-    public async initiateBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
+    public async initiateBuild(creds: ProjectOperationCredentials,
+                               id: RemoteRepoRef,
+                               addressChannels: AddressChannels,
                                team: string): Promise<LocalBuildInProgress> {
         const as = this.artifactStore;
         const log = await this.logFactory();
 
         const rb = await this.startBuild(creds, id, team, log);
-        rb.stream.addListener("exit", (code, signal) => onExit(code === 0, rb, team, as, log))
-            .addListener("error", (code, signal) => onExit(false, rb, team, as, log));
+        rb.stream.addListener("exit", (code, signal) => onExit(code === 0, rb, team, as,
+            log,
+            addressChannels, this.logInterpreter))
+            .addListener("error", (code, signal) => onExit(false, rb, team, as,
+                log,
+                addressChannels, this.logInterpreter));
         await onStarted(rb);
         return rb;
     }
+
+    public abstract logInterpreter(log: string): InterpretedLog | undefined;
 
     protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
                                   team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress>;
@@ -87,12 +101,19 @@ function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
 async function onExit(success: boolean,
                       rb: LocalBuildInProgress, team: string,
                       artifactStore: ArtifactStore,
-                      log: ProgressLog): Promise<any> {
+                      log: LinkablePersistentProgressLog & QueryableProgressLog,
+                      ac: AddressChannels,
+                      errorParser: LogInterpreter): Promise<any> {
     try {
         if (success) {
             await updateAtomistLifecycle(rb, "SUCCESS", "FINALIZED")
                 .then(id => linkArtifact(rb, team, artifactStore));
         } else {
+            const interpretation = errorParser && errorParser(log.log);
+            // The deployer might have information about the failure; report it in the channels
+            if (interpretation) {
+                await reportFailureInterpretation(interpretation, log, rb.appInfo.id, ac);
+            }
             await updateAtomistLifecycle(rb, "FAILURE", "FINALIZED");
         }
     } finally {

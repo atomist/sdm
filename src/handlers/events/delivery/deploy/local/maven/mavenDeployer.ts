@@ -3,8 +3,9 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { ChildProcess, spawn } from "child_process";
 import { DeployableArtifact } from "../../../ArtifactStore";
 import { QueryableProgressLog } from "../../../log/ProgressLog";
-import { Deployer, InterpretedLog } from "../../Deployer";
+import { Deployer } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
+import { InterpretedLog } from "../../../log/InterpretedLog";
 
 /**
  * Ports will be reused for the same app

@@ -21,6 +21,7 @@ import { OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { currentPhaseIsStillPending, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
@@ -61,7 +62,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        await params.builder.initiateBuild(creds, id, team);
+        await params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
         return Success;
     }
 }
