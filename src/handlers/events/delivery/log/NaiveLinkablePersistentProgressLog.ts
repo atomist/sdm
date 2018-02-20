@@ -1,9 +1,9 @@
 
-import { LinkablePersistentProgressLog } from "./ProgressLog";
+import {LinkablePersistentProgressLog, QueryableProgressLog} from "./ProgressLog";
 
-class NaiveLinkablePersistentProgressLog implements LinkablePersistentProgressLog {
+class NaiveLinkablePersistentProgressLog implements LinkablePersistentProgressLog, QueryableProgressLog {
 
-    private log = "";
+    public log = "";
 
     constructor(public url: string) {}
 
@@ -24,7 +24,7 @@ class NaiveLinkablePersistentProgressLog implements LinkablePersistentProgressLo
 
 }
 
-export function createLinkableProgressLog(): Promise<LinkablePersistentProgressLog> {
+export function createLinkableProgressLog(): Promise<LinkablePersistentProgressLog & QueryableProgressLog> {
     const url = "http://foo.bar/" + new Date().getMilliseconds();
     return Promise.resolve(new NaiveLinkablePersistentProgressLog(url));
 }

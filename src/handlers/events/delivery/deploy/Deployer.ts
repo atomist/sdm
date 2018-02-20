@@ -3,6 +3,12 @@ import { DeployableArtifact } from "../ArtifactStore";
 import { QueryableProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo } from "./Deployment";
 
+export interface InterpretedLog {
+    relevantPart: string;
+    message: string;
+    includeFullLog?: boolean
+}
+
 export interface Deployer<T extends TargetInfo = TargetInfo> {
 
     /**
@@ -13,5 +19,7 @@ export interface Deployer<T extends TargetInfo = TargetInfo> {
     undeploy?(id: RemoteRepoRef): Promise<any>;
 
     deploy(ai: DeployableArtifact, ti: T, log: QueryableProgressLog): Promise<Deployment>;
+
+    errorParser?: (log: string) => InterpretedLog | undefined
 
 }

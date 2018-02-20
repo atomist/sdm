@@ -83,6 +83,5 @@ export function mavenDeployer(baseUrl: string = "http://localhost"): Deployer {
             });
         },
 
-    }
-        ;
+    };
 }
