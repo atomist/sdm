@@ -3,7 +3,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { ChildProcess, spawn } from "child_process";
 import { DeployableArtifact } from "../../../ArtifactStore";
 import { QueryableProgressLog } from "../../../log/ProgressLog";
-import { Deployer } from "../../Deployer";
+import { Deployer, InterpretedLog } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
 
 /**
@@ -39,49 +39,67 @@ function findPort(id: RemoteRepoRef): number {
  * Note that this isn't thread safe concerning multiple logins or spaces.
  */
 export function mavenDeployer(baseUrl: string = "http://localhost"): Deployer {
-    return {
-        async undeploy(id: RemoteRepoRef): Promise<any> {
-            const victim = deployments.find(d => d.id.sha === id.sha);
-            if (!!victim) {
-                victim.childProcess.kill();
-                // Keep the port but deallocate the process
-                victim.childProcess = undefined;
-                logger.info("Killed app [%j], but continuing to reserve port [%d]", victim.port);
-            }
-        },
+    return new MavenDeployer(baseUrl);
+}
 
-        async deploy(da: DeployableArtifact, cfi: TargetInfo, log: QueryableProgressLog): Promise<Deployment> {
-            if (!da) {
-                throw new Error("no DeployableArtifact passed in");
-            }
-            const port = findPort(da.id);
-            logger.info("Deploying app [%j] at port [%d]", da, port);
-            const childProcess = spawn("mvn",
-                [
-                    "spring-boot:run",
-                    `-Dserver.port=${port}`,
-                ],
-                {
-                    cwd: da.cwd + "/..",
-                });
-            childProcess.stdout.on("data", what => log.write(what.toString()));
-            childProcess.stderr.on("data", what => log.write(what.toString()));
-            return new Promise((resolve, reject) => {
-                childProcess.stdout.addListener("data", what => {
-                    // TODO too Tomcat specific
-                    if (!!what && what.toString().includes("Tomcat started on port")) {
-                        deployments.push({id: da.id, port, childProcess});
-                        resolve({
-                            endpoint: `${baseUrl}:${port}`,
-                        });
-                    }
-                });
-                childProcess.addListener("exit", () => {
-                    reject("We should have found Tomcat endpoint by now!!");
-                });
-                childProcess.addListener("error", reject);
+class MavenDeployer implements Deployer {
+
+    constructor(public baseUrl: string) {
+    }
+
+    public async undeploy(id: RemoteRepoRef): Promise<any> {
+        const victim = deployments.find(d => d.id.sha === id.sha);
+        if (!!victim) {
+            victim.childProcess.kill();
+            // Keep the port but deallocate the process
+            victim.childProcess = undefined;
+            logger.info("Killed app [%j], but continuing to reserve port [%d]", victim.port);
+        }
+    }
+
+    public async deploy(da: DeployableArtifact, cfi: TargetInfo, log: QueryableProgressLog): Promise<Deployment> {
+        if (!da) {
+            throw new Error("no DeployableArtifact passed in");
+        }
+        const baseUrl = this.baseUrl;
+        const port = findPort(da.id);
+        logger.info("Deploying app [%j] at port [%d]", da, port);
+        const childProcess = spawn("mvn",
+            [
+                "spring-boot:run",
+                `-Dserver.port=${port}`,
+            ],
+            {
+                cwd: da.cwd + "/..",
             });
-        },
+        childProcess.stdout.on("data", what => log.write(what.toString()));
+        childProcess.stderr.on("data", what => log.write(what.toString()));
+        return new Promise((resolve, reject) => {
+            childProcess.stdout.addListener("data", what => {
+                // TODO too Tomcat specific
+                if (!!what && what.toString().includes("Tomcat started on port")) {
+                    deployments.push({id: da.id, port, childProcess});
+                    resolve({
+                        endpoint: `${baseUrl}:${port}`,
+                    });
+                }
+            });
+            childProcess.addListener("exit", () => {
+                reject("We should have found Tomcat endpoint by now!!");
+            });
+            childProcess.addListener("error", reject);
+        });
+    }
 
-    };
+    public errorParser(log: string): InterpretedLog | undefined {
+        const relevantPart = log.split("\n")
+            .filter(l => l.startsWith("[ERROR]"))
+            .join("\n");
+        return {
+            relevantPart,
+            message: "Maven errors",
+            includeFullLog: true,
+        };
+    }
+
 }
