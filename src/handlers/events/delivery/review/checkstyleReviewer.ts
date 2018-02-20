@@ -1,11 +1,11 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { clean, ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { clean } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 // TODO pass parameter
 export const checkstyleReviewer = (checkstylePath: string) => (p: GitProject, ctx: HandlerContext) => {
-    return runCommand(`java -jar ${checkstylePath}/checkstyle-8.8-all.jar -c /sun_checks.xml src/main/java`,
+    return runCommand(`java -jar ${checkstylePath}/checkstyle-8.8-all.jar -c /sun_checks.xml src/main/java -f xml`,
         {
             cwd: p.baseDir,
         })
