@@ -1,4 +1,4 @@
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
@@ -16,7 +16,10 @@ import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDelivery
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
 import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
-import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
+import {
+    CloudFoundryProductionDeployOnFingerprint,
+    CloudFoundryStagingDeployOnImageLinked
+} from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
@@ -42,7 +45,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
-    public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> = () => LocalMavenDeployer;
+    public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
+        CloudFoundryStagingDeployOnImageLinked;//LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 
@@ -58,11 +62,6 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
         deploy: CloudFoundryProductionDeployOnFingerprint,
     };
-
-    public supportingCommands: Array<Maker<HandleCommand>> = [
-        () => addCloudFoundryManifest,
-        DescribeStagingAndProd,
-    ];
 
     get possiblePhases(): Phases[] {
         return [HttpServicePhases, LibraryPhases];
@@ -98,6 +97,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
                 id => {
                     logger.info("Will undeploy application %j", id);
                     return LocalMavenDeployer.deployer.undeploy(id);
-                });
+                })
+            .addSupportingCommands(
+                () => addCloudFoundryManifest,
+                DescribeStagingAndProd,
+            );
     }
 }

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import {HandlerResult, logger, success} from "@atomist/automation-client";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {Action} from "@atomist/slack-messages";
-import {StatusState} from "../../../../typings/types";
-import {reportFailureInterpretation} from "../../../../util/reportFailureInterpretation";
-import {AddressChannels} from "../../../commands/editors/toclient/addressChannels";
-import {createStatus} from "../../../commands/editors/toclient/ghub";
-import {ArtifactStore} from "../ArtifactStore";
-import {createLinkableProgressLog} from "../log/NaiveLinkablePersistentProgressLog";
-import {ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog} from "../log/ProgressLog";
-import {GitHubStatusContext, PlannedPhase} from "../Phases";
-import {Deployer} from "./Deployer";
-import {TargetInfo} from "./Deployment";
+import { HandlerResult, logger, success } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { Action } from "@atomist/slack-messages";
+import { StatusState } from "../../../../typings/types";
+import { reportFailureInterpretation } from "../../../../util/reportFailureInterpretation";
+import { AddressChannels } from "../../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { ArtifactStore } from "../ArtifactStore";
+import { createLinkableProgressLog } from "../log/NaiveLinkablePersistentProgressLog";
+import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../log/ProgressLog";
+import { GitHubStatusContext, PlannedPhase } from "../Phases";
+import { Deployer } from "./Deployer";
+import { TargetInfo } from "./Deployment";
 
 export interface DeployParams<T extends TargetInfo> {
     deployPhase: PlannedPhase;
@@ -82,12 +82,13 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
-        const artifactCheckout = await artifactStore.checkout(targetUrl).catch(err => {
-            console.log("Writing to progress log");
-            progressLog.write("Error checking out artifact: " + err.message);
-            return progressLog.close().then(() => Promise.reject(err));
-        });
-        const deployment = await deployer.deploy(artifactCheckout, targeter(id), progressLog);
+        const artifactCheckout = await artifactStore.checkout(targetUrl, { token: githubToken})
+            .catch(err => {
+                console.log("Writing to progress log");
+                progressLog.write("Error checking out artifact: " + err.message);
+                return progressLog.close().then(() => Promise.reject(err));
+            });
+        const deployment = await deployer.deploy(artifactCheckout, targeter(id), progressLog, { token: githubToken});
 
         await progressLog.close();
         await setDeployStatus(githubToken, id,
