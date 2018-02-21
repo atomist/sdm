@@ -1,9 +1,9 @@
 import "mocha";
 
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import * as assert from "power-assert";
 import { checkstyleReviewer } from "../../../../../src/handlers/events/delivery/review/checkstyleReviewer";
-import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 const checkstylePath = process.env.CHECKSTYLE_PATH;
 

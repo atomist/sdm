@@ -11,7 +11,6 @@ import * as stringify from "json-stringify-safe";
 import { ApprovalGateParam } from "../gates/StatusApprovalGate";
 import {contextIsAfter, GitHubStatusContext, splitContext} from "./phases/gitHubContext";
 
-
 export interface PlannedPhase {
     context: GitHubStatusContext;
     name: string;
@@ -19,7 +18,7 @@ export interface PlannedPhase {
 
 // exported for testing
 export function parseContext(context: GitHubStatusContext): PlannedPhase {
-    return { context, name: splitContext(context).name }
+    return { context, name: splitContext(context).name };
 }
 
 export class Phases {

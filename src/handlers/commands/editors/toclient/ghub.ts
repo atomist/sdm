@@ -1,6 +1,6 @@
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
-import { logger } from "@atomist/automation-client";
 import * as fs from "fs";
 import { promisify } from "util";
 

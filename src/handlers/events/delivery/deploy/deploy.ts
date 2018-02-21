@@ -26,9 +26,9 @@ import { ArtifactStore } from "../ArtifactStore";
 import { createLinkableProgressLog } from "../log/NaiveLinkablePersistentProgressLog";
 import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../log/ProgressLog";
 import { PlannedPhase } from "../Phases";
+import { GitHubStatusContext } from "../phases/gitHubContext";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import { GitHubStatusContext } from "../phases/gitHubContext";
 
 export interface DeployParams<T extends TargetInfo> {
     deployPhase: PlannedPhase;
@@ -83,7 +83,7 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
-        const artifactCheckout = await artifactStore.checkout(targetUrl, {token: githubToken})
+        const artifactCheckout = await artifactStore.checkout(targetUrl, id,{token: githubToken})
             .catch(err => {
                 console.log("Writing to progress log");
                 progressLog.write("Error checking out artifact: " + err.message);

@@ -1,25 +1,25 @@
 
 import { CheckstyleReport, FileReport } from "./CheckstyleReport";
 
+import {logger} from "@atomist/automation-client";
 import { promisify } from "util";
 import * as xml2js from "xml2js";
-import {logger} from "@atomist/automation-client";
 
 export async function extract(report: string): Promise<CheckstyleReport> {
-    if(report === undefined || report === null) {
+    if (report === undefined || report === null) {
         throw new Error("checkstyle report is null or undefined");
     }
     if (report === "") {
         // great
         return {
-            files: []
-        }
+            files: [],
+        };
     }
     const parser = new xml2js.Parser();
     const output = await promisify(parser.parseString)(report);
     if (!output) {
         logger.warn(`Report: <${report}>`);
-        throw new Error("Unable to parse checkstyle report.")
+        throw new Error("Unable to parse checkstyle report.");
     }
     const raw = output.checkstyle;
     return {

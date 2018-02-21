@@ -17,6 +17,7 @@
 import * as _ from "lodash";
 
 import {GraphQL, logger, Secret, Secrets, Success} from "@atomist/automation-client";
+import {successOn} from "@atomist/automation-client/action/ActionResult";
 import {
     EventFired,
     EventHandler,
@@ -39,19 +40,18 @@ import {ProjectReviewer} from "@atomist/automation-client/operations/review/proj
 import {ProjectReview, ReviewComment} from "@atomist/automation-client/operations/review/ReviewResult";
 import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
 import {GitProject} from "@atomist/automation-client/project/git/GitProject";
+import {Attachment, SlackMessage} from "@atomist/slack-messages";
+import {MessagingReviewRouter} from "@atomist/spring-automation/commands/messagingReviewRouter";
 import {OnAnyPendingStatus, StatusState} from "../../../../typings/types";
 import {AddressChannels, addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
 import {createStatus} from "../../../commands/editors/toclient/ghub";
+import {ApprovalGateParam} from "../../gates/StatusApprovalGate";
 import {ScanContext} from "../phases/gitHubContext";
 import {ContextToPlannedPhase} from "../phases/httpServicePhases";
-import {ApprovalGateParam} from "../../gates/StatusApprovalGate";
-import {MessagingReviewRouter} from "@atomist/spring-automation/commands/messagingReviewRouter";
-import {Attachment, SlackMessage} from "@atomist/slack-messages";
-import {successOn} from "@atomist/automation-client/action/ActionResult";
 
-import * as slack from "@atomist/slack-messages";
-import {deepLink} from "@atomist/automation-client/util/gitHub";
 import {buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
+import {deepLink} from "@atomist/automation-client/util/gitHub";
+import * as slack from "@atomist/slack-messages";
 
 /**
  * Perform arbitrary actions (besides reviewing and returning a structured type)
@@ -67,7 +67,7 @@ export type CodeReaction = (p: GitProject,
  * Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql",))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
 export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -129,7 +129,7 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
                         params.context, "success", creds, true));
             }
             return Success;
-        } catch(err) {
+        } catch (err) {
             await markScanned(id,
                 params.context, "error", creds, false);
             return failure(err);

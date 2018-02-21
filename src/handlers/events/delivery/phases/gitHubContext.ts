@@ -50,7 +50,7 @@ export function contextIsAfter(contextA: GitHubStatusContext, contextB: GitHubSt
     if (belongToSameSeriesOfPhases(contextA, contextB)) {
         const splitA = splitContext(contextA);
         const splitB = splitContext(contextB);
-        return splitA.envOrder < splitB.envOrder || splitA.phaseOrder < splitB.phaseOrder
+        return splitA.envOrder < splitB.envOrder || splitA.phaseOrder < splitB.phaseOrder;
     }
 }
 

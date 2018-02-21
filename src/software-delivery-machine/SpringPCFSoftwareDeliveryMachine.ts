@@ -18,7 +18,7 @@ import { OnImageLinked } from "../typings/types";
 import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
     CloudFoundryProductionDeployOnFingerprint,
-    CloudFoundryStagingDeployOnImageLinked
+    CloudFoundryStagingDeployOnImageLinked,
 } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
@@ -46,7 +46,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
-        CloudFoundryStagingDeployOnImageLinked;//LocalMavenDeployer;
+        CloudFoundryStagingDeployOnImageLinked; // LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 
@@ -78,7 +78,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         if (!!checkStylePath) {
             this.addProjectReviewers(checkstyleReviewer(checkStylePath));
         } else {
-            logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH to the location of a downloaded checkstyle jar")
+            logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH to the location of a downloaded checkstyle jar");
         }
         this.addCodeReactions(logReactor)
             .addAutoEditors(

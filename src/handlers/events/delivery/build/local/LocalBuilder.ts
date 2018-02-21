@@ -1,6 +1,6 @@
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
@@ -11,7 +11,7 @@ import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
-import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog, } from "../../log/ProgressLog";
+import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
 import EventEmitter = NodeJS.EventEmitter;
 

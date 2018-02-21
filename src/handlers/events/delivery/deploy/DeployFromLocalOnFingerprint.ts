@@ -33,7 +33,7 @@ import { TargetInfo } from "./Deployment";
 
 // TODO could make more common with other deployer...
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnDeployToProductionFingerprint.graphql",))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnDeployToProductionFingerprint.graphql"))
 export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements HandleEvent<OnDeployToProductionFingerprint.Subscription> {
 
     @Secret(Secrets.OrgToken)

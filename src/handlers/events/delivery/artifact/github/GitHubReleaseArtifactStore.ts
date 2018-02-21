@@ -1,11 +1,11 @@
-import { ArtifactStore, DeployableArtifact } from "../../ArtifactStore";
-import { AppInfo } from "../../deploy/Deployment";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { createRelease, createTag, Release, Tag } from "../../../../commands/editors/toclient/ghub";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { createRelease, createTag, Release, Tag } from "../../../../commands/editors/toclient/ghub";
+import { ArtifactStore, DeployableArtifact } from "../../ArtifactStore";
+import { AppInfo } from "../../deploy/Deployment";
 
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 
@@ -35,7 +35,9 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         return asset.url;
     }
 
-    public checkout(url: string, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
+    public checkout(url: string, id: RepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
+        // TODO download artifact to a local directory
+        // parse other information from name and use id
         throw new Error("Not yet implemented");
     }
 }
@@ -67,8 +69,9 @@ export function uploadAsset(token: string,
 }
 
 import * as GitHubApi from "@octokit/rest";
-import * as URL from "url";
 import * as fs from "fs";
+import * as URL from "url";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export function api(token: string, apiUrl: string = "https://api.github.com/"): GitHubApi {
     // separate the url

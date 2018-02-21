@@ -15,11 +15,11 @@ describe("Phase handling", () => {
    });
 
    it("says endpoint is after deploy", () => {
-       assert(contextIsAfter(CloudFoundryStagingDeploymentContext, StagingEndpointContext))
-   })
+       assert(contextIsAfter(CloudFoundryStagingDeploymentContext, StagingEndpointContext));
+   });
 
    it("says deploy is after build", () => {
-       assert(contextIsAfter(BuiltContext, CloudFoundryStagingDeploymentContext))
-   })
+       assert(contextIsAfter(BuiltContext, CloudFoundryStagingDeploymentContext));
+   });
 
 });

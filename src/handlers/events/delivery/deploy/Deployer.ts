@@ -1,9 +1,9 @@
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { DeployableArtifact } from "../ArtifactStore";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { QueryableProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo } from "./Deployment";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
 
