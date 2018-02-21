@@ -10,7 +10,7 @@ import { OnSuperseded, SupersededListener } from "../handlers/events/delivery/ph
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { BuiltContext } from "../handlers/events/delivery/phases/core";
+import { BuiltContext } from "../handlers/events/delivery/phases/gitHubContext";
 import {
     CodeReaction,
     WithCodeOnPendingScanStatus,

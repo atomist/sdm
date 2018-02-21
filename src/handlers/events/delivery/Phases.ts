@@ -8,8 +8,8 @@ import {createStatus, State, Status} from "../../commands/editors/toclient/ghub"
 
 import {logger} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
-import * as _ from "lodash";
 import { ApprovalGateParam } from "../gates/StatusApprovalGate";
+import {contextIsAfter, splitContext} from "./phases/gitHubContext";
 
 // convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
 export type GitHubStatusContext = string;
@@ -20,26 +20,8 @@ export interface PlannedPhase {
 }
 
 // exported for testing
-export function parseContext(context: GitHubStatusContext) {
-    const fallback = {context, name: context};
-
-    // if it's following convention we can learn from it
-    const numberAndName = /[0-9\.]+-(.*)/;
-    const wholeContext = /^sdm\/atomist\/(.*)\/(.*)$/;
-
-    const matchWhole = context.match(wholeContext);
-    if (!matchWhole) {
-        return fallback;
-    }
-
-    const phasePart = matchWhole[2];
-    const matchPhase = phasePart.match(numberAndName);
-    if (!matchPhase) {
-        return {context, name: phasePart};
-    }
-    const name = matchPhase[1];
-
-    return {context, name};
+export function parseContext(context: GitHubStatusContext): PlannedPhase {
+    return { context, name: splitContext(context).name }
 }
 
 export class Phases {
@@ -69,8 +51,9 @@ export class Phases {
                 `Planning to ${self.contextToPlannedPhase(self, phase).name}`)));
     }
 
+    // rod, why the self argument?
     private contextToPlannedPhase(self: this, context: GitHubStatusContext) {
-        if (self.plannedPhaseByContext && this.plannedPhaseByContext[context]) {
+        if (self.plannedPhaseByContext && self.plannedPhaseByContext[context]) {
             return self.plannedPhaseByContext[context];
         } else {
             return parseContext(context);
@@ -78,21 +61,27 @@ export class Phases {
     }
 
     /**
-     * Set all downstream phase to failure status given a specific failed phase
-     * @param {string} failedPhase
+     * Set all downstream phase to failure status given a specific failed phase.
+     *
+     * The phases are associated by the atomist-sdm/${env}/ prefix in their context.
+     * This method's only dependency on the enclosing object is for selecting
+     * nicer names for the phases.
+     *
+     * @param {string} failedContext
      * @param {GitHubRepoRef} id
      * @param {ProjectOperationCredentials} creds
      * @return {Promise<any>}
      */
-    public gameOver(failedPhase: GitHubStatusContext, currentlyPending: GitHubStatusContext[],
+    public gameOver(failedContext: GitHubStatusContext, currentlyPending: GitHubStatusContext[],
                     id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        if (!this.phases.includes(failedPhase)) {
+        if (!this.phases.includes(failedContext)) {
             // Don't fail all our outstanding phases because someone else failed an unrelated phase
             return Promise.resolve();
         }
-        const failedPhaseName = this.contextToPlannedPhase(this, failedPhase).name;
+        const failedPhase: PlannedPhase = this.contextToPlannedPhase(this, failedContext);
+        const failedPhaseName = failedPhase.name;
         const phasesToReset = currentlyPending
-            .filter(phase => this.phases.indexOf(phase) > this.phases.indexOf(failedPhase))
+            .filter(pendingContext => contextIsAfter(failedContext, pendingContext))
             .map(p => this.contextToPlannedPhase(this, p));
         return Promise.all(phasesToReset.map(
             p => setStatus(id, p.context, "failure", creds,

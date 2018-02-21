@@ -26,7 +26,7 @@ import {
     PlannedPhase,
     previousPhaseSucceeded,
 } from "../Phases";
-import { BuiltContext } from "../phases/core";
+import { BuiltContext } from "../phases/gitHubContext";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";

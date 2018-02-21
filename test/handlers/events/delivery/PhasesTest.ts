@@ -1,7 +1,7 @@
 import "mocha";
 import * as assert from "power-assert";
 import {parseContext} from "../../../../src/handlers/events/delivery/Phases";
-import {ScanContext} from "../../../../src/handlers/events/delivery/phases/core";
+import {ScanContext} from "../../../../src/handlers/events/delivery/phases/gitHubContext";
 
 describe("Phase handling", () => {
    it("parses my contexts", () => {

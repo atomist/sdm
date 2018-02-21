@@ -3,7 +3,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { ScanContext } from "../handlers/events/delivery/phases/core";
+import { ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyleReviewer";
