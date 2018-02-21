@@ -18,6 +18,7 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import { OnVerifiedStatus, StatusInfo } from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
+import {tipOfDefaultBranch} from "../../../handlers/commands/editors/toclient/ghub";
 
 /**
  * Display a button suggesting promotion to production
@@ -61,7 +62,7 @@ export class OfferPromotionParameters {
     @MappedParameter(MappedParameters.GitHubRepository)
     public repo;
 
-    @Parameter()
+    @Parameter({required: false})
     public sha;
 
     @MappedParameter(MappedParameters.SlackChannel)
@@ -69,8 +70,9 @@ export class OfferPromotionParameters {
 }
 
 export const offerPromotionCommand: Maker<HandleCommand<OfferPromotionParameters>> = () =>
-    commandHandlerFrom((ctx: HandlerContext, params: OfferPromotionParameters) => {
-            return presentPromotionButton(new GitHubRepoRef(params.owner, params.repo, params.sha),
-                {targetUrl: "http://test.com"}, addressSlackChannels(params.channel), ctx, params.githubToken);
+    commandHandlerFrom(async (ctx: HandlerContext, params: OfferPromotionParameters) => {
+            return presentPromotionButton(new GitHubRepoRef(params.owner, params.repo, params.sha || await
+            tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo))),
+                {targetUrl: undefined}, addressSlackChannels(params.channel), ctx, params.githubToken);
         }, OfferPromotionParameters, "OfferPromotionButton", "test: suggest promoting a ref to prod",
         "please offer to promote");
