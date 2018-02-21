@@ -74,28 +74,27 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
     }
     const linkableLog = await createLinkableProgressLog();
 
+    const savingLog = new SavingProgressLog();
+    const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
+
     try {
         await setDeployStatus(githubToken, id, "pending", deployPhase.context,
             undefined, `Working on ${deployPhase.name}`)
             .catch(err =>
                 logger.warn("Failed to update deploy status to tell people we are working on it"));
 
-        const savingLog = new SavingProgressLog();
-        const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
-
-        const artifactCheckout = await artifactStore.checkout(targetUrl, id, {token: githubToken})
+       const artifactCheckout = await artifactStore.checkout(targetUrl, id, {token: githubToken})
             .catch(err => {
                 progressLog.write("Error checking out artifact: " + err.message);
-                return progressLog.close()
-                    .then(() => Promise.reject(err));
+                throw err;
             });
         const deployment = await deployer.deploy(
             artifactCheckout,
             targeter(id),
             progressLog,
-            {token: githubToken})
-            .then(progressLog.close,
-                (err) => progressLog.close().then(() => Promise.reject(err)));
+            {token: githubToken});
+
+        progressLog.close();
 
         await setDeployStatus(githubToken, id,
             "success",
@@ -114,6 +113,8 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
         }
     } catch (err) {
         logger.error(err.message);
+        logger.error(err.stack);
+        progressLog.close();
         const interpretation = deployer.logInterpreter && deployer.logInterpreter(linkableLog.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {

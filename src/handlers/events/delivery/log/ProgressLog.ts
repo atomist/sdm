@@ -1,3 +1,5 @@
+import { logger } from "@atomist/automation-client";
+
 export interface ProgressLog {
 
     write(what: string): void;
@@ -48,6 +50,10 @@ export class MultiProgressLog implements ProgressLog {
     }
 
     public close() {
+        if (!this.logs) {
+            logger.error("This is unexpected! How did I get here without logs?");
+            return;
+        }
         return Promise.all(this.logs.map(log => log.close()));
     }
 
