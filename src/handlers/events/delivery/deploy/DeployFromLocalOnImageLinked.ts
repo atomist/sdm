@@ -40,8 +40,7 @@ import { TargetInfo } from "./Deployment";
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnImageLinked.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql",))
 export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription>, EventWithCommand {
 
     @Secret(Secrets.OrgToken)

@@ -67,8 +67,7 @@ export type CodeReaction = (p: GitProject,
  * Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnAnyPendingStatus.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql",))
 export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

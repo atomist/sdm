@@ -25,8 +25,7 @@ export type SupersededListener = (id: GitHubRepoRef, s: OnSupersededStatus.Statu
  * Respond to a superseded push
  */
 @EventHandler("React to a superseded push",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSupersededStatus.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnSupersededStatus.graphql"))
 export class OnSuperseded implements HandleEvent<OnSupersededStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

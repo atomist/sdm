@@ -39,8 +39,8 @@ export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: StatusInfo,
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
 @EventHandler("Act on verified project",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSuccessStatus.graphql",
-        __dirname, {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql",
+        undefined, {
             context: StagingVerifiedContext,
         }))
 export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscription> {

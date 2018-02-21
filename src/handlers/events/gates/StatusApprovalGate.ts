@@ -36,8 +36,7 @@ export const ApprovalGateParam = "?atomist:approve=true";
  * Update a status.
  */
 @EventHandler("Approval gate",
-    GraphQL.subscriptionFromFile("../../../../graphql/subscription/OnAnySuccessStatus.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
 export class StatusApprovalGate implements HandleEvent<OnAnySuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
