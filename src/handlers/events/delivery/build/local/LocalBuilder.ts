@@ -10,16 +10,12 @@ import { AddressChannels } from "../../../../commands/editors/toclient/addressCh
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import EventEmitter = NodeJS.EventEmitter;
-import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../log/InterpretedLog";
-import {
-    LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
-    QueryableProgressLog,
-} from "../../log/ProgressLog";
+import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
+import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog, } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
 import { createRelease, createTag, Release, Tag, uploadReleaseAsset } from "../../../../commands/editors/toclient/ghub";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import * as fs from "fs";
+import EventEmitter = NodeJS.EventEmitter;
 
 export interface LocalBuildInProgress {
 
@@ -156,7 +152,8 @@ async function linkArtifact(token: string, rb: LocalBuildInProgress, team: strin
     await createRelease(token, grr, release);
     const lastSlash = rb.deploymentUnitFile.lastIndexOf("/");
     const filename = rb.deploymentUnitFile.substr(lastSlash + 1);
-    await uploadReleaseAsset(token, grr, release.name, filename, fs.createReadStream(rb.deploymentUnitFile));
-    return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
+    const asset = await uploadReleaseAsset(token, grr, release.name, filename, rb.deploymentUnitFile);
+    return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
+    //return postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, asset.url, team);
 }

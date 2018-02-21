@@ -1,7 +1,8 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 import { logger } from "@atomist/automation-client";
-import { ReadStream } from "fs";
+import * as fs from "fs";
+import { promisify } from "util";
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -72,13 +73,29 @@ export function createRelease(token: string, rr: GitHubRepoRef, release: Release
         );
 }
 
-export function uploadReleaseAsset(token: string, rr: GitHubRepoRef, releaseId: string, name: string, readSteam: ReadStream): AxiosPromise {
-    const config = authHeaders(token);
+export interface Asset {
+    url: string;
+    browser_download_url: string;
+    id: string;
+    name: string;
+    label: string;
+    size: number;
+}
+
+export async function uploadReleaseAsset(token: string,
+                                         rr: GitHubRepoRef,
+                                         releaseId: string,
+                                         name: string,
+                                         localFile: string): Promise<Asset> {
+    const readStream = fs.createReadStream(localFile);
+    const size = (await promisify(fs.stat)(localFile)).size;
+    const config = streamHeaders(token, size);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases/${releaseId}/assets?name=${name}`;
-    logger.info("Updating github release asset: %s named %s to release %s", url, name, releaseId);
-    return axios.post(url, readSteam, config)
+    logger.info("Publishing github release asset: %s named %s to release %s", url, name, releaseId);
+    return axios.post(url, readStream, config)
+        .then(r => r.data)
         .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to set release ${releaseId}: ${err.message}`)),
+            Promise.reject(new Error(`Error hitting ${url} to upload release asset for release ${releaseId}: ${err.message}`)),
         );
 }
 
@@ -101,6 +118,17 @@ function authHeaders(token: string): AxiosRequestConfig {
     return token ? {
             headers: {
                 Authorization: `token ${token}`,
+            },
+        }
+        : {};
+}
+
+function streamHeaders(token: string, size: number): AxiosRequestConfig {
+    return token ? {
+            headers: {
+                "Authorization": `token ${token}`,
+                "Content-Type": "application/zip",
+                "Content-Length": size,
             },
         }
         : {};
