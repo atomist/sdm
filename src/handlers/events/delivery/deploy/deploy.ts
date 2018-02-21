@@ -93,9 +93,10 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
             artifactCheckout,
             targeter(id),
             progressLog,
-            {token: githubToken});
+            {token: githubToken})
+            .then(progressLog.close,
+                (err) => progressLog.close().then(() => Promise.reject(err)));
 
-        await progressLog.close();
         await setDeployStatus(githubToken, id,
             "success",
             deployPhase.context,
@@ -117,6 +118,8 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
             await reportFailureInterpretation("deploy", interpretation, linkableLog, id, ac, retryButton);
+        } else {
+            await ac(":x: Failure deploying: " + err.message,)
         }
         return setDeployStatus(githubToken, id, "failure",
             deployPhase.context,

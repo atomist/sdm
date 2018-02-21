@@ -1,13 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { fileContent } from "@atomist/automation-client/util/gitHub";
 import { spawn } from "child_process";
-import * as fs from "fs";
 import { DeployableArtifact } from "../../ArtifactStore";
 import { QueryableProgressLog } from "../../log/ProgressLog";
 import { Deployer } from "../Deployer";
@@ -62,6 +57,14 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             });
             childProcess.addListener("error", reject);
         });
+    }
+
+    public logInterpreter(log: string) {
+        return {
+            relevantPart: "",
+            message: "Deploy failed",
+            includeFullLog: true
+        }
     }
 
 }
