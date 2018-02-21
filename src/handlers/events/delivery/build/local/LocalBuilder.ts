@@ -13,8 +13,6 @@ import { AppInfo } from "../../deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
 import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog, } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
-import { createRelease, createTag, Release, Tag, uploadReleaseAsset } from "../../../../commands/editors/toclient/ghub";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import EventEmitter = NodeJS.EventEmitter;
 
 export interface LocalBuildInProgress {
@@ -129,31 +127,7 @@ async function onExit(token: string,
     }
 }
 
-async function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
-    const tagName = rb.appInfo.version + new Date().getMilliseconds();
-    const tag: Tag = {
-        tag: tagName,
-        message: rb.appInfo.version + " for release",
-        object: rb.appInfo.id.sha,
-        type: "commit",
-        tagger: {
-            name: "Atomist",
-            email: "info@atomist.com",
-            date: new Date().toISOString(),
-        },
-    };
-    // TODO cast here is a bit nasty
-    const grr = rb.appInfo.id as GitHubRepoRef;
-    await createTag(token, grr, tag);
-    const release: Release = {
-        name: rb.appInfo.version,
-        tag_name: tag.tag,
-    };
-    await createRelease(token, grr, release);
-    const lastSlash = rb.deploymentUnitFile.lastIndexOf("/");
-    const filename = rb.deploymentUnitFile.substr(lastSlash + 1);
-    const asset = await uploadReleaseAsset(token, grr, release.name, filename, rb.deploymentUnitFile);
+function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
-    //return postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, asset.url, team);
 }

@@ -88,7 +88,7 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
                 progressLog.write("Error checking out artifact: " + err.message);
                 return progressLog.close().then(() => Promise.reject(err));
             });
-        const deployment = await deployer.deploy(artifactCheckout, targeter(id), progressLog);
+        const deployment = await deployer.deploy(artifactCheckout, targeter(id), progressLog, { token: githubToken});
 
         await progressLog.close();
         await setDeployStatus(githubToken, id,

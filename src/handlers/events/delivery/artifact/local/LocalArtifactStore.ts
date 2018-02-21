@@ -10,11 +10,6 @@ export class LocalArtifactStore implements ArtifactStore {
 
     private entries: Array<StoredArtifact & { url: string }> = [];
 
-    public store(appInfo: AppInfo, what: Stream): Promise<string> {
-        console.log("Storing " + JSON.stringify(appInfo));
-        throw new Error("not yet supported");
-    }
-
     public storeFile(appInfo: AppInfo, what: string): Promise<string> {
         console.log("Storing " + JSON.stringify(appInfo));
         const entry = {

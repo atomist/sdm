@@ -91,7 +91,8 @@ export async function uploadReleaseAsset(token: string,
     const size = (await promisify(fs.stat)(localFile)).size;
     const config = streamHeaders(token, size);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases/${releaseId}/assets?name=${name}`;
-    logger.info("Publishing github release asset: %s named %s to release %s", url, name, releaseId);
+    logger.info("Publishing github release asset: %s named %s to release %s with config %j",
+        url, name, releaseId, config);
     return axios.post(url, readStream, config)
         .then(r => r.data)
         .catch(err =>
