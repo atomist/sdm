@@ -105,6 +105,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract builder: Maker<StatusSuccessHandler>;
 
+    public buildCompleter: Maker<HandleEvent<OnImageLinked.Subscription> & EventWithCommand>
+
     public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription> & EventWithCommand>;
 
     public get notifyOnDeploy(): Maker<OnDeployStatus> {
