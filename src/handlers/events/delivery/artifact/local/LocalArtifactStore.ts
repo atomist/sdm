@@ -26,7 +26,7 @@ export class LocalArtifactStore implements ArtifactStore {
         return Promise.resolve(entry.url);
     }
 
-    public retrieve(url: string): Promise<StoredArtifact> {
+    protected retrieve(url: string): Promise<StoredArtifact> {
         return Promise.resolve(this.entries.find(e => e.url === url));
     }
 
