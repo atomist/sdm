@@ -33,8 +33,7 @@ export const SupersededContext = "superseded";
  * Set superseded status on previous commit on a push
  */
 @EventHandler("Scan code on master",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnPushWithBefore.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnPushWithBefore.graphql"))
 export class SetSupersededStatus implements HandleEvent<OnPushWithBefore.Subscription> {
 
     @Secret(Secrets.OrgToken)

@@ -27,8 +27,7 @@ import { Builder } from "./Builder";
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
  */
 @EventHandler("Build on source scan success",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnAnySuccessStatus.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
 export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
 
     @Secret(Secrets.OrgToken)

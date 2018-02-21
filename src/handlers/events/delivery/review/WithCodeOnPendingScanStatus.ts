@@ -42,7 +42,7 @@ import {GitProject} from "@atomist/automation-client/project/git/GitProject";
 import {OnAnyPendingStatus, StatusState} from "../../../../typings/types";
 import {AddressChannels, addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
 import {createStatus} from "../../../commands/editors/toclient/ghub";
-import {ScanContext} from "../phases/core";
+import {ScanContext} from "../phases/gitHubContext";
 import {ContextToPlannedPhase} from "../phases/httpServicePhases";
 import {ApprovalGateParam} from "../../gates/StatusApprovalGate";
 import {MessagingReviewRouter} from "@atomist/spring-automation/commands/messagingReviewRouter";
@@ -67,8 +67,7 @@ export type CodeReaction = (p: GitProject,
  * Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnAnyPendingStatus.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql",))
 export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

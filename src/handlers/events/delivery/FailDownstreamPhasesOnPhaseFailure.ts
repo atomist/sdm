@@ -25,8 +25,7 @@ import Status = OnSuccessStatus.Status;
  * Respond to a failure status by failing downstream phases
  */
 @EventHandler("Fail downstream phases on a phase failure",
-    GraphQL.subscriptionFromFile("../../../../../graphql/subscription/OnFailureStatus.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnFailureStatus.graphql"))
 export class FailDownstreamPhasesOnPhaseFailure implements HandleEvent<OnFailureStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

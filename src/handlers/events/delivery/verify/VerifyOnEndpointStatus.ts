@@ -41,8 +41,8 @@ export type EndpointVerifier = (url: string,
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
 @EventHandler("Check endpoint",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSuccessStatus.graphql",
-        __dirname, {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql", undefined,
+        {
             context: StagingEndpointContext,
         }))
 export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscription> {

@@ -28,8 +28,7 @@ import { createStatus, State } from "../../../commands/editors/toclient/ghub";
  * Set build status on complete build
  */
 @EventHandler("Check endpoint",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnBuildComplete.graphql",
-        __dirname))
+    GraphQL.subscriptionFromFile("graphql/subscription/OnBuildComplete.graphql",))
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)

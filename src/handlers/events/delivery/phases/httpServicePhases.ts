@@ -1,5 +1,5 @@
 import { Phases, PlannedPhase } from "../Phases";
-import { BaseContext, BuiltContext, ScanContext, StagingEnvironment } from "./core";
+import { BaseContext, BuiltContext, ScanContext, StagingEnvironment } from "./gitHubContext";
 
 export const CloudFoundryStagingDeploymentContext = BaseContext + StagingEnvironment + "3-PCF deploy";
 export const StagingEndpointContext = BaseContext + StagingEnvironment + "4-endpoint";

@@ -34,8 +34,8 @@ export type DeployListener = (id: GitHubRepoRef,
  * React to a deployment.
  */
 @EventHandler("React to a successful deployment",
-    GraphQL.subscriptionFromFile("../../../../../../graphql/subscription/OnSuccessStatus.graphql",
-        __dirname, {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql",
+        undefined, {
             context: CloudFoundryStagingDeploymentContext,
         }))
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
