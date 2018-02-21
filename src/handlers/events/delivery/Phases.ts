@@ -4,15 +4,13 @@ import {
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import {StatusState} from "../../../typings/types";
-import {createStatus, State, Status} from "../../commands/editors/toclient/ghub";
+import {createStatus, State} from "../../commands/editors/toclient/ghub";
 
 import {logger} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import { ApprovalGateParam } from "../gates/StatusApprovalGate";
-import {contextIsAfter, splitContext} from "./phases/gitHubContext";
+import {contextIsAfter, GitHubStatusContext, splitContext} from "./phases/gitHubContext";
 
-// convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
-export type GitHubStatusContext = string;
 
 export interface PlannedPhase {
     context: GitHubStatusContext;

@@ -1,4 +1,7 @@
-import {GitHubStatusContext} from "../Phases";
+import {logger} from "@atomist/automation-client";
+
+// convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
+export type GitHubStatusContext = string;
 
 export const BaseContext = "sdm/atomist/";
 export const IndependentOfEnvironment = "0-code/";
@@ -26,15 +29,16 @@ export function splitContext(context: GitHubStatusContext) {
         }
 
         const phasePart = matchWhole[2];
-        const env = matchWhole[1];
+        const matchEnv = matchWhole[1].match(numberAndName);
         const matchPhase = phasePart.match(numberAndName);
-        if (!matchPhase) {
+        if (!matchPhase || !matchEnv) {
+            logger.debug(`Did not find number and name in ${matchWhole[1]} or ${matchWhole[2]}`);
             return;
         }
         const name = matchPhase[2];
-        const order = +matchPhase[1];
+        const phaseOrder = +matchPhase[1];
 
-        return {base: BaseContext, env, name, order};
+        return {base: BaseContext, env: matchEnv[2], envOrder: +matchEnv[1], name, phaseOrder};
     }
 }
 
@@ -46,12 +50,12 @@ export function contextIsAfter(contextA: GitHubStatusContext, contextB: GitHubSt
     if (belongToSameSeriesOfPhases(contextA, contextB)) {
         const splitA = splitContext(contextA);
         const splitB = splitContext(contextB);
-        return
+        return splitA.envOrder < splitB.envOrder || splitA.phaseOrder < splitB.phaseOrder
     }
 }
 
 function belongToSameSeriesOfPhases(contextA: GitHubStatusContext, contextB: GitHubStatusContext): boolean {
     const splitA = splitContext(contextA);
     const splitB = splitContext(contextB);
-    return splitA && splitB && splitA.env === splitB.env && splitA.base === splitB.base;
+    return splitA && splitB && splitA.base === splitB.base;
 }

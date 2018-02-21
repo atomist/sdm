@@ -25,9 +25,10 @@ import {createStatus} from "../../../commands/editors/toclient/ghub";
 import {ArtifactStore} from "../ArtifactStore";
 import {createLinkableProgressLog} from "../log/NaiveLinkablePersistentProgressLog";
 import {ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog} from "../log/ProgressLog";
-import {GitHubStatusContext, PlannedPhase} from "../Phases";
+import { PlannedPhase} from "../Phases";
 import {Deployer} from "./Deployer";
 import {TargetInfo} from "./Deployment";
+import {GitHubStatusContext} from "../phases/gitHubContext";
 
 export interface DeployParams<T extends TargetInfo> {
     deployPhase: PlannedPhase;
