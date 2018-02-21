@@ -1,6 +1,6 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { AppInfo } from "./deploy/Deployment";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export interface ArtifactStore {
 
@@ -13,7 +13,7 @@ export interface ArtifactStore {
      */
     storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string>;
 
-    checkout(url: string, id: RepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact>;
+    checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact>;
 }
 
 export interface StoredArtifact {

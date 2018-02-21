@@ -97,17 +97,6 @@ function authHeaders(token: string): AxiosRequestConfig {
         : {};
 }
 
-function streamHeaders(token: string, size: number): AxiosRequestConfig {
-    return token ? {
-            headers: {
-                "Authorization": `token ${token}`,
-                "Content-Type": "application/zip",
-                "Content-Length": size,
-            },
-        }
-        : {};
-}
-
 export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<string> {
     // TODO: use real default branch
     const defaultBranch = "master";

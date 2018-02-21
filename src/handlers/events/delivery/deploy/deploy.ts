@@ -83,11 +83,11 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
         const savingLog = new SavingProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
-        const artifactCheckout = await artifactStore.checkout(targetUrl, id,{token: githubToken})
+        const artifactCheckout = await artifactStore.checkout(targetUrl, id, {token: githubToken})
             .catch(err => {
-                console.log("Writing to progress log");
                 progressLog.write("Error checking out artifact: " + err.message);
-                return progressLog.close().then(() => Promise.reject(err));
+                return progressLog.close()
+                    .then(() => Promise.reject(err));
             });
         const deployment = await deployer.deploy(
             artifactCheckout,
