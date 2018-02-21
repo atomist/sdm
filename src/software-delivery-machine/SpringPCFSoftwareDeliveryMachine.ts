@@ -75,11 +75,11 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
                 suggestAddingCloudFoundryManifest)
             .addProjectReviewers(logReview);
         const checkStylePath = process.env.CHECKSTYLE_PATH;
-        if (!!checkStylePath) {
-            this.addProjectReviewers(checkstyleReviewer(checkStylePath));
-        } else {
-            logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH to the location of a downloaded checkstyle jar");
-        }
+        // if (!!checkStylePath) {
+        //     this.addProjectReviewers(checkstyleReviewer(checkStylePath));
+        // } else {
+        //     logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH to the location of a downloaded checkstyle jar");
+        // }
         this.addCodeReactions(logReactor)
             .addAutoEditors(
                 async p => {

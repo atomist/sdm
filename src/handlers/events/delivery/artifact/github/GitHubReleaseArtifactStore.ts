@@ -40,13 +40,12 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         };
         await createRelease(token, grr, release);
         const asset = await uploadAsset(token, grr.owner, grr.repo, tag.tag, localFile);
-        logger.info("Uploaded artifact with url [%s] for %j", asset.url, appInfo);
-        return asset.url;
+        logger.info("Uploaded artifact with url [%s] for %j", asset.browser_download_url, appInfo);
+        return asset.browser_download_url;
     }
 
     public async checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
         logger.info("Attempting to download artifact [%s] for %j", url, id);
-
         const tmpDir = tmp.dirSync({unsafeCleanup: true});
         const cwd = tmpDir.name;
         const lastSlash = url.lastIndexOf("/");
@@ -71,7 +70,7 @@ function saveFileTo(token: string, url: string, outputFilename: string): Promise
     return axios.request({
         responseType: "arraybuffer",
         url,
-        method: "get",
+        method: "GET",
         headers: {
             "Authorization": `token ${token}`,
             "Content-Type": "application/zip",
@@ -83,7 +82,7 @@ function saveFileTo(token: string, url: string, outputFilename: string): Promise
 
 export interface Asset {
     url: string;
-    browser_url: string;
+    browser_download_url: string;
     name: string;
 }
 
