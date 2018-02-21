@@ -29,6 +29,11 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         const sources = await GitCommandGitProject.cloned(creds, da.id);
         const manifestFile = await sources.findFile(ManifestPath);
 
+        if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
+            throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts")
+        }
+
+        // TODO: if the password is wrong, things hangs forever waiting for input.
         await runCommand(
             `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`,
             {cwd: da.cwd});
@@ -48,7 +53,6 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             {
                 cwd: da.cwd,
             });
-        childProcess.stdin.end(); // if it asks for something, please don't freeze forever
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
         return new Promise((resolve, reject) => {
