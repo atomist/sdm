@@ -1,17 +1,7 @@
-
-import * as Stream from "stream";
 import { AppInfo } from "./deploy/Deployment";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export interface ArtifactStore {
-
-    /**
-     * Returns the URL of a StoredArtifact
-     * @param {string} appInfo
-     * @param {ReadableStream} what
-     * @return {Promise<String>}
-     */
-    store(appInfo: AppInfo, what: Stream, creds: ProjectOperationCredentials): Promise<string>;
 
     /**
      * Store an artifact we have locally at the given absolute path

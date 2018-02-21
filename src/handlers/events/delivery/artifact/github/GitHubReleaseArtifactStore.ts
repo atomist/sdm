@@ -1,19 +1,13 @@
 import { ArtifactStore, DeployableArtifact } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import { Stream } from "stream";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { createRelease, createTag, Release, Tag, uploadReleaseAsset } from "../../../../commands/editors/toclient/ghub";
-import * as fs from "fs";
 import {
     ProjectOperationCredentials,
     TokenCredentials
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export class GitHubReleaseArtifactStore implements ArtifactStore {
-
-    public store(appInfo: AppInfo, what: Stream): Promise<string> {
-        throw new Error("Not yet implemented");
-    }
 
     public async storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string> {
         const token = (creds as TokenCredentials).token;

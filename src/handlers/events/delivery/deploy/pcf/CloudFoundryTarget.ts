@@ -1,6 +1,12 @@
 
 import { TargetInfo } from "../Deployment";
 
+/**
+ * Path to Cloud Foundry manifest within deployable projects
+ * @type {string}
+ */
+export const ManifestPath = "manifest.yml";
+
 export interface CloudFoundryInfo extends TargetInfo {
 
     api: string;

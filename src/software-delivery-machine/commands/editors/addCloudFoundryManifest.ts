@@ -2,6 +2,7 @@ import { HandleCommand } from "@atomist/automation-client";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { editor } from "../../../handlers/commands/editors/registerEditor";
 import { identification } from "../../../handlers/events/delivery/build/local/maven/pomParser";
+import { ManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 
 export const AddCloudFoundryManifestEditorName = "AddCloudFoundryManifest";
 
@@ -14,7 +15,7 @@ export const addCfManifest: SimpleProjectEditor = (p, ctx) => {
         .then(pom => pom.getContent()
             .then(content => identification(content))
             .then(ident => {
-                return p.addFile("manifest.yml", javaManifestFor(ident.artifact, ctx.teamId));
+                return p.addFile(ManifestPath, javaManifestFor(ident.artifact, ctx.teamId));
             }))
         .catch(err => p);
 };

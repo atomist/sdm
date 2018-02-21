@@ -3,6 +3,7 @@ import { DeployableArtifact } from "../ArtifactStore";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { QueryableProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo } from "./Deployment";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
 
@@ -13,6 +14,9 @@ export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpre
      */
     undeploy?(id: RemoteRepoRef): Promise<any>;
 
-    deploy(ai: DeployableArtifact, ti: T, log: QueryableProgressLog): Promise<Deployment>;
+    deploy(da: DeployableArtifact,
+           ti: T,
+           log: QueryableProgressLog,
+           creds: ProjectOperationCredentials): Promise<Deployment>;
 
 }
