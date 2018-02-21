@@ -56,7 +56,10 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
         return new Promise((resolve, reject) => {
-            childProcess.addListener("exit", () => {
+            childProcess.addListener("exit", (code, signal) => {
+                if (code !== 0) {
+                    reject(`Error: code ${code}`);
+                }
                 resolve({endpoint: parseCloudFoundryLogForEndpoint(log.log)});
             });
             childProcess.addListener("error", reject);

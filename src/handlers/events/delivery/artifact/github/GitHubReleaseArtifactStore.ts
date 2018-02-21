@@ -44,37 +44,54 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         return asset.browser_download_url;
     }
 
+    // Note that this Maven specific
+    // Name is of format fintan-0.1.0-SNAPSHOT.jar
     public async checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
         logger.info("Attempting to download artifact [%s] for %j", url, id);
         const tmpDir = tmp.dirSync({unsafeCleanup: true});
         const cwd = tmpDir.name;
         const lastSlash = url.lastIndexOf("/");
         const filename = url.substring(lastSlash + 1);
+        const re = /([a-zA-Z0-9_]+)-(.*)/;
+        const match = re.exec(filename);
+        const name = match[1];
+        const version = match[2].replace(/.jar$/, "");
+
         const outputPath = cwd + "/" + filename;
 
-        await saveFileTo((creds as TokenCredentials).token, url, outputPath);
+        // const token = (creds as TokenCredentials).token;
+        // const github = api(token);
+        // return github.repos.getAsset({owner: id.owner, repo: id.repo, id: url});
+
+        await saveFileAs((creds as TokenCredentials).token, url, outputPath);
         logger.info("Saved url %s to %s", url, outputPath);
         return {
             cwd,
             filename,
-
-            // TODO fix this properly
-            name: id.repo,
-            version: "1",
+            name,
+            version,
             id,
         };
     }
 }
 
-function saveFileTo(token: string, url: string, outputFilename: string): Promise<any> {
-    return axios.request({
-        responseType: "arraybuffer",
-        url,
-        method: "GET",
+/**
+ * Save the file to local disk
+ * @param {string} token
+ * @param {string} url
+ * @param {string} outputFilename
+ * @return {Promise<any>}
+ */
+function saveFileAs(token: string, url: string, outputFilename: string): Promise<any> {
+    const github = api(token);
+    return axios.get(url, {
         headers: {
-            "Authorization": `token ${token}`,
+            // TODO why doesn't auth work?
+            //"Authorization": `token ${token}`,
+            Accept: "application/octet-stream",
             "Content-Type": "application/zip",
         },
+        responseType: "arraybuffer",
     }).then(result => {
         return fs.writeFileSync(outputFilename, result.data);
     });
