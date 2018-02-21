@@ -73,33 +73,6 @@ export function createRelease(token: string, rr: GitHubRepoRef, release: Release
         );
 }
 
-export interface Asset {
-    url: string;
-    browser_download_url: string;
-    id: string;
-    name: string;
-    label: string;
-    size: number;
-}
-
-export async function uploadReleaseAsset(token: string,
-                                         rr: GitHubRepoRef,
-                                         releaseId: string,
-                                         name: string,
-                                         localFile: string): Promise<Asset> {
-    const readStream = fs.createReadStream(localFile);
-    const size = (await promisify(fs.stat)(localFile)).size;
-    const config = streamHeaders(token, size);
-    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases/${releaseId}/assets?name=${name}`;
-    logger.info("Publishing github release asset: %s named %s to release %s with config %j",
-        url, name, releaseId, config);
-    return axios.post(url, readStream, config)
-        .then(r => r.data)
-        .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to upload release asset for release ${releaseId}: ${err.message}`)),
-        );
-}
-
 export interface GitHubCommitsBetween {
     commits: Array<{
         sha: string;
