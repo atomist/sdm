@@ -53,6 +53,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             {
                 cwd: da.cwd,
             });
+        childProcess.stdin.end(); // if it asks for something, please don't freeze forever
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
         return new Promise((resolve, reject) => {
