@@ -38,6 +38,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public editors: Array<Maker<HandleCommand>> = [];
 
+    public supportingCommands: Array<Maker<HandleCommand>> = [];
+
     private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
@@ -118,11 +120,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete(BuiltContext)
 
-    /**
-     * Miscellaneous supporting commands
-     */
-    public abstract supportingCommands: Array<Maker<HandleCommand>>;
-
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat([
@@ -163,6 +160,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addEditors(...e: Array<Maker<HandleCommand>>): this {
         this.editors = this.editors.concat(e);
+        return this;
+    }
+
+    public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
+        this.supportingCommands = this.supportingCommands.concat(e);
         return this;
     }
 
