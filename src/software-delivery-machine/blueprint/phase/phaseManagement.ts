@@ -4,19 +4,20 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { FailDownstreamPhasesOnPhaseFailure } from "../../../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {
     ApplyPhasesParameters,
-    applyPhasesToCommit, PushesToMaster,
+    applyPhasesToCommit, PhaseCreator, PushesToMaster,
     SetupPhasesOnPush,
 } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../../../handlers/events/delivery/Phases";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
+import { ManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 
-export const PhaseSetup = () => new SetupPhasesOnPush([jvmPhaseBuilder], PushesToMaster);
+export const PhaseSetup = () => new SetupPhasesOnPush(new PhaseCreator([jvmPhaseBuilder], PushesToMaster));
 
 async function jvmPhaseBuilder(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");
-        const manifest = await p.findFile("manifest.yml").catch(err => undefined);
+        const manifest = await p.findFile(ManifestPath).catch(err => undefined);
         const contents = await f.getContent();
         if (contents.includes("spring-boot") && !!manifest) {
             return HttpServicePhases;

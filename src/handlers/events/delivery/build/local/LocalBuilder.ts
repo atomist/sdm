@@ -1,4 +1,7 @@
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
 import { Readable } from "stream";
@@ -7,13 +10,10 @@ import { AddressChannels } from "../../../../commands/editors/toclient/addressCh
 import { postLinkImageWebhook } from "../../../link/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import EventEmitter = NodeJS.EventEmitter;
-import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../log/InterpretedLog";
-import {
-    LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
-    QueryableProgressLog,
-} from "../../log/ProgressLog";
+import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
+import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog, } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
+import EventEmitter = NodeJS.EventEmitter;
 
 export interface LocalBuildInProgress {
 
@@ -48,13 +48,18 @@ export abstract class LocalBuilder implements Builder {
                                addressChannels: AddressChannels,
                                team: string): Promise<LocalBuildInProgress> {
         const as = this.artifactStore;
+        const token = (creds as TokenCredentials).token;
         const log = await this.logFactory();
 
         const rb = await this.startBuild(creds, id, team, log);
-        rb.stream.addListener("exit", (code, signal) => onExit(code === 0, rb, team, as,
+        rb.stream.addListener("exit", (code, signal) => onExit(
+            token,
+            code === 0, rb, team, as,
             log,
             addressChannels, this.logInterpreter))
-            .addListener("error", (code, signal) => onExit(false, rb, team, as,
+            .addListener("error", (code, signal) => onExit(
+                token,
+                false, rb, team, as,
                 log,
                 addressChannels, this.logInterpreter));
         await onStarted(rb);
@@ -98,7 +103,8 @@ function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
         .then(() => runningBuild);
 }
 
-async function onExit(success: boolean,
+async function onExit(token: string,
+                      success: boolean,
                       rb: LocalBuildInProgress, team: string,
                       artifactStore: ArtifactStore,
                       log: LinkablePersistentProgressLog & QueryableProgressLog,
@@ -107,7 +113,7 @@ async function onExit(success: boolean,
     try {
         if (success) {
             await updateAtomistLifecycle(rb, "SUCCESS", "FINALIZED")
-                .then(id => linkArtifact(rb, team, artifactStore));
+                .then(id => linkArtifact(token, rb, team, artifactStore));
         } else {
             const interpretation = logInterpreter && logInterpreter(log.log);
             // The deployer might have information about the failure; report it in the channels
@@ -121,7 +127,7 @@ async function onExit(success: boolean,
     }
 }
 
-function linkArtifact(rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
-    return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
+function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
+    return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }

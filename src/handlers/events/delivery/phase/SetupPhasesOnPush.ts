@@ -15,7 +15,7 @@
  */
 
 import {
-    GraphQL,
+    GraphQL, logger,
     MappedParameter,
     MappedParameters,
     Parameter,
@@ -47,41 +47,57 @@ export type PushTest = (p: OnAnyPush.Push) => boolean | Promise<boolean>;
 
 export const PushesToMaster: PushTest = p => p.branch === "master";
 
+export class PhaseCreator {
+
+    /**
+     * Create a new PhaseCreator that will be used to test a push
+     * @param {PhaseBuilder[]} phaseBuilders phase builders to apply to a push with these characteristics
+     * @param {PushTest} pushTest test for a push (e.g. is it to master)
+     */
+    constructor(public phaseBuilders: PhaseBuilder[],
+                public pushTest: PushTest) {
+    }
+}
+
 /**
- * Scan code on a push. Results in setting up phases (e.g. for delivery).
+ * Set up phases on a push (e.g. for delivery).
  */
-@EventHandler("Scan code on master",
+@EventHandler("Set up phases",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPushToAnyBranch.graphql"))
 export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
+    private phaseCreators: PhaseCreator[];
+
     /**
-     * Find phases
-     * @param {PhaseBuilder[]} phaseBuilders first PhaseBuilder that returns
+     * Configure phase creation
+     * @param phaseCreators first PhaseCreator that matches the push and returns
      * phases will win
-     * @param pushTest how to determine whether to create phases for this project
      */
-    constructor(private phaseBuilders: PhaseBuilder[], private pushTest) {
+    constructor(...phaseCreators: PhaseCreator[]) {
+        this.phaseCreators = phaseCreators;
     }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
-
-        if (!this.pushTest(push)) {
-            return Promise.resolve(Success);
-        }
-
         const commit = push.commits[0];
-
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
 
-        const creds = {token: params.githubToken};
+        const phaseCreatorResults: boolean[] = await Promise.all(params.phaseCreators
+            .map(pc => Promise.resolve(pc.pushTest(push)).then(f => f)));
+        const firstSatisifiedIndex = phaseCreatorResults.indexOf(true);
+        if (firstSatisifiedIndex === -1) {
+            logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
+            return Promise.resolve(Success);
+        }
+        const phaseBuilders = params.phaseCreators[firstSatisifiedIndex].phaseBuilders;
 
+        const creds = {token: params.githubToken};
         const p = await GitCommandGitProject.cloned(creds, id);
-        const phasesFound = await Promise.all(params.phaseBuilders.map(pb => pb(p)));
-        const phases = phasesFound.find(phrase => !!phrase);
+        const phasesFound = await Promise.all(phaseBuilders.map(pb => pb(p)));
+        const phases = phasesFound.find(phase => !!phase);
         if (!!phases) {
             await phases.setAllToPending(id, creds);
         }
