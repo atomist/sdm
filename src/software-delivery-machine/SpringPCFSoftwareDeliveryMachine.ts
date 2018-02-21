@@ -1,4 +1,4 @@
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
@@ -63,11 +63,6 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         deploy: CloudFoundryProductionDeployOnFingerprint,
     };
 
-    public supportingCommands: Array<Maker<HandleCommand>> = [
-        () => addCloudFoundryManifest,
-        DescribeStagingAndProd,
-    ];
-
     get possiblePhases(): Phases[] {
         return [HttpServicePhases, LibraryPhases];
     }
@@ -102,6 +97,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
                 id => {
                     logger.info("Will undeploy application %j", id);
                     return LocalMavenDeployer.deployer.undeploy(id);
-                });
+                })
+            .addSupportingCommands(
+                () => addCloudFoundryManifest,
+                DescribeStagingAndProd,
+            );
     }
 }

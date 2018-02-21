@@ -16,7 +16,7 @@ export interface Status {
 export function createStatus(token: string, rr: GitHubRepoRef, status: Status): AxiosPromise {
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
-    logger.info("Updating github status: $s to %j", url, status);
+    logger.info("Updating github status: %s to %j", url, status);
     return axios.post(url, status, config)
         .catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
