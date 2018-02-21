@@ -17,8 +17,9 @@ import {
     QueryableProgressLog,
 } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
-import { createRelease, createTag, Release, Tag } from "../../../../commands/editors/toclient/ghub";
+import { createRelease, createTag, Release, Tag, uploadReleaseAsset } from "../../../../commands/editors/toclient/ghub";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import * as fs from "fs";
 
 export interface LocalBuildInProgress {
 
@@ -133,15 +134,16 @@ async function onExit(token: string,
 }
 
 async function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
+    const tagName = rb.appInfo.version + new Date().getMilliseconds();
     const tag: Tag = {
-        tag: rb.appInfo.version,
+        tag: tagName,
         message: rb.appInfo.version + " for release",
         object: rb.appInfo.id.sha,
         type: "commit",
         tagger: {
             name: "Atomist",
-            email: "info @atomist.com",
-            date: new Date().toDateString(),
+            email: "info@atomist.com",
+            date: new Date().toISOString(),
         },
     };
     // TODO cast here is a bit nasty
@@ -152,6 +154,9 @@ async function linkArtifact(token: string, rb: LocalBuildInProgress, team: strin
         tag_name: tag.tag,
     };
     await createRelease(token, grr, release);
+    const lastSlash = rb.deploymentUnitFile.lastIndexOf("/");
+    const filename = rb.deploymentUnitFile.substr(lastSlash + 1);
+    await uploadReleaseAsset(token, grr, release.name, filename, fs.createReadStream(rb.deploymentUnitFile));
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile)
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }

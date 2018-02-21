@@ -1,7 +1,7 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 import { logger } from "@atomist/automation-client";
-import ReadStream = NodeJS.ReadStream;
+import { ReadStream } from "fs";
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -47,9 +47,9 @@ export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosProm
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/tags`;
     logger.info("Updating github tag: %s to %j", url, tag);
-    return axios.post(url, status, config)
+    return axios.post(url, tag, config)
         .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to set tag ${JSON.stringify(status)}: ${err.message}`)),
+            Promise.reject(new Error(`Error hitting ${url} to set tag ${JSON.stringify(tag)}: ${err.message}`)),
         );
 }
 
@@ -78,7 +78,7 @@ export function uploadReleaseAsset(token: string, rr: GitHubRepoRef, releaseId: 
     logger.info("Updating github release asset: %s named %s to release %s", url, name, releaseId);
     return axios.post(url, readSteam, config)
         .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
+            Promise.reject(new Error(`Error hitting ${url} to set release ${releaseId}: ${err.message}`)),
         );
 }
 
