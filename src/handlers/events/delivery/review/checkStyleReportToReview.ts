@@ -2,8 +2,8 @@ import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { CheckstyleReport, FileReport } from "./CheckstyleReport";
 
-import * as _ from "lodash";
 import { logger } from "@atomist/automation-client";
+import * as _ from "lodash";
 
 export function checkstyleReportToReview(repoId: RepoRef,
                                          cr: CheckstyleReport,
