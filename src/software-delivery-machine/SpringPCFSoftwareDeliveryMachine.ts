@@ -35,8 +35,6 @@ import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerpri
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
-// CloudFoundryStagingDeployOnImageLinked
-
 export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     protected scanContext = ScanContext;
@@ -67,18 +65,20 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         return [HttpServicePhases, LibraryPhases];
     }
 
-    constructor() {
+    constructor(opts: { useCheckstyle: boolean }) {
         super();
         this.addGenerators(() => springBootGenerator())
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
                 suggestAddingCloudFoundryManifest)
             .addProjectReviewers(logReview);
-        const checkStylePath = process.env.CHECKSTYLE_PATH;
-        if (!!checkStylePath) {
-            this.addProjectReviewers(checkstyleReviewer(checkStylePath));
-        } else {
-            logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
+        if (opts.useCheckstyle) {
+            const checkStylePath = process.env.CHECKSTYLE_PATH;
+            if (!!checkStylePath) {
+                this.addProjectReviewers(checkstyleReviewer(checkStylePath));
+            } else {
+                logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
+            }
         }
         this.addCodeReactions(logReactor)
             // .addAutoEditors(

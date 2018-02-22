@@ -13,7 +13,7 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new MachineAssembler(
-    new SpringPCFSoftwareDeliveryMachine(),
+    new SpringPCFSoftwareDeliveryMachine({ useCheckstyle: false}),
 );
 
 export const configuration: Configuration = {
