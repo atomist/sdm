@@ -18,7 +18,7 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { createStatus } from "../../../../commands/editors/toclient/ghub";
-import { OnAnySuccessStatus } from "../../../../../typings/types";
+import { OnAParticularStatus } from "../../../../../typings/types";
 import { PlannedPhase } from "../../Phases";
 import { K8AutomationDeployContext } from "./RequestDeployOnSuccessStatus";
 
@@ -27,9 +27,9 @@ import { K8AutomationDeployContext } from "./RequestDeployOnSuccessStatus";
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Request k8s deploy of linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql", undefined,
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
         {context: K8AutomationDeployContext}))
-export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccessStatus.Subscription> {
+export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -43,32 +43,37 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
                 private endpointPhase: PlannedPhase) {
     }
 
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAParticularStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== K8AutomationDeployContext || status.state !== "success") {
+        if (status.state === "pending") {
+            // not interesting
+            return Promise.resolve(Success);
+        }
+
+        if (status.context !== K8AutomationDeployContext) {
             logger.warn(`Unexpected event: ${status.context} is ${status.state}`);
             return Promise.resolve(Success);
         }
 
-        logger.info(`Recognized deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+        logger.info(`Recognized deploy result. ${status.state} status: ${status.context}: ${status.description}`);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: params.deployPhase.context,
-            state: "success",
+            state: status.state,
             description: "Complete: " + params.deployPhase.name,
             target_url: undefined,
         });
-        if (status.targetUrl) {
+        if (status.state === "success" && status.targetUrl) {
             await createStatus(params.githubToken, id as GitHubRepoRef, {
                 context: params.endpointPhase.context,
                 state: "success",
                 description: "Complete: " + params.endpointPhase.name,
                 target_url: status.targetUrl,
             });
-        } else {
+        } else if (status.state === "success") {
             logger.warn("no endpoint URL determined from " + status.context)
         }
         return Success;
