@@ -2,6 +2,9 @@
 
 GitHub Software Delivery Machine.
 
+## What is a "Software Delivery Machine?"
+A **software delivery machine** is a comprehensive solution to project delivery.
+
 ## Concepts
 This repository shows how Atomist can automate important tasks,
 and improve your delivery flow. Specifically:
@@ -54,6 +57,14 @@ This is configurable
 
 
 ## "Blueprint" interfaces and classes
+
+## Binary Dependencies
+You will need the following on the deployment node:
+
+- `git` binary
+- JDK
+- Maven, with `mvn` on the path
+
 
 ## Environment Variables
 For the optional Checkstyle integration to work, set up a Checkstyle environment variable as follows:

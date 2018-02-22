@@ -23,6 +23,7 @@
     "@atomist/spring-automation": "^0.6.2",
     "app-root-path": "^2.0.1",
     "artifactory-publisher": "^1.1.4",
+    "jssha": "^2.3.1",
     "strip-ansi": "^4.0.0",
     "xml2js": "^0.4.19"
   },
