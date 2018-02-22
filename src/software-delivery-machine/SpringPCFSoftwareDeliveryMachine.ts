@@ -33,6 +33,7 @@ import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManif
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
+import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -46,7 +47,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
-    public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription>> =
+    public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription> & EventWithCommand> =
         CloudFoundryStagingDeployOnSuccessStatus; // LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;

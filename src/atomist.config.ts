@@ -6,6 +6,7 @@ import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/ph
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
 import { SpringPCFSoftwareDeliveryMachine } from "./software-delivery-machine/SpringPCFSoftwareDeliveryMachine";
+import { SpringK8sSoftwareDeliveryMachine } from "./software-delivery-machine/SpringK8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -13,7 +14,8 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new MachineAssembler(
-    new SpringPCFSoftwareDeliveryMachine({ useCheckstyle: false}),
+   // new SpringPCFSoftwareDeliveryMachine({ useCheckstyle: false}),
+    new SpringK8sSoftwareDeliveryMachine(),
 );
 
 export const configuration: Configuration = {
