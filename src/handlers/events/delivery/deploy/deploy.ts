@@ -45,6 +45,7 @@ export interface DeployParams<T extends TargetInfo> {
 }
 
 export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
+    logger.info("Deploying with params=%j", params);
     const linkableLog = await createLinkableProgressLog();
 
     const savingLog = new SavingProgressLog();

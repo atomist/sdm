@@ -57,11 +57,12 @@ class ExecutableJarDeployer implements Deployer {
         }
     }
 
-    public async deploy(da: DeployableArtifact, ti: TargetInfo,
+    public async deploy(da: DeployableArtifact,
+                        ti: TargetInfo,
                         log: QueryableProgressLog, team: string): Promise<Deployment> {
         const baseUrl = this.baseUrl;
         const port = findPort(da.id);
-        logger.info("Deploying app [%j] at port [%d]", da, port);
+        logger.info("Deploying app [%j] at port [%d] for team %s", da, port, team);
         const childProcess = spawn("java",
             [
                 "-jar",
