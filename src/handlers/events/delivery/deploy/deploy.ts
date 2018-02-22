@@ -41,71 +41,49 @@ export interface DeployParams<T extends TargetInfo> {
     targeter: (id: RemoteRepoRef) => T;
     ac: AddressChannels;
     retryButton?: Action;
+    team: string;
 }
 
-function isDeployParams<T extends TargetInfo>(a: PlannedPhase | DeployParams<T>): a is DeployParams<T> {
-    return !!(a as DeployParams<T>).deployPhase;
-}
-
-export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedPhase | DeployParams<T>,
-                                                   endpointPhase?: PlannedPhase,
-                                                   id?: GitHubRepoRef,
-                                                   githubToken?: string,
-                                                   targetUrl?: string,
-                                                   artifactStore?: ArtifactStore,
-                                                   deployer?: Deployer<T>,
-                                                   targeter?: (id: RemoteRepoRef) => T,
-                                                   ac?: AddressChannels): Promise<HandlerResult> {
-    let deployPhase: PlannedPhase;
-    let retryButton: Action;
-    if (isDeployParams(paramsOrDeployPhase)) {
-        deployPhase = paramsOrDeployPhase.deployPhase;
-        endpointPhase = paramsOrDeployPhase.endpointPhase;
-        id = paramsOrDeployPhase.id;
-        githubToken = paramsOrDeployPhase.githubToken;
-        targetUrl = paramsOrDeployPhase.targetUrl;
-        artifactStore = paramsOrDeployPhase.artifactStore;
-        deployer = paramsOrDeployPhase.deployer;
-        targeter = paramsOrDeployPhase.targeter;
-        ac = paramsOrDeployPhase.ac;
-        retryButton = paramsOrDeployPhase.retryButton;
-    } else {
-        deployPhase = paramsOrDeployPhase;
-    }
+export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
     const linkableLog = await createLinkableProgressLog();
 
     const savingLog = new SavingProgressLog();
     const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
 
     try {
-        await setDeployStatus(githubToken, id, "pending", deployPhase.context,
-            undefined, `Working on ${deployPhase.name}`)
+        await setDeployStatus(params.githubToken, params.id, "pending", params.deployPhase.context,
+            undefined, `Working on ${params.deployPhase.name}`)
             .catch(err =>
                 logger.warn("Failed to update deploy status to tell people we are working on it"));
 
-       const artifactCheckout = await artifactStore.checkout(targetUrl, id, {token: githubToken})
+        const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
+            {token: params.githubToken})
             .catch(err => {
                 progressLog.write("Error checking out artifact: " + err.message);
                 throw err;
             });
-        const deployment = await deployer.deploy(
+        if (!artifactCheckout) {
+            throw new Error("No DeployableArtifact passed in");
+        }
+        const deployment = await params.deployer.deploy(
             artifactCheckout,
-            targeter(id),
+            params.targeter(params.id),
             progressLog,
-            {token: githubToken});
+            {token: params.githubToken},
+            params.team);
 
-        progressLog.close();
+        await progressLog.close();
 
-        await setDeployStatus(githubToken, id,
+        await setDeployStatus(params.githubToken, params.id,
             "success",
-            deployPhase.context,
+            params.deployPhase.context,
             linkableLog.url,
-            `Completed ${deployPhase.name}`);
+            `Completed ${params.deployPhase.name}`);
         if (deployment.endpoint) {
-            await setEndpointStatus(githubToken, id,
-                endpointPhase.context,
+            await setEndpointStatus(params.githubToken, params.id,
+                params.endpointPhase.context,
                 deployment.endpoint,
-                `Completed ${endpointPhase.name}`)
+                `Completed ${params.endpointPhase.name}`)
                 .catch(endpointStatus => {
                     logger.error("Could not set Endpoint status: " + endpointStatus.message);
                     // do not fail this whole handler
@@ -114,22 +92,23 @@ export async function deploy<T extends TargetInfo>(paramsOrDeployPhase: PlannedP
     } catch (err) {
         logger.error(err.message);
         logger.error(err.stack);
-        progressLog.close();
-        const interpretation = deployer.logInterpreter && deployer.logInterpreter(linkableLog.log);
+        await progressLog.close();
+        const interpretation = params.deployer.logInterpreter && params.deployer.logInterpreter(linkableLog.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
-            await reportFailureInterpretation("deploy", interpretation, linkableLog, id, ac, retryButton);
+            await reportFailureInterpretation("deploy", interpretation, linkableLog, params.id, params.ac, params.retryButton);
         } else {
-            await ac(":x: Failure deploying: " + err.message,)
+            await params.ac(":x: Failure deploying: " + err.message);
         }
-        return setDeployStatus(githubToken, id, "failure",
-            deployPhase.context,
+        return setDeployStatus(params.githubToken, params.id, "failure",
+            params.deployPhase.context,
             linkableLog.url,
-            `Failed to ${deployPhase.name}`).then(success);
+            `Failed to ${params.deployPhase.name}`).then(success);
     }
 }
 
-function setDeployStatus(token: string, id: GitHubRepoRef,
+function setDeployStatus(token: string,
+                         id: GitHubRepoRef,
                          state: StatusState,
                          context: GitHubStatusContext,
                          targetUrl: string,

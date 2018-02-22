@@ -45,7 +45,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
-        CloudFoundryStagingDeployOnImageLinked; // LocalMavenDeployer;
+        //CloudFoundryStagingDeployOnImageLinked;
+        () => LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 

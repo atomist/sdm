@@ -1,11 +1,11 @@
-import {logger} from "@atomist/automation-client";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {ChildProcess, spawn} from "child_process";
-import {DeployableArtifact} from "../../../ArtifactStore";
-import {InterpretedLog} from "../../../log/InterpretedLog";
-import {QueryableProgressLog} from "../../../log/ProgressLog";
-import {Deployer} from "../../Deployer";
-import {Deployment, TargetInfo} from "../../Deployment";
+import { logger } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ChildProcess, spawn } from "child_process";
+import { DeployableArtifact } from "../../../ArtifactStore";
+import { InterpretedLog } from "../../../log/InterpretedLog";
+import { QueryableProgressLog } from "../../../log/ProgressLog";
+import { Deployer } from "../../Deployer";
+import { Deployment, TargetInfo } from "../../Deployment";
 
 /**
  * Ports will be reused for the same app
@@ -36,14 +36,13 @@ function findPort(id: RemoteRepoRef): number {
 }
 
 /**
- * Spawn a new process to use the Cloud Foundry CLI to push.
- * Note that this isn't thread safe concerning multiple logins or spaces.
+ * Start up an executable Jar
  */
-export function mavenDeployer(baseUrl: string = "http://localhost"): Deployer {
-    return new MavenDeployer(baseUrl);
+export function executableJarDeployer(baseUrl: string = "http://localhost"): Deployer {
+    return new ExecutableJarDeployer(baseUrl);
 }
 
-class MavenDeployer implements Deployer {
+class ExecutableJarDeployer implements Deployer {
 
     constructor(public baseUrl: string) {
     }
@@ -58,20 +57,20 @@ class MavenDeployer implements Deployer {
         }
     }
 
-    public async deploy(da: DeployableArtifact, cfi: TargetInfo, log: QueryableProgressLog): Promise<Deployment> {
-        if (!da) {
-            throw new Error("no DeployableArtifact passed in");
-        }
+    public async deploy(da: DeployableArtifact, ti: TargetInfo,
+                        log: QueryableProgressLog, team: string): Promise<Deployment> {
         const baseUrl = this.baseUrl;
         const port = findPort(da.id);
         logger.info("Deploying app [%j] at port [%d]", da, port);
-        const childProcess = spawn("mvn",
+        const childProcess = spawn("java",
             [
-                "spring-boot:run",
+                "-jar",
+                da.filename,
                 `-Dserver.port=${port}`,
+                `-DATOMIST_TEAM=${team}`,
             ],
             {
-                cwd: da.cwd + "/..",
+                cwd: da.cwd,
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));

@@ -74,12 +74,18 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         logger.info("Fingerprint deployer deploying image [%s]", fingerprint.commit.image.imageName);
-        return deploy(params.ourPhase, params.endpointPhase,
-            id, params.githubToken,
-            fingerprint.commit.image.imageName,
-            params.artifactStore,
-            params.deployer,
-            params.targeter,
-            addressChannelsFor(commit.repo, ctx)).then(success);
+        return deploy({
+            deployPhase: params.ourPhase,
+            endpointPhase: params.endpointPhase,
+            id,
+            githubToken: params.githubToken,
+            targetUrl: fingerprint.commit.image.imageName,
+            artifactStore: params.artifactStore,
+            deployer: params.deployer,
+            targeter: params.targeter,
+            ac: addressChannelsFor(commit.repo, ctx),
+            team: ctx.teamId,
+        })
+            .then(success);
     }
 }

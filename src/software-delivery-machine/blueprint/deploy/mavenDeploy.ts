@@ -16,7 +16,7 @@
 
 import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
 import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
-import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenDeployer";
+import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/maven/executableJarDeployer";
 import { CloudFoundryInfo } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import {
     CloudFoundryStagingDeploymentContext,
@@ -36,7 +36,7 @@ export const LocalMavenDeployOnImageLinked: DeployFromLocalOnImageLinked<TargetI
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
-        mavenDeployer(),
+        executableJarDeployer(),
         () => ({
             name: "Local",
             description: "Deployment alongside local automation client",
