@@ -1,6 +1,6 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { AppInfo } from "./deploy/Deployment";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AppInfo } from "./deploy/Deployment";
 
 export interface ArtifactStore {
 

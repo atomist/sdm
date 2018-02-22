@@ -23,7 +23,7 @@ describe("Phase handling", () => {
        assert(contextIsAfter(BuildContext, CloudFoundryStagingDeploymentContext));
    });
 
-    it("says prod endpoint is after prod ", () => {
+   it("says prod endpoint is after prod ", () => {
         assert(contextIsAfter(ProductionDeploymentContext, ProductionEndpointContext));
     });
 

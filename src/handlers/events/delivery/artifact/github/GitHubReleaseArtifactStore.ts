@@ -1,19 +1,19 @@
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import * as GitHubApi from "@octokit/rest";
+import axios from "axios";
+import * as fs from "fs";
+import * as p from "path";
+import * as tmp from "tmp-promise";
+import * as URL from "url";
 import { createRelease, createTag, Release, Tag } from "../../../../commands/editors/toclient/ghub";
 import { ArtifactStore, DeployableArtifact } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import * as tmp from "tmp-promise";
-import * as p from "path";
-import axios from "axios";
-import * as GitHubApi from "@octokit/rest";
-import * as fs from "fs";
-import * as URL from "url";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { logger } from "@atomist/automation-client";
 
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 
@@ -87,8 +87,8 @@ function saveFileAs(token: string, url: string, outputFilename: string): Promise
     return axios.get(url, {
         headers: {
             // TODO why doesn't auth work?
-            //"Authorization": `token ${token}`,
-            Accept: "application/octet-stream",
+            // "Authorization": `token ${token}`,
+            "Accept": "application/octet-stream",
             "Content-Type": "application/zip",
         },
         responseType: "arraybuffer",

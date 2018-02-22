@@ -18,8 +18,8 @@ import { GraphQL, HandlerResult, Secret, Secrets, success, Success } from "@atom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnImageLinked } from "../../../../typings/types";
-import { PlannedPhase } from "../Phases";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { PlannedPhase } from "../Phases";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -54,7 +54,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
             state: "success",
             description: `Complete: ${params.artifactPhase.name}`,
             target_url: image.imageName,
-            context: params.artifactPhase.context
-        }).then(success)
+            context: params.artifactPhase.context,
+        }).then(success);
     }
 }

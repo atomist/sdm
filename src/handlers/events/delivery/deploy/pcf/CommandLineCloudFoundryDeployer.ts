@@ -1,6 +1,6 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
-import { ProjectOperationCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../ArtifactStore";
@@ -27,7 +27,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         const manifestFile = await sources.findFile(ManifestPath);
 
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
-            throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts")
+            throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
 
         // TODO: if the password is wrong, things hangs forever waiting for input.
@@ -67,8 +67,8 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         return {
             relevantPart: "",
             message: "Deploy failed",
-            includeFullLog: true
-        }
+            includeFullLog: true,
+        };
     }
 
 }

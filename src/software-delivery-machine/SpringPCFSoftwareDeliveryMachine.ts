@@ -1,6 +1,7 @@
 import { HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
@@ -14,7 +15,7 @@ import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
-import { OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { OnAnySuccessStatus, OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { LocalMavenBuildOnSuccessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
     CloudFoundryProductionDeployOnFingerprint, CloudFoundryStagingDeployOnSuccessStatus,
@@ -32,7 +33,6 @@ import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManif
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -46,7 +46,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
-    public deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription>> =
+    public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription>> =
         CloudFoundryStagingDeployOnSuccessStatus; // LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;

@@ -1,10 +1,9 @@
-import {AddressChannels} from "../../../../commands/editors/toclient/addressChannels";
+import {success} from "@atomist/automation-client";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {AddressChannels} from "../../../../commands/editors/toclient/addressChannels";
 import {createStatus} from "../../../../commands/editors/toclient/ghub";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {success} from "@atomist/automation-client";
-
 
 const K8AutomationBuildContext = "build/atomist/k8s";
 /**
@@ -15,9 +14,9 @@ const K8AutomationBuildContext = "build/atomist/k8s";
  * The message to k8-automation takes the form of a pending GitHub status.
  */
 export function initiatek8AutomationBuild(creds: ProjectOperationCredentials,
-    id: RemoteRepoRef,
-    ac: AddressChannels,
-    team: string): Promise<any> {
+                                          id: RemoteRepoRef,
+                                          ac: AddressChannels,
+                                          team: string): Promise<any> {
 
     return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
         context: K8AutomationBuildContext,
@@ -25,4 +24,4 @@ export function initiatek8AutomationBuild(creds: ProjectOperationCredentials,
         description: "Requested build in k8-automation",
         target_url: undefined,
     }).then(success);
-};
+}

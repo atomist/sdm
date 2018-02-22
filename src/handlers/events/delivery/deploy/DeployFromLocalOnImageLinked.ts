@@ -20,18 +20,11 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { OnImageLinked, OnSuccessStatus } from "../../../../typings/types";
+import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { ArtifactStore } from "../ArtifactStore";
-import {
-    currentPhaseIsStillPending,
-    GitHubStatusAndFriends,
-    Phases,
-    PlannedPhase,
-    previousPhaseSucceeded,
-} from "../Phases";
-import { BuildContext } from "../phases/gitHubContext";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../Phases";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
@@ -40,8 +33,8 @@ import { TargetInfo } from "./Deployment";
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql"))
-export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements HandleEvent<OnSuccessStatus.Subscription>, EventWithCommand {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
+export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -94,6 +87,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         const commit = status.commit;
         const image = status.commit.image;
 
+        console.log("remove me");
 
         const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
             repo: commit.repo.name,
@@ -125,7 +119,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
-            return Promise.resolve(failure(new Error("No image linked")))
+            return Promise.resolve(failure(new Error("No image linked")));
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

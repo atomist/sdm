@@ -1,11 +1,14 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { OnSuperseded } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { ArtifactContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
 import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
@@ -18,9 +21,6 @@ import {
     OnSupersededStatus,
 } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
-import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { ArtifactContext } from "../handlers/events/delivery/phases/gitHubContext";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 
 /**
  * An environment to promote into. Normally there is only one, for production
