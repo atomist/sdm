@@ -32,6 +32,7 @@ import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
+import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -70,7 +71,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         this.addGenerators(() => springBootGenerator())
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
-                suggestAddingCloudFoundryManifest)
+                suggestAddingCloudFoundryManifest,
+                publishNewRepo)
             .addProjectReviewers(logReview);
         if (opts.useCheckstyle) {
             const checkStylePath = process.env.CHECKSTYLE_PATH;
