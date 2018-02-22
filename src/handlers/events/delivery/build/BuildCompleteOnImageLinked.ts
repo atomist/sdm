@@ -26,7 +26,7 @@ import { createStatus } from "../../../commands/editors/toclient/ghub";
  */
 @EventHandler("Set build phase to complete with link to artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
-export class BuildCompleteOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
+export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -35,7 +35,7 @@ export class BuildCompleteOnImageLinked implements HandleEvent<OnImageLinked.Sub
      * The phase to update when an artifact is linked.
      * When an artifact is linked to a commit, the build must be done.
      */
-    constructor(private buildPhase: PlannedPhase) {
+    constructor(private artifactPhase: PlannedPhase) {
     }
 
     public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -44,7 +44,7 @@ export class BuildCompleteOnImageLinked implements HandleEvent<OnImageLinked.Sub
         const image = imageLinked.image;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const builtStatus = commit.statuses.find(status => status.context === params.buildPhase.context);
+        const builtStatus = commit.statuses.find(status => status.context === params.artifactPhase.context);
         if (!builtStatus) {
             console.log(`Deploy: builtStatus not found`);
             return Promise.resolve(Success);
@@ -52,9 +52,9 @@ export class BuildCompleteOnImageLinked implements HandleEvent<OnImageLinked.Sub
 
         return createStatus(params.githubToken, id, {
             state: "success",
-            description: `${params.buildPhase.name} artifact: ${image.imageName}`,
-            target_url: image.image,
-            context: params.buildPhase.context
+            description: `Complete: ${params.artifactPhase.name}`,
+            target_url: image.imageName,
+            context: params.artifactPhase.context
         }).then(success)
     }
 }

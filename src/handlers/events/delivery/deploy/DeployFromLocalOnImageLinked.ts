@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandleCommand, HandlerResult, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { OnImageLinked } from "../../../../typings/types";
+import { OnImageLinked, OnSuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { ArtifactStore } from "../ArtifactStore";
@@ -31,7 +31,7 @@ import {
     PlannedPhase,
     previousPhaseSucceeded,
 } from "../Phases";
-import { BuiltContext } from "../phases/gitHubContext";
+import { BuildContext } from "../phases/gitHubContext";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
@@ -40,8 +40,8 @@ import { TargetInfo } from "./Deployment";
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
-export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription>, EventWithCommand {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql"))
+export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements HandleEvent<OnSuccessStatus.Subscription>, EventWithCommand {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -89,43 +89,51 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
         }, RetryDeployParameters, this.commandName);
     }
 
-    public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-        const imageLinked = event.data.ImageLinked[0];
-        const commit = imageLinked.commit;
+    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+        const status = event.data.Status[0];
+        const commit = status.commit;
+        const image = status.commit.image;
+
 
         const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
             repo: commit.repo.name,
             owner: commit.repo.owner,
             sha: commit.sha,
-            targetUrl: imageLinked.image.imageName,
+            targetUrl: image.imageName,
         });
 
-        // TODO doesn't work as built status isn't in, yet
-        // const builtStatus = commit.statuses.find(status => status.context === BuiltContext);
-        // if (!builtStatus) {
-        //     console.log(`Deploy: builtStatus not found`);
-        //     return Promise.resolve(Success);
-        // }
         const statusAndFriends: GitHubStatusAndFriends = {
-            context: BuiltContext,
-            state: "success", // builtStatus.state,
-            targetUrl: "xxx",
-            siblings: imageLinked.commit.statuses,
+            context: status.context,
+            state: status.state,
+            targetUrl: status.targetUrl,
+            siblings: status.commit.statuses,
         };
 
+        // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
+        // (this is related to the next two TODOs)
         if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
+        // TODO: make sure it is in a "Planning" state, not just "pending" -- this lets us start the deploy after a failing status
+        // is corrected, but not too many times.
         if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
+        // TODO: if any status is failed, do not deploy
+
+        if (!image) {
+            logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
+            return Promise.resolve(failure(new Error("No image linked")))
+        }
+
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         return deploy({
-            deployPhase: params.ourPhase, endpointPhase: params.endpointPhase,
+            deployPhase: params.ourPhase,
+            endpointPhase: params.endpointPhase,
             id, githubToken: params.githubToken,
-            targetUrl: imageLinked.image.imageName,
+            targetUrl: image.imageName,
             artifactStore: this.artifactStore,
             deployer: params.deployer,
             targeter: params.targeter,

@@ -10,7 +10,8 @@ export const StagingEnvironment = "1-staging/";
 export const ProductionEnvironment = "2-prod/";
 
 export const ScanContext = BaseContext + IndependentOfEnvironment + "1-scan";
-export const BuiltContext = BaseContext + IndependentOfEnvironment + "2-build";
+export const BuildContext = BaseContext + IndependentOfEnvironment + "2-build";
+export const ArtifactContext = BaseContext + IndependentOfEnvironment + "2.5-artifact";
 
 /**
  * if this is a context we created, then we can interpret it.

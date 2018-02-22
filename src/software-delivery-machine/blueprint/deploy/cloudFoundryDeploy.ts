@@ -15,7 +15,7 @@
  */
 
 import { DeployFromLocalOnFingerprint } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
-import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
+import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
@@ -40,8 +40,8 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
-export const CloudFoundryStagingDeployOnImageLinked = () =>
-    new DeployFromLocalOnImageLinked(
+export const CloudFoundryStagingDeployOnSuccessStatus = () =>
+    new DeployFromLocalOnSuccessStatus(
         HttpServicePhases,
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],

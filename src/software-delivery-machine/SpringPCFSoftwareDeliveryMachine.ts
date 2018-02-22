@@ -3,8 +3,8 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
-import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
+import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
@@ -14,11 +14,10 @@ import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
-import { OnImageLinked } from "../typings/types";
-import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
+import { OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { LocalMavenBuildOnSuccessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
-    CloudFoundryProductionDeployOnFingerprint,
-    CloudFoundryStagingDeployOnImageLinked,
+    CloudFoundryProductionDeployOnFingerprint, CloudFoundryStagingDeployOnSuccessStatus,
 } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
@@ -33,6 +32,7 @@ import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManif
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -42,11 +42,12 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 
-    public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
+    public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSuccessStatus;
 
-    public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
-        //CloudFoundryStagingDeployOnImageLinked;
-        () => LocalMavenDeployer;
+    public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
+
+    public deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription>> =
+        CloudFoundryStagingDeployOnSuccessStatus; // LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 

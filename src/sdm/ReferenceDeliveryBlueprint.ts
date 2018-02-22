@@ -18,6 +18,9 @@ import {
     OnSupersededStatus,
 } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
+import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
+import { ArtifactContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 
 /**
  * An environment to promote into. Normally there is only one, for production
@@ -69,10 +72,12 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
     onBuildComplete: Maker<SetStatusOnBuildComplete>;
 
+    artifactFinder: Maker<HandleEvent<OnImageLinked.Subscription>>;
+
     /**
      * Initial deploy
      */
-    deploy1: Maker<HandleEvent<OnImageLinked.Subscription>>;
+    deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
 
     notifyOnDeploy?: Maker<OnDeployStatus>;
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
 import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/maven/executableJarDeployer";
 import { CloudFoundryInfo } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
@@ -25,13 +24,14 @@ import {
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";
+import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
-export const LocalMavenDeployOnImageLinked: DeployFromLocalOnImageLinked<TargetInfo> =
-    new DeployFromLocalOnImageLinked(
+export const LocalMavenDeployOnImageLinked: DeployFromLocalOnSuccessStatus<TargetInfo> =
+    new DeployFromLocalOnSuccessStatus<TargetInfo>(
         HttpServicePhases,
         ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],

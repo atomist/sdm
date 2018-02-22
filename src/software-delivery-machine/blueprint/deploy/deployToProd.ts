@@ -14,7 +14,7 @@ import { addressSlackUsers } from "@atomist/automation-client/spi/message/Messag
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { sendFingerprint } from "../../../handlers/commands/editors/toclient/fingerprints";
 import { listStatuses, Status } from "../../../handlers/commands/editors/toclient/ghub";
-import { BuiltContext } from "../../../handlers/events/delivery/phases/gitHubContext";
+import { BuildContext } from "../../../handlers/events/delivery/phases/gitHubContext";
 import { ProductionDeployPhases } from "../../../handlers/events/delivery/phases/productionDeployPhases";
 
 @CommandHandler("Promote to production", "promote to production")
@@ -98,6 +98,6 @@ function tryAgainMessage(params: DeployToProd, message: string) {
 function findArtifactStatus(id: GitHubRepoRef, token: string): Promise<Status> {
     return listStatuses(token, id)
         .then(statuses => {
-            return statuses.find(s => s.context === BuiltContext);
+            return statuses.find(s => s.context === BuildContext);
         });
 }

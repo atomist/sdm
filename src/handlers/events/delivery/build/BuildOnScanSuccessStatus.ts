@@ -61,6 +61,8 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
+        // the builder is expected to result in a complete Build event (which will update the build status)
+        // and an ImageLinked event (which will update the artifact status).
         await params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
         return Success;
     }

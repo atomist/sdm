@@ -25,6 +25,10 @@ subscription OnSuccessStatus($context: String!) {
             pushes {
                 branch
             }
+            image {
+                image
+                imageName
+            }
         }
         state
         targetUrl

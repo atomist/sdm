@@ -1,5 +1,5 @@
 import { Phases, PlannedPhase } from "../Phases";
-import { BaseContext, BuiltContext, ScanContext, StagingEnvironment } from "./gitHubContext";
+import { ArtifactContext, BaseContext, BuildContext, ScanContext, StagingEnvironment } from "./gitHubContext";
 
 export const CloudFoundryStagingDeploymentContext = BaseContext + StagingEnvironment + "3-PCF deploy";
 export const StagingEndpointContext = BaseContext + StagingEnvironment + "4-endpoint";
@@ -7,13 +7,14 @@ export const StagingVerifiedContext = BaseContext + StagingEnvironment + "5-veri
 
 export const ContextToPlannedPhase: { [key: string]: PlannedPhase } = {};
 ContextToPlannedPhase[ScanContext] = {context: ScanContext, name: "scan"};
-ContextToPlannedPhase[BuiltContext] = {context: BuiltContext, name: "build"};
+ContextToPlannedPhase[BuildContext] = {context: BuildContext, name: "build"};
+ContextToPlannedPhase[ArtifactContext] = {context: ArtifactContext, name: "find artifact"};
 ContextToPlannedPhase[CloudFoundryStagingDeploymentContext] = {
     context: CloudFoundryStagingDeploymentContext,
-    name: "deploy to staging",
+    name: "deploy to Test space in PCF",
 };
-ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in staging"};
-ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in staging"};
+ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in Test"};
+ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in Test"};
 
 /**
  * Phases for an Http service
@@ -21,7 +22,8 @@ ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext
  */
 export const HttpServicePhases = new Phases([
     ScanContext,
-    BuiltContext,
+    BuildContext,
+    ArtifactContext,
     CloudFoundryStagingDeploymentContext,
     StagingEndpointContext,
     StagingVerifiedContext]);
