@@ -98,13 +98,11 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         };
 
         // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
-        // (this is related to the next two TODOs)
+        // (this is related to the next TODO)
         if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        // TODO: make sure it is in a "Planning" state, not just "pending" -- this lets us start the deploy after a failing status
-        // is corrected, but not too many times.
         if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
