@@ -22,7 +22,7 @@ import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../../Phases";
 
 
-const K8AutomationDeployContext = "deploy/atomist/k8s/testing";
+export const K8AutomationDeployContext = "deploy/atomist/k8s/testing";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -39,15 +39,9 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
      * @param {Phases} phases
      * @param {PlannedPhase} ourPhase
      * @param {PlannedPhase} endpointPhase
-     * @param {ArtifactStore} artifactStore
-     * @param {Deployer<T extends TargetInfo>} deployer
-     * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
-     * For example, we may wish to deploy different repos to different Cloud Foundry spaces
-     * or Kubernetes clusters
      */
     constructor(private phases: Phases,
-                private ourPhase: PlannedPhase,
-                private endpointPhase: PlannedPhase) {
+                private deployPhase: PlannedPhase) {
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -67,11 +61,11 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
 
         // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
         // (this is related to the next two TODOs)
-        if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
+        if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
@@ -91,6 +85,12 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             state: "pending",
             description: "Requested deploy by k8-automation",
             target_url: image.imageName,
+        });
+        await createStatus(params.githubToken, id as GitHubRepoRef, {
+            context: params.deployPhase.context,
+            description: "Working on " + params.deployPhase.name,
+            state: "pending",
+            target_url: undefined
         });
         return Success;
     }
