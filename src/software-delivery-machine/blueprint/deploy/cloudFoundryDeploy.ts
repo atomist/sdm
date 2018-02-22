@@ -22,7 +22,7 @@ import {
 } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
-    CloudFoundryStagingDeploymentContext,
+    StagingDeploymentContext,
     ContextToPlannedPhase,
     HttpServicePhases,
     StagingEndpointContext,
@@ -43,7 +43,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
 export const CloudFoundryStagingDeployOnSuccessStatus = () =>
     new DeployFromLocalOnSuccessStatus(
         HttpServicePhases,
-        ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
+        ContextToPlannedPhase[StagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
         Deployer,

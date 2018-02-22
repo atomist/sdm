@@ -1,7 +1,7 @@
 import "mocha";
 import * as assert from "power-assert";
 import {BaseContext, BuildContext, contextIsAfter, ScanContext, splitContext} from "../../../../src/handlers/events/delivery/phases/gitHubContext";
-import {CloudFoundryStagingDeploymentContext, StagingEndpointContext} from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
+import {StagingDeploymentContext, StagingEndpointContext} from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
 import {ProductionDeploymentContext, ProductionEndpointContext} from "../../../../src/handlers/events/delivery/phases/productionDeployPhases";
 
 describe("Phase handling", () => {
@@ -16,11 +16,11 @@ describe("Phase handling", () => {
    });
 
    it("says endpoint is after deploy", () => {
-       assert(contextIsAfter(CloudFoundryStagingDeploymentContext, StagingEndpointContext));
+       assert(contextIsAfter(StagingDeploymentContext, StagingEndpointContext));
    });
 
    it("says deploy is after build", () => {
-       assert(contextIsAfter(BuildContext, CloudFoundryStagingDeploymentContext));
+       assert(contextIsAfter(BuildContext, StagingDeploymentContext));
    });
 
    it("says prod endpoint is after prod ", () => {

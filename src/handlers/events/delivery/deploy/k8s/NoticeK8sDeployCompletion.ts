@@ -29,7 +29,7 @@ import { K8AutomationDeployContext } from "./RequestDeployOnSuccessStatus";
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
         {context: K8AutomationDeployContext}))
-export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAParticularStatus.Subscription> {
+export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

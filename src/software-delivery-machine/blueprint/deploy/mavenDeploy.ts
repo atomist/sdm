@@ -19,7 +19,7 @@ import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment"
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/maven/executableJarDeployer";
 import { CloudFoundryInfo } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import {
-    CloudFoundryStagingDeploymentContext,
+    StagingDeploymentContext,
     ContextToPlannedPhase,
     HttpServicePhases,
     StagingEndpointContext,
@@ -33,7 +33,7 @@ import { artifactStore } from "../artifactStore";
 export const LocalMavenDeployOnImageLinked: DeployFromLocalOnSuccessStatus<TargetInfo> =
     new DeployFromLocalOnSuccessStatus<TargetInfo>(
         HttpServicePhases,
-        ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
+        ContextToPlannedPhase[StagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
         executableJarDeployer(),

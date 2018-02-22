@@ -39,6 +39,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public editors: Array<Maker<HandleCommand>> = [];
 
     public supportingCommands: Array<Maker<HandleCommand>> = [];
+    public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
 
     private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
 
@@ -170,6 +171,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
         this.supportingCommands = this.supportingCommands.concat(e);
+        return this;
+    }
+
+    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
+        this.supportingEvents = this.supportingEvents.concat(e);
         return this;
     }
 
