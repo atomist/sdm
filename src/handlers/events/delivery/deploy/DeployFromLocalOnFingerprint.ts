@@ -60,6 +60,7 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
         const statusAndFriends: GitHubStatusAndFriends = {
             context: BuildContext,
             state: "success", // builtStatus.state,
+            description: "This is sadly hardcoded",
             targetUrl: "xxx",
             siblings: fingerprint.commit.statuses,
         };

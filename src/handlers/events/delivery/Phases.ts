@@ -1,15 +1,15 @@
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {StatusState} from "../../../typings/types";
-import {createStatus, State} from "../../commands/editors/toclient/ghub";
+import { StatusState } from "../../../typings/types";
+import { createStatus, State } from "../../commands/editors/toclient/ghub";
 
-import {logger} from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import { ApprovalGateParam } from "../gates/StatusApprovalGate";
-import {contextIsAfter, GitHubStatusContext, splitContext} from "./phases/gitHubContext";
+import { contextIsAfter, GitHubStatusContext, splitContext } from "./phases/gitHubContext";
 
 export interface PlannedPhase {
     context: GitHubStatusContext;
@@ -18,7 +18,7 @@ export interface PlannedPhase {
 
 // exported for testing
 export function parseContext(context: GitHubStatusContext): PlannedPhase {
-    return { context, name: splitContext(context).name };
+    return {context, name: splitContext(context).name};
 }
 
 export class Phases {
@@ -98,22 +98,25 @@ function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
         description,
     });
 }
-
-export interface GitHubStatusAndFriends {
-
-    context: GitHubStatusContext;
-    state: StatusState;
-    targetUrl: string;
-    siblings: Array<{ context?: GitHubStatusContext, state?: StatusState }>;
-
+export interface GitHubStatus {
+    context?: GitHubStatusContext;
+    description?: string;
+    state?: StatusState;
+    targetUrl?: string;
+}
+export interface GitHubStatusAndFriends extends GitHubStatus{
+    siblings: Array<GitHubStatus>;
 }
 
 export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const result = status.siblings.some(s => s.state === "pending" && s.context === currentPhase);
+    const result = status.siblings.find(s => s.state === "pending" && s.context === currentPhase);
     if (!result) {
         console.log(`${currentPhase} wanted to run but it wasn't pending`);
     }
-    return result;
+    if (!result.description.startsWith("Planning")) {
+        console.log(`${currentPhase} is not still planned, so I'm not running it. Description: ${result.description}`)
+    }
+    return true;
 }
 
 export function nothingFailed(status: GitHubStatusAndFriends): boolean {

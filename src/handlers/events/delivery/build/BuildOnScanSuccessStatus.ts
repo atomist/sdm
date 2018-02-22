@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
-import { currentPhaseIsStillPending, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
 
 /**
@@ -43,10 +43,11 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
-        const statusAndFriends = {
+        const statusAndFriends : GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
             targetUrl: status.targetUrl,
+            description: status.description,
             siblings: status.commit.statuses,
         };
 

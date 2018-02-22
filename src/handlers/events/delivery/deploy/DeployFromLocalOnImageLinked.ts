@@ -82,24 +82,18 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         }, RetryDeployParameters, this.commandName);
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
 
         console.log("remove me");
 
-        const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
-            repo: commit.repo.name,
-            owner: commit.repo.owner,
-            sha: commit.sha,
-            targetUrl: image.imageName,
-        });
-
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
             targetUrl: status.targetUrl,
+            description: status.description,
             siblings: status.commit.statuses,
         };
 
@@ -121,6 +115,15 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
             return Promise.resolve(failure(new Error("No image linked")));
         }
+
+        logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+
+        const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
+            repo: commit.repo.name,
+            owner: commit.repo.owner,
+            sha: commit.sha,
+            targetUrl: image.imageName,
+        });
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         return deploy({

@@ -8,6 +8,7 @@ subscription OnAnySuccessStatus {
                 context
                 description
                 state
+                targetUrl
             }
             repo {
                 owner
@@ -24,6 +25,10 @@ subscription OnAnySuccessStatus {
             }
             pushes {
                 branch
+            }
+            image {
+                image
+                imageName
             }
         }
         state
