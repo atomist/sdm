@@ -29,6 +29,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
                          team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
         return GitCommandGitProject.cloned(creds, id)
             .then(p => {
+                console.log("Checked out project ok");
                 // Find the artifact info from Maven
                 return p.findFile("pom.xml")
                     .then(pom => pom.getContent()

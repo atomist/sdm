@@ -15,7 +15,7 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
 import { OnImageLinked } from "../typings/types";
-import { LocalMavenBuildOnSucessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
+import { LocalMavenBuildOnSuccessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
 import {
     CloudFoundryProductionDeployOnFingerprint,
     CloudFoundryStagingDeployOnImageLinked,
@@ -42,10 +42,10 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
 
-    public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSucessStatus;
+    public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSuccessStatus;
 
     public deploy1: Maker<HandleEvent<OnImageLinked.Subscription>> =
-        CloudFoundryStagingDeployOnImageLinked; // LocalMavenDeployer;
+        () => LocalMavenDeployer; //  CloudFoundryStagingDeployOnImageLinked; // () => LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
 
