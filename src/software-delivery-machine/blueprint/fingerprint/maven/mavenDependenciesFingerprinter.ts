@@ -1,13 +1,7 @@
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { extractEffectivePom } from "./effectivePomExtractor";
 import { computeShaOf } from "../../../../util/sha";
 
-// TODO must have one that can do multiple fingerprints in one go, for efficiency
-// Or add to context?
-
-export async function mavenDependenciesFingerprinter(p: GitProject): Promise<Fingerprint> {
-    const epom = await extractEffectivePom(p);
+export async function mavenDependenciesFingerprinter(epom: any): Promise<Fingerprint> {
     const dependencies: VersionedArtifact[] =
         epom.project.dependencies[0].dependency.map(toVersionedArtifact);
     const sorted = dependencies

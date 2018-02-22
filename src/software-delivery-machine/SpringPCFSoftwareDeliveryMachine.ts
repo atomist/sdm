@@ -25,13 +25,13 @@ import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServic
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
-import { mavenDependenciesFingerprinter } from "./blueprint/fingerprint/maven/mavenDependenciesFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -90,7 +90,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             //             return p.addFile("thing", "1");
             //         }
             //     })
-            .addFingerprinters(mavenDependenciesFingerprinter)
+            .addMultiFingerprinters(mavenFingerprinter)
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
             .addSupersededListeners(
