@@ -14,11 +14,11 @@ import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
 import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
 import EventEmitter = NodeJS.EventEmitter;
-import { HandlerResult, Success } from "@atomist/automation-client";
+import { HandlerResult, logger, Success } from "@atomist/automation-client";
 
 export interface LocalBuildInProgress {
 
-    readonly stream: EventEmitter;
+    readonly buildResult: Promise<{ error: boolean, code: number }>;
 
     readonly repoRef: RemoteRepoRef;
 
@@ -26,8 +26,6 @@ export interface LocalBuildInProgress {
 
     /** Available once build is complete */
     readonly appInfo: AppInfo;
-
-    readonly deploymentUnitStream: Readable;
 
     readonly deploymentUnitFile: string;
 
@@ -51,21 +49,25 @@ export abstract class LocalBuilder implements Builder {
         const as = this.artifactStore;
         const token = (creds as TokenCredentials).token;
         const log = await this.logFactory();
+        const logInterpreter = this.logInterpreter;
 
         const rb = await this.startBuild(creds, id, team, log);
-        const buildComplete: Promise<HandlerResult> = new Promise((resolve, reject) => {
-            rb.stream.addListener("exit", (code, signal) => onExit(
-                token,
-                code === 0, rb, team, as,
-                log,
-                addressChannels, this.logInterpreter)
-                .then(() => resolve(Success), reject))
-                .addListener("error", (code, signal) => onExit(
+        const buildComplete: Promise<HandlerResult> = rb.buildResult.then(br => {
+            if (!br.error) {
+                return onExit(
+                    token,
+                    br.code === 0, rb, team, as,
+                    log,
+                    addressChannels, logInterpreter)
+                    .then(() => Success)
+            } else {
+                return onExit(
                     token,
                     false, rb, team, as,
                     log,
-                    addressChannels, this.logInterpreter)
-                    .then(() => resolve({code: 1}), reject));
+                    addressChannels, logInterpreter)
+                    .then(() => ({code: 1}))
+            }
         });
         await onStarted(rb);
         return buildComplete;
