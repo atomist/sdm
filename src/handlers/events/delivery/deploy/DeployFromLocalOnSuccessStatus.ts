@@ -82,7 +82,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         }, RetryDeployParameters, this.commandName);
     }
 
-    public handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
@@ -126,17 +126,36 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         });
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return deploy({
-            deployPhase: params.ourPhase,
-            endpointPhase: params.endpointPhase,
-            id, githubToken: params.githubToken,
-            targetUrl: image.imageName,
-            artifactStore: this.artifactStore,
-            deployer: params.deployer,
-            targeter: params.targeter,
-            ac: addressChannelsFor(commit.repo, ctx),
-            team: ctx.teamId,
-            retryButton,
-        }).then(success);
+
+        await dedup(commit.sha, () =>
+            deploy({
+                deployPhase: params.ourPhase,
+                endpointPhase: params.endpointPhase,
+                id, githubToken: params.githubToken,
+                targetUrl: image.imageName,
+                artifactStore: this.artifactStore,
+                deployer: params.deployer,
+                targeter: params.targeter,
+                ac: addressChannelsFor(commit.repo, ctx),
+                team: ctx.teamId,
+                retryButton,
+            }));
+
+        return Success;
     }
+}
+
+const running = {};
+
+async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
+    if (running[key]) {
+        logger.warn("deploy was called twice for " + key);
+        return Promise.resolve();
+    }
+    running[key] = true;
+    const promise = f().then(t => {
+        running[key] = undefined;
+        return t;
+    });
+    return promise;
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnAnySuccessStatus } from "../../../../typings/types";
@@ -43,7 +43,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
-        const statusAndFriends : GitHubStatusAndFriends = {
+        const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
             targetUrl: status.targetUrl,
@@ -59,12 +59,31 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             return Promise.resolve(Success);
         }
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const creds = {token: params.githubToken};
+        logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
-        // the builder is expected to result in a complete Build event (which will update the build status)
-        // and an ImageLinked event (which will update the artifact status).
-        await params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
+        await dedup(commit.sha, () => {
+            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+            const creds = {token: params.githubToken};
+
+            // the builder is expected to result in a complete Build event (which will update the build status)
+            // and an ImageLinked event (which will update the artifact status).
+            return params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
+        });
         return Success;
     }
+}
+
+const running = {};
+
+async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
+    if (running[key]) {
+        logger.warn("This op was called twice for " + key);
+        return Promise.resolve();
+    }
+    running[key] = true;
+    const promise = f().then(t => {
+        running[key] = undefined;
+        return t;
+    });
+    return promise;
 }
