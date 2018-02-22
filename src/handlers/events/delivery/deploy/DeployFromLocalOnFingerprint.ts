@@ -11,7 +11,7 @@ import {
     HandlerResult,
     logger,
     Secret,
-    Secrets,
+    Secrets, success,
     Success,
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
@@ -80,6 +80,6 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
             params.artifactStore,
             params.deployer,
             params.targeter,
-            addressChannelsFor(commit.repo, ctx));
+            addressChannelsFor(commit.repo, ctx)).then(success);
     }
 }
