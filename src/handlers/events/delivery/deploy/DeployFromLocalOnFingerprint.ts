@@ -26,7 +26,7 @@ import {
     PlannedPhase,
     previousPhaseSucceeded,
 } from "../Phases";
-import { BuiltContext } from "../phases/gitHubContext";
+import { BuildContext } from "../phases/gitHubContext";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
@@ -52,14 +52,15 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
         const commit = fingerprint.commit;
 
         // TODO doesn't work as built status isn't in, yet
-        // const builtStatus = commit.statuses.find(status => status.context === BuiltContext);
+        // const builtStatus = commit.statuses.find(status => status.context === BuildContext);
         // if (!builtStatus) {
         //     console.log(`Deploy: builtStatus not found`);
         //     return Promise.resolve(Success);
         // }
         const statusAndFriends: GitHubStatusAndFriends = {
-            context: BuiltContext,
+            context: BuildContext,
             state: "success", // builtStatus.state,
+            description: "This is sadly hardcoded",
             targetUrl: "xxx",
             siblings: fingerprint.commit.statuses,
         };

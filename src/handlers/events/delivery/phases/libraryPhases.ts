@@ -1,7 +1,7 @@
 import { Phases } from "../Phases";
-import { BuiltContext, ScanContext } from "./gitHubContext";
+import { BuildContext, ScanContext } from "./gitHubContext";
 
 export const LibraryPhases = new Phases([
     ScanContext,
-    BuiltContext,
+    BuildContext,
 ]);

@@ -1,19 +1,20 @@
 import { Phases, PlannedPhase } from "../Phases";
-import { BaseContext, BuiltContext, ScanContext, StagingEnvironment } from "./gitHubContext";
+import { ArtifactContext, BaseContext, BuildContext, ScanContext, StagingEnvironment } from "./gitHubContext";
 
-export const CloudFoundryStagingDeploymentContext = BaseContext + StagingEnvironment + "3-PCF deploy";
+export const StagingDeploymentContext = BaseContext + StagingEnvironment + "3-deploy";
 export const StagingEndpointContext = BaseContext + StagingEnvironment + "4-endpoint";
 export const StagingVerifiedContext = BaseContext + StagingEnvironment + "5-verifyEndpoint";
 
 export const ContextToPlannedPhase: { [key: string]: PlannedPhase } = {};
 ContextToPlannedPhase[ScanContext] = {context: ScanContext, name: "scan"};
-ContextToPlannedPhase[BuiltContext] = {context: BuiltContext, name: "build"};
-ContextToPlannedPhase[CloudFoundryStagingDeploymentContext] = {
-    context: CloudFoundryStagingDeploymentContext,
-    name: "deploy to staging",
+ContextToPlannedPhase[BuildContext] = {context: BuildContext, name: "build"};
+ContextToPlannedPhase[ArtifactContext] = {context: ArtifactContext, name: "find artifact"};
+ContextToPlannedPhase[StagingDeploymentContext] = {
+    context: StagingDeploymentContext,
+    name: "deploy to Test space",
 };
-ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in staging"};
-ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in staging"};
+ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in Test"};
+ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in Test"};
 
 /**
  * Phases for an Http service
@@ -21,7 +22,8 @@ ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext
  */
 export const HttpServicePhases = new Phases([
     ScanContext,
-    BuiltContext,
-    CloudFoundryStagingDeploymentContext,
+    BuildContext,
+    ArtifactContext,
+    StagingDeploymentContext,
     StagingEndpointContext,
     StagingVerifiedContext]);

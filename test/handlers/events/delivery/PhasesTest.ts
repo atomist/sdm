@@ -1,7 +1,7 @@
 import "mocha";
 import * as assert from "power-assert";
-import {BaseContext, BuiltContext, contextIsAfter, ScanContext, splitContext} from "../../../../src/handlers/events/delivery/phases/gitHubContext";
-import {CloudFoundryStagingDeploymentContext, StagingEndpointContext} from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
+import {BaseContext, BuildContext, contextIsAfter, ScanContext, splitContext} from "../../../../src/handlers/events/delivery/phases/gitHubContext";
+import {StagingDeploymentContext, StagingEndpointContext} from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
 import {ProductionDeploymentContext, ProductionEndpointContext} from "../../../../src/handlers/events/delivery/phases/productionDeployPhases";
 
 describe("Phase handling", () => {
@@ -16,14 +16,14 @@ describe("Phase handling", () => {
    });
 
    it("says endpoint is after deploy", () => {
-       assert(contextIsAfter(CloudFoundryStagingDeploymentContext, StagingEndpointContext));
+       assert(contextIsAfter(StagingDeploymentContext, StagingEndpointContext));
    });
 
    it("says deploy is after build", () => {
-       assert(contextIsAfter(BuiltContext, CloudFoundryStagingDeploymentContext));
+       assert(contextIsAfter(BuildContext, StagingDeploymentContext));
    });
 
-    it("says prod endpoint is after prod ", () => {
+   it("says prod endpoint is after prod ", () => {
         assert(contextIsAfter(ProductionDeploymentContext, ProductionEndpointContext));
     });
 

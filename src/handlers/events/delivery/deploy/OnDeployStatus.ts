@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus } from "../../../../typings/types";
 import Status = OnSuccessStatus.Status;
 import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
-import { CloudFoundryStagingDeploymentContext } from "../phases/httpServicePhases";
+import { StagingDeploymentContext } from "../phases/httpServicePhases";
 
 /**
  * React to a successful deployment
@@ -36,7 +36,7 @@ export type DeployListener = (id: GitHubRepoRef,
 @EventHandler("React to a successful deployment",
     GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql",
         undefined, {
-            context: CloudFoundryStagingDeploymentContext,
+            context: StagingDeploymentContext,
         }))
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
@@ -54,7 +54,7 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== CloudFoundryStagingDeploymentContext) {
+        if (status.context !== StagingDeploymentContext) {
             console.log(`********* OnDeploy got called with status context=[${status.context}]`);
             return Promise.resolve(Success);
         }

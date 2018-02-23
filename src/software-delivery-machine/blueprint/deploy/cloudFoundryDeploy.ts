@@ -15,14 +15,14 @@
  */
 
 import { DeployFromLocalOnFingerprint } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
-import { DeployFromLocalOnImageLinked } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnImageLinked";
+import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
 } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
-    CloudFoundryStagingDeploymentContext,
+    StagingDeploymentContext,
     ContextToPlannedPhase,
     HttpServicePhases,
     StagingEndpointContext,
@@ -40,10 +40,10 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  * Deploy everything to the same Cloud Foundry space
  * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
-export const CloudFoundryStagingDeployOnImageLinked = () =>
-    new DeployFromLocalOnImageLinked(
+export const CloudFoundryStagingDeployOnSuccessStatus = () =>
+    new DeployFromLocalOnSuccessStatus(
         HttpServicePhases,
-        ContextToPlannedPhase[CloudFoundryStagingDeploymentContext],
+        ContextToPlannedPhase[StagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
         Deployer,

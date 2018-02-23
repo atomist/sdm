@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
-import { currentPhaseIsStillPending, previousPhaseSucceeded } from "../Phases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../Phases";
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
@@ -60,8 +60,9 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        const statusAndFriends = {
+        const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
+            description: status.description,
             state: status.state,
             targetUrl: status.targetUrl,
             siblings: status.commit.statuses,

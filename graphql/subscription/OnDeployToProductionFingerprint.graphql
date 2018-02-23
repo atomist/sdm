@@ -20,6 +20,7 @@ subscription OnDeployToProductionFingerprint {
                 context
                 description
                 state
+                targetUrl
             }
             repo {
                 owner

@@ -10,7 +10,7 @@ import { OnSuperseded, SupersededListener } from "../handlers/events/delivery/ph
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { BuiltContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
 import {
     CodeReaction,
     WithCodeOnPendingScanStatus,
@@ -25,7 +25,7 @@ import {
     ReactToSemanticDiffsOnPushImpact,
 } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { OnImageLinked } from "../typings/types";
+import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
@@ -39,6 +39,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public editors: Array<Maker<HandleCommand>> = [];
 
     public supportingCommands: Array<Maker<HandleCommand>> = [];
+    public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
 
     private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
 
@@ -105,7 +106,9 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract builder: Maker<StatusSuccessHandler>;
 
-    public abstract deploy1: Maker<HandleEvent<OnImageLinked.Subscription> & EventWithCommand>;
+    public artifactFinder: Maker<HandleEvent<OnImageLinked.Subscription>>;
+
+    public abstract deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>;
 
     public get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -120,7 +123,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public abstract promotedEnvironment?: PromotedEnvironment;
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuiltContext)
+        () => new SetStatusOnBuildComplete(BuildContext)
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
@@ -140,6 +143,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
                 this.notifyOnDeploy,
                 this.verifyEndpoint,
                 this.onVerifiedStatus,
+                this.artifactFinder,
             ]).filter(m => !!m);
     }
 
@@ -167,6 +171,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
         this.supportingCommands = this.supportingCommands.concat(e);
+        return this;
+    }
+
+    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
+        this.supportingEvents = this.supportingEvents.concat(e);
         return this;
     }
 

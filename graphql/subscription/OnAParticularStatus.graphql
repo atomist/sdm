@@ -1,6 +1,6 @@
 
-subscription OnAnySuccessStatus {
-    Status(state: success) {
+subscription OnAParticularStatus($context: String!)  {
+    Status(context: $context) {
         commit {
             sha
             message

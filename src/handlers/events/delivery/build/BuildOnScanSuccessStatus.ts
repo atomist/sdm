@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
-import { currentPhaseIsStillPending, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
 
 /**
@@ -43,10 +43,11 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
 
-        const statusAndFriends = {
+        const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
             targetUrl: status.targetUrl,
+            description: status.description,
             siblings: status.commit.statuses,
         };
 
@@ -58,11 +59,30 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             return Promise.resolve(Success);
         }
 
-        logger.info(`Running build, triggered by ${status.state} on ${status.context}: ${status.description}`)
+        logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+        await dedup(commit.sha, () => {
+            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+            const creds = {token: params.githubToken};
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const creds = {token: params.githubToken};
-
-        return params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
+            // the builder is expected to result in a complete Build event (which will update the build status)
+            // and an ImageLinked event (which will update the artifact status).
+            return params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
+        });
+        return Success;
     }
+}
+
+const running = {};
+
+async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
+    if (running[key]) {
+        logger.warn("This op was called twice for " + key);
+        return Promise.resolve();
+    }
+    running[key] = true;
+    const promise = f().then(t => {
+        running[key] = undefined;
+        return t;
+    });
+    return promise;
 }

@@ -15,10 +15,10 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { addressSlackChannels, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
+import {tipOfDefaultBranch} from "../../../handlers/commands/editors/toclient/ghub";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import { OnVerifiedStatus, StatusInfo } from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
-import {tipOfDefaultBranch} from "../../../handlers/commands/editors/toclient/ghub";
 
 /**
  * Display a button suggesting promotion to production

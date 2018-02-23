@@ -4,9 +4,10 @@ import { createLinkableProgressLog } from "../../../handlers/events/delivery/log
 import { BuildContext } from "../../../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";
+import { K8sAutomationBuilder } from "../../../handlers/events/delivery/build/k8s/K8AutomationBuilder";
 
-export const LocalMavenBuildOnSuccessStatus = () =>
+export const K8sBuildOnSuccessStatus = () =>
     new BuildOnScanSuccessStatus(
         HttpServicePhases,
         BuildContext,
-        new MavenBuilder(artifactStore, createLinkableProgressLog));
+        new K8sAutomationBuilder());

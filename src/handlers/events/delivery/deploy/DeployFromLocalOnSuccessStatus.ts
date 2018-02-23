@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandleCommand, HandlerResult, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { OnImageLinked } from "../../../../typings/types";
+import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { ArtifactStore } from "../ArtifactStore";
-import {
-    currentPhaseIsStillPending,
-    GitHubStatusAndFriends,
-    Phases,
-    PlannedPhase,
-    previousPhaseSucceeded,
-} from "../Phases";
-import { BuiltContext } from "../phases/gitHubContext";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../Phases";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
@@ -40,8 +33,8 @@ import { TargetInfo } from "./Deployment";
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
-export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements HandleEvent<OnImageLinked.Subscription>, EventWithCommand {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
+export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -89,30 +82,23 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
         }, RetryDeployParameters, this.commandName);
     }
 
-    public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-        const imageLinked = event.data.ImageLinked[0];
-        const commit = imageLinked.commit;
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+        const status = event.data.Status[0];
+        const commit = status.commit;
+        const image = status.commit.image;
 
-        const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
-            repo: commit.repo.name,
-            owner: commit.repo.owner,
-            sha: commit.sha,
-            targetUrl: imageLinked.image.imageName,
-        });
+        console.log("remove me");
 
-        // TODO doesn't work as built status isn't in, yet
-        // const builtStatus = commit.statuses.find(status => status.context === BuiltContext);
-        // if (!builtStatus) {
-        //     console.log(`Deploy: builtStatus not found`);
-        //     return Promise.resolve(Success);
-        // }
         const statusAndFriends: GitHubStatusAndFriends = {
-            context: BuiltContext,
-            state: "success", // builtStatus.state,
-            targetUrl: "xxx",
-            siblings: imageLinked.commit.statuses,
+            context: status.context,
+            state: status.state,
+            targetUrl: status.targetUrl,
+            description: status.description,
+            siblings: status.commit.statuses,
         };
 
+        // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
+        // (this is related to the next TODO)
         if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
@@ -121,17 +107,53 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
             return Promise.resolve(Success);
         }
 
+        // TODO: if any status is failed, do not deploy
+
+        if (!image) {
+            logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
+            return Promise.resolve(failure(new Error("No image linked")));
+        }
+
+        logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+
+        const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
+            repo: commit.repo.name,
+            owner: commit.repo.owner,
+            sha: commit.sha,
+            targetUrl: image.imageName,
+        });
+
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return deploy({
-            deployPhase: params.ourPhase, endpointPhase: params.endpointPhase,
-            id, githubToken: params.githubToken,
-            targetUrl: imageLinked.image.imageName,
-            artifactStore: this.artifactStore,
-            deployer: params.deployer,
-            targeter: params.targeter,
-            ac: addressChannelsFor(commit.repo, ctx),
-            team: ctx.teamId,
-            retryButton,
-        }).then(success);
+
+        await dedup(commit.sha, () =>
+            deploy({
+                deployPhase: params.ourPhase,
+                endpointPhase: params.endpointPhase,
+                id, githubToken: params.githubToken,
+                targetUrl: image.imageName,
+                artifactStore: this.artifactStore,
+                deployer: params.deployer,
+                targeter: params.targeter,
+                ac: addressChannelsFor(commit.repo, ctx),
+                team: ctx.teamId,
+                retryButton,
+            }));
+
+        return Success;
     }
+}
+
+const running = {};
+
+async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
+    if (running[key]) {
+        logger.warn("deploy was called twice for " + key);
+        return Promise.resolve();
+    }
+    running[key] = true;
+    const promise = f().then(t => {
+        running[key] = undefined;
+        return t;
+    });
+    return promise;
 }
