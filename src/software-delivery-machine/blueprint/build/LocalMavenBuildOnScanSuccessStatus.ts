@@ -5,7 +5,7 @@ import { BuiltContext } from "../../../handlers/events/delivery/phases/gitHubCon
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";
 
-export const LocalMavenBuildOnSucessStatus = () =>
+export const LocalMavenBuildOnSuccessStatus = () =>
     new BuildOnScanSuccessStatus(
         HttpServicePhases,
         BuiltContext,

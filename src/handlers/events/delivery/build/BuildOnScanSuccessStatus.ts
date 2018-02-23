@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnAnySuccessStatus } from "../../../../typings/types";
@@ -58,10 +58,11 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             return Promise.resolve(Success);
         }
 
+        logger.info(`Running build, triggered by ${status.state} on ${status.context}: ${status.description}`)
+
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const creds = {token: params.githubToken};
 
-        await params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
-        return Success;
+        return params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
     }
 }
