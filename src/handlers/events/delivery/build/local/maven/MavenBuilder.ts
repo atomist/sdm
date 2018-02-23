@@ -24,35 +24,36 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         super(artifactStore, logFactory);
     }
 
-    protected startBuild(creds: ProjectOperationCredentials,
-                         id: RemoteRepoRef,
-                         team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
-        return GitCommandGitProject.cloned(creds, id)
-            .then(p => {
-                // Find the artifact info from Maven
-                return p.findFile("pom.xml")
-                    .then(pom => pom.getContent()
-                        .then(content => identification(content)))
-                    .then(va => ({...va, name: va.artifact, id}))
-                    .then(appId => {
-                        const childProcess = spawn("mvn", [
-                            "package",
-                            "-DskipTests",
-                        ], {
-                            cwd: p.baseDir,
-                        });
-                        const rb = new UpdatingBuild(id, childProcess, team, log.url);
-                        childProcess.stdout.on("data", data => {
-                            log.write(data.toString());
-                        });
-                        childProcess.addListener("exit", (code, signal) => {
-                            rb.ai = appId;
-                            // rb._deploymentUnitStream = fs.createReadStream(`${p.baseDir}/target/losgatos1-0.1.0-SNAPSHOT.jar`);
-                            rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
-                        });
-                        return rb;
-                    });
+    protected async startBuild(creds: ProjectOperationCredentials,
+                               id: RemoteRepoRef,
+                               team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
+        const p = await GitCommandGitProject.cloned(creds, id)
+        // Find the artifact info from Maven
+        const pom = await p.findFile("pom.xml")
+        const content = await pom.getContent()
+        const va = await identification(content)
+        const appId = {...va, name: va.artifact, id};
+        const childProcess = spawn("mvn", [
+            "package",
+            "-DskipTests",
+        ], {
+            cwd: p.baseDir,
+        });
+        const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
+            childProcess.stdout.on("data", data => {
+                log.write(data.toString());
             });
+            childProcess.addListener("exit", (code, signal) => {
+                resolve({error: false, code});
+            });
+            childProcess.addListener("error", (code, signal) => {
+                resolve({error: true, code});
+            });
+        });
+        const rb = new UpdatingBuild(id, buildResult, team, log.url);
+        rb.ai = appId;
+        rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
+        return rb;
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
@@ -71,14 +72,12 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 class UpdatingBuild implements LocalBuildInProgress {
 
     constructor(public repoRef: RemoteRepoRef,
-                public stream: ChildProcess,
+                public buildResult: Promise<{error: boolean, code: number}>,
                 public team: string,
                 public url: string) {
     }
 
     public ai: AppInfo;
-
-    public deploymentUnitStream: Readable;
 
     public deploymentUnitFile: string;
 

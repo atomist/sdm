@@ -126,8 +126,12 @@ export function nothingFailed(status: GitHubStatusAndFriends): boolean {
 }
 
 export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    if (status.state !== "success" || status.targetUrl.endsWith(ApprovalGateParam)) {
+    if (status.state !== "success" ) {
         logger.info(`********* Previous state ${status.context} wasn't success, but [${status.state}]`);
+        return false;
+    }
+    if(status.targetUrl.endsWith(ApprovalGateParam)) {
+        logger.info(`Approval gate detected in ${status.context}`)
         return false;
     }
 

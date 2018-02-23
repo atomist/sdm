@@ -60,7 +60,6 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         }
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
         await dedup(commit.sha, () => {
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
             const creds = {token: params.githubToken};
