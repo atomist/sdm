@@ -6,6 +6,7 @@ import { InterpretedLog } from "../../../log/InterpretedLog";
 import { QueryableProgressLog } from "../../../log/ProgressLog";
 import { Deployer } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 /**
  * Ports will be reused for the same app
@@ -59,7 +60,9 @@ class ExecutableJarDeployer implements Deployer {
 
     public async deploy(da: DeployableArtifact,
                         ti: TargetInfo,
-                        log: QueryableProgressLog, team: string): Promise<Deployment> {
+                        log: QueryableProgressLog,
+                        creds: ProjectOperationCredentials,
+                        team: string): Promise<Deployment> {
         const baseUrl = this.baseUrl;
         const port = findPort(da.id);
         logger.info("Deploying app [%j] at port [%d] for team %s", da, port, team);
@@ -67,8 +70,8 @@ class ExecutableJarDeployer implements Deployer {
             [
                 "-jar",
                 da.filename,
-                `-Dserver.port=${port}`,
-                `-DATOMIST_TEAM=${team}`,
+                `--server.port=${port}`,
+                `--ATOMIST_TEAM=${team}`,
             ],
             {
                 cwd: da.cwd,
