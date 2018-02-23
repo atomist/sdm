@@ -20,9 +20,6 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                         cfi: CloudFoundryInfo,
                         log: QueryableProgressLog,
                         creds: ProjectOperationCredentials): Promise<Deployment> {
-        if (!da) {
-            throw new Error("no DeployableArtifact passed in");
-        }
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy

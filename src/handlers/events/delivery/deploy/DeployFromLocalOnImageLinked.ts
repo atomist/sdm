@@ -81,6 +81,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
                 deployer: this.deployer,
                 targeter: this.targeter,
                 ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
+                team: ctx.teamId,
                 retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
                     ...commandParams,
                 }),
@@ -129,6 +130,7 @@ export class DeployFromLocalOnImageLinked<T extends TargetInfo> implements Handl
             deployer: params.deployer,
             targeter: params.targeter,
             ac: addressChannelsFor(commit.repo, ctx),
+            team: ctx.teamId,
             retryButton,
         }).then(success);
     }

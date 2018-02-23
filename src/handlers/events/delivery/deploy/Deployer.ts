@@ -17,6 +17,7 @@ export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpre
     deploy(da: DeployableArtifact,
            ti: T,
            log: QueryableProgressLog,
-           creds: ProjectOperationCredentials): Promise<Deployment>;
+           creds: ProjectOperationCredentials,
+           team: string): Promise<Deployment>;
 
 }
