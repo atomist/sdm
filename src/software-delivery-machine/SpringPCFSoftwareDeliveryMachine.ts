@@ -12,6 +12,7 @@ import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyl
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
+import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm-support/AbstractSoftwareDeliveryMachine";
@@ -32,11 +33,10 @@ import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
-import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 import {
-    tryToUpgradeSpringBootVersion
+    tryToUpgradeSpringBootVersion,
 } from "./commands/editors/tryToUpgradeSpringBootVersion";
-import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
+import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 

@@ -1,13 +1,13 @@
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { Project } from "@atomist/automation-client/project/Project";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { createStatus, Status } from "./ghub";
+import { logger } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { logger } from "@atomist/automation-client";
+import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Project } from "@atomist/automation-client/project/Project";
+import { createStatus, Status } from "./ghub";
 
 /**
  * Create a new branch, setting the necessary status
