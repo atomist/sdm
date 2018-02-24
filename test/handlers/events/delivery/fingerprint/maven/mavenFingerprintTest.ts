@@ -1,17 +1,17 @@
 import "mocha";
-import { mavenDependenciesFingerprinter } from "../../../../../../src/software-delivery-machine/blueprint/fingerprint/maven/mavenDependenciesFingerprinter";
+import { dependenciesFingerprintsFromParsedPom } from "../../../../../../src/software-delivery-machine/blueprint/fingerprint/maven/dependenciesFingerprintsFromParsedPom";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { mavenFingerprinter } from "../../../../../../src/software-delivery-machine/blueprint/fingerprint/maven/mavenFingerprinter";
 
-describe("mavenDependenciesFingerprinter", () => {
+describe("dependenciesFingerprintsFromParsedPom", () => {
 
-    it("should find some dependencies", async done => {
+    it("should find some dependencies", async () => {
         const Seed = await GitCommandGitProject.cloned({token: null}, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
-        const fp = await mavenDependenciesFingerprinter(Seed);
+        const fp = await mavenFingerprinter(Seed);
         console.log(JSON.stringify(fp));
         //assert(fp.data === "");
-        done();
-    });
+    }).timeout(5000);
 
 });
 
