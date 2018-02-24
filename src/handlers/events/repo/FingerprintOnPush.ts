@@ -33,13 +33,7 @@ import { sendFingerprint } from "../../commands/editors/toclient/fingerprints";
 
 import * as _ from "lodash";
 
-export type Fingerprinter = (p: GitProject) => Promise<Fingerprint>;
-
-/**
- * Use if a number of fingerprints need the same expensive-to-compute
- * resource
- */
-export type MultiFingerprinter = (p: GitProject) => Promise<Fingerprint[]>;
+export type Fingerprinter = (p: GitProject) => Promise<Fingerprint> | Promise<Fingerprint[]>;
 
 /**
  * Fingerprint on any push
@@ -52,19 +46,25 @@ export class FingerprintOnPush
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private fingerprinters: Fingerprinter[],
-                private multiFingerprinters: MultiFingerprinter[]) {
+    constructor(private fingerprinters: Fingerprinter[]) {
     }
 
     public async handle(event: EventFired<schema.OnAnyPush.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const push = event.data.Push[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, push.after.sha);
         const project = await GitCommandGitProject.cloned({ token: params.githubToken}, id);
-        const fingerprints: Fingerprint[] = await Promise.all(params.fingerprinters.map(fp => fp(project)));
-        const fingerprintss: Promise<Fingerprint[][]> = Promise.all(params.multiFingerprinters.map(fp => fp(project)));
-        const multiFingerprints: Fingerprint[] = await fingerprintss.then(x => _.flatten(x));
-        const allFingerprints = fingerprints.concat(multiFingerprints);
-        await allFingerprints.map(fingerprint => sendFingerprint(id, fingerprint, ctx.teamId));
+        const fingerprints: Fingerprint[] = await Promise.all(
+            params.fingerprinters.map(async fp => {
+                const f = await fp(project);
+                return isFingerprint(f) ? [f] : f;
+            }),
+        ).then(x2 => _.flatten(x2));
+        await fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, ctx.teamId));
         return Success;
     }
+}
+
+function isFingerprint(a: any): a is Fingerprint {
+    const fq = a as Fingerprint;
+    return !!fq.sha && !!fq.version;
 }

@@ -92,7 +92,7 @@ export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         //             return p.addFile("thing", "1");
         //         }
         //     })
-            .addMultiFingerprinters(mavenFingerprinter)
+            .addFingerprinters(mavenFingerprinter)
            // .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
             .addSupersededListeners(

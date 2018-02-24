@@ -18,7 +18,7 @@ import {
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
-import { Fingerprinter, FingerprintOnPush, MultiFingerprinter } from "../handlers/events/repo/FingerprintOnPush";
+import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { NewRepoWithCodeAction, OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import {
     FingerprintDifferenceHandler,
@@ -51,8 +51,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     private fingerprinters: Fingerprinter[] = [];
 
-    private multiFingerprinters: MultiFingerprinter[] = [];
-
     private supersededListeners: SupersededListener[] = [];
 
     private fingerprintDifferenceHandlers: FingerprintDifferenceHandler[] = [];
@@ -71,8 +69,8 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     }
 
     public get fingerprinter(): Maker<FingerprintOnPush> {
-        return this.fingerprinters.length + this.multiFingerprinters.length > 0 ?
-            () => new FingerprintOnPush(this.fingerprinters, this.multiFingerprinters) :
+        return this.fingerprinters.length > 0 ?
+            () => new FingerprintOnPush(this.fingerprinters) :
             undefined;
     }
 
@@ -206,11 +204,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addFingerprinters(...f: Fingerprinter[]): this {
         this.fingerprinters = this.fingerprinters.concat(f);
-        return this;
-    }
-
-    public addMultiFingerprinters(...f: MultiFingerprinter[]): this {
-        this.multiFingerprinters = this.multiFingerprinters.concat(f);
         return this;
     }
 
