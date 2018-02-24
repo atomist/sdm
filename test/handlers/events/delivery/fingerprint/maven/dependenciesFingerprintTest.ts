@@ -1,7 +1,7 @@
 import "mocha";
+// tslint:disable-next-line:max-line-length
 import { mavenDependenciesFingerprinter } from "../../../../../../src/software-delivery-machine/blueprint/fingerprint/maven/mavenDependenciesFingerprinter";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-// tslint:disable-next-line:max-line-length
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 describe("mavenDependenciesFingerprinter", () => {
