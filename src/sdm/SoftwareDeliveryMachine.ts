@@ -2,12 +2,13 @@ import { HandleCommand } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { NewRepoReactor } from "./NewRepoReactor";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
+import { IssueHandling } from "./IssueHandling";
 
 /**
  * Represents a software delivery machine, which extends delivery blueprint
  * to include project creation etc.
  */
-export interface SoftwareDeliveryMachine extends NewRepoReactor, ReferenceDeliveryBlueprint {
+export interface SoftwareDeliveryMachine extends NewRepoReactor, ReferenceDeliveryBlueprint, IssueHandling {
 
     generators: Array<Maker<HandleCommand>>;
 

@@ -28,6 +28,7 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
 
 /**
  * Superclass for user software delivery machines
@@ -39,7 +40,10 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public editors: Array<Maker<HandleCommand>> = [];
 
     public supportingCommands: Array<Maker<HandleCommand>> = [];
+
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
+
+    public newIssueListeners: NewIssueListener[] = [];
 
     private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
 
@@ -126,6 +130,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat([
+                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.fingerprinter,
@@ -164,6 +169,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addEditors(...e: Array<Maker<HandleCommand>>): this {
         this.editors = this.editors.concat(e);
+        return this;
+    }
+
+    public addNewIssueListeners(...e: NewIssueListener[]): this {
+        this.newIssueListeners = this.newIssueListeners.concat(e);
         return this;
     }
 

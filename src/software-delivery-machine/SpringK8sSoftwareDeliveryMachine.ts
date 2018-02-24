@@ -36,6 +36,7 @@ const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
 // CloudFoundryStagingDeployOnImageLinked
 
+// TODO capture commonality with Spring PCF machine. Not much is unique to deployment.
 export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     protected scanContext = ScanContext;

@@ -1,4 +1,4 @@
-import { HandleEvent, logger } from "@atomist/automation-client";
+import { HandleEvent, logger, Success } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
@@ -72,6 +72,16 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     constructor(opts: { useCheckstyle: boolean }) {
         super();
+
+        this.addNewIssueListeners(async (issue, id, ac, ctx) => {
+            if (!issue.body || issue.body.length < 10) {
+                await ctx.messageClient.addressUsers(
+                    `Please add a description for new issue ${issue.number}: _${issue.title}_: ${id.url}/issues/${issue.number}`,
+                    issue.openedBy.person.chatId.screenName);
+            }
+            return Success;
+        });
+
         this.addGenerators(() => springBootGenerator())
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
@@ -87,15 +97,15 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             }
         }
         this.addCodeReactions(logReactor)
-            // .addAutoEditors(
-            //     async p => {
-            //         try {
-            //             await p.findFile("thing");
-            //             return p;
-            //         } catch {
-            //             return p.addFile("thing", "1");
-            //         }
-            //     })
+        // .addAutoEditors(
+        //     async p => {
+        //         try {
+        //             await p.findFile("thing");
+        //             return p;
+        //         } catch {
+        //             return p.addFile("thing", "1");
+        //         }
+        //     })
             .addFingerprinters(mavenFingerprinter)
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
