@@ -33,6 +33,9 @@ import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddin
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import {
+    tryToUpgradeSpringBootVersion
+} from "./commands/editors/tryToUpgradeSpringBootVersion";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -73,6 +76,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
         super();
 
         this.addNewIssueListeners(requestDescription);
+
+        this.addEditors(() => tryToUpgradeSpringBootVersion);
 
         this.addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
