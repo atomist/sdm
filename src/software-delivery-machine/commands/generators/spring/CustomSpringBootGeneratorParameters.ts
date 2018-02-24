@@ -1,7 +1,9 @@
 import { Parameter } from "@atomist/automation-client";
 import { SpringBootGeneratorParameters } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
+import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
 
 /**
+ * Custom parameters for Spring Boot.
  * Customize spring-automations default parameters to default our group
  * and choose our seed
  */
@@ -20,7 +22,7 @@ export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorPara
         required: false,
         order: 50,
     })
-    public groupId: string = "mycom";
+    public groupId: string;
 
     @Parameter({
         displayName: "Class Name",
@@ -45,9 +47,11 @@ export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorPara
     })
     public seed: string = "spring-rest-seed";
 
-    constructor() {
+    constructor(params: JavaGeneratorConfig) {
         super();
-        this.source.owner = "spring-team";
+        this.groupId = params.groupId;
+        this.source.owner = params.seedOwner;
+        this.seed = params.seedRepo;
     }
 
     public bindAndValidate() {

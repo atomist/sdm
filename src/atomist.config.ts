@@ -1,7 +1,7 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { MachineAssembler } from "./sdm/MachineAssembler";
+import { MachineAssembler } from "./sdm-support/MachineAssembler";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/phaseManagement";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";

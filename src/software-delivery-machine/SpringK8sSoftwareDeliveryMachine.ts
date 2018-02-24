@@ -13,8 +13,8 @@ import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedS
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
-import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
+import { AbstractSoftwareDeliveryMachine } from "../sdm-support/AbstractSoftwareDeliveryMachine";
+import { PromotedEnvironment } from "../sdm-support/ReferenceDeliveryBlueprint";
 import { OnAnySuccessStatus } from "../typings/types";
 import { CloudFoundryProductionDeployOnFingerprint, } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
@@ -71,7 +71,11 @@ export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     constructor() {
         super();
-        this.addGenerators(() => springBootGenerator())
+        this.addGenerators(() => springBootGenerator({
+            seedOwner: "spring-team",
+            seedRepo: "spring-rest-seed",
+            groupId: "myco",
+        }))
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
                 suggestAddingCloudFoundryManifest)

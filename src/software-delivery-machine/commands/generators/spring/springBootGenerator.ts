@@ -7,11 +7,19 @@ import { GitHubProjectPersister } from "@atomist/automation-client/operations/ge
 import { springBootProjectEditor } from "@atomist/spring-automation/commands/generator/spring/springBootGenerator";
 import { SpringBootGeneratorParameters } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
 import { CustomSpringBootGeneratorParameters } from "./CustomSpringBootGeneratorParameters";
+import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
 
-export function springBootGenerator(projectPersister: ProjectPersister = GitHubProjectPersister): HandleCommand<SpringBootGeneratorParameters> {
+/**
+ * Spring Boot generator. Relies on generic Atomist Java & Spring functionality in spring-automations
+ * @param config config for a Java generator, including location of seed
+ * @param {ProjectPersister} projectPersister
+ * @return {HandleCommand<SpringBootGeneratorParameters>}
+ */
+export function springBootGenerator(config: JavaGeneratorConfig,
+                                    projectPersister: ProjectPersister = GitHubProjectPersister): HandleCommand<SpringBootGeneratorParameters> {
     return generatorHandler<CustomSpringBootGeneratorParameters>(
         params => chainEditors(springBootProjectEditor(params), editor(params)),
-        CustomSpringBootGeneratorParameters,
+        () => new CustomSpringBootGeneratorParameters(config),
         "customSpringBootGenerator",
         {
             intent: "create spring",
@@ -22,6 +30,8 @@ export function springBootGenerator(projectPersister: ProjectPersister = GitHubP
 
 export const editor: (params: CustomSpringBootGeneratorParameters) => AnyProjectEditor =
     params => p => {
-        console.log("CUSTOM EDIT!");
+        /**
+         * Add any custom editor code here
+         */
         return Promise.resolve(p);
     };
