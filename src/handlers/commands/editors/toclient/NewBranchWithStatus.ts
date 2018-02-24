@@ -14,8 +14,6 @@ import { logger } from "@atomist/automation-client";
  */
 export class NewBranchWithStatus implements BranchCommit {
 
-    private sha: string;
-
     constructor(public branch: string,
                 public message: string,
                 private creds: ProjectOperationCredentials,
@@ -23,20 +21,17 @@ export class NewBranchWithStatus implements BranchCommit {
         logger.info("Created NewBranchWithStatus: %j", this);
     }
 
-    public async beforePersist(p: Project): Promise<any> {
-        const gp = p as GitProject;
-        const status = await gp.gitStatus();
-        this.sha = status.sha;
-    }
-
-    public afterPersist(p: Project): Promise<any> {
-        if (!this.sha) {
+    public async afterPersist(p: Project): Promise<any> {
+        const gitStatus = await (p as GitProject).gitStatus();
+        const sha = gitStatus.sha;
+        logger.info("Setting status %j on sha %s for %j", this.status, sha, p.id);
+        if (!sha) {
             throw new Error("Sha is not set");
         }
         return createStatus((this.creds as TokenCredentials).token,
             {
                 ...p.id,
-                sha: this.sha,
+                sha,
             } as GitHubRepoRef,
             this.status);
     }

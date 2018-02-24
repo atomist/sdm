@@ -36,6 +36,7 @@ import { springBootGenerator } from "./commands/generators/spring/springBootGene
 import {
     tryToUpgradeSpringBootVersion
 } from "./commands/editors/tryToUpgradeSpringBootVersion";
+import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -74,11 +75,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     constructor(opts: { useCheckstyle: boolean }) {
         super();
-
         this.addNewIssueListeners(requestDescription);
-
         this.addEditors(() => tryToUpgradeSpringBootVersion);
-
         this.addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
             seedRepo: "spring-rest-seed",
@@ -109,6 +107,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addSupportingCommands(
                 () => addCloudFoundryManifest,
                 DescribeStagingAndProd,
-            );
+            )
+            .addSupportingEvents(OnDryRunBuildComplete);
     }
 }

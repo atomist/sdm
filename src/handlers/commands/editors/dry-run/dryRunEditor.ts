@@ -12,6 +12,8 @@ import { Status } from "../toclient/ghub";
 import { SpringBootGeneratorParameters } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
 import { UnleashPhilParameters } from "@atomist/spring-automation/commands/editor/spring/unleashPhil";
 
+export const DryRunContext = "atomist-dry-run";
+
 /**
  * Edit setting a status
  * @param {(params: PARAMS) => AnyProjectEditor} edd
@@ -25,7 +27,7 @@ export function dryRunEditor<PARAMS extends EditOneOrAllParameters =
                             details: Partial<EditorCommandDetails<PARAMS>> = {}): HandleCommand<EditOneOrAllParameters> {
     const description = details.description || name;
     const status: Status = {
-        context: "atomist-dry-run",
+        context: DryRunContext,
         target_url: "https://www.atomist.com",
         description,
         state: "pending",

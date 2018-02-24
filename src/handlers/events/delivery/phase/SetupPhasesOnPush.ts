@@ -47,6 +47,8 @@ export type PushTest = (p: OnAnyPush.Push) => boolean | Promise<boolean>;
 
 export const PushesToMaster: PushTest = p => p.branch === "master";
 
+export const AnyPush: PushTest = p => true;
+
 export class PhaseCreator {
 
     /**
