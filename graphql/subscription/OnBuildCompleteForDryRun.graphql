@@ -1,4 +1,4 @@
-subscription OnBuildComplete {
+subscription OnBuildCompleteForDryRun {
   Build {
     buildId
     buildUrl
@@ -16,6 +16,9 @@ subscription OnBuildComplete {
         channels {
           id
         }
+      }
+      pushes {
+        branch
       }
       statuses {
         context

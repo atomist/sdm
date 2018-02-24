@@ -47,6 +47,11 @@ export type PushTest = (p: OnAnyPush.Push) => boolean | Promise<boolean>;
 
 export const PushesToMaster: PushTest = p => p.branch === "master";
 
+// TODO should do this but it doesn't work
+// export const PushesToMaster: PushTest = p => p.branch === p.repo.defaultBranch;
+
+export const AnyPush: PushTest = p => true;
+
 export class PhaseCreator {
 
     /**

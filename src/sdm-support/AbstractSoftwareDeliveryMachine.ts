@@ -129,6 +129,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
+            .concat(this.supportingEvents)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners) : undefined,
                 this.onRepoCreation,

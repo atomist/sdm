@@ -20,6 +20,7 @@ subscription OnAnyPush {
         name
         id
       }
+      defaultBranch
     }
   }
 }
