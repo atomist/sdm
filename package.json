@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "GitHub Software Delivery Machine",
   "author": "Atomist",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/atomist/github-sdm.git"
