@@ -1,4 +1,4 @@
-import { HandleEvent, logger, Success } from "@atomist/automation-client";
+import { HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
@@ -15,11 +15,9 @@ import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm/ReferenceDeliveryBlueprint";
-import { OnAnySuccessStatus, OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { OnAnySuccessStatus } from "../typings/types";
 import { LocalMavenBuildOnSuccessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
-import {
-    CloudFoundryProductionDeployOnFingerprint, CloudFoundryStagingDeployOnSuccessStatus,
-} from "./blueprint/deploy/cloudFoundryDeploy";
+import { CloudFoundryProductionDeployOnFingerprint, } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
@@ -34,6 +32,7 @@ import { springBootGenerator } from "./commands/generators/spring/springBootGene
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { EventWithCommand } from "../handlers/commands/RetryDeploy";
+import { requestDescription } from "./blueprint/issue/requestDescription";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -73,14 +72,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     constructor(opts: { useCheckstyle: boolean }) {
         super();
 
-        this.addNewIssueListeners(async (issue, id, ac, ctx) => {
-            if (!issue.body || issue.body.length < 10) {
-                await ctx.messageClient.addressUsers(
-                    `Please add a description for new issue ${issue.number}: _${issue.title}_: ${id.url}/issues/${issue.number}`,
-                    issue.openedBy.person.chatId.screenName);
-            }
-            return Success;
-        });
+        this.addNewIssueListeners(requestDescription);
 
         this.addGenerators(() => springBootGenerator())
             .addNewRepoWithCodeActions(
@@ -97,15 +89,6 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             }
         }
         this.addCodeReactions(logReactor)
-        // .addAutoEditors(
-        //     async p => {
-        //         try {
-        //             await p.findFile("thing");
-        //             return p;
-        //         } catch {
-        //             return p.addFile("thing", "1");
-        //         }
-        //     })
             .addFingerprinters(mavenFingerprinter)
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
