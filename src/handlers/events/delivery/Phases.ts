@@ -130,8 +130,8 @@ export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: Git
         logger.info(`********* Previous state ${status.context} wasn't success, but [${status.state}]`);
         return false;
     }
-    if(status.targetUrl.endsWith(ApprovalGateParam)) {
-        logger.info(`Approval gate detected in ${status.context}`)
+    if (status.targetUrl.endsWith(ApprovalGateParam)) {
+        logger.info(`Approval gate detected in ${status.context}`);
         return false;
     }
 

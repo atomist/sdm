@@ -22,9 +22,9 @@ import {
 } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
-    StagingDeploymentContext,
     ContextToPlannedPhase,
     HttpServicePhases,
+    StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import {

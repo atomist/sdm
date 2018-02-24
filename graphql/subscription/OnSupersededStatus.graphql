@@ -1,22 +1,21 @@
 subscription OnSupersededStatus {
-    Status(context: "superseded") {
-        commit {
-            sha
-            message
-            statuses {
-                context
-                description
-                state
-            }
-            repo {
-                owner
-                name
-            }
-        }
-        state
-        targetUrl
+  Status(context: "superseded") {
+    commit {
+      sha
+      message
+      statuses {
         context
         description
+        state
+      }
+      repo {
+        owner
+        name
+      }
     }
+    state
+    targetUrl
+    context
+    description
+  }
 }
-

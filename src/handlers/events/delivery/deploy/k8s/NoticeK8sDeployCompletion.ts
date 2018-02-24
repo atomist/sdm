@@ -17,11 +17,10 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { createStatus } from "../../../../commands/editors/toclient/ghub";
 import { OnAParticularStatus } from "../../../../../typings/types";
+import { createStatus } from "../../../../commands/editors/toclient/ghub";
 import { PlannedPhase } from "../../Phases";
 import { K8AutomationDeployContext } from "./RequestDeployOnSuccessStatus";
-
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -74,11 +73,9 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
                 target_url: status.targetUrl,
             });
         } else if (status.state === "success") {
-            logger.warn("no endpoint URL determined from " + status.context)
+            logger.warn("no endpoint URL determined from " + status.context);
         }
         return Success;
     }
 
 }
-
-

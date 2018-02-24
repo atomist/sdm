@@ -23,8 +23,8 @@ import {
     HandlerResult,
     Success,
 } from "@atomist/automation-client/Handlers";
-import { OnNewIssue } from "../../../typings/types";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { OnNewIssue } from "../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 
 export type Issue = OnNewIssue.Issue;

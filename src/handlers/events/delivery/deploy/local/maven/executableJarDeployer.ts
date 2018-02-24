@@ -1,4 +1,5 @@
 import { logger } from "@atomist/automation-client";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess, spawn } from "child_process";
 import { DeployableArtifact } from "../../../ArtifactStore";
@@ -6,7 +7,6 @@ import { InterpretedLog } from "../../../log/InterpretedLog";
 import { QueryableProgressLog } from "../../../log/ProgressLog";
 import { Deployer } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 /**
  * Ports will be reused for the same app

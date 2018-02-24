@@ -19,9 +19,9 @@ import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment"
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/maven/executableJarDeployer";
 import { CloudFoundryInfo } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import {
-    StagingDeploymentContext,
     ContextToPlannedPhase,
     HttpServicePhases,
+    StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";

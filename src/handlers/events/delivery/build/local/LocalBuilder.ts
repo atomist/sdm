@@ -1,3 +1,5 @@
+import EventEmitter = NodeJS.EventEmitter;
+import { HandlerResult, logger, Success } from "@atomist/automation-client";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
@@ -13,8 +15,6 @@ import { AppInfo } from "../../deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
 import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../log/ProgressLog";
 import { Builder } from "../Builder";
-import EventEmitter = NodeJS.EventEmitter;
-import { HandlerResult, logger, Success } from "@atomist/automation-client";
 
 export interface LocalBuildInProgress {
 
@@ -59,14 +59,14 @@ export abstract class LocalBuilder implements Builder {
                     br.code === 0, rb, team, as,
                     log,
                     addressChannels, logInterpreter)
-                    .then(() => Success)
+                    .then(() => Success);
             } else {
                 return onExit(
                     token,
                     false, rb, team, as,
                     log,
                     addressChannels, logInterpreter)
-                    .then(() => ({code: 1}))
+                    .then(() => ({code: 1}));
             }
         });
         await onStarted(rb);

@@ -1,8 +1,8 @@
+import { HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { AddressChannels } from "../../../handlers/commands/editors/toclient/addressChannels";
 import { NewRepoWithCodeAction } from "../../../handlers/events/repo/OnFirstPushToRepo";
-import { HandlerContext } from "@atomist/automation-client";
 
 export function publishNewRepo(id: GitHubRepoRef,
                                creds: ProjectOperationCredentials,

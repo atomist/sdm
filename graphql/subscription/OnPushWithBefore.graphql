@@ -1,24 +1,23 @@
-
 subscription OnPushWithBefore {
-    Push {
-        id
-        branch
-        before @required {
-            message
-            sha
-            statuses {
-                context
-                state
-                description
-            }
-        }
-        after {
-            sha
-            message
-        }
-        repo {
-            owner
-            name
-        }
+  Push {
+    id
+    branch
+    before @required {
+      message
+      sha
+      statuses {
+        context
+        state
+        description
+      }
     }
+    after {
+      sha
+      message
+    }
+    repo {
+      owner
+      name
+    }
+  }
 }

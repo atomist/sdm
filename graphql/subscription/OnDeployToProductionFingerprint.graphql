@@ -1,40 +1,40 @@
 subscription OnDeployToProductionFingerprint {
-    Fingerprint(name: "DeployToProduction") {
-        name
-        commit {
-            sha
-            message
-            author {
-                person {
-                    id
-                    name
-                    chatId {
-                        screenName
-                    }
-                }
-            }
-            image {
-                imageName
-            }
-            statuses {
-                context
-                description
-                state
-                targetUrl
-            }
-            repo {
-                owner
-                name
-                channels {
-                    name
-                    id
-                }
-                org {
-                    chatTeam {
-                        id
-                    }
-                }
-            }
+  Fingerprint(name: "DeployToProduction") {
+    name
+    commit {
+      sha
+      message
+      author {
+        person {
+          id
+          name
+          chatId {
+            screenName
+          }
         }
+      }
+      image {
+        imageName
+      }
+      statuses {
+        context
+        description
+        state
+        targetUrl
+      }
+      repo {
+        owner
+        name
+        channels {
+          name
+          id
+        }
+        org {
+          chatTeam {
+            id
+          }
+        }
+      }
     }
+  }
 }

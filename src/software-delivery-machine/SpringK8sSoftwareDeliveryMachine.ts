@@ -16,21 +16,21 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm-support/AbstractSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm-support/ReferenceDeliveryBlueprint";
 import { OnAnySuccessStatus } from "../typings/types";
-import { CloudFoundryProductionDeployOnFingerprint, } from "./blueprint/deploy/cloudFoundryDeploy";
+import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
+import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
+import { K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion } from "./blueprint/deploy/k8sDeploy";
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
 import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
+import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
-import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
-import { K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion } from "./blueprint/deploy/k8sDeploy";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 

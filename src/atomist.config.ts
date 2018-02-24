@@ -5,8 +5,8 @@ import { MachineAssembler } from "./sdm-support/MachineAssembler";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/phaseManagement";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
-import { SpringPCFSoftwareDeliveryMachine } from "./software-delivery-machine/SpringPCFSoftwareDeliveryMachine";
 import { SpringK8sSoftwareDeliveryMachine } from "./software-delivery-machine/SpringK8sSoftwareDeliveryMachine";
+import { SpringPCFSoftwareDeliveryMachine } from "./software-delivery-machine/SpringPCFSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);

@@ -1,28 +1,27 @@
-
 subscription OnBuildComplete {
-    Build {
-        buildId
-        buildUrl
-        compareUrl
+  Build {
+    buildId
+    buildUrl
+    compareUrl
+    name
+    status
+    commit {
+      sha
+      message
+      repo {
         name
-        status
-        commit {
-            sha
-            message
-            repo {
-                name
-                owner
-                gitHubId
-                allowRebaseMerge
-                channels {
-                    id
-                }
-            }
-            statuses {
-                context
-                description
-                state
-            }
+        owner
+        gitHubId
+        allowRebaseMerge
+        channels {
+          id
         }
+      }
+      statuses {
+        context
+        description
+        state
+      }
     }
+  }
 }

@@ -1,23 +1,23 @@
 subscription OnNewIssue {
-    Issue {
-        number
-        title
-        body
-        openedBy {
-            login
-            person {
-                name
-                chatId {
-                    screenName
-                }
-            }
+  Issue {
+    number
+    title
+    body
+    openedBy {
+      login
+      person {
+        name
+        chatId {
+          screenName
         }
-        repo {
-            owner
-            name
-            channels {
-                name
-            }
-        }
+      }
     }
+    repo {
+      owner
+      name
+      channels {
+        name
+      }
+    }
+  }
 }

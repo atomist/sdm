@@ -17,6 +17,7 @@ import {
 } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
+import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { NewRepoWithCodeAction, OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -28,7 +29,6 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
-import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
 
 /**
  * Superclass for user software delivery machines

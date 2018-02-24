@@ -1,34 +1,33 @@
-
 subscription OnPendingStatus($context: String!) {
-    Status(state: pending, context: $context) {
-        commit {
-            sha
-            message
-            statuses {
-                context
-                description
-                state
-            }
-            repo {
-                owner
-                name
-                channels {
-                    name
-                    id
-                }
-                org {
-                    chatTeam {
-                        id
-                    }
-                }
-            }
-            pushes {
-                branch
-            }
-        }
-        state
-        targetUrl
+  Status(state: pending, context: $context) {
+    commit {
+      sha
+      message
+      statuses {
         context
         description
+        state
+      }
+      repo {
+        owner
+        name
+        channels {
+          name
+          id
+        }
+        org {
+          chatTeam {
+            id
+          }
+        }
+      }
+      pushes {
+        branch
+      }
     }
+    state
+    targetUrl
+    context
+    description
+  }
 }

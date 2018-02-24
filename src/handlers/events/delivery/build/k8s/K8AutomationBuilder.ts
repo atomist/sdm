@@ -15,7 +15,7 @@ const K8AutomationBuildContext = "build/atomist/k8s";
  * The message to k8-automation takes the form of a pending GitHub status.
  */
 export class K8sAutomationBuilder implements Builder {
-    initiateBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef, ac: AddressChannels, team: string): Promise<any> {
+    public initiateBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef, ac: AddressChannels, team: string): Promise<any> {
         return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
             context: K8AutomationBuildContext,
             state: "pending",

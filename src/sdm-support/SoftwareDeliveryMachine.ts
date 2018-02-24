@@ -1,8 +1,8 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { IssueHandling } from "./IssueHandling";
 import { NewRepoReactor } from "./NewRepoReactor";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
-import { IssueHandling } from "./IssueHandling";
 
 /**
  * Represents a software delivery machine, which extends delivery blueprint

@@ -1,42 +1,42 @@
 subscription OnPushImpact {
-    PushImpact {
-        id
-        data
-        push {
-            before {
-                sha
-                fingerprints {
-                    sha
-                    name
-                    data
-                }
-            }
-            after {
-                author {
-                    login
-                    emails {
-                        address
-                    }
-                }
-                sha
-                fingerprints {
-                    sha
-                    name
-                    data
-                }
-                repo {
-                    owner
-                    name
-                    org {
-                        owner
-                        ownerType
-                    }
-                    channels {
-                        channelId
-                        name
-                    }
-                }
-            }
+  PushImpact {
+    id
+    data
+    push {
+      before {
+        sha
+        fingerprints {
+          sha
+          name
+          data
         }
+      }
+      after {
+        author {
+          login
+          emails {
+            address
+          }
+        }
+        sha
+        fingerprints {
+          sha
+          name
+          data
+        }
+        repo {
+          owner
+          name
+          org {
+            owner
+            ownerType
+          }
+          channels {
+            channelId
+            name
+          }
+        }
+      }
     }
+  }
 }

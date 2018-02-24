@@ -1,22 +1,22 @@
 subscription OnPush($branch: String!) {
-    Push(branch: $branch) {
-        id,
-        repo {
-            owner,
-            name,
-            channels {
-                name,
-                id
-            }
-        },
-        commits {
-            sha,
-            message,
-            author {
-                _id
-                login
-                name
-            },
-        }
+  Push(branch: $branch) {
+    id
+    repo {
+      owner
+      name
+      channels {
+        name
+        id
+      }
     }
+    commits {
+      sha
+      message
+      author {
+        _id
+        login
+        name
+      }
+    }
+  }
 }

@@ -1,39 +1,38 @@
-
-subscription OnAParticularStatus($context: String!)  {
-    Status(context: $context) {
-        commit {
-            sha
-            message
-            statuses {
-                context
-                description
-                state
-                targetUrl
-            }
-            repo {
-                owner
-                name
-                channels {
-                    name
-                    id
-                }
-                org {
-                    chatTeam {
-                        id
-                    }
-                }
-            }
-            pushes {
-                branch
-            }
-            image {
-                image
-                imageName
-            }
-        }
-        state
-        targetUrl
+subscription OnAParticularStatus($context: String!) {
+  Status(context: $context) {
+    commit {
+      sha
+      message
+      statuses {
         context
         description
+        state
+        targetUrl
+      }
+      repo {
+        owner
+        name
+        channels {
+          name
+          id
+        }
+        org {
+          chatTeam {
+            id
+          }
+        }
+      }
+      pushes {
+        branch
+      }
+      image {
+        image
+        imageName
+      }
     }
+    state
+    targetUrl
+    context
+    description
+  }
 }

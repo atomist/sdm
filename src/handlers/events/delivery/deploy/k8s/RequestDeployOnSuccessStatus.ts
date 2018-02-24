@@ -17,10 +17,9 @@
 import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { createStatus } from "../../../../commands/editors/toclient/ghub";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
+import { createStatus } from "../../../../commands/editors/toclient/ghub";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../../Phases";
-
 
 export const K8AutomationDeployContext = "deploy/atomist/k8s/testing";
 
@@ -78,7 +77,6 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
 
         logger.info(`Requesting deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: K8AutomationDeployContext,
@@ -90,11 +88,9 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             context: params.deployPhase.context,
             description: "Working on " + params.deployPhase.name,
             state: "pending",
-            target_url: undefined
+            target_url: undefined,
         });
         return Success;
     }
 
 }
-
-

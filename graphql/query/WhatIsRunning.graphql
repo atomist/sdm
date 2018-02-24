@@ -1,13 +1,13 @@
 query WhatIsRunning($domain: String) {
-    Application(state: "started", domain: $domain) {
-        domain
+  Application(state: "started", domain: $domain) {
+    domain
 
-        commits {
-            sha
-            repo {
-                owner
-                name
-            }
-        }
+    commits {
+      sha
+      repo {
+        owner
+        name
+      }
     }
+  }
 }

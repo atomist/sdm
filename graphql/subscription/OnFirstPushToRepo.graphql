@@ -1,24 +1,24 @@
 subscription OnFirstPushToRepo {
-    Push {
-        branch
-        before {
-            sha
-        }
-        after {
-            sha
-            message
-            committer {
-                person {
-                    chatId {
-                        screenName
-                    }
-                }
-            }
-        }
-        repo {
-            owner
-            name
-            defaultBranch
-        }
+  Push {
+    branch
+    before {
+      sha
     }
+    after {
+      sha
+      message
+      committer {
+        person {
+          chatId {
+            screenName
+          }
+        }
+      }
+    }
+    repo {
+      owner
+      name
+      defaultBranch
+    }
+  }
 }

@@ -1,20 +1,21 @@
-import "mocha";
-import { dependenciesFingerprintsFromParsedPom } from "../../../../../../src/software-delivery-machine/blueprint/fingerprint/maven/dependenciesFingerprintsFromParsedPom";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import "mocha";
 import { mavenFingerprinter } from "../../../../../../src/software-delivery-machine/blueprint/fingerprint/maven/mavenFingerprinter";
 
-describe("dependenciesFingerprintsFromParsedPom", () => {
+describe("mavenFingerprinter", () => {
 
     it("should find some dependencies", async () => {
-        const Seed = await GitCommandGitProject.cloned({token: null}, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        const Seed = await GitCommandGitProject.cloned({token: null},
+            new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const fp = await mavenFingerprinter(Seed);
         console.log(JSON.stringify(fp));
-        //assert(fp.data === "");
+        // assert(fp.data === "");
     }).timeout(5000);
 
 });
 
+/* tslint:disable */
 const PomWithReplaceMe =
     `<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -40,7 +41,7 @@ const PomWithReplaceMe =
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 	</properties>
-	
+
 	<!-- replace-block -->
 
 	<dependencies>
@@ -50,14 +51,14 @@ const PomWithReplaceMe =
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -69,4 +70,3 @@ const PomWithReplaceMe =
 
 </project>
 `;
-

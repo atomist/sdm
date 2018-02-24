@@ -1,6 +1,6 @@
 
-import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { promisify } from "util";
 import * as xml2js from "xml2js";
 
