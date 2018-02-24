@@ -47,7 +47,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
     public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription> & EventWithCommand> =
-        //CloudFoundryStagingDeployOnSuccessStatus;
+        // CloudFoundryStagingDeployOnSuccessStatus;
         () => LocalMavenDeployer;
 
     public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
