@@ -8,14 +8,13 @@ const XmlFile = "effective-pom.xml";
 
 export async function extractEffectivePom(p: LocalProject): Promise<any> {
     try {
-        const cr = await runCommand(`mvn help:effective-pom -Doutput=${XmlFile}`, {cwd: p.baseDir});
+        await runCommand(`mvn help:effective-pom -Doutput=${XmlFile}`, {cwd: p.baseDir});
         const f = await p.findFile(XmlFile);
         const xml = await f.getContent();
         const parser = new xml2js.Parser();
         const parsed = await promisify(parser.parseString)(xml);
         return parsed;
     } catch (err) {
-        console.log(err);
         throw err;
     }
 }

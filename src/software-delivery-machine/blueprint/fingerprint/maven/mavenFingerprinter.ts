@@ -4,6 +4,12 @@ import { dependenciesFingerprintsFromParsedPom } from "./dependenciesFingerprint
 import { extractEffectivePom } from "./effectivePomExtractor";
 
 export async function mavenFingerprinter(p: GitProject): Promise<Fingerprint[]> {
-    const epom = await extractEffectivePom(p);
-    return Promise.all([ dependenciesFingerprintsFromParsedPom].map(fp => fp(epom)));
+    try {
+        await p.findFile("pom.xml");
+        const epom = await extractEffectivePom(p);
+        return Promise.all([dependenciesFingerprintsFromParsedPom].map(fp => fp(epom)));
+    } catch {
+        // If we can't find a pom, just exit
+        return [];
+    }
 }
