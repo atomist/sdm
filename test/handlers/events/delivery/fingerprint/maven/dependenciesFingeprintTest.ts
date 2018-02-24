@@ -9,7 +9,7 @@ describe("mavenDependenciesFingerprinter", () => {
         const Seed = await GitCommandGitProject.cloned({token: null}, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const fp = await mavenDependenciesFingerprinter(Seed);
         console.log(JSON.stringify(fp));
-        //assert(fp.data === "");
+        // assert(fp.data === "");
         done();
     });
 
