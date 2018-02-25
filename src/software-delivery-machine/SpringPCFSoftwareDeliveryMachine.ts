@@ -8,7 +8,7 @@ import { Phases } from "../handlers/events/delivery/Phases";
 import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyleReviewer";
+import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
