@@ -6,12 +6,13 @@ import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
+import { ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
 import { OnSuperseded, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
-import { WithCodeOnPendingScanStatus, } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
+import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
@@ -26,7 +27,6 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
-import { ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
 
 /**
  * Superclass for user software delivery machines

@@ -10,6 +10,7 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { addressSlackChannels, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
@@ -18,9 +19,8 @@ import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import {
     OnVerifiedStatus,
-    VerifiedDeploymentInvocation
+    VerifiedDeploymentInvocation,
 } from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 /**
  * Display a button suggesting promotion to production

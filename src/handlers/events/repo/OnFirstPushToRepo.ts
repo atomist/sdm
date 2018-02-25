@@ -29,7 +29,7 @@ import * as schema from "../../../typings/types";
 import { AddressChannels } from "../../commands/editors/toclient/addressChannels";
 
 import * as _ from "lodash";
-import { SdmListener, ListenerInvocation } from "../delivery/Listener";
+import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 
 /**
  * A new repo has been created, and it has some code in it.

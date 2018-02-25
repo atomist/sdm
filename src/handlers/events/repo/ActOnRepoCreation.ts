@@ -23,9 +23,9 @@ import {
     HandlerResult,
     Success,
 } from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnRepoCreation } from "../../../typings/types";
 import { ListenerInvocation, SdmListener } from "../delivery/Listener";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 export interface RepoCreationInvocation extends ListenerInvocation {
     repo: OnRepoCreation.Repo;

@@ -1,7 +1,7 @@
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { AddCloudFoundryManifestEditorName } from "../../commands/editors/addCloudFoundryManifest";
 import { ListenerInvocation } from "../../../handlers/events/delivery/Listener";
+import { AddCloudFoundryManifestEditorName } from "../../commands/editors/addCloudFoundryManifest";
 
 export function suggestAddingCloudFoundryManifest(inv: ListenerInvocation) {
     const attachment: slack.Attachment = {

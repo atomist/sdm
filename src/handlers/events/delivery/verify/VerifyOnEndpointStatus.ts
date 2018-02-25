@@ -20,6 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { ListenerInvocation, SdmListener } from "../Listener";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../Phases";
 import {
     ContextToPlannedPhase,
@@ -27,7 +28,6 @@ import {
     StagingEndpointContext,
     StagingVerifiedContext,
 } from "../phases/httpServicePhases";
-import { ListenerInvocation, SdmListener } from "../Listener";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
     url: string;

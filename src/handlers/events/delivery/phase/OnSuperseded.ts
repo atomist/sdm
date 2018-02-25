@@ -18,8 +18,8 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSupersededStatus } from "../../../../typings/types";
-import { ListenerInvocation, SdmListener } from "../Listener";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { ListenerInvocation, SdmListener } from "../Listener";
 
 export interface SupersededListenerInvocation  extends ListenerInvocation {
     status: OnSupersededStatus.Status;

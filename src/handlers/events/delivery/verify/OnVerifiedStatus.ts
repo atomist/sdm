@@ -20,9 +20,9 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { addressChannelsFor, messageDestinations } from "../../../commands/editors/toclient/addressChannels";
-import { StagingVerifiedContext } from "../phases/httpServicePhases";
 import Status = OnSuccessStatus.Status;
 import { ListenerInvocation, SdmListener } from "../Listener";
+import { StagingVerifiedContext } from "../phases/httpServicePhases";
 
 // something independent of the particular query
 export interface StatusInfo {
