@@ -16,8 +16,7 @@
 
 import * as _ from "lodash";
 
-import {GraphQL, logger, Secret, Secrets, Success} from "@atomist/automation-client";
-import {successOn} from "@atomist/automation-client/action/ActionResult";
+import { GraphQL, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -26,40 +25,33 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {SimpleRepoId} from "@atomist/automation-client/operations/common/RepoId";
-import {editOne} from "@atomist/automation-client/operations/edit/editAll";
-import {BranchCommit} from "@atomist/automation-client/operations/edit/editModes";
-import {AnyProjectEditor, ProjectEditor} from "@atomist/automation-client/operations/edit/projectEditor";
-import {chainEditors} from "@atomist/automation-client/operations/edit/projectEditorOps";
-import {ProjectReviewer} from "@atomist/automation-client/operations/review/projectReviewer";
-import {ProjectReview, ReviewComment} from "@atomist/automation-client/operations/review/ReviewResult";
-import {GitCommandGitProject} from "@atomist/automation-client/project/git/GitCommandGitProject";
-import {GitProject} from "@atomist/automation-client/project/git/GitProject";
-import {Attachment, SlackMessage} from "@atomist/slack-messages";
-import {MessagingReviewRouter} from "@atomist/spring-automation/commands/messagingReviewRouter";
-import {OnAnyPendingStatus, StatusState} from "../../../../typings/types";
-import {AddressChannels, addressChannelsFor} from "../../../commands/editors/toclient/addressChannels";
-import {createStatus} from "../../../commands/editors/toclient/ghub";
-import {ApprovalGateParam} from "../../gates/StatusApprovalGate";
-import {ScanContext} from "../phases/gitHubContext";
-import {ContextToPlannedPhase} from "../phases/httpServicePhases";
-
-import {buttonForCommand} from "@atomist/automation-client/spi/message/MessageClient";
-import {deepLink} from "@atomist/automation-client/util/gitHub";
+import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { editOne } from "@atomist/automation-client/operations/edit/editAll";
+import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
+import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
+import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as slack from "@atomist/slack-messages";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
+import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { ApprovalGateParam } from "../../gates/StatusApprovalGate";
+import { ScanContext } from "../phases/gitHubContext";
+import { ContextToPlannedPhase } from "../phases/httpServicePhases";
 
-/**
- * Perform arbitrary actions (besides reviewing and returning a structured type)
- * in response to the contents of this repo
- */
-export type CodeReaction = (p: GitProject,
-                            addressChannels: AddressChannels,
-                            ctx: HandlerContext) => Promise<any>;
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { deepLink } from "@atomist/automation-client/util/gitHub";
+import { ProjectListenerInvocation, SdmListener } from "../Listener";
+
+import * as stringify from "json-stringify-safe";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -77,34 +69,43 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
 
     constructor(private context: string,
                 private projectReviewers: ProjectReviewer[],
-                private codeReactions: CodeReaction[],
+                private codeReactions: Array<SdmListener<ProjectListenerInvocation>>,
                 editors: AnyProjectEditor[] = []) {
         this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }
 
-    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const creds = {token: params.githubToken};
+        const credentials = {token: params.githubToken};
 
         if (status.context !== params.context || status.state !== "pending") {
             logger.warn(`I was looking for ${params.context} being pending, but I heard about ${status.context} being ${status.state}`);
             return Promise.resolve(Success);
         }
 
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, context);
         try {
-            const p = await GitCommandGitProject.cloned(creds, id);
+            const project = await GitCommandGitProject.cloned(credentials, id);
             const review: ProjectReview =
                 await Promise.all(params.projectReviewers
-                    .map(reviewer => reviewer(p, ctx, params as any)))
+                    .map(reviewer => reviewer(project, context, params as any)))
                     .then(reviews => consolidate(reviews));
+            const i: ProjectListenerInvocation = {
+                id,
+                context,
+                addressChannels,
+                project,
+                credentials,
+            };
             const inspections: Promise<any> =
                 Promise.all(params.codeReactions
-                    .map(inspection => inspection(p, addressChannels, ctx)));
+                    .map(inspection => inspection(i)));
             await inspections;
 
             if (params.editorChain) {
@@ -114,24 +115,24 @@ export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStat
                     message: "Autofixes",
                 };
                 logger.info("Editing %j with mode=%j", id, editMode);
-                await editOne(ctx, creds, params.editorChain, editMode,
+                await editOne(context, credentials, params.editorChain, editMode,
                     new SimpleRepoId(id.owner, id.repo));
             }
 
             if (review.comments.length === 0) {
-                await markScanned(p.id as GitHubRepoRef,
-                    params.context, "success", creds, false);
+                await markScanned(project.id as GitHubRepoRef,
+                    params.context, "success", credentials, false);
             } else {
                 // TODO might want to raise issue
                 // Fail it??
-                await sendReviewToSlack("Review comments", review, ctx, addressChannels)
-                    .then(() => markScanned(p.id as GitHubRepoRef,
-                        params.context, "success", creds, true));
+                await sendReviewToSlack("Review comments", review, context, addressChannels)
+                    .then(() => markScanned(project.id as GitHubRepoRef,
+                        params.context, "success", credentials, true));
             }
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.context, "error", creds, false);
+                params.context, "error", credentials, false);
             return failure(err);
         }
     }

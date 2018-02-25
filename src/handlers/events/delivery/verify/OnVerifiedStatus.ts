@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
-import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {Destination} from "@atomist/automation-client/spi/message/MessageClient";
-import {OnSuccessStatus, StatusState} from "../../../../typings/types";
-import {messageDestinations} from "../../../commands/editors/toclient/addressChannels";
-import {StagingVerifiedContext} from "../phases/httpServicePhases";
+import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import { OnSuccessStatus, StatusState } from "../../../../typings/types";
+import { addressChannelsFor, messageDestinations } from "../../../commands/editors/toclient/addressChannels";
 import Status = OnSuccessStatus.Status;
+import { ListenerInvocation, SdmListener } from "../Listener";
+import { StagingVerifiedContext } from "../phases/httpServicePhases";
 
 // something independent of the particular query
 export interface StatusInfo {
@@ -30,13 +31,13 @@ export interface StatusInfo {
     context?: string | null;
 }
 
-export type VerifiedDeploymentListener = (id: GitHubRepoRef, s: StatusInfo,
-                                          sendMessagesHere: Destination,
-                                          ctx: HandlerContext,
-                                          token: string) => Promise<any>;
+export interface VerifiedDeploymentInvocation extends ListenerInvocation {
+    status: StatusInfo;
+    messageDestination: Destination;
+}
 
 /**
- * Deploy a published artifact identified in a GitHub "artifact" status.
+ * React to a verified deployment
  */
 @EventHandler("Act on verified project",
     GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql",
@@ -48,10 +49,11 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private listener: VerifiedDeploymentListener) {
+    constructor(private listeners: Array<SdmListener<VerifiedDeploymentInvocation>>) {
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>,
+                        context: HandlerContext, params: this): Promise<HandlerResult> {
         const status: Status = event.data.Status[0];
         const commit = status.commit;
 
@@ -61,8 +63,16 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const i: VerifiedDeploymentInvocation = {
+            id,
+            context,
+            status,
+            addressChannels: addressChannelsFor(commit.repo, context),
+            messageDestination: messageDestinations(commit.repo, context),
+            credentials: {token: params.githubToken},
+        };
 
-        return params.listener(id, status, messageDestinations(commit.repo, ctx), ctx, params.githubToken)
-            .then(() => Success);
+        await Promise.all(params.listeners.map(l => l(i)));
+        return Success;
     }
 }

@@ -20,6 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
+import { ListenerInvocation, SdmListener } from "../Listener";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../Phases";
 import {
     ContextToPlannedPhase,
@@ -28,14 +29,9 @@ import {
     StagingVerifiedContext,
 } from "../phases/httpServicePhases";
 
-/**
- * Verify an endpoint.
- * @param url root endpoint of the deployment
- */
-export type EndpointVerifier = (url: string,
-                                id: GitHubRepoRef,
-                                addressChannels: AddressChannels,
-                                ctx: HandlerContext) => Promise<any>;
+export interface EndpointVerificationInvocation extends ListenerInvocation {
+    url: string;
+}
 
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
@@ -50,13 +46,13 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private verifiers: EndpointVerifier[];
+    private verifiers: Array<SdmListener<EndpointVerificationInvocation>>;
 
-    constructor(...verifiers: EndpointVerifier[]) {
+    constructor(...verifiers: Array<SdmListener<EndpointVerificationInvocation>>) {
         this.verifiers = verifiers;
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public handle(event: EventFired<OnSuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
@@ -78,9 +74,16 @@ export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subsc
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, context);
+        const i: EndpointVerificationInvocation = {
+            id,
+            url: status.targetUrl,
+            addressChannels,
+            context,
+            credentials: { token: params.githubToken},
+        };
 
-        return Promise.all(params.verifiers.map(verifier => verifier(status.targetUrl, id, addressChannels, ctx)))
+        return Promise.all(params.verifiers.map(verifier => verifier(i)))
             .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl)
                 .then(success))
             .catch(err => {

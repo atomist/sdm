@@ -1,26 +1,24 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import {Maker, toFactory} from "@atomist/automation-client/util/constructionUtils";
-import {EventWithCommand} from "../handlers/commands/RetryDeploy";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { OnSuperseded, SupersededListener } from "../handlers/events/delivery/phase/OnSuperseded";
+import { ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
+import { OnSuperseded, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
-import {
-    CodeReaction,
-    WithCodeOnPendingScanStatus,
-} from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
+import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
-import { NewRepoWithCodeAction, OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
+import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import {
     FingerprintDifferenceHandler,
     ReactToSemanticDiffsOnPushImpact,
@@ -45,17 +43,17 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public newIssueListeners: NewIssueListener[] = [];
 
-    private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
+    private newRepoWithCodeActions: SdmListener[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
-    private codeReactions: CodeReaction[] = [];
+    private codeReactions: Array<SdmListener<ProjectListenerInvocation>> = [];
 
     private autoEditors: AnyProjectEditor[] = [];
 
     private fingerprinters: Fingerprinter[] = [];
 
-    private supersededListeners: SupersededListener[] = [];
+    private supersededListeners: Array<SdmListener<SupersededListenerInvocation>> = [];
 
     private fingerprintDifferenceHandlers: FingerprintDifferenceHandler[] = [];
 
@@ -188,7 +186,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addNewRepoWithCodeActions(...nrc: NewRepoWithCodeAction[]): this {
+    public addNewRepoWithCodeActions(...nrc: SdmListener[]): this {
         this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(nrc);
         return this;
     }
@@ -198,7 +196,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addCodeReactions(...cr: CodeReaction[]): this {
+    public addCodeReactions(...cr: Array<SdmListener<ProjectListenerInvocation>>): this {
         this.codeReactions = this.codeReactions.concat(cr);
         return this;
     }
@@ -218,7 +216,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addSupersededListeners(...l: SupersededListener[]): this {
+    public addSupersededListeners(...l: Array<SdmListener<SupersededListenerInvocation>>): this {
         this.supersededListeners = this.supersededListeners.concat(l);
         return this;
     }

@@ -11,6 +11,10 @@ subscription OnSupersededStatus {
       repo {
         owner
         name
+        channels {
+          name
+          id
+        }
       }
     }
     state

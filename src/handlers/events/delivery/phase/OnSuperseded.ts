@@ -18,8 +18,12 @@ import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/autom
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSupersededStatus } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { ListenerInvocation, SdmListener } from "../Listener";
 
-export type SupersededListener = (id: GitHubRepoRef, s: OnSupersededStatus.Status) => Promise<any>;
+export interface SupersededListenerInvocation  extends ListenerInvocation {
+    status: OnSupersededStatus.Status;
+}
 
 /**
  * Respond to a superseded push
@@ -31,19 +35,26 @@ export class OnSuperseded implements HandleEvent<OnSupersededStatus.Subscription
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private listeners: SupersededListener[];
+    private listeners: Array<SdmListener<SupersededListenerInvocation>>;
 
-    constructor(...listeners: SupersededListener[]) {
+    constructor(...listeners: Array<SdmListener<SupersededListenerInvocation>>) {
         this.listeners = listeners;
     }
 
-    public async handle(event: EventFired<OnSupersededStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSupersededStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const i: SupersededListenerInvocation = {
+            id,
+            context,
+            addressChannels: addressChannelsFor(commit.repo, context),
+            status,
+            credentials: { token: params.githubToken},
+        };
 
-        await Promise.all(params.listeners.map(l => l(id, status)));
+        await Promise.all(params.listeners.map(l => l(i)));
         return Success;
     }
 }

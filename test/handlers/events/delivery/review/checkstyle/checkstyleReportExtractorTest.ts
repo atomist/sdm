@@ -2,7 +2,7 @@ import "mocha";
 
 import * as assert from "power-assert";
 
-import { extract } from "../../../../../src/handlers/events/delivery/review/checkstyleReportExtractor";
+import { extract } from "../../../../../../src/handlers/events/delivery/review/checkstyle/checkstyleReportExtractor";
 
 describe("checkstyleReportExtractor", () => {
 

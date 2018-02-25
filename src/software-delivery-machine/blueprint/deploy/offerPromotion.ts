@@ -1,6 +1,5 @@
 import {
     HandleCommand,
-    HandleEvent,
     HandlerContext,
     MappedParameter,
     MappedParameters,
@@ -11,27 +10,32 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { addressSlackChannels, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {tipOfDefaultBranch} from "../../../handlers/commands/editors/toclient/ghub";
+import { tipOfDefaultBranch } from "../../../handlers/commands/editors/toclient/ghub";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
-import { OnVerifiedStatus, StatusInfo } from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
+import {
+    OnVerifiedStatus,
+    VerifiedDeploymentInvocation,
+} from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
 
 /**
  * Display a button suggesting promotion to production
  * @type {OnVerifiedStatus}
  */
-export const OfferPromotion = () => new OnVerifiedStatus(presentPromotionButton);
+export const OfferPromotion = () => new OnVerifiedStatus([presentPromotionButton]);
 
-async function presentPromotionButton(id: RemoteRepoRef, s: StatusInfo, sendMessagesHere, ctx, token: string) {
-    const shaLink = slack.url(id.url + "/tree/" + id.sha, id.repo);
-    const endpointLink = slack.url(s.targetUrl);
-    const messageId = `httpService:promote:prod/${id.repo}/${id.owner}/${id.sha}`;
-    const currentlyRunning = await runningAttachment(ctx, token, id as GitHubRepoRef,
-        {domain: "ri-production", color: ProductionMauve}, id.sha);
+async function presentPromotionButton(inv: VerifiedDeploymentInvocation) {
+    const shaLink = slack.url(inv.id.url + "/tree/" + inv.id.sha, inv.id.repo);
+    const endpointLink = slack.url(inv.status.targetUrl);
+    const messageId = `httpService:promote:prod/${inv.id.repo}/${inv.id.owner}/${inv.id.sha}`;
+    const currentlyRunning = await runningAttachment(inv.context,
+        (inv.credentials as TokenCredentials).token,
+        inv.id,
+        {domain: "ri-production", color: ProductionMauve}, inv.id.sha);
 
     const attachment: slack.Attachment = {
         color: ProductionMauve,
@@ -40,15 +44,15 @@ async function presentPromotionButton(id: RemoteRepoRef, s: StatusInfo, sendMess
         actions: [buttonForCommand({text: "Promote to Prod"},
             "DeployToProd",
             {
-                repo: id.repo, owner: id.owner, sha: id.sha,
+                repo: inv.id.repo, owner: inv.id.owner, sha: inv.id.sha,
                 messageId,
-                destinationsJson: JSON.stringify(sendMessagesHere),
+                destinationsJson: JSON.stringify(inv.messageDestination),
             })],
     };
     const message: slack.SlackMessage = {
         attachments: currentlyRunning.concat([attachment]),
     };
-    return ctx.messageClient.send(message, sendMessagesHere, {id: messageId});
+    return inv.context.messageClient.send(message, inv.messageDestination, {id: messageId});
 }
 
 @Parameters()
@@ -70,9 +74,15 @@ export class OfferPromotionParameters {
 }
 
 export const offerPromotionCommand: Maker<HandleCommand<OfferPromotionParameters>> = () =>
-    commandHandlerFrom(async (ctx: HandlerContext, params: OfferPromotionParameters) => {
-            return presentPromotionButton(new GitHubRepoRef(params.owner, params.repo, params.sha || await
-            tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo))),
-                {targetUrl: undefined}, addressSlackChannels(params.channel), ctx, params.githubToken);
+    commandHandlerFrom(async (context: HandlerContext, params: OfferPromotionParameters) => {
+            const inv: VerifiedDeploymentInvocation = {
+                id: new GitHubRepoRef(params.owner, params.repo, params.sha || await
+                    tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo))),
+                status: {targetUrl: undefined},
+                credentials: {token: params.githubToken},
+                messageDestination: addressSlackChannels(params.channel),
+                context,
+            };
+            return presentPromotionButton(inv);
         }, OfferPromotionParameters, "OfferPromotionButton", "test: suggest promoting a ref to prod",
         "please offer to promote");

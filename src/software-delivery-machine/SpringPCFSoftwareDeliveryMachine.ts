@@ -8,8 +8,8 @@ import { Phases } from "../handlers/events/delivery/Phases";
 import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyleReviewer";
-import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
+import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
+import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
@@ -29,7 +29,7 @@ import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerpri
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
-import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
+import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
@@ -85,7 +85,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
                 suggestAddingCloudFoundryManifest,
-                publishNewRepo)
+                PublishNewRepo)
             .addProjectReviewers(logReview);
         if (opts.useCheckstyle) {
             const checkStylePath = process.env.CHECKSTYLE_PATH;
@@ -100,9 +100,9 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
             .addSupersededListeners(
-                id => {
-                    logger.info("Will undeploy application %j", id);
-                    return LocalMavenDeployer.deployer.undeploy(id);
+                inv => {
+                    logger.info("Will undeploy application %j", inv.id);
+                    return LocalMavenDeployer.deployer.undeploy(inv.id);
                 })
             .addSupportingCommands(
                 () => addCloudFoundryManifest,
