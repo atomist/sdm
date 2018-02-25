@@ -42,7 +42,7 @@ export class OnFirstPushToRepo
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private actions: Array<SdmListener<GitHubRepoRef>>) {
+    constructor(private actions: SdmListener[]) {
     }
 
     public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,
@@ -70,15 +70,14 @@ export class OnFirstPushToRepo
 
         const addressChannels: AddressChannels = m => context.messageClient.addressUsers(m, screenName);
 
-        const invocation: ListenerInvocation<GitHubRepoRef> = {
+        const invocation: ListenerInvocation = {
             id,
             context,
             addressChannels,
-            data: id,
             credentials: {token: params.githubToken},
         };
         await Promise.all(params.actions
-            .map(l => l.apply(invocation)),
+            .map(l => l(invocation)),
         );
         return Success;
     }

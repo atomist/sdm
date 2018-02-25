@@ -8,7 +8,7 @@ import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases
 import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
-import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/lookFor200OnEndpointRootGet";
+import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
@@ -101,9 +101,9 @@ export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
            // .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
             .addSupersededListeners(
-                id => {
-                    logger.info("Will undeploy application %j", id);
-                    return LocalMavenDeployer.deployer.undeploy(id);
+                inv => {
+                    logger.info("Will undeploy application %j", inv.id);
+                    return LocalMavenDeployer.deployer.undeploy(inv.id);
                 })
             .addSupportingCommands(
                 () => addCloudFoundryManifest,

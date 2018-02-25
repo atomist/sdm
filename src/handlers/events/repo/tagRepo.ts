@@ -1,13 +1,12 @@
 import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
 import { publishTags } from "../../../handlers/events/repo/publishTags";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { SdmListener } from "../delivery/Listener";
 
 /**
  * Tag the repo using the given tagger
  * @param {Tagger} tagger
  */
-export function tagRepo(tagger: Tagger): SdmListener<GitHubRepoRef> {
+export function tagRepo(tagger: Tagger): SdmListener {
 
     // TODO why doesn't curry work
     // curry(springBootTagger)(publishTags);

@@ -2,12 +2,14 @@ import { AddressChannels } from "../../commands/editors/toclient/addressChannels
 import { HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Function1 } from "lodash";
 
 /**
  * Common parameters to an invocation of a listener to one of the
  * SDM's specific events
  */
-export interface ListenerInvocation<T> {
+export interface ListenerInvocation {
 
     id: GitHubRepoRef;
 
@@ -20,12 +22,13 @@ export interface ListenerInvocation<T> {
 
     credentials: ProjectOperationCredentials;
 
-    data: T;
+}
+
+export interface ProjectListenerInvocation extends ListenerInvocation {
+
+    project: GitProject;
 
 }
 
-export interface SdmListener<T, R extends any = any> {
-
-    apply(i: ListenerInvocation<T>): Promise<R>;
-
-}
+export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R extends any = any> =
+    Function1<I, Promise<R>>;

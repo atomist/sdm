@@ -24,8 +24,12 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { OnRepoCreation } from "../../../typings/types";
-import { SdmListener } from "../delivery/Listener";
+import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+
+export interface RepoCreationInvocation extends ListenerInvocation {
+    repo: OnRepoCreation.Repo;
+}
 
 /**
  * A new repo has been created. We don't know if it has code.
@@ -37,16 +41,16 @@ export class ActOnRepoCreation implements HandleEvent<OnRepoCreation.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private newRepoAction: SdmListener<OnRepoCreation.Repo>) {
+    constructor(private newRepoAction: SdmListener<RepoCreationInvocation>) {
     }
 
     public async handle(event: EventFired<OnRepoCreation.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const repo: OnRepoCreation.Repo = event.data.Repo[0];
         const id = new GitHubRepoRef(repo.owner, repo.name);
-        await this.newRepoAction.apply({
+        await this.newRepoAction({
             id,
             context,
-            data: repo,
+            repo,
             credentials: {token: params.githubToken},
         });
         return Success;
