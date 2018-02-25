@@ -1,12 +1,10 @@
-import EventEmitter = NodeJS.EventEmitter;
-import { HandlerResult, logger, Success } from "@atomist/automation-client";
+import { HandlerResult, Success } from "@atomist/automation-client";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
-import { Readable } from "stream";
 import { reportFailureInterpretation } from "../../../../../util/reportFailureInterpretation";
 import { AddressChannels } from "../../../../commands/editors/toclient/addressChannels";
 import { postLinkImageWebhook } from "../../../link/ImageLink";

@@ -29,7 +29,7 @@ import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerpri
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
-import { publishNewRepo } from "./blueprint/repo/publishNewRepo";
+import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
@@ -85,7 +85,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addNewRepoWithCodeActions(
                 tagRepo(springBootTagger),
                 suggestAddingCloudFoundryManifest,
-                publishNewRepo)
+                PublishNewRepo)
             .addProjectReviewers(logReview);
         if (opts.useCheckstyle) {
             const checkStylePath = process.env.CHECKSTYLE_PATH;

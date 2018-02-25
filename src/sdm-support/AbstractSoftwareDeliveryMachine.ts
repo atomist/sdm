@@ -20,7 +20,7 @@ import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/Verif
 import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
-import { NewRepoWithCodeAction, OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
+import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import {
     FingerprintDifferenceHandler,
     ReactToSemanticDiffsOnPushImpact,
@@ -29,6 +29,8 @@ import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { SdmListener } from "../handlers/events/delivery/Listener";
 
 /**
  * Superclass for user software delivery machines
@@ -45,7 +47,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public newIssueListeners: NewIssueListener[] = [];
 
-    private newRepoWithCodeActions: NewRepoWithCodeAction[] = [];
+    private newRepoWithCodeActions: Array<SdmListener<GitHubRepoRef>> = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -188,7 +190,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addNewRepoWithCodeActions(...nrc: NewRepoWithCodeAction[]): this {
+    public addNewRepoWithCodeActions(...nrc: Array<SdmListener<GitHubRepoRef>>): this {
         this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(nrc);
         return this;
     }

@@ -25,16 +25,11 @@ import {
 } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as schema from "../../../typings/types";
 import { AddressChannels } from "../../commands/editors/toclient/addressChannels";
 
 import * as _ from "lodash";
-
-export type NewRepoWithCodeAction = (id: GitHubRepoRef,
-                                     creds: ProjectOperationCredentials,
-                                     addressChannels: AddressChannels,
-                                     ctx: HandlerContext) => Promise<any>;
+import { SdmListener, ListenerInvocation } from "../delivery/Listener";
 
 /**
  * A new repo has been created, and it has some code in it.
@@ -47,10 +42,11 @@ export class OnFirstPushToRepo
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private actions: NewRepoWithCodeAction[]) {
+    constructor(private actions: Array<SdmListener<GitHubRepoRef>>) {
     }
 
-    public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,
+                        context: HandlerContext, params: this): Promise<HandlerResult> {
         const push = event.data.Push[0];
 
         if (!!push.before) {
@@ -72,10 +68,17 @@ export class OnFirstPushToRepo
             return Success;
         }
 
-        const addressChannels: AddressChannels = m => ctx.messageClient.addressUsers(m, screenName);
+        const addressChannels: AddressChannels = m => context.messageClient.addressUsers(m, screenName);
 
+        const invocation: ListenerInvocation<GitHubRepoRef> = {
+            id,
+            context,
+            addressChannels,
+            data: id,
+            credentials: {token: params.githubToken},
+        };
         await Promise.all(params.actions
-            .map(action => action(id, {token: params.githubToken}, addressChannels, ctx)),
+            .map(l => l.apply(invocation)),
         );
         return Success;
     }

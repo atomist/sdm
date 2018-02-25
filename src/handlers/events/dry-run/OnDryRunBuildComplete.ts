@@ -18,9 +18,9 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
-import { OnBuildComplete, OnBuildCompleteForDryRun } from "../../../typings/types";
 import { DryRunContext } from "../../commands/editors/dry-run/dryRunEditor";
 import { createStatus } from "../../commands/editors/toclient/ghub";
+import { OnBuildCompleteForDryRun } from "../../../typings/types";
 
 /**
  * React to to result of a dry run build

@@ -35,7 +35,7 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
 
     /**
      *
-     * @param {PlannedPhase} ourPhase
+     * @param {PlannedPhase} deployPhase
      * @param {PlannedPhase} endpointPhase
      */
     constructor(private deployPhase: PlannedPhase,
