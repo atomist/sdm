@@ -9,6 +9,7 @@ import { Deployer } from "../Deployer";
 import { Deployment } from "../Deployment";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryInfo, ManifestPath } from "./CloudFoundryTarget";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.

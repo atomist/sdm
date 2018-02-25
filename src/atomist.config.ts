@@ -20,7 +20,7 @@ const assembled = new MachineAssembler(
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: ["T5964N9B7"], // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: ["T1JVCMVH7"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: assembled.commandHandlers.concat([
         HelloWorld,
         () => affirmationEditor,
