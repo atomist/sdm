@@ -4,7 +4,8 @@ import { AnyPush, PhaseCreator, PushesToMaster } from "../handlers/events/delive
 import { ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
+import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
+import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
@@ -18,7 +19,6 @@ import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
 import { offerPromotionCommand, presentPromotionButton } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
-import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { buildPhaseBuilder, jvmPhaseBuilder } from "./blueprint/phase/phaseManagement";

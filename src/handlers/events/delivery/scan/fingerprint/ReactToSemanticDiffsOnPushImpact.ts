@@ -27,9 +27,9 @@ import {
 } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import * as schema from "../../../typings/types";
-import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { ListenerInvocation, SdmListener } from "../delivery/Listener";
+import * as schema from "../../../../../typings/types";
+import { addressChannelsFor } from "../../../../commands/editors/toclient/addressChannels";
+import { ListenerInvocation, SdmListener } from "../../Listener";
 
 export interface FingerprintValue {
     name: string;

@@ -28,8 +28,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import * as schema from "../../../typings/types";
-import { sendFingerprint } from "../../commands/editors/toclient/fingerprints";
+import * as schema from "../../../../../typings/types";
+import { sendFingerprint } from "../../../../commands/editors/toclient/fingerprints";
 
 import * as _ from "lodash";
 

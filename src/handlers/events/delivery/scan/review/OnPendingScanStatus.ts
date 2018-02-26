@@ -40,16 +40,16 @@ import { ProjectReview, ReviewComment } from "@atomist/automation-client/operati
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
-import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../../commands/editors/toclient/ghub";
-import { ScanContext } from "../phases/gitHubContext";
-import { ContextToPlannedPhase } from "../phases/httpServicePhases";
+import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
+import { AddressChannels, addressChannelsFor } from "../../../../commands/editors/toclient/addressChannels";
+import { createStatus } from "../../../../commands/editors/toclient/ghub";
+import { ScanContext } from "../../phases/gitHubContext";
+import { ContextToPlannedPhase } from "../../phases/httpServicePhases";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
-import { ProjectListenerInvocation, SdmListener } from "../Listener";
-import { forApproval } from "../verify/approvalGate";
+import { ProjectListenerInvocation, SdmListener } from "../../Listener";
+import { forApproval } from "../../verify/approvalGate";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.

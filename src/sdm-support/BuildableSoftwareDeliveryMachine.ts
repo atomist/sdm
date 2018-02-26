@@ -14,17 +14,17 @@ import { PhaseCreator, SetupPhasesOnPush } from "../handlers/events/delivery/pha
 import { Phases } from "../handlers/events/delivery/Phases";
 import { ArtifactContext, BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { OnPendingScanStatus } from "../handlers/events/delivery/review/OnPendingScanStatus";
-import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedStatus, VerifiedDeploymentListener } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
-import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
-import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
-import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
+import { Fingerprinter, FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import {
     FingerprintDifferenceListener,
     ReactToSemanticDiffsOnPushImpact,
-} from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
+} from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
+import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
+import { OnVerifiedStatus, VerifiedDeploymentListener } from "../handlers/events/delivery/verify/OnVerifiedStatus";
+import { NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
+import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
+import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnImageLinked, OnSuccessStatus } from "../typings/types";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";

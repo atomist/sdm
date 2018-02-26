@@ -6,11 +6,11 @@ import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatu
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { OnPendingScanStatus } from "../handlers/events/delivery/review/OnPendingScanStatus";
+import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
+import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
+import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
-import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
 import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus, OnSupersededStatus } from "../typings/types";
