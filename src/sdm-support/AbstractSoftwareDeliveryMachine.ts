@@ -15,7 +15,7 @@ import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
-import { NewIssueHandler, NewIssueListener } from "../handlers/events/issue/NewIssueHandler";
+import { NewIssueHandler, NewIssueInvocation } from "../handlers/events/issue/NewIssueHandler";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -41,7 +41,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
 
-    public newIssueListeners: NewIssueListener[] = [];
+    public newIssueListeners: Array<SdmListener<NewIssueInvocation>> = [];
 
     private newRepoWithCodeActions: SdmListener[] = [];
 
@@ -171,7 +171,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addNewIssueListeners(...e: NewIssueListener[]): this {
+    public addNewIssueListeners(...e: Array<SdmListener<NewIssueInvocation>>): this {
         this.newIssueListeners = this.newIssueListeners.concat(e);
         return this;
     }

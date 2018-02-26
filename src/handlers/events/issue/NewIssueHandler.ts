@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL } from "@atomist/automation-client";
+import { GraphQL, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -26,13 +26,14 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnNewIssue } from "../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 
 export type Issue = OnNewIssue.Issue;
 
-export type NewIssueListener = (issue: Issue,
-                                id: GitHubRepoRef,
-                                addressChannels: AddressChannels,
-                                ctx: HandlerContext) => Promise<any>;
+export interface NewIssueInvocation extends ListenerInvocation {
+
+    issue: Issue;
+}
 
 /**
  * A new repo has been created. We don't know if it has code.
@@ -41,15 +42,25 @@ export type NewIssueListener = (issue: Issue,
     GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
 export class NewIssueHandler implements HandleEvent<OnNewIssue.Subscription> {
 
-    constructor(private newIssueListeners: NewIssueListener[]) {
+    @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
+    private githubToken: string;
+
+    constructor(private newIssueListeners: Array<SdmListener<NewIssueInvocation>>) {
     }
 
-    public async handle(event: EventFired<OnNewIssue.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const issue: Issue = event.data.Issue[0];
-        const ac = addressChannelsFor(issue.repo, ctx);
+        const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
+        const inv: NewIssueInvocation = {
+            id,
+            addressChannels,
+            context,
+            issue,
+            credentials: { token: params.githubToken},
+        };
         await Promise.all(params.newIssueListeners
-            .map(l => l(issue, id, ac, ctx)));
+            .map(l => l(inv)));
         return Success;
     }
 }
