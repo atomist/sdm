@@ -3,7 +3,10 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
-import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import {
+    AnyPush, PhaseCreator, PushesToMaster,
+    SetupPhasesOnPush,
+} from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
@@ -13,7 +16,7 @@ import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { AbstractSoftwareDeliveryMachine } from "../sdm-support/AbstractSoftwareDeliveryMachine";
+import { BuildableSoftwareDeliveryMachine } from "../sdm-support/BuildableSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../sdm-support/ReferenceDeliveryBlueprint";
 import { OnAnySuccessStatus } from "../typings/types";
 import { LocalMavenBuildOnSuccessStatus } from "./blueprint/build/LocalMavenBuildOnScanSuccessStatus";
@@ -27,47 +30,34 @@ import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsCh
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
-import { PhaseSetup } from "./blueprint/phase/phaseManagement";
+import { buildPhaseBuilder, jvmPhaseBuilder } from "./blueprint/phase/phaseManagement";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
-import { tryToUpgradeSpringBootVersion, } from "./commands/editors/tryToUpgradeSpringBootVersion";
+import { tryToUpgradeSpringBootVersion } from "./commands/editors/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
-export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
+const promotedEnvironment: PromotedEnvironment = {
 
-    protected scanContext = ScanContext;
+    name: "production",
 
-    public phaseSetup: Maker<SetupPhasesOnPush> = PhaseSetup;
+    offerPromotionCommand,
 
-    public builder: Maker<StatusSuccessHandler> = LocalMavenBuildOnSuccessStatus;
+    promote: DeployToProd,
 
-    public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
+    deploy: CloudFoundryProductionDeployOnFingerprint,
+};
 
-    public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription> & EventWithCommand> =
-        // CloudFoundryStagingDeployOnSuccessStatus;
-        () => LocalMavenDeployer
-
-    public promotedEnvironment: PromotedEnvironment = {
-
-        name: "production",
-
-        offerPromotionCommand,
-
-        promote: DeployToProd,
-
-        deploy: CloudFoundryProductionDeployOnFingerprint,
-    };
-
-    get possiblePhases(): Phases[] {
-        return [HttpServicePhases, LibraryPhases];
-    }
+export class SpringPCFSoftwareDeliveryMachine extends BuildableSoftwareDeliveryMachine {
 
     constructor(opts: { useCheckstyle: boolean }) {
-        super();
+        super([HttpServicePhases, LibraryPhases], ScanContext,
+            LocalMavenBuildOnSuccessStatus,
+            // CloudFoundryStagingDeployOnSuccessStatus;
+            () => LocalMavenDeployer);
         this.addNewIssueListeners(requestDescription);
         this.addEditors(() => tryToUpgradeSpringBootVersion);
         this.addGenerators(() => springBootGenerator({
@@ -88,6 +78,11 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
                 logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
             }
         }
+
+        this.addPhaseCreators(
+            new PhaseCreator([jvmPhaseBuilder], PushesToMaster),
+            new PhaseCreator([buildPhaseBuilder], AnyPush));
+
         this.addCodeReactions(logReactor)
             .addFingerprinters(mavenFingerprinter)
             .addFingerprintDifferenceHandlers(diff1)

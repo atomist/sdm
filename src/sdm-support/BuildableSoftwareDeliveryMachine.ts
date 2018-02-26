@@ -3,22 +3,24 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { EventWithCommand } from "../handlers/commands/RetryDeploy";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { ProjectListener, ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
+import { ProjectListener, SdmListener } from "../handlers/events/delivery/Listener";
 import { OnSupersededStatus, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { PhaseCreator, SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
-import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { ArtifactContext, BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
 import { OnPendingScanStatus } from "../handlers/events/delivery/review/OnPendingScanStatus";
 import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedStatus, VerifiedDeploymentListener } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { NewIssueInvocation, NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
-import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
+import { NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
+import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
 import {
     FingerprintDifferenceHandler,
     ReactToSemanticDiffsOnPushImpact,
@@ -31,7 +33,7 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 /**
  * Superclass for user software delivery machines
  */
-export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
+export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
 
     public generators: Array<Maker<HandleCommand>> = [];
 
@@ -43,9 +45,13 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public newIssueListeners: NewIssueListener[] = [];
 
+    public promotedEnvironment: PromotedEnvironment;
+
     private repoCreationListeners: RepoCreationListener[] = [];
 
     private newRepoWithCodeActions: ProjectListener[] = [];
+
+    private phaseCreators: PhaseCreator[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -64,11 +70,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
-
-    /**
-     * All possible phases we can set up. Makes cleanup easier.
-     */
-    protected abstract possiblePhases: Phases[];
 
     get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
@@ -101,7 +102,12 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             undefined;
     }
 
-    public abstract phaseSetup: Maker<SetupPhasesOnPush>;
+    get phaseSetup(): Maker<SetupPhasesOnPush> {
+        if (this.phaseCreators.length === 0) {
+            throw new Error("No phase creators");
+        }
+        return () => new SetupPhasesOnPush(...this.phaseCreators);
+    }
 
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
@@ -114,11 +120,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
     public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
         this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
-    public abstract builder: Maker<StatusSuccessHandler>;
-
-    public artifactFinder: Maker<HandleEvent<OnImageLinked.Subscription>>;
-
-    public abstract deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>;
+    public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
     get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -137,8 +139,6 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             () => new OnVerifiedStatus(...this.verifiedDeploymentListeners) :
             undefined;
     }
-
-    public abstract promotedEnvironment?: PromotedEnvironment;
 
     public onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete(BuildContext)
@@ -204,23 +204,28 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addRepoCreationListeners(...nrc: RepoCreationListener[]): this {
-        this.repoCreationListeners = this.repoCreationListeners.concat(nrc);
+    public addRepoCreationListeners(...rcls: RepoCreationListener[]): this {
+        this.repoCreationListeners = this.repoCreationListeners.concat(rcls);
         return this;
     }
 
-    public addNewRepoWithCodeActions(...nrc: ProjectListener[]): this {
-        this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(nrc);
+    public addNewRepoWithCodeActions(...pls: ProjectListener[]): this {
+        this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(pls);
         return this;
     }
 
-    public addProjectReviewers(...r: ProjectReviewer[]): this {
-        this.projectReviewers = this.projectReviewers.concat(r);
+    public addPhaseCreators(...phaseCreators: PhaseCreator[]): this {
+        this.phaseCreators = this.phaseCreators.concat(phaseCreators);
         return this;
     }
 
-    public addCodeReactions(...cr: ProjectListener[]): this {
-        this.codeReactions = this.codeReactions.concat(cr);
+    public addProjectReviewers(...reviewers: ProjectReviewer[]): this {
+        this.projectReviewers = this.projectReviewers.concat(reviewers);
+        return this;
+    }
+
+    public addCodeReactions(...pls: ProjectListener[]): this {
+        this.codeReactions = this.codeReactions.concat(pls);
         return this;
     }
 
@@ -264,5 +269,21 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    protected abstract scanContext: string;
+    public addPromotedEnvironment(pe: PromotedEnvironment): this {
+        this.promotedEnvironment = pe;
+        return this;
+    }
+
+    /**
+     *
+     * @param {Phases[]} possiblePhases All possible phases we can set up. Makes cleanup easier
+     * @param {string} scanContext
+     * @param {Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>} deploy1
+     */
+    constructor(protected possiblePhases: Phases[],
+                protected scanContext: string,
+                public builder: Maker<StatusSuccessHandler>,
+                public deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>) {
+    }
+
 }

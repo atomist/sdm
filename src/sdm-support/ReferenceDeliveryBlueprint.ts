@@ -1,5 +1,6 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
@@ -70,7 +71,7 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
     /**
      * Initial deploy
      */
-    deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription>>;
+    deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription & EventWithCommand>>;
 
     notifyOnDeploy?: Maker<OnDeployStatus>;
 
