@@ -59,8 +59,11 @@ export function deleteRepository(token: string, rr: GitHubRepoRef): AxiosPromise
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
     logger.info("Deleting repository: %s", url);
     return axios.delete(url, config)
-        .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to delete repo`)),
+        .catch(err => {
+                logger.error(err.message);
+                logger.error(err.response.body);
+                return Promise.reject(new Error(`Error hitting ${url} to delete repo`));
+            }
         );
 }
 
