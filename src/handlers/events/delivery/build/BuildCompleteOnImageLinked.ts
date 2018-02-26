@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnImageLinked } from "../../../../typings/types";
@@ -46,7 +46,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         const builtStatus = commit.statuses.find(status => status.context === params.artifactPhase.context);
         if (!builtStatus) {
-            console.log(`Deploy: builtStatus not found`);
+            logger.info(`Deploy: builtStatus not found`);
             return Promise.resolve(Success);
         }
 

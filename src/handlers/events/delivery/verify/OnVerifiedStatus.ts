@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
@@ -63,8 +63,8 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
         const commit = status.commit;
 
         if (status.context !== StagingVerifiedContext) {
-            console.log(`********* onVerifiedStatus got called with status context=[${status.context}]`);
-            return Promise.resolve(Success);
+            logger.debug(`********* onVerifiedStatus got called with status context=[${status.context}]`);
+            return Success;
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

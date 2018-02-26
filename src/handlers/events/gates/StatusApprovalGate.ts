@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
@@ -44,8 +44,8 @@ export class StatusApprovalGate implements HandleEvent<OnAnySuccessStatus.Subscr
         const commit = status.commit;
 
         if (!status.targetUrl.endsWith(ApprovalGateParam)) {
-            console.log(`********* approval gate got called with status context=[${status.context}]`);
-            return Promise.resolve(Success);
+            logger.debug(`********* approval gate got called with status context=[${status.context}]`);
+            return Success;
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

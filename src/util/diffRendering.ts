@@ -1,3 +1,4 @@
+import { logger } from "@atomist/automation-client";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
@@ -21,8 +22,7 @@ export async function renderDiff(token: string, id: GitHubRepoRef, start: string
         author: c.author,
     }));
 
-    console.log("Rendering " + commits.length + " commits in diff");
-
+    logger.info("Rendering %d commits in diff", commits.length);
     return render({owner: id.owner, name: id.repo}, commits, diffUrl(id, start, end), color);
 }
 

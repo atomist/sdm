@@ -87,8 +87,6 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         const commit = status.commit;
         const image = status.commit.image;
 
-        console.log("remove me");
-
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -100,18 +98,18 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
         // (this is related to the next TODO)
         if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
-            return Promise.resolve(Success);
+            return Success;
         }
 
         if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
-            return Promise.resolve(Success);
+            return Success;
         }
 
         // TODO: if any status is failed, do not deploy
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
-            return Promise.resolve(failure(new Error("No image linked")));
+            return failure(new Error("No image linked"));
         }
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);

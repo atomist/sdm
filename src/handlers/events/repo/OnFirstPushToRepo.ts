@@ -51,13 +51,13 @@ export class OnFirstPushToRepo
         const push = event.data.Push[0];
 
         if (!!push.before) {
-            console.log(`Get out here: Not a new commit on ${push.repo.name}`);
-            return Promise.resolve(Success);
+            logger.info(`Done: Not a new commit on ${push.repo.name}`);
+            return Success;
         }
 
         if (push.branch !== push.repo.defaultBranch) {
-            console.log(`Get out here: Not push to the default branch on ${push.repo.name}`);
-            return Promise.resolve(Success);
+            logger.info(`Done: Not push to the default branch on ${push.repo.name}`);
+            return Success;
         }
 
         const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");

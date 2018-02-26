@@ -33,12 +33,6 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    /**
-     *
-     * @param {Phases} phases
-     * @param {PlannedPhase} ourPhase
-     * @param {PlannedPhase} endpointPhase
-     */
     constructor(private phases: Phases,
                 private deployPhase: PlannedPhase) {
     }
@@ -47,8 +41,6 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
-
-        console.log("remove me");
 
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,

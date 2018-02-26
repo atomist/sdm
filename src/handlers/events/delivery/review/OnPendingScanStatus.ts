@@ -84,7 +84,7 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
 
         if (status.context !== params.context || status.state !== "pending") {
             logger.warn(`I was looking for ${params.context} being pending, but I heard about ${status.context} being ${status.state}`);
-            return Promise.resolve(Success);
+            return Success;
         }
 
         const addressChannels = addressChannelsFor(commit.repo, context);

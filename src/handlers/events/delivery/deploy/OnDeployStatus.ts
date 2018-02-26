@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus } from "../../../../typings/types";
@@ -50,13 +50,12 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
     }
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
-
         const status = event.data.Status[0];
         const commit = status.commit;
 
         if (status.context !== StagingDeploymentContext) {
-            console.log(`********* OnDeploy got called with status context=[${status.context}]`);
-            return Promise.resolve(Success);
+            logger.debug(`********* OnDeploy got called with status context=[${status.context}]`);
+            return Success;
         }
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);

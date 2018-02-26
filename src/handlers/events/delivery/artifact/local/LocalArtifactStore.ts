@@ -5,13 +5,14 @@ import { AppInfo } from "../../deploy/Deployment";
 
 /**
  * Store the artifact on local disk, relying on in memory cache
+ * This is useful only for development, not for production use,
+ * as the URLs it stores in GitHub statuses are not permalinks.
  */
 export class LocalArtifactStore implements ArtifactStore {
 
     private entries: Array<StoredArtifact & { url: string }> = [];
 
     public storeFile(appInfo: AppInfo, what: string): Promise<string> {
-        console.log("Storing " + JSON.stringify(appInfo));
         const entry = {
             appInfo,
             deploymentUnitUrl: "http://" + what,

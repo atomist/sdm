@@ -91,13 +91,14 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
 
         const phaseCreatorResults: boolean[] = await Promise.all(params.phaseCreators
-            .map(pc => Promise.resolve(pc.pushTest(push)).then(f => f)));
-        const firstSatisifiedIndex = phaseCreatorResults.indexOf(true);
-        if (firstSatisifiedIndex === -1) {
+            .map(pc => Promise.resolve(pc.pushTest(push))
+                .then(f => f)));
+        const firstSatisfiedIndex = phaseCreatorResults.indexOf(true);
+        if (firstSatisfiedIndex === -1) {
             logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
-            return Promise.resolve(Success);
+            return Success;
         }
-        const phaseBuilders = params.phaseCreators[firstSatisifiedIndex].phaseBuilders;
+        const phaseBuilders = params.phaseCreators[firstSatisfiedIndex].phaseBuilders;
 
         const creds = {token: params.githubToken};
         const p = await GitCommandGitProject.cloned(creds, id);

@@ -11,7 +11,6 @@ describe("commit rendering", () => {
             author: { login: "Dorothy" },
         });
 
-        console.log(text);
         assert(text.includes("a stripe"));
     });
 });

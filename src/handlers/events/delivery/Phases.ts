@@ -111,11 +111,11 @@ export interface GitHubStatusAndFriends extends GitHubStatus {
 export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     const result = status.siblings.find(s => s.state === "pending" && s.context === currentPhase);
     if (!result) {
-        console.log(`${currentPhase} wanted to run but it wasn't pending`);
+        logger.debug(`${currentPhase} wanted to run but it wasn't pending`);
         return false;
     }
     if (!result.description.startsWith("Planning")) {
-        console.log(`${currentPhase} is not still planned, so I'm not running it. Description: ${result.description}`);
+        logger.debug(`${currentPhase} is not still planned, so I'm not running it. Description: ${result.description}`);
         return false;
     }
     return true;

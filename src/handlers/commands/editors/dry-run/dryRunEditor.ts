@@ -5,10 +5,10 @@ import { EditOneOrAllParameters } from "@atomist/automation-client/operations/co
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { UnleashPhilParameters } from "@atomist/spring-automation/commands/editor/spring/unleashPhil";
 import { Status } from "../toclient/ghub";
 import { NewBranchWithStatus } from "../toclient/NewBranchWithStatus";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 
 export const DryRunContext = "atomist-dry-run";
 

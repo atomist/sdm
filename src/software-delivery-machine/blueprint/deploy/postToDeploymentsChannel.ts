@@ -7,5 +7,5 @@ export const PostToDeploymentsChannel: DeployListener =
 
 export const PostToServiceChannel: DeployListener =
     (id, status, ac, ctx) => {
-        return ac(`Whoopee! I was successful deployed!`);
+        return ac(`Whoopee! I was successfully deployed!`);
     };

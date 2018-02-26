@@ -48,12 +48,12 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
 
         if (status.state === "pending") {
             // not interesting
-            return Promise.resolve(Success);
+            return Success;
         }
 
         if (status.context !== K8AutomationDeployContext) {
             logger.warn(`Unexpected event: ${status.context} is ${status.state}`);
-            return Promise.resolve(Success);
+            return Success;
         }
 
         logger.info(`Recognized deploy result. ${status.state} status: ${status.context}: ${status.description}`);

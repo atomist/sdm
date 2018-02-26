@@ -52,11 +52,11 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         };
 
         if (nothingFailed(statusAndFriends) && !previousPhaseSucceeded(params.phases, this.ourContext, statusAndFriends)) {
-            return Promise.resolve(Success);
+            return Success;
         }
 
         if (!currentPhaseIsStillPending(this.ourContext, statusAndFriends)) {
-            return Promise.resolve(Success);
+            return Success;
         }
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
