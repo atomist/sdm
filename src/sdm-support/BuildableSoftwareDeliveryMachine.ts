@@ -31,7 +31,8 @@ import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
- * Superclass for user software delivery machines
+ * Convenient superclass for user software delivery machines,
+ * enabling the builder pattern
  */
 export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine {
 

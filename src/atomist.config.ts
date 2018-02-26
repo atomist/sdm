@@ -5,7 +5,8 @@ import { MachineAssembler } from "./sdm-support/MachineAssembler";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/phaseManagement";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
-import { SpringPCFSoftwareDeliveryMachine } from "./software-delivery-machine/SpringPCFSoftwareDeliveryMachine";
+import { springK8sSoftwareDeliveryMachine } from "./software-delivery-machine/springK8sSoftwareDeliveryMachine";
+import { springPCFSoftwareDeliveryMachine } from "./software-delivery-machine/springPCFSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
@@ -13,8 +14,8 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new MachineAssembler(
-    new SpringPCFSoftwareDeliveryMachine({useCheckstyle: false}),
-    // new SpringK8sSoftwareDeliveryMachine(),
+    springPCFSoftwareDeliveryMachine({useCheckstyle: false}),
+    // springK8sSoftwareDeliveryMachine({useCheckstyle: false}),
 );
 
 export const configuration: Configuration = {
