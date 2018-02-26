@@ -24,11 +24,11 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnNewIssue } from "../../../typings/types";
-import { AddressChannels, addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import * as schema from "../../../typings/types";
+import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 
-export type Issue = OnNewIssue.Issue;
+export type Issue = schema.OnNewIssue.Issue;
 
 export interface NewIssueInvocation extends ListenerInvocation {
 
@@ -40,7 +40,7 @@ export interface NewIssueInvocation extends ListenerInvocation {
  */
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
-export class NewIssueHandler implements HandleEvent<OnNewIssue.Subscription> {
+export class OnNewIssue implements HandleEvent<schema.OnNewIssue.Subscription> {
 
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
     private githubToken: string;
@@ -48,7 +48,7 @@ export class NewIssueHandler implements HandleEvent<OnNewIssue.Subscription> {
     constructor(private newIssueListeners: Array<SdmListener<NewIssueInvocation>>) {
     }
 
-    public async handle(event: EventFired<OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const issue: Issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);

@@ -9,8 +9,8 @@ import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/del
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
+import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm-support/AbstractSoftwareDeliveryMachine";
@@ -50,7 +50,7 @@ export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription>> =
         K8sStagingDeployOnSuccessStatus;
 
-    public verifyEndpoint: Maker<VerifyOnEndpointStatus> = LookFor200OnEndpointRootGet;
+    public verifyEndpoint: Maker<OnEndpointStatus> = LookFor200OnEndpointRootGet;
 
     public onVerifiedStatus: Maker<OnVerifiedStatus> = OfferPromotion;
 

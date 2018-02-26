@@ -41,7 +41,7 @@ export interface EndpointVerificationInvocation extends ListenerInvocation {
         {
             context: StagingEndpointContext,
         }))
-export class VerifyOnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscription> {
+export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

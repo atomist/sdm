@@ -1,25 +1,18 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { OnSuperseded } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { ArtifactContext } from "../handlers/events/delivery/phases/gitHubContext";
-import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
+import { OnPendingScanStatus } from "../handlers/events/delivery/review/OnPendingScanStatus";
+import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
 import { FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import {
-    OnDeployToProductionFingerprint, OnImageLinked, OnPushWithBefore, OnSuccessStatus,
-    OnSupersededStatus,
-} from "../typings/types";
+import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus, OnSupersededStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
@@ -47,7 +40,7 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
     semanticDiffReactor?: Maker<ReactToSemanticDiffsOnPushImpact>;
 
-    reviewRunner?: Maker<WithCodeOnPendingScanStatus>;
+    reviewRunner?: Maker<OnPendingScanStatus>;
 
     // TODO need > 1 with different push tests
     phaseSetup: Maker<SetupPhasesOnPush>;
@@ -81,7 +74,7 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
     notifyOnDeploy?: Maker<OnDeployStatus>;
 
-    verifyEndpoint?: Maker<VerifyOnEndpointStatus>;
+    verifyEndpoint?: Maker<OnEndpointStatus>;
 
     onVerifiedStatus?: Maker<OnVerifiedStatus>;
 

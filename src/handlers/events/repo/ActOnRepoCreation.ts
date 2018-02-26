@@ -24,11 +24,12 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnRepoCreation } from "../../../typings/types";
+import * as schema from "../../../typings/types";
 import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 
 export interface RepoCreationInvocation extends ListenerInvocation {
-    repo: OnRepoCreation.Repo;
+
+    repo: schema.OnRepoCreation.Repo;
 }
 
 /**
@@ -36,7 +37,7 @@ export interface RepoCreationInvocation extends ListenerInvocation {
  */
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnRepoCreation.graphql"))
-export class ActOnRepoCreation implements HandleEvent<OnRepoCreation.Subscription> {
+export class ActOnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -44,8 +45,8 @@ export class ActOnRepoCreation implements HandleEvent<OnRepoCreation.Subscriptio
     constructor(private newRepoAction: SdmListener<RepoCreationInvocation>) {
     }
 
-    public async handle(event: EventFired<OnRepoCreation.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
-        const repo: OnRepoCreation.Repo = event.data.Repo[0];
+    public async handle(event: EventFired<schema.OnRepoCreation.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+        const repo = event.data.Repo[0];
         const id = new GitHubRepoRef(repo.owner, repo.name);
         await this.newRepoAction({
             id,

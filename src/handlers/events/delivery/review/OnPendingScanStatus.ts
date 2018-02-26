@@ -51,8 +51,6 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import { ProjectListenerInvocation, SdmListener } from "../Listener";
 
-import * as stringify from "json-stringify-safe";
-
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
  * Run any autofix editors.
@@ -60,7 +58,7 @@ import * as stringify from "json-stringify-safe";
  */
 @EventHandler("Scan code",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
-export class WithCodeOnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
+export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

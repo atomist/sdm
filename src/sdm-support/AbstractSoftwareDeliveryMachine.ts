@@ -7,15 +7,15 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import { ProjectListener, ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
-import { OnSuperseded, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
+import { OnSupersededStatus, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
-import { WithCodeOnPendingScanStatus } from "../handlers/events/delivery/review/WithCodeOnPendingScanStatus";
+import { OnPendingScanStatus } from "../handlers/events/delivery/review/OnPendingScanStatus";
+import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { VerifyOnEndpointStatus } from "../handlers/events/delivery/verify/VerifyOnEndpointStatus";
-import { NewIssueHandler, NewIssueInvocation } from "../handlers/events/issue/NewIssueHandler";
+import { NewIssueInvocation, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
 import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -82,12 +82,12 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             undefined;
     }
 
-    get reviewRunner(): Maker<WithCodeOnPendingScanStatus> {
+    get reviewRunner(): Maker<OnPendingScanStatus> {
         const reviewers = this.projectReviewers;
         const inspections = this.codeReactions;
         const autoEditors = this.autoEditors;
         return (reviewers.length + inspections.length + autoEditors.length > 0) ?
-            () => new WithCodeOnPendingScanStatus(this.scanContext, reviewers, inspections, autoEditors) :
+            () => new OnPendingScanStatus(this.scanContext, reviewers, inspections, autoEditors) :
             undefined;
     }
 
@@ -95,9 +95,9 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
-    get onSuperseded(): Maker<OnSuperseded> {
+    get onSuperseded(): Maker<OnSupersededStatus> {
         return this.supersededListeners.length > 0 ?
-            () => new OnSuperseded(...this.supersededListeners) :
+            () => new OnSupersededStatus(...this.supersededListeners) :
             undefined;
     }
 
@@ -116,7 +116,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
             undefined;
     }
 
-    public abstract verifyEndpoint?: Maker<VerifyOnEndpointStatus>;
+    public abstract verifyEndpoint?: Maker<OnEndpointStatus>;
 
     public abstract onVerifiedStatus?: Maker<OnVerifiedStatus>;
 
@@ -129,7 +129,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
             .concat([
-                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners) : undefined,
+                this.newIssueListeners.length > 0 ? () => new OnNewIssue(this.newIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.fingerprinter,
