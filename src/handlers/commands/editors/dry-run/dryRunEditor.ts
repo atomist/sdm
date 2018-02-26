@@ -8,6 +8,7 @@ import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/
 import { UnleashPhilParameters } from "@atomist/spring-automation/commands/editor/spring/unleashPhil";
 import { Status } from "../toclient/ghub";
 import { NewBranchWithStatus } from "../toclient/NewBranchWithStatus";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 
 export const DryRunContext = "atomist-dry-run";
 
@@ -20,6 +21,7 @@ export const DryRunContext = "atomist-dry-run";
  */
 export function dryRunEditor<PARAMS extends EditOneOrAllParameters =
     EditOneOrAllParameters>(edd: (params: PARAMS) => AnyProjectEditor,
+                            factory: Maker<PARAMS>,
                             name: string,
                             details: Partial<EditorCommandDetails<PARAMS>> = {}): HandleCommand<EditOneOrAllParameters> {
     const description = details.description || name;
@@ -42,9 +44,9 @@ export function dryRunEditor<PARAMS extends EditOneOrAllParameters =
             status)),
         ...details,
     };
-    return editorHandler<PARAMS>(
+    return editorHandler(
         edd,
-        UnleashPhilParameters as any,
+        factory,
         name,
         detailsToUse);
 }

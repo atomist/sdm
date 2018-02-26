@@ -5,6 +5,7 @@ import { dryRunEditor } from "../../../handlers/commands/editors/dry-run/dryRunE
 
 export const tryToUpgradeSpringBootVersion: HandleCommand<any> = dryRunEditor<UnleashPhilParameters>(
     params => setSpringBootVersionEditor(params.desiredBootVersion),
+    UnleashPhilParameters,
     "boot-upgrade", {
         description: `Upgrade Spring Boot version`,
     },

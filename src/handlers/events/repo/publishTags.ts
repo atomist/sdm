@@ -7,7 +7,6 @@ import { Tagger, Tags } from "@atomist/automation-client/operations/tagger/Tagge
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import { GitHubTagRouter } from "@atomist/spring-automation/commands/tag/gitHubTagRouter";
-import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { AddressChannels } from "../../../handlers/commands/editors/toclient/addressChannels";
 
 export async function publishTags(tagger: Tagger,
@@ -31,8 +30,6 @@ export async function publishTags(tagger: Tagger,
             test: () => true,
         },
     };
-    // TODO this is hacky but we need the different parameter format
-    // Anyway, we don't want this to be part of generation long term
     return doWithRetry(() => GitHubTagRouter(tags, edp, undefined),
         "Publish tags", {
             randomize: true,

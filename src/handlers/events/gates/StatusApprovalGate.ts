@@ -24,13 +24,10 @@ import { addressChannelsFor } from "../../commands/editors/toclient/addressChann
 import Status = OnSuccessStatus.Status;
 
 /**
- * Added to end of URL
+ * Added to end of URL of a status to fire manual approval step
  * @type {string}
  */
-// TODO proper make approvable
 export const ApprovalGateParam = "?atomist:approve=true";
-
-// Not currently used
 
 /**
  * Update a status.

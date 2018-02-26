@@ -33,10 +33,9 @@ export function editor<PARAMS extends EditOneOrAllParameters =
             description)),
         ...details,
     };
-    return editorHandler<PARAMS>(
+    return editorHandler(
         edd,
-        // TODO this is nasty
-        EditOneOrAllParameters as any,
+        EditOneOrAllParameters,
         name,
         detailsToUse);
 }

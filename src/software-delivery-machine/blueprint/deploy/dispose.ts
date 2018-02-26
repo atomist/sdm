@@ -83,9 +83,8 @@ async function deletePCF(cfi: CloudFoundryInfo, appName: string) {
     logger.info(`Deleting ${appName} from ${cfi.space}`);
     const loginResult = await runCommand(
         `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`, {});
-    console.log("Successfully selected space [%s]", cfi.space);
+    logger.info("Successfully selected space [%s]", cfi.space);
 
     const deleteResult = await runCommand(`cf delete ${appName} -r -f`, {});
-    console.log(deleteResult.stdout);
-
+    logger.info(deleteResult.stdout);
 }
