@@ -13,14 +13,17 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new MachineAssembler(
-    new SpringPCFSoftwareDeliveryMachine({ useCheckstyle: false}),
-   // new SpringK8sSoftwareDeliveryMachine(),
+    new SpringPCFSoftwareDeliveryMachine({useCheckstyle: false}),
+    // new SpringK8sSoftwareDeliveryMachine(),
 );
 
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: ["T1JVCMVH7"], // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: [
+        //  "T1JVCMVH7",
+        "T5964N9B7",
+    ], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: assembled.commandHandlers.concat([
         HelloWorld,
         () => affirmationEditor,
