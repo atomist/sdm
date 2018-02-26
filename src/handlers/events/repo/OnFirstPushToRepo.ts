@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GraphQL, logger, Secret, Secrets, success } from "@atomist/automation-client";
+import { GraphQL, logger, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -28,8 +28,9 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import * as schema from "../../../typings/types";
 import { AddressChannels } from "../../commands/editors/toclient/addressChannels";
 
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { ListenerInvocation, SdmListener } from "../delivery/Listener";
+import { ProjectListenerInvocation, SdmListener } from "../delivery/Listener";
 
 /**
  * A new repo has been created, and it has some code in it.
@@ -62,6 +63,7 @@ export class OnFirstPushToRepo
         const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");
 
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, push.after.sha);
+        const credentials = {token: params.githubToken};
 
         if (!screenName) {
             logger.warn("Warning: Cannot get screen name of committer for first push on %j", id);
@@ -70,11 +72,13 @@ export class OnFirstPushToRepo
 
         const addressChannels: AddressChannels = m => context.messageClient.addressUsers(m, screenName);
 
-        const invocation: ListenerInvocation = {
+        const project = await GitCommandGitProject.cloned(credentials, id);
+        const invocation: ProjectListenerInvocation = {
             id,
             context,
             addressChannels,
-            credentials: {token: params.githubToken},
+            credentials,
+            project,
         };
         await Promise.all(params.actions
             .map(l => l(invocation)),

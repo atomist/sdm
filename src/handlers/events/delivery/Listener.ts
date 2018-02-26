@@ -24,11 +24,13 @@ export interface ListenerInvocation {
 
 }
 
+export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R extends any = any> =
+    Function1<I, Promise<R>>;
+
 export interface ProjectListenerInvocation extends ListenerInvocation {
 
     project: GitProject;
 
 }
 
-export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R extends any = any> =
-    Function1<I, Promise<R>>;
+export type ProjectListener = SdmListener<ProjectListenerInvocation>;

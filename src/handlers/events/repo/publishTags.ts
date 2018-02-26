@@ -19,7 +19,7 @@ export async function publishTags(tagger: Tagger,
 
     const tags: Tags = await tagger(p, ctx, undefined);
 
-    await addressChannels(`Tagging \`${id.owner}/${id.repo}\` with ` + tags.tags.join());
+    await addressChannels(`Tagging \`${id.owner}/${id.repo}\` with [${tags.tags.join()}]`);
     const edp: EditorOrReviewerParameters = {
         targets: {
             owner: id.owner,

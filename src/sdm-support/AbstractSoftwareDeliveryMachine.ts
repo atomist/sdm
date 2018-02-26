@@ -6,7 +6,7 @@ import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
+import { ProjectListener, ProjectListenerInvocation, SdmListener } from "../handlers/events/delivery/Listener";
 import { OnSuperseded, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
@@ -43,7 +43,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public newIssueListeners: Array<SdmListener<NewIssueInvocation>> = [];
 
-    private newRepoWithCodeActions: SdmListener[] = [];
+    private newRepoWithCodeActions: ProjectListener[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -186,7 +186,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addNewRepoWithCodeActions(...nrc: SdmListener[]): this {
+    public addNewRepoWithCodeActions(...nrc: ProjectListener[]): this {
         this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(nrc);
         return this;
     }
@@ -196,7 +196,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addCodeReactions(...cr: Array<SdmListener<ProjectListenerInvocation>>): this {
+    public addCodeReactions(...cr: ProjectListener[]): this {
         this.codeReactions = this.codeReactions.concat(cr);
         return this;
     }
