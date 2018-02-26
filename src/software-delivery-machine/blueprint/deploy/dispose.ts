@@ -1,10 +1,57 @@
 import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { logger } from "@atomist/automation-client";
+import {
+    HandleCommand, HandlerContext, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
+    success
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
+import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { deleteRepository } from "../../../handlers/commands/editors/toclient/ghub";
 
+@Parameters()
+export class DisposeParameters {
+
+    @Secret(Secrets.userToken("delete_repo"))
+    public githubToken: string;
+
+    @MappedParameter(MappedParameters.GitHubOwner)
+    public owner: string;
+
+    @MappedParameter(MappedParameters.GitHubRepository)
+    public repo: string;
+
+    @MappedParameter(MappedParameters.SlackUserName)
+    public screenName: string;
+
+    @Parameter({displayName: "Are you sure?"})
+    public areYouSure: string;
+
+}
+
+
+export const disposeProjectHandler: HandleCommand<DisposeParameters> =
+    commandHandlerFrom(disposeHandle,
+        DisposeParameters,
+        "DisposeOfProject",
+        "Delete deployments and repo",
+        "dispose of this project");
+
+
+function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<HandlerResult> {
+    if (params.areYouSure.toLowerCase() !== "yes") {
+        return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
+            .then(success);
+    }
+    const id = new GitHubRepoRef(params.owner, params.repo);
+    const creds = {token: params.githubToken};
+    return disposeOfProject(creds, id)
+        .then(() => ctx.messageClient.respond("Repository deleted."))
+        .then(success)
+}
 
 async function disposeOfProject(creds: ProjectOperationCredentials, id: RemoteRepoRef) {
     const appNames = await determineAppName(creds, id);
@@ -14,6 +61,7 @@ async function disposeOfProject(creds: ProjectOperationCredentials, id: RemoteRe
         cfi.space = "ri-production";
         await deletePCF(cfi, appName);
     }));
+    await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
 }
 
 async function determineAppName(creds: ProjectOperationCredentials, id: RemoteRepoRef): Promise<string[]> {
@@ -27,7 +75,7 @@ async function determineAppName(creds: ProjectOperationCredentials, id: RemoteRe
 // todo: officially parse yaml
     const nameMatch = manifest.match(/^- name: (.*)$/m);
     if (nameMatch) {
-      return [nameMatch[1]];
+        return [nameMatch[1]];
     } else {
         throw new Error("Could not parse app name from manifest: " + manifest);
     }

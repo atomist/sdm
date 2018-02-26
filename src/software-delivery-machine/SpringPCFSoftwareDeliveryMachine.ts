@@ -37,6 +37,7 @@ import {
     tryToUpgradeSpringBootVersion,
 } from "./commands/editors/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -107,6 +108,7 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addSupportingCommands(
                 () => addCloudFoundryManifest,
                 DescribeStagingAndProd,
+                () => disposeProjectHandler,
             )
             .addSupportingEvents(OnDryRunBuildComplete);
     }
