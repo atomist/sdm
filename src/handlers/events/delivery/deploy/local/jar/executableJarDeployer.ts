@@ -1,61 +1,43 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ChildProcess, spawn } from "child_process";
+import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../ArtifactStore";
 import { InterpretedLog } from "../../../log/InterpretedLog";
 import { QueryableProgressLog } from "../../../log/ProgressLog";
 import { Deployer } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
+import { ManagedDeployments } from "../appManagement";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 
 /**
- * Ports will be reused for the same app
+ * Managed deployments
  */
-interface DeployedApp {
-    id: RemoteRepoRef;
-    port: number;
+let managedDeployments: ManagedDeployments;
 
-    /** Will be undefined if the app is not currently deployed */
-    childProcess: ChildProcess;
-}
-
-const deployments: DeployedApp[] = [];
-
-const InitialPort = 8080;
-
-function nextFreePort(): number {
-    let port = InitialPort;
-    while (deployments.some(d => d.port === port)) {
-        port++;
+/**
+ * Start up an executable Jar on the same node as the automation client.
+ * Not for production use.
+ * @param opts options
+ */
+export function executableJarDeployer(opts: LocalDeployerOptions): Deployer {
+    if (!managedDeployments) {
+        logger.info("Created new deployments record");
+        managedDeployments = new ManagedDeployments(opts.lowerPort);
     }
-    return port;
-}
-
-function findPort(id: RemoteRepoRef): number {
-    const running = deployments.find(d => d.id.owner === id.owner && d.id.repo === id.repo);
-    return !!running ? running.port : nextFreePort();
-}
-
-/**
- * Start up an executable Jar
- */
-export function executableJarDeployer(baseUrl: string = "http://localhost"): Deployer {
-    return new ExecutableJarDeployer(baseUrl);
+    return new ExecutableJarDeployer({
+        ...DefaultLocalDeployerOptions,
+        ...opts,
+    });
 }
 
 class ExecutableJarDeployer implements Deployer {
 
-    constructor(public baseUrl: string) {
+    constructor(public opts: LocalDeployerOptions) {
     }
 
     public async undeploy(id: RemoteRepoRef): Promise<any> {
-        const victim = deployments.find(d => d.id.sha === id.sha);
-        if (!!victim) {
-            victim.childProcess.kill();
-            // Keep the port but deallocate the process
-            victim.childProcess = undefined;
-            logger.info("Killed app [%j], but continuing to reserve port [%d]", victim.port);
-        }
+        return managedDeployments.undeploy(id);
     }
 
     public async deploy(da: DeployableArtifact,
@@ -63,9 +45,9 @@ class ExecutableJarDeployer implements Deployer {
                         log: QueryableProgressLog,
                         creds: ProjectOperationCredentials,
                         team: string): Promise<Deployment> {
-        const baseUrl = this.baseUrl;
-        const port = findPort(da.id);
-        logger.info("Deploying app [%j] at port [%d] for team %s", da, port, team);
+        const baseUrl = this.opts.baseUrl;
+        const port = managedDeployments.findPort(da.id);
+        logger.info("Deploying app [%j] on port [%d] for team %s", da, port, team);
         const childProcess = spawn("java",
             [
                 "-jar",
@@ -82,7 +64,7 @@ class ExecutableJarDeployer implements Deployer {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    deployments.push({id: da.id, port, childProcess});
+                    managedDeployments.recordDeployment({id: da.id, port, childProcess});
                     resolve({
                         endpoint: `${baseUrl}:${port}`,
                     });

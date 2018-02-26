@@ -16,8 +16,7 @@
 
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
-import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/maven/executableJarDeployer";
-import { CloudFoundryInfo } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
@@ -27,16 +26,18 @@ import {
 import { artifactStore } from "../artifactStore";
 
 /**
- * Deploy everything to the same Cloud Foundry space
- * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
+ * Deploy to the automation client node
  */
-export const LocalMavenDeployOnImageLinked: DeployFromLocalOnSuccessStatus<TargetInfo> =
+export const LocalDeployOnAutomationNodeDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
     new DeployFromLocalOnSuccessStatus<TargetInfo>(
         HttpServicePhases,
         ContextToPlannedPhase[StagingDeploymentContext],
         ContextToPlannedPhase[StagingEndpointContext],
         artifactStore,
-        executableJarDeployer(),
+        executableJarDeployer({
+            baseUrl: "http://localhost",
+            lowerPort: 8080,
+        }),
         () => ({
             name: "Local",
             description: "Deployment alongside local automation client",
