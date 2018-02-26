@@ -7,11 +7,11 @@ import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { K8sStagingDeployOnSuccessStatus } from "./blueprint/deploy/k8sDeploy";
-import { LocalDeployOnAutomationNodeDeployOnSuccessStatus } from "./blueprint/deploy/localDeployOnAutomationNodeDeployOnSuccessStatus";
+import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { configureSpringSdm } from "./springPCFSoftwareDeliveryMachine";
 
-const LocalMavenDeployer = LocalDeployOnAutomationNodeDeployOnSuccessStatus;
+const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
 
 // CloudFoundryStagingDeployOnImageLinked
 

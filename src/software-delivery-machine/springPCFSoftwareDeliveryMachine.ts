@@ -16,7 +16,7 @@ import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cl
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
-import { LocalDeployOnAutomationNodeDeployOnSuccessStatus } from "./blueprint/deploy/localDeployOnAutomationNodeDeployOnSuccessStatus";
+import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand, presentPromotionButton } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
@@ -29,7 +29,7 @@ import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManif
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
-const LocalMavenDeployer = LocalDeployOnAutomationNodeDeployOnSuccessStatus;
+const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
 
 const promotedEnvironment: PromotedEnvironment = {
 

@@ -44,17 +44,15 @@ class ExecutableJarDeployer implements Deployer {
                         ti: TargetInfo,
                         log: QueryableProgressLog,
                         creds: ProjectOperationCredentials,
-                        team: string): Promise<Deployment> {
+                        atomistTeam: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;
         const port = managedDeployments.findPort(da.id);
-        logger.info("Deploying app [%j] on port [%d] for team %s", da, port, team);
+        logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const childProcess = spawn("java",
             [
                 "-jar",
                 da.filename,
-                `--server.port=${port}`,
-                `--ATOMIST_TEAM=${team}`,
-            ],
+            ].concat(this.opts.commandLineArgumentsFor({ port, atomistTeam})),
             {
                 cwd: da.cwd,
             });

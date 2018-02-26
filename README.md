@@ -3,7 +3,10 @@
 GitHub Software Delivery Machine.
 
 ## What is a "Software Delivery Machine?"
-A **software delivery machine** is a comprehensive solution to project delivery.
+A **software delivery machine** is like a development team in a box. It enable you:
+
+- To automate every delivery flow
+- To automate anything.
 
 ## Concepts
 This repository shows how Atomist can automate important tasks,

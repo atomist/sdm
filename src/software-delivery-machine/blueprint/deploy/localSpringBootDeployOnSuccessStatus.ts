@@ -17,6 +17,7 @@
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
+import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
@@ -28,7 +29,7 @@ import { artifactStore } from "../artifactStore";
 /**
  * Deploy to the automation client node
  */
-export const LocalDeployOnAutomationNodeDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
+export const LocalSpringBootDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
     new DeployFromLocalOnSuccessStatus<TargetInfo>(
         HttpServicePhases,
         ContextToPlannedPhase[StagingDeploymentContext],
@@ -37,9 +38,17 @@ export const LocalDeployOnAutomationNodeDeployOnSuccessStatus: DeployFromLocalOn
         executableJarDeployer({
             baseUrl: "http://localhost",
             lowerPort: 8080,
+            commandLineArgumentsFor: springBootArgs,
         }),
         () => ({
             name: "Local",
             description: "Deployment alongside local automation client",
         }),
     );
+
+function springBootArgs(si: StartupInfo): string[] {
+    return [
+        `--server.port=${si.port}`,
+        `--ATOMIST_TEAM=${si.atomistTeam}`,
+    ];
+}
