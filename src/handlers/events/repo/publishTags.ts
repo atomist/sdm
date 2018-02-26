@@ -9,6 +9,15 @@ import { doWithRetry } from "@atomist/automation-client/util/retry";
 import { GitHubTagRouter } from "@atomist/spring-automation/commands/tag/gitHubTagRouter";
 import { AddressChannels } from "../../../handlers/commands/editors/toclient/addressChannels";
 
+/**
+ * Run a tagger and publish tags for this repo
+ * @param {Tagger} tagger
+ * @param {GitHubRepoRef} id
+ * @param {ProjectOperationCredentials} credentials
+ * @param {AddressChannels} addressChannels
+ * @param {HandlerContext} ctx
+ * @return {Promise<ActionResult<Tags>>}
+ */
 export async function publishTags(tagger: Tagger,
                                   id: GitHubRepoRef,
                                   credentials: ProjectOperationCredentials,

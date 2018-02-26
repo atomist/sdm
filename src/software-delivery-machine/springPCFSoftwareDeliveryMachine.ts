@@ -81,7 +81,7 @@ export function configureSpringSdm(sdm: BuildableSoftwareDeliveryMachine, opts: 
         new PhaseCreator([buildPhaseBuilder], AnyPush))
         .addCodeReactions(logReactor)
         .addFingerprinters(mavenFingerprinter)
-        .addFingerprintDifferenceHandlers(diff1)
+        .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
         .addVerifiedDeploymentListeners(presentPromotionButton)

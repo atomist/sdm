@@ -22,7 +22,7 @@ import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/Finger
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
 import {
-    FingerprintDifferenceHandler,
+    FingerprintDifferenceListener,
     ReactToSemanticDiffsOnPushImpact,
 } from "../handlers/events/repo/ReactToSemanticDiffsOnPushImpact";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
@@ -64,7 +64,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
 
     private supersededListeners: Array<SdmListener<SupersededListenerInvocation>> = [];
 
-    private fingerprintDifferenceHandlers: FingerprintDifferenceHandler[] = [];
+    private fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
     private deploymentListeners?: DeployListener[] = [];
 
@@ -89,8 +89,8 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
     }
 
     public get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
-        return this.fingerprintDifferenceHandlers.length > 0 ?
-            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceHandlers) :
+        return this.fingerprintDifferenceListeners.length > 0 ?
+            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners) :
             undefined;
     }
 
@@ -250,8 +250,8 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
         return this;
     }
 
-    public addFingerprintDifferenceHandlers(...fh: FingerprintDifferenceHandler[]): this {
-        this.fingerprintDifferenceHandlers = this.fingerprintDifferenceHandlers.concat(fh);
+    public addFingerprintDifferenceListeners(...fh: FingerprintDifferenceListener[]): this {
+        this.fingerprintDifferenceListeners = this.fingerprintDifferenceListeners.concat(fh);
         return this;
     }
 

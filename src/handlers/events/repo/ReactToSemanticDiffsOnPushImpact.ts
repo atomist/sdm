@@ -16,7 +16,7 @@
 
 import * as _ from "lodash";
 
-import { GraphQL } from "@atomist/automation-client";
+import { GraphQL, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -28,6 +28,8 @@ import {
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as schema from "../../../typings/types";
+import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
+import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 
 export interface FingerprintValue {
     name: string;
@@ -45,22 +47,31 @@ export interface FingerprintDifference {
     newValue?: FingerprintValue;
 }
 
-export type FingerprintDifferenceHandler = (id: GitHubRepoRef,
-                                            diffs: FingerprintDifference[],
-                                            ctx: HandlerContext) => any | Promise<any>;
+export interface FingerprintDifferenceInvocation extends ListenerInvocation {
+
+    diffs: FingerprintDifference[];
+}
 
 /**
- * Handle fingerprint changes
+ * React to a fingerprint diff
  */
-@EventHandler("On repo creation",
+export type FingerprintDifferenceListener = SdmListener<FingerprintDifferenceInvocation>;
+
+/**
+ * React to a PushImpact event to react to semantic diffs
+ */
+@EventHandler("Find semantic diffs from a PushImpact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPushImpact.graphql"))
 export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
-    constructor(private differenceHandlers: FingerprintDifferenceHandler[]) {
+    @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
+    private githubToken: string;
+
+    constructor(private differenceListeners: FingerprintDifferenceListener[]) {
     }
 
-    public async handle(event: EventFired<schema.OnPushImpact.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnPushImpact.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const pushImpact = event.data.PushImpact[0];
 
         const after = pushImpact.push.after;
@@ -84,7 +95,14 @@ export class ReactToSemanticDiffsOnPushImpact
             }))
                 .filter(fv => _.get(fv, "oldValue.sha") !== _.get(fv, "newValue.sha"));
 
-        await Promise.all(this.differenceHandlers.map(dh => dh(id, diffs, ctx)));
+        const inv: FingerprintDifferenceInvocation = {
+            id,
+            context,
+            credentials: {token: params.githubToken},
+            addressChannels: addressChannelsFor(after.repo, context),
+            diffs,
+        };
+        await Promise.all(this.differenceListeners.map(dh => dh(inv)));
         return Success;
     }
 }
