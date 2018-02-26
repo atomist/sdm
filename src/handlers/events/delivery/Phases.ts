@@ -8,8 +8,8 @@ import { createStatus, State } from "../../commands/editors/toclient/ghub";
 
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
-import { ApprovalGateParam } from "../gates/StatusApprovalGate";
 import { contextIsAfter, GitHubStatusContext, splitContext } from "./phases/gitHubContext";
+import { ApprovalGateParam } from "./verify/approvalGate";
 
 export interface PlannedPhase {
     context: GitHubStatusContext;

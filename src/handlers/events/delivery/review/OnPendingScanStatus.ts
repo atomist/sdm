@@ -43,13 +43,13 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
-import { ApprovalGateParam } from "../../gates/StatusApprovalGate";
 import { ScanContext } from "../phases/gitHubContext";
 import { ContextToPlannedPhase } from "../phases/httpServicePhases";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import { ProjectListenerInvocation, SdmListener } from "../Listener";
+import { forApproval } from "../verify/approvalGate";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -142,9 +142,10 @@ export const ScanBase = "https://scan.atomist.com";
 function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
                      creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
     const phase = ContextToPlannedPhase[context];
+    const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: `${ScanBase}/${id.owner}/${id.repo}/${id.sha}${requireApproval ? ApprovalGateParam : ""}`,
+        target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
         context: ScanContext,
         description: `Completed ${phase.name}`,
     });
