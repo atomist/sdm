@@ -51,7 +51,10 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private listeners: VerifiedDeploymentListener[]) {
+    private listeners: VerifiedDeploymentListener[];
+
+    constructor(...listeners: VerifiedDeploymentListener[]) {
+        this.listeners = listeners;
     }
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,

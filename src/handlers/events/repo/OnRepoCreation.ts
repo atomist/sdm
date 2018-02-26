@@ -32,28 +32,34 @@ export interface RepoCreationInvocation extends ListenerInvocation {
     repo: schema.OnRepoCreation.Repo;
 }
 
+export type RepoCreationListener = SdmListener<RepoCreationInvocation>;
+
 /**
  * A new repo has been created. We don't know if it has code.
  */
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnRepoCreation.graphql"))
-export class ActOnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
+export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private newRepoAction: SdmListener<RepoCreationInvocation>) {
+    private newRepoActions: RepoCreationListener[];
+
+    constructor(...newRepoActions: RepoCreationListener[]) {
+        this.newRepoActions = newRepoActions;
     }
 
     public async handle(event: EventFired<schema.OnRepoCreation.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
         const id = new GitHubRepoRef(repo.owner, repo.name);
-        await this.newRepoAction({
+        const invocation: RepoCreationInvocation = {
             id,
             context,
             repo,
             credentials: {token: params.githubToken},
-        });
+        };
+        await Promise.all(params.newRepoActions.map(a => a(invocation)));
         return Success;
     }
 }

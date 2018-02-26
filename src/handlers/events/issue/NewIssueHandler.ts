@@ -35,6 +35,8 @@ export interface NewIssueInvocation extends ListenerInvocation {
     issue: Issue;
 }
 
+export type NewIssueListener = SdmListener<NewIssueInvocation>;
+
 /**
  * A new repo has been created. We don't know if it has code.
  */
@@ -45,7 +47,10 @@ export class OnNewIssue implements HandleEvent<schema.OnNewIssue.Subscription> {
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
     private githubToken: string;
 
-    constructor(private newIssueListeners: Array<SdmListener<NewIssueInvocation>>) {
+    private newIssueListeners: NewIssueListener[];
+
+    constructor(...newIssueListeners: NewIssueListener[]) {
+        this.newIssueListeners = newIssueListeners;
     }
 
     public async handle(event: EventFired<schema.OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {

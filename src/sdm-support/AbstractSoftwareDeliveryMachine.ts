@@ -13,10 +13,10 @@ import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhases
 import { Phases } from "../handlers/events/delivery/Phases";
 import { BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { OnPendingScanStatus } from "../handlers/events/delivery/review/OnPendingScanStatus";
-import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
-import { NewIssueInvocation, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
-import { ActOnRepoCreation } from "../handlers/events/repo/ActOnRepoCreation";
+import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
+import { OnVerifiedStatus, VerifiedDeploymentListener } from "../handlers/events/delivery/verify/OnVerifiedStatus";
+import { NewIssueInvocation, NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
+import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/repo/FingerprintOnPush";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import {
@@ -41,13 +41,15 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
 
-    public newIssueListeners: Array<SdmListener<NewIssueInvocation>> = [];
+    public newIssueListeners: NewIssueListener[] = [];
+
+    private repoCreationListeners: RepoCreationListener[] = [];
 
     private newRepoWithCodeActions: ProjectListener[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
-    private codeReactions: Array<SdmListener<ProjectListenerInvocation>> = [];
+    private codeReactions: ProjectListener[] = [];
 
     private autoEditors: AnyProjectEditor[] = [];
 
@@ -59,12 +61,20 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     private deploymentListeners?: DeployListener[] = [];
 
+    private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
+
+    private endpointVerificationListeners: EndpointVerificationListener[] = [];
+
     /**
      * All possible phases we can set up. Makes cleanup easier.
      */
     protected abstract possiblePhases: Phases[];
 
-    public onRepoCreation?: Maker<ActOnRepoCreation>;
+    get onRepoCreation(): Maker<OnRepoCreation> {
+        return this.repoCreationListeners.length > 0 ?
+            () => new OnRepoCreation(...this.repoCreationListeners) :
+            undefined;
+    }
 
     public get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
@@ -110,15 +120,23 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public abstract deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>;
 
-    public get notifyOnDeploy(): Maker<OnDeployStatus> {
+    get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
             () => new OnDeployStatus(...this.deploymentListeners) :
             undefined;
     }
 
-    public abstract verifyEndpoint?: Maker<OnEndpointStatus>;
+    get verifyEndpoint(): Maker<OnEndpointStatus> {
+        return this.endpointVerificationListeners.length > 0 ?
+            () => new OnEndpointStatus(...this.endpointVerificationListeners) :
+            undefined;
+    }
 
-    public abstract onVerifiedStatus?: Maker<OnVerifiedStatus>;
+    get onVerifiedStatus(): Maker<OnVerifiedStatus> {
+        return this.verifiedDeploymentListeners.length > 0 ?
+            () => new OnVerifiedStatus(...this.verifiedDeploymentListeners) :
+            undefined;
+    }
 
     public abstract promotedEnvironment?: PromotedEnvironment;
 
@@ -129,7 +147,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
             .concat([
-                this.newIssueListeners.length > 0 ? () => new OnNewIssue(this.newIssueListeners) : undefined,
+                this.newIssueListeners.length > 0 ? () => new OnNewIssue(...this.newIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.fingerprinter,
@@ -171,7 +189,7 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
         return this;
     }
 
-    public addNewIssueListeners(...e: Array<SdmListener<NewIssueInvocation>>): this {
+    public addNewIssueListeners(...e: NewIssueListener[]): this {
         this.newIssueListeners = this.newIssueListeners.concat(e);
         return this;
     }
@@ -183,6 +201,11 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
         this.supportingEvents = this.supportingEvents.concat(e);
+        return this;
+    }
+
+    public addRepoCreationListeners(...nrc: RepoCreationListener[]): this {
+        this.repoCreationListeners = this.repoCreationListeners.concat(nrc);
         return this;
     }
 
@@ -228,6 +251,16 @@ export abstract class AbstractSoftwareDeliveryMachine implements SoftwareDeliver
 
     public addDeploymentListeners(...l: DeployListener[]): this {
         this.deploymentListeners = this.deploymentListeners.concat(l);
+        return this;
+    }
+
+    public addVerifiedDeploymentListeners(...l: VerifiedDeploymentListener[]): this {
+        this.verifiedDeploymentListeners = this.verifiedDeploymentListeners.concat(l);
+        return this;
+    }
+
+    public addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this {
+        this.endpointVerificationListeners = this.endpointVerificationListeners.concat(l);
         return this;
     }
 

@@ -33,6 +33,8 @@ export interface EndpointVerificationInvocation extends ListenerInvocation {
     url: string;
 }
 
+export type EndpointVerificationListener = SdmListener<EndpointVerificationInvocation>;
+
 /**
  * Deploy a published artifact identified in a GitHub "artifact" status.
  */
@@ -46,9 +48,9 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private verifiers: Array<SdmListener<EndpointVerificationInvocation>>;
+    private verifiers: EndpointVerificationListener[];
 
-    constructor(...verifiers: Array<SdmListener<EndpointVerificationInvocation>>) {
+    constructor(...verifiers: EndpointVerificationListener[]) {
         this.verifiers = verifiers;
     }
 

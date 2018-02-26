@@ -17,18 +17,9 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { tipOfDefaultBranch } from "../../../handlers/commands/editors/toclient/ghub";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
-import {
-    OnVerifiedStatus,
-    VerifiedDeploymentInvocation,
-} from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
+import { VerifiedDeploymentInvocation } from "../../../handlers/events/delivery/verify/OnVerifiedStatus";
 
-/**
- * Display a button suggesting promotion to production
- * @type {OnVerifiedStatus}
- */
-export const OfferPromotion = () => new OnVerifiedStatus([presentPromotionButton]);
-
-async function presentPromotionButton(inv: VerifiedDeploymentInvocation) {
+export async function presentPromotionButton(inv: VerifiedDeploymentInvocation) {
     const shaLink = slack.url(inv.id.url + "/tree/" + inv.id.sha, inv.id.repo);
     const endpointLink = slack.url(inv.status.targetUrl);
     const messageId = `httpService:promote:prod/${inv.id.repo}/${inv.id.owner}/${inv.id.sha}`;

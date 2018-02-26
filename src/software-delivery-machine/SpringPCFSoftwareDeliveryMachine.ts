@@ -10,8 +10,6 @@ import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/del
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
-import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
@@ -22,8 +20,9 @@ import { LocalMavenBuildOnSuccessStatus } from "./blueprint/build/LocalMavenBuil
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
+import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
-import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
+import { offerPromotionCommand, presentPromotionButton } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
@@ -33,11 +32,8 @@ import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
-import {
-    tryToUpgradeSpringBootVersion,
-} from "./commands/editors/tryToUpgradeSpringBootVersion";
+import { tryToUpgradeSpringBootVersion, } from "./commands/editors/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -54,10 +50,6 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
     public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription> & EventWithCommand> =
         // CloudFoundryStagingDeployOnSuccessStatus;
         () => LocalMavenDeployer
-
-    public verifyEndpoint: Maker<OnEndpointStatus> = LookFor200OnEndpointRootGet;
-
-    public onVerifiedStatus: Maker<OnVerifiedStatus> = OfferPromotion;
 
     public promotedEnvironment: PromotedEnvironment = {
 
@@ -100,6 +92,8 @@ export class SpringPCFSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addFingerprinters(mavenFingerprinter)
             .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
+            .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
+            .addVerifiedDeploymentListeners(presentPromotionButton)
             .addSupersededListeners(
                 inv => {
                     logger.info("Will undeploy application %j", inv.id);

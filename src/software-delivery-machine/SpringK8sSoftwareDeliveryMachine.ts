@@ -8,9 +8,6 @@ import { ArtifactContext, ScanContext } from "../handlers/events/delivery/phases
 import { ContextToPlannedPhase, HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/review/checkstyle/checkstyleReviewer";
-import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
-import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { AbstractSoftwareDeliveryMachine } from "../sdm-support/AbstractSoftwareDeliveryMachine";
@@ -22,15 +19,15 @@ import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion } from "./blueprint/deploy/k8sDeploy";
 import { LocalMavenDeployOnImageLinked } from "./blueprint/deploy/mavenDeploy";
-import { OfferPromotion, offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
+import { offerPromotionCommand, presentPromotionButton } from "./blueprint/deploy/offerPromotion";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { mavenFingerprinter } from "./blueprint/fingerprint/maven/mavenFingerprinter";
-import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { PhaseSetup } from "./blueprint/phase/phaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { logReactor, logReview } from "./blueprint/review/scan";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 
 const LocalMavenDeployer = LocalMavenDeployOnImageLinked;
 
@@ -49,10 +46,6 @@ export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
 
     public deploy1: Maker<HandleEvent<OnAnySuccessStatus.Subscription>> =
         K8sStagingDeployOnSuccessStatus;
-
-    public verifyEndpoint: Maker<OnEndpointStatus> = LookFor200OnEndpointRootGet;
-
-    public onVerifiedStatus: Maker<OnVerifiedStatus> = OfferPromotion;
 
     public promotedEnvironment: PromotedEnvironment = {
 
@@ -100,6 +93,8 @@ export class SpringK8sSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMa
             .addFingerprinters(mavenFingerprinter)
            // .addFingerprintDifferenceHandlers(diff1)
             .addDeploymentListeners(PostToDeploymentsChannel)
+            .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
+            .addVerifiedDeploymentListeners(presentPromotionButton)
             .addSupersededListeners(
                 inv => {
                     logger.info("Will undeploy application %j", inv.id);

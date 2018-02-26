@@ -1,12 +1,11 @@
-
 import axios from "axios";
-import { EndpointVerificationInvocation, OnEndpointStatus } from "../OnEndpointStatus";
+import { EndpointVerificationInvocation, EndpointVerificationListener, OnEndpointStatus } from "../OnEndpointStatus";
 
 /**
  * Make an HTTP request to the reported endpoint to check
  * @type {OnEndpointStatus}
  */
-export const LookFor200OnEndpointRootGet = () => new OnEndpointStatus(
+export const LookFor200OnEndpointRootGet: EndpointVerificationListener =
     (inv: EndpointVerificationInvocation) => {
         return axios.get(inv.url)
             .then(resp => {
@@ -15,6 +14,5 @@ export const LookFor200OnEndpointRootGet = () => new OnEndpointStatus(
                 }
                 return Promise.resolve();
             });
-            // Let a failure go through
-    },
-);
+        // Let a failure go through
+    };

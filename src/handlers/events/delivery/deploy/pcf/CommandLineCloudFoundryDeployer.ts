@@ -1,6 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../ArtifactStore";
@@ -9,7 +10,6 @@ import { Deployer } from "../Deployer";
 import { Deployment } from "../Deployment";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryInfo, ManifestPath } from "./CloudFoundryTarget";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
