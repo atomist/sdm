@@ -54,6 +54,16 @@ export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosProm
         );
 }
 
+export function deleteRepository(token: string, rr: GitHubRepoRef): AxiosPromise {
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
+    logger.info("Deleting repository: %s", url);
+    return axios.delete(url, config)
+        .catch(err =>
+            Promise.reject(new Error(`Error hitting ${url} to delete repo`)),
+        );
+}
+
 export interface Release {
     tag_name: string;
     target_commitish?: string;
