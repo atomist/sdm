@@ -24,13 +24,15 @@ import Status = OnSuccessStatus.Status;
 import { ListenerInvocation, SdmListener } from "../Listener";
 import { StagingVerifiedContext } from "../phases/httpServicePhases";
 
-// something independent of the particular query
 export interface StatusInfo {
     state?: StatusState | null;
     targetUrl?: string | null;
     context?: string | null;
 }
 
+/**
+ * Represents a verified deployment
+ */
 export interface VerifiedDeploymentInvocation extends ListenerInvocation {
     status: StatusInfo;
     messageDestination: Destination;
@@ -41,12 +43,12 @@ export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentInvocatio
 /**
  * React to a verified deployment
  */
-@EventHandler("Act on verified project",
+@EventHandler("Act on verified deployment",
     GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql",
         undefined, {
             context: StagingVerifiedContext,
         }))
-export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscription> {
+export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

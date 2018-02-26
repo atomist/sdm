@@ -21,14 +21,20 @@ import {
 } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedStatus, VerifiedDeploymentListener } from "../handlers/events/delivery/verify/OnVerifiedStatus";
+import {
+    OnVerifiedDeploymentStatus,
+    VerifiedDeploymentListener,
+} from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { OnImageLinked, OnSuccessStatus } from "../typings/types";
+import { OnSuccessStatus } from "../typings/types";
+import { FunctionalUnit } from "./FunctionalUnit";
 import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+
+import * as _ from "lodash";
 
 /**
  * Convenient superclass for user software delivery machines,
@@ -43,6 +49,8 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
     public supportingCommands: Array<Maker<HandleCommand>> = [];
 
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
+
+    public functionalUnits: FunctionalUnit[] = [];
 
     public newIssueListeners: NewIssueListener[] = [];
 
@@ -135,9 +143,9 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
             undefined;
     }
 
-    get onVerifiedStatus(): Maker<OnVerifiedStatus> {
+    get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
         return this.verifiedDeploymentListeners.length > 0 ?
-            () => new OnVerifiedStatus(...this.verifiedDeploymentListeners) :
+            () => new OnVerifiedDeploymentStatus(...this.verifiedDeploymentListeners) :
             undefined;
     }
 
@@ -147,6 +155,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
+            .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new OnNewIssue(...this.newIssueListeners) : undefined,
                 this.onRepoCreation,
@@ -173,6 +182,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
         return this.generators
             .concat(this.editors)
             .concat(this.supportingCommands)
+            .concat(_.flatten(this.functionalUnits.map(fu => fu.commandHandlers)))
             .concat([mayHaveCommand.correspondingCommand ? () => mayHaveCommand.correspondingCommand() : undefined])
             .concat([
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
@@ -272,6 +282,11 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
 
     public addPromotedEnvironment(pe: PromotedEnvironment): this {
         this.promotedEnvironment = pe;
+        return this;
+    }
+
+    public addFunctionalUnits(fus: FunctionalUnit[]): this {
+        this.functionalUnits = this.functionalUnits.concat(fus);
         return this;
     }
 

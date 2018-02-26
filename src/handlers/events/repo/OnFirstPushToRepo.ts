@@ -30,7 +30,7 @@ import { AddressChannels } from "../../commands/editors/toclient/addressChannels
 
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { ProjectListenerInvocation, SdmListener } from "../delivery/Listener";
+import { ProjectListener, ProjectListenerInvocation } from "../delivery/Listener";
 
 /**
  * A new repo has been created, and it has some code in it.
@@ -43,7 +43,7 @@ export class OnFirstPushToRepo
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private actions: SdmListener[]) {
+    constructor(private actions: ProjectListener[]) {
     }
 
     public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,

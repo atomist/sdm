@@ -63,7 +63,7 @@ export function deleteRepository(token: string, rr: GitHubRepoRef): AxiosPromise
                 logger.error(err.message);
                 logger.error(err.response.body);
                 return Promise.reject(new Error(`Error hitting ${url} to delete repo`));
-            }
+            },
         );
 }
 

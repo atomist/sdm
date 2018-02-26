@@ -10,7 +10,7 @@ import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedStatus } from "../handlers/events/delivery/verify/OnVerifiedStatus";
+import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
 import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus, OnSupersededStatus } from "../typings/types";
@@ -76,7 +76,7 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
     verifyEndpoint?: Maker<OnEndpointStatus>;
 
-    onVerifiedStatus?: Maker<OnVerifiedStatus>;
+    onVerifiedStatus?: Maker<OnVerifiedDeploymentStatus>;
 
     // TODO could have n of these?
     promotedEnvironment?: PromotedEnvironment;
@@ -85,5 +85,10 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
      * Miscellaneous supporting commands needed by the event handlers etc.
      */
     supportingCommands: Array<Maker<HandleCommand>>;
+
+    /**
+     * FunctionalUnits brought in by this project
+     */
+    functionalUnits: FunctionalUnit[];
 
 }

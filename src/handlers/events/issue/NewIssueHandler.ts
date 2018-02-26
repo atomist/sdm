@@ -38,7 +38,7 @@ export interface NewIssueInvocation extends ListenerInvocation {
 export type NewIssueListener = SdmListener<NewIssueInvocation>;
 
 /**
- * A new repo has been created. We don't know if it has code.
+ * A new issue has been created.
  */
 @EventHandler("On repo creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))

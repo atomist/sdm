@@ -18,7 +18,7 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } fro
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
-import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { ListenerInvocation, SdmListener } from "../Listener";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../Phases";
@@ -30,15 +30,19 @@ import {
 } from "../phases/httpServicePhases";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
+
+    /**
+     * Reported endpoint base url
+     */
     url: string;
 }
 
 export type EndpointVerificationListener = SdmListener<EndpointVerificationInvocation>;
 
 /**
- * Deploy a published artifact identified in a GitHub "artifact" status.
+ * React to an endpoint reported in a GitHub status.
  */
-@EventHandler("Check endpoint",
+@EventHandler("React to an endpoint",
     GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql", undefined,
         {
             context: StagingEndpointContext,
