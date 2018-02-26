@@ -36,6 +36,8 @@ export interface VerifiedDeploymentInvocation extends ListenerInvocation {
     messageDestination: Destination;
 }
 
+export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentInvocation>;
+
 /**
  * React to a verified deployment
  */
@@ -49,7 +51,7 @@ export class OnVerifiedStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private listeners: Array<SdmListener<VerifiedDeploymentInvocation>>) {
+    constructor(private listeners: VerifiedDeploymentListener[]) {
     }
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
