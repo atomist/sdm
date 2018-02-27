@@ -42,7 +42,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
     /**
      *
      * @param {Phases} phases
-     * @param {PlannedPhase} ourPhase
+     * @param {PlannedPhase} deployPhase
      * @param {PlannedPhase} endpointPhase
      * @param {ArtifactStore} artifactStore
      * @param {Deployer<T extends TargetInfo>} deployer
@@ -51,7 +51,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
      * or Kubernetes clusters
      */
     constructor(private phases: Phases,
-                private ourPhase: PlannedPhase,
+                private deployPhase: PlannedPhase,
                 private endpointPhase: PlannedPhase,
                 private artifactStore: ArtifactStore,
                 public deployer: Deployer<T>,
@@ -65,7 +65,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
             return deploy({
-                deployPhase: this.ourPhase,
+                deployPhase: this.deployPhase,
                 endpointPhase: this.endpointPhase,
                 id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
                 githubToken: commandParams.githubToken,
@@ -95,13 +95,12 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
             siblings: status.commit.statuses,
         };
 
-        // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
-        // (this is related to the next TODO)
-        if (!previousPhaseSucceeded(params.phases, params.ourPhase.context, statusAndFriends)) {
+        // TODO: determine previous step based on the contexts of existing statuses
+        if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.ourPhase.context, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
             return Success;
         }
 
@@ -125,7 +124,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
 
         await dedup(commit.sha, () =>
             deploy({
-                deployPhase: params.ourPhase,
+                deployPhase: params.deployPhase,
                 endpointPhase: params.endpointPhase,
                 id, githubToken: params.githubToken,
                 targetUrl: image.imageName,

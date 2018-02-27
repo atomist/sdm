@@ -93,9 +93,14 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             }
             const builder = params.conditionalBuilders[indx].builder;
 
+            const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
+            const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
+            const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
+            const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
+
             // the builder is expected to result in a complete Build event (which will update the build status)
             // and an ImageLinked event (which will update the artifact status).
-            return builder.initiateBuild(credentials, id, i.addressChannels, team);
+            return builder.initiateBuild(credentials, id, i.addressChannels, team, { branch: branchToMarkTheBuildWith });
         });
         return Success;
     }
