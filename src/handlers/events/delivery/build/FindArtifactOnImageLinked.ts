@@ -21,9 +21,6 @@ import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../commands/editors/toclient/ghub";
 import { PlannedPhase } from "../Phases";
 
-/**
- * Deploy a published artifact identified in an ImageLinked event.
- */
 @EventHandler("Set build phase to complete with link to artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
@@ -52,9 +49,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         return createStatus(params.githubToken, id, {
             state: "success",
-            description: `Complete: ${params.artifactPhase.name}`,
-            // TODO: this might not be a URL, in which case, put it in the description instead. which might mess up the deploy, check on that
-            target_url: image.imageName,
+            description: `Complete: ${params.artifactPhase.name} ${image.imageName}`,
             context: params.artifactPhase.context,
         }).then(success);
     }

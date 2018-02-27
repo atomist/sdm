@@ -74,13 +74,11 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             context: K8AutomationDeployContext,
             state: "pending",
             description: "Requested deploy by k8-automation",
-            target_url: undefined,
         });
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: params.deployPhase.context,
             description: "Working on " + params.deployPhase.name,
             state: "pending",
-            target_url: undefined,
         });
         return Success;
     }

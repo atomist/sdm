@@ -8,7 +8,7 @@ export type State = "error" | "failure" | "pending" | "success";
 
 export interface Status {
     state: State;
-    target_url: string;
+    target_url?: string;
     description?: string;
     context?: string;
 }

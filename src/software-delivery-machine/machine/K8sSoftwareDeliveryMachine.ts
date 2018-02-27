@@ -6,7 +6,7 @@ import { PromotedEnvironment } from "../../sdm-support/ReferenceDeliveryBlueprin
 import { K8sBuildOnSuccessStatus } from "../blueprint/build/K8sBuildOnScanSuccess";
 import { CloudFoundryProductionDeployOnFingerprint } from "../blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "../blueprint/deploy/deployToProd";
-import { K8sStagingDeployOnSuccessStatus } from "../blueprint/deploy/k8sDeploy";
+import {K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion} from "../blueprint/deploy/k8sDeploy";
 import { LocalSpringBootDeployOnSuccessStatus } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand } from "../blueprint/deploy/offerPromotion";
 import { configureSpringSdm } from "./cloudFoundrySoftwareDeliveryMachine";
@@ -32,6 +32,7 @@ export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): Bu
         K8sBuildOnSuccessStatus,
         K8sStagingDeployOnSuccessStatus);
     sdm.addPromotedEnvironment(promotedEnvironment);
+    sdm.addSupportingEvents(() => NoticeK8sDeployCompletion);
     configureSpringSdm(sdm, opts);
     return sdm;
 }
