@@ -1,11 +1,15 @@
-import { CommandResult, runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { ChildProcess, exec, ExecOptions } from "child_process";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
-import { LinkableLogFactory, LinkablePersistentProgressLog } from "../../../log/ProgressLog";
+import {
+    LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
+    QueryableProgressLog
+} from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
 /**
@@ -17,14 +21,15 @@ import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
  */
 export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
-    constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory) {
+    constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory,
+                private buildCommand: string = "npm run build") {
         super(artifactStore, logFactory);
     }
 
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                team: string,
-                               log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
+                               log: LinkablePersistentProgressLog & QueryableProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from package.json
         const pom = await p.findFile("package.json");
@@ -34,28 +39,20 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
         const opts = {
             cwd: p.baseDir,
         };
+
         try {
-            const npmCommand: CommandResult = await runCommand("npm install", opts)
-                .then(cr => {
-                    (cr.childProcess as any).stdout.addListener("data", what => console.log(what.toString()));
-                    (cr.childProcess as any).stderr.addListener("data", what => console.log(what.toString()));
-                    if (!cr.success) {
-                        throw new Error(cr.stderr);
-                    }
-                    return runCommand("npm build", opts);
-                });
-            (npmCommand.childProcess as any).stdout.addListener("data", what => console.log(what.toString()));
-            (npmCommand.childProcess as any).stderr.addListener("data", what => console.log(what.toString()));
-            const buildResult = Promise.resolve({error: !npmCommand.success, code: npmCommand.childProcess.exitCode});
-            log.write(npmCommand.stdout);
-            log.write(npmCommand.stderr);
-            console.log(npmCommand.stdout);
-            console.log(npmCommand.stderr);
-            return new NpmBuild(appId, id, buildResult, team, log.url);
-        } catch (err) {
-            log.write(err);
-            return new NpmBuild(appId, id, Promise.resolve({error: true, code: 1}), team, log.url);
+            const install = await runCommand("npm install", opts, log);
+            const build = await runCommand(this.buildCommand, opts, log);
+            const error = log.log.includes("ERROR:");
+            const b = new NpmBuild(appId, id, ({error, code: build.code}), team, log.url);
+            logger.info("Build complete: %j", b.buildResultAchieved);
+            return b;
+        } catch {
+            const b = new NpmBuild(appId, id, ({error: true, code: 1}), team, log.url);
+            logger.info("Build FAILURE: %j", b.buildResultAchieved);
+            return b;
         }
+
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
@@ -71,13 +68,40 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
 }
 
+export interface Result {
+    code: number;
+    signal: string;
+}
+
+function runCommand(command: string, opts: ExecOptions, log: ProgressLog): Promise<Result> {
+    logger.debug("Running command [%s] in %j", command, opts);
+    const cmd = exec(command, opts);
+    cmd.stdout.addListener("data", what => log.write(what.toString()));
+    cmd.stderr.addListener("data", what => log.write(what.toString()));
+    cmd.stdout.addListener("data", what => console.log(what.toString()));
+    cmd.stderr.addListener("data", what => console.log(what.toString()));
+    return new Promise<Result>((resolve, reject) => {
+        cmd.on("exit", (code, signal) => {
+            logger.info("Success: Returning code=%d", code);
+            return resolve(({code, signal}));
+        });
+        cmd.on("error", (code, signal) => {
+            logger.warn("ERROR: Returning code=%d", code);
+            return reject(({code, signal}));
+        });
+    });
+}
+
 class NpmBuild implements LocalBuildInProgress {
+
+    public readonly buildResult: Promise<{ error: boolean, code: number }>;
 
     constructor(public appInfo: AppInfo,
                 public repoRef: RemoteRepoRef,
-                public buildResult: Promise<{ error: boolean, code: number }>,
+                public buildResultAchieved: { error: boolean, code: number },
                 public team: string,
                 public url: string) {
+        this.buildResult = Promise.resolve(buildResultAchieved);
     }
 
     public deploymentUnitFile: string;
