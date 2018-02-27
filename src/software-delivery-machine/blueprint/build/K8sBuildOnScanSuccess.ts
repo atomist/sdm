@@ -7,4 +7,4 @@ export const K8sBuildOnSuccessStatus = () =>
     new BuildOnScanSuccessStatus(
         HttpServicePhases,
         BuildContext,
-        new K8sAutomationBuilder());
+        { builder: new K8sAutomationBuilder(), test: async () => true});
