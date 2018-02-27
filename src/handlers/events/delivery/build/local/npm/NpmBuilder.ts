@@ -1,3 +1,4 @@
+import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
@@ -7,17 +8,15 @@ import { AppInfo } from "../../../deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
 import { LinkableLogFactory, LinkablePersistentProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
-import { identification } from "./pomParser";
 
 /**
- * Build with Maven in the local automation client.
- * This implementation requires Java and maven on the classpath.
+ * Build with npm in the local automation client.
  * Note it is NOT intended for use for multiple organizations. It's OK
  * for one organization to use inside its firewall, but there is potential
  * vulnerability in builds of unrelated tenants getting at each others
  * artifacts.
  */
-export class MavenBuilder extends LocalBuilder implements LogInterpretation {
+export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
     constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory) {
         super(artifactStore, logFactory);
@@ -25,16 +24,20 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
-                               team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
+                               team: string,
+                               log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
-        // Find the artifact info from Maven
-        const pom = await p.findFile("pom.xml");
+        // Find the artifact info from package.json
+        const pom = await p.findFile("package.json");
         const content = await pom.getContent();
-        const va = await identification(content);
-        const appId = {...va, name: va.artifact, id};
-        const childProcess = spawn("mvn", [
-            "package",
-            "-DskipTests",
+        const json = JSON.parse(content);
+        const appId: AppInfo = { id, name: json.name, version: json.version};
+        const childProcess = spawn("npm", [
+            "i",
+            "&",
+            "npm",
+            "run",
+            "build",
         ], {
             cwd: p.baseDir,
         });
@@ -51,17 +54,16 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         });
         const rb = new UpdatingBuild(id, buildResult, team, log.url);
         rb.ai = appId;
-        rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
         return rb;
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
         const relevantPart = log.split("\n")
-            .filter(l => l.startsWith("[ERROR]"))
+            .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))
             .join("\n");
         return {
             relevantPart,
-            message: "Maven errors",
+            message: "npm errors",
             includeFullLog: true,
         };
     }

@@ -296,6 +296,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
      * @param {string} scanContext
      * @param {Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>} deploy1
      */
+    // TODO want to take the phase builders, and get the possible phases from them
     constructor(protected possiblePhases: Phases[],
                 protected scanContext: string,
                 public builder: Maker<StatusSuccessHandler>,

@@ -3,10 +3,7 @@
 GitHub Software Delivery Machine.
 
 ## What is a "Software Delivery Machine?"
-A **software delivery machine** is like a development team in a box. It enable you:
-
-- To automate every delivery flow
-- To automate anything.
+A **software delivery machine** is like a development process in a box. It automates many actions and many steps in the flow from commit to productions.
 
 ## Concepts
 This repository shows how Atomist can automate important tasks,
@@ -61,15 +58,43 @@ This is configurable
 
 ## "Blueprint" interfaces and classes
 
-## Binary Dependencies
-You will need the following on the deployment node:
+## Plugging in Third Party Tools
+
+This repo shows the use of Atomist to perform many steps itself. However, each of the phases used by Atomist here is pluggable.
+
+It's also easy to integrate third party tools like Checkstyle.
+
+### Integrating CI tools
+One of the tools you are most likely to integrate is CI. For example, you can integrate Jenkins, Travis or Circle CI with Atomist so that these tools are responsible for build. This has potential advantages in terms of scheduling and repeatability of environments.
+
+Integrating a CI tool with Atomist is simple. Simply invoke Atomist hooks to send events around build and artifact creation.
+
+If integrating CI tools, we recommend the following:
+
+- CI tools are great for building and generating artifacts. They are often abused as a PaaS for `bash`. If you find your CI usage has you programming in `bash` or YML, consider whether invoking such operations from Atomist event handlers might be a better model.
+- Use Atomist generators to create your CI files, and Atomist editors to keep them in synch, minimizing inconsistency.
+
+#### Example: Integrating Travis
+tbc
+
+### Integrating APM tools
+
+### Integrating with Static Analysis Tools
+Any tool that runs on code, such as Checkstyle, can easily be integrated.
+
+Use shell. node is good for this
+
+## Running this Project
+
+### Binary Dependencies
+To start up these project, you will need the following on the deployment node:
 
 - `git` binary
 - JDK
 - Maven, with `mvn` on the path
 
 
-## Environment Variables
+### Environment Variables
 For the optional Checkstyle integration to work, set up a Checkstyle environment variable as follows:
 
 ```

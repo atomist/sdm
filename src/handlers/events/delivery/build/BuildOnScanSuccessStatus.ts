@@ -17,11 +17,18 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
+import { ProjectListenerInvocation } from "../Listener";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
+
+export interface ConditionalBuilder {
+    builder: Builder;
+    test: (i: ProjectListenerInvocation) => Promise<boolean>;
+}
 
 /**
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
@@ -33,12 +40,15 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
+    private conditionalBuilders: ConditionalBuilder[];
+
     constructor(public phases: Phases,
                 public ourContext: string,
-                private builder: Builder) {
+                ...conditionalBuilders: ConditionalBuilder[]) {
+        this.conditionalBuilders = conditionalBuilders;
     }
 
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
@@ -51,22 +61,41 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             siblings: status.commit.statuses,
         };
 
-        if (nothingFailed(statusAndFriends) && !previousPhaseSucceeded(params.phases, this.ourContext, statusAndFriends)) {
+        logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
+            params.ourContext, params.conditionalBuilders.length, statusAndFriends);
+
+        if (nothingFailed(statusAndFriends) && !previousPhaseSucceeded(params.phases, params.ourContext, statusAndFriends)) {
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(this.ourContext, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.ourContext, statusAndFriends)) {
             return Success;
         }
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-        await dedup(commit.sha, () => {
+        await dedup(commit.sha, async () =>  {
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-            const creds = {token: params.githubToken};
+            const credentials = {token: params.githubToken};
+            const project = await GitCommandGitProject.cloned(credentials, id);
+
+            const i: ProjectListenerInvocation = {
+                id,
+                project,
+                credentials,
+                context,
+                addressChannels: addressChannelsFor(commit.repo, context),
+            };
+
+            const builders: boolean[] = await Promise.all(params.conditionalBuilders.map(b => b.test(i)));
+            const indx = builders.indexOf(true);
+            if (indx < 0) {
+                throw new Error(`Cannot build project ${id.owner}${id.repo}`);
+            }
+            const builder = params.conditionalBuilders[indx].builder;
 
             // the builder is expected to result in a complete Build event (which will update the build status)
             // and an ImageLinked event (which will update the artifact status).
-            return params.builder.initiateBuild(creds, id, addressChannelsFor(commit.repo, ctx), team);
+            return builder.initiateBuild(credentials, id, i.addressChannels, team);
         });
         return Success;
     }
