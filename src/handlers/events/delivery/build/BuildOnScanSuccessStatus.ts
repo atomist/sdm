@@ -89,7 +89,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             const builders: boolean[] = await Promise.all(params.conditionalBuilders.map(b => b.test(i)));
             const indx = builders.indexOf(true);
             if (indx < 0) {
-                throw new Error(`Cannot build project ${id.owner}${id.repo}`);
+                throw new Error(`Don't know how to build project ${id.owner}${id.repo}`);
             }
             const builder = params.conditionalBuilders[indx].builder;
 

@@ -1,8 +1,7 @@
-import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import { CommandResult, runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { spawn } from "child_process";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
@@ -31,30 +30,32 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
         const pom = await p.findFile("package.json");
         const content = await pom.getContent();
         const json = JSON.parse(content);
-        const appId: AppInfo = { id, name: json.name, version: json.version};
-        const childProcess = spawn("npm", [
-            "i",
-            "&",
-            "npm",
-            "run",
-            "build",
-        ], {
+        const appId: AppInfo = {id, name: json.name, version: json.version};
+        const opts = {
             cwd: p.baseDir,
-        });
-        const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
-            childProcess.stdout.on("data", data => {
-                log.write(data.toString());
-            });
-            childProcess.addListener("exit", (code, signal) => {
-                resolve({error: false, code});
-            });
-            childProcess.addListener("error", (code, signal) => {
-                resolve({error: true, code});
-            });
-        });
-        const rb = new UpdatingBuild(id, buildResult, team, log.url);
-        rb.ai = appId;
-        return rb;
+        };
+        try {
+            const npmCommand: CommandResult = await runCommand("npm install", opts)
+                .then(cr => {
+                    (cr.childProcess as any).stdout.addListener("data", what => console.log(what.toString()));
+                    (cr.childProcess as any).stderr.addListener("data", what => console.log(what.toString()));
+                    if (!cr.success) {
+                        throw new Error(cr.stderr);
+                    }
+                    return runCommand("npm build", opts);
+                });
+            (npmCommand.childProcess as any).stdout.addListener("data", what => console.log(what.toString()));
+            (npmCommand.childProcess as any).stderr.addListener("data", what => console.log(what.toString()));
+            const buildResult = Promise.resolve({error: !npmCommand.success, code: npmCommand.childProcess.exitCode});
+            log.write(npmCommand.stdout);
+            log.write(npmCommand.stderr);
+            console.log(npmCommand.stdout);
+            console.log(npmCommand.stderr);
+            return new NpmBuild(appId, id, buildResult, team, log.url);
+        } catch (err) {
+            log.write(err);
+            return new NpmBuild(appId, id, Promise.resolve({error: true, code: 1}), team, log.url);
+        }
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
@@ -70,20 +71,15 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
 }
 
-class UpdatingBuild implements LocalBuildInProgress {
+class NpmBuild implements LocalBuildInProgress {
 
-    constructor(public repoRef: RemoteRepoRef,
-                public buildResult: Promise<{error: boolean, code: number}>,
+    constructor(public appInfo: AppInfo,
+                public repoRef: RemoteRepoRef,
+                public buildResult: Promise<{ error: boolean, code: number }>,
                 public team: string,
                 public url: string) {
     }
 
-    public ai: AppInfo;
-
     public deploymentUnitFile: string;
-
-    get appInfo(): AppInfo {
-        return this.ai;
-    }
 
 }
