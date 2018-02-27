@@ -10,9 +10,10 @@ import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryP
 export async function jvmPhaseBuilder(p: GitProject): Promise<Phases> {
     try {
         const f = await p.findFile("pom.xml");
-        const manifest = await p.findFile(ManifestPath).catch(err => undefined);
+        // TODO: how can we distinguish a lib from a service that should run in k8s?
+        // const manifest = await p.findFile(ManifestPath).catch(err => undefined); // this is PCF-specific
         const contents = await f.getContent();
-        if (contents.includes("spring-boot") && !!manifest) {
+        if (contents.includes("spring-boot") /* && !!manifest */) {
             return HttpServicePhases;
         } else {
             return LibraryPhases;

@@ -60,7 +60,7 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             return Promise.resolve(Success);
         }
 
-        // TODO: if any status is failed, do not deploy
+        // TODO: if any status is failed, do not deploy (excluding post-deploy phases)
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -74,13 +74,11 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             context: K8AutomationDeployContext,
             state: "pending",
             description: "Requested deploy by k8-automation",
-            target_url: image.imageName,
         });
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: params.deployPhase.context,
             description: "Working on " + params.deployPhase.name,
             state: "pending",
-            target_url: undefined,
         });
         return Success;
     }

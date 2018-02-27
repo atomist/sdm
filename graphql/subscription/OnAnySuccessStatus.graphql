@@ -12,6 +12,7 @@ subscription OnAnySuccessStatus {
       repo {
         owner
         name
+        defaultBranch
         channels {
           name
           id
