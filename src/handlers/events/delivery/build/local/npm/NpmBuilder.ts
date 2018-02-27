@@ -8,7 +8,7 @@ import { AppInfo } from "../../../deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
 import {
     LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
-    QueryableProgressLog
+    QueryableProgressLog,
 } from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 

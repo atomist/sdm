@@ -8,7 +8,7 @@ import {
 export const K8sStagingDeployOnSuccessStatus = () =>
     new RequestK8sDeployOnSuccessStatus(
         HttpServicePhases,
-        ContextToPlannedPhase[StagingEndpointContext]);
+        ContextToPlannedPhase[StagingDeploymentContext]);
 
 export const NoticeK8sDeployCompletion = new NoticeK8sDeployCompletionOnStatus(
     ContextToPlannedPhase[StagingDeploymentContext],

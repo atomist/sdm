@@ -3,7 +3,7 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { EventWithCommand } from "../handlers/commands/RetryDeploy";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/BuildCompleteOnImageLinked";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
