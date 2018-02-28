@@ -1,7 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
+import { SpringBootRestServiceGuard } from "../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
 import {
-    AnyPush, guardedPhaseCreator, PhaseCreator,
     PushesToMaster,
 } from "../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { ScanContext } from "../../handlers/events/delivery/phases/gitHubContext";
@@ -60,9 +60,10 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
 
 export function configureSpringSdm(sdm: BuildableSoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
     sdm.addPhaseCreators(
-        guardedPhaseCreator(jvmPhaseBuilder, PushesToMaster),
-        guardedPhaseCreator(nodePhaseBuilder, PushesToMaster),
-        buildPhaseBuilder);
+        jvmPhaseBuilder,
+        nodePhaseBuilder,
+        buildPhaseBuilder,
+    );
 
     sdm.addNewIssueListeners(requestDescription)
         .addEditors(() => tryToUpgradeSpringBootVersion)

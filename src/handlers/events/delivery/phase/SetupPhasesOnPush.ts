@@ -15,7 +15,8 @@
  */
 
 import {
-    GraphQL, logger,
+    GraphQL,
+    logger,
     MappedParameter,
     MappedParameters,
     Parameter,
@@ -33,13 +34,16 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnAnyPush, OnPushToAnyBranch } from "../../../../typings/types";
-import { tipOfDefaultBranch } from "../../../commands/editors/toclient/ghub";
-import { ListenerInvocation, ProjectListenerInvocation, SdmListener } from "../Listener";
+import { OnPushToAnyBranch } from "../../../../typings/types";
+import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
+import { createStatus, tipOfDefaultBranch } from "../../../commands/editors/toclient/ghub";
+import { ProjectListenerInvocation, SdmListener } from "../Listener";
 import { Phases } from "../Phases";
 
-export type PushTest = (pci: PhaseCreationInvocation) => boolean | Promise<boolean>;
+/**
+ * Return true if we like this push
+ */
+export type PushTest = (p: PhaseCreationInvocation) => boolean | Promise<boolean>;
 
 export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
 
@@ -48,9 +52,21 @@ export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
 
 export const AnyPush: PushTest = p => true;
 
+/**
+ * All of these guards vote for these phases
+ * @param {PushTest} guards
+ * @return {PushTest}
+ */
+export function allGuardsVoteFor(...guards: PushTest[]): PushTest {
+    return async pci => {
+        const guardResults: boolean[] = await Promise.all(guards.map(g => g(pci)));
+        return !guardResults.some(r => !r);
+    };
+}
+
 export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 
-    push: OnAnyPush.Push;
+    push: OnPushToAnyBranch.Push;
 }
 
 /**
@@ -60,20 +76,6 @@ export interface PhaseCreationInvocation extends ProjectListenerInvocation {
  * understand the repo
  */
 export type PhaseCreator = SdmListener<PhaseCreationInvocation, Phases | undefined>;
-
-/**
- * Guard a phase creator with a test of the push
- * @param {PhaseCreator} pc
- * @param {PushTest} guard
- * @return {PhaseCreator}
- */
-export function guardedPhaseCreator(pc: PhaseCreator, guard: PushTest): PhaseCreator {
-    return async pci => {
-        const shouldRun = await guard(pci);
-        logger.debug("Guard says %d on push %j: test was %s", shouldRun, pci.push, guard.toString());
-        return shouldRun ? pc(pci) : undefined;
-    };
-}
 
 /**
  * Set up phases on a push (e.g. for delivery).
@@ -107,12 +109,18 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
             credentials,
             push,
             context,
+            addressChannels: addressChannelsFor(push.repo, context),
         };
         const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
             .map(pc => Promise.resolve(pc(pi))));
         const phases = phaseCreatorResults.find(p => !!p);
         if (!phases) {
             logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
+            await createStatus(params.githubToken, id, {
+                context: "Immaterial",
+                state: "success",
+                description: "No significant change",
+            });
             return Success;
         }
         await phases.setAllToPending(id, credentials);

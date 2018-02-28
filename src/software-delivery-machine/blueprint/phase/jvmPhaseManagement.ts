@@ -1,16 +1,23 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { SpringBootRestServiceGuard } from "../../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
 import {
-    ApplyPhasesParameters, applyPhasesToCommit,
+    allGuardsVoteFor,
+    ApplyPhasesParameters,
+    applyPhasesToCommit,
     PhaseCreationInvocation,
+    PushesToMaster,
 } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../../../handlers/events/delivery/Phases";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
 
 export async function jvmPhaseBuilder(pi: PhaseCreationInvocation): Promise<Phases> {
+    const relevant: boolean = await allGuardsVoteFor(SpringBootRestServiceGuard, PushesToMaster)(pi);
+    if (!relevant) {
+        return undefined;
+    }
+
     try {
         const f = await pi.project.findFile("pom.xml");
         // TODO: how can we distinguish a lib from a service that should run in k8s?
@@ -33,6 +40,10 @@ export const applyHttpServicePhases: HandleCommand<ApplyPhasesParameters> =
         "trigger sdm for http service");
 
 export async function buildPhaseBuilder(pi: PhaseCreationInvocation): Promise<Phases> {
+    const relevant: boolean = await SpringBootRestServiceGuard(pi);
+    if (!relevant) {
+        return undefined;
+    }
     try {
         const f = await pi.project.findFile("pom.xml");
         return LibraryPhases;

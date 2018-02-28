@@ -1,5 +1,7 @@
 import { logger } from "@atomist/automation-client";
+import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 import * as fs from "fs";
 import { promisify } from "util";
@@ -117,4 +119,12 @@ export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<st
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/branches/master`;
     return axios.get(url, config)
         .then(ap => ap.data.commit.sha);
+}
+
+export async function filesChangedSince(project: GitProject, sha: string): Promise<string[]> {
+    const command = `git diff --name-only ${sha}`;
+    const cr = await runCommand(command, {cwd: project.baseDir});
+    // stdout is nothing but a list of files, one per line
+    console.log(cr.stdout);
+    return cr.stdout.split("\n");
 }
