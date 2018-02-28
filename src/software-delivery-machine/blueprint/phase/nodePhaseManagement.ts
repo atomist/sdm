@@ -1,10 +1,10 @@
 import { logger } from "@atomist/automation-client";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { PhaseCreationInvocation } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../../../handlers/events/delivery/Phases";
 import { npmPhases } from "../../../handlers/events/delivery/phases/npmPhases";
 
-export async function nodePhaseBuilder(p: GitProject): Promise<Phases> {
+export async function nodePhaseBuilder(pi: PhaseCreationInvocation): Promise<Phases> {
+    const p = pi.project;
     try {
         logger.info("node phase builder on %s:%s", p.id.owner, p.id.repo);
         const f = await p.findFile("package.json");

@@ -36,32 +36,43 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { OnAnyPush, OnPushToAnyBranch } from "../../../../typings/types";
 import { tipOfDefaultBranch } from "../../../commands/editors/toclient/ghub";
+import { ListenerInvocation, ProjectListenerInvocation, SdmListener } from "../Listener";
 import { Phases } from "../Phases";
 
-/**
- * Return undefined if no phases set up
- */
-export type PhaseBuilder = (p: GitProject) => Promise<Phases | undefined>;
+export type PushTest = (pci: PhaseCreationInvocation) => boolean | Promise<boolean>;
 
-export type PushTest = (p: OnAnyPush.Push) => boolean | Promise<boolean>;
-
-export const PushesToMaster: PushTest = p => p.branch === "master";
+export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
 
 // TODO should do this but it doesn't work
-// export const PushesToMaster: PushTest = p => p.branch === p.repo.defaultBranch;
+// export const PushesToMaster: PushTest = p => p.push.branch === p.repo.defaultBranch;
 
 export const AnyPush: PushTest = p => true;
 
-export class PhaseCreator {
+export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 
-    /**
-     * Create a new PhaseCreator that will be used to test a push
-     * @param {PhaseBuilder[]} phaseBuilders phase builders to apply to a push with these characteristics
-     * @param {PushTest} pushTest test for a push (e.g. is it to master)
-     */
-    constructor(public phaseBuilders: PhaseBuilder[],
-                public pushTest: PushTest) {
-    }
+    push: OnAnyPush.Push;
+}
+
+/**
+ * A PhaseCreator decided what phases to run depending on repo contents and characteristics
+ * of the push.
+ * @returns Phases or undefined if it doesn't like the push or
+ * understand the repo
+ */
+export type PhaseCreator = SdmListener<PhaseCreationInvocation, Phases | undefined>;
+
+/**
+ * Guard a phase creator with a test of the push
+ * @param {PhaseCreator} pc
+ * @param {PushTest} guard
+ * @return {PhaseCreator}
+ */
+export function guardedPhaseCreator(pc: PhaseCreator, guard: PushTest): PhaseCreator {
+    return async pci => {
+        const shouldRun = await guard(pci);
+        logger.debug("Guard says %d on push %j: test was %s", shouldRun, pci.push, guard.toString());
+        return shouldRun ? pc(pci) : undefined;
+    };
 }
 
 /**
@@ -78,35 +89,33 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
 
     /**
      * Configure phase creation
-     * @param phaseCreators first PhaseCreator that matches the push and returns
-     * phases will win
+     * @param phaseCreators first PhaseCreator that returns phases
      */
     constructor(...phaseCreators: PhaseCreator[]) {
         this.phaseCreators = phaseCreators;
     }
 
-    public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
         const commit = push.commits[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
-
-        const phaseCreatorResults: boolean[] = await Promise.all(params.phaseCreators
-            .map(pc => Promise.resolve(pc.pushTest(push))
-                .then(f => f)));
-        const firstSatisfiedIndex = phaseCreatorResults.indexOf(true);
-        if (firstSatisfiedIndex === -1) {
+        const credentials = {token: params.githubToken};
+        const project = await GitCommandGitProject.cloned(credentials, id);
+        const pi: PhaseCreationInvocation = {
+            id,
+            project,
+            credentials,
+            push,
+            context,
+        };
+        const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
+            .map(pc => Promise.resolve(pc(pi))));
+        const phases = phaseCreatorResults.find(p => !!p);
+        if (!phases) {
             logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
             return Success;
         }
-        const phaseBuilders = params.phaseCreators[firstSatisfiedIndex].phaseBuilders;
-
-        const creds = {token: params.githubToken};
-        const p = await GitCommandGitProject.cloned(creds, id);
-        const phasesFound = await Promise.all(phaseBuilders.map(pb => pb(p)));
-        const phases = phasesFound.find(phase => !!phase);
-        if (!!phases) {
-            await phases.setAllToPending(id, creds);
-        }
+        await phases.setAllToPending(id, credentials);
         return Success;
     }
 }

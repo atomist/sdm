@@ -1,6 +1,9 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { AnyPush, PhaseCreator, PushesToMaster } from "../../handlers/events/delivery/phase/SetupPhasesOnPush";
+import {
+    AnyPush, guardedPhaseCreator, PhaseCreator,
+    PushesToMaster,
+} from "../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { ScanContext } from "../../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../handlers/events/delivery/phases/libraryPhases";
@@ -56,8 +59,12 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
 }
 
 export function configureSpringSdm(sdm: BuildableSoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
-    sdm
-        .addNewIssueListeners(requestDescription)
+    sdm.addPhaseCreators(
+        guardedPhaseCreator(jvmPhaseBuilder, PushesToMaster),
+        guardedPhaseCreator(nodePhaseBuilder, PushesToMaster),
+        buildPhaseBuilder);
+
+    sdm.addNewIssueListeners(requestDescription)
         .addEditors(() => tryToUpgradeSpringBootVersion)
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
@@ -78,10 +85,7 @@ export function configureSpringSdm(sdm: BuildableSoftwareDeliveryMachine, opts: 
         }
     }
 
-    sdm.addPhaseCreators(
-        new PhaseCreator([jvmPhaseBuilder, nodePhaseBuilder], PushesToMaster),
-        new PhaseCreator([buildPhaseBuilder], AnyPush))
-        .addCodeReactions(logReactor)
+    sdm.addCodeReactions(logReactor)
         .addFingerprinters(mavenFingerprinter)
         .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)

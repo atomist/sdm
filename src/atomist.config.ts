@@ -14,8 +14,8 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new MachineAssembler(
-    // cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
-    K8sSoftwareDeliveryMachine({useCheckstyle: false}),
+    cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
+    // K8sSoftwareDeliveryMachine({useCheckstyle: false}),
 );
 
 export const configuration: Configuration = {
