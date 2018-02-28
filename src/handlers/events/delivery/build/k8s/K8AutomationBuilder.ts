@@ -2,7 +2,7 @@ import {success} from "@atomist/automation-client";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {AddressChannels} from "../../../../../common/addressChannels";
+import {AddressChannels} from "../../../../../common/slack/addressChannels";
 import {createStatus} from "../../../../../util/github/ghub";
 import {Builder, PushThatTriggersBuild} from "../Builder";
 

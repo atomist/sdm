@@ -1,14 +1,14 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
+import { PhaseCreationInvocation } from "../../../common/listener/PhaseCreator";
+import { Phases } from "../../../common/phases/Phases";
 import { SpringBootRestServiceGuard } from "../../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
-import { PhaseCreationInvocation } from "../../../handlers/events/delivery/phase/PhaseCreator";
 import {
     allGuardsVoteFor,
     ApplyPhasesParameters,
     applyPhasesToCommit,
     PushesToMaster,
 } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { Phases } from "../../../handlers/events/delivery/Phases";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
 

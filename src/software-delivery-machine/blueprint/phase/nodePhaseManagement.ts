@@ -1,6 +1,6 @@
 import { logger } from "@atomist/automation-client";
-import { PhaseCreationInvocation } from "../../../handlers/events/delivery/phase/PhaseCreator";
-import { Phases } from "../../../handlers/events/delivery/Phases";
+import { PhaseCreationInvocation } from "../../../common/listener/PhaseCreator";
+import { Phases } from "../../../common/phases/Phases";
 import { npmPhases } from "../../../handlers/events/delivery/phases/npmPhases";
 
 export async function nodePhaseBuilder(pi: PhaseCreationInvocation): Promise<Phases> {

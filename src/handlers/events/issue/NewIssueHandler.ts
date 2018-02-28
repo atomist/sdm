@@ -24,9 +24,9 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { addressChannelsFor } from "../../../common/addressChannels";
+import { NewIssueInvocation, NewIssueListener } from "../../../common/listener/NewIssueListener";
+import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
-import { NewIssueInvocation, NewIssueListener } from "./NewIssueListener";
 
 /**
  * A new issue has been created.

@@ -1,6 +1,6 @@
 import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
-import { StatusState } from "../../../../typings/types";
-import { ListenerInvocation, SdmListener } from "../Listener";
+import { StatusState } from "../../typings/types";
+import { ListenerInvocation, SdmListener } from "./Listener";
 
 export interface StatusInfo {
     state?: StatusState | null;

@@ -1,6 +1,6 @@
-import * as schema from "../../../typings/types";
+import * as schema from "../../typings/types";
 
-import { ListenerInvocation, SdmListener } from "../delivery/Listener";
+import { ListenerInvocation, SdmListener } from "./Listener";
 
 export type Issue = schema.OnNewIssue.Issue;
 

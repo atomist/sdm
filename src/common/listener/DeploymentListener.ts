@@ -1,8 +1,8 @@
 /**
  * React to a successful deployment
  */
-import { OnSuccessStatus } from "../../../../typings/types";
-import { ListenerInvocation, SdmListener } from "../Listener";
+import { OnSuccessStatus } from "../../typings/types";
+import { ListenerInvocation, SdmListener } from "./Listener";
 import Status = OnSuccessStatus.Status;
 
 export interface DeploymentEventListener extends ListenerInvocation {

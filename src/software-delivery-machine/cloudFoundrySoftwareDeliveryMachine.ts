@@ -1,6 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
+import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { ScanContext } from "../common/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
@@ -9,8 +11,6 @@ import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/chec
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { tagRepo } from "../handlers/events/repo/tagRepo";
-import { PromotedEnvironment } from "../sdm-support/ReferenceDeliveryBlueprint";
-import { SoftwareDeliveryMachine } from "../sdm-support/SoftwareDeliveryMachine";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";

@@ -1,5 +1,5 @@
 
-import { ProjectListenerInvocation, SdmListener } from "../../Listener";
+import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 

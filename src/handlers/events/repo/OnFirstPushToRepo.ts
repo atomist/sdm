@@ -25,12 +25,12 @@ import {
 } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { AddressChannels } from "../../../common/addressChannels";
+import { AddressChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { ProjectListener, ProjectListenerInvocation } from "../delivery/Listener";
+import { ProjectListener, ProjectListenerInvocation } from "../../../common/listener/Listener";
 
 /**
  * A new repo has been created, and it has some code in it.

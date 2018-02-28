@@ -1,4 +1,4 @@
-import { NewIssueListener } from "../handlers/events/issue/NewIssueListener";
+import { NewIssueListener } from "../common/listener/NewIssueListener";
 import { FunctionalUnit } from "./FunctionalUnit";
 
 export interface IssueHandling extends FunctionalUnit {

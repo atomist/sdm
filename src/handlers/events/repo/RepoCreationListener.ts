@@ -1,6 +1,6 @@
 
+import { ListenerInvocation, SdmListener } from "../../../common/listener/Listener";
 import * as schema from "../../../typings/types";
-import { ListenerInvocation, SdmListener } from "../delivery/Listener";
 
 export interface RepoCreationInvocation extends ListenerInvocation {
 

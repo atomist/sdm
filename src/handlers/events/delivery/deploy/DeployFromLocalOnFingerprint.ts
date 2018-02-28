@@ -16,17 +16,17 @@ import {
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { addressChannelsFor } from "../../../../common/addressChannels";
-import { OnDeployToProductionFingerprint } from "../../../../typings/types";
-import { ArtifactStore } from "../ArtifactStore";
+import { BuildContext } from "../../../../common/phases/gitHubContext";
 import {
     currentPhaseIsStillPending,
     GitHubStatusAndFriends, nothingFailed,
     Phases,
     PlannedPhase,
     previousPhaseSucceeded,
-} from "../Phases";
-import { BuildContext } from "../phases/gitHubContext";
+} from "../../../../common/phases/Phases";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { OnDeployToProductionFingerprint } from "../../../../typings/types";
+import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";

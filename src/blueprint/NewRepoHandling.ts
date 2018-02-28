@@ -1,4 +1,4 @@
-import { ProjectListener } from "../handlers/events/delivery/Listener";
+import { ProjectListener } from "../common/listener/Listener";
 import { RepoCreationListener } from "../handlers/events/repo/RepoCreationListener";
 
 export interface NewRepoHandling {

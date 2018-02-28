@@ -1,7 +1,7 @@
 
-import { OnPushToAnyBranch } from "../../../../typings/types";
-import { ProjectListenerInvocation, SdmListener } from "../Listener";
-import { Phases } from "../Phases";
+import { OnPushToAnyBranch } from "../../typings/types";
+import { Phases } from "../phases/Phases";
+import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
 export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 

@@ -17,11 +17,11 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { addressChannelsFor } from "../../../../common/addressChannels";
+import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../../../../common/phases/Phases";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { ListenerInvocation, SdmListener } from "../Listener";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../Phases";
 import {
     ContextToPlannedPhase,
     HttpServicePhases,

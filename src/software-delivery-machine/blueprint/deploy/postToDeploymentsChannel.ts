@@ -1,4 +1,4 @@
-import { DeploymentListener } from "../../../handlers/events/delivery/deploy/DeploymentListener";
+import { DeploymentListener } from "../../../common/listener/DeploymentListener";
 
 export const PostToDeploymentsChannel: DeploymentListener =
     inv => {

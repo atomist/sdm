@@ -40,17 +40,17 @@ import { ProjectReview, ReviewComment } from "@atomist/automation-client/operati
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { AddressChannels, addressChannelsFor } from "../../../../../common/addressChannels";
+import { ScanContext } from "../../../../../common/phases/gitHubContext";
+import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ScanContext } from "../../phases/gitHubContext";
 import { ContextToPlannedPhase } from "../../phases/httpServicePhases";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
+import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { forApproval } from "../../verify/approvalGate";
-import { CodeReactionInvocation, CodeReactionListener } from "./CodeReactionListener";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.

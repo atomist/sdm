@@ -1,5 +1,5 @@
 
-import { ListenerInvocation, SdmListener } from "../../Listener";
+import { ListenerInvocation, SdmListener } from "./Listener";
 
 export interface FingerprintValue {
     name: string;

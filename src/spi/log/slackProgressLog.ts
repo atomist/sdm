@@ -1,6 +1,6 @@
 
 import { HandlerContext } from "@atomist/automation-client";
-import { addressChannelsFor, HasChannels } from "../../common/addressChannels";
+import { addressChannelsFor, HasChannels } from "../../common/slack/addressChannels";
 import { ProgressLog } from "./ProgressLog";
 
 export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {

@@ -17,9 +17,9 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { PlannedPhase } from "../../../../common/phases/Phases";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { PlannedPhase } from "../Phases";
 
 @EventHandler("Set build phase to complete with link to artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
