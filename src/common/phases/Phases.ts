@@ -3,13 +3,13 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { StatusState } from "../../../typings/types";
-import { createStatus, State } from "../../../util/github/ghub";
+import { StatusState } from "../../typings/types";
+import { createStatus, State } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
-import { contextIsAfter, GitHubStatusContext, splitContext } from "./phases/gitHubContext";
-import { ApprovalGateParam } from "./verify/approvalGate";
+import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
+import { contextIsAfter, GitHubStatusContext, splitContext } from "./gitHubContext";
 
 export interface PlannedPhase {
     context: GitHubStatusContext;

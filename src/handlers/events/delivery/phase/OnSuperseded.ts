@@ -17,9 +17,9 @@
 import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { addressChannelsFor } from "../../../../common/addressChannels";
+import { SupersededListener, SupersededListenerInvocation } from "../../../../common/listener/SupersededListener";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
-import { SupersededListener, SupersededListenerInvocation } from "./SupersededListener";
 
 /**
  * Respond to a superseded push

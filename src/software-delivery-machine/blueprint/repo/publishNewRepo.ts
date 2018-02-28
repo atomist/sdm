@@ -1,4 +1,4 @@
-import { ListenerInvocation, SdmListener } from "../../../handlers/events/delivery/Listener";
+import { ListenerInvocation, SdmListener } from "../../../common/listener/Listener";
 
 export const PublishNewRepo: SdmListener = (i: ListenerInvocation) => {
     return i.context.messageClient.addressChannels(

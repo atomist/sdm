@@ -12,7 +12,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { addressSlackUsers } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { BuildContext } from "../../../handlers/events/delivery/phases/gitHubContext";
+import { BuildContext } from "../../../common/phases/gitHubContext";
 import { ProductionDeployPhases } from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import { listStatuses, Status } from "../../../util/github/ghub";
 import { sendFingerprint } from "../../../util/webhook/sendFingerprint";

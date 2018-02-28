@@ -7,7 +7,7 @@ import { Tagger, Tags } from "@atomist/automation-client/operations/tagger/Tagge
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import { GitHubTagRouter } from "@atomist/spring-automation/commands/tag/gitHubTagRouter";
-import { AddressChannels } from "../../../common/addressChannels";
+import { AddressChannels } from "../../../common/slack/addressChannels";
 
 /**
  * Run a tagger and publish tags for this repo

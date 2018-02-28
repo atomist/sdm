@@ -1,5 +1,5 @@
 import { HandlerResult, Success } from "@atomist/automation-client";
-import { NewIssueInvocation } from "../../../handlers/events/issue/NewIssueListener";
+import { NewIssueInvocation } from "../../../common/listener/NewIssueListener";
 
 export async function requestDescription(inv: NewIssueInvocation): Promise<HandlerResult> {
     if (!inv.issue.body || inv.issue.body.length < 10) {

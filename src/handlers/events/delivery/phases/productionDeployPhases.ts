@@ -1,6 +1,6 @@
 
-import { Phases } from "../Phases";
-import { BaseContext, ProductionEnvironment } from "./gitHubContext";
+import { BaseContext, ProductionEnvironment } from "../../../../common/phases/gitHubContext";
+import { Phases } from "../../../../common/phases/Phases";
 
 // TODO get rid of hard coding of number
 

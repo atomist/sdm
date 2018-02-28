@@ -1,6 +1,6 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { ScanContext } from "../common/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";

@@ -5,7 +5,7 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
-import { AddressChannels } from "../../../../../common/addressChannels";
+import { AddressChannels } from "../../../../../common/slack/addressChannels";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import {
     LinkableLogFactory, LinkablePersistentProgressLog,

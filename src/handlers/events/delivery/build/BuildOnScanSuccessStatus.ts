@@ -18,11 +18,11 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { addressChannelsFor } from "../../../../common/addressChannels";
+import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../../../../common/phases/Phases";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
-import { ProjectListenerInvocation } from "../Listener";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";
 import { Builder } from "./Builder";
 
 export interface ConditionalBuilder {

@@ -17,8 +17,8 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Phases } from "../../../common/phases/Phases";
 import { OnFailureStatus, OnSuccessStatus } from "../../../typings/types";
-import { Phases } from "./Phases";
 import Status = OnSuccessStatus.Status;
 
 /**

@@ -1,7 +1,7 @@
+import { BuildContext } from "../../../common/phases/gitHubContext";
 import { BuildOnScanSuccessStatus } from "../../../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { MavenBuilder } from "../../../handlers/events/delivery/build/local/maven/MavenBuilder";
 import { NpmBuilder } from "../../../handlers/events/delivery/build/local/npm/NpmBuilder";
-import { BuildContext } from "../../../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { createLinkableProgressLog } from "../../../spi/log/NaiveLinkablePersistentProgressLog";
 import { artifactStore } from "../artifactStore";

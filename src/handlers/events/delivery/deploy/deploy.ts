@@ -18,15 +18,15 @@ import { HandlerResult, logger, success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Action } from "@atomist/slack-messages";
-import { AddressChannels } from "../../../../common/addressChannels";
+import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
+import { PlannedPhase } from "../../../../common/phases/Phases";
+import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { createLinkableProgressLog } from "../../../../spi/log/NaiveLinkablePersistentProgressLog";
 import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { ArtifactStore } from "../ArtifactStore";
-import { PlannedPhase } from "../Phases";
-import { GitHubStatusContext } from "../phases/gitHubContext";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
 

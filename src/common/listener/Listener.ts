@@ -3,7 +3,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Function1 } from "lodash";
-import { AddressChannels } from "../../../common/addressChannels";
+import { AddressChannels } from "../slack/addressChannels";
 
 /**
  * Common parameters to an invocation of a listener to one of the

@@ -1,5 +1,5 @@
-import { Phases, PlannedPhase } from "../Phases";
-import { ArtifactContext, BaseContext, BuildContext, ScanContext, StagingEnvironment } from "./gitHubContext";
+import { ArtifactContext, BaseContext, BuildContext, ScanContext, StagingEnvironment } from "../../../../common/phases/gitHubContext";
+import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
 export const StagingDeploymentContext = BaseContext + StagingEnvironment + "3-deploy";
 export const StagingEndpointContext = BaseContext + StagingEnvironment + "4-endpoint";

@@ -27,13 +27,13 @@ import {
 } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { addressChannelsFor } from "../../../../../common/addressChannels";
-import * as schema from "../../../../../typings/types";
 import {
     FingerprintDifference,
     FingerprintDifferenceInvocation, FingerprintDifferenceListener,
     FingerprintValue,
-} from "./FingerprintDifferenceListener";
+} from "../../../../../common/listener/FingerprintDifferenceListener";
+import { addressChannelsFor } from "../../../../../common/slack/addressChannels";
+import * as schema from "../../../../../typings/types";
 
 /**
  * React to a PushImpact event to react to semantic diffs

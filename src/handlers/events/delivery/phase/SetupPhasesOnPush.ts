@@ -34,11 +34,11 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { addressChannelsFor } from "../../../../common/addressChannels";
+import { PhaseCreationInvocation, PhaseCreator } from "../../../../common/listener/PhaseCreator";
+import { Phases } from "../../../../common/phases/Phases";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { Phases } from "../Phases";
-import { PhaseCreationInvocation, PhaseCreator } from "./PhaseCreator";
 
 /**
  * Return true if we like this push

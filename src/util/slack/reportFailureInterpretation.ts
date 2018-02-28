@@ -1,5 +1,5 @@
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {AddressChannels} from "../../common/addressChannels";
+import {AddressChannels} from "../../common/slack/addressChannels";
 import {LinkablePersistentProgressLog, QueryableProgressLog} from "../../spi/log/ProgressLog";
 
 import * as slack from "@atomist/slack-messages/SlackMessages";

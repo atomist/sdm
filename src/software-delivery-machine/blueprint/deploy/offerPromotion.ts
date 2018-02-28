@@ -14,9 +14,9 @@ import { TokenCredentials } from "@atomist/automation-client/operations/common/P
 import { addressSlackChannels, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
+import { VerifiedDeploymentInvocation } from "../../../common/listener/VerifiedDeploymentListener";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
-import { VerifiedDeploymentInvocation } from "../../../handlers/events/delivery/verify/VerifiedDeploymentListener";
 import { tipOfDefaultBranch } from "../../../util/github/ghub";
 
 export async function presentPromotionButton(inv: VerifiedDeploymentInvocation) {

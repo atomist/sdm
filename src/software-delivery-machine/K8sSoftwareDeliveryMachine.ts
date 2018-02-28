@@ -1,4 +1,4 @@
-import { ScanContext } from "../handlers/events/delivery/phases/gitHubContext";
+import { ScanContext } from "../common/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { PromotedEnvironment } from "../sdm-support/ReferenceDeliveryBlueprint";
