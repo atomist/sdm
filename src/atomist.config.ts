@@ -3,11 +3,11 @@ import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { MachineAssembler } from "./sdm-support/MachineAssembler";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/jvmPhaseManagement";
+import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
 import { javaAffirmationEditor } from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
-import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machine/cloudFoundrySoftwareDeliveryMachine";
-import {K8sSoftwareDeliveryMachine} from "./software-delivery-machine/machine/K8sSoftwareDeliveryMachine";
+import {K8sSoftwareDeliveryMachine} from "./software-delivery-machine/K8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
