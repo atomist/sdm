@@ -3,13 +3,13 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ChildProcess, exec, ExecOptions } from "child_process";
-import { ArtifactStore } from "../../../ArtifactStore";
-import { AppInfo } from "../../../deploy/Deployment";
-import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
+import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
 import {
     LinkableLogFactory, LinkablePersistentProgressLog, ProgressLog,
     QueryableProgressLog,
-} from "../../../log/ProgressLog";
+} from "../../../../../../spi/log/ProgressLog";
+import { ArtifactStore } from "../../../ArtifactStore";
+import { AppInfo } from "../../../deploy/Deployment";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
 /**

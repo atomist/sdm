@@ -2,10 +2,10 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
+import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
+import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
-import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
-import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
 

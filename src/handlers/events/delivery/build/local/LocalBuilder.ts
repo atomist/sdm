@@ -5,13 +5,16 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
+import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import {
+    LinkableLogFactory, LinkablePersistentProgressLog,
+    QueryableProgressLog,
+} from "../../../../../spi/log/ProgressLog";
+import { postLinkImageWebhook } from "../../../../../util/ImageLink";
 import { reportFailureInterpretation } from "../../../../../util/reportFailureInterpretation";
 import { AddressChannels } from "../../../../commands/editors/toclient/addressChannels";
-import { postLinkImageWebhook } from "../../../../../util/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
-import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";
-import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../log/ProgressLog";
 import { Builder, PushThatTriggersBuild } from "../Builder";
 
 export interface LocalBuildInProgress {

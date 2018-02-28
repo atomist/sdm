@@ -1,7 +1,7 @@
 import {
     FingerprintDifferenceInvocation,
     FingerprintDifferenceListener,
-} from "../../../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
+} from "../../../handlers/events/delivery/scan/fingerprint/FingerprintDifferentListener";
 
 export const diff1: FingerprintDifferenceListener = async (fdi: FingerprintDifferenceInvocation) => {
     console.log(JSON.stringify(fdi.diffs));

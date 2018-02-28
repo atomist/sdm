@@ -26,16 +26,7 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as schema from "../../../typings/types";
 import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
-import { ListenerInvocation, SdmListener } from "../delivery/Listener";
-
-export type Issue = schema.OnNewIssue.Issue;
-
-export interface NewIssueInvocation extends ListenerInvocation {
-
-    issue: Issue;
-}
-
-export type NewIssueListener = SdmListener<NewIssueInvocation>;
+import { NewIssueInvocation, NewIssueListener } from "./NewIssueListener";
 
 /**
  * A new issue has been created.
@@ -54,7 +45,7 @@ export class OnNewIssue implements HandleEvent<schema.OnNewIssue.Subscription> {
     }
 
     public async handle(event: EventFired<schema.OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
-        const issue: Issue = event.data.Issue[0];
+        const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
         const inv: NewIssueInvocation = {

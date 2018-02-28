@@ -17,7 +17,7 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { tipOfDefaultBranch } from "../../../handlers/commands/editors/toclient/ghub";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
-import { VerifiedDeploymentInvocation } from "../../../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
+import { VerifiedDeploymentInvocation } from "../../../handlers/events/delivery/verify/VerifiedDeploymentListener";
 
 export async function presentPromotionButton(inv: VerifiedDeploymentInvocation) {
     const shaLink = slack.url(inv.id.url + "/tree/" + inv.id.sha, inv.id.repo);

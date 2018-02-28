@@ -17,28 +17,11 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
-import { OnSuccessStatus, StatusState } from "../../../../typings/types";
+import { OnSuccessStatus } from "../../../../typings/types";
 import { addressChannelsFor, messageDestinations } from "../../../commands/editors/toclient/addressChannels";
-import Status = OnSuccessStatus.Status;
-import { ListenerInvocation, SdmListener } from "../Listener";
 import { StagingVerifiedContext } from "../phases/httpServicePhases";
-
-export interface StatusInfo {
-    state?: StatusState | null;
-    targetUrl?: string | null;
-    context?: string | null;
-}
-
-/**
- * Represents a verified deployment
- */
-export interface VerifiedDeploymentInvocation extends ListenerInvocation {
-    status: StatusInfo;
-    messageDestination: Destination;
-}
-
-export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentInvocation>;
+import Status = OnSuccessStatus.Status;
+import { VerifiedDeploymentInvocation, VerifiedDeploymentListener } from "./VerifiedDeploymentListener";
 
 /**
  * React to a verified deployment

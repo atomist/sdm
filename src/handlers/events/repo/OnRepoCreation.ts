@@ -25,14 +25,7 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as schema from "../../../typings/types";
-import { ListenerInvocation, SdmListener } from "../delivery/Listener";
-
-export interface RepoCreationInvocation extends ListenerInvocation {
-
-    repo: schema.OnRepoCreation.Repo;
-}
-
-export type RepoCreationListener = SdmListener<RepoCreationInvocation>;
+import { RepoCreationInvocation, RepoCreationListener } from "./RepoCreationListener";
 
 /**
  * A new repo has been created. We don't know if it has code.

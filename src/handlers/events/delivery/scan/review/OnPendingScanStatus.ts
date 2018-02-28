@@ -48,16 +48,8 @@ import { ContextToPlannedPhase } from "../../phases/httpServicePhases";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
-import { ProjectListenerInvocation, SdmListener } from "../../Listener";
 import { forApproval } from "../../verify/approvalGate";
-
-export interface CodeReactionInvocation extends ProjectListenerInvocation {
-
-    filesChanged: string[];
-
-}
-
-export type CodeReaction = SdmListener<CodeReactionInvocation>;
+import { CodeReactionInvocation, CodeReactionListener } from "./CodeReactionListener";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -75,7 +67,7 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
 
     constructor(private context: string,
                 private projectReviewers: ProjectReviewer[],
-                private codeReactions: CodeReaction[],
+                private codeReactions: CodeReactionListener[],
                 editors: AnyProjectEditor[] = []) {
         this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }

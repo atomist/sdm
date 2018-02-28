@@ -4,8 +4,8 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
+import { QueryableProgressLog } from "../../../../../spi/log/ProgressLog";
 import { DeployableArtifact } from "../../ArtifactStore";
-import { QueryableProgressLog } from "../../log/ProgressLog";
 import { Deployer } from "../Deployer";
 import { Deployment } from "../Deployment";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";

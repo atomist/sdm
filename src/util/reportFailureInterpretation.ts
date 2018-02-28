@@ -1,9 +1,9 @@
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {AddressChannels} from "../handlers/commands/editors/toclient/addressChannels";
-import {LinkablePersistentProgressLog, QueryableProgressLog} from "../handlers/events/delivery/log/ProgressLog";
+import {LinkablePersistentProgressLog, QueryableProgressLog} from "../spi/log/ProgressLog";
 
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {InterpretedLog} from "../handlers/events/delivery/log/InterpretedLog";
+import {InterpretedLog} from "../spi/log/InterpretedLog";
 
 export async function reportFailureInterpretation(stepName: string,
                                                   interpretation: InterpretedLog,

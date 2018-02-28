@@ -5,10 +5,10 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { DeployListener, OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
+import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { ProjectListener, SdmListener } from "../handlers/events/delivery/Listener";
-import { OnSupersededStatus, SupersededListenerInvocation } from "../handlers/events/delivery/phase/OnSuperseded";
+import { ProjectListener } from "../handlers/events/delivery/Listener";
+import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { PhaseCreator, SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
@@ -16,18 +16,15 @@ import { ArtifactContext, BuildContext } from "../handlers/events/delivery/phase
 import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
 import { Fingerprinter, FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import {
-    FingerprintDifferenceListener,
     ReactToSemanticDiffsOnPushImpact,
 } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
-import { CodeReaction, OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import {
     OnVerifiedDeploymentStatus,
-    VerifiedDeploymentListener,
 } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
-import { NewIssueListener, OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
+import { NewIssueListener } from "../handlers/events/issue/NewIssueListener";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
-import { OnRepoCreation, RepoCreationListener } from "../handlers/events/repo/OnRepoCreation";
+import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
@@ -35,6 +32,14 @@ import { PromotedEnvironment } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 import * as _ from "lodash";
+import { DeploymentListener } from "../handlers/events/delivery/deploy/DeploymentListener";
+import { SupersededListener } from "../handlers/events/delivery/phase/SupersededListener";
+import { FingerprintDifferenceListener } from "../handlers/events/delivery/scan/fingerprint/FingerprintDifferentListener";
+import { CodeReactionListener } from "../handlers/events/delivery/scan/review/CodeReactionListener";
+import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import { VerifiedDeploymentListener } from "../handlers/events/delivery/verify/VerifiedDeploymentListener";
+import { OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
+import { RepoCreationListener } from "../handlers/events/repo/RepoCreationListener";
 
 /**
  * Convenient superclass for user software delivery machines,
@@ -64,17 +69,17 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
 
     private projectReviewers: ProjectReviewer[] = [];
 
-    private codeReactions: CodeReaction[] = [];
+    private codeReactions: CodeReactionListener[] = [];
 
     private autoEditors: AnyProjectEditor[] = [];
 
     private fingerprinters: Fingerprinter[] = [];
 
-    private supersededListeners: Array<SdmListener<SupersededListenerInvocation>> = [];
+    private supersededListeners: SupersededListener[] = [];
 
     private fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
-    private deploymentListeners?: DeployListener[] = [];
+    private deploymentListeners?: DeploymentListener[] = [];
 
     private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
@@ -235,7 +240,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
         return this;
     }
 
-    public addCodeReactions(...pls: CodeReaction[]): this {
+    public addCodeReactions(...pls: CodeReactionListener[]): this {
         this.codeReactions = this.codeReactions.concat(pls);
         return this;
     }
@@ -255,7 +260,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
         return this;
     }
 
-    public addSupersededListeners(...l: Array<SdmListener<SupersededListenerInvocation>>): this {
+    public addSupersededListeners(...l: SupersededListener[]): this {
         this.supersededListeners = this.supersededListeners.concat(l);
         return this;
     }
@@ -265,7 +270,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
         return this;
     }
 
-    public addDeploymentListeners(...l: DeployListener[]): this {
+    public addDeploymentListeners(...l: DeploymentListener[]): this {
         this.deploymentListeners = this.deploymentListeners.concat(l);
         return this;
     }

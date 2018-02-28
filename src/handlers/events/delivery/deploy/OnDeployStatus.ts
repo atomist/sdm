@@ -21,14 +21,7 @@ import { OnSuccessStatus } from "../../../../typings/types";
 import Status = OnSuccessStatus.Status;
 import { AddressChannels, addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StagingDeploymentContext } from "../phases/httpServicePhases";
-
-/**
- * React to a successful deployment
- */
-export type DeployListener = (id: GitHubRepoRef,
-                              s: Status,
-                              addressChannels: AddressChannels,
-                              ctx: HandlerContext) => Promise<any>;
+import { DeploymentEventListener, DeploymentListener } from "./DeploymentListener";
 
 /**
  * React to a deployment.
@@ -43,13 +36,13 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private actions: DeployListener[];
+    private listeners: DeploymentListener[];
 
-    constructor(...actions: DeployListener[]) {
-        this.actions = actions;
+    constructor(...listeners: DeploymentListener[]) {
+        this.listeners = listeners;
     }
 
-    public async handle(event: EventFired<OnSuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
@@ -57,10 +50,19 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
             logger.debug(`********* OnDeploy got called with status context=[${status.context}]`);
             return Success;
         }
-
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, context);
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        await Promise.all(params.actions.map(action => action(id, status, addressChannels, ctx)));
+        const credentials = {token: params.githubToken};
+
+        const inv: DeploymentEventListener = {
+            context,
+            status,
+            id,
+            addressChannels,
+            credentials,
+        };
+
+        await Promise.all(params.listeners.map(l => l(inv)));
         return Success;
     }
 

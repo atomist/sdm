@@ -19,12 +19,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as schema from "../../../../typings/types";
 import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
-import { ListenerInvocation, SdmListener } from "../Listener";
-
-export interface SupersededListenerInvocation  extends ListenerInvocation {
-
-    status: schema.OnSupersededStatus.Status;
-}
+import { SupersededListener, SupersededListenerInvocation } from "./SupersededListener";
 
 /**
  * Respond to a superseded push
@@ -36,9 +31,9 @@ export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private listeners: Array<SdmListener<SupersededListenerInvocation>>;
+    private listeners: SupersededListener[];
 
-    constructor(...listeners: Array<SdmListener<SupersededListenerInvocation>>) {
+    constructor(...listeners: SupersededListener[]) {
         this.listeners = listeners;
     }
 

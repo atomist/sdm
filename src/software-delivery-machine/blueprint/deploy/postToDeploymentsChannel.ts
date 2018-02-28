@@ -1,11 +1,11 @@
-import { DeployListener } from "../../../handlers/events/delivery/deploy/OnDeployStatus";
+import { DeploymentListener } from "../../../handlers/events/delivery/deploy/DeploymentListener";
 
-export const PostToDeploymentsChannel: DeployListener =
-    (id, status, ac, ctx) => {
-        return ctx.messageClient.addressChannels(`Successful deployment of \`${id.owner}/${id.repo}:${id.sha}\``, "deployments");
+export const PostToDeploymentsChannel: DeploymentListener =
+    inv => {
+        return inv.context.messageClient.addressChannels(`Successful deployment of \`${inv.id.owner}/${inv.id.repo}:${inv.id.sha}\``, "deployments");
     };
 
-export const PostToServiceChannel: DeployListener =
-    (id, status, ac, ctx) => {
-        return ac(`Whoopee! I was successfully deployed!`);
+export const PostToServiceChannel: DeploymentListener =
+    inv => {
+        return inv.addressChannels(`Whoopee! I was successfully deployed!`);
     };

@@ -29,33 +29,11 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as schema from "../../../../../typings/types";
 import { addressChannelsFor } from "../../../../commands/editors/toclient/addressChannels";
-import { ListenerInvocation, SdmListener } from "../../Listener";
-
-export interface FingerprintValue {
-    name: string;
-    sha: string;
-    data: string;
-}
-
-/**
- * Represents the difference of two fingerprints with the same name.
- * Note that a fingerprint may be added or removed, so calling
- * code must check
- */
-export interface FingerprintDifference {
-    oldValue?: FingerprintValue;
-    newValue?: FingerprintValue;
-}
-
-export interface FingerprintDifferenceInvocation extends ListenerInvocation {
-
-    diffs: FingerprintDifference[];
-}
-
-/**
- * React to a fingerprint diff
- */
-export type FingerprintDifferenceListener = SdmListener<FingerprintDifferenceInvocation>;
+import {
+    FingerprintDifference,
+    FingerprintDifferenceInvocation, FingerprintDifferenceListener,
+    FingerprintValue,
+} from "./FingerprintDifferentListener";
 
 /**
  * React to a PushImpact event to react to semantic diffs
