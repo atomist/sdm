@@ -40,4 +40,7 @@ export const configuration: Configuration = {
     http: {
         enabled: false,
     },
+    applicationEvents: {
+        enabled: true,
+    },
 };
