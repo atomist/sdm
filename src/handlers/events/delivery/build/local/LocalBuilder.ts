@@ -7,7 +7,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import axios from "axios";
 import { reportFailureInterpretation } from "../../../../../util/reportFailureInterpretation";
 import { AddressChannels } from "../../../../commands/editors/toclient/addressChannels";
-import { postLinkImageWebhook } from "../../../link/ImageLink";
+import { postLinkImageWebhook } from "../../../../../util/ImageLink";
 import { ArtifactStore } from "../../ArtifactStore";
 import { AppInfo } from "../../deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../log/InterpretedLog";

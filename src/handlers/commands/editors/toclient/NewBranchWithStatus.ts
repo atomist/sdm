@@ -10,7 +10,7 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { createStatus, Status } from "./ghub";
 
 /**
- * Create a new branch, setting the necessary status
+ * Create a new branch, setting a GitHub commit status
  */
 export class NewBranchWithStatus implements BranchCommit {
 
@@ -24,12 +24,11 @@ export class NewBranchWithStatus implements BranchCommit {
     public async afterPersist(p: Project): Promise<any> {
         const gitStatus = await (p as GitProject).gitStatus();
         const sha = gitStatus.sha;
-        logger.info("Setting status %j on sha %s for %j", this.status, sha, p.id);
         if (!sha) {
-            throw new Error("Sha is not set");
+            throw new Error("Sha is not available");
         }
-        return createStatus((this.creds as TokenCredentials).token,
-            {
+        logger.info("Setting status %j on sha %s for %j", this.status, sha, p.id);
+        return createStatus((this.creds as TokenCredentials).token, {
                 ...p.id,
                 sha,
             } as GitHubRepoRef,

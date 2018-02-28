@@ -7,8 +7,6 @@ import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 
-// TODO should this kind of thing go in a library? Not yet
-
 /**
  * Add intent "edit <name>"
  * @param {(params: PARAMS) => AnyProjectEditor} edd
