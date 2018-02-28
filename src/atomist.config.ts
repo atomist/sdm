@@ -1,7 +1,7 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { MachineAssembler } from "./sdm-support/MachineAssembler";
+import { ComposedFunctionalUnit } from "./sdm-support/ComposedFunctionalUnit";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/jvmPhaseManagement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
@@ -14,7 +14,7 @@ const pj = require(`${appRoot.path}/package.json`);
 
 const token = process.env.GITHUB_TOKEN;
 
-const assembled = new MachineAssembler(
+const assembled = new ComposedFunctionalUnit(
     cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
     // K8sSoftwareDeliveryMachine({useCheckstyle: false}),
 );

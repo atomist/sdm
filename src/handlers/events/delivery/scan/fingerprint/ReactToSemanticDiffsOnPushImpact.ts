@@ -33,7 +33,7 @@ import {
     FingerprintDifference,
     FingerprintDifferenceInvocation, FingerprintDifferenceListener,
     FingerprintValue,
-} from "./FingerprintDifferentListener";
+} from "./FingerprintDifferenceListener";
 
 /**
  * React to a PushImpact event to react to semantic diffs

@@ -33,14 +33,14 @@ import { PromotedEnvironment, ReferenceDeliveryBlueprint } from "./ReferenceDeli
 import * as _ from "lodash";
 import { DeploymentListener } from "../handlers/events/delivery/deploy/DeploymentListener";
 import { SupersededListener } from "../handlers/events/delivery/phase/SupersededListener";
-import { FingerprintDifferenceListener } from "../handlers/events/delivery/scan/fingerprint/FingerprintDifferentListener";
+import { FingerprintDifferenceListener } from "../handlers/events/delivery/scan/fingerprint/FingerprintDifferenceListener";
 import { CodeReactionListener } from "../handlers/events/delivery/scan/review/CodeReactionListener";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { VerifiedDeploymentListener } from "../handlers/events/delivery/verify/VerifiedDeploymentListener";
 import { OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
 import { RepoCreationListener } from "../handlers/events/repo/RepoCreationListener";
 import { IssueHandling } from "./IssueHandling";
-import { NewRepoHandling } from "./NewRepoReactor";
+import { NewRepoHandling } from "./NewRepoHandling";
 
 /**
  * A reference blueprint for Atomist delivery.

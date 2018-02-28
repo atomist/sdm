@@ -1,7 +1,7 @@
 import {
     FingerprintDifferenceInvocation,
     FingerprintDifferenceListener,
-} from "../../../handlers/events/delivery/scan/fingerprint/FingerprintDifferentListener";
+} from "../../../handlers/events/delivery/scan/fingerprint/FingerprintDifferenceListener";
 
 export const diff1: FingerprintDifferenceListener = async (fdi: FingerprintDifferenceInvocation) => {
     console.log(JSON.stringify(fdi.diffs));
