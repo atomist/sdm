@@ -2,7 +2,6 @@ import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { ScanContext } from "../common/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
@@ -45,7 +44,6 @@ const promotedEnvironment: PromotedEnvironment = {
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine([HttpServicePhases, LibraryPhases, npmPhases],
-        ScanContext,
         LocalBuildOnSuccessStatus,
         // CloudFoundryStagingDeployOnSuccessStatus;
         () => LocalMavenDeployer);

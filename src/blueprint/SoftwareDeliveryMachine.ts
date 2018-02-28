@@ -118,7 +118,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const inspections = this.codeReactions;
         const autoEditors = this.autoEditors;
         return (reviewers.length + inspections.length + autoEditors.length > 0) ?
-            () => new OnPendingScanStatus(this.scanContext, reviewers, inspections, autoEditors) :
+            () => new OnPendingScanStatus(reviewers, inspections, autoEditors) :
             undefined;
     }
 
@@ -304,12 +304,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     /**
      *
      * @param {Phases[]} possiblePhases All possible phases we can set up. Makes cleanup easier
-     * @param {string} scanContext
      * @param {Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>} deploy1
      */
     // TODO want to take the phase builders, and get the possible phases from them
     constructor(protected possiblePhases: Phases[],
-                protected scanContext: string,
                 public builder: Maker<StatusSuccessHandler>,
                 public deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>) {
     }

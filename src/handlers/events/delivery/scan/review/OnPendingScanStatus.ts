@@ -66,10 +66,10 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
 
     private editorChain: ProjectEditor;
 
-    constructor(private context: string,
-                private projectReviewers: ProjectReviewer[],
+    constructor(private projectReviewers: ProjectReviewer[],
                 private codeReactions: CodeReactionListener[],
-                editors: AnyProjectEditor[] = []) {
+                editors: AnyProjectEditor[] = [],
+                private context: string = ScanContext) {
         this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }
 

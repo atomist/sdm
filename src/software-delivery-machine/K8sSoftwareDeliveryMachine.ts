@@ -28,7 +28,6 @@ const promotedEnvironment: PromotedEnvironment = {
 
 export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine([HttpServicePhases, LibraryPhases],
-        ScanContext,
         K8sBuildOnSuccessStatus,
         K8sStagingDeployOnSuccessStatus);
     sdm.addPromotedEnvironment(promotedEnvironment);
