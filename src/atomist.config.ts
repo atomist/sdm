@@ -1,7 +1,7 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
+import { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { ComposedFunctionalUnit } from "./sdm-support/ComposedFunctionalUnit";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/jvmPhaseManagement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";

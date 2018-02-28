@@ -1,8 +1,8 @@
+import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
+import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { ScanContext } from "../common/phases/gitHubContext";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { PromotedEnvironment } from "../sdm-support/ReferenceDeliveryBlueprint";
-import { SoftwareDeliveryMachine } from "../sdm-support/SoftwareDeliveryMachine";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";

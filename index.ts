@@ -9,11 +9,11 @@ export { Phases } from "./src/common/phases/Phases";
 
 export * from "./src/spi/log/ProgressLog";
 
-export { SoftwareDeliveryMachine } from "./src/sdm-support/SoftwareDeliveryMachine";
-export { IssueHandling } from "./src/sdm-support/IssueHandling";
-export { NewRepoHandling } from "./src/sdm-support/NewRepoHandling";
-export { FunctionalUnit } from "./src/sdm-support/FunctionalUnit";
-export { ComposedFunctionalUnit } from "./src/sdm-support/ComposedFunctionalUnit";
+export { SoftwareDeliveryMachine } from "./src/blueprint/SoftwareDeliveryMachine";
+export { IssueHandling } from "./src/blueprint/IssueHandling";
+export { NewRepoHandling } from "./src/blueprint/NewRepoHandling";
+export { FunctionalUnit } from "./src/blueprint/FunctionalUnit";
+export { ComposedFunctionalUnit } from "./src/blueprint/ComposedFunctionalUnit";
 
 export * from "./src/common/slack/addressChannels";
 
