@@ -22,7 +22,7 @@ import {
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
-import { createStatus, State } from "../../../commands/editors/toclient/ghub";
+import { createStatus, State } from "../../../../util/github/ghub";
 
 /**
  * Set build status on complete build

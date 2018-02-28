@@ -25,8 +25,8 @@ import {
 } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { AddressChannels } from "../../../common/addressChannels";
 import * as schema from "../../../typings/types";
-import { AddressChannels } from "../../commands/editors/toclient/addressChannels";
 
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";

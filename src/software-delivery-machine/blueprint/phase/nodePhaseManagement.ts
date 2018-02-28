@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { PhaseCreationInvocation } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { PhaseCreationInvocation } from "../../../handlers/events/delivery/phase/PhaseCreator";
 import { Phases } from "../../../handlers/events/delivery/Phases";
 import { npmPhases } from "../../../handlers/events/delivery/phases/npmPhases";
 

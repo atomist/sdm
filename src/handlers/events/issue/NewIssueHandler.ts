@@ -24,8 +24,8 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { addressChannelsFor } from "../../../common/addressChannels";
 import * as schema from "../../../typings/types";
-import { addressChannelsFor } from "../../commands/editors/toclient/addressChannels";
 import { NewIssueInvocation, NewIssueListener } from "./NewIssueListener";
 
 /**

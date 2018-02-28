@@ -10,7 +10,7 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/
 import { ProjectListener } from "../handlers/events/delivery/Listener";
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { PhaseCreator, SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { Phases } from "../handlers/events/delivery/Phases";
 import { ArtifactContext, BuildContext } from "../handlers/events/delivery/phases/gitHubContext";
 import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
@@ -32,6 +32,7 @@ import { PromotedEnvironment, ReferenceDeliveryBlueprint } from "./ReferenceDeli
 
 import * as _ from "lodash";
 import { DeploymentListener } from "../handlers/events/delivery/deploy/DeploymentListener";
+import { PhaseCreator } from "../handlers/events/delivery/phase/PhaseCreator";
 import { SupersededListener } from "../handlers/events/delivery/phase/SupersededListener";
 import { FingerprintDifferenceListener } from "../handlers/events/delivery/scan/fingerprint/FingerprintDifferenceListener";
 import { CodeReactionListener } from "../handlers/events/delivery/scan/review/CodeReactionListener";

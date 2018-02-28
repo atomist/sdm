@@ -29,7 +29,7 @@ import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fing
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as schema from "../../../../../typings/types";
-import { sendFingerprint } from "../../../../commands/editors/toclient/fingerprints";
+import { sendFingerprint } from "../../../../../util/webhook/sendFingerprint";
 
 import * as _ from "lodash";
 

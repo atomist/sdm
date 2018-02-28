@@ -2,8 +2,8 @@ import {success} from "@atomist/automation-client";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {AddressChannels} from "../../../../commands/editors/toclient/addressChannels";
-import {createStatus} from "../../../../commands/editors/toclient/ghub";
+import {AddressChannels} from "../../../../../common/addressChannels";
+import {createStatus} from "../../../../../util/github/ghub";
 import {Builder, PushThatTriggersBuild} from "../Builder";
 
 const K8AutomationBuildContext = "build/atomist/k8s";

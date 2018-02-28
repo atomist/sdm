@@ -18,8 +18,8 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { addressChannelsFor } from "../../../../common/addressChannels";
 import { OnAnySuccessStatus } from "../../../../typings/types";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { ProjectListenerInvocation } from "../Listener";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../Phases";

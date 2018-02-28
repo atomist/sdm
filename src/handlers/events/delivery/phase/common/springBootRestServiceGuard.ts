@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { filesChangedSince } from "../../../../commands/editors/toclient/ghub";
+import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { PushTest } from "../SetupPhasesOnPush";
 
 /**

@@ -16,8 +16,8 @@ import {
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { addressChannelsFor } from "../../../../common/addressChannels";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
 import { ArtifactStore } from "../ArtifactStore";
 import {
     currentPhaseIsStillPending,

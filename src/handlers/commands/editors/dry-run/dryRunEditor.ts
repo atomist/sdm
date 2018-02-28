@@ -6,8 +6,8 @@ import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { Status } from "../toclient/ghub";
-import { NewBranchWithStatus } from "../toclient/NewBranchWithStatus";
+import { Status } from "../../../../util/github/ghub";
+import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";
 

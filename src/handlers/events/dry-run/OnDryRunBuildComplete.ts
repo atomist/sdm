@@ -19,8 +19,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
+import { createStatus } from "../../../util/github/ghub";
 import { DryRunContext } from "../../commands/editors/dry-run/dryRunEditor";
-import { createStatus } from "../../commands/editors/toclient/ghub";
 
 /**
  * React to to result of a dry run build

@@ -34,11 +34,11 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { addressChannelsFor } from "../../../../common/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
-import { addressChannelsFor } from "../../../commands/editors/toclient/addressChannels";
-import { createStatus, tipOfDefaultBranch } from "../../../commands/editors/toclient/ghub";
-import { ProjectListenerInvocation, SdmListener } from "../Listener";
+import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { Phases } from "../Phases";
+import { PhaseCreationInvocation, PhaseCreator } from "./PhaseCreator";
 
 /**
  * Return true if we like this push
@@ -63,19 +63,6 @@ export function allGuardsVoteFor(...guards: PushTest[]): PushTest {
         return !guardResults.some(r => !r);
     };
 }
-
-export interface PhaseCreationInvocation extends ProjectListenerInvocation {
-
-    push: OnPushToAnyBranch.Push;
-}
-
-/**
- * A PhaseCreator decided what phases to run depending on repo contents and characteristics
- * of the push.
- * @returns Phases or undefined if it doesn't like the push or
- * understand the repo
- */
-export type PhaseCreator = SdmListener<PhaseCreationInvocation, Phases | undefined>;
 
 /**
  * Set up phases on a push (e.g. for delivery).

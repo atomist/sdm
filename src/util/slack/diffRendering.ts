@@ -2,8 +2,8 @@ import { logger } from "@atomist/automation-client";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {listCommitsBetween} from "../handlers/commands/editors/toclient/ghub";
-import {avatarUrl, commitUrl, RepoInfo, truncateCommitMessage, userUrl} from "./lifecycleHelpers";
+import {listCommitsBetween} from "../github/ghub";
+import {avatarUrl, commitUrl, RepoInfo, truncateCommitMessage, userUrl} from "../lifecycleHelpers";
 
 export function linkToDiff(id: RemoteRepoRef, start: string, end: string, endDescription?: string) {
     return slack.url(diffUrl(id, start, end), `(Compare with ${endDescription || end.substr(0, 6)})`);

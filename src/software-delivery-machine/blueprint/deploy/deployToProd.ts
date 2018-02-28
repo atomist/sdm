@@ -12,10 +12,10 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { addressSlackUsers } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { sendFingerprint } from "../../../handlers/commands/editors/toclient/fingerprints";
-import { listStatuses, Status } from "../../../handlers/commands/editors/toclient/ghub";
 import { BuildContext } from "../../../handlers/events/delivery/phases/gitHubContext";
 import { ProductionDeployPhases } from "../../../handlers/events/delivery/phases/productionDeployPhases";
+import { listStatuses, Status } from "../../../util/github/ghub";
+import { sendFingerprint } from "../../../util/webhook/sendFingerprint";
 
 @CommandHandler("Promote to production", "promote to production")
 export class DeployToProd implements HandleCommand {

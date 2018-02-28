@@ -13,3 +13,7 @@ export { IssueHandling } from "./src/sdm-support/IssueHandling";
 export { NewRepoHandling } from "./src/sdm-support/NewRepoHandling";
 export { FunctionalUnit } from "./src/sdm-support/FunctionalUnit";
 export { ComposedFunctionalUnit } from "./src/sdm-support/ComposedFunctionalUnit";
+
+export * from "./src/common/addressChannels";
+
+export { computeShaOf } from "./src/util/misc/sha";

@@ -17,8 +17,8 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { addressChannelsFor, messageDestinations } from "../../../../common/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { addressChannelsFor, messageDestinations } from "../../../commands/editors/toclient/addressChannels";
 import { StagingVerifiedContext } from "../phases/httpServicePhases";
 import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentInvocation, VerifiedDeploymentListener } from "./VerifiedDeploymentListener";

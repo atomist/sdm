@@ -9,8 +9,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { deleteRepository } from "../../../handlers/commands/editors/toclient/ghub";
 import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { deleteRepository } from "../../../util/github/ghub";
 
 @Parameters()
 export class DisposeParameters {

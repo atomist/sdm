@@ -8,8 +8,8 @@ import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import * as _ from "lodash";
 import * as graphqlTypes from "../../typings/types";
-import {linkToDiff, renderDiff} from "../../util/diffRendering";
-import {tipOfDefaultBranch} from "./editors/toclient/ghub";
+import {tipOfDefaultBranch} from "../../util/github/ghub";
+import {linkToDiff, renderDiff} from "../../util/slack/diffRendering";
 
 @Parameters()
 export class ReportRunningParameters {

@@ -24,8 +24,8 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnPushWithBefore } from "../../../../typings/types";
+import { createStatus } from "../../../../util/github/ghub";
 import { truncateCommitMessage } from "../../../../util/lifecycleHelpers";
-import { createStatus } from "../../../commands/editors/toclient/ghub";
 
 export const SupersededContext = "superseded";
 
