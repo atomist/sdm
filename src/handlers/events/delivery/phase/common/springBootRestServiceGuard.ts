@@ -12,6 +12,7 @@ export const SpringBootRestServiceGuard: PushTest = async pci => {
     console.log(`Changed files are [${changedFiles.join(",")}]`);
     if (changedFiles.some(f => f.endsWith(".java")) ||
         changedFiles.some(f => f.endsWith(".html")) ||
+        changedFiles.some(f => f.endsWith(".yml")) ||
         changedFiles.some(f => f.endsWith(".xml"))
     ) {
         logger.info("Change is material: changed files=[%s]", changedFiles.join(","));
