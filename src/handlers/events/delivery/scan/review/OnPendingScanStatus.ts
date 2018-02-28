@@ -42,7 +42,7 @@ import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { AddressChannels, addressChannelsFor } from "../../../../commands/editors/toclient/addressChannels";
-import { createStatus } from "../../../../commands/editors/toclient/ghub";
+import { createStatus, filesChangedSince } from "../../../../commands/editors/toclient/ghub";
 import { ScanContext } from "../../phases/gitHubContext";
 import { ContextToPlannedPhase } from "../../phases/httpServicePhases";
 
@@ -50,6 +50,14 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import { ProjectListenerInvocation, SdmListener } from "../../Listener";
 import { forApproval } from "../../verify/approvalGate";
+
+export interface CodeReactionInvocation extends ProjectListenerInvocation {
+
+    filesChanged: string[];
+
+}
+
+export type CodeReaction = SdmListener<CodeReactionInvocation>;
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -67,7 +75,7 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
 
     constructor(private context: string,
                 private projectReviewers: ProjectReviewer[],
-                private codeReactions: Array<SdmListener<ProjectListenerInvocation>>,
+                private codeReactions: CodeReaction[],
                 editors: AnyProjectEditor[] = []) {
         this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }
@@ -79,7 +87,6 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         const credentials = {token: params.githubToken};
 
         if (status.context !== params.context || status.state !== "pending") {
@@ -94,16 +101,19 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
                 await Promise.all(params.projectReviewers
                     .map(reviewer => reviewer(project, context, params as any)))
                     .then(reviews => consolidate(reviews));
-            const i: ProjectListenerInvocation = {
+
+            const filesChanged = await filesChangedSince(project, commit.pushes[0].before.sha);
+            const i: CodeReactionInvocation = {
                 id,
                 context,
                 addressChannels,
                 project,
                 credentials,
+                filesChanged,
             };
             const inspections: Promise<any> =
                 Promise.all(params.codeReactions
-                    .map(inspection => inspection(i)));
+                    .map(reaction => reaction(i)));
             await inspections;
 
             if (params.editorChain) {

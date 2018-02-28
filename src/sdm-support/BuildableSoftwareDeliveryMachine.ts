@@ -19,7 +19,7 @@ import {
     FingerprintDifferenceListener,
     ReactToSemanticDiffsOnPushImpact,
 } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
-import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import { CodeReaction, OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import {
     OnVerifiedDeploymentStatus,
@@ -64,7 +64,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
 
     private projectReviewers: ProjectReviewer[] = [];
 
-    private codeReactions: ProjectListener[] = [];
+    private codeReactions: CodeReaction[] = [];
 
     private autoEditors: AnyProjectEditor[] = [];
 
@@ -235,7 +235,7 @@ export class BuildableSoftwareDeliveryMachine implements SoftwareDeliveryMachine
         return this;
     }
 
-    public addCodeReactions(...pls: ProjectListener[]): this {
+    public addCodeReactions(...pls: CodeReaction[]): this {
         this.codeReactions = this.codeReactions.concat(pls);
         return this;
     }

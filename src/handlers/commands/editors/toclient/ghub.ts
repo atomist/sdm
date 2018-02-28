@@ -126,5 +126,6 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
     const cr = await runCommand(command, {cwd: project.baseDir});
     // stdout is nothing but a list of files, one per line
     console.log(cr.stdout);
-    return cr.stdout.split("\n");
+    return cr.stdout.split("\n")
+        .filter(n => !!n);
 }

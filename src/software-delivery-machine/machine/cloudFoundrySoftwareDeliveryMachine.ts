@@ -1,9 +1,5 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { SpringBootRestServiceGuard } from "../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
-import {
-    PushesToMaster,
-} from "../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { ScanContext } from "../../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../handlers/events/delivery/phases/libraryPhases";
@@ -29,7 +25,7 @@ import { buildPhaseBuilder, jvmPhaseBuilder } from "../blueprint/phase/jvmPhaseM
 import { nodePhaseBuilder } from "../blueprint/phase/nodePhaseManagement";
 import { PublishNewRepo } from "../blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
-import { logReactor, logReview } from "../blueprint/review/scan";
+import { listChangedFiles, logReview } from "../blueprint/review/scan";
 import { addCloudFoundryManifest } from "../commands/editors/addCloudFoundryManifest";
 import { tryToUpgradeSpringBootVersion } from "../commands/editors/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../commands/generators/spring/springBootGenerator";
@@ -86,7 +82,7 @@ export function configureSpringSdm(sdm: BuildableSoftwareDeliveryMachine, opts: 
         }
     }
 
-    sdm.addCodeReactions(logReactor)
+    sdm.addCodeReactions(listChangedFiles)
         .addFingerprinters(mavenFingerprinter)
         .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)

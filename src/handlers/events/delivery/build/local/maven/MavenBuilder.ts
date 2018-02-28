@@ -5,7 +5,7 @@ import { spawn } from "child_process";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../log/InterpretedLog";
-import { LinkableLogFactory, LinkablePersistentProgressLog } from "../../../log/ProgressLog";
+import { LinkableLogFactory, LinkablePersistentProgressLog, QueryableProgressLog } from "../../../log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
 
@@ -25,7 +25,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
-                               team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress> {
+                               team: string, log: LinkablePersistentProgressLog & QueryableProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from Maven
         const pom = await p.findFile("pom.xml");
@@ -43,7 +43,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
                 log.write(data.toString());
             });
             childProcess.addListener("exit", (code, signal) => {
-                resolve({error: false, code});
+                resolve({error: log.log.includes("[ERROR]"), code});
             });
             childProcess.addListener("error", (code, signal) => {
                 resolve({error: true, code});

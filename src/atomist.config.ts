@@ -5,6 +5,7 @@ import { MachineAssembler } from "./sdm-support/MachineAssembler";
 import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/jvmPhaseManagement";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
+import { javaAffirmationEditor } from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machine/cloudFoundrySoftwareDeliveryMachine";
 import {K8sSoftwareDeliveryMachine} from "./software-delivery-machine/machine/K8sSoftwareDeliveryMachine";
 
@@ -32,6 +33,7 @@ export const configuration: Configuration = {
         () => applyHttpServicePhases,
         () => breakBuildEditor,
         () => unbreakBuildEditor,
+        () => javaAffirmationEditor,
     ]),
     events: assembled.eventHandlers.concat([]),
     token,
