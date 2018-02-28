@@ -2,9 +2,6 @@ import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
-import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
@@ -20,8 +17,8 @@ import { offerPromotionCommand, presentPromotionButton } from "./blueprint/deplo
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
-import { buildPhaseBuilder, jvmPhaseBuilder } from "./blueprint/phase/jvmPhaseManagement";
-import { nodePhaseBuilder } from "./blueprint/phase/nodePhaseManagement";
+import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./blueprint/phase/jvmPhaseManagement";
+import { NodePhaseCreator } from "./blueprint/phase/nodePhaseManagement";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { listChangedFiles, logReview } from "./blueprint/review/scan";
@@ -43,7 +40,7 @@ const promotedEnvironment: PromotedEnvironment = {
 };
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
-    const sdm = new SoftwareDeliveryMachine([HttpServicePhases, LibraryPhases, npmPhases],
+    const sdm = new SoftwareDeliveryMachine(
         LocalBuildOnSuccessStatus,
         // CloudFoundryStagingDeployOnSuccessStatus;
         () => LocalMavenDeployer);
@@ -54,9 +51,9 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
 
 export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
     sdm.addPhaseCreators(
-        jvmPhaseBuilder,
-        nodePhaseBuilder,
-        buildPhaseBuilder,
+        new SpringBootDeployPhaseCreator(),
+        new NodePhaseCreator(),
+        new JavaLibraryPhaseCreator(),
     );
 
     sdm.addNewIssueListeners(requestDescription)

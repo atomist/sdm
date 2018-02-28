@@ -140,6 +140,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
         this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
 
+    get possiblePhases(): Phases[] {
+        return _.uniq(_.flatMap(this.phaseCreators, p => p.possiblePhases));
+    }
+
     public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
     get notifyOnDeploy(): Maker<OnDeployStatus> {
@@ -301,13 +305,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    /**
-     *
-     * @param {Phases[]} possiblePhases All possible phases we can set up. Makes cleanup easier
-     * @param {Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>} deploy1
-     */
-    // TODO want to take the phase builders, and get the possible phases from them
-    constructor(protected possiblePhases: Phases[],
+    constructor(
                 public builder: Maker<StatusSuccessHandler>,
                 public deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>) {
     }

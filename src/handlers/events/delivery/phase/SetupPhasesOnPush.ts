@@ -41,30 +41,6 @@ import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 
 /**
- * Return true if we like this push
- */
-export type PushTest = (p: PhaseCreationInvocation) => boolean | Promise<boolean>;
-
-export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
-
-// TODO should do this but it doesn't work
-// export const PushesToMaster: PushTest = p => p.push.branch === p.repo.defaultBranch;
-
-export const AnyPush: PushTest = p => true;
-
-/**
- * All of these guards vote for these phases
- * @param {PushTest} guards
- * @return {PushTest}
- */
-export function allGuardsVoteFor(...guards: PushTest[]): PushTest {
-    return async pci => {
-        const guardResults: boolean[] = await Promise.all(guards.map(g => g(pci)));
-        return !guardResults.some(r => !r);
-    };
-}
-
-/**
  * Set up phases on a push (e.g. for delivery).
  */
 @EventHandler("Set up phases",
@@ -99,7 +75,13 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
             addressChannels: addressChannelsFor(push.repo, context),
         };
         const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
-            .map(pc => Promise.resolve(pc(pi))));
+            .map(async pc => {
+                const relevant = !!pc.guard ? await pc.guard(pi) : true;
+                logger.info("Guard %s found relevant=%d for %j", pc.guard, relevant, id);
+                return relevant ?
+                    Promise.resolve(pc.createPhases(pi)) :
+                    Promise.resolve(undefined);
+            }));
         const phases = phaseCreatorResults.find(p => !!p);
         if (!phases) {
             logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);

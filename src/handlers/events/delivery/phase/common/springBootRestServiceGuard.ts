@@ -1,7 +1,6 @@
 import { logger } from "@atomist/automation-client";
+import { PushTest } from "../../../../../common/listener/PhaseCreator";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
-import { PushTest } from "../SetupPhasesOnPush";
-
 /**
  * Veto if not important
  * @param {PhaseCreationInvocation} pci
