@@ -1,13 +1,13 @@
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {AddressChannels} from "../../common/slack/addressChannels";
-import {LinkablePersistentProgressLog, QueryableProgressLog} from "../../spi/log/ProgressLog";
+import {LinkableProgressLog, QueryableProgressLog} from "../../spi/log/ProgressLog";
 
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import {InterpretedLog} from "../../spi/log/InterpretedLog";
 
 export async function reportFailureInterpretation(stepName: string,
                                                   interpretation: InterpretedLog,
-                                                  fullLog: LinkablePersistentProgressLog & QueryableProgressLog,
+                                                  fullLog: LinkableProgressLog & QueryableProgressLog,
                                                   id: RemoteRepoRef,
                                                   ac: AddressChannels,
                                                   retryButton?: slack.Action) {

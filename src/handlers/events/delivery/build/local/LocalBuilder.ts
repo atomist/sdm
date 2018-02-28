@@ -8,7 +8,7 @@ import axios from "axios";
 import { AddressChannels } from "../../../../../common/slack/addressChannels";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import {
-    LinkableLogFactory, LinkablePersistentProgressLog,
+    LinkableLogFactory, LinkableProgressLog,
     QueryableProgressLog,
 } from "../../../../../spi/log/ProgressLog";
 import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
@@ -79,7 +79,7 @@ export abstract class LocalBuilder implements Builder {
     public abstract logInterpreter(log: string): InterpretedLog | undefined;
 
     protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                                  team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress>;
+                                  team: string, log: LinkableProgressLog): Promise<LocalBuildInProgress>;
 }
 
 function onStarted(runningBuild: LocalBuildInProgress, branch: string) {
@@ -98,9 +98,8 @@ function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
             number: `Build ${runningBuild.repoRef.sha.substring(0, 7)}...`,
             scm: {
                 commit: runningBuild.repoRef.sha,
-                // TODO why doesn't this work
-                // url: runningBuild.url,
-                url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
+                 url: runningBuild.url,
+               // url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
                 // TODO is this required
                 branch,
             },
@@ -119,7 +118,7 @@ async function onExit(token: string,
                       team: string,
                       branch: string,
                       artifactStore: ArtifactStore,
-                      log: LinkablePersistentProgressLog & QueryableProgressLog,
+                      log: LinkableProgressLog & QueryableProgressLog,
                       ac: AddressChannels,
                       logInterpreter: LogInterpreter): Promise<any> {
     try {

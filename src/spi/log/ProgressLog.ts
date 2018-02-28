@@ -119,10 +119,13 @@ export class SavingProgressLog implements QueryableProgressLog {
     }
 }
 
-export interface LinkablePersistentProgressLog extends ProgressLog {
+export interface LinkableProgressLog extends ProgressLog {
 
-    url: string;
+    /**
+     * Return the url of the log if it was persisted
+     */
+    url: string | undefined;
 
 }
 
-export type LinkableLogFactory = () => Promise<LinkablePersistentProgressLog & QueryableProgressLog>;
+export type LinkableLogFactory = () => Promise<LinkableProgressLog & QueryableProgressLog>;
