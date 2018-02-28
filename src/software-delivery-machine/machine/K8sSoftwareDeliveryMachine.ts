@@ -1,8 +1,8 @@
 import { ScanContext } from "../../handlers/events/delivery/phases/gitHubContext";
 import { HttpServicePhases } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../handlers/events/delivery/phases/libraryPhases";
-import { BuildableSoftwareDeliveryMachine } from "../../sdm-support/BuildableSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../../sdm-support/ReferenceDeliveryBlueprint";
+import { SoftwareDeliveryMachine } from "../../sdm-support/SoftwareDeliveryMachine";
 import { K8sBuildOnSuccessStatus } from "../blueprint/build/K8sBuildOnScanSuccess";
 import { CloudFoundryProductionDeployOnFingerprint } from "../blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "../blueprint/deploy/deployToProd";
@@ -26,8 +26,8 @@ const promotedEnvironment: PromotedEnvironment = {
     deploy: CloudFoundryProductionDeployOnFingerprint,
 };
 
-export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): BuildableSoftwareDeliveryMachine {
-    const sdm = new BuildableSoftwareDeliveryMachine([HttpServicePhases, LibraryPhases],
+export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
+    const sdm = new SoftwareDeliveryMachine([HttpServicePhases, LibraryPhases],
         ScanContext,
         K8sBuildOnSuccessStatus,
         K8sStagingDeployOnSuccessStatus);

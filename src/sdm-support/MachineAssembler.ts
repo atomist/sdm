@@ -1,7 +1,6 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 import * as _ from "lodash";
 import { FunctionalUnit } from "./FunctionalUnit";
@@ -11,9 +10,9 @@ import { FunctionalUnit } from "./FunctionalUnit";
  */
 export class MachineAssembler implements FunctionalUnit {
 
-    public readonly deliveryMachines: SoftwareDeliveryMachine[];
+    public readonly deliveryMachines: FunctionalUnit[];
 
-    constructor(...machines: SoftwareDeliveryMachine[]) {
+    constructor(...machines: FunctionalUnit[]) {
         this.deliveryMachines = machines;
     }
 

@@ -9,8 +9,8 @@ import { checkstyleReviewer } from "../../handlers/events/delivery/scan/review/c
 import { LookFor200OnEndpointRootGet } from "../../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnDryRunBuildComplete } from "../../handlers/events/dry-run/OnDryRunBuildComplete";
 import { tagRepo } from "../../handlers/events/repo/tagRepo";
-import { BuildableSoftwareDeliveryMachine } from "../../sdm-support/BuildableSoftwareDeliveryMachine";
 import { PromotedEnvironment } from "../../sdm-support/ReferenceDeliveryBlueprint";
+import { SoftwareDeliveryMachine } from "../../sdm-support/SoftwareDeliveryMachine";
 import { LocalBuildOnSuccessStatus } from "../blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnFingerprint } from "../blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "../blueprint/deploy/deployToProd";
@@ -43,8 +43,8 @@ const promotedEnvironment: PromotedEnvironment = {
     deploy: CloudFoundryProductionDeployOnFingerprint,
 };
 
-export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): BuildableSoftwareDeliveryMachine {
-    const sdm = new BuildableSoftwareDeliveryMachine([HttpServicePhases, LibraryPhases, npmPhases],
+export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
+    const sdm = new SoftwareDeliveryMachine([HttpServicePhases, LibraryPhases, npmPhases],
         ScanContext,
         LocalBuildOnSuccessStatus,
         // CloudFoundryStagingDeployOnSuccessStatus;
@@ -54,7 +54,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
     return sdm;
 }
 
-export function configureSpringSdm(sdm: BuildableSoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
+export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
     sdm.addPhaseCreators(
         jvmPhaseBuilder,
         nodePhaseBuilder,

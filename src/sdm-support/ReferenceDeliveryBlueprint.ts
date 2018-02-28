@@ -1,19 +1,7 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EventWithCommand } from "../handlers/commands/RetryDeploy";
-import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
-import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
-import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
-import { OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
-import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OfferPromotionParameters } from "../software-delivery-machine/blueprint/deploy/offerPromotion";
-import { OnDeployToProductionFingerprint, OnImageLinked, OnSuccessStatus, OnSupersededStatus } from "../typings/types";
+import { OnDeployToProductionFingerprint } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
@@ -37,47 +25,6 @@ export interface PromotedEnvironment {
  */
 export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
-    fingerprinter?: Maker<FingerprintOnPush>;
-
-    semanticDiffReactor?: Maker<ReactToSemanticDiffsOnPushImpact>;
-
-    reviewRunner?: Maker<OnPendingScanStatus>;
-
-    phaseSetup: Maker<SetupPhasesOnPush>;
-
-    phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>>;
-
-    /**
-     * Do not define if you don't want old commits to be automatically superseded
-     */
-    oldPushSuperseder?: Maker<SetSupersededStatus>;
-
-    /**
-     * React when a push is superseded
-     */
-    onSuperseded?: Maker<HandleEvent<OnSupersededStatus.Subscription>>;
-
-    /**
-     * Initiate build. We don't need this if there's a CI file in the
-     * project itself.
-     */
-    builder?: Maker<StatusSuccessHandler>;
-
-    onBuildComplete: Maker<SetStatusOnBuildComplete>;
-
-    artifactFinder: Maker<HandleEvent<OnImageLinked.Subscription>>;
-
-    /**
-     * Initial deploy
-     */
-    deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription & EventWithCommand>>;
-
-    notifyOnDeploy?: Maker<OnDeployStatus>;
-
-    verifyEndpoint?: Maker<OnEndpointStatus>;
-
-    onVerifiedStatus?: Maker<OnVerifiedDeploymentStatus>;
-
     // TODO could have n of these?
     promotedEnvironment?: PromotedEnvironment;
 
@@ -85,6 +32,8 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
      * Miscellaneous supporting commands needed by the event handlers etc.
      */
     supportingCommands: Array<Maker<HandleCommand>>;
+
+    supportingEvents: Array<Maker<HandleEvent<any>>>;
 
     /**
      * FunctionalUnits brought in by this project
