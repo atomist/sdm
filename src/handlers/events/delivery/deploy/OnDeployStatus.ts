@@ -17,9 +17,8 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { DeploymentEventListener, DeploymentListener } from "../../../../common/listener/DeploymentListener";
-import Status = OnSuccessStatus.Status;
-import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { StagingDeploymentContext } from "../phases/httpServicePhases";
 
@@ -54,15 +53,14 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
-        const inv: DeploymentEventListener = {
+        const dil: DeploymentListenerInvocation = {
             context,
             status,
             id,
             addressChannels,
             credentials,
         };
-
-        await Promise.all(params.listeners.map(l => l(inv)));
+        await Promise.all(params.listeners.map(l => l(dil)));
         return Success;
     }
 

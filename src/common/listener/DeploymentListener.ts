@@ -5,10 +5,10 @@ import { OnSuccessStatus } from "../../typings/types";
 import { ListenerInvocation, SdmListener } from "./Listener";
 import Status = OnSuccessStatus.Status;
 
-export interface DeploymentEventListener extends ListenerInvocation {
+export interface DeploymentListenerInvocation extends ListenerInvocation {
 
     status: Status;
 
 }
 
-export type DeploymentListener = SdmListener<DeploymentEventListener>;
+export type DeploymentListener = SdmListener<DeploymentListenerInvocation>;
