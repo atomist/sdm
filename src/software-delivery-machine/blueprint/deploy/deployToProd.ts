@@ -88,16 +88,3 @@ function workingMessage(params: DeployToProd) {
 function tryAgainMessage(params: DeployToProd, message: string) {
     return "failed";
 }
-
-/**
- * Rewrite the artifact status so that we get a new event
- * @param {GitHubRepoRef} id
- * @param {string} token
- * @return {Promise<any>}
- */
-function findArtifactStatus(id: GitHubRepoRef, token: string): Promise<Status> {
-    return listStatuses(token, id)
-        .then(statuses => {
-            return statuses.find(s => s.context === BuildContext);
-        });
-}

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
+import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
-import { createStatus, State } from "../../../../util/github/ghub";
+import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
+import {createStatus, State} from "../../../../util/github/ghub";
+import {NotARealUrl} from "./local/LocalBuilder";
 
 /**
  * Set build status on complete build
@@ -34,7 +35,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private context: string) {
+    constructor(private buildPhaseContext: string) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -42,10 +43,13 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const commit = build.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const builtStatus = commit.statuses.find(s => s.context === params.context);
+        const builtStatus = commit.statuses.find(s => s.context === params.buildPhaseContext);
         if (!!builtStatus && builtStatus.state === "pending") {
-            await setBuiltContext(params.context, buildStatusToGitHubStatusState(build.status),
-                build.buildUrl, id, {token: params.githubToken});
+            await setBuiltContext(params.buildPhaseContext,
+                buildStatusToGitHubStatusState(build.status),
+                build.buildUrl,
+                id,
+                {token: params.githubToken});
         }
         return Success;
     }
@@ -67,7 +71,7 @@ function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
 async function setBuiltContext(context: string, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: url,
+        target_url: (url === NotARealUrl ? undefined : url),
         context,
         description: `Completed ${context}`,
     });

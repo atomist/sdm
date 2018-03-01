@@ -1,21 +1,21 @@
-import { HandlerResult, logger, Success } from "@atomist/automation-client";
+import {HandlerResult, logger, Success} from "@atomist/automation-client";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
-import { AddressChannels } from "../../../../../common/slack/addressChannels";
-import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import {AddressChannels} from "../../../../../common/slack/addressChannels";
+import {InterpretedLog, LogInterpreter} from "../../../../../spi/log/InterpretedLog";
 import {
-    LinkableLogFactory, LinkablePersistentProgressLog,
+    LogFactory, ProgressLog,
     QueryableProgressLog,
 } from "../../../../../spi/log/ProgressLog";
-import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
-import { postLinkImageWebhook } from "../../../../../util/webhook/ImageLink";
-import { ArtifactStore } from "../../ArtifactStore";
-import { AppInfo } from "../../deploy/Deployment";
-import { Builder, PushThatTriggersBuild } from "../Builder";
+import {reportFailureInterpretation} from "../../../../../util/slack/reportFailureInterpretation";
+import {postLinkImageWebhook} from "../../../../../util/webhook/ImageLink";
+import {ArtifactStore} from "../../ArtifactStore";
+import {AppInfo} from "../../deploy/Deployment";
+import {Builder, PushThatTriggersBuild} from "../Builder";
 
 export interface LocalBuildInProgress {
 
@@ -40,7 +40,7 @@ export interface LocalBuildInProgress {
 export abstract class LocalBuilder implements Builder {
 
     constructor(private artifactStore: ArtifactStore,
-                private logFactory: LinkableLogFactory) {
+                private logFactory: LogFactory) {
     }
 
     public async initiateBuild(creds: ProjectOperationCredentials,
@@ -79,35 +79,33 @@ export abstract class LocalBuilder implements Builder {
     public abstract logInterpreter(log: string): InterpretedLog | undefined;
 
     protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                                  team: string, log: LinkablePersistentProgressLog): Promise<LocalBuildInProgress>;
+                                  team: string, log: ProgressLog): Promise<LocalBuildInProgress>;
 }
 
 function onStarted(runningBuild: LocalBuildInProgress, branch: string) {
-    return updateAtomistLifecycle(runningBuild, "STARTED", "STARTED", branch);
+    return updateAtomistLifecycle(runningBuild, "started", branch);
 }
 
+export const NotARealUrl = "https://not.a.real.url";
+
 function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
-                                status: "STARTED" | "SUCCESS" | "FAILURE",
-                                phase: "STARTED" | "FINALIZED" = "FINALIZED", branch: string): Promise<LocalBuildInProgress> {
+                                status: "started" | "failed" | "error" | "passed" | "canceled",
+                                branch: string): Promise<LocalBuildInProgress> {
     // TODO Use David's Abstraction?
-    const url = `https://webhook.atomist.com/atomist/jenkins/teams/${runningBuild.team}`;
+    logger.info(`Telling Atomist about a ${status} build on ${branch}, sha ${runningBuild.repoRef.sha}, url ${runningBuild.url}`);
+    const url = `https://webhook.atomist.com/atomist/build/teams/${runningBuild.team}`;
     const data = {
-        name: `Build ${runningBuild.repoRef.sha}`,
-        duration: 3,
-        build: {
-            number: `Build ${runningBuild.repoRef.sha.substring(0, 7)}...`,
-            scm: {
-                commit: runningBuild.repoRef.sha,
-                // TODO why doesn't this work
-                // url: runningBuild.url,
-                url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
-                // TODO is this required
-                branch,
-            },
-            phase,
-            status,
-            full_url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}/commit/${runningBuild.repoRef.sha}`,
+        repository: {
+            owner_name: runningBuild.repoRef.owner,
+            name: runningBuild.repoRef.repo,
         },
+        name: `Build ${runningBuild.repoRef.sha}`,
+        type: "push",
+        build_url: runningBuild.url,
+        status,
+        commit: runningBuild.repoRef.sha,
+        branch,
+        provider: "github-sdm-local",
     };
     return axios.post(url, data)
         .then(() => runningBuild);
@@ -119,19 +117,19 @@ async function onExit(token: string,
                       team: string,
                       branch: string,
                       artifactStore: ArtifactStore,
-                      log: LinkablePersistentProgressLog & QueryableProgressLog,
+                      log: QueryableProgressLog,
                       ac: AddressChannels,
                       logInterpreter: LogInterpreter): Promise<any> {
     try {
         if (success) {
-            await updateAtomistLifecycle(rb, "SUCCESS", "FINALIZED", branch);
+            await updateAtomistLifecycle(rb, "passed", branch);
             if (!!rb.deploymentUnitFile) {
                 await linkArtifact(token, rb, team, artifactStore);
             } else {
                 logger.warn("No artifact generated by build of %j", rb.appInfo);
             }
         } else {
-            await updateAtomistLifecycle(rb, "FAILURE", "FINALIZED", branch);
+            await updateAtomistLifecycle(rb, "failed", branch);
             const interpretation = logInterpreter && logInterpreter(log.log);
             // The deployer might have information about the failure; report it in the channels
             if (interpretation) {

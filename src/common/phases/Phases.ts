@@ -93,7 +93,7 @@ function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
                    description: string = context): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: `${id.apiBase}/${id.owner}/${id.repo}/${id.sha}`,
+        target_url: `${id.url}/commit/${id.sha}`,
         context,
         description,
     });

@@ -21,8 +21,11 @@ import { Action } from "@atomist/slack-messages";
 import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
 import { PlannedPhase } from "../../../../common/phases/Phases";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
-import { createLinkableProgressLog } from "../../../../spi/log/NaiveLinkablePersistentProgressLog";
-import { ConsoleProgressLog, MultiProgressLog, QueryableProgressLog, SavingProgressLog } from "../../../../spi/log/ProgressLog";
+import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
+import {
+    ConsoleProgressLog, LogFactory, MultiProgressLog, QueryableProgressLog,
+    SavingProgressLog,
+} from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
@@ -42,11 +45,12 @@ export interface DeployParams<T extends TargetInfo> {
     ac: AddressChannels;
     retryButton?: Action;
     team: string;
+    logFactory: LogFactory;
 }
 
 export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
     logger.info("Deploying with params=%j", params);
-    const linkableLog = await createLinkableProgressLog();
+    const linkableLog = await params.logFactory();
 
     const savingLog = new SavingProgressLog();
     const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
