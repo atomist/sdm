@@ -1,3 +1,4 @@
+import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { isPublicRepo } from "../../../util/github/ghub";
 import { PushTest } from "../PhaseCreator";
 
@@ -20,5 +21,5 @@ export const AnyPush: PushTest = p => true;
  */
 export const PushToPublicRepo: PushTest = async p => {
     // Ask GitHub if the repo is public as we do not have this information in our model
-    return isPublicRepo(p.id);
+    return isGitHubRepoRef(p.id) && isPublicRepo(p.id);
 };
