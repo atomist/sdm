@@ -10,7 +10,7 @@ export const LocalBuildOnSuccessStatus = () =>
     new BuildOnScanSuccessStatus(
         HttpServicePhases,
         BuildContext,
-        // TODO add async method in client so this isn't sync
+        // TODO use async method in client so this isn't sync
         {builder: new MavenBuilder(artifactStore, createEphemeralProgressLog), test: async li => li.project.fileExistsSync("pom.xml")},
         {builder: new NpmBuilder(artifactStore, createEphemeralProgressLog), test: async li => li.project.fileExistsSync("package.json")},
     );

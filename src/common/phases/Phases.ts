@@ -39,8 +39,6 @@ export class Phases {
         return undefined;
     }
 
-    // TODO method to check whether a status is set
-
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
         const self = this;
         return Promise.all(this.phases.map(phase =>

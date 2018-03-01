@@ -91,7 +91,6 @@ export const NotARealUrl = "https://not.a.real.url";
 function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
                                 status: "started" | "failed" | "error" | "passed" | "canceled",
                                 branch: string): Promise<LocalBuildInProgress> {
-    // TODO Use David's Abstraction?
     logger.info(`Telling Atomist about a ${status} build on ${branch}, sha ${runningBuild.repoRef.sha}, url ${runningBuild.url}`);
     const url = `https://webhook.atomist.com/atomist/build/teams/${runningBuild.team}`;
     const data = {
