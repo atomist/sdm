@@ -25,7 +25,7 @@ import {
     previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
 import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";

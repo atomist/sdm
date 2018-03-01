@@ -1,7 +1,7 @@
 
 import { HandlerContext } from "@atomist/automation-client";
-import { addressChannelsFor, HasChannels } from "../../common/slack/addressChannels";
-import { ProgressLog } from "./ProgressLog";
+import { addressChannelsFor, HasChannels } from "../slack/addressChannels";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
     const add = addressChannelsFor(hasChannels, ctx);

@@ -22,7 +22,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { ArtifactStore } from "../ArtifactStore";

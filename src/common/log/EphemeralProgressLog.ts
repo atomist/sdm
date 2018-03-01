@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { LogFactory, ProgressLog } from "./ProgressLog";
+import { LogFactory, ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * Implementation of LinkableProgressLog log that returns
