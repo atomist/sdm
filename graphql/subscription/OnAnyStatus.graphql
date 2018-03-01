@@ -1,0 +1,15 @@
+subscription OnAnyStatus {
+  Status {
+    commit {
+      sha
+      repo {
+        owner
+        name
+      }
+    }
+    state
+    targetUrl
+    context
+    description
+  }
+}

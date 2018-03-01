@@ -2,9 +2,8 @@ import { logger } from "@atomist/automation-client";
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
-import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
-import { K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion } from "./blueprint/deploy/k8sDeploy";
+import { K8sStagingDeployOnSuccessStatus, K8sProductionDeployOnFingerprint, NoticeK8sStagingDeployCompletion, NoticeK8sProductionDeployCompletion } from "./blueprint/deploy/k8sDeploy";
 import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./blueprint/phase/jvmPhaseManagement";
@@ -15,7 +14,7 @@ const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
 
 // CloudFoundryStagingDeployOnImageLinked
 
-const promotedEnvironment: PromotedEnvironment = {
+export const promotedEnvironment: PromotedEnvironment = {
 
     name: "production",
 
@@ -23,7 +22,7 @@ const promotedEnvironment: PromotedEnvironment = {
 
     promote: DeployToProd,
 
-    deploy: CloudFoundryProductionDeployOnFingerprint,
+    deploy: K8sProductionDeployOnFingerprint,
 };
 
 export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
@@ -36,7 +35,7 @@ export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
         new NodePhaseCreator(),
         new JavaLibraryPhaseCreator());
     sdm.addPromotedEnvironment(promotedEnvironment);
-    sdm.addSupportingEvents(() => NoticeK8sDeployCompletion);
+    sdm.addSupportingEvents(() => NoticeK8sStagingDeployCompletion, () => NoticeK8sProductionDeployCompletion);
     sdm.addSupersededListeners(
         inv => {
             logger.info("Will undeploy application %j", inv.id);

@@ -18,17 +18,16 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { PlannedPhase } from "../../../../../common/phases/Phases";
-import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { K8AutomationDeployContext } from "./RequestDeployOnSuccessStatus";
+import {OnAnyStatus} from "../../../../../typings/types";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Request k8s deploy of linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: K8AutomationDeployContext}))
-export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyStatus.graphql"))
+export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAnyStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -39,10 +38,11 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
      * @param {PlannedPhase} endpointPhase
      */
     constructor(private deployPhase: PlannedPhase,
-                private endpointPhase: PlannedPhase) {
+                private endpointPhase: PlannedPhase,
+                private environment: string) {
     }
 
-    public async handle(event: EventFired<OnAParticularStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnyStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 
@@ -51,7 +51,7 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
             return Success;
         }
 
-        if (status.context !== K8AutomationDeployContext) {
+        if (status.context !== K8AutomationDeployContext + params.environment) {
             logger.warn(`Unexpected event: ${status.context} is ${status.state}`);
             return Success;
         }
