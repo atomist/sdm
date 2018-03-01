@@ -27,13 +27,11 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as schema from "../../../../../typings/types";
 import { sendFingerprint } from "../../../../../util/webhook/sendFingerprint";
 
 import * as _ from "lodash";
-
-export type Fingerprinter = (p: GitProject) => Promise<Fingerprint> | Promise<Fingerprint[]>;
+import { Fingerprinter } from "../../../../../common/listener/Fingerprinter";
 
 /**
  * Fingerprint on any push

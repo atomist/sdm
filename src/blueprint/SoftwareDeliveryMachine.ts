@@ -15,7 +15,7 @@ import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSupersed
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { Fingerprinter, FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
+import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import {
     ReactToSemanticDiffsOnPushImpact,
 } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
@@ -34,6 +34,7 @@ import * as _ from "lodash";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
+import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { PhaseCreator } from "../common/listener/PhaseCreator";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
