@@ -3,6 +3,8 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import {
 PhaseCreationInvocation, PhaseCreator,
 } from "../../../common/listener/PhaseCreator";
+import { PushesToMaster, PushToPublicRepo } from "../../../common/listener/support/pushTests";
+import { allGuardsVoteFor } from "../../../common/listener/support/pushTestUtils";
 import { Phases } from "../../../common/phases/Phases";
 import { SpringBootRestServiceGuard } from "../../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
 import {
@@ -11,8 +13,6 @@ import {
 } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
-import { allGuardsVoteFor } from "../../../common/listener/support/pushTestUtils";
-import { PushesToMaster, PushToPublicRepo } from "../../../common/listener/support/pushTests";
 
 export class SpringBootDeployPhaseCreator implements PhaseCreator {
 

@@ -1,5 +1,5 @@
-import { PushTest } from "../PhaseCreator";
 import { isPublicRepo } from "../../../util/github/ghub";
+import { PushTest } from "../PhaseCreator";
 
 export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
 

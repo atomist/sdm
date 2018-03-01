@@ -1,8 +1,8 @@
-import "mocha";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { PushToPublicRepo } from "../../../../src/common/listener/support/pushTests";
-import { PhaseCreationInvocation } from "../../../../src/common/listener/PhaseCreator";
+import "mocha";
 import * as assert from "power-assert";
+import { PhaseCreationInvocation } from "../../../../src/common/listener/PhaseCreator";
+import { PushToPublicRepo } from "../../../../src/common/listener/support/pushTests";
 
 describe("pushToPublicRepo", () => {
 
