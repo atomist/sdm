@@ -8,7 +8,7 @@ import {ArtifactContext, BuildContext} from "../common/phases/gitHubContext";
 import {Phases} from "../common/phases/Phases";
 import {EventWithCommand} from "../handlers/commands/RetryDeploy";
 import {FindArtifactOnImageLinked} from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
-import {displayBuildLogHandler, SetStatusOnBuildComplete} from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
+import {SetStatusOnBuildComplete} from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import {OnDeployStatus} from "../handlers/events/delivery/deploy/OnDeployStatus";
 import {FailDownstreamPhasesOnPhaseFailure} from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {OnSupersededStatus} from "../handlers/events/delivery/phase/OnSuperseded";
@@ -40,6 +40,7 @@ import {OnNewIssue} from "../handlers/events/issue/NewIssueHandler";
 import {IssueHandling} from "./IssueHandling";
 import {NewRepoHandling} from "./NewRepoHandling";
 import {hasLogInterpretation} from "../spi/log/InterpretedLog";
+import {displayBuildLogHandler} from "../handlers/commands/ShowBuildLog";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -167,7 +168,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         () => new SetStatusOnBuildComplete(BuildContext);
 
     get showBuildLog(): Maker<HandleCommand> {
-        return () => displayBuildLogHandler();
+        return () => {
+            return displayBuildLogHandler();
+        };
     }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {

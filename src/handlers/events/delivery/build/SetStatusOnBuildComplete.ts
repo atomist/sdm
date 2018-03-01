@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    GraphQL, HandleCommand, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
-    Success
-} from "@atomist/automation-client";
-import * as _ from "lodash";
+import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {BuildStatus, BuildUrlBySha, OnBuildComplete} from "../../../../typings/types";
-import {createStatus, State, tipOfDefaultBranch} from "../../../../util/github/ghub";
+import {ProjectOperationCredentials, TokenCredentials,} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
+import {createStatus, State} from "../../../../util/github/ghub";
 import {NotARealUrl} from "./local/LocalBuilder";
 import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
 import axios from "axios";
@@ -35,10 +28,6 @@ import {AddressChannels, addressChannelsFor} from "../../../../";
 import * as stringify from "json-stringify-safe";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
-import {ApplyPhasesParameters, applyPhasesToCommit} from "../phase/SetupPhasesOnPush";
-import {HttpServicePhases} from "../phases/httpServicePhases";
-import {Parameters} from "@atomist/automation-client/decorators";
 
 /**
  * Set build status on complete build
@@ -75,63 +64,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     }
 }
 
-@Parameters()
-export class DisplayBuildLogParameters {
-    @Secret(Secrets.UserToken)
-    public githubToken: string;
-
-    @MappedParameter(MappedParameters.GitHubOwner)
-    public owner: string;
-
-    @MappedParameter(MappedParameters.GitHubRepository)
-    public repo: string;
-
-    @Parameter({required: false})
-    public sha?: string;
-}
-
-
-function displayBuildLogForCommit(interpreter?: LogInterpretation) {
-    return async (ctx: HandlerContext,
-                  params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
-
-        const sha = params.sha ? params.sha :
-            await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
-
-        const id = new GitHubRepoRef(params.owner, params.repo, sha);
-
-        const ac: AddressChannels = (msg, opts) => ctx.messageClient.respond(msg, opts);
-        const build = await fetchBuildUrl(ctx, id);
-
-        await displayBuildLogFailure(id, build, ac, interpreter);
-        await ctx.messageClient.respond(":heavy_check_mark: Build log displayed for " + sha);
-        return Success;
-    }
-}
-
-async function fetchBuildUrl(context: HandlerContext, id: RemoteRepoRef): Promise<{ buildUrl?: string }> {
-    const queryResult = await context.graphClient.executeQueryFromFile<BuildUrlBySha.Query, BuildUrlBySha.Variables>(
-        "graphql/query/BuildUrlBySha", { sha: id.sha })
-    const commit: BuildUrlBySha.Commit = _.get(queryResult, "Commit[0]");
-    if (!commit) {
-        throw new Error("No commit found for " + id.sha);
-    }
-    if (!commit.builds || commit.builds.length === 0) {
-        throw new Error("No builds found for commit " + id.sha);
-    }
-    // TODO: sort by timestamp
-    return queryResult.Commit[0].builds[0];
-}
-
-export function displayBuildLogHandler(logInterpretation?: LogInterpretation): HandleCommand<DisplayBuildLogParameters> {
-    logger.info("Log interpreter provided? " + !!logInterpretation);
-    return commandHandlerFrom(displayBuildLogForCommit(logInterpretation),
-        DisplayBuildLogParameters, "DisplayBuildLog",
-        "interpret and report on a build log",
-        "show build log");
-}
-
-async function displayBuildLogFailure(id: RemoteRepoRef,build:{ buildUrl?: string, status?: string} ,
+export async function displayBuildLogFailure(id: RemoteRepoRef,build:{ buildUrl?: string, status?: string} ,
                                       ac: AddressChannels, logInterpretation?: LogInterpretation) {
     const buildUrl = build.buildUrl
     if (buildUrl) {
