@@ -1,4 +1,7 @@
-import { ArtifactContext, BaseContext, BuildContext, ScanContext, StagingEnvironment } from "../../../../common/phases/gitHubContext";
+import {
+    ArtifactContext, BaseContext, BuildContext, GitHubStatusContext, ScanContext, splitContext,
+    StagingEnvironment
+} from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
 export const StagingDeploymentContext = BaseContext + StagingEnvironment + "3-deploy";
@@ -15,6 +18,19 @@ ContextToPlannedPhase[StagingDeploymentContext] = {
 };
 ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in Test"};
 ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in Test"};
+
+export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
+    return ContextToPlannedPhase[ghsc] ||
+        defaultPhaseDefinition(ghsc)
+}
+
+function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
+    const interpreted = splitContext(ghsc);
+    return {
+        context: ghsc,
+        name: interpreted.name
+    }
+}
 
 /**
  * Phases for an Http service
