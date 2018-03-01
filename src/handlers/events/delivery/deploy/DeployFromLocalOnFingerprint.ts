@@ -25,7 +25,7 @@ import {
     previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralLinkableProgressLog } from "../../../../spi/log/EphemeralLinkableProgressLog";
+import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
 import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
@@ -87,7 +87,7 @@ export class DeployFromLocalOnFingerprint<T extends TargetInfo> implements Handl
             targeter: params.targeter,
             ac: addressChannelsFor(commit.repo, ctx),
             team: ctx.teamId,
-            logFactory: createEphemeralLinkableProgressLog,
+            logFactory: createEphemeralProgressLog,
         })
             .then(success);
     }

@@ -3,7 +3,7 @@ import { BuildOnScanSuccessStatus } from "../../../handlers/events/delivery/buil
 import { MavenBuilder } from "../../../handlers/events/delivery/build/local/maven/MavenBuilder";
 import { NpmBuilder } from "../../../handlers/events/delivery/build/local/npm/NpmBuilder";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
-import { createEphemeralLinkableProgressLog } from "../../../spi/log/EphemeralLinkableProgressLog";
+import { createEphemeralProgressLog } from "../../../spi/log/EphemeralProgressLog";
 import { artifactStore } from "../artifactStore";
 
 export const LocalBuildOnSuccessStatus = () =>
@@ -11,6 +11,6 @@ export const LocalBuildOnSuccessStatus = () =>
         HttpServicePhases,
         BuildContext,
         // TODO add async method in client so this isn't sync
-        {builder: new MavenBuilder(artifactStore, createEphemeralLinkableProgressLog), test: async li => li.project.fileExistsSync("pom.xml")},
-        {builder: new NpmBuilder(artifactStore, createEphemeralLinkableProgressLog), test: async li => li.project.fileExistsSync("package.json")},
+        {builder: new MavenBuilder(artifactStore, createEphemeralProgressLog), test: async li => li.project.fileExistsSync("pom.xml")},
+        {builder: new NpmBuilder(artifactStore, createEphemeralProgressLog), test: async li => li.project.fileExistsSync("package.json")},
     );

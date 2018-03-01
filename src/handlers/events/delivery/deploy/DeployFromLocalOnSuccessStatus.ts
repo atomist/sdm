@@ -22,7 +22,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralLinkableProgressLog } from "../../../../spi/log/EphemeralLinkableProgressLog";
+import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { ArtifactStore } from "../ArtifactStore";
@@ -79,7 +79,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
                 retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
                     ...commandParams,
                 }),
-                logFactory: createEphemeralLinkableProgressLog,
+                logFactory: createEphemeralProgressLog,
             });
         }, RetryDeployParameters, this.commandName);
     }
@@ -136,7 +136,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
                 ac: addressChannelsFor(commit.repo, ctx),
                 team: ctx.teamId,
                 retryButton,
-                logFactory: createEphemeralLinkableProgressLog,
+                logFactory: createEphemeralProgressLog,
             }));
 
         return Success;

@@ -2,12 +2,9 @@ import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { ChildProcess, exec, ExecOptions } from "child_process";
+import { exec, ExecOptions } from "child_process";
 import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
-import {
-    LinkableLogFactory, LinkableProgressLog, ProgressLog,
-    QueryableProgressLog,
-} from "../../../../../../spi/log/ProgressLog";
+import { LogFactory, ProgressLog, QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
@@ -21,7 +18,7 @@ import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
  */
 export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
-    constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory,
+    constructor(artifactStore: ArtifactStore, logFactory: LogFactory,
                 private buildCommand: string = "npm run build") {
         super(artifactStore, logFactory);
     }
@@ -29,7 +26,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                team: string,
-                               log: LinkableProgressLog & QueryableProgressLog): Promise<LocalBuildInProgress> {
+                               log: QueryableProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from package.json
         const pom = await p.findFile("package.json");

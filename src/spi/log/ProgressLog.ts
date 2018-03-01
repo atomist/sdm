@@ -7,6 +7,11 @@ export interface ProgressLog {
     flush(): Promise<any>;
 
     close(): Promise<any>;
+
+    /**
+     * Return the url of the log if it is persisted
+     */
+    url?: string;
 }
 
 export const DevNullProgressLog: ProgressLog = {
@@ -119,13 +124,4 @@ export class SavingProgressLog implements QueryableProgressLog {
     }
 }
 
-export interface LinkableProgressLog extends ProgressLog {
-
-    /**
-     * Return the url of the log if it was persisted
-     */
-    url: string | undefined;
-
-}
-
-export type LinkableLogFactory = () => Promise<LinkableProgressLog & QueryableProgressLog>;
+export type LogFactory = () => Promise<QueryableProgressLog>;

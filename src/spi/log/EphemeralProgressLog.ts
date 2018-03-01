@@ -1,12 +1,12 @@
 import { logger } from "@atomist/automation-client";
-import { LinkableLogFactory, LinkableProgressLog, QueryableProgressLog } from "./ProgressLog";
+import { LogFactory, QueryableProgressLog } from "./ProgressLog";
 
 /**
  * Implementation of LinkableProgressLog log that returns
  * an undefined link because it isn't actually persisted.
  * Used when we are not storing a local log.
  */
-class EphemeralLinkableProgressLog implements LinkableProgressLog, QueryableProgressLog {
+class EphemeralProgressLog implements QueryableProgressLog {
 
     public log = "";
 
@@ -29,5 +29,5 @@ class EphemeralLinkableProgressLog implements LinkableProgressLog, QueryableProg
 
 }
 
-export const createEphemeralLinkableProgressLog: LinkableLogFactory = () =>
-    Promise.resolve(new EphemeralLinkableProgressLog());
+export const createEphemeralProgressLog: LogFactory = () =>
+    Promise.resolve(new EphemeralProgressLog());

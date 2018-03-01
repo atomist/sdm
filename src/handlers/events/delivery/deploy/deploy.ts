@@ -21,9 +21,9 @@ import { Action } from "@atomist/slack-messages";
 import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
 import { PlannedPhase } from "../../../../common/phases/Phases";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
-import { createEphemeralLinkableProgressLog } from "../../../../spi/log/EphemeralLinkableProgressLog";
+import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
 import {
-    ConsoleProgressLog, LinkableLogFactory, MultiProgressLog, QueryableProgressLog,
+    ConsoleProgressLog, LogFactory, MultiProgressLog, QueryableProgressLog,
     SavingProgressLog,
 } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
@@ -45,7 +45,7 @@ export interface DeployParams<T extends TargetInfo> {
     ac: AddressChannels;
     retryButton?: Action;
     team: string;
-    logFactory: LinkableLogFactory;
+    logFactory: LogFactory;
 }
 
 export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {

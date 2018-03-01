@@ -3,7 +3,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
-import { LinkableLogFactory, LinkableProgressLog, QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
+import { LogFactory, ProgressLog, QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
@@ -19,13 +19,14 @@ import { identification } from "./pomParser";
  */
 export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
-    constructor(artifactStore: ArtifactStore, logFactory: LinkableLogFactory) {
+    constructor(artifactStore: ArtifactStore, logFactory: LogFactory) {
         super(artifactStore, logFactory);
     }
 
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
-                               team: string, log: LinkableProgressLog & QueryableProgressLog): Promise<LocalBuildInProgress> {
+                               team: string,
+                               log: QueryableProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from Maven
         const pom = await p.findFile("pom.xml");
@@ -71,7 +72,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 class UpdatingBuild implements LocalBuildInProgress {
 
     constructor(public repoRef: RemoteRepoRef,
-                public buildResult: Promise<{error: boolean, code: number}>,
+                public buildResult: Promise<{ error: boolean, code: number }>,
                 public team: string,
                 public url: string) {
     }

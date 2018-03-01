@@ -8,7 +8,7 @@ import axios from "axios";
 import { AddressChannels } from "../../../../../common/slack/addressChannels";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import {
-    LinkableLogFactory, LinkableProgressLog,
+    LogFactory, ProgressLog,
     QueryableProgressLog,
 } from "../../../../../spi/log/ProgressLog";
 import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
@@ -40,7 +40,7 @@ export interface LocalBuildInProgress {
 export abstract class LocalBuilder implements Builder {
 
     constructor(private artifactStore: ArtifactStore,
-                private logFactory: LinkableLogFactory) {
+                private logFactory: LogFactory) {
     }
 
     public async initiateBuild(creds: ProjectOperationCredentials,
@@ -79,7 +79,7 @@ export abstract class LocalBuilder implements Builder {
     public abstract logInterpreter(log: string): InterpretedLog | undefined;
 
     protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                                  team: string, log: LinkableProgressLog): Promise<LocalBuildInProgress>;
+                                  team: string, log: ProgressLog): Promise<LocalBuildInProgress>;
 }
 
 function onStarted(runningBuild: LocalBuildInProgress, branch: string) {
@@ -118,7 +118,7 @@ async function onExit(token: string,
                       team: string,
                       branch: string,
                       artifactStore: ArtifactStore,
-                      log: LinkableProgressLog & QueryableProgressLog,
+                      log: QueryableProgressLog,
                       ac: AddressChannels,
                       logInterpreter: LogInterpreter): Promise<any> {
     try {
