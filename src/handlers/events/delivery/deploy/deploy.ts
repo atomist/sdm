@@ -18,17 +18,17 @@ import { HandlerResult, logger, success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Action } from "@atomist/slack-messages";
+import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
 import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
 import { PlannedPhase } from "../../../../common/phases/Phases";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
-import { LogFactory, } from "../../../../spi/log/ProgressLog";
+import { LogFactory } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { ArtifactStore } from "../ArtifactStore";
 import { Deployer } from "./Deployer";
 import { TargetInfo } from "./Deployment";
-import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
 
 export interface DeployParams<T extends TargetInfo> {
     deployPhase: PlannedPhase;

@@ -1,6 +1,6 @@
 
-import { ProgressLog } from "../../spi/log/ProgressLog";
 import { logger } from "@atomist/automation-client";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 export const DevNullProgressLog: ProgressLog = {
     write() {

@@ -16,6 +16,7 @@ import {
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { BuildContext } from "../../../../common/phases/gitHubContext";
 import {
     currentPhaseIsStillPending,
@@ -25,7 +26,6 @@ import {
     previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
 import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
