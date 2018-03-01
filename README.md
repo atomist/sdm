@@ -124,8 +124,67 @@ When a new issue is created, you may want to notify people or perform an action.
 #### Listener interfaces
 
 #### Examples
-## "Blueprint" interfaces and classes
-Registering listeners
+## Pulling it All Together: The `SoftwareDeliveryMachine` class
+
+Your event listeners need to be invoked by Atomist handlers. The `SoftwareDeliveryMachine` takes care of this, ensuring that the correct handlers are emitted for use in `atomist.config.ts`.
+
+It also allows you to use a fluent builder approach to adding command handlers. generators and editors.
+
+### Example
+```typescript
+const sdm = new SoftwareDeliveryMachine(
+        LocalBuildOnSuccessStatus,
+        () => LocalMavenDeployer);
+    sdm.addPromotedEnvironment(promotedEnvironment);
+    sdm.addPhaseCreators(
+        new SpringBootDeployPhaseCreator(),
+        new NodePhaseCreator(),
+        new JavaLibraryPhaseCreator(),
+    );
+
+    sdm.addNewIssueListeners(requestDescription)
+        .addEditors(() => tryToUpgradeSpringBootVersion)
+        .addGenerators(() => springBootGenerator({
+            seedOwner: "spring-team",
+            seedRepo: "spring-rest-seed",
+            groupId: "myco",
+        }))
+        .addNewRepoWithCodeActions(
+            tagRepo(springBootTagger),
+            suggestAddingCloudFoundryManifest,
+            PublishNewRepo)
+        .addProjectReviewers(logReview);
+   
+    sdm.addCodeReactions(listChangedFiles)
+        .addFingerprinters(mavenFingerprinter)
+        .addFingerprintDifferenceListeners(diff1)
+        .addDeploymentListeners(PostToDeploymentsChannel)
+        .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
+        .addVerifiedDeploymentListeners(presentPromotionButton)
+        .addSupersededListeners(
+            inv => {
+                logger.info("Will undeploy application %j", inv.id);
+                return LocalMavenDeployer.deployer.undeploy(inv.id);
+            })
+        .addSupportingCommands(
+            () => addCloudFoundryManifest,
+            DescribeStagingAndProd,
+            () => disposeProjectHandler,
+        )
+        .addSupportingEvents(OnDryRunBuildComplete);
+```
+The `SoftwareDeliveryMachine` instance will create the necessary Atomist event handlers to export.
+
+In `atomist.config.ts` you can bring them in as follows:
+
+```typescript
+commands: assembled.commandHandlers.concat([
+        // other command handlers,
+    ]),
+    events: assembled.eventHandlers.concat([
+    		// other event handlers
+    ]),
+```
 
 ## Plugging in Third Party Tools
 
@@ -159,7 +218,7 @@ Use shell. node is good for this
 To start up these project, you will need the following on the deployment node:
 
 - `git` binary
-- JDK
+- JDK, for Maven and Checkstyle
 - Maven, with `mvn` on the path
 
 
