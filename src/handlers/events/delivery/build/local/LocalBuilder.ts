@@ -1,21 +1,21 @@
-import { HandlerResult, logger, Success } from "@atomist/automation-client";
+import {HandlerResult, logger, Success} from "@atomist/automation-client";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
-import { AddressChannels } from "../../../../../common/slack/addressChannels";
-import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import {AddressChannels} from "../../../../../common/slack/addressChannels";
+import {InterpretedLog, LogInterpreter} from "../../../../../spi/log/InterpretedLog";
 import {
     LogFactory, ProgressLog,
     QueryableProgressLog,
 } from "../../../../../spi/log/ProgressLog";
-import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
-import { postLinkImageWebhook } from "../../../../../util/webhook/ImageLink";
-import { ArtifactStore } from "../../ArtifactStore";
-import { AppInfo } from "../../deploy/Deployment";
-import { Builder, PushThatTriggersBuild } from "../Builder";
+import {reportFailureInterpretation} from "../../../../../util/slack/reportFailureInterpretation";
+import {postLinkImageWebhook} from "../../../../../util/webhook/ImageLink";
+import {ArtifactStore} from "../../ArtifactStore";
+import {AppInfo} from "../../deploy/Deployment";
+import {Builder, PushThatTriggersBuild} from "../Builder";
 
 export interface LocalBuildInProgress {
 
@@ -86,10 +86,14 @@ function onStarted(runningBuild: LocalBuildInProgress, branch: string) {
     return updateAtomistLifecycle(runningBuild, "STARTED", "STARTED", branch);
 }
 
+export const NotARealUrl = "https://not.a.real.url";
+
 function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
                                 status: "STARTED" | "SUCCESS" | "FAILURE",
                                 phase: "STARTED" | "FINALIZED" = "FINALIZED", branch: string): Promise<LocalBuildInProgress> {
     // TODO Use David's Abstraction?
+    const buildUrl = runningBuild.url || NotARealUrl; // required in build
+    logger.info(`Telling Atomist about a ${status} build on ${branch}, sha ${runningBuild.repoRef.sha}, url ${buildUrl}`);
     const url = `https://webhook.atomist.com/atomist/jenkins/teams/${runningBuild.team}`;
     const data = {
         name: `Build ${runningBuild.repoRef.sha}`,
@@ -98,14 +102,12 @@ function updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
             number: `Build ${runningBuild.repoRef.sha.substring(0, 7)}...`,
             scm: {
                 commit: runningBuild.repoRef.sha,
-                 url: runningBuild.url,
-               // url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
-                // TODO is this required
+                url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}`,
                 branch,
             },
             phase,
             status,
-            full_url: `https://github.com/${runningBuild.repoRef.owner}/${runningBuild.repoRef.repo}/commit/${runningBuild.repoRef.sha}`,
+            full_url: buildUrl,
         },
     };
     return axios.post(url, data)
