@@ -183,9 +183,112 @@ sdm.addNewRepoWithCodeActions(
 ```
 
 ### Push
+A push to the source control hosting system is typically a very important trigger for actions. The `SoftwareDeliveryMachine` divides the actions into several steps:
+
+- Code Review
+- Code
+
+There are multiple listeners associated with pushes.
+
+Most of the listeners use or extend `ProjectListener`, which listens to the following extension of `ListenerInvocation`:
+
+```typescript
+/**
+ * Invocation for an event relating to a project for which we have source code
+ */
+export interface ProjectListenerInvocation extends ListenerInvocation {
+
+    /**
+     * The project to which this event relates. It will have been cloned
+     * prior to this invocation. Modifications made during listener invocation will
+     * not be committed back to the project (although they are acceptable if necessary, for
+     * example to run particular commands against the project).
+     * As well as working with
+     * project files using the Project superinterface, we can use git-related
+     * functionality fro the GitProject subinterface: For example to check
+     * for previous shas.
+     * We can also easily run shell commands against the project using its baseDir.
+     */
+    project: GitProject;
+
+}
+```
+#### Phase Creation
+The first and most important reaction to a push is determining the set of *phases* that will be executed. This will drive further behavior: For example, do we need a code review? Do we need to deploy a push to this branch. Typically phase creation depends both on the characteristics of the push (usually, its branch), and the characteristics of the repo--for example, does it have a Cloud Foundry manifest?
+
+The `PhaseCreator` interface is thus a critical determinant of what happens next:
+
+```typescript
+export interface PhaseCreator {
+
+    /**
+     * Test the push as to whether we should even look inside it.
+     * If we return false here, our createPhases method will never be
+     * called for this push
+     */
+    guard?: PushTest;
+
+    /**
+     * Determine the phases that apply to this PhaseCreationInvocation,
+     * or return undefined if this PhaseCreator doesn't know what to do with it.
+     * The latter is not an error.
+     * @param {PhaseCreationInvocation} pci
+     * @return {Promise<Phases>}
+     */
+    createPhases(pci: PhaseCreationInvocation): Promise<Phases | undefined>;
+}
+```
+Available interface is:
+
+```typescript
+export interface PhaseCreationInvocation extends ProjectListenerInvocation {
+
+    push: OnPushToAnyBranch.Push;
+}
+```
+If all `PhaseCreator` instances return `undefined` the commit will be tagged as "not material" and no further action will be taken.
+
 #### Listener interfaces
 
-#### Examples
+##### ProjectReviewer
+`ProjectReviewer` is a type defined in `automation-client-ts`. It allows a structured review to be returned. The review comments can localize the file path, line and column if such information is available, and also optionally include a link to a "fix" command to autofix the problem.
+
+The following is a trival project reviewer that always returns a clean report but logs to the console to show when it's invoked:
+
+```typescript
+export const logReview: ProjectReviewer = async (p: GitProject,
+                                                 ctx: HandlerContext) => {
+    console.log("REVIEWING THING");
+    return clean(p.id);
+};
+
+```
+
+Add in `atomist.config.ts` as follows:
+
+```typescript
+sdm.addProjectReviewers(logReview)
+    .addProjectReviewers(checkstyleReviewer(checkStylePath));
+```
+##### CodeReaction interface
+This interface allows you to react to the code and changes:
+
+For example, the following function lists changed files to any linked Slack channels for the repo:
+```typescript
+export async function listChangedFiles(i: CodeReactionInvocation): Promise<any> {
+    return i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
+}
+```
+Add in `atomist.config.ts` as follows:
+
+```typescript
+sdm.addCodeReactions(listChangedFiles)
+```
+
+#### Fingerprints
+A special kind of push listener relates to **fingerprints**.
+
+tbc
 
 ### Deployment Result
 #### Listener interfaces

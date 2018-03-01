@@ -15,8 +15,6 @@ import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryP
 
 export class SpringBootDeployPhaseCreator implements PhaseCreator {
 
-    public possiblePhases = [HttpServicePhases, LibraryPhases];
-
     public guard = allGuardsVoteFor(SpringBootRestServiceGuard, PushesToMaster);
 
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
@@ -46,8 +44,6 @@ export const applyHttpServicePhases: HandleCommand<ApplyPhasesParameters> =
 export class JavaLibraryPhaseCreator implements PhaseCreator {
 
     public guard = SpringBootRestServiceGuard;
-
-    public possiblePhases = [LibraryPhases];
 
     public async createPhases(pi: PhaseCreationInvocation) {
         try {

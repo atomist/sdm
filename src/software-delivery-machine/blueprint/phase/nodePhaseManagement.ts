@@ -5,8 +5,6 @@ import { npmPhases } from "../../../handlers/events/delivery/phases/npmPhases";
 
 export class NodePhaseCreator implements PhaseCreator {
 
-    public possiblePhases = [npmPhases];
-
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases> {
         const p = pi.project;
         try {
