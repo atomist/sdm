@@ -17,11 +17,11 @@
 import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {Phases, PlannedPhase} from "../../../common/phases/Phases";
-import {OnFailureStatus, OnSuccessStatus} from "../../../typings/types";
+import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import Status = OnSuccessStatus.Status;
 import {BaseContext, contextIsAfter, GitHubStatusContext, splitContext} from "../../../common/phases/gitHubContext";
-import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {Phases, PlannedPhase} from "../../../common/phases/Phases";
+import {OnFailureStatus, OnSuccessStatus} from "../../../typings/types";
 import {createStatus, State} from "../../../util/github/ghub";
 import {contextToPlannedPhase, ContextToPlannedPhase} from "./phases/httpServicePhases";
 

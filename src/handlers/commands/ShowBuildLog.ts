@@ -1,12 +1,12 @@
-import {Parameters} from "@atomist/automation-client/decorators";
 import {HandleCommand, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success} from "@atomist/automation-client";
-import * as _ from "lodash";
+import {Parameters} from "@atomist/automation-client/decorators";
 import {HandlerContext} from "@atomist/automation-client/Handlers";
-import {LogInterpretation} from "../../spi/log/InterpretedLog";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {AddressChannels} from "../../index";
 import {commandHandlerFrom} from "@atomist/automation-client/onCommand";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import * as _ from "lodash";
+import {AddressChannels} from "../../index";
+import {LogInterpretation} from "../../spi/log/InterpretedLog";
 import {BuildUrlBySha} from "../../typings/types";
 import {tipOfDefaultBranch} from "../../util/github/ghub";
 import {displayBuildLogFailure} from "../events/delivery/build/SetStatusOnBuildComplete";
@@ -26,7 +26,6 @@ export class DisplayBuildLogParameters {
     public sha?: string;
 }
 
-
 function displayBuildLogForCommit(interpreter?: LogInterpretation) {
     return async (ctx: HandlerContext,
                   params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
@@ -42,12 +41,12 @@ function displayBuildLogForCommit(interpreter?: LogInterpretation) {
         await displayBuildLogFailure(id, build, ac, interpreter);
         await ctx.messageClient.respond(":heavy_check_mark: Build log displayed for " + sha);
         return Success;
-    }
+    };
 }
 
 async function fetchBuildUrl(context: HandlerContext, id: RemoteRepoRef): Promise<{ buildUrl?: string }> {
     const queryResult = await context.graphClient.executeQueryFromFile<BuildUrlBySha.Query, BuildUrlBySha.Variables>(
-        "graphql/query/BuildUrlBySha", { sha: id.sha })
+        "graphql/query/BuildUrlBySha", { sha: id.sha });
     const commit: BuildUrlBySha.Commit = _.get(queryResult, "Commit[0]");
     if (!commit) {
         throw new Error("No commit found for " + id.sha);

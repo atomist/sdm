@@ -17,17 +17,17 @@
 import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {ProjectOperationCredentials, TokenCredentials,} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import axios from "axios";
+import * as stringify from "json-stringify-safe";
+import {AddressChannels, addressChannelsFor} from "../../../../";
+import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
 import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
 import {createStatus, State} from "../../../../util/github/ghub";
-import {NotARealUrl} from "./local/LocalBuilder";
-import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
-import axios from "axios";
 import {reportFailureInterpretation} from "../../../../util/slack/reportFailureInterpretation";
-import {AddressChannels, addressChannelsFor} from "../../../../";
-import * as stringify from "json-stringify-safe";
-import * as slack from "@atomist/slack-messages/SlackMessages";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {NotARealUrl} from "./local/LocalBuilder";
 
 /**
  * Set build status on complete build
@@ -64,9 +64,9 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     }
 }
 
-export async function displayBuildLogFailure(id: RemoteRepoRef,build:{ buildUrl?: string, status?: string} ,
-                                      ac: AddressChannels, logInterpretation?: LogInterpretation) {
-    const buildUrl = build.buildUrl
+export async function displayBuildLogFailure(id: RemoteRepoRef, build: { buildUrl?: string, status?: string} ,
+                                             ac: AddressChannels, logInterpretation?: LogInterpretation) {
+    const buildUrl = build.buildUrl;
     if (buildUrl) {
         logger.info("Retrieving failed build log from " + buildUrl);
         const buildLog = (await axios.get(buildUrl)).data;

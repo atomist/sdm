@@ -16,9 +16,9 @@ import {SetSupersededStatus} from "../handlers/events/delivery/phase/SetSupersed
 import {SetupPhasesOnPush} from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import {ContextToPlannedPhase} from "../handlers/events/delivery/phases/httpServicePhases";
 import {FingerprintOnPush} from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
-import {ReactToSemanticDiffsOnPushImpact,} from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
+import {ReactToSemanticDiffsOnPushImpact} from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {EndpointVerificationListener, OnEndpointStatus} from "../handlers/events/delivery/verify/OnEndpointStatus";
-import {OnVerifiedDeploymentStatus,} from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
+import {OnVerifiedDeploymentStatus} from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import {OnFirstPushToRepo} from "../handlers/events/repo/OnFirstPushToRepo";
 import {OnRepoCreation} from "../handlers/events/repo/OnRepoCreation";
 import {StatusSuccessHandler} from "../handlers/events/StatusSuccessHandler";
@@ -35,12 +35,12 @@ import {PhaseCreator} from "../common/listener/PhaseCreator";
 import {RepoCreationListener} from "../common/listener/RepoCreationListener";
 import {SupersededListener} from "../common/listener/SupersededListener";
 import {VerifiedDeploymentListener} from "../common/listener/VerifiedDeploymentListener";
+import {displayBuildLogHandler} from "../handlers/commands/ShowBuildLog";
 import {OnPendingScanStatus} from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import {OnNewIssue} from "../handlers/events/issue/NewIssueHandler";
+import {hasLogInterpretation} from "../spi/log/InterpretedLog";
 import {IssueHandling} from "./IssueHandling";
 import {NewRepoHandling} from "./NewRepoHandling";
-import {hasLogInterpretation} from "../spi/log/InterpretedLog";
-import {displayBuildLogHandler} from "../handlers/commands/ShowBuildLog";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -165,7 +165,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuildContext);
+        () => new SetStatusOnBuildComplete(BuildContext)
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {
