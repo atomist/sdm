@@ -21,7 +21,8 @@ import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./bluepri
 import { NodePhaseCreator } from "./blueprint/phase/nodePhaseManagement";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
-import { listChangedFiles, logReview } from "./blueprint/review/scan";
+import { listChangedFiles } from "./blueprint/review/listChangedFiles";
+import { logReview } from "./blueprint/review/logReview";
 import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";

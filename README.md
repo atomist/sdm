@@ -183,9 +183,78 @@ sdm.addNewRepoWithCodeActions(
 ```
 
 ### Push
+A push to the source control hosting system is typically a very important trigger for actions. The `SoftwareDeliveryMachine` divides the actions into several steps:
+
+- Code Review
+- Code
+
+There are multiple listeners associated with this.
+
+Most of the listeners use or extend `ProjectListener`, which listens to the following extension of `ListenerInvocation`:
+
+```typescript
+/**
+ * Invocation for an event relating to a project for which we have source code
+ */
+export interface ProjectListenerInvocation extends ListenerInvocation {
+
+    /**
+     * The project to which this event relates. It will have been cloned
+     * prior to this invocation. Modifications made during listener invocation will
+     * not be committed back to the project (although they are acceptable if necessary, for
+     * example to run particular commands against the project).
+     * As well as working with
+     * project files using the Project superinterface, we can use git-related
+     * functionality fro the GitProject subinterface: For example to check
+     * for previous shas.
+     * We can also easily run shell commands against the project using its baseDir.
+     */
+    project: GitProject;
+
+}
+```
+
 #### Listener interfaces
 
-#### Examples
+##### ProjectReviewer
+`ProjectReviewer` is a type defined in `automation-client-ts`. It allows a structured review to be returned. The review comments can localize the file path, line and column if such information is available, and also optionally include a link to a "fix" command to autofix the problem.
+
+The following is a trival project reviewer that always returns a clean report but logs to the console to show when it's invoked:
+
+```typescript
+export const logReview: ProjectReviewer = async (p: GitProject,
+                                                 ctx: HandlerContext) => {
+    console.log("REVIEWING THING");
+    return clean(p.id);
+};
+
+```
+
+Add in `atomist.config.ts` as follows:
+
+```typescript
+sdm.addProjectReviewers(logReview)
+    .addProjectReviewers(checkstyleReviewer(checkStylePath));
+```
+##### CodeReaction interface
+This interface allows you to react to the code and changes:
+
+For example, the following function lists changed files to any linked Slack channels for the repo:
+```typescript
+export async function listChangedFiles(i: CodeReactionInvocation): Promise<any> {
+    return i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
+}
+```
+Add in `atomist.config.ts` as follows:
+
+```typescript
+sdm.addCodeReactions(listChangedFiles)
+```
+
+#### Fingerprints
+A special kind of push listener relates to **fingerprints**.
+
+tbc
 
 ### Deployment Result
 #### Listener interfaces
