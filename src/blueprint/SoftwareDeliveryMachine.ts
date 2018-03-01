@@ -136,7 +136,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get phaseCleanup(): Array<Maker<FailDownstreamPhasesOnPhaseFailure>> {
-        return this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
+        return [() => new FailDownstreamPhasesOnPhaseFailure()];
     }
 
     private get possiblePhases(): Phases[] {

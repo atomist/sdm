@@ -55,34 +55,6 @@ export class Phases {
         }
     }
 
-    /**
-     * Set all downstream phase to failure status given a specific failed phase.
-     *
-     * The phases are associated by the atomist-sdm/${env}/ prefix in their context.
-     * This method's only dependency on the enclosing object is for selecting
-     * nicer names for the phases.
-     *
-     * @param {string} failedContext
-     * @param {GitHubRepoRef} id
-     * @param {ProjectOperationCredentials} creds
-     * @return {Promise<any>}
-     */
-    public gameOver(failedContext: GitHubStatusContext, currentlyPending: GitHubStatusContext[],
-                    id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        if (!this.phases.includes(failedContext)) {
-            // Don't fail all our outstanding phases because someone else failed an unrelated phase
-            return Promise.resolve();
-        }
-        const failedPhase: PlannedPhase = this.contextToPlannedPhase(this, failedContext);
-        const failedPhaseName = failedPhase.name;
-        const phasesToReset = currentlyPending
-            .filter(pendingContext => contextIsAfter(failedContext, pendingContext))
-            .map(p => this.contextToPlannedPhase(this, p));
-        return Promise.all(phasesToReset.map(
-            p => setStatus(id, p.context, "failure", creds,
-                `Skipping ${p.name} because ${failedPhaseName} failed`)));
-    }
-
 }
 
 function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
