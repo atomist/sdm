@@ -94,6 +94,35 @@ The listener interfaces are
 | Endpoint reported |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |  
 | Endpoint verification |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |
 
+All listeners receive the following information:
+
+```typescript
+export interface ListenerInvocation {
+
+    /**
+     * The repo this relates to
+     */
+    id: GitHubRepoRef;
+
+    /**
+     * Context of the Atomist EventHandler invocation. Use to run GraphQL
+     * queries, use the messageClient directly and find
+     * the team and correlation id
+     */
+    context: HandlerContext;
+
+    /**
+     * If available, provides a way to address the channel(s) related to this repo.
+     */
+    addressChannels?: AddressChannels;
+
+    /**
+     * Credentials for use with source control hosts such as GitHub
+     */
+    credentials: ProjectOperationCredentials;
+
+}
+```
 
 ### Issue Creation
 When a new issue is created, you may want to notify people or perform an action.

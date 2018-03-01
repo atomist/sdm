@@ -92,29 +92,29 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
 
-    get onRepoCreation(): Maker<OnRepoCreation> {
+    private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
             () => new OnRepoCreation(...this.repoCreationListeners) :
             undefined;
     }
 
-    public get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
+    private get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
     }
 
-    public get fingerprinter(): Maker<FingerprintOnPush> {
+    private get fingerprinter(): Maker<FingerprintOnPush> {
         return this.fingerprinters.length > 0 ?
             () => new FingerprintOnPush(this.fingerprinters) :
             undefined;
     }
 
-    public get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
+    private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
         return this.fingerprintDifferenceListeners.length > 0 ?
             () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners) :
             undefined;
     }
 
-    get reviewRunner(): Maker<OnPendingScanStatus> {
+    private get reviewRunner(): Maker<OnPendingScanStatus> {
         const reviewers = this.projectReviewers;
         const inspections = this.codeReactions;
         const autoEditors = this.autoEditors;
@@ -123,7 +123,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    get phaseSetup(): Maker<SetupPhasesOnPush> {
+    private get phaseSetup(): Maker<SetupPhasesOnPush> {
         if (this.phaseCreators.length === 0) {
             throw new Error("No phase creators");
         }
@@ -138,34 +138,35 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    public phaseCleanup: Array<Maker<FailDownstreamPhasesOnPhaseFailure>> =
-        this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
+    private get phaseCleanup(): Array<Maker<FailDownstreamPhasesOnPhaseFailure>> {
+        return this.possiblePhases.map(phases => () => new FailDownstreamPhasesOnPhaseFailure(phases));
+    }
 
-    get possiblePhases(): Phases[] {
+    private get possiblePhases(): Phases[] {
         return _.uniq(_.flatMap(this.phaseCreators, p => p.possiblePhases));
     }
 
-    public artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
+    private artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
-    get notifyOnDeploy(): Maker<OnDeployStatus> {
+    private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
             () => new OnDeployStatus(...this.deploymentListeners) :
             undefined;
     }
 
-    get verifyEndpoint(): Maker<OnEndpointStatus> {
+    private get verifyEndpoint(): Maker<OnEndpointStatus> {
         return this.endpointVerificationListeners.length > 0 ?
             () => new OnEndpointStatus(...this.endpointVerificationListeners) :
             undefined;
     }
 
-    get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
+    private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
         return this.verifiedDeploymentListeners.length > 0 ?
             () => new OnVerifiedDeploymentStatus(...this.verifiedDeploymentListeners) :
             undefined;
     }
 
-    public onBuildComplete: Maker<SetStatusOnBuildComplete> =
+    private onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete(BuildContext)
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {

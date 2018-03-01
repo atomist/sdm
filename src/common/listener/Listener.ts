@@ -12,15 +12,26 @@ import { AddressChannels } from "../slack/addressChannels";
  */
 export interface ListenerInvocation {
 
+    /**
+     * The repo this relates to
+     */
     id: GitHubRepoRef;
 
+    /**
+     * Context of the Atomist EventHandler invocation. Use to run GraphQL
+     * queries, use the messageClient directly and find
+     * the team and correlation id
+     */
     context: HandlerContext;
 
     /**
-     * Channel link if available
+     * If available, provides a way to address the channel(s) related to this repo.
      */
     addressChannels?: AddressChannels;
 
+    /**
+     * Credentials for use with source control hosts such as GitHub
+     */
     credentials: ProjectOperationCredentials;
 
 }
