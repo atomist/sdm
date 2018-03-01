@@ -72,7 +72,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private phaseCreators: PhaseCreator[] = [];
+    private readonly builder: Maker<StatusSuccessHandler>;
+
+    private readonly deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>;
+
+    private readonly phaseCreators: PhaseCreator[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -245,11 +249,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addPhaseCreators(...phaseCreators: PhaseCreator[]): this {
-        this.phaseCreators = this.phaseCreators.concat(phaseCreators);
-        return this;
-    }
-
     public addProjectReviewers(...reviewers: ProjectReviewer[]): this {
         this.projectReviewers = this.projectReviewers.concat(reviewers);
         return this;
@@ -310,9 +309,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    constructor(
-                public builder: Maker<StatusSuccessHandler>,
-                public deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>) {
+    constructor(opts: {
+                    builder: Maker<StatusSuccessHandler>,
+                    deploy1: Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>,
+                },
+                ...phaseCreators: PhaseCreator[]) {
+        this.builder = opts.builder;
+        this.deploy1 = opts.deploy1;
+        this.phaseCreators = phaseCreators;
     }
 
 }

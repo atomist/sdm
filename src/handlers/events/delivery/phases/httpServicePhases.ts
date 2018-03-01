@@ -1,6 +1,6 @@
 import {
     ArtifactContext, BaseContext, BuildContext, GitHubStatusContext, ScanContext, splitContext,
-    StagingEnvironment
+    StagingEnvironment,
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
@@ -21,15 +21,15 @@ ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext
 
 export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
     return ContextToPlannedPhase[ghsc] ||
-        defaultPhaseDefinition(ghsc)
+        defaultPhaseDefinition(ghsc);
 }
 
 function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
     const interpreted = splitContext(ghsc);
     return {
         context: ghsc,
-        name: interpreted.name
-    }
+        name: interpreted.name,
+    };
 }
 
 /**
