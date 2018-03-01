@@ -31,6 +31,7 @@ subscription OnPushToAnyBranch {
         name
         id
       }
+      defaultBranch
     }
     commits {
       sha

@@ -2,7 +2,7 @@ import { logger } from "@atomist/automation-client";
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { CloudFoundryManifestPushTest } from "../common/listener/support/cloudFoundryManifestPushTest";
-import { PushesToMaster, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { PushesToDefaultBranch, PushesToMaster, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
@@ -34,7 +34,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             // CloudFoundryStagingDeployOnSuccessStatus;
             deploy1: () => LocalMavenDeployer,
         },
-        new SpringBootDeployPhaseCreator(PushesToMaster, CloudFoundryManifestPushTest, PushToPublicRepo),
+        new SpringBootDeployPhaseCreator(PushesToDefaultBranch, CloudFoundryManifestPushTest, PushToPublicRepo),
         new NodePhaseCreator(),
         new JavaLibraryPhaseCreator());
     sdm.addPromotedEnvironment(promotedEnvironment);

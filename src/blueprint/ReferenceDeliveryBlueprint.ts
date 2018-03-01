@@ -25,7 +25,6 @@ export interface PromotedEnvironment {
  */
 export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
 
-    // TODO could have n of these?
     promotedEnvironment?: PromotedEnvironment;
 
     /**

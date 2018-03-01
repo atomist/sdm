@@ -3,8 +3,7 @@ import { PushTest } from "../PhaseCreator";
 
 export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
 
-// TODO should do this but it doesn't work
-// export const PushesToMaster: PushTest = p => p.push.branch === p.repo.defaultBranch;
+export const PushesToDefaultBranch: PushTest = p => p.push.branch === p.push.repo.defaultBranch;
 
 /**
  * Match on any push

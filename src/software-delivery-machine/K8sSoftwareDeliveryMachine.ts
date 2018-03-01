@@ -1,7 +1,7 @@
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { K8sSpecTestPushTest } from "../common/listener/support/k8sSpecPushTest";
-import { PushesToMaster, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
@@ -30,7 +30,7 @@ export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             builder: K8sBuildOnSuccessStatus,
             deploy1: K8sStagingDeployOnSuccessStatus,
         },
-        new SpringBootDeployPhaseCreator(PushesToMaster, K8sSpecTestPushTest, PushToPublicRepo),
+        new SpringBootDeployPhaseCreator(PushesToDefaultBranch, K8sSpecTestPushTest, PushToPublicRepo),
         new NodePhaseCreator(),
         new JavaLibraryPhaseCreator());
     sdm.addPromotedEnvironment(promotedEnvironment);
