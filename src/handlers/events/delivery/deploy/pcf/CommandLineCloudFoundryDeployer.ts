@@ -8,7 +8,7 @@ import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
-import { CloudFoundryInfo, ManifestPath } from "./CloudFoundryTarget";
+import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
@@ -24,7 +24,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
         const sources = await GitCommandGitProject.cloned(creds, da.id);
-        const manifestFile = await sources.findFile(ManifestPath);
+        const manifestFile = await sources.findFile(CloudFoundryManifestPath);
 
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");

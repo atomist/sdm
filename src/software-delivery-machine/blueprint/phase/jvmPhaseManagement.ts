@@ -1,34 +1,26 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import {
-PhaseCreationInvocation, PhaseCreator,
-} from "../../../common/listener/PhaseCreator";
-import { PushesToMaster, PushToPublicRepo } from "../../../common/listener/support/pushTests";
+import { PhaseCreationInvocation, PhaseCreator, PushTest } from "../../../common/listener/PhaseCreator";
 import { allGuardsVoteFor } from "../../../common/listener/support/pushTestUtils";
 import { Phases } from "../../../common/phases/Phases";
 import { SpringBootRestServiceGuard } from "../../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
-import {
-    ApplyPhasesParameters,
-    applyPhasesToCommit,
-} from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { ApplyPhasesParameters, applyPhasesToCommit } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
 
 export class SpringBootDeployPhaseCreator implements PhaseCreator {
 
-    /**
-     * Only deploy pushes to master, of a Spring REST service, on a public repo
-     * @type {PushTest}
-     */
-    public guard = allGuardsVoteFor(PushesToMaster, SpringBootRestServiceGuard, PushToPublicRepo);
+    public guard: PushTest;
+
+    constructor(...guards: PushTest[]) {
+        // As a minimum, it must be a Spring Rest service
+        this.guard =  allGuardsVoteFor(SpringBootRestServiceGuard, ...guards);
+    }
 
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
         try {
             const f = await pi.project.findFile("pom.xml");
-            // TODO: how can we distinguish a lib from a service that should run in k8s?
-            // const manifest = await p.findFile(ManifestPath).catch(err => undefined); // this is PCF-specific
-            const contents = await
-                f.getContent();
+            const contents = await f.getContent();
             if (contents.includes("spring-boot") /* && !!manifest */) {
                 return HttpServicePhases;
             } else {

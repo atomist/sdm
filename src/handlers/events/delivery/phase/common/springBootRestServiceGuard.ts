@@ -2,7 +2,8 @@ import { logger } from "@atomist/automation-client";
 import { PushTest } from "../../../../../common/listener/PhaseCreator";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 /**
- * Veto if not important
+ * Veto if change to deployment unit doesn't seem important enough to
+ * build and deploy
  * @param {PhaseCreationInvocation} pci
  * @return {Promise<void>}
  * @constructor
@@ -12,6 +13,7 @@ export const SpringBootRestServiceGuard: PushTest = async pci => {
     console.log(`Changed files are [${changedFiles.join(",")}]`);
     if (changedFiles.some(f => f.endsWith(".java")) ||
         changedFiles.some(f => f.endsWith(".html")) ||
+        changedFiles.some(f => f.endsWith(".json")) ||
         changedFiles.some(f => f.endsWith(".yml")) ||
         changedFiles.some(f => f.endsWith(".xml"))
     ) {

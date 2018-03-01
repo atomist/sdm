@@ -10,7 +10,7 @@ export type PushTest = (p: PhaseCreationInvocation) => boolean | Promise<boolean
 
 export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 
-    push: OnPushToAnyBranch.Push;
+    readonly push: OnPushToAnyBranch.Push;
 }
 
 /**
@@ -28,7 +28,7 @@ export interface PhaseCreator {
      * If we return false here, our createPhases method will never be
      * called for this push
      */
-    guard?: PushTest;
+    readonly guard?: PushTest;
 
     /**
      * Determine the phases that apply to this PhaseCreationInvocation,
