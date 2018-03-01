@@ -15,6 +15,7 @@ import {OnDeployToProductionFingerprint} from "../../../typings/types";
 import {HandleEvent} from "@atomist/automation-client";
 import {Maker} from "@atomist/automation-client/util/constructionUtils";
 import {promotedEnvironmentName} from "../../K8sSoftwareDeliveryMachine";
+import {NoticeK8sProductionDeployCompletionOnStatus} from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sProductionDeployCompletion";
 
 
 export const K8sStagingDeployOnSuccessStatus = () =>
@@ -27,7 +28,7 @@ export const NoticeK8sStagingDeployCompletion = new NoticeK8sDeployCompletionOnS
     ContextToPlannedPhase[StagingEndpointContext],
     "testing");
 
-export const NoticeK8sProductionDeployCompletion = new NoticeK8sDeployCompletionOnStatus(
+export const NoticeK8sProductionDeployCompletion = new NoticeK8sProductionDeployCompletionOnStatus(
     ProductionDeploymentPhase,
     ProductionEndpointPhase,
     "production");
