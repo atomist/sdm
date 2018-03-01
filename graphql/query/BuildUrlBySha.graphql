@@ -1,9 +1,9 @@
-query BuildUrlBySha($sha: String!){
-    Commit(sha: $sha) {
-        builds {
-            status
-            buildUrl
-            timestamp
-        }
+query BuildUrlBySha($sha: String!) {
+  Commit(sha: $sha) {
+    builds {
+      status
+      buildUrl
+      timestamp
     }
+  }
 }
