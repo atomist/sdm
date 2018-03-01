@@ -13,8 +13,6 @@ import { configureSpringSdm } from "./springSdmConfig";
 
 const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
 
-// CloudFoundryStagingDeployOnImageLinked
-
 const promotedEnvironment: PromotedEnvironment = {
 
     name: "production",

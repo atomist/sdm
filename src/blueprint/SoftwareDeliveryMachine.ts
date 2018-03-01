@@ -1,48 +1,46 @@
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { ProjectListener } from "../common/listener/Listener";
-import { NewIssueListener } from "../common/listener/NewIssueListener";
-import { ArtifactContext, BuildContext } from "../common/phases/gitHubContext";
-import { Phases } from "../common/phases/Phases";
-import { EventWithCommand } from "../handlers/commands/RetryDeploy";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
-import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
-import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { ContextToPlannedPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
-import {
-    ReactToSemanticDiffsOnPushImpact,
-} from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
-import { EndpointVerificationListener, OnEndpointStatus } from "../handlers/events/delivery/verify/OnEndpointStatus";
-import {
-    OnVerifiedDeploymentStatus,
-} from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
-import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
-import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
-import { OnSuccessStatus } from "../typings/types";
-import { FunctionalUnit } from "./FunctionalUnit";
-import { PromotedEnvironment, ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
+import {HandleCommand, HandleEvent} from "@atomist/automation-client";
+import {AnyProjectEditor} from "@atomist/automation-client/operations/edit/projectEditor";
+import {ProjectReviewer} from "@atomist/automation-client/operations/review/projectReviewer";
+import {Maker, toFactory} from "@atomist/automation-client/util/constructionUtils";
+import {ProjectListener} from "../common/listener/Listener";
+import {NewIssueListener} from "../common/listener/NewIssueListener";
+import {ArtifactContext, BuildContext} from "../common/phases/gitHubContext";
+import {Phases} from "../common/phases/Phases";
+import {EventWithCommand} from "../handlers/commands/RetryDeploy";
+import {FindArtifactOnImageLinked} from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
+import {SetStatusOnBuildComplete} from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
+import {OnDeployStatus} from "../handlers/events/delivery/deploy/OnDeployStatus";
+import {FailDownstreamPhasesOnPhaseFailure} from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
+import {OnSupersededStatus} from "../handlers/events/delivery/phase/OnSuperseded";
+import {SetSupersededStatus} from "../handlers/events/delivery/phase/SetSupersededStatus";
+import {SetupPhasesOnPush} from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import {ContextToPlannedPhase} from "../handlers/events/delivery/phases/httpServicePhases";
+import {FingerprintOnPush} from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
+import {ReactToSemanticDiffsOnPushImpact} from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
+import {EndpointVerificationListener, OnEndpointStatus} from "../handlers/events/delivery/verify/OnEndpointStatus";
+import {OnVerifiedDeploymentStatus} from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
+import {OnFirstPushToRepo} from "../handlers/events/repo/OnFirstPushToRepo";
+import {OnRepoCreation} from "../handlers/events/repo/OnRepoCreation";
+import {StatusSuccessHandler} from "../handlers/events/StatusSuccessHandler";
+import {OnSuccessStatus} from "../typings/types";
+import {FunctionalUnit} from "./FunctionalUnit";
+import {PromotedEnvironment, ReferenceDeliveryBlueprint} from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
-import { CodeReactionListener } from "../common/listener/CodeReactionListener";
-import { DeploymentListener } from "../common/listener/DeploymentListener";
-import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
-import { Fingerprinter } from "../common/listener/Fingerprinter";
-import { PhaseCreator } from "../common/listener/PhaseCreator";
-import { RepoCreationListener } from "../common/listener/RepoCreationListener";
-import { SupersededListener } from "../common/listener/SupersededListener";
-import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
-import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
-import { OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
-import { IssueHandling } from "./IssueHandling";
-import { NewRepoHandling } from "./NewRepoHandling";
+import {CodeReactionListener} from "../common/listener/CodeReactionListener";
+import {DeploymentListener} from "../common/listener/DeploymentListener";
+import {FingerprintDifferenceListener} from "../common/listener/FingerprintDifferenceListener";
+import {Fingerprinter} from "../common/listener/Fingerprinter";
+import {PhaseCreator} from "../common/listener/PhaseCreator";
+import {RepoCreationListener} from "../common/listener/RepoCreationListener";
+import {SupersededListener} from "../common/listener/SupersededListener";
+import {VerifiedDeploymentListener} from "../common/listener/VerifiedDeploymentListener";
+import {displayBuildLogHandler} from "../handlers/commands/ShowBuildLog";
+import {OnPendingScanStatus} from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import {OnNewIssue} from "../handlers/events/issue/NewIssueHandler";
+import {hasLogInterpretation} from "../spi/log/InterpretedLog";
+import {IssueHandling} from "./IssueHandling";
+import {NewRepoHandling} from "./NewRepoHandling";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -169,6 +167,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete(BuildContext)
 
+    get showBuildLog(): Maker<HandleCommand> {
+        return () => {
+            return displayBuildLogHandler();
+        };
+    }
+
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
@@ -204,7 +208,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat([
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
                 !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,
-            ]).filter(m => !!m);
+            ])
+            .concat([this.showBuildLog])
+            .filter(m => !!m);
     }
 
     public addGenerators(...g: Array<Maker<HandleCommand>>): this {

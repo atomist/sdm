@@ -57,16 +57,20 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
-        const relevantPart = log.split("\n")
-            .filter(l => l.startsWith("[ERROR]"))
-            .join("\n");
-        return {
-            relevantPart,
-            message: "Maven errors",
-            includeFullLog: true,
-        };
+        return interpretMavenLog(log);
     }
 
+}
+
+export function interpretMavenLog(log: string): InterpretedLog | undefined {
+    const relevantPart = log.split("\n")
+        .filter(l => l.startsWith("[ERROR]"))
+        .join("\n");
+    return {
+        relevantPart,
+        message: "Maven errors",
+        includeFullLog: true,
+    };
 }
 
 class UpdatingBuild implements LocalBuildInProgress {

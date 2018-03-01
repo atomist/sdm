@@ -15,16 +15,16 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new ComposedFunctionalUnit(
-    cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
-    // K8sSoftwareDeliveryMachine({useCheckstyle: false}),
+    //cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
+     K8sSoftwareDeliveryMachine({useCheckstyle: false}),
 );
 
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
     teamIds: [
-        //  "T1JVCMVH7",
-        "T5964N9B7",    // spring-team
+          "T1JVCMVH7",
+        // "T5964N9B7",    // spring-team
         //  "T29E48P34",    // Atomist community
     ], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: assembled.commandHandlers.concat([

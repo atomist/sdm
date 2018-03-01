@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
+import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import axios from "axios";
+import * as stringify from "json-stringify-safe";
+import {AddressChannels, addressChannelsFor} from "../../../../";
+import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
 import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
 import {createStatus, State} from "../../../../util/github/ghub";
+import {reportFailureInterpretation} from "../../../../util/slack/reportFailureInterpretation";
 import {NotARealUrl} from "./local/LocalBuilder";
 
 /**
@@ -35,7 +39,8 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private buildPhaseContext: string) {
+    constructor(private buildPhaseContext: string,
+                private logInterpretation?: LogInterpretation) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -44,15 +49,48 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const builtStatus = commit.statuses.find(s => s.context === params.buildPhaseContext);
-        if (!!builtStatus && builtStatus.state === "pending") {
+        if (!!builtStatus) {
             await setBuiltContext(params.buildPhaseContext,
                 buildStatusToGitHubStatusState(build.status),
                 build.buildUrl,
                 id,
                 {token: params.githubToken});
         }
+        if (build.status === "failed" && build.buildUrl) {
+            const ac = addressChannelsFor(commit.repo, ctx);
+            await displayBuildLogFailure(id, build, ac, params.logInterpretation);
+        }
         return Success;
     }
+}
+
+export async function displayBuildLogFailure(id: RemoteRepoRef, build: { buildUrl?: string, status?: string} ,
+                                             ac: AddressChannels, logInterpretation?: LogInterpretation) {
+    const buildUrl = build.buildUrl;
+    if (buildUrl) {
+        logger.info("Retrieving failed build log from " + buildUrl);
+        const buildLog = (await axios.get(buildUrl)).data;
+        console.log("Do we have a log interpretation? " + !!logInterpretation);
+        const interpretation = logInterpretation && logInterpretation.logInterpreter(buildLog);
+        console.log("What did it say? " + stringify(interpretation));
+        // The deployer might have information about the failure; report it in the channels
+        if (interpretation) {
+            await reportFailureInterpretation("build", interpretation,
+                {log: buildLog, url: buildUrl}, id, ac);
+        } else {
+            await ac({
+                content: buildLog,
+                fileType: "text",
+                fileName: `build-${build.status}-${id.sha}.log`,
+            } as any);
+        }
+    } else {
+        ac("No build log detected for " + linkToSha(id));
+    }
+}
+
+function linkToSha(id: RemoteRepoRef) {
+    return slack.url(id.url + "/tree/" + id.sha, id.sha.substr(0, 6));
 }
 
 function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {

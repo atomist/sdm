@@ -6,7 +6,7 @@ import { QueryableProgressLog } from "../../spi/log/ProgressLog";
 
 export async function reportFailureInterpretation(stepName: string,
                                                   interpretation: InterpretedLog,
-                                                  fullLog: QueryableProgressLog,
+                                                  fullLog: { url?: string, log: string },
                                                   id: RemoteRepoRef,
                                                   ac: AddressChannels,
                                                   retryButton?: slack.Action) {
