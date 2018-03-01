@@ -229,11 +229,6 @@ export interface PhaseCreator {
     guard?: PushTest;
 
     /**
-     * All the phases we might return. Used for cleanup.
-     */
-    possiblePhases: Phases[];
-
-    /**
      * Determine the phases that apply to this PhaseCreationInvocation,
      * or return undefined if this PhaseCreator doesn't know what to do with it.
      * The latter is not an error.

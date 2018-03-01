@@ -142,10 +142,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return [() => new FailDownstreamPhasesOnPhaseFailure()];
     }
 
-    private get possiblePhases(): Phases[] {
-        return _.uniq(_.flatMap(this.phaseCreators, p => p.possiblePhases));
-    }
-
     private artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
