@@ -8,30 +8,6 @@ import { ProjectListenerInvocation } from "./Listener";
  */
 export type PushTest = (p: PhaseCreationInvocation) => boolean | Promise<boolean>;
 
-export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
-
-// TODO should do this but it doesn't work
-// export const PushesToMaster: PushTest = p => p.push.branch === p.repo.defaultBranch;
-
-/**
- * Match on any push
- * @param {PhaseCreationInvocation} p
- * @constructor
- */
-export const AnyPush: PushTest = p => true;
-
-/**
- * All of these guards vote for these phases
- * @param {PushTest} guards
- * @return {PushTest}
- */
-export function allGuardsVoteFor(...guards: PushTest[]): PushTest {
-    return async pci => {
-        const guardResults: boolean[] = await Promise.all(guards.map(g => g(pci)));
-        return !guardResults.some(r => !r);
-    };
-}
-
 export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 
     push: OnPushToAnyBranch.Push;

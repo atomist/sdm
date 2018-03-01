@@ -15,6 +15,10 @@ export * from "./common/listener/DeploymentListener";
 export * from "./common/listener/VerifiedDeploymentListener";
 export { Phases } from "./common/phases/Phases";
 
+export * from "./common/listener/PhaseCreator";
+export * from "./common/listener/support/pushTests";
+export * from "./common/listener/support/pushTestUtils";
+
 export * from "./spi/log/ProgressLog";
 
 export { SoftwareDeliveryMachine } from "./blueprint/SoftwareDeliveryMachine";

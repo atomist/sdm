@@ -1,8 +1,7 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import {
-    allGuardsVoteFor, PhaseCreationInvocation, PhaseCreator,
-    PushesToMaster,
+PhaseCreationInvocation, PhaseCreator,
 } from "../../../common/listener/PhaseCreator";
 import { Phases } from "../../../common/phases/Phases";
 import { SpringBootRestServiceGuard } from "../../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
@@ -12,10 +11,16 @@ import {
 } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
+import { allGuardsVoteFor } from "../../../common/listener/support/pushTestUtils";
+import { PushesToMaster, PushToPublicRepo } from "../../../common/listener/support/pushTests";
 
 export class SpringBootDeployPhaseCreator implements PhaseCreator {
 
-    public guard = allGuardsVoteFor(SpringBootRestServiceGuard, PushesToMaster);
+    /**
+     * Only deploy pushes to master, of a Spring REST service, on a public repo
+     * @type {PushTest}
+     */
+    public guard = allGuardsVoteFor(PushesToMaster, SpringBootRestServiceGuard, PushToPublicRepo);
 
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
         try {

@@ -116,3 +116,10 @@ export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<st
     return axios.get(url, config)
         .then(ap => ap.data.commit.sha);
 }
+
+export function isPublicRepo(rr: GitHubRepoRef): Promise<boolean> {
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
+    return axios.head(url)
+        .then(ap => true)
+        .catch(ap => false);
+}
