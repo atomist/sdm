@@ -94,7 +94,7 @@ The listener interfaces are
 | Endpoint reported |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |  
 | Endpoint verification |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |
 
-All listeners receive the following information:
+All listener invocations receive at least the following generally useful information:
 
 ```typescript
 export interface ListenerInvocation {
@@ -127,14 +127,60 @@ export interface ListenerInvocation {
 ### Issue Creation
 When a new issue is created, you may want to notify people or perform an action.
 #### Listener interfaces
-
+`NewIssueListener`: [NewIssueListener](src/common/listener/NewIssueListener.ts)
 
 #### Examples
+The following simple example notifies any user who raises an issue with insufficient detail in the body, via a 
+direct message in Slack, and provides them with a helpful
+link to the issue. Note that we make use of the
+person available via the `openedBy` field:
+
+```typescript
+export async function requestDescription(inv: NewIssueInvocation) {
+    if (!inv.issue.body || inv.issue.body.length < 10) {
+        await inv.context.messageClient.addressUsers(
+            `Please add a description for new issue ${inv.issue.number}: _${inv.issue.title}_: ${inv.id.url}/issues/${inv.issue.number}`,
+            inv.issue.openedBy.person.chatId.screenName);
+    }
+}
+```
+This is registed with a `SoftwareDeliveryMachine` instance as follows:
+
+```typescript
+sdm.addNewIssueListeners(requestDescription)
+```
+Using the `credentials` on the `NewIssueInvocation`, you can even use the GitHub API to modify the issue, for example correctly spelling errors.
 
 ### Repo Creation
+We frequently want to respond to the creation of a new repository: For example, to notify people, provision infrastructure, or tag it with GitHub topics based on its contents.
+
 #### Listener interfaces
+There are two scenarios to consider:
+
+1. The creation of a new repository. `RepoCreationListener`: [RepoCreationListener](src/common/listener/RepoCreationListener.ts)
+2. The first push to a repository, which uses the more generic [ProjectListener](src/common/listener/Listener.ts)
+
+The second scenario is usually more important, as it is possible to create a repository without any source code or a master branch, which isn't enough to work with for common actions.
 
 #### Examples
+The following example publishes a message to the `#general` channel in Slack when a new repo has been created:
+
+```typescript
+export const PublishNewRepo: SdmListener = (i: ListenerInvocation) => {
+    return i.context.messageClient.addressChannels(
+        `A new repo was created: \`${i.id.owner}:${i.id.repo}\``, "general");
+};
+
+```
+
+Tagging a repo with topics based on its content is a useful action. `tagRepo` is a convenient function to construct a `ProjectListener` for this. It tags as an argument a `Tagger`, which looks at the project content and returns a `Tags` object. The following example from `atomist.config.ts` tags Spring Boot repos, using a `Tagger` from the `spring-automation` project, in addition to suggesting the addition of a Cloud Foundry manifest, and publishing the repo using the listener previously shown:
+
+```typescript
+sdm.addNewRepoWithCodeActions(
+      tagRepo(springBootTagger),
+      suggestAddingCloudFoundryManifest,
+      PublishNewRepo)
+```
 
 ### Push
 #### Listener interfaces

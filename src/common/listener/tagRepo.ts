@@ -1,6 +1,6 @@
 import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
-import { ProjectListener } from "../../../common/listener/Listener";
-import { publishTags } from "../../../handlers/events/repo/publishTags";
+import { publishTags } from "../../handlers/events/repo/publishTags";
+import { ProjectListener } from "./Listener";
 
 /**
  * Tag the repo using the given tagger

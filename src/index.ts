@@ -3,6 +3,10 @@ export * from "./common/listener/Listener";
 
 export * from "./common/listener/NewIssueListener";
 
+export { RepoCreationListener } from "./common/listener/RepoCreationListener";
+
+export { tagRepo } from "./common/listener/tagRepo";
+
 export * from "./common/listener/Fingerprinter";
 
 export * from "./common/listener/FingerprintDifferenceListener";
@@ -16,6 +20,7 @@ export * from "./spi/log/ProgressLog";
 export { SoftwareDeliveryMachine } from "./blueprint/SoftwareDeliveryMachine";
 export { IssueHandling } from "./blueprint/IssueHandling";
 export { NewRepoHandling } from "./blueprint/NewRepoHandling";
+
 export { FunctionalUnit } from "./blueprint/FunctionalUnit";
 export { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
 

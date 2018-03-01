@@ -36,11 +36,11 @@ import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { PhaseCreator } from "../common/listener/PhaseCreator";
+import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
-import { RepoCreationListener } from "../handlers/events/repo/RepoCreationListener";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 
@@ -232,6 +232,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
+    /**
+     * You probably mean to use addNewRepoWithCodeActions!
+     * This responds to a repo creation, but there may be no
+     * code in it.
+     * @param {RepoCreationListener} rcls
+     * @return {this}
+     */
     public addRepoCreationListeners(...rcls: RepoCreationListener[]): this {
         this.repoCreationListeners = this.repoCreationListeners.concat(rcls);
         return this;
