@@ -188,7 +188,7 @@ A push to the source control hosting system is typically a very important trigge
 - Code Review
 - Code
 
-There are multiple listeners associated with this.
+There are multiple listeners associated with pushes.
 
 Most of the listeners use or extend `ProjectListener`, which listens to the following extension of `ListenerInvocation`:
 
@@ -213,6 +213,45 @@ export interface ProjectListenerInvocation extends ListenerInvocation {
 
 }
 ```
+#### Phase Creation
+The first and most important reaction to a push is determining the set of *phases* that will be executed. This will drive further behavior: For example, do we need a code review? Do we need to deploy a push to this branch. Typically phase creation depends both on the characteristics of the push (usually, its branch), and the characteristics of the repo--for example, does it have a Cloud Foundry manifest?
+
+The `PhaseCreator` interface is thus a critical determinant of what happens next:
+
+```typescript
+export interface PhaseCreator {
+
+    /**
+     * Test the push as to whether we should even look inside it.
+     * If we return false here, our createPhases method will never be
+     * called for this push
+     */
+    guard?: PushTest;
+
+    /**
+     * All the phases we might return. Used for cleanup.
+     */
+    possiblePhases: Phases[];
+
+    /**
+     * Determine the phases that apply to this PhaseCreationInvocation,
+     * or return undefined if this PhaseCreator doesn't know what to do with it.
+     * The latter is not an error.
+     * @param {PhaseCreationInvocation} pci
+     * @return {Promise<Phases>}
+     */
+    createPhases(pci: PhaseCreationInvocation): Promise<Phases | undefined>;
+}
+```
+Available interface is:
+
+```typescript
+export interface PhaseCreationInvocation extends ProjectListenerInvocation {
+
+    push: OnPushToAnyBranch.Push;
+}
+```
+If all `PhaseCreator` instances return `undefined` the commit will be tagged as "not material" and no further action will be taken.
 
 #### Listener interfaces
 
