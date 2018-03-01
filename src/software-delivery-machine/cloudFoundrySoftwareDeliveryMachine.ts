@@ -11,7 +11,7 @@ import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./blueprint/phase/jvmPhaseManagement";
 import { NodePhaseCreator } from "./blueprint/phase/nodePhaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
-import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
+import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
 
 const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;

@@ -1,7 +1,7 @@
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { ProjectListenerInvocation } from "../../../common/listener/Listener";
-import { AddK8sSpecCommandName } from "../../commands/editors/addK8sSpec";
+import { AddK8sSpecCommandName } from "../../commands/editors/k8s/addK8sSpec";
 
 /**
  * Present a button suggesting a Kubernetes spec is added by an editor

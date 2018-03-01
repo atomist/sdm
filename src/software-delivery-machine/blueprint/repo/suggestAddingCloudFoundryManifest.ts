@@ -1,7 +1,7 @@
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { ProjectListenerInvocation } from "../../../common/listener/Listener";
-import { AddCloudFoundryManifestCommandName } from "../../commands/editors/addCloudFoundryManifest";
+import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
 
 export async function suggestAddingCloudFoundryManifest(inv: ProjectListenerInvocation) {
     try {

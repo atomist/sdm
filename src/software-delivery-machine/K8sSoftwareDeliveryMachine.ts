@@ -10,7 +10,7 @@ import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./blueprint/phase/jvmPhaseManagement";
 import { NodePhaseCreator } from "./blueprint/phase/nodePhaseManagement";
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
-import { addK8sSpec } from "./commands/editors/addK8sSpec";
+import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
 
 const promotedEnvironment: PromotedEnvironment = {

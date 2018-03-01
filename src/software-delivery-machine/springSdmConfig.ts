@@ -15,7 +15,7 @@ import { requestDescription } from "./blueprint/issue/requestDescription";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
-import { tryToUpgradeSpringBootVersion } from "./commands/editors/tryToUpgradeSpringBootVersion";
+import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
 /**

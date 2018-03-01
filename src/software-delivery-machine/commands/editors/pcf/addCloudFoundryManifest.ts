@@ -1,8 +1,8 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { editor } from "../../../handlers/commands/editors/registerEditor";
-import { identification } from "../../../handlers/events/delivery/build/local/maven/pomParser";
-import { CloudFoundryManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { editor } from "../../../../handlers/commands/editors/registerEditor";
+import { identification } from "../../../../handlers/events/delivery/build/local/maven/pomParser";
+import { CloudFoundryManifestPath } from "../../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 
