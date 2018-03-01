@@ -21,10 +21,9 @@ import { Action } from "@atomist/slack-messages";
 import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
 import { PlannedPhase } from "../../../../common/phases/Phases";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
-import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
 import {
-    ConsoleProgressLog, LogFactory, MultiProgressLog, QueryableProgressLog,
-    SavingProgressLog,
+    ConsoleProgressLog, InMemoryProgressLog, LogFactory, MultiProgressLog,
+    ProgressLog,
 } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
@@ -50,10 +49,10 @@ export interface DeployParams<T extends TargetInfo> {
 
 export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
     logger.info("Deploying with params=%j", params);
-    const linkableLog = await params.logFactory();
+    const log = await params.logFactory();
 
-    const savingLog = new SavingProgressLog();
-    const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, linkableLog) as any as QueryableProgressLog;
+    const savingLog = new InMemoryProgressLog();
+    const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, log);
 
     try {
         await setDeployStatus(params.githubToken, params.id, "pending", params.deployPhase.context,
@@ -82,7 +81,7 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
         await setDeployStatus(params.githubToken, params.id,
             "success",
             params.deployPhase.context,
-            linkableLog.url,
+            log.url,
             `Completed ${params.deployPhase.name}`);
         if (deployment.endpoint) {
             await setEndpointStatus(params.githubToken, params.id,
@@ -98,16 +97,18 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
         logger.error(err.message);
         logger.error(err.stack);
         await progressLog.close();
-        const interpretation = params.deployer.logInterpreter && params.deployer.logInterpreter(linkableLog.log);
+        const interpretation = params.deployer.logInterpreter && !!log.log && params.deployer.logInterpreter(log.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
-            await reportFailureInterpretation("deploy", interpretation, linkableLog, params.id, params.ac, params.retryButton);
+            await reportFailureInterpretation("deploy", interpretation,
+                {url: log.url, log: log.log},
+                params.id, params.ac, params.retryButton);
         } else {
             await params.ac(":x: Failure deploying: " + err.message);
         }
         return setDeployStatus(params.githubToken, params.id, "failure",
             params.deployPhase.context,
-            linkableLog.url,
+            log.url,
             `Failed to ${params.deployPhase.name}`).then(success);
     }
 }

@@ -3,7 +3,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
-import { QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
+import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { DeployableArtifact } from "../../../ArtifactStore";
 import { Deployer } from "../../Deployer";
 import { Deployment, TargetInfo } from "../../Deployment";
@@ -42,7 +42,7 @@ class ExecutableJarDeployer implements Deployer {
 
     public async deploy(da: DeployableArtifact,
                         ti: TargetInfo,
-                        log: QueryableProgressLog,
+                        log: ProgressLog,
                         creds: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;

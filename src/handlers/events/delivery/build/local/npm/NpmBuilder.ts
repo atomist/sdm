@@ -4,7 +4,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { exec, ExecOptions } from "child_process";
 import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog, QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
+import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ArtifactStore } from "../../../ArtifactStore";
 import { AppInfo } from "../../../deploy/Deployment";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
@@ -26,7 +26,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                team: string,
-                               log: QueryableProgressLog): Promise<LocalBuildInProgress> {
+                               log: ProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from package.json
         const pom = await p.findFile("package.json");

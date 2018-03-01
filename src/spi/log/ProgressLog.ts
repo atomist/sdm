@@ -1,5 +1,10 @@
 import { logger } from "@atomist/automation-client";
 
+/**
+ * Log abstraction for output of our activities.
+ * Not a technical log of this project but a log of meaningful activity
+ * on behalf of users.
+ */
 export interface ProgressLog {
 
     write(what: string): void;
@@ -7,6 +12,12 @@ export interface ProgressLog {
     flush(): Promise<any>;
 
     close(): Promise<any>;
+
+    /**
+     * Some implementations expose their log as a string.
+     * Otherwise may not, as it could be too long etc.
+     */
+    log?: string;
 
     /**
      * Return the url of the log if it is persisted
@@ -29,14 +40,6 @@ export const ConsoleProgressLog: ProgressLog = {
     flush() { return Promise.resolve(); },
     close() { return Promise.resolve(); },
 };
-
-/**
- * ProgressLog that enables log output to be checked while operation
- * being logged is in progress, or after close
- */
-export interface QueryableProgressLog extends ProgressLog {
-    log: string;
-}
 
 export class MultiProgressLog implements ProgressLog {
 
@@ -62,47 +65,16 @@ export class MultiProgressLog implements ProgressLog {
         return Promise.all(this.logs.map(log => log.close()));
     }
 
-    /**
-     * This can be cast to QueryableProgressLog if any of the logs is queryable
-     */
-    get log() {
-        const q = this.logs.find(l => !!(l as QueryableProgressLog).log);
-        if (!!q) {
-            return (q as QueryableProgressLog).log;
-        }
-    }
-}
-
-export class TransformingProgressLog implements ProgressLog {
-
-    /**
-     *
-     * @param {ProgressLog} log
-     * @param {(what: string) => string} filter if filter returns undefined
-     * don't output anything
-     */
-    constructor(private log: ProgressLog, private filter: (what: string) => string) {}
-
-    public write(what: string) {
-        const filtered = this.filter(what);
-        return !!filtered ?
-            this.log.write(what) :
-            Promise.resolve();
-    }
-
-    public flush() {
-        return this.log.flush();
-    }
-
-    public close() {
-        return this.log.close();
+    get log(): string {
+        const hasLog = this.logs.find(l => !!l.log);
+        return !!hasLog ? hasLog.log : undefined;
     }
 }
 
 /**
  * Saves log to a string
  */
-export class SavingProgressLog implements QueryableProgressLog {
+export class InMemoryProgressLog implements ProgressLog {
 
     private logged: string = "";
 
@@ -124,4 +96,4 @@ export class SavingProgressLog implements QueryableProgressLog {
     }
 }
 
-export type LogFactory = () => Promise<QueryableProgressLog>;
+export type LogFactory = () => Promise<ProgressLog>;

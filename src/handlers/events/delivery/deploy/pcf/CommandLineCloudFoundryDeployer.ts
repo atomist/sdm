@@ -1,10 +1,9 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
-import { QueryableProgressLog } from "../../../../../spi/log/ProgressLog";
+import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { DeployableArtifact } from "../../ArtifactStore";
 import { Deployer } from "../Deployer";
 import { Deployment } from "../Deployment";
@@ -19,7 +18,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
 
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,
-                        log: QueryableProgressLog,
+                        log: ProgressLog,
                         creds: ProjectOperationCredentials): Promise<Deployment> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
 
