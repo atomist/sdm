@@ -8,7 +8,7 @@ import {ArtifactContext, BuildContext} from "../common/phases/gitHubContext";
 import {Phases} from "../common/phases/Phases";
 import {EventWithCommand} from "../handlers/commands/RetryDeploy";
 import {FindArtifactOnImageLinked} from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
-import {SetStatusOnBuildComplete} from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
+import {displayBuildLogHandler, SetStatusOnBuildComplete} from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import {OnDeployStatus} from "../handlers/events/delivery/deploy/OnDeployStatus";
 import {FailDownstreamPhasesOnPhaseFailure} from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {OnSupersededStatus} from "../handlers/events/delivery/phase/OnSuperseded";
@@ -164,8 +164,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuildContext,
-            hasLogInterpretation(this.builder) ? this.builder : undefined);
+        () => new SetStatusOnBuildComplete(BuildContext);
+
+    get showBuildLog(): Maker<HandleCommand> {
+        return () => displayBuildLogHandler();
+    }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
@@ -202,7 +205,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat([
                 !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
                 !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,
-            ]).filter(m => !!m);
+            ])
+            .concat([this.showBuildLog])
+            .filter(m => !!m);
     }
 
     public addGenerators(...g: Array<Maker<HandleCommand>>): this {
