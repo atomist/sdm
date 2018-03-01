@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, Secret, Secrets, Success} from "@atomist/automation-client";
+import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
 import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
@@ -24,6 +24,11 @@ import {
 import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
 import {createStatus, State} from "../../../../util/github/ghub";
 import {NotARealUrl} from "./local/LocalBuilder";
+import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
+import axios from "axios";
+import {reportFailureInterpretation} from "../../../../util/slack/reportFailureInterpretation";
+import {addressChannelsFor} from "../../../../";
+import * as stringify from "json-stringify-safe";
 
 /**
  * Set build status on complete build
@@ -35,7 +40,8 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private buildPhaseContext: string) {
+    constructor(private buildPhaseContext: string,
+                private logInterpretation?: LogInterpretation) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -44,12 +50,31 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const builtStatus = commit.statuses.find(s => s.context === params.buildPhaseContext);
-        if (!!builtStatus && builtStatus.state === "pending") {
+        if (!!builtStatus) {
             await setBuiltContext(params.buildPhaseContext,
                 buildStatusToGitHubStatusState(build.status),
                 build.buildUrl,
                 id,
                 {token: params.githubToken});
+        }
+        if (build.status === "failed" && build.buildUrl) {
+            logger.info("Retrieving failed build log from " + build.buildUrl);
+            const buildLog = (await axios.get(build.buildUrl)).data;
+            const ac = addressChannelsFor(commit.repo, ctx);
+            console.log("Do we have a log interpretation? " + !!params.logInterpretation);
+            const interpretation = params.logInterpretation && params.logInterpretation.logInterpreter(buildLog);
+            console.log("What did it say? " + stringify(interpretation))
+            // The deployer might have information about the failure; report it in the channels
+            if (interpretation) {
+                await reportFailureInterpretation("build", interpretation,
+                    {log: buildLog, url: build.buildUrl}, id, ac);
+            } else {
+                await ac({
+                    content: buildLog,
+                    fileType: "text",
+                    fileName: `deploy-failure-${id.sha}.log`,
+                } as any);
+            }
         }
         return Success;
     }
