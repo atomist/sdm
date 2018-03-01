@@ -23,12 +23,12 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../spi/deploy/Deployer";
+import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
-import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.

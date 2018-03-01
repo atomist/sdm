@@ -3,9 +3,9 @@ import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHub
 import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {AddressChannels} from "../../../../../common/slack/addressChannels";
+import {Builder, PushThatTriggersBuild} from "../../../../../spi/build/Builder";
 import {InterpretedLog, LogInterpretation} from "../../../../../spi/log/InterpretedLog";
 import {createStatus} from "../../../../../util/github/ghub";
-import {Builder, PushThatTriggersBuild} from "../Builder";
 import {interpretMavenLog} from "../local/maven/MavenBuilder";
 
 const K8AutomationBuildContext = "build/atomist/k8s";

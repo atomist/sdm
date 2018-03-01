@@ -3,10 +3,10 @@ import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
+import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../../spi/deploy/Deployer";
+import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
-import { DeployableArtifact } from "../../ArtifactStore";
-import { Deployer } from "../Deployer";
-import { Deployment } from "../Deployment";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryInfo, ManifestPath } from "./CloudFoundryTarget";
 

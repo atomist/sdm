@@ -11,9 +11,9 @@ import * as fs from "fs";
 import * as p from "path";
 import * as tmp from "tmp-promise";
 import * as URL from "url";
+import { ArtifactStore, DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
+import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { createRelease, createTag, Release, Tag } from "../../../../../util/github/ghub";
-import { ArtifactStore, DeployableArtifact } from "../../ArtifactStore";
-import { AppInfo } from "../../deploy/Deployment";
 
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 

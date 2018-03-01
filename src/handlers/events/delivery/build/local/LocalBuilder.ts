@@ -6,15 +6,15 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
 import { AddressChannels } from "../../../../../common/slack/addressChannels";
+import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
+import { Builder, PushThatTriggersBuild } from "../../../../../spi/build/Builder";
+import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import {
     LogFactory, ProgressLog,
 } from "../../../../../spi/log/ProgressLog";
 import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
 import { postLinkImageWebhook } from "../../../../../util/webhook/ImageLink";
-import { ArtifactStore } from "../../ArtifactStore";
-import { AppInfo } from "../../deploy/Deployment";
-import { Builder, PushThatTriggersBuild } from "../Builder";
 
 export interface LocalBuildInProgress {
 

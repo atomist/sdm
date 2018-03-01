@@ -26,11 +26,11 @@ import {
     previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../spi/deploy/Deployer";
+import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
-import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
 
 // TODO could make more common with other deployer...
 @EventHandler("Deploy linked artifact",

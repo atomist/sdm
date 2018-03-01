@@ -1,5 +1,5 @@
 
-import { TargetInfo } from "../Deployment";
+import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 
 /**
  * Path to Cloud Foundry manifest within deployable projects

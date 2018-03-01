@@ -22,13 +22,13 @@ import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../..
 import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
 import { PlannedPhase } from "../../../../common/phases/Phases";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../spi/deploy/Deployer";
+import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { LogFactory } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
-import { ArtifactStore } from "../ArtifactStore";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
 
 export interface DeployParams<T extends TargetInfo> {
     deployPhase: PlannedPhase;

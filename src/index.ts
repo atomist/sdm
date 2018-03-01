@@ -20,6 +20,14 @@ export * from "./common/listener/support/pushTests";
 export * from "./common/listener/support/pushTestUtils";
 
 export * from "./spi/log/ProgressLog";
+export * from "./common/log/progressLogs";
+export * from "./common/log/EphemeralProgressLog";
+export * from "./common/log/slackProgressLog";
+
+export * from "./spi/deploy/Deployment";
+export * from "./spi/build/Builder";
+export * from "./spi/deploy/Deployment";
+export * from "./spi/deploy/Deployer";
 
 export { SoftwareDeliveryMachine } from "./blueprint/SoftwareDeliveryMachine";
 export { IssueHandling } from "./blueprint/IssueHandling";
