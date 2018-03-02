@@ -32,7 +32,7 @@ export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
     const sdm = new SoftwareDeliveryMachine(
         {
             builder: K8sBuildOnSuccessStatus,
-            deploy1: K8sStagingDeployOnSuccessStatus,
+            deployers: [ K8sStagingDeployOnSuccessStatus ],
         },
         new GuardedPhaseCreator(HttpServicePhases, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),

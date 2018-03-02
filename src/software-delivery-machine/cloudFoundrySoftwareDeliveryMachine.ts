@@ -36,7 +36,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         {
             builder: LocalBuildOnSuccessStatus,
             // CloudFoundryStagingDeployOnSuccessStatus;
-            deploy1: () => LocalMavenDeployer,
+            deployers: [ () => LocalMavenDeployer],
         },
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),
