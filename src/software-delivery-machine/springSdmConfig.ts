@@ -1,4 +1,3 @@
-
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
@@ -14,11 +13,9 @@ import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsCh
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
-import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
-import { addCloudFoundryManifest } from "./commands/editors/addCloudFoundryManifest";
-import { tryToUpgradeSpringBootVersion } from "./commands/editors/tryToUpgradeSpringBootVersion";
+import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
 /**
@@ -36,7 +33,6 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         }))
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
-            suggestAddingCloudFoundryManifest,
             PublishNewRepo)
         .addProjectReviewers(logReview);
     if (opts.useCheckstyle) {
@@ -55,7 +51,6 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
         .addVerifiedDeploymentListeners(presentPromotionButton)
         .addSupportingCommands(
-            () => addCloudFoundryManifest,
             DescribeStagingAndProd,
             () => disposeProjectHandler,
         )

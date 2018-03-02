@@ -27,7 +27,7 @@ export async function publishTags(tagger: Tagger,
 
     const tags: Tags = await tagger(p, ctx, undefined);
 
-    await addressChannels(`Tagging \`${id.owner}/${id.repo}\` with [${tags.tags.join()}]`);
+    await addressChannels(`Tagging \`${id.owner}/${id.repo}\` with tags ${format(tags.tags)}`);
     const edp: EditorOrReviewerParameters = {
         targets: {
             owner: id.owner,
@@ -44,4 +44,8 @@ export async function publishTags(tagger: Tagger,
             randomize: true,
             retries: 30,
         });
+}
+
+function format(tags: string[]) {
+    return tags.map(t => "`" + t + "`").join(", ");
 }

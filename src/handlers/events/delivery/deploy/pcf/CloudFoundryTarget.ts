@@ -1,11 +1,11 @@
 
-import { TargetInfo } from "../Deployment";
+import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 
 /**
  * Path to Cloud Foundry manifest within deployable projects
  * @type {string}
  */
-export const ManifestPath = "manifest.yml";
+export const CloudFoundryManifestPath = "manifest.yml";
 
 export interface CloudFoundryInfo extends TargetInfo {
 

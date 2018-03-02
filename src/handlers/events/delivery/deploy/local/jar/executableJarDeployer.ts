@@ -2,11 +2,11 @@ import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
+import { DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../../../spi/deploy/Deployer";
+import { Deployment, TargetInfo } from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
-import { QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { DeployableArtifact } from "../../../ArtifactStore";
-import { Deployer } from "../../Deployer";
-import { Deployment, TargetInfo } from "../../Deployment";
+import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 
@@ -42,7 +42,7 @@ class ExecutableJarDeployer implements Deployer {
 
     public async deploy(da: DeployableArtifact,
                         ti: TargetInfo,
-                        log: QueryableProgressLog,
+                        log: ProgressLog,
                         creds: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;

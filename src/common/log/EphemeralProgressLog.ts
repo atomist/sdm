@@ -1,12 +1,12 @@
 import { logger } from "@atomist/automation-client";
-import { LogFactory, QueryableProgressLog } from "./ProgressLog";
+import { LogFactory, ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * Implementation of LinkableProgressLog log that returns
  * an undefined link because it isn't actually persisted.
  * Used when we are not storing a local log.
  */
-class EphemeralProgressLog implements QueryableProgressLog {
+class EphemeralProgressLog implements ProgressLog {
 
     public log = "";
 

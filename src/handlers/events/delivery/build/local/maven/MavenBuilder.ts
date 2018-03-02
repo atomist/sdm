@@ -2,10 +2,10 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
+import { ArtifactStore } from "../../../../../../spi/artifact/ArtifactStore";
+import { AppInfo } from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog, QueryableProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { ArtifactStore } from "../../../ArtifactStore";
-import { AppInfo } from "../../../deploy/Deployment";
+import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
 
@@ -26,7 +26,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                team: string,
-                               log: QueryableProgressLog): Promise<LocalBuildInProgress> {
+                               log: ProgressLog): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from Maven
         const pom = await p.findFile("pom.xml");
@@ -57,16 +57,20 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
-        const relevantPart = log.split("\n")
-            .filter(l => l.startsWith("[ERROR]"))
-            .join("\n");
-        return {
-            relevantPart,
-            message: "Maven errors",
-            includeFullLog: true,
-        };
+        return interpretMavenLog(log);
     }
 
+}
+
+export function interpretMavenLog(log: string): InterpretedLog | undefined {
+    const relevantPart = log.split("\n")
+        .filter(l => l.startsWith("[ERROR]"))
+        .join("\n");
+    return {
+        relevantPart,
+        message: "Maven errors",
+        includeFullLog: true,
+    };
 }
 
 class UpdatingBuild implements LocalBuildInProgress {

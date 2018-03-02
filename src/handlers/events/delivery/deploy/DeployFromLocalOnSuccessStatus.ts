@@ -20,15 +20,15 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../spi/deploy/Deployer";
+import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
-import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.

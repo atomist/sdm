@@ -14,6 +14,7 @@ subscription OnBuildComplete {
         gitHubId
         allowRebaseMerge
         channels {
+          name
           id
         }
       }

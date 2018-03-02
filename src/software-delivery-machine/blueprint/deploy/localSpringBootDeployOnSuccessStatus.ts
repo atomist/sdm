@@ -15,7 +15,6 @@
  */
 
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
-import { TargetInfo } from "../../../handlers/events/delivery/deploy/Deployment";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import {
@@ -24,6 +23,7 @@ import {
     StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { artifactStore } from "../artifactStore";
 
 /**

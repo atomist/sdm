@@ -1,29 +1,26 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import {
-    allGuardsVoteFor, PhaseCreationInvocation, PhaseCreator,
-    PushesToMaster,
-} from "../../../common/listener/PhaseCreator";
+import { PhaseCreationInvocation, PhaseCreator, PushTest } from "../../../common/listener/PhaseCreator";
+import { allGuardsVoteFor } from "../../../common/listener/support/pushTestUtils";
 import { Phases } from "../../../common/phases/Phases";
 import { SpringBootRestServiceGuard } from "../../../handlers/events/delivery/phase/common/springBootRestServiceGuard";
-import {
-    ApplyPhasesParameters,
-    applyPhasesToCommit,
-} from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { ApplyPhasesParameters, applyPhasesToCommit } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../../../handlers/events/delivery/phases/libraryPhases";
 
 export class SpringBootDeployPhaseCreator implements PhaseCreator {
 
-    public guard = allGuardsVoteFor(SpringBootRestServiceGuard, PushesToMaster);
+    public guard: PushTest;
+
+    constructor(guard1: PushTest, ...guards: PushTest[]) {
+        // As a minimum, it must be a Spring Rest service
+        this.guard =  allGuardsVoteFor(SpringBootRestServiceGuard, guard1, ...guards);
+    }
 
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
         try {
             const f = await pi.project.findFile("pom.xml");
-            // TODO: how can we distinguish a lib from a service that should run in k8s?
-            // const manifest = await p.findFile(ManifestPath).catch(err => undefined); // this is PCF-specific
-            const contents = await
-                f.getContent();
+            const contents = await f.getContent();
             if (contents.includes("spring-boot") /* && !!manifest */) {
                 return HttpServicePhases;
             } else {

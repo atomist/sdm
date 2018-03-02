@@ -1,21 +1,20 @@
-import {HandlerResult, logger, Success} from "@atomist/automation-client";
+import { HandlerResult, logger, Success } from "@atomist/automation-client";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import axios from "axios";
-import {AddressChannels} from "../../../../../common/slack/addressChannels";
-import {InterpretedLog, LogInterpreter} from "../../../../../spi/log/InterpretedLog";
+import { AddressChannels } from "../../../../../common/slack/addressChannels";
+import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
+import { Builder, PushThatTriggersBuild } from "../../../../../spi/build/Builder";
+import { AppInfo } from "../../../../../spi/deploy/Deployment";
+import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import {
     LogFactory, ProgressLog,
-    QueryableProgressLog,
 } from "../../../../../spi/log/ProgressLog";
-import {reportFailureInterpretation} from "../../../../../util/slack/reportFailureInterpretation";
-import {postLinkImageWebhook} from "../../../../../util/webhook/ImageLink";
-import {ArtifactStore} from "../../ArtifactStore";
-import {AppInfo} from "../../deploy/Deployment";
-import {Builder, PushThatTriggersBuild} from "../Builder";
+import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
+import { postLinkImageWebhook } from "../../../../../util/webhook/ImageLink";
 
 export interface LocalBuildInProgress {
 
@@ -116,7 +115,7 @@ async function onExit(token: string,
                       team: string,
                       branch: string,
                       artifactStore: ArtifactStore,
-                      log: QueryableProgressLog,
+                      log: ProgressLog,
                       ac: AddressChannels,
                       logInterpreter: LogInterpreter): Promise<any> {
     try {
@@ -129,10 +128,11 @@ async function onExit(token: string,
             }
         } else {
             await updateAtomistLifecycle(rb, "failed", branch);
-            const interpretation = logInterpreter && logInterpreter(log.log);
+            const interpretation = logInterpreter && !!log.log && logInterpreter(log.log);
             // The deployer might have information about the failure; report it in the channels
             if (interpretation) {
-                await reportFailureInterpretation("build", interpretation, log, rb.appInfo.id, ac);
+                await reportFailureInterpretation("build", interpretation,
+                    {url: log.url, log: log.log}, rb.appInfo.id, ac);
             }
         }
     } finally {

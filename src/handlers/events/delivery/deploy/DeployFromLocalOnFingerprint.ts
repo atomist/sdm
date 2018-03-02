@@ -16,6 +16,7 @@ import {
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { BuildContext } from "../../../../common/phases/gitHubContext";
 import {
     currentPhaseIsStillPending,
@@ -25,12 +26,11 @@ import {
     previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { createEphemeralProgressLog } from "../../../../spi/log/EphemeralProgressLog";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../spi/deploy/Deployer";
+import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnDeployToProductionFingerprint } from "../../../../typings/types";
-import { ArtifactStore } from "../ArtifactStore";
 import { deploy } from "./deploy";
-import { Deployer } from "./Deployer";
-import { TargetInfo } from "./Deployment";
 
 // TODO could make more common with other deployer...
 @EventHandler("Deploy linked artifact",

@@ -1,15 +1,14 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
-import { QueryableProgressLog } from "../../../../../spi/log/ProgressLog";
-import { DeployableArtifact } from "../../ArtifactStore";
-import { Deployer } from "../Deployer";
-import { Deployment } from "../Deployment";
+import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../../spi/deploy/Deployer";
+import { Deployment } from "../../../../../spi/deploy/Deployment";
+import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
-import { CloudFoundryInfo, ManifestPath } from "./CloudFoundryTarget";
+import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
@@ -19,13 +18,13 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
 
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,
-                        log: QueryableProgressLog,
+                        log: ProgressLog,
                         creds: ProjectOperationCredentials): Promise<Deployment> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
         const sources = await GitCommandGitProject.cloned(creds, da.id);
-        const manifestFile = await sources.findFile(ManifestPath);
+        const manifestFile = await sources.findFile(CloudFoundryManifestPath);
 
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");

@@ -11,9 +11,9 @@ import * as fs from "fs";
 import * as p from "path";
 import * as tmp from "tmp-promise";
 import * as URL from "url";
+import { ArtifactStore, DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
+import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { createRelease, createTag, Release, Tag } from "../../../../../util/github/ghub";
-import { ArtifactStore, DeployableArtifact } from "../../ArtifactStore";
-import { AppInfo } from "../../deploy/Deployment";
 
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 
@@ -83,7 +83,6 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
  * @return {Promise<any>}
  */
 function saveFileAs(token: string, url: string, outputFilename: string): Promise<any> {
-    const github = api(token);
     return axios.get(url, {
         headers: {
             // TODO why doesn't auth work?
@@ -109,7 +108,7 @@ export function uploadAsset(token: string,
                             tag: string,
                             path: string,
                             contentType: string = "application/zip"): Promise<Asset> {
-    const github = api(token);
+    const github = githubApi(token);
     return github.repos.getReleaseByTag({
         owner,
         repo,
@@ -127,7 +126,7 @@ export function uploadAsset(token: string,
         .then(r => r.data);
 }
 
-export function api(token: string, apiUrl: string = "https://api.github.com/"): GitHubApi {
+export function githubApi(token: string, apiUrl: string = "https://api.github.com/"): GitHubApi {
     // separate the url
     const url = URL.parse(apiUrl);
 

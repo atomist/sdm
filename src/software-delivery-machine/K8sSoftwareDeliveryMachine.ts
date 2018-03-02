@@ -1,20 +1,18 @@
-import { logger } from "@atomist/automation-client";
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { K8sSpecTestPushTest } from "../common/listener/support/k8sSpecPushTest";
+import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { K8sStagingDeployOnSuccessStatus, K8sProductionDeployOnFingerprint, NoticeK8sStagingDeployCompletion, NoticeK8sProductionDeployCompletion } from "./blueprint/deploy/k8sDeploy";
-import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./blueprint/phase/jvmPhaseManagement";
 import { NodePhaseCreator } from "./blueprint/phase/nodePhaseManagement";
+import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
+import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
 
-const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
-
-// CloudFoundryStagingDeployOnImageLinked
-
-export const promotedEnvironment: PromotedEnvironment = {
+const promotedEnvironment: PromotedEnvironment = {
 
     name: "production",
 
@@ -31,16 +29,15 @@ export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             builder: K8sBuildOnSuccessStatus,
             deploy1: K8sStagingDeployOnSuccessStatus,
         },
-        new SpringBootDeployPhaseCreator(),
+        new SpringBootDeployPhaseCreator(PushesToDefaultBranch, K8sSpecTestPushTest, PushToPublicRepo),
         new NodePhaseCreator(),
         new JavaLibraryPhaseCreator());
     sdm.addPromotedEnvironment(promotedEnvironment);
+    sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec);
+    sdm.addSupportingCommands(
+        () => addK8sSpec,
+    );
     sdm.addSupportingEvents(() => NoticeK8sStagingDeployCompletion, () => NoticeK8sProductionDeployCompletion);
-    sdm.addSupersededListeners(
-        inv => {
-            logger.info("Will undeploy application %j", inv.id);
-            return LocalMavenDeployer.deployer.undeploy(inv.id);
-        });
     configureSpringSdm(sdm, opts);
     return sdm;
 }

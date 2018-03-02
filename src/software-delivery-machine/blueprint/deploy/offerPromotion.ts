@@ -25,7 +25,7 @@ export async function presentPromotionButton(inv: VerifiedDeploymentInvocation) 
     const messageId = `httpService:promote:prod/${inv.id.repo}/${inv.id.owner}/${inv.id.sha}`;
     const currentlyRunning = await runningAttachment(inv.context,
         (inv.credentials as TokenCredentials).token,
-        inv.id,
+        inv.id as GitHubRepoRef,
         {domain: "ri-production", color: ProductionMauve}, inv.id.sha);
 
     const attachment: slack.Attachment = {

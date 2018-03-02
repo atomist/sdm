@@ -1,6 +1,6 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AppInfo } from "./deploy/Deployment";
+import { AppInfo } from "../deploy/Deployment";
 
 /**
  * Abstraction for saving and retrieving artifact files from local disk

@@ -21,9 +21,9 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { Builder } from "../../../../spi/build/Builder";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
-import { Builder } from "./Builder";
 
 export interface ConditionalBuilder {
     builder: Builder;
