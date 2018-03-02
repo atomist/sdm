@@ -8,8 +8,8 @@ import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
-import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
+import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";

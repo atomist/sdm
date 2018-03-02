@@ -8,16 +8,22 @@ import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServic
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
-import { K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion } from "./blueprint/deploy/k8sDeploy";
+import {
+    K8sProductionDeployOnSuccessStatus, K8sStagingDeployOnSuccessStatus,
+    NoticeK8sDeployCompletion,
+} from "./blueprint/deploy/k8sDeploy";
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
 
-export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
+export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {
             builder: K8sBuildOnSuccessStatus,
-            deployers: [ K8sStagingDeployOnSuccessStatus ],
+            deployers: [
+                K8sStagingDeployOnSuccessStatus,
+                K8sProductionDeployOnSuccessStatus,
+            ],
         },
         new GuardedPhaseCreator(HttpServicePhases, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),

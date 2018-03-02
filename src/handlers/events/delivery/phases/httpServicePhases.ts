@@ -1,6 +1,6 @@
 import {
-    ArtifactContext, BaseContext, BuildContext, GitHubStatusContext, ScanContext, splitContext,
-    StagingEnvironment, ProductionEnvironment
+    ArtifactContext, BaseContext, BuildContext, GitHubStatusContext, ProductionEnvironment, ScanContext,
+    splitContext, StagingEnvironment,
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
@@ -25,7 +25,7 @@ ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext
 ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in Test"};
 ContextToPlannedPhase[ProductionDeploymentContext] = { context: ProductionDeploymentContext, name: "deploy to production" };
 ContextToPlannedPhase[ProductionEndpointContext] =  { context: ProductionEndpointContext, name: "find production endpoint" };
-//export const ProductionVerifiedPhase =  { context: ProductionVerifiedContext, name: "verify production endpoint" };
+// export const ProductionVerifiedPhase =  { context: ProductionVerifiedContext, name: "verify production endpoint" };
 
 export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
     return ContextToPlannedPhase[ghsc] ||

@@ -1,6 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../../../spi/deploy/Deployer";
@@ -9,7 +10,6 @@ import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 
 /**
  * Managed deployments

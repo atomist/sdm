@@ -20,14 +20,16 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { PlannedPhase } from "../../../../../common/phases/Phases";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { K8AutomationDeployContext } from "./RequestDeployOnSuccessStatus";
+import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSuccessStatus";
+
+// TODO parameterize once we can have multiple handlers
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: K8AutomationDeployContext}))
+        {context: k8AutomationDeployContext("testing")}))
 export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -51,7 +53,7 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
             return Success;
         }
 
-        if (status.context !== K8AutomationDeployContext) {
+        if (!status.context.startsWith(K8TargetBase)) {
             logger.warn(`Unexpected event: ${status.context} is ${status.state}`);
             return Success;
         }

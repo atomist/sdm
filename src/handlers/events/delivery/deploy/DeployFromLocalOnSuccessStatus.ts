@@ -23,7 +23,7 @@ import {
     Secret,
     Secrets,
     success,
-    Success
+    Success,
 } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
@@ -36,7 +36,7 @@ import {
     GitHubStatusAndFriends,
     Phases,
     PlannedPhase,
-    previousPhaseSucceeded
+    previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";

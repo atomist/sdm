@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
+import { DeployFromLocalOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
@@ -22,13 +24,11 @@ import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delive
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
-    StagingDeploymentContext,
-    StagingEndpointContext,
-    ProductionEndpointContext, ProductionDeploymentContext
+    ProductionDeploymentContext,
+    ProductionEndpointContext,
+    StagingDeploymentContext, StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";
-import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
-import { DeployFromLocalOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 

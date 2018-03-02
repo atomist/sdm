@@ -3,7 +3,7 @@ import * as assert from "power-assert";
 import {BaseContext, BuildContext, contextIsAfter, ScanContext, splitContext} from "../../../../src/common/phases/gitHubContext";
 import {
     ProductionDeploymentContext, ProductionEndpointContext, StagingDeploymentContext,
-    StagingEndpointContext
+    StagingEndpointContext,
 } from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
 
 describe("Phase handling", () => {

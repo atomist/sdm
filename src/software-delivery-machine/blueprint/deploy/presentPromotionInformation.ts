@@ -16,8 +16,8 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { VerifiedDeploymentInvocation } from "../../../common/listener/VerifiedDeploymentListener";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
-import { tipOfDefaultBranch } from "../../../util/github/ghub";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import { tipOfDefaultBranch } from "../../../util/github/ghub";
 
 export async function presentPromotionInformation(inv: VerifiedDeploymentInvocation) {
     const shaLink = slack.url(inv.id.url + "/tree/" + inv.id.sha, inv.id.repo);

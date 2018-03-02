@@ -31,12 +31,14 @@ export function k8AutomationDeployContext(target: K8Target): string {
     return `${K8TargetBase}${target}`;
 }
 
+// TODO remove duplication
+
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccessStatus.Subscription> {
+export class RequestK8sDeployOnSuccessStatus1 implements HandleEvent<OnAnySuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

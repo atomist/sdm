@@ -9,11 +9,11 @@ import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServic
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
+import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalSpringBootMavenDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
-import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 
 const LocalExecutableJarDeployer = LocalSpringBootMavenDeployOnSuccessStatus;
 

@@ -17,6 +17,7 @@
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
+import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenDeployer";
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
@@ -25,7 +26,6 @@ import {
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { artifactStore } from "../artifactStore";
-import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenDeployer";
 
 /**
  * Deploy to the automation client node
