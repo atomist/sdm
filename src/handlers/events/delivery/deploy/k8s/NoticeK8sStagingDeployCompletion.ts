@@ -28,7 +28,7 @@ import {NoticeK8sDeployCompletionOnStatus} from "./NoticeK8sDeployCompletion";
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: K8AutomationDeployContext + "production"}))
-export class NoticeK8sProductionDeployCompletionOnStatus extends NoticeK8sDeployCompletionOnStatus {
-    environment = "production";
+        {context: K8AutomationDeployContext + "testing"}))
+export class NoticeK8sStagingDeployCompletionOnStatus extends NoticeK8sDeployCompletionOnStatus {
+    environment = "testing";
 }

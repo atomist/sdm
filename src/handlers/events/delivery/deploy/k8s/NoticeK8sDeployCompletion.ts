@@ -25,12 +25,12 @@ import {OnAnyStatus} from "../../../../../typings/types";
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Request k8s deploy of linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyStatus.graphql"))
-export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAnyStatus.Subscription> {
+export abstract class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAnyStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
+
+    protected abstract environment: string;
 
     /**
      *
@@ -38,8 +38,7 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAnyStatu
      * @param {PlannedPhase} endpointPhase
      */
     constructor(private deployPhase: PlannedPhase,
-                private endpointPhase: PlannedPhase,
-                private environment: string) {
+                private endpointPhase: PlannedPhase) {
     }
 
     public async handle(event: EventFired<OnAnyStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
