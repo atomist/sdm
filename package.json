@@ -1,6 +1,6 @@
 {
   "name": "@atomist/github-sdm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "GitHub Software Delivery Machine",
   "author": "Atomist",
   "license": "Apache-2.0",
