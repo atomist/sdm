@@ -104,5 +104,5 @@ export async function undeployFromK8s(creds: ProjectOperationCredentials,
         context: undeployContext,
         state: "pending",
         description: `Requested undeploy from ${env} by k8-automation`,
-    });
+    }).catch(err => Promise.resolve(new Error(`Could not undeploy from ${env}: ${err.message}`)));
 }

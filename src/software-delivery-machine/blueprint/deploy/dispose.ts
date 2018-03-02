@@ -7,7 +7,7 @@ import {
     MappedParameters,
     Parameter,
     Secret,
-    Secrets,
+    Secrets, Success,
     success,
 } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
@@ -20,6 +20,7 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { deleteRepository } from "../../../util/github/ghub";
 import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
+import { AddressChannels } from "../../../";
 
 
 @Parameters()
@@ -57,9 +58,12 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
     }
     const id = new GitHubRepoRef(params.owner, params.repo);
     const creds = {token: params.githubToken};
-    return disposeOfProjectK8s(creds, id)
+    return disposeOfProjectK8s(creds, id, (msg) => ctx.messageClient.respond(msg))
         .then(() => ctx.messageClient.respond("Repository deleted."))
-        .then(success);
+        .then(success, err => {
+            ctx.messageClient.respond("Problem disposing: " + err.message);
+            return Success;
+        });
 }
 
 /*
@@ -67,8 +71,9 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
  * and then we can target the undeploy to the right places.
  * For now, I'm assuming it's deployed in K8S which is the default.
  */
-async function disposeOfProjectK8s(creds: ProjectOperationCredentials, id: RemoteRepoRef) {
-    await Promise.all(["testing", "production"].map(env => undeployFromK8s(creds, id, env)));
+async function disposeOfProjectK8s(creds: ProjectOperationCredentials, id: RemoteRepoRef, ac: AddressChannels) {
+    await Promise.all(["testing", "production"].map(env => undeployFromK8s(creds, id, env)
+        .then(() => ac("Undeployed from k8s in " + env))));
     await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
 }
 
