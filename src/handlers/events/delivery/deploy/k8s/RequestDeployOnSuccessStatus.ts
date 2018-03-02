@@ -23,7 +23,7 @@ import {
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 
-export const K8AutomationDeployContext = "deploy/atomist/k8s/testing";
+export const K8AutomationDeployContext = "deploy/atomist/k8s/";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -73,7 +73,7 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         await createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: K8AutomationDeployContext,
+            context: K8AutomationDeployContext + "testing",
             state: "pending",
             description: "Requested deploy by k8-automation",
         });

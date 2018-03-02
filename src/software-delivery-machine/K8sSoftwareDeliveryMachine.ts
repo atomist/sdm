@@ -9,9 +9,8 @@ import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServic
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
-import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
-import { K8sStagingDeployOnSuccessStatus, NoticeK8sDeployCompletion } from "./blueprint/deploy/k8sDeploy";
+import { K8sStagingDeployOnSuccessStatus, K8sProductionDeployOnFingerprint, NoticeK8sStagingDeployCompletion, NoticeK8sProductionDeployCompletion } from "./blueprint/deploy/k8sDeploy";
 import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
@@ -25,7 +24,7 @@ const promotedEnvironment: PromotedEnvironment = {
 
     promote: DeployToProd,
 
-    deploy: CloudFoundryProductionDeployOnFingerprint,
+    deploy: K8sProductionDeployOnFingerprint,
 };
 
 export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
@@ -42,7 +41,7 @@ export function K8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
     sdm.addSupportingCommands(
         () => addK8sSpec,
     );
-    sdm.addSupportingEvents(() => NoticeK8sDeployCompletion);
+    sdm.addSupportingEvents(() => NoticeK8sStagingDeployCompletion, () => NoticeK8sProductionDeployCompletion);
     configureSpringSdm(sdm, opts);
     return sdm;
 }
