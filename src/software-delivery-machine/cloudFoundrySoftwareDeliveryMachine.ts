@@ -12,13 +12,16 @@ import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
-import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import {
+    LocalExecutableJarDeployOnSuccessStatus,
+    LocalSpringBootMavenDeployOnSuccessStatus
+} from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
 
-const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
+const LocalExecutableJarDeployer = LocalSpringBootMavenDeployOnSuccessStatus;
 
 const promotedEnvironment: PromotedEnvironment = {
 
@@ -36,7 +39,9 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         {
             builder: LocalBuildOnSuccessStatus,
             // CloudFoundryStagingDeployOnSuccessStatus;
-            deployers: [ () => LocalMavenDeployer],
+            deployers: [
+                () => LocalExecutableJarDeployer
+            ],
         },
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),
@@ -49,7 +54,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         .addSupersededListeners(
             inv => {
                 logger.info("Will undeploy application %j", inv.id);
-                return LocalMavenDeployer.deployer.undeploy(inv.id);
+                return LocalExecutableJarDeployer.deployer.undeploy(inv.id);
             });
     configureSpringSdm(sdm, opts);
     return sdm;

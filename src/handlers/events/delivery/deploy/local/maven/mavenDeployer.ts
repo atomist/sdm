@@ -9,6 +9,7 @@ import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 
 /**
  * Managed deployments
@@ -47,13 +48,14 @@ class MavenDeployer implements Deployer {
         const baseUrl = this.opts.baseUrl;
         const port = managedDeployments.findPort(da.id);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
+        // Don't use the deployable artifact. Clone it
+        const cloned = await GitCommandGitProject.cloned(creds, da.id);
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",
-                `-Dserver.port=${port}`,
-            ],
+            ].concat(this.opts.commandLineArgumentsFor({ port, atomistTeam})),
             {
-                cwd: da.cwd + "/..",
+                cwd: cloned.baseDir,
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));

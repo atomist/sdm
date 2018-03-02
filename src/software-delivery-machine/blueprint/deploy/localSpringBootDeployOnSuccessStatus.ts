@@ -25,11 +25,12 @@ import {
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { artifactStore } from "../artifactStore";
+import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenDeployer";
 
 /**
  * Deploy to the automation client node
  */
-export const LocalSpringBootDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
+export const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
     new DeployFromLocalOnSuccessStatus<TargetInfo>(
         HttpServicePhases,
         ContextToPlannedPhase[StagingDeploymentContext],
@@ -38,7 +39,7 @@ export const LocalSpringBootDeployOnSuccessStatus: DeployFromLocalOnSuccessStatu
         executableJarDeployer({
             baseUrl: "http://localhost",
             lowerPort: 8080,
-            commandLineArgumentsFor: springBootArgs,
+            commandLineArgumentsFor: springBootExecutableJarArgs,
         }),
         () => ({
             name: "Local",
@@ -46,9 +47,32 @@ export const LocalSpringBootDeployOnSuccessStatus: DeployFromLocalOnSuccessStatu
         }),
     );
 
-function springBootArgs(si: StartupInfo): string[] {
+function springBootExecutableJarArgs(si: StartupInfo): string[] {
     return [
         `--server.port=${si.port}`,
         `--ATOMIST_TEAM=${si.atomistTeam}`,
+    ];
+}
+
+export const LocalSpringBootMavenDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
+    new DeployFromLocalOnSuccessStatus<TargetInfo>(
+        HttpServicePhases,
+        ContextToPlannedPhase[StagingDeploymentContext],
+        ContextToPlannedPhase[StagingEndpointContext],
+        artifactStore,
+        mavenDeployer({
+            baseUrl: "http://localhost",
+            lowerPort: 9090,
+            commandLineArgumentsFor: springBootMavenArgs,
+        }),
+        () => ({
+            name: "Local",
+            description: "Deployment alongside local automation client",
+        }),
+    );
+
+function springBootMavenArgs(si: StartupInfo): string[] {
+    return [
+        `-Dserver.port=${si.port}`,
     ];
 }
