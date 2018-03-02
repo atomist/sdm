@@ -1,12 +1,17 @@
 import {
     ArtifactContext, BaseContext, BuildContext, GitHubStatusContext, ScanContext, splitContext,
-    StagingEnvironment,
+    StagingEnvironment, ProductionEnvironment
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
 export const StagingDeploymentContext = BaseContext + StagingEnvironment + "3-deploy";
 export const StagingEndpointContext = BaseContext + StagingEnvironment + "4-endpoint";
 export const StagingVerifiedContext = BaseContext + StagingEnvironment + "5-verifyEndpoint";
+export const ProductionDeploymentContext = BaseContext + ProductionEnvironment + "3-PCF-prod-deploy";
+export const ProductionEndpointContext = BaseContext + ProductionEnvironment + "4-endpoint";
+export const ProductionVerifiedContext = BaseContext + ProductionEnvironment + "5-verifyEndpoint";
+
+export const ProductionMauve = "#cf5097";
 
 export const ContextToPlannedPhase: { [key: string]: PlannedPhase } = {};
 ContextToPlannedPhase[ScanContext] = {context: ScanContext, name: "scan"};
@@ -18,6 +23,9 @@ ContextToPlannedPhase[StagingDeploymentContext] = {
 };
 ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in Test"};
 ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in Test"};
+ContextToPlannedPhase[ProductionDeploymentContext] = { context: ProductionDeploymentContext, name: "deploy to production" };
+ContextToPlannedPhase[ProductionEndpointContext] =  { context: ProductionEndpointContext, name: "find production endpoint" };
+//export const ProductionVerifiedPhase =  { context: ProductionVerifiedContext, name: "verify production endpoint" };
 
 export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
     return ContextToPlannedPhase[ghsc] ||
@@ -42,4 +50,6 @@ export const HttpServicePhases = new Phases([
     ArtifactContext,
     StagingDeploymentContext,
     StagingEndpointContext,
-    StagingVerifiedContext]);
+    StagingVerifiedContext,
+    ProductionDeploymentContext,
+    ProductionEndpointContext]);

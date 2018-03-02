@@ -13,6 +13,7 @@ import { LocalSpringBootMavenDeployOnSuccessStatus } from "./blueprint/deploy/lo
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
+import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 
 const LocalExecutableJarDeployer = LocalSpringBootMavenDeployOnSuccessStatus;
 
@@ -22,7 +23,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             builder: LocalBuildOnSuccessStatus,
             // CloudFoundryStagingDeployOnSuccessStatus;
             deployers: [
-                () => LocalExecutableJarDeployer
+                () => LocalExecutableJarDeployer,
+                CloudFoundryProductionDeployOnSuccessStatus,
             ],
         },
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),

@@ -1,6 +1,6 @@
 import {HandleCommand} from "@atomist/automation-client";
 import {reportRunningCommand, ReportRunningParameters} from "../../../handlers/commands/reportRunning";
-import { ProductionMauve } from "../../../handlers/events/delivery/phases/productionDeployPhases";
+import { ProductionMauve } from "../../../handlers/events/delivery/phases/httpServicePhases";
 
 export const DescribeStagingAndProd: () => HandleCommand<ReportRunningParameters> = () => reportRunningCommand(
     [

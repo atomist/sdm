@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { DeployFromLocalOnFingerprint } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
-import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
@@ -26,19 +24,16 @@ import {
     HttpServicePhases,
     StagingDeploymentContext,
     StagingEndpointContext,
+    ProductionEndpointContext, ProductionDeploymentContext
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
-import {
-    ProductionDeploymentPhase,
-    ProductionDeployPhases,
-    ProductionEndpointPhase,
-} from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import { artifactStore } from "../artifactStore";
+import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
+import { DeployFromLocalOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
 /**
  * Deploy everything to the same Cloud Foundry space
- * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
 export const CloudFoundryStagingDeployOnSuccessStatus = () =>
     new DeployFromLocalOnSuccessStatus(
@@ -53,11 +48,11 @@ export const CloudFoundryStagingDeployOnSuccessStatus = () =>
         }),
     );
 
-export const CloudFoundryProductionDeployOnFingerprint =
-    () => new DeployFromLocalOnFingerprint(
-        ProductionDeployPhases,
-        ProductionDeploymentPhase,
-        ProductionEndpointPhase,
+export const CloudFoundryProductionDeployOnSuccessStatus =
+    () => new DeployFromLocalOnSuccessStatus1(
+        HttpServicePhases,
+        ContextToPlannedPhase[ProductionDeploymentContext],
+        ContextToPlannedPhase[ProductionEndpointContext],
         artifactStore,
         Deployer,
         () => ({
