@@ -1,5 +1,13 @@
 import {
-    HandleCommand, HandlerContext, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
+    HandleCommand,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
     success,
 } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
@@ -11,6 +19,8 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { deleteRepository } from "../../../util/github/ghub";
+import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
+
 
 @Parameters()
 export class DisposeParameters {
@@ -39,6 +49,7 @@ export const disposeProjectHandler: HandleCommand<DisposeParameters> =
         "Delete deployments and repo",
         "dispose of this project");
 
+
 function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<HandlerResult> {
     if (params.areYouSure.toLowerCase() !== "yes") {
         return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
@@ -46,14 +57,23 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
     }
     const id = new GitHubRepoRef(params.owner, params.repo);
     const creds = {token: params.githubToken};
-    return disposeOfProject(creds, id)
+    return disposeOfProjectK8s(creds, id)
         .then(() => ctx.messageClient.respond("Repository deleted."))
         .then(success);
 }
 
-async function disposeOfProject(creds: ProjectOperationCredentials, id: RemoteRepoRef) {
-    const appNames = await determineAppName(creds, id);
-    await Promise.all(appNames.map(async appName => {
+/*
+ * look. After we have a Deploy node in the model, I'll have a way to ask, "Where all is this project deployed?"
+ * and then we can target the undeploy to the right places.
+ * For now, I'm assuming it's deployed in K8S which is the default.
+ */
+async function disposeOfProjectK8s(creds: ProjectOperationCredentials, id: RemoteRepoRef) {
+    await Promise.all(["testing", "production"].map(env => undeployFromK8s(creds, id, env)));
+    await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
+}
+
+async function disposeOfProjectPCF(creds: ProjectOperationCredentials, id: RemoteRepoRef) {
+    await Promise.all(["testing", "production"].map(async appName => {
         const cfi = new EnvironmentCloudFoundryTarget();
         await deletePCF(cfi, appName); // staging
         cfi.space = "ri-production";
