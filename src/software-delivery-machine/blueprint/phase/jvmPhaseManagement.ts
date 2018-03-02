@@ -12,9 +12,9 @@ export class SpringBootDeployPhaseCreator implements PhaseCreator {
 
     public guard: PushTest;
 
-    constructor(...guards: PushTest[]) {
+    constructor(guard1: PushTest, ...guards: PushTest[]) {
         // As a minimum, it must be a Spring Rest service
-        this.guard =  allGuardsVoteFor(SpringBootRestServiceGuard, ...guards);
+        this.guard =  allGuardsVoteFor(SpringBootRestServiceGuard, guard1, ...guards);
     }
 
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
