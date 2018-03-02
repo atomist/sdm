@@ -1,15 +1,19 @@
 import { logger } from "@atomist/automation-client";
 import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { CloudFoundryManifestPushTest } from "../common/listener/support/cloudFoundryManifestPushTest";
-import { PushesToDefaultBranch, PushesToMaster, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
+import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
+import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
+import { IsNode } from "../common/listener/support/nodeGuards";
+import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
+import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
+import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
 import { DeployToProd } from "./blueprint/deploy/deployToProd";
 import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
-import { JavaLibraryPhaseCreator, SpringBootDeployPhaseCreator } from "./blueprint/phase/jvmPhaseManagement";
-import { NodePhaseCreator } from "./blueprint/phase/nodePhaseManagement";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
@@ -34,9 +38,9 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             // CloudFoundryStagingDeployOnSuccessStatus;
             deploy1: () => LocalMavenDeployer,
         },
-        new SpringBootDeployPhaseCreator(PushesToDefaultBranch, CloudFoundryManifestPushTest, PushToPublicRepo),
-        new NodePhaseCreator(),
-        new JavaLibraryPhaseCreator());
+        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(npmPhases, IsNode),
+        new GuardedPhaseCreator(LibraryPhases, MaterialChangeToJavaRepo));
     sdm.addPromotedEnvironment(promotedEnvironment);
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest);
     sdm.addSupportingCommands(

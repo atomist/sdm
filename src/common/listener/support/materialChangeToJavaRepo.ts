@@ -1,6 +1,6 @@
 import { logger } from "@atomist/automation-client";
-import { PushTest } from "../../../../../common/listener/PhaseCreator";
-import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
+import { filesChangedSince } from "../../../util/git/filesChangedSince";
+import { PushTest } from "../PhaseCreator";
 /**
  * Veto if change to deployment unit doesn't seem important enough to
  * build and deploy
@@ -8,7 +8,7 @@ import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
  * @return {Promise<void>}
  * @constructor
  */
-export const SpringBootRestServiceGuard: PushTest = async pci => {
+export const MaterialChangeToJavaRepo: PushTest = async pci => {
     const changedFiles = await filesChangedSince(pci.project, pci.push.before.sha);
     console.log(`Changed files are [${changedFiles.join(",")}]`);
     if (changedFiles.some(f => f.endsWith(".java")) ||
