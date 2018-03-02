@@ -1,5 +1,4 @@
 import { logger } from "@atomist/automation-client";
-import { PromotedEnvironment } from "../blueprint/ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
@@ -10,38 +9,27 @@ import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServic
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
-import { CloudFoundryProductionDeployOnFingerprint } from "./blueprint/deploy/cloudFoundryDeploy";
-import { DeployToProd } from "./blueprint/deploy/deployToProd";
-import { LocalSpringBootDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
-import { offerPromotionCommand } from "./blueprint/deploy/offerPromotion";
+import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
+import { LocalSpringBootMavenDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
 
-const LocalMavenDeployer = LocalSpringBootDeployOnSuccessStatus;
-
-const promotedEnvironment: PromotedEnvironment = {
-
-    name: "production",
-
-    offerPromotionCommand,
-
-    promote: DeployToProd,
-
-    deploy: CloudFoundryProductionDeployOnFingerprint,
-};
+const LocalExecutableJarDeployer = LocalSpringBootMavenDeployOnSuccessStatus;
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {
             builder: LocalBuildOnSuccessStatus,
             // CloudFoundryStagingDeployOnSuccessStatus;
-            deploy1: () => LocalMavenDeployer,
+            deployers: [
+                () => LocalExecutableJarDeployer,
+                CloudFoundryProductionDeployOnSuccessStatus,
+            ],
         },
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),
         new GuardedPhaseCreator(LibraryPhases, MaterialChangeToJavaRepo));
-    sdm.addPromotedEnvironment(promotedEnvironment);
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest);
     sdm.addSupportingCommands(
         () => addCloudFoundryManifest,
@@ -49,7 +37,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         .addSupersededListeners(
             inv => {
                 logger.info("Will undeploy application %j", inv.id);
-                return LocalMavenDeployer.deployer.undeploy(inv.id);
+                return LocalExecutableJarDeployer.deployer.undeploy(inv.id);
             });
     configureSpringSdm(sdm, opts);
     return sdm;

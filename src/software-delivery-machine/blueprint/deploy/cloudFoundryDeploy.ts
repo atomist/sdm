@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { DeployFromLocalOnFingerprint } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnFingerprint";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
+import { DeployFromLocalOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
@@ -24,21 +24,16 @@ import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delive
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
-    StagingDeploymentContext,
-    StagingEndpointContext,
+    ProductionDeploymentContext,
+    ProductionEndpointContext,
+    StagingDeploymentContext, StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
-import {
-    ProductionDeploymentPhase,
-    ProductionDeployPhases,
-    ProductionEndpointPhase,
-} from "../../../handlers/events/delivery/phases/productionDeployPhases";
 import { artifactStore } from "../artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
 /**
  * Deploy everything to the same Cloud Foundry space
- * @type {DeployFromLocalOnImageLinked<CloudFoundryInfo>}
  */
 export const CloudFoundryStagingDeployOnSuccessStatus = () =>
     new DeployFromLocalOnSuccessStatus(
@@ -53,11 +48,11 @@ export const CloudFoundryStagingDeployOnSuccessStatus = () =>
         }),
     );
 
-export const CloudFoundryProductionDeployOnFingerprint =
-    () => new DeployFromLocalOnFingerprint(
-        ProductionDeployPhases,
-        ProductionDeploymentPhase,
-        ProductionEndpointPhase,
+export const CloudFoundryProductionDeployOnSuccessStatus =
+    () => new DeployFromLocalOnSuccessStatus1(
+        HttpServicePhases,
+        ContextToPlannedPhase[ProductionDeploymentContext],
+        ContextToPlannedPhase[ProductionEndpointContext],
         artifactStore,
         Deployer,
         () => ({

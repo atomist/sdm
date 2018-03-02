@@ -46,12 +46,15 @@ import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { deploy } from "./deploy";
 
+// TODO This class is copied from DeployFromLocalOnSuccessStatus to ensure
+// the subscription works with a different name
+
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Deploy linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
+export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
