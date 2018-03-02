@@ -5,18 +5,6 @@ import { OnDeployToProductionFingerprint } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
- * An environment to promote into. Normally there is only one, for production
- */
-export interface PromotedEnvironment {
-
-    name: string;
-    deploy: Maker<HandleEvent<OnDeployToProductionFingerprint.Subscription>>;
-    promote: Maker<HandleCommand>;
-    offerPromotionCommand: Maker<HandleCommand<OfferPromotionParameters>>;
-
-}
-
-/**
  * A reference blueprint for Atomist delivery.
  * Represents a possible delivery process spanning
  * phases of fingerprinting, reacting to fingerprint diffs,
@@ -24,8 +12,6 @@ export interface PromotedEnvironment {
  * promotion to a production environment
  */
 export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
-
-    promotedEnvironment?: PromotedEnvironment;
 
     /**
      * Miscellaneous supporting commands needed by the event handlers etc.

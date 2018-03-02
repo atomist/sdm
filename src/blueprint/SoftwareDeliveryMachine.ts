@@ -23,7 +23,7 @@ import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
 import { StatusSuccessHandler } from "../handlers/events/StatusSuccessHandler";
 import { OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
-import { PromotedEnvironment, ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
+import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -59,8 +59,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
 
     public functionalUnits: FunctionalUnit[] = [];
-
-    public promotedEnvironment: PromotedEnvironment;
 
     public newIssueListeners: NewIssueListener[] = [];
 
@@ -188,7 +186,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.onSuperseded,
                 this.builder,
                 this.onBuildComplete,
-                !!this.promotedEnvironment ? this.promotedEnvironment.deploy : undefined,
                 this.notifyOnDeploy,
                 this.verifyEndpoint,
                 this.onVerifiedStatus,
@@ -206,10 +203,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(mayHaveCommands
                 .filter(mhc => !!mhc.correspondingCommand)
                 .map(m => () => m.correspondingCommand()))
-            .concat([
-                !!this.promotedEnvironment ? this.promotedEnvironment.promote : undefined,
-                !!this.promotedEnvironment ? this.promotedEnvironment.offerPromotionCommand : undefined,
-            ])
             .concat([this.showBuildLog])
             .filter(m => !!m);
     }
@@ -303,11 +296,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this {
         this.endpointVerificationListeners = this.endpointVerificationListeners.concat(l);
-        return this;
-    }
-
-    public addPromotedEnvironment(pe: PromotedEnvironment): this {
-        this.promotedEnvironment = pe;
         return this;
     }
 
