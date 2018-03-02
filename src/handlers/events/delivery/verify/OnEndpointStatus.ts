@@ -28,6 +28,7 @@ import {
     StagingEndpointContext,
     StagingVerifiedContext,
 } from "../phases/httpServicePhases";
+import { forApproval } from "./approvalGate";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 
@@ -90,7 +91,8 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
         };
 
         return Promise.all(params.verifiers.map(verifier => verifier(i)))
-            .then(() => setVerificationStatus(params.githubToken, id, "success", status.targetUrl)
+            .then(() => setVerificationStatus(params.githubToken, id, "success",
+                amILastContext(statusAndFriends) ? status.targetUrl : forApproval(status.targetUrl))
                 .then(success))
             .catch(err => {
                 // todo: report error in Slack? ... or load it to a log that links
@@ -100,6 +102,10 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
                     .then(success);
             });
     }
+}
+
+function amILastContext(statusAndFriends: GitHubStatusAndFriends): boolean {
+    return false;
 }
 
 function setVerificationStatus(token: string, id: GitHubRepoRef, state: StatusState, targetUrl: string): Promise<any> {

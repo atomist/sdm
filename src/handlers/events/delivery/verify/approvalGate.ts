@@ -11,6 +11,6 @@ export const ApprovalGateParam = "atomist:approve=true";
  */
 export function forApproval(url: string): string {
     return url +
-        url.includes("?") ? "&" : "?" +
+        (url.includes("?") ? "&" : "?") +
         ApprovalGateParam;
 }
