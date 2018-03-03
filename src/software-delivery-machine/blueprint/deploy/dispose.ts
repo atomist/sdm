@@ -21,6 +21,7 @@ import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handle
 import { deleteRepository } from "../../../util/github/ghub";
 import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
 import { AddressChannels } from "../../../";
+import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
 
 
 @Parameters()
@@ -72,18 +73,22 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
  * For now, I'm assuming it's deployed in K8S which is the default.
  */
 async function disposeOfProjectK8s(creds: ProjectOperationCredentials, id: RemoteRepoRef, ac: AddressChannels) {
-    await Promise.all(["testing", "production"].map(env => undeployFromK8s(creds, id, env)
+    await Promise.all([K8sTestingDomain, K8sProductionDomain].map(env => undeployFromK8s(creds, id, env)
         .then(() => ac("Undeployed from k8s in " + env))));
     await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
 }
 
 async function disposeOfProjectPCF(creds: ProjectOperationCredentials, id: RemoteRepoRef) {
-    await Promise.all(["testing", "production"].map(async appName => {
-        const cfi = new EnvironmentCloudFoundryTarget();
-        await deletePCF(cfi, appName); // staging
-        cfi.space = "ri-production";
-        await deletePCF(cfi, appName);
-    }));
+    await
+        determineAppName(creds, id)
+            .then(appNames =>
+                Promise.all(appNames
+                    .map(async appName => {
+                        const cfi = new EnvironmentCloudFoundryTarget();
+                        await deletePCF(cfi, appName); // staging
+                        cfi.space = K8sProductionDomain;
+                        await deletePCF(cfi, appName);
+                    })));
     await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
 }
 

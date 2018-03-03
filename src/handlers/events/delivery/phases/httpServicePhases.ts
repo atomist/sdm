@@ -1,43 +1,98 @@
 import {
-    ArtifactContext, BaseContext, BuildContext, GitHubStatusContext, ProductionEnvironment, ScanContext,
+    BaseContext, GitHubStatusContext, IndependentOfEnvironment, PhaseEnvironment, ProductionEnvironment,
     splitContext, StagingEnvironment,
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
-export const StagingDeploymentContext = BaseContext + StagingEnvironment + "3-deploy";
-export const StagingEndpointContext = BaseContext + StagingEnvironment + "4-endpoint";
-export const StagingVerifiedContext = BaseContext + StagingEnvironment + "5-verifyEndpoint";
-export const ProductionDeploymentContext = BaseContext + ProductionEnvironment + "3-PCF-prod-deploy";
-export const ProductionEndpointContext = BaseContext + ProductionEnvironment + "4-endpoint";
-export const ProductionVerifiedContext = BaseContext + ProductionEnvironment + "5-verifyEndpoint";
+
+export const ScanPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "1-scan",
+    completedDescription: "Code scan passed",
+});
+export const BuildPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "2-build",
+    workingDescription: "Building...",
+    completedDescription: "Build successful",
+});
+export const ArtifactPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "2.5-artifact",
+    displayName: "find artifact",
+    completedDescription: "Located artifact"
+});
+export const StagingDeploymentPhase = new PlannedPhase({
+    environment: StagingEnvironment,
+    orderedName: "3-deploy", displayName: "deploy to Test",
+    completedDescription: "Deployed to Test",
+});
+export const StagingEndpointPhase = new PlannedPhase({
+    environment: StagingEnvironment,
+    orderedName: "4-endpoint",
+    displayName: "locate service endpoint in Test",
+    completedDescription: "Here is the service endpoint in Test",
+});
+export const StagingVerifiedPhase = new PlannedPhase({
+    environment: StagingEnvironment,
+    orderedName: "5-verifyEndpoint",
+    displayName: "verify Test deployment",
+    completedDescription: "Verified endpoint in Test"
+});
+export const ProductionDeploymentPhase = new PlannedPhase({
+    environment: ProductionEnvironment,
+    orderedName: "3-prod-deploy",
+    displayName: "deploy to Prod",
+    completedDescription: "Deployed to Prod"
+});
+export const ProductionEndpointPhase = new PlannedPhase({
+    environment: ProductionEnvironment,
+    orderedName: "4-endpoint",
+    displayName: "locate service endpoint in Prod",
+    completedDescription: "Here is the service endpoint in Prod"
+
+});
+
+const AllKnownPhases = [
+    ScanPhase,
+    BuildPhase,
+    ArtifactPhase,
+    StagingDeploymentPhase,
+    StagingEndpointPhase,
+    StagingVerifiedPhase,
+    ProductionDeploymentPhase,
+    ProductionEndpointPhase,
+];
+
+export const StagingDeploymentContext = StagingDeploymentPhase.context;
+export const StagingEndpointContext = StagingEndpointPhase.context;
+export const StagingVerifiedContext = StagingVerifiedPhase.context;
+export const ProductionDeploymentContext = ProductionDeploymentPhase.context;
+export const ProductionEndpointContext = ProductionEndpointPhase.context;
+export const ScanContext = ScanPhase.context;
+export const BuildContext = BuildPhase.context;
+export const ArtifactContext = ArtifactPhase.context;
 
 export const ProductionMauve = "#cf5097";
 
 export const ContextToPlannedPhase: { [key: string]: PlannedPhase } = {};
-ContextToPlannedPhase[ScanContext] = {context: ScanContext, name: "scan"};
-ContextToPlannedPhase[BuildContext] = {context: BuildContext, name: "build"};
-ContextToPlannedPhase[ArtifactContext] = {context: ArtifactContext, name: "find artifact"};
-ContextToPlannedPhase[StagingDeploymentContext] = {
-    context: StagingDeploymentContext,
-    name: "deploy to Test space",
-};
-ContextToPlannedPhase[StagingEndpointContext] = {context: StagingEndpointContext, name: "find endpoint in Test"};
-ContextToPlannedPhase[StagingVerifiedContext] = {context: StagingVerifiedContext, name: "verify endpoint in Test"};
-ContextToPlannedPhase[ProductionDeploymentContext] = { context: ProductionDeploymentContext, name: "deploy to production" };
-ContextToPlannedPhase[ProductionEndpointContext] =  { context: ProductionEndpointContext, name: "find production endpoint" };
-// export const ProductionVerifiedPhase =  { context: ProductionVerifiedContext, name: "verify production endpoint" };
+AllKnownPhases.forEach(p => ContextToPlannedPhase[p.context] = p);
 
 export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
-    return ContextToPlannedPhase[ghsc] ||
+    return contextToKnownPhase(ghsc) ||
         defaultPhaseDefinition(ghsc);
+}
+
+export function contextToKnownPhase(ghsc: GitHubStatusContext): PlannedPhase {
+    return ContextToPlannedPhase[ghsc]
 }
 
 function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
     const interpreted = splitContext(ghsc);
-    return {
-        context: ghsc,
-        name: interpreted.name,
-    };
+    return new PlannedPhase({
+        environment: interpreted.envPart as PhaseEnvironment,
+        orderedName: interpreted.phasePart,
+    });
 }
 
 /**
@@ -45,11 +100,11 @@ function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
  * @type {Phases}
  */
 export const HttpServicePhases = new Phases([
-    ScanContext,
-    BuildContext,
-    ArtifactContext,
-    StagingDeploymentContext,
-    StagingEndpointContext,
-    StagingVerifiedContext,
-    ProductionDeploymentContext,
-    ProductionEndpointContext]);
+    ScanPhase,
+    BuildPhase,
+    ArtifactPhase,
+    StagingDeploymentPhase,
+    StagingEndpointPhase,
+    StagingVerifiedPhase,
+    ProductionDeploymentPhase,
+    ProductionEndpointPhase]);

@@ -62,7 +62,6 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         };
 
         // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
-        // (this is related to the next two TODOs)
         if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
@@ -88,7 +87,7 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         });
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: params.deployPhase.context,
-            description: "Working on " + params.deployPhase.name,
+            description: params.deployPhase.workingDescription,
             state: "pending",
         });
         return Success;

@@ -5,19 +5,20 @@ import {
     ContextToPlannedPhase, HttpServicePhases, ProductionDeploymentContext, StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
 
 export const K8sStagingDeployOnSuccessStatus = () =>
     new RequestK8sDeployOnSuccessStatus(
         HttpServicePhases,
         ContextToPlannedPhase[StagingDeploymentContext],
-        "testing");
+        K8sTestingDomain);
 
 export const K8sProductionDeployOnSuccessStatus = () =>
-    // TODO replace this evil hack
+    // TODO replace this evil hack of the duplicate class
     new RequestK8sDeployOnSuccessStatus1(
         HttpServicePhases,
         ContextToPlannedPhase[ProductionDeploymentContext],
-        "production");
+        K8sProductionDomain);
 
 export const NoticeK8sDeployCompletion = new NoticeK8sDeployCompletionOnStatus(
     ContextToPlannedPhase[StagingDeploymentContext],

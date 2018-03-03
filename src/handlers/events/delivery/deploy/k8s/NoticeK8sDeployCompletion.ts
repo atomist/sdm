@@ -21,6 +21,7 @@ import { PlannedPhase } from "../../../../../common/phases/Phases";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSuccessStatus";
+import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 
 // TODO parameterize once we can have multiple handlers
 
@@ -29,7 +30,7 @@ import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSucces
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: k8AutomationDeployContext("testing")}))
+        {context: k8AutomationDeployContext(K8sTestingDomain)}))
 export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -65,14 +66,14 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
             context: params.deployPhase.context,
             state: status.state,
             // todo: don't say "complete" if it failed
-            description: "Complete: " + params.deployPhase.name,
+            description: params.deployPhase.completedDescription,
             target_url: undefined,
         });
         if (status.state === "success" && status.targetUrl) {
             await createStatus(params.githubToken, id as GitHubRepoRef, {
                 context: params.endpointPhase.context,
                 state: "success",
-                description: "Complete: " + params.endpointPhase.name,
+                description: params.endpointPhase.completedDescription,
                 // we expect k8-automation to have set the targetUrl on its deploy status to the endpoint URL
                 target_url: status.targetUrl,
             });

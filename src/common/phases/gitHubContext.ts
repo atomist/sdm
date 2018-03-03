@@ -1,17 +1,16 @@
-import {logger} from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 
 // convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
 export type GitHubStatusContext = string;
 
-export const BaseContext = "sdm/atomist/";
-export const IndependentOfEnvironment = "0-code/";
-export const StagingEnvironment = "1-staging/";
-// should always be number dash name. The number may be a decimal
-export const ProductionEnvironment = "2-prod/";
+export type PhaseEnvironment = "0-code/" | "1-staging/" | "2-prod/";
 
-export const ScanContext = BaseContext + IndependentOfEnvironment + "1-scan";
-export const BuildContext = BaseContext + IndependentOfEnvironment + "2-build";
-export const ArtifactContext = BaseContext + IndependentOfEnvironment + "2.5-artifact";
+export const BaseContext = "sdm/atomist/";
+export const IndependentOfEnvironment: PhaseEnvironment = "0-code/";
+export const StagingEnvironment: PhaseEnvironment = "1-staging/";
+// should always be number dash name. The number may be a decimal
+export const ProductionEnvironment: PhaseEnvironment = "2-prod/";
+
 
 /**
  * if this is a context we created, then we can interpret it.
@@ -39,7 +38,12 @@ export function splitContext(context: GitHubStatusContext) {
         const name = matchPhase[2];
         const phaseOrder = +matchPhase[1];
 
-        return {base: BaseContext, env: matchEnv[2], envOrder: +matchEnv[1], name, phaseOrder};
+        return {
+            base: BaseContext, env: matchEnv[2], envOrder: +matchEnv[1], name,
+            phaseOrder,
+            envPart: matchWhole[1],
+            phasePart
+        };
     }
 }
 

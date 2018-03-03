@@ -28,6 +28,7 @@ import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
 import {createStatus, State} from "../../../../util/github/ghub";
 import {reportFailureInterpretation} from "../../../../util/slack/reportFailureInterpretation";
 import {NotARealUrl} from "./local/LocalBuilder";
+import { PlannedPhase } from "../../../../common/phases/Phases";
 
 /**
  * Set build status on complete build
@@ -39,7 +40,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private buildPhaseContext: string,
+    constructor(private buildPhase: PlannedPhase,
                 private logInterpretation?: LogInterpretation) {
     }
 
@@ -48,10 +49,11 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const commit = build.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const builtStatus = commit.statuses.find(s => s.context === params.buildPhaseContext);
+        const builtStatus = commit.statuses.find(s => s.context === params.buildPhase.context);
+        const ghStatusState = buildStatusToGitHubStatusState(build.status);
         if (!!builtStatus) {
-            await setBuiltContext(params.buildPhaseContext,
-                buildStatusToGitHubStatusState(build.status),
+            await setBuiltContext(params.buildPhase,
+                ghStatusState,
                 build.buildUrl,
                 id,
                 {token: params.githubToken});
@@ -106,11 +108,12 @@ function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
     }
 }
 
-async function setBuiltContext(context: string, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+async function setBuiltContext(phase: PlannedPhase, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+    const description = state === "pending" ? phase.workingDescription : phase.completedDescription;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: (url === NotARealUrl ? undefined : url),
-        context,
-        description: `Completed ${context}`,
+        context: phase.context,
+        description,
     });
 }

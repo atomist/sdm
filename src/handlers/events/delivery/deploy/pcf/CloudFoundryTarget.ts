@@ -1,5 +1,6 @@
 
 import { TargetInfo } from "../../../../../spi/deploy/Deployment";
+import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 
 /**
  * Path to Cloud Foundry manifest within deployable projects
@@ -30,7 +31,7 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
 
     public password = process.env.PIVOTAL_PASSWORD;
 
-    public space = process.env.PCF_SPACE;
+    public space = process.env.PCF_SPACE || K8sTestingDomain;
 
     public org = process.env.PCF_ORG;
 

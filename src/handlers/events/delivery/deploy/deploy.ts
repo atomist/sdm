@@ -80,12 +80,12 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
             "success",
             params.deployPhase.context,
             log.url,
-            `Completed ${params.deployPhase.name}`);
+            params.deployPhase.completedDescription);
         if (deployment.endpoint) {
             await setEndpointStatus(params.githubToken, params.id,
                 params.endpointPhase.context,
                 deployment.endpoint,
-                `Completed ${params.endpointPhase.name}`)
+                params.deployPhase.completedDescription)
                 .catch(endpointStatus => {
                     logger.error("Could not set Endpoint status: " + endpointStatus.message);
                     // do not fail this whole handler

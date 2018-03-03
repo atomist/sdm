@@ -1,8 +1,8 @@
 
-import { BaseContext, BuildContext, IndependentOfEnvironment, ScanContext } from "../../../../common/phases/gitHubContext";
 import { Phases } from "../../../../common/phases/Phases";
+import { BuildPhase, ScanPhase } from "./httpServicePhases";
 
 export const npmPhases = new Phases([
-    ScanContext,
-    BuildContext,
+    ScanPhase,
+    BuildPhase,
 ]);

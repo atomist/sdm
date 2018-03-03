@@ -49,7 +49,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         return createStatus(params.githubToken, id, {
             state: "success",
-            description: `Complete: ${params.artifactPhase.name} ${image.imageName}`,
+            description: `${params.artifactPhase.completedDescription} ${image.imageName}`,
             context: params.artifactPhase.context,
         }).then(success);
     }
