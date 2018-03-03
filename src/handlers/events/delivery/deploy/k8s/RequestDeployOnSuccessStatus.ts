@@ -17,13 +17,13 @@
 import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import {
     currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded,
 } from "../../../../../common/phases/Phases";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export type K8Target = "testing" | "production";
 
@@ -96,8 +96,8 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
 }
 
 export async function undeployFromK8s(creds: ProjectOperationCredentials,
-                               id: RemoteRepoRef,
-                               env: string) {
+                                      id: RemoteRepoRef,
+                                      env: string) {
     const undeployContext = "undeploy/atomist/k8s/" + env;
     await createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
         context: undeployContext,

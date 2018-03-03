@@ -16,11 +16,19 @@
 
 import {
     GraphQL, HandleCommand, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success,
-    Success
+    Success,
 } from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
+import { splitContext } from "../../../../common/phases/gitHubContext";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
@@ -30,15 +38,6 @@ import {
     StagingEndpointContext,
 } from "../phases/httpServicePhases";
 import { forApproval } from "./approvalGate";
-import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
-import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
-import { Parameters } from "@atomist/automation-client/decorators";
-import * as slack from "@atomist/slack-messages/SlackMessages";
-import { splitContext } from "../../../../common/phases/gitHubContext";
-
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 
@@ -91,12 +90,11 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
         return verifyImpl(params.sdm,
             {
                 context, id, messageDestination: messageDestinations(commit.repo, context),
-                credentials: {token: params.githubToken}
+                credentials: {token: params.githubToken},
             },
             status.targetUrl);
     }
 }
-
 
 /**
  * What the SDM should define for each environment's verification
@@ -120,7 +118,7 @@ function verifyImpl(sdm: SdmVerification,
                         context: HandlerContext,
                         credentials: ProjectOperationCredentials,
                         id: RemoteRepoRef,
-                        messageDestination: Destination
+                        messageDestination: Destination,
                     },
                     targetUrl: string) {
     const addressChannels = addressDestination(li.messageDestination, li.context);
@@ -149,7 +147,7 @@ function verifyImpl(sdm: SdmVerification,
                     targetUrl,
                     sdm.verifyPhase)
                     .then(() => reportFailedVerification(addressChannels,
-                        sdm.verifyPhase, li.id, targetUrl, err.message))
+                        sdm.verifyPhase, li.id, targetUrl, err.message));
             })
         .then(success);
 }
@@ -171,8 +169,8 @@ function failedVerificationMessage(verifyPhase: PlannedPhase, id: RemoteRepoRef,
     };
 
     return {
-        attachments: [attachment]
-    }
+        attachments: [attachment],
+    };
 }
 
 function linkToSha(id: RemoteRepoRef) {
@@ -186,7 +184,7 @@ function retryButton(verifyPhase: PlannedPhase, id: RemoteRepoRef, targetUrl: st
             repo: id.repo,
             owner: id.owner,
             sha: id.sha,
-            targetUrl
+            targetUrl,
         });
 }
 
@@ -226,7 +224,6 @@ export class RetryVerifyParameters {
 
 }
 
-
 function retryVerificationCommandName(verifyPhase: PlannedPhase) {
     // todo: get the env on the PlannedPhase
     return "RetryFailedVerification" + splitContext(verifyPhase.context).env;
@@ -235,7 +232,7 @@ function retryVerificationCommandName(verifyPhase: PlannedPhase) {
 export function retryVerifyCommand(sdm: SdmVerification): HandleCommand<RetryVerifyParameters> {
     return commandHandlerFrom(verifyHandle(sdm), RetryVerifyParameters,
         retryVerificationCommandName(sdm.verifyPhase),
-        "retry verification", "retry verification"
+        "retry verification", "retry verification",
     );
 }
 
@@ -248,6 +245,6 @@ function verifyHandle(sdm: SdmVerification) {
         const messageDestination = addressSlackChannels(ctx.teamId, params.channelName);
         return verifyImpl(sdm,
             {id, messageDestination, credentials: {token: params.githubToken}, context: ctx},
-            params.targetUrl)
-    }
+            params.targetUrl);
+    };
 }

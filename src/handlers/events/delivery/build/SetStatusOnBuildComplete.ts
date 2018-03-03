@@ -23,12 +23,12 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
 import {AddressChannels, addressChannelsFor} from "../../../../";
+import { PlannedPhase } from "../../../../common/phases/Phases";
 import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
 import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
 import {createStatus, State} from "../../../../util/github/ghub";
 import {reportFailureInterpretation} from "../../../../util/slack/reportFailureInterpretation";
 import {NotARealUrl} from "./local/LocalBuilder";
-import { PlannedPhase } from "../../../../common/phases/Phases";
 
 /**
  * Set build status on complete build

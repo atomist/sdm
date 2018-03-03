@@ -4,7 +4,6 @@ import {
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
-
 export const ScanPhase = new PlannedPhase({
     environment: IndependentOfEnvironment,
     orderedName: "1-scan",
@@ -20,7 +19,7 @@ export const ArtifactPhase = new PlannedPhase({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "find artifact",
-    completedDescription: "Located artifact"
+    completedDescription: "Located artifact",
 });
 export const StagingDeploymentPhase = new PlannedPhase({
     environment: StagingEnvironment,
@@ -37,19 +36,19 @@ export const StagingVerifiedPhase = new PlannedPhase({
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
-    completedDescription: "Verified endpoint in Test"
+    completedDescription: "Verified endpoint in Test",
 });
 export const ProductionDeploymentPhase = new PlannedPhase({
     environment: ProductionEnvironment,
     orderedName: "3-prod-deploy",
     displayName: "deploy to Prod",
-    completedDescription: "Deployed to Prod"
+    completedDescription: "Deployed to Prod",
 });
 export const ProductionEndpointPhase = new PlannedPhase({
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
-    completedDescription: "Here is the service endpoint in Prod"
+    completedDescription: "Here is the service endpoint in Prod",
 
 });
 
@@ -84,7 +83,7 @@ export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
 }
 
 export function contextToKnownPhase(ghsc: GitHubStatusContext): PlannedPhase {
-    return ContextToPlannedPhase[ghsc]
+    return ContextToPlannedPhase[ghsc];
 }
 
 function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {

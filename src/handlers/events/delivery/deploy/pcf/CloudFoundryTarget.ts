@@ -1,6 +1,6 @@
 
-import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
+import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 
 /**
  * Path to Cloud Foundry manifest within deployable projects

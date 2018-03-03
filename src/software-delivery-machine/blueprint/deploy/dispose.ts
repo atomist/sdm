@@ -17,12 +17,11 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { AddressChannels } from "../../../";
+import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
 import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { deleteRepository } from "../../../util/github/ghub";
-import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
-import { AddressChannels } from "../../../";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
-
 
 @Parameters()
 export class DisposeParameters {
@@ -51,7 +50,6 @@ export const disposeProjectHandler: HandleCommand<DisposeParameters> =
         "Delete deployments and repo",
         "dispose of this project");
 
-
 function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<HandlerResult> {
     if (params.areYouSure.toLowerCase() !== "yes") {
         return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
@@ -59,7 +57,7 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
     }
     const id = new GitHubRepoRef(params.owner, params.repo);
     const creds = {token: params.githubToken};
-    return disposeOfProjectK8s(creds, id, (msg) => ctx.messageClient.respond(msg))
+    return disposeOfProjectK8s(creds, id, msg => ctx.messageClient.respond(msg))
         .then(() => ctx.messageClient.respond("Repository deleted."))
         .then(success, err => {
             ctx.messageClient.respond("Problem disposing: " + err.message);

@@ -11,7 +11,6 @@ export const StagingEnvironment: PhaseEnvironment = "1-staging/";
 // should always be number dash name. The number may be a decimal
 export const ProductionEnvironment: PhaseEnvironment = "2-prod/";
 
-
 /**
  * if this is a context we created, then we can interpret it.
  * Otherwise returns undefined
@@ -42,7 +41,7 @@ export function splitContext(context: GitHubStatusContext) {
             base: BaseContext, env: matchEnv[2], envOrder: +matchEnv[1], name,
             phaseOrder,
             envPart: matchWhole[1],
-            phasePart
+            phasePart,
         };
     }
 }

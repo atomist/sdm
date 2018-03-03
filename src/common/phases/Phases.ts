@@ -1,20 +1,20 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { StatusState } from "../../typings/types";
 import { createStatus, State } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
+import { contextToKnownPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusContext, PhaseEnvironment, splitContext } from "./gitHubContext";
-import { contextToKnownPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
 
 export interface PlannedPhaseDefinition {
-    environment: PhaseEnvironment,
-    orderedName: string,
-    displayName?: string,
-    completedDescription?: string,
-    workingDescription?: string
+    environment: PhaseEnvironment;
+    orderedName: string;
+    displayName?: string;
+    completedDescription?: string;
+    workingDescription?: string;
 }
 
 export class PlannedPhase {
@@ -23,11 +23,11 @@ export class PlannedPhase {
     private readonly definition: PlannedPhaseDefinition;
 
     get completedDescription() {
-        return this.definition.completedDescription || ("Complete: " + this.name)
+        return this.definition.completedDescription || ("Complete: " + this.name);
     }
 
     get workingDescription() {
-        return this.definition.workingDescription || ("Working: " + this.name)
+        return this.definition.workingDescription || ("Working: " + this.name);
     }
 
     constructor(definition: PlannedPhaseDefinition) {
@@ -49,7 +49,6 @@ export class Phases {
 
     constructor(public phases: PlannedPhase[]) {
     }
-
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
         const self = this;

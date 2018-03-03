@@ -19,7 +19,7 @@ import {
     EndpointVerificationListener,
     OnEndpointStatus,
     retryVerifyCommand,
-    SdmVerification
+    SdmVerification,
 } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -154,16 +154,16 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get verifyEndpoint(): FunctionalUnit {
         if (this.endpointVerificationListeners.length === 0) {
-            return {eventHandlers: [], commandHandlers: []}
+            return {eventHandlers: [], commandHandlers: []};
         }
         const stagingVerification: SdmVerification = {
             verifiers: this.endpointVerificationListeners,
             verifyPhase: ContextToPlannedPhase[StagingVerifiedContext],
-            requestApproval: true
+            requestApproval: true,
         };
         return {
             eventHandlers: [() => new OnEndpointStatus(stagingVerification)],
-            commandHandlers: [() => retryVerifyCommand(stagingVerification)]
+            commandHandlers: [() => retryVerifyCommand(stagingVerification)],
         };
     }
 
