@@ -27,7 +27,7 @@ export class PlannedPhase {
     }
 
     get workingDescription() {
-        return this.definition.workingDescription || ("Complete: " + this.name)
+        return this.definition.workingDescription || ("Working: " + this.name)
     }
 
     constructor(definition: PlannedPhaseDefinition) {
