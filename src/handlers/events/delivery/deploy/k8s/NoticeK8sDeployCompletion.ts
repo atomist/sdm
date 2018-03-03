@@ -21,6 +21,7 @@ import { PlannedPhase } from "../../../../../common/phases/Phases";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSuccessStatus";
+import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 
 // TODO parameterize once we can have multiple handlers
 
@@ -29,7 +30,7 @@ import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSucces
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: k8AutomationDeployContext("testing")}))
+        {context: k8AutomationDeployContext(K8sTestingDomain)}))
 export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
