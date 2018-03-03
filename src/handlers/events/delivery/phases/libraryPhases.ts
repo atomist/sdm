@@ -1,7 +1,7 @@
 import { Phases } from "../../../../common/phases/Phases";
-import { BuildContext, ScanContext } from "./httpServicePhases";
+import { BuildPhase, ScanPhase } from "./httpServicePhases";
 
 export const LibraryPhases = new Phases([
-    ScanContext,
-    BuildContext,
+    ScanPhase,
+    BuildPhase,
 ]);

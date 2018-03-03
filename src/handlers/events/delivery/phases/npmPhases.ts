@@ -1,8 +1,8 @@
 
 import { Phases } from "../../../../common/phases/Phases";
-import { BuildContext, ScanContext } from "./httpServicePhases";
+import { BuildPhase, ScanPhase } from "./httpServicePhases";
 
 export const npmPhases = new Phases([
-    ScanContext,
-    BuildContext,
+    ScanPhase,
+    BuildPhase,
 ]);

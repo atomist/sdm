@@ -65,8 +65,12 @@ ContextToPlannedPhase[StagingDeploymentContext] = {
 };
 
 export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
-    return ContextToPlannedPhase[ghsc] ||
+    return contextToKnownPhase(ghsc) ||
         defaultPhaseDefinition(ghsc);
+}
+
+export function contextToKnownPhase(ghsc: GitHubStatusContext): PlannedPhase {
+    return ContextToPlannedPhase[ghsc]
 }
 
 function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
@@ -82,11 +86,11 @@ function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
  * @type {Phases}
  */
 export const HttpServicePhases = new Phases([
-    ScanContext,
-    BuildContext,
-    ArtifactContext,
-    StagingDeploymentContext,
-    StagingEndpointContext,
-    StagingVerifiedContext,
-    ProductionDeploymentContext,
-    ProductionEndpointContext]);
+    ScanPhase,
+    BuildPhase,
+    ArtifactPhase,
+    StagingDeploymentPhase,
+    StagingEndpointPhase,
+    StagingVerifiedPhase,
+    ProductionDeploymentPhase,
+    ProductionEndpointPhase]);
