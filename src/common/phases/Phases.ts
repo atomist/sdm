@@ -1,19 +1,31 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { StatusState } from "../../typings/types";
 import { createStatus, State } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
-import { contextIsAfter, GitHubStatusContext, splitContext } from "./gitHubContext";
+import { BaseContext, contextIsAfter, GitHubStatusContext, PhaseEnvironment, splitContext } from "./gitHubContext";
 
-export interface PlannedPhase {
-    context: GitHubStatusContext;
-    name: string;
+export class PlannedPhase {
+    public readonly context: GitHubStatusContext;
+    public readonly name: string;
+
+    constructor(definition: {
+        environment: PhaseEnvironment,
+        orderedName: string,
+        displayName?: string,
+    }) {
+        const numberAndName = /([0-9\.]+)-(.*)/;
+        const matchPhase = definition.orderedName.match(numberAndName);
+        if (!matchPhase) {
+            logger.debug(`Ordered name must be '#-name'. Did not find number and name in ${definition.orderedName}`);
+            return;
+        }
+        this.name = definition.displayName || matchPhase[2];
+        this.context = BaseContext + definition.environment + definition.orderedName;
+    }
 }
 
 // exported for testing

@@ -40,11 +40,10 @@ import { ProjectReview, ReviewComment } from "@atomist/automation-client/operati
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { ScanContext } from "../../../../../common/phases/gitHubContext";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase } from "../../phases/httpServicePhases";
+import { ContextToPlannedPhase, ScanContext } from "../../phases/httpServicePhases";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
