@@ -14,21 +14,31 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import {
+    GraphQL, HandleCommand, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success,
+    Success
+} from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, previousPhaseSucceeded } from "../../../../common/phases/Phases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
+import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import {
-    ContextToPlannedPhase,
     HttpServicePhases,
     StagingEndpointContext,
-    StagingVerifiedContext,
 } from "../phases/httpServicePhases";
 import { forApproval } from "./approvalGate";
+import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
+import { Parameters } from "@atomist/automation-client/decorators";
+import * as slack from "@atomist/slack-messages/SlackMessages";
+import { splitContext } from "../../../../common/phases/gitHubContext";
+
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 
@@ -53,10 +63,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private verifiers: EndpointVerificationListener[];
-
-    constructor(...verifiers: EndpointVerificationListener[]) {
-        this.verifiers = verifiers;
+    constructor(private sdm: SdmVerification) {
     }
 
     public handle(event: EventFired<OnSuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
@@ -71,48 +78,176 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             siblings: status.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(HttpServicePhases, StagingVerifiedContext, statusAndFriends)) {
+        if (!previousPhaseSucceeded(HttpServicePhases, params.sdm.verifyPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(StagingVerifiedContext, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.sdm.verifyPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const addressChannels = addressChannelsFor(commit.repo, context);
-        const i: EndpointVerificationInvocation = {
-            id,
-            url: status.targetUrl,
-            addressChannels,
-            context,
-            credentials: { token: params.githubToken},
-        };
-
-        return Promise.all(params.verifiers.map(verifier => verifier(i)))
-            .then(() => setVerificationStatus(params.githubToken, id, "success",
-                amILastContext(statusAndFriends) ? status.targetUrl : forApproval(status.targetUrl))
-                .then(success))
-            .catch(err => {
-                // todo: report error in Slack? ... or load it to a log that links
-                logger.warn("Failing verification because: " + err);
-                return setVerificationStatus(params.githubToken, id,
-                    "failure", status.targetUrl)
-                    .then(success);
-            });
+        return verifyImpl(params.sdm,
+            {
+                context, id, messageDestination: messageDestinations(commit.repo, context),
+                credentials: {token: params.githubToken}
+            },
+            status.targetUrl);
     }
 }
 
-function amILastContext(statusAndFriends: GitHubStatusAndFriends): boolean {
-    return false;
+
+/**
+ * What the SDM should define for each environment's verification
+ */
+export interface SdmVerification {
+    verifiers: EndpointVerificationListener[];
+    verifyPhase: PlannedPhase;
+    requestApproval: boolean;
 }
 
-function setVerificationStatus(token: string, id: GitHubRepoRef, state: StatusState, targetUrl: string): Promise<any> {
-    return createStatus(token, id, {
+/**
+ *
+ * id: RemoteRepoRef; messageDestination: Destination}} specific to the invocation; common to Listeners
+ * @param sdm
+ * @param li common listener-invocation stuff
+ * @param {string} targetUrl
+ * @returns {Promise<HandlerResult>}
+ */
+function verifyImpl(sdm: SdmVerification,
+                    li: {
+                        context: HandlerContext,
+                        credentials: ProjectOperationCredentials,
+                        id: RemoteRepoRef,
+                        messageDestination: Destination
+                    },
+                    targetUrl: string) {
+    const addressChannels = addressDestination(li.messageDestination, li.context);
+    const i: EndpointVerificationInvocation = {
+        id: li.id,
+        url: targetUrl,
+        addressChannels,
+        context: li.context,
+        credentials: li.credentials,
+    };
+
+    return Promise.all(sdm.verifiers.map(verifier => verifier(i)))
+        .then(
+            () => setVerificationStatus(li.credentials,
+                li.id,
+                "success",
+                sdm.requestApproval,
+                targetUrl,
+                sdm.verifyPhase),
+            err => {
+                // todo: report error in Slack? ... or load it to a log that links
+                logger.warn("Failing verification because: " + err);
+                return setVerificationStatus(li.credentials, li.id,
+                    "failure",
+                    false,
+                    targetUrl,
+                    sdm.verifyPhase)
+                    .then(() => reportFailedVerification(addressChannels,
+                        sdm.verifyPhase, li.id, targetUrl, err.message))
+            })
+        .then(success);
+}
+
+function reportFailedVerification(ac: AddressChannels, verifyPhase: PlannedPhase, id: RemoteRepoRef,
+                                  targetUrl: string, message: string) {
+    return ac(failedVerificationMessage(verifyPhase, id, targetUrl, message));
+}
+
+function failedVerificationMessage(verifyPhase: PlannedPhase, id: RemoteRepoRef,
+                                   targetUrl: string, message: string): slack.SlackMessage {
+
+    const attachment: slack.Attachment = {
+        fallback: "verification failure report",
+        title: "Verification failed",
+        text: `Failed to verify ${linkToSha(id)} at ${targetUrl}:\n> ${message}`,
+        actions: [retryButton(verifyPhase, id, targetUrl)],
+        color: "#D94649",
+    };
+
+    return {
+        attachments: [attachment]
+    }
+}
+
+function linkToSha(id: RemoteRepoRef) {
+    return slack.url(id.url + "/tree/" + id.sha,
+        `${id.owner}/${id.repo}#${id.sha.substr(0, 6)}`);
+}
+
+function retryButton(verifyPhase: PlannedPhase, id: RemoteRepoRef, targetUrl: string): slack.Action {
+    return buttonForCommand({text: "Retry"},
+        retryVerificationCommandName(verifyPhase), {
+            repo: id.repo,
+            owner: id.owner,
+            sha: id.sha,
+            targetUrl
+        });
+}
+
+function setVerificationStatus(creds: ProjectOperationCredentials,
+                               id: RemoteRepoRef, state: StatusState,
+                               requestApproval: boolean,
+                               targetUrl: string,
+                               verifyPhase: PlannedPhase): Promise<any> {
+    return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
         state,
-        target_url: targetUrl,
-        context: StagingVerifiedContext,
-        description: `${state === "success" ? "Completed" : "Failed to "} ${ContextToPlannedPhase[StagingVerifiedContext].name}`,
+        target_url: requestApproval ? forApproval(targetUrl) : targetUrl,
+        context: verifyPhase.context,
+        description: `${state === "success" ? "Completed" : "Failed to "} ${verifyPhase.name}`,
     });
+}
+
+@Parameters()
+export class RetryVerifyParameters {
+
+    @Secret(Secrets.UserToken)
+    public githubToken: string;
+
+    @MappedParameter(MappedParameters.SlackChannelName)
+    public channelName: string;
+
+    @MappedParameter(MappedParameters.GitHubRepository)
+    public repo: string;
+
+    @MappedParameter(MappedParameters.GitHubOwner)
+    public owner: string;
+
+    @Parameter({required: false})
+    public sha: string;
+
+    @Parameter()
+    public targetUrl: string;
+
+}
+
+
+function retryVerificationCommandName(verifyPhase: PlannedPhase) {
+    // todo: get the env on the PlannedPhase
+    return "RetryFailedVerification" + splitContext(verifyPhase.context).env;
+}
+
+export function retryVerifyCommand(sdm: SdmVerification): HandleCommand<RetryVerifyParameters> {
+    return commandHandlerFrom(verifyHandle(sdm), RetryVerifyParameters,
+        retryVerificationCommandName(sdm.verifyPhase),
+        "retry verification", "retry verification"
+    );
+}
+
+function verifyHandle(sdm: SdmVerification) {
+    return async (ctx: HandlerContext, params: RetryVerifyParameters) => {
+        const sha = params.sha || await
+            tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
+        const id = new GitHubRepoRef(params.owner, params.repo, sha);
+        // todo: get all destinations instead of only one channel; update messages
+        const messageDestination = addressSlackChannels(ctx.teamId, params.channelName);
+        return verifyImpl(sdm,
+            {id, messageDestination, credentials: {token: params.githubToken}, context: ctx},
+            params.targetUrl)
+    }
 }
