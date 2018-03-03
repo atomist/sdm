@@ -1,11 +1,15 @@
 import {
-    BaseContext, GitHubStatusContext, IndependentOfEnvironment, ProductionEnvironment,
+    BaseContext, GitHubStatusContext, IndependentOfEnvironment, PhaseEnvironment, ProductionEnvironment,
     splitContext, StagingEnvironment,
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
 
-export const ScanPhase = new PlannedPhase({environment: IndependentOfEnvironment, orderedName: "1-scan"});
+export const ScanPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "1-scan",
+    completedDescription: "Code scan passed",
+});
 export const BuildPhase = new PlannedPhase({environment: IndependentOfEnvironment, orderedName: "2-build"});
 export const ArtifactPhase = new PlannedPhase({
     environment: IndependentOfEnvironment,
@@ -59,10 +63,6 @@ export const ProductionMauve = "#cf5097";
 
 export const ContextToPlannedPhase: { [key: string]: PlannedPhase } = {};
 AllKnownPhases.forEach(p => ContextToPlannedPhase[p.context] = p);
-ContextToPlannedPhase[StagingDeploymentContext] = {
-    context: StagingDeploymentContext,
-    name: "deploy to Test space",
-};
 
 export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
     return contextToKnownPhase(ghsc) ||
@@ -75,10 +75,10 @@ export function contextToKnownPhase(ghsc: GitHubStatusContext): PlannedPhase {
 
 function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
     const interpreted = splitContext(ghsc);
-    return {
-        context: ghsc,
-        name: interpreted.name,
-    };
+    return new PlannedPhase({
+        environment: interpreted.envPart as PhaseEnvironment,
+        orderedName: interpreted.phasePart,
+    });
 }
 
 /**

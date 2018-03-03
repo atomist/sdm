@@ -6,32 +6,38 @@ import { createStatus, State } from "../../util/github/ghub";
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
-import { BaseContext, contextIsAfter, GitHubStatusContext, PhaseEnvironment, splitContext } from "./gitHubContext";
-import { contextToKnownPhase, contextToPlannedPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { BaseContext, GitHubStatusContext, PhaseEnvironment, splitContext } from "./gitHubContext";
+import { contextToKnownPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
+
+export interface PlannedPhaseDefinition {
+    environment: PhaseEnvironment,
+    orderedName: string,
+    displayName?: string,
+    completedDescription?: string,
+}
 
 export class PlannedPhase {
     public readonly context: GitHubStatusContext;
     public readonly name: string;
+    private readonly definition: PlannedPhaseDefinition;
 
-    constructor(definition: {
-        environment: PhaseEnvironment,
-        orderedName: string,
-        displayName?: string,
-    }) {
+    get completedDescription() {
+        return this.definition.completedDescription || ("Complete: " + this.name)
+    }
+
+    constructor(definition: PlannedPhaseDefinition) {
+        this.definition = definition;
+
         const numberAndName = /([0-9\.]+)-(.*)/;
         const matchPhase = definition.orderedName.match(numberAndName);
         if (!matchPhase) {
             logger.debug(`Ordered name must be '#-name'. Did not find number and name in ${definition.orderedName}`);
             return;
         }
+
         this.name = definition.displayName || matchPhase[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
     }
-}
-
-// exported for testing
-export function parseContext(context: GitHubStatusContext): PlannedPhase {
-    return {context, name: splitContext(context).name};
 }
 
 export class Phases {
