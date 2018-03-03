@@ -12,11 +12,13 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { ArtifactContext, BuildContext, ContextToPlannedPhase, StagingVerifiedContext } from "../handlers/events/delivery/phases/httpServicePhases";
+import { ArtifactContext, BuildPhase, ContextToPlannedPhase, StagingVerifiedContext } from "../handlers/events/delivery/phases/httpServicePhases";
 import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
-    EndpointVerificationListener, OnEndpointStatus, retryVerifyCommand,
+    EndpointVerificationListener,
+    OnEndpointStatus,
+    retryVerifyCommand,
     SdmVerification
 } from "../handlers/events/delivery/verify/OnEndpointStatus";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
@@ -172,7 +174,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuildContext)
+        () => new SetStatusOnBuildComplete(BuildPhase)
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {

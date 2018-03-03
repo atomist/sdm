@@ -199,7 +199,7 @@ function setVerificationStatus(creds: ProjectOperationCredentials,
         state,
         target_url: requestApproval ? forApproval(targetUrl) : targetUrl,
         context: verifyPhase.context,
-        description: `${state === "success" ? "Completed" : "Failed to "} ${verifyPhase.name}`,
+        description: state === "success" ? verifyPhase.completedDescription : ("Failed to " + verifyPhase.name),
     });
 }
 

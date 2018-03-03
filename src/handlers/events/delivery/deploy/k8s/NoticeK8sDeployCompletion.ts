@@ -65,14 +65,14 @@ export class NoticeK8sDeployCompletionOnStatus implements HandleEvent<OnAParticu
             context: params.deployPhase.context,
             state: status.state,
             // todo: don't say "complete" if it failed
-            description: "Complete: " + params.deployPhase.name,
+            description: params.deployPhase.completedDescription,
             target_url: undefined,
         });
         if (status.state === "success" && status.targetUrl) {
             await createStatus(params.githubToken, id as GitHubRepoRef, {
                 context: params.endpointPhase.context,
                 state: "success",
-                description: "Complete: " + params.endpointPhase.name,
+                description: params.endpointPhase.completedDescription,
                 // we expect k8-automation to have set the targetUrl on its deploy status to the endpoint URL
                 target_url: status.targetUrl,
             });

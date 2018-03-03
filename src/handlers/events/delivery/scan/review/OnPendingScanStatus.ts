@@ -149,7 +149,7 @@ function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
         state,
         target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
         context: ScanContext,
-        description: `Completed ${phase.name}`,
+        description: phase.completedDescription,
     });
 }
 

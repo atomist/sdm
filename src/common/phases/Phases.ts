@@ -14,6 +14,7 @@ export interface PlannedPhaseDefinition {
     orderedName: string,
     displayName?: string,
     completedDescription?: string,
+    workingDescription?: string
 }
 
 export class PlannedPhase {
@@ -23,6 +24,10 @@ export class PlannedPhase {
 
     get completedDescription() {
         return this.definition.completedDescription || ("Complete: " + this.name)
+    }
+
+    get workingDescription() {
+        return this.definition.workingDescription || ("Complete: " + this.name)
     }
 
     constructor(definition: PlannedPhaseDefinition) {
