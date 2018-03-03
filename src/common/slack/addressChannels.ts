@@ -18,7 +18,7 @@ export interface HasChannels {
 
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
     if (!!hasChannels.channels) {
-        return (msg, opts) => ctx.messageClient.send(msg, messageDestinations(hasChannels, ctx), opts);
+        return addressDestination(messageDestinations(hasChannels, ctx), ctx);
     } else {
         return () => Promise.resolve();
     }
@@ -27,4 +27,8 @@ export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext
 export function messageDestinations(hasChannels: HasChannels, ctx: HandlerContext): Destination {
     const channels = hasChannels.channels.map(c => c.name);
     return addressSlackChannels(ctx.teamId, ...channels);
+}
+
+export function addressDestination(destination: Destination, ctx: HandlerContext): AddressChannels {
+    return (msg, opts) => ctx.messageClient.send(msg, destination, opts);
 }
