@@ -68,27 +68,33 @@ function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
         description,
     });
 }
+
 export interface GitHubStatus {
     context?: GitHubStatusContext;
     description?: string;
     state?: StatusState;
     targetUrl?: string;
 }
+
 export interface GitHubStatusAndFriends extends GitHubStatus {
     siblings: GitHubStatus[];
 }
 
 export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const result = status.siblings.find(s => s.state === "pending" && s.context === currentPhase);
-    if (!result) {
-        logger.debug(`${currentPhase} wanted to run but it wasn't pending`);
-        return false;
+    const myStatus = status.siblings.find(s => s.context === currentPhase);
+    if (!myStatus) {
+        // unexpected
+        throw new Error("what? I can't find myself. My status.context is " + currentPhase);
     }
-    if (!result.description.startsWith("Planning")) {
-        logger.debug(`${currentPhase} is not still planned, so I'm not running it. Description: ${result.description}`);
-        return false;
+    if (myStatus.state === "pending" && myStatus.description.startsWith("Planning")) {
+        return true;
     }
-    return true;
+    if (myStatus.state === "failure" && myStatus.description.startsWith("Skip")) {
+        return true;
+    }
+    logger.debug(`${currentPhase} is not still planned or skipped, so I'm not running it.
+    State: ${myStatus.state} Description: ${myStatus.description}`);
+    return false;
 }
 
 export function nothingFailed(status: GitHubStatusAndFriends): boolean {
@@ -96,7 +102,7 @@ export function nothingFailed(status: GitHubStatusAndFriends): boolean {
 }
 
 export function previousPhaseSucceeded(expectedPhases: Phases, currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    if (status.state !== "success" ) {
+    if (status.state !== "success") {
         logger.info(`********* Previous state ${status.context} wasn't success, but [${status.state}]`);
         return false;
     }
