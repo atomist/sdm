@@ -4,5 +4,5 @@ import { ProductionMauve } from "../../../handlers/events/delivery/phases/httpSe
 
 export const DescribeStagingAndProd: () => HandleCommand<ReportRunningParameters> = () => reportRunningCommand(
     [
-        {domain: "ri-staging", color: "#aa93c4"},
-        {domain: "ri-production", color: ProductionMauve}]);
+        {domain: "staging", color: "#aa93c4"},
+        {domain: "production", color: ProductionMauve}]);
