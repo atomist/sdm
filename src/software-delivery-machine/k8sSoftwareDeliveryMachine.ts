@@ -6,11 +6,7 @@ import { MaterialChangeToJavaRepo } from "../common/listener/support/materialCha
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushFromAtomist, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
-import {
-    HttpServicePhases,
-    ImmaterialPhases,
-    LocalDeploymentPhases,
-} from "../handlers/events/delivery/phases/httpServicePhases";
+import { HttpServicePhases, LocalDeploymentPhases, } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
@@ -34,7 +30,6 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 K8sProductionDeployOnSuccessStatus,
             ],
         },
-        new GuardedPhaseCreator(ImmaterialPhases, IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo)),
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
             PushToPublicRepo),
