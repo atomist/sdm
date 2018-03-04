@@ -22,16 +22,20 @@ export class NewBranchWithStatus implements BranchCommit {
     }
 
     public async afterPersist(p: Project): Promise<any> {
-        const gitStatus = await (p as GitProject).gitStatus();
-        const sha = gitStatus.sha;
-        if (!sha) {
-            throw new Error("Sha is not available");
+        try {
+            const gitStatus = await (p as GitProject).gitStatus();
+            const sha = gitStatus.sha;
+            if (!sha) {
+                throw new Error("Sha is not available");
+            }
+            logger.info("Setting status %j on sha %s for %j", this.status, sha, p.id);
+            return createStatus((this.creds as TokenCredentials).token, {
+                    ...p.id,
+                    sha,
+                } as GitHubRepoRef,
+                this.status);
+        } catch (err) {
+            logger.warn("Unable to get git status for %j. Possibly a deleted repo", p.id);
         }
-        logger.info("Setting status %j on sha %s for %j", this.status, sha, p.id);
-        return createStatus((this.creds as TokenCredentials).token, {
-                ...p.id,
-                sha,
-            } as GitHubRepoRef,
-            this.status);
     }
 }
