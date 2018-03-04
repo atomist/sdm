@@ -8,6 +8,6 @@ export const tryToUpgradeSpringBootVersion: HandleCommand<any> = dryRunEditor<Un
     UnleashPhilParameters,
     "boot-upgrade", {
         description: `Upgrade Spring Boot version`,
-        intent: "try to upgrade Spring Boot"
+        intent: "try to upgrade Spring Boot",
     },
     );
