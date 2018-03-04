@@ -6,7 +6,7 @@ import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
+import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import {
     K8sProductionDeployOnSuccessStatus, K8sStagingDeployOnSuccessStatus,
@@ -26,7 +26,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ],
         },
         new GuardedPhaseCreator(HttpServicePhases, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(npmPhases, IsNode),
+        new GuardedPhaseCreator(NpmPhases, IsNode),
         new GuardedPhaseCreator(LibraryPhases, MaterialChangeToJavaRepo));
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec);
     sdm.addSupportingCommands(

@@ -14,7 +14,7 @@ import {
     LocalEndpointPhase,
 } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
+import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import {
@@ -46,7 +46,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             PushToPublicRepo, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(npmPhases, IsNode),
+        new GuardedPhaseCreator(NpmPhases, IsNode),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest);
     sdm.addSupportingCommands(
