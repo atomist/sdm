@@ -1,7 +1,7 @@
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { HandlerContext, logger } from "@atomist/automation-client";
-import { LastEndpoint } from "../typings/types";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as https from "https";
+import { LastEndpoint } from "../typings/types";
 
 const K8TargetBase = "deploy/atomist/k8s/";
 
@@ -11,7 +11,7 @@ export async function findLastK8sDeployment(ctx: HandlerContext, rr: RepoRef,
         "graphql/query/LastEndpoint", {
             name: rr.repo,
             owner: rr.owner,
-            branch: branch,
+            branch,
             statusContext: K8TargetBase + environment,
         });
     if (!result) {
@@ -25,7 +25,7 @@ export async function findLastK8sDeployment(ctx: HandlerContext, rr: RepoRef,
     }
     const endpointStatus = statuses[0];
     if (endpointStatus.state !== "success") {
-        throw new Error(`The k8s deployment on ${commit.sha} was not successful`)
+        throw new Error(`The k8s deployment on ${commit.sha} was not successful`);
     }
     return endpointStatus.targetUrl;
 }
@@ -33,5 +33,5 @@ export async function findLastK8sDeployment(ctx: HandlerContext, rr: RepoRef,
 export const notPicky = {
     httpsAgent: new https.Agent({
         rejectUnauthorized: false,
-    })
+    }),
 };
