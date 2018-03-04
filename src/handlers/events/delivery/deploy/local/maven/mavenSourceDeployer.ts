@@ -45,8 +45,9 @@ class MavenSourceDeployer implements SourceDeployer {
                                   atomistTeam: string,
                                   branch: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;
-        const port = managedDeployments.findPort(id);
-        logger.info("Deploying app [%j] on port [%d] for team %s", id, port, atomistTeam);
+        const branchId = { ...id, branch };
+        const port = managedDeployments.findPort(branchId);
+        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, branch, port, atomistTeam);
         // Don't use the deployable artifact. Clone it
         const cloned = await GitCommandGitProject.cloned(creds, id);
         const childProcess = spawn("mvn",
@@ -63,7 +64,7 @@ class MavenSourceDeployer implements SourceDeployer {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
                     managedDeployments.recordDeployment({
-                        id: {...id, branch},
+                        id: branchId,
                         port, childProcess,
                     });
                     resolve({
