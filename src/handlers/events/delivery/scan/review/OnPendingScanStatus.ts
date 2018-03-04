@@ -94,7 +94,9 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
                     .map(reviewer => reviewer(project, context, params as any)))
                     .then(reviews => consolidate(reviews));
 
-            const filesChanged = await filesChangedSince(project, commit.pushes[0].before.sha);
+            const push = commit.pushes[0];
+            const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
+
             const i: CodeReactionInvocation = {
                 id,
                 context,
