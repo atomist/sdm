@@ -26,7 +26,6 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 K8sProductionDeployOnSuccessStatus,
             ],
         },
-        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot),
         new GuardedPhaseCreator(HttpServicePhases, IsMaven, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo),
         new GuardedPhaseCreator(NpmPhases, IsNode),
         new GuardedPhaseCreator(LibraryPhases, IsMaven, PushesToDefaultBranch));
