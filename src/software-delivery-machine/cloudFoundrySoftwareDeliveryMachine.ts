@@ -59,12 +59,12 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             inv => {
                 logger.info("Will undeploy application %j", inv.id);
                 return LocalExecutableJarDeployer.deployer.undeploy(inv.id);
-            })
-        .addSupersededListeners(
-            inv => {
-                logger.info("Will undeploy Maven application %j", inv.id);
-                return MavenDeployer.undeploy(inv.id);
             });
+        // .addSupersededListeners(
+        //     inv => {
+        //         logger.info("Will undeploy Maven application %j", inv.id);
+        //         return MavenDeployer.undeploy(inv.id);
+        //     });
     configureSpringSdm(sdm, opts);
     return sdm;
 }

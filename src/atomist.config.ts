@@ -6,7 +6,10 @@ import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/ph
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
-import { javaAffirmationEditor } from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
+import {
+    javaAffirmationEditor,
+    javaBranchAffirmationEditor,
+} from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
 import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/k8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
@@ -34,6 +37,7 @@ export const configuration: Configuration = {
         () => breakBuildEditor,
         () => unbreakBuildEditor,
         () => javaAffirmationEditor,
+        () => javaBranchAffirmationEditor,
     ]),
     events: assembled.eventHandlers.concat([]),
     token,

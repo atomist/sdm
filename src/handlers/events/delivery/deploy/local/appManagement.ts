@@ -2,12 +2,20 @@ import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess } from "child_process";
 
+export interface BranchRepoRef extends RemoteRepoRef {
+    branch?: string;
+}
+
+export function isBranchRepoRef(rr: RemoteRepoRef): rr is BranchRepoRef {
+    return !!(rr as BranchRepoRef).branch;
+}
+
 /**
  * Ports will be reused for the same app
  */
 export interface DeployedApp {
 
-    id: RemoteRepoRef;
+    id: BranchRepoRef;
 
     port: number;
 
@@ -33,8 +41,11 @@ export class ManagedDeployments {
      * @return {number}
      */
     public findPort(id: RemoteRepoRef): number {
-        const running = this.deployments
-            .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
+        const running = isBranchRepoRef(id) ?
+            this.deployments
+                .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch) :
+            this.deployments
+                .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
         return !!running ? running.port : this.nextFreePort();
     }
 
@@ -45,8 +56,9 @@ export class ManagedDeployments {
         this.deployments.push(da);
     }
 
-    public async undeploy(id: RemoteRepoRef): Promise<any> {
-        const victim = this.deployments.find(d => d.id.sha === id.sha);
+    public async undeploy(id: BranchRepoRef): Promise<any> {
+        const victim = this.deployments.find(d => d.id.sha === id.sha ||
+            (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
         if (!!victim) {
             victim.childProcess.kill();
             // Keep the port but deallocate the process

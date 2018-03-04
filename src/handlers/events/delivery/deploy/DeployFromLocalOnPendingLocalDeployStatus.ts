@@ -26,9 +26,10 @@ import {
 } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { push } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
-import { SourceDeployer } from "../../../../spi/deploy/Deployer";
+import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
 import { setDeployStatus, setEndpointStatus } from "./deploy";
 
@@ -88,7 +89,8 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
                 id,
                 log,
                 {token: params.githubToken},
-                ctx.teamId);
+                ctx.teamId,
+                status.commit.pushes[0].branch);
             await setDeployStatus(params.githubToken, id,
                 "success",
                 params.deployPhase.context, undefined, params.deployPhase.completedDescription);
