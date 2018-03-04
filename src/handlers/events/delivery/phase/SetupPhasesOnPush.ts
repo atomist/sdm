@@ -39,6 +39,7 @@ import { Phases } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import { ImmaterialPhases } from "../phases/httpServicePhases";
 
 /**
  * Set up phases on a push (e.g. for delivery).
@@ -82,16 +83,17 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
                     Promise.resolve(undefined);
             }));
         const phases = phaseCreatorResults.find(p => !!p);
-        if (!phases) {
-            logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
+        if (phases === ImmaterialPhases) {
             await createStatus(params.githubToken, id, {
                 context: "Immaterial",
                 state: "success",
                 description: "No significant change",
             });
-            return Success;
+        } else if (!phases) {
+            logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
+        } else {
+            await phases.setAllToPending(id, credentials);
         }
-        await phases.setAllToPending(id, credentials);
         return Success;
     }
 }
@@ -114,12 +116,9 @@ export class ApplyPhasesParameters {
 export function applyPhasesToCommit(phases: Phases) {
     return async (ctx: HandlerContext,
                   params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
-
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
-
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
-
         const creds = {token: params.githubToken};
 
         await phases.setAllToPending(id, creds);
