@@ -6,21 +6,16 @@ import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
-import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
+import { not } from "../common/listener/support/pushTestUtils";
 import {
-    HttpServicePhases,
-    LocalDeploymentPhase,
+    HttpServicePhases, ImmaterialPhases,
     LocalDeploymentPhases,
-    LocalEndpointPhase,
 } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
-import {
-    LocalExecutableJarDeployOnSuccessStatus,
-    MavenDeployer,
-} from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { LocalExecutableJarDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
@@ -37,10 +32,11 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
                 CloudFoundryProductionDeployOnSuccessStatus,
             ],
         },
+        new GuardedPhaseCreator(ImmaterialPhases, IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo)),
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
             HasCloudFoundryManifest,
-            PushToPublicRepo, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot, MaterialChangeToJavaRepo),
+            PushToPublicRepo),
+        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot),
         new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(NpmPhases, IsNode),
     );

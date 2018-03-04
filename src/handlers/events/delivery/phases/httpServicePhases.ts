@@ -1,6 +1,10 @@
 import {
-    BaseContext, GitHubStatusContext, IndependentOfEnvironment, PhaseEnvironment, ProductionEnvironment,
-    splitContext, StagingEnvironment,
+    GitHubStatusContext,
+    IndependentOfEnvironment,
+    PhaseEnvironment,
+    ProductionEnvironment,
+    splitContext,
+    StagingEnvironment,
 } from "../../../../common/phases/gitHubContext";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 
@@ -73,6 +77,14 @@ export const LocalEndpointPhase = new PlannedPhase({
 
 });
 
+export const ImmaterialPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "1-immaterial",
+    displayName: "immaterial",
+    completedDescription: "No material changes",
+
+});
+
 const AllKnownPhases = [
     ScanPhase,
     BuildPhase,
@@ -84,6 +96,7 @@ const AllKnownPhases = [
     ProductionEndpointPhase,
     LocalDeploymentPhase,
     LocalEndpointPhase,
+    ImmaterialPhase,
 ];
 
 export const StagingDeploymentContext = StagingDeploymentPhase.context;
@@ -116,6 +129,14 @@ function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
         orderedName: interpreted.phasePart,
     });
 }
+
+/**
+ * Special Phases object to be returned if changes are immaterial.
+ * The identity of this object is important.
+ * @type {Phases}
+ */
+export const ImmaterialPhases = new Phases([
+    ImmaterialPhase]);
 
 /**
  * Phases for an Http service
