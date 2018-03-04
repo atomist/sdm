@@ -83,6 +83,7 @@ const AllKnownPhases = [
     ProductionDeploymentPhase,
     ProductionEndpointPhase,
     LocalDeploymentPhase,
+    LocalEndpointPhase,
 ];
 
 export const StagingDeploymentContext = StagingDeploymentPhase.context;
@@ -111,7 +112,7 @@ export function contextToKnownPhase(ghsc: GitHubStatusContext): PlannedPhase {
 function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
     const interpreted = splitContext(ghsc);
     return new PlannedPhase({
-        environment: interpreted.envPart as PhaseEnvironment,
+        environment: interpreted.envPart + "/" as PhaseEnvironment,
         orderedName: interpreted.phasePart,
     });
 }
