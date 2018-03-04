@@ -53,7 +53,7 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
 
         // this happens immediately, not conditional on any other status
 
-        logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+        logger.info(`Running local deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const log = ConsoleProgressLog;
