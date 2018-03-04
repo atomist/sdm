@@ -47,8 +47,8 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
     }
 
     sdm.addCodeReactions(listChangedFiles)
-        .addFingerprinters(mavenFingerprinter)
-        .addFingerprintDifferenceListeners(diff1)
+        // .addFingerprinters(mavenFingerprinter)
+        // .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
         .addVerifiedDeploymentListeners(presentPromotionInformation)
