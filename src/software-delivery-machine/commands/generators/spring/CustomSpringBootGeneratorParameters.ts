@@ -22,7 +22,7 @@ export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorPara
         required: false,
         order: 50,
     })
-    public groupId: string;
+    public groupId: string = "myco";
 
     @Parameter({
         displayName: "Class Name",
@@ -49,7 +49,6 @@ export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorPara
 
     constructor(params: JavaGeneratorConfig) {
         super();
-        this.groupId = params.groupId;
         this.source.owner = params.seedOwner;
         this.seed = params.seedRepo;
     }

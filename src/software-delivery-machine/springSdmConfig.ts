@@ -29,7 +29,6 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
             seedRepo: "spring-rest-seed",
-            groupId: "myco",
         }))
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),

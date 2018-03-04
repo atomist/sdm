@@ -41,7 +41,6 @@ describe("custom Spring Boot generator", () => {
                 const p = InMemoryProject.from(new SimpleRepoId("owner", "repoName"),
                     {path: "README.md", content: Readme1});
                 const params = new CustomSpringBootGeneratorParameters({
-                    groupId: "mygroup",
                     seedOwner: "foo",
                     seedRepo: "bar",
                 });
