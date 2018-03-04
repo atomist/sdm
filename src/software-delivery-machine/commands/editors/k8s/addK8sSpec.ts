@@ -13,6 +13,7 @@ export const ImagePlaceholder = "image_placeholder";
 export const addK8sSpec: HandleCommand<any> = editor(
     () => addK8sSpecEditor,
     AddK8sSpecCommandName, {
+        intent: "Add kubernetes deployment spec",
         editMode: new PullRequest("enable-k8s",
             "Enable deployment to Kubernetes",
             `This will trigger the Software Development Machine to request deployment of this service in a Kubernetes environment.
