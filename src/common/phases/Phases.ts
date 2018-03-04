@@ -58,19 +58,17 @@ export class Phases {
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
         return Promise.all(this.phases.map(phase =>
-            setStatus(id, phase.context, "pending", creds,
+            setPendingStatus(id, phase.context, creds,
                 `Planning to ${phase.name}`)));
     }
 
 }
 
-function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
-                   state: State,
+function setPendingStatus(id: GitHubRepoRef, context: GitHubStatusContext,
                    creds: ProjectOperationCredentials,
                    description: string = context): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
-        state,
-        target_url: `${id.url}/commit/${id.sha}`,
+        state: "pending",
         context,
         description,
     });
