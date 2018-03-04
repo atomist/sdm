@@ -17,6 +17,9 @@ import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
+import { LocalDeploymentPhase, LocalDeploymentPhases, LocalEndpointPhase } from "../handlers/events/delivery/phases/httpServicePhases";
+import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
@@ -53,5 +56,11 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
             DescribeStagingAndProd,
             () => disposeProjectHandler,
         )
-        .addSupportingEvents(OnDryRunBuildComplete);
+        .addSupportingEvents(OnDryRunBuildComplete, localDeployer);
+
 }
+
+
+const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
+    LocalDeploymentPhases, LocalDeploymentPhase, LocalEndpointPhase,
+    MavenDeployer);

@@ -27,9 +27,6 @@ import { configureSpringSdm } from "./springSdmConfig";
 
 const LocalExecutableJarDeployer = LocalExecutableJarDeployOnSuccessStatus;
 
-const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
-    LocalDeploymentPhases, LocalDeploymentPhase, LocalEndpointPhase,
-    MavenDeployer);
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -52,9 +49,6 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
     sdm.addSupportingCommands(
         () => addCloudFoundryManifest,
     )
-        .addSupportingEvents(
-            localDeployer,
-        )
         .addSupersededListeners(
             inv => {
                 logger.info("Will undeploy application %j", inv.id);
