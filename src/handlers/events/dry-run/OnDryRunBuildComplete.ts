@@ -36,11 +36,9 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
         const build = event.data.Build[0];
         const commit = build.commit;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         const branch = build.commit.pushes[0].branch;
 
         logger.info("Assessing dry run for %j: Statuses=%j", id, commit.statuses);
-
         const dryRunStatus = commit.statuses.find(s => s.context === DryRunContext);
         if (!dryRunStatus || dryRunStatus.state !== "pending") {
             logger.info("Not a dry run build on %j: Statuses=%j", id, commit.statuses);
@@ -61,10 +59,13 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
                 state: "success",
             });
         } else if (build.status === "failed" || build.status === "broken") {
-            logger.info("Raising issue for successful dry run on %j", id);
+            logger.info("Raising issue for failed dry run on %j on branch %s,", id, branch);
+            let body = "Details:\n\n";
+            body += !!build.buildUrl ? `[Build log](${build.buildUrl})` : "No build log available";
+            body += `\n\n[Branch with failure](${id.url}/tree/${branch} "Failing branch ${branch}")`;
             await raiseIssue(params.githubToken, id, {
                 title: `Failed to ${dryRunStatus.description}`,
-                body: "Link to build log...",
+                body,
             });
             await createStatus(params.githubToken, id, {
                 context: DryRunContext,
