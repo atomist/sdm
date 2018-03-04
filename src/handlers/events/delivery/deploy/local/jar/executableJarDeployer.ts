@@ -37,7 +37,7 @@ class ExecutableJarDeployer implements Deployer {
     }
 
     public async undeploy(id: RemoteRepoRef): Promise<any> {
-        return managedDeployments.undeploy(id);
+        return managedDeployments.terminateIfRunning(id);
     }
 
     public async deploy(da: DeployableArtifact,

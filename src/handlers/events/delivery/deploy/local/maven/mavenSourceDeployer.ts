@@ -36,7 +36,7 @@ class MavenSourceDeployer implements SourceDeployer {
     }
 
     public async undeploy(id: RemoteRepoRef, branch: string): Promise<any> {
-        return managedDeployments.undeploy({...id, branch});
+        return managedDeployments.terminateIfRunning({...id, branch});
     }
 
     public async deployFromSource(id: RemoteRepoRef,
@@ -50,6 +50,7 @@ class MavenSourceDeployer implements SourceDeployer {
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, branch, port, atomistTeam);
         // Don't use the deployable artifact. Clone it
         const cloned = await GitCommandGitProject.cloned(creds, id);
+        await managedDeployments.terminateIfRunning(branchId);
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",

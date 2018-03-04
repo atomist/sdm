@@ -51,19 +51,24 @@ export class ManagedDeployments {
 
     public async recordDeployment(da: DeployedApp) {
         logger.info("Recording app [%j] on port [%d]", da.port);
-        // Undeploy it if necessary
-        await this.undeploy(da.id);
         this.deployments.push(da);
     }
 
-    public async undeploy(id: BranchRepoRef): Promise<any> {
+    /**
+     * Terminate any process we're managing on behalf of this id
+     * @param {BranchRepoRef} id
+     * @return {Promise<any>}
+     */
+    public async terminateIfRunning(id: BranchRepoRef): Promise<any> {
         const victim = this.deployments.find(d => d.id.sha === id.sha ||
             (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
         if (!!victim) {
             victim.childProcess.kill();
             // Keep the port but deallocate the process
             victim.childProcess = undefined;
-            logger.info("Killed app [%j], but continuing to reserve port [%d]", victim.port);
+            logger.info("Killed app [%j], but continuing to reserve port [%d]", id, victim.port);
+        } else {
+            logger.info("Was asked to killed app [%j], but no eligible process found", id);
         }
     }
 
