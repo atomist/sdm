@@ -4,7 +4,7 @@ query LastEndpoint(
   $branch: String!
   $statusContext: String!
 ) {
-  Repo(owner: $owner, name: $name) @required {
+  Repo(owner: $owner, name: $name) {
     branches(name: $branch) {
       commit @required {
         sha
