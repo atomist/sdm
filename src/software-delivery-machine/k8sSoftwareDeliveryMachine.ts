@@ -1,5 +1,6 @@
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
+import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
@@ -15,7 +16,6 @@ import {
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
-import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(

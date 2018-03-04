@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Failure, GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
+import { Failure, GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";

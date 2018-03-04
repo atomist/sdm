@@ -2,12 +2,15 @@ import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
+import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
+import { LocalDeploymentPhase, LocalDeploymentPhases, LocalEndpointPhase } from "../handlers/events/delivery/phases/httpServicePhases";
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
+import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
 import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
@@ -17,9 +20,6 @@ import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
-import { LocalDeploymentPhase, LocalDeploymentPhases, LocalEndpointPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
@@ -59,7 +59,6 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         .addSupportingEvents(OnDryRunBuildComplete, localDeployer);
 
 }
-
 
 const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
     LocalDeploymentPhases, LocalDeploymentPhase, LocalEndpointPhase,

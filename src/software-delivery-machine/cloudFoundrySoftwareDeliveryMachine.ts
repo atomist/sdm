@@ -27,7 +27,6 @@ import { configureSpringSdm } from "./springSdmConfig";
 
 const LocalExecutableJarDeployer = LocalExecutableJarDeployOnSuccessStatus;
 
-
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {

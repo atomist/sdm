@@ -65,8 +65,8 @@ export class Phases {
 }
 
 function setPendingStatus(id: GitHubRepoRef, context: GitHubStatusContext,
-                   creds: ProjectOperationCredentials,
-                   description: string = context): Promise<any> {
+                          creds: ProjectOperationCredentials,
+                          description: string = context): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state: "pending",
         context,
