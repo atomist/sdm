@@ -21,3 +21,14 @@ export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpre
            team: string): Promise<Deployment>;
 
 }
+
+/**
+ * Implemented by classes that can deploy from source
+ */
+export interface SourceDeployer {
+
+    deployFromSource(id: RemoteRepoRef,
+                     log: ProgressLog,
+                     creds: ProjectOperationCredentials,
+                     atomistTeam: string): Promise<Deployment>;
+}

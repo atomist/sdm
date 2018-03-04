@@ -1,0 +1,36 @@
+subscription OnPendingLocalDeployStatus {
+  Status(state: pending, context: "sdm/atomist/0-code/1-deploy locally") {
+    commit {
+      sha
+      message
+      statuses {
+        context
+        description
+        state
+      }
+      repo {
+        owner
+        name
+        channels {
+          name
+          id
+        }
+        org {
+          chatTeam {
+            id
+          }
+        }
+      }
+      pushes {
+        branch
+        before {
+          sha
+        }
+      }
+    }
+    state
+    targetUrl
+    context
+    description
+  }
+}

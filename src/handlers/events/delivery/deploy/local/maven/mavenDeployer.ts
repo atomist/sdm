@@ -4,7 +4,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../../../spi/deploy/Deployer";
+import { Deployer, SourceDeployer } from "../../../../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
@@ -20,7 +20,7 @@ let managedDeployments: ManagedDeployments;
  * Use Maven to deploy
  * @param opts options
  */
-export function mavenDeployer(opts: LocalDeployerOptions): Deployer {
+export function mavenDeployer(opts: LocalDeployerOptions): Deployer & SourceDeployer {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -31,7 +31,7 @@ export function mavenDeployer(opts: LocalDeployerOptions): Deployer {
     });
 }
 
-class MavenDeployer implements Deployer {
+class MavenDeployer implements Deployer, SourceDeployer {
 
     constructor(public opts: LocalDeployerOptions) {
     }
@@ -45,15 +45,22 @@ class MavenDeployer implements Deployer {
                         log: ProgressLog,
                         creds: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment> {
+        return this.deployFromSource(da.id, log, creds, atomistTeam);
+    }
+
+    public async deployFromSource(id: RemoteRepoRef,
+                                  log: ProgressLog,
+                                  creds: ProjectOperationCredentials,
+                                  atomistTeam: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;
-        const port = managedDeployments.findPort(da.id);
-        logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
+        const port = managedDeployments.findPort(id);
+        logger.info("Deploying app [%j] on port [%d] for team %s", id, port, atomistTeam);
         // Don't use the deployable artifact. Clone it
-        const cloned = await GitCommandGitProject.cloned(creds, da.id);
+        const cloned = await GitCommandGitProject.cloned(creds, id);
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",
-            ].concat(this.opts.commandLineArgumentsFor({ port, atomistTeam})),
+            ].concat(this.opts.commandLineArgumentsFor({port, atomistTeam})),
             {
                 cwd: cloned.baseDir,
             });
@@ -63,7 +70,7 @@ class MavenDeployer implements Deployer {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    managedDeployments.recordDeployment({id: da.id, port, childProcess});
+                    managedDeployments.recordDeployment({id, port, childProcess});
                     resolve({
                         endpoint: `${baseUrl}:${port}`,
                     });
