@@ -15,6 +15,7 @@ import {
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
+import { IsMaven } from "../common/listener/support/jvmGuards";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -25,9 +26,9 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 K8sProductionDeployOnSuccessStatus,
             ],
         },
-        new GuardedPhaseCreator(HttpServicePhases, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(HttpServicePhases, IsMaven, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo),
         new GuardedPhaseCreator(NpmPhases, IsNode),
-        new GuardedPhaseCreator(LibraryPhases, MaterialChangeToJavaRepo));
+        new GuardedPhaseCreator(LibraryPhases, IsMaven));
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec);
     sdm.addSupportingCommands(
         () => addK8sSpec,
