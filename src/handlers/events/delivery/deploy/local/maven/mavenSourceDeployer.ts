@@ -48,13 +48,17 @@ class MavenSourceDeployer implements SourceDeployer {
         const branchId = { ...id, branch };
         const port = managedDeployments.findPort(branchId);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, branch, port, atomistTeam);
-        // Don't use the deployable artifact. Clone it
         const cloned = await GitCommandGitProject.cloned(creds, id);
         await managedDeployments.terminateIfRunning(branchId);
+        const startupInfo = {
+            port,
+            atomistTeam,
+            contextRoot: `/${branchId.owner}/${branchId.repo}/${branchId.branch}`,
+        };
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",
-            ].concat(this.opts.commandLineArgumentsFor({port, atomistTeam})),
+            ].concat(this.opts.commandLineArgumentsFor(startupInfo)),
             {
                 cwd: cloned.baseDir,
             });
@@ -69,7 +73,7 @@ class MavenSourceDeployer implements SourceDeployer {
                         port, childProcess,
                     });
                     resolve({
-                        endpoint: `${baseUrl}:${port}`,
+                        endpoint: `${baseUrl}:${port}/${startupInfo.contextRoot}`,
                     });
                 }
             });

@@ -2,6 +2,7 @@
 export interface StartupInfo {
     port: number;
     atomistTeam: string;
+    contextRoot: string;
 }
 
 export interface LocalDeployerOptions {

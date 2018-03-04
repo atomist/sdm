@@ -65,5 +65,6 @@ export const MavenDeployer: SourceDeployer =
 function springBootMavenArgs(si: StartupInfo): string[] {
     return [
         `-Dserver.port=${si.port}`,
+        `-Dserver.contextPath=${si.contextRoot}`,
     ];
 }
