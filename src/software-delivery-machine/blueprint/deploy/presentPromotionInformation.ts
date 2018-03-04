@@ -18,6 +18,7 @@ import { VerifiedDeploymentInvocation } from "../../../common/listener/VerifiedD
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
 import { ProductionMauve } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { tipOfDefaultBranch } from "../../../util/github/ghub";
+import { K8sProductionDomain } from "./describeRunningServices";
 
 export async function presentPromotionInformation(inv: VerifiedDeploymentInvocation) {
     const shaLink = slack.url(inv.id.url + "/tree/" + inv.id.sha, inv.id.repo);
@@ -26,7 +27,7 @@ export async function presentPromotionInformation(inv: VerifiedDeploymentInvocat
     const currentlyRunning = await runningAttachment(inv.context,
         (inv.credentials as TokenCredentials).token,
         inv.id as GitHubRepoRef,
-        {domain: "ri-production", color: ProductionMauve}, inv.id.sha);
+        {domain: K8sProductionDomain, color: ProductionMauve}, inv.id.sha);
 
     const message: slack.SlackMessage = {
         attachments: currentlyRunning,
