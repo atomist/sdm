@@ -4,7 +4,7 @@ import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
-import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
+import { HttpServicePhases, LocalDeploymentPhases } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
@@ -15,7 +15,7 @@ import {
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
-import { IsMaven } from "../common/listener/support/jvmGuards";
+import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -26,9 +26,10 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 K8sProductionDeployOnSuccessStatus,
             ],
         },
+        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot),
         new GuardedPhaseCreator(HttpServicePhases, IsMaven, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo),
         new GuardedPhaseCreator(NpmPhases, IsNode),
-        new GuardedPhaseCreator(LibraryPhases, IsMaven));
+        new GuardedPhaseCreator(LibraryPhases, IsMaven, PushesToDefaultBranch));
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec);
     sdm.addSupportingCommands(
         () => addK8sSpec,
