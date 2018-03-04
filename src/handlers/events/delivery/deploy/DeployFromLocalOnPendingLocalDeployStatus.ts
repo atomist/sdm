@@ -26,11 +26,10 @@ import {
 } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
+import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
-import { Deployer, SourceDeployer } from "../../../../spi/deploy/Deployer";
+import { SourceDeployer } from "../../../../spi/deploy/Deployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
 import { setDeployStatus, setEndpointStatus } from "./deploy";
 
 /**
@@ -48,7 +47,7 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
      * @param {Phases} phases
      * @param {PlannedPhase} deployPhase
      * @param {PlannedPhase} endpointPhase
-     * or Kubernetes clusters
+     * @param deployer source deployer to use
      */
     constructor(public phases: Phases,
                 private deployPhase: PlannedPhase,
@@ -83,8 +82,7 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const da = null;
-        const log = await createEphemeralProgressLog();
+        const log = ConsoleProgressLog;
         try {
             const deployment = await params.deployer.deployFromSource(
                 id,

@@ -3,7 +3,8 @@ import { PhaseCreationInvocation, PhaseCreator, PushTest } from "../PhaseCreator
 import { allGuardsVoteFor } from "./pushTestUtils";
 
 /**
- * PhaseCreator totally driven by one or more PushTest instances.
+ * PhaseCreator wholly driven by one or more PushTest instances.
+ * Always returns the same phases
  */
 export class GuardedPhaseCreator implements PhaseCreator {
 

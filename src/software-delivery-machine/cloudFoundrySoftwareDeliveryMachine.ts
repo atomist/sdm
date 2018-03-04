@@ -2,13 +2,16 @@ import { logger } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
+import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
 import {
-    HttpServicePhases, LocalDeploymentPhase, LocalDeploymentPhases, LocalEndpointPhase,
-    StagingEndpointPhase,
+    HttpServicePhases,
+    LocalDeploymentPhase,
+    LocalDeploymentPhases,
+    LocalEndpointPhase,
 } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
@@ -16,7 +19,7 @@ import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuc
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import {
     LocalExecutableJarDeployOnSuccessStatus,
-    LocalSpringBootMavenDeployOnSuccessStatus, MavenDeployer,
+    MavenDeployer,
 } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
@@ -38,12 +41,13 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
                 CloudFoundryProductionDeployOnSuccessStatus,
             ],
         },
-        // TODO will take everything for now
-        new GuardedPhaseCreator(LocalDeploymentPhases, MaterialChangeToJavaRepo),
-
-        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
+            HasCloudFoundryManifest,
+            PushToPublicRepo, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),
-        new GuardedPhaseCreator(LibraryPhases, MaterialChangeToJavaRepo));
+    );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest);
     sdm.addSupportingCommands(
         () => addCloudFoundryManifest,
