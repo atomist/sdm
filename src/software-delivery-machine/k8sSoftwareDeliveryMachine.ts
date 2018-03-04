@@ -27,6 +27,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ],
         },
         new GuardedPhaseCreator(HttpServicePhases, IsMaven, HasK8Spec, PushesToDefaultBranch, PushToPublicRepo),
+        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot),
         new GuardedPhaseCreator(NpmPhases, IsNode),
         new GuardedPhaseCreator(LibraryPhases, IsMaven, PushesToDefaultBranch));
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec);
