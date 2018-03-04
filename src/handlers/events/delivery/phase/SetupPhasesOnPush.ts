@@ -77,7 +77,6 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
             .map(async pc => {
                 const relevant = !!pc.guard ? await pc.guard(pi) : true;
-                logger.info("Guard %s found relevant=%d for %j", pc.guard, relevant, id);
                 return relevant ?
                     Promise.resolve(pc.createPhases(pi)) :
                     Promise.resolve(undefined);

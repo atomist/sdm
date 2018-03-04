@@ -17,7 +17,7 @@
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
-import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenDeployer";
+import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
@@ -25,6 +25,7 @@ import {
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
+import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";
 
 /**
@@ -54,22 +55,12 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export const LocalSpringBootMavenDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
-    new DeployFromLocalOnSuccessStatus<TargetInfo>(
-        HttpServicePhases,
-        ContextToPlannedPhase[StagingDeploymentContext],
-        ContextToPlannedPhase[StagingEndpointContext],
-        artifactStore,
-        mavenDeployer({
-            baseUrl: "http://localhost",
-            lowerPort: 9090,
-            commandLineArgumentsFor: springBootMavenArgs,
-        }),
-        () => ({
-            name: "Local",
-            description: "Deployment alongside local automation client",
-        }),
-    );
+export const MavenDeployer: SourceDeployer =
+    mavenDeployer({
+        baseUrl: "http://localhost",
+        lowerPort: 9090,
+        commandLineArgumentsFor: springBootMavenArgs,
+    });
 
 function springBootMavenArgs(si: StartupInfo): string[] {
     return [

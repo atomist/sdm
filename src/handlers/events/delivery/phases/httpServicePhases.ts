@@ -9,46 +9,67 @@ export const ScanPhase = new PlannedPhase({
     orderedName: "1-scan",
     completedDescription: "Code scan passed",
 });
+
 export const BuildPhase = new PlannedPhase({
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
 });
+
 export const ArtifactPhase = new PlannedPhase({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "find artifact",
     completedDescription: "Located artifact",
 });
+
 export const StagingDeploymentPhase = new PlannedPhase({
     environment: StagingEnvironment,
     orderedName: "3-deploy", displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
 });
+
 export const StagingEndpointPhase = new PlannedPhase({
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
 });
+
 export const StagingVerifiedPhase = new PlannedPhase({
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
 });
+
 export const ProductionDeploymentPhase = new PlannedPhase({
     environment: ProductionEnvironment,
     orderedName: "3-prod-deploy",
     displayName: "deploy to Prod",
     completedDescription: "Deployed to Prod",
 });
+
 export const ProductionEndpointPhase = new PlannedPhase({
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
     completedDescription: "Here is the service endpoint in Prod",
+
+});
+
+export const LocalDeploymentPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "1-deploy locally",
+    completedDescription: "Deployed locally",
+});
+
+export const LocalEndpointPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "2-endpoint",
+    displayName: "locate local service endpoint",
+    completedDescription: "Here is the local service endpoint",
 
 });
 
@@ -61,6 +82,7 @@ const AllKnownPhases = [
     StagingVerifiedPhase,
     ProductionDeploymentPhase,
     ProductionEndpointPhase,
+    LocalDeploymentPhase,
 ];
 
 export const StagingDeploymentContext = StagingDeploymentPhase.context;
@@ -107,3 +129,7 @@ export const HttpServicePhases = new Phases([
     StagingVerifiedPhase,
     ProductionDeploymentPhase,
     ProductionEndpointPhase]);
+
+export const LocalDeploymentPhases = new Phases([
+    LocalDeploymentPhase,
+    LocalEndpointPhase]);

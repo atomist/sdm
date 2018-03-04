@@ -1,5 +1,8 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { StatusState } from "../../typings/types";
 import { createStatus, State } from "../../util/github/ghub";
 
@@ -7,7 +10,7 @@ import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import { contextToKnownPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
-import { BaseContext, GitHubStatusContext, PhaseEnvironment, splitContext } from "./gitHubContext";
+import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 
 export interface PlannedPhaseDefinition {
     environment: PhaseEnvironment;
@@ -45,13 +48,15 @@ export class PlannedPhase {
     }
 }
 
+/**
+ * Represents the phases of a delivery
+ */
 export class Phases {
 
     constructor(public phases: PlannedPhase[]) {
     }
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        const self = this;
         return Promise.all(this.phases.map(phase =>
             setStatus(id, phase.context, "pending", creds,
                 `Planning to ${phase.name}`)));

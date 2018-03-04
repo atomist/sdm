@@ -14,7 +14,7 @@ export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 }
 
 /**
- * A PhaseCreator decided what phases to run depending on repo contents and characteristics
+ * A PhaseCreator decides what phases to run depending on repo contents and characteristics
  * of the push. It is fundamental to determining the flow after the push:
  * for example: do we want to run a code scan?; do we want to build?; do
  * we want to deploy?
@@ -24,7 +24,7 @@ export interface PhaseCreationInvocation extends ProjectListenerInvocation {
 export interface PhaseCreator {
 
     /**
-     * Test the push as to whether we should even look inside it.
+     * Test the push as to whether we should even think about creating phases for it.
      * If we return false here, our createPhases method will never be
      * called for this push
      */
@@ -38,4 +38,5 @@ export interface PhaseCreator {
      * @return {Promise<Phases>}
      */
     createPhases(pci: PhaseCreationInvocation): Promise<Phases | undefined>;
+
 }

@@ -6,7 +6,10 @@ import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/ph
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
-import { javaAffirmationEditor } from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
+import {
+    javaAffirmationEditor,
+    javaBranchAffirmationEditor,
+} from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
 import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/k8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
@@ -16,15 +19,15 @@ const token = process.env.GITHUB_TOKEN;
 
 const assembled = new ComposedFunctionalUnit(
      // cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
-     k8sSoftwareDeliveryMachine({useCheckstyle: false}),
+      k8sSoftwareDeliveryMachine({useCheckstyle: false}),
 );
 
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
     teamIds: [
-          "T1JVCMVH7",
-      //  "T5964N9B7",    // spring-team
+         // "T1JVCMVH7",
+       "T5964N9B7",    // spring-team
         //  "T29E48P34",    // Atomist community
     ], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: assembled.commandHandlers.concat([
@@ -34,6 +37,7 @@ export const configuration: Configuration = {
         () => breakBuildEditor,
         () => unbreakBuildEditor,
         () => javaAffirmationEditor,
+        () => javaBranchAffirmationEditor,
     ]),
     events: assembled.eventHandlers.concat([]),
     token,

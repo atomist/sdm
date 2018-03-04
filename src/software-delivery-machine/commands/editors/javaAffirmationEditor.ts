@@ -1,15 +1,35 @@
 import { HandleCommand } from "@atomist/automation-client";
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
+import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editor } from "../../../handlers/commands/editors/registerEditor";
 
+/**
+ * Harmlessly modify a Java file on master
+ * @type {HandleCommand<EditOneOrAllParameters>}
+ */
 export const javaAffirmationEditor: HandleCommand<any> = editor(
     () => appendAffirmationToJava,
     "java affirmation",
     {
-        editMode: {message: `Everyone needs encouragement to write Java`, branch: "master"} as BranchCommit,
+        editMode: commitToMaster(`Everyone needs encouragement to write Java`),
+    },
+);
+
+/**
+ * Harmlessly modify a Java file on a branch
+ * @type {HandleCommand<EditOneOrAllParameters>}
+ */
+export const javaBranchAffirmationEditor: HandleCommand<any> = editor(
+    () => appendAffirmationToJava,
+    "java branch affirmation",
+    {
+        // Be sure to create a new instance each time to ensure unique branch names
+        editMode: () => ({
+            message: `Everyone needs encouragement to write Java`,
+            branch: "ja-" + new Date().getTime(),
+        }),
     },
 );
 

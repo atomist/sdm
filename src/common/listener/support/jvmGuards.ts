@@ -1,4 +1,5 @@
 
+import { SpringBootProjectStructure } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectStructure";
 import { PushTest } from "../PhaseCreator";
 
 export const IsMaven: PushTest = async pi => {
@@ -11,11 +12,6 @@ export const IsMaven: PushTest = async pi => {
 };
 
 export const IsSpringBoot: PushTest = async pi => {
-    try {
-        const f = await pi.project.findFile("pom.xml");
-        const contents = await f.getContent();
-        return contents.includes("spring-boot");
-    } catch {
-        return false;
-    }
+    const springBootStructure = await SpringBootProjectStructure.inferFromJavaSource(pi.project);
+    return !!springBootStructure;
 };

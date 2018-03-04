@@ -22,10 +22,9 @@ import {
     logger,
     Secret,
     Secrets,
-    success,
     Success,
 } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
@@ -42,8 +41,9 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
+import { OnAnySuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
+import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { deploy } from "./deploy";
 
 /**
@@ -51,7 +51,7 @@ import { deploy } from "./deploy";
  */
 @EventHandler("Deploy linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
+export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements StatusSuccessHandler, EventWithCommand {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -67,7 +67,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(private phases: Phases,
+    constructor(public phases: Phases,
                 private deployPhase: PlannedPhase,
                 private endpointPhase: PlannedPhase,
                 private artifactStore: ArtifactStore,
@@ -104,9 +104,6 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Han
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
-
-        logger.info("%%%% In DeployFromLocalOnSuccessStatus looking for %s, incoming status is %s",
-            params.deployPhase.context, status.context);
 
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,

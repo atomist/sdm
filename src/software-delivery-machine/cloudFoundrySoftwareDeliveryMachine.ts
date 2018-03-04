@@ -2,20 +2,34 @@ import { logger } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
+import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
-import { HttpServicePhases } from "../handlers/events/delivery/phases/httpServicePhases";
+import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
+import {
+    HttpServicePhases,
+    LocalDeploymentPhase,
+    LocalDeploymentPhases,
+    LocalEndpointPhase,
+} from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { npmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
-import { LocalSpringBootMavenDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import {
+    LocalExecutableJarDeployOnSuccessStatus,
+    MavenDeployer,
+} from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
 
-const LocalExecutableJarDeployer = LocalSpringBootMavenDeployOnSuccessStatus;
+const LocalExecutableJarDeployer = LocalExecutableJarDeployOnSuccessStatus;
+
+const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
+    LocalDeploymentPhases, LocalDeploymentPhase, LocalEndpointPhase,
+    MavenDeployer);
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -27,13 +41,20 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
                 CloudFoundryProductionDeployOnSuccessStatus,
             ],
         },
-        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, HasCloudFoundryManifest, PushToPublicRepo, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
+            HasCloudFoundryManifest,
+            PushToPublicRepo, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(npmPhases, IsNode),
-        new GuardedPhaseCreator(LibraryPhases, MaterialChangeToJavaRepo));
+    );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest);
     sdm.addSupportingCommands(
         () => addCloudFoundryManifest,
     )
+        .addSupportingEvents(
+            localDeployer,
+        )
         .addSupersededListeners(
             inv => {
                 logger.info("Will undeploy application %j", inv.id);
