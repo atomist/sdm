@@ -18,7 +18,7 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { PlannedPhase } from "../../../../../common/phases/Phases";
-import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
+import { K8sProductionDomain, K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSuccessStatus";
@@ -30,8 +30,8 @@ import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSucces
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: k8AutomationDeployContext(K8sTestingDomain)}))
-export class NoticeK8sTestDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
+        {context: k8AutomationDeployContext(K8sProductionDomain)}))
+export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;

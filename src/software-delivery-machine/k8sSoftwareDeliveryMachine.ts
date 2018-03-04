@@ -9,8 +9,8 @@ import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases"
 import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import {
-    K8sProductionDeployOnSuccessStatus, K8sStagingDeployOnSuccessStatus,
-    NoticeK8sDeployCompletion,
+    K8sProductionDeployOnSuccessStatus, K8sStagingDeployOnSuccessStatus, NoticeK8sProdDeployCompletion,
+    NoticeK8sTestDeployCompletion,
 } from "./blueprint/deploy/k8sDeploy";
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
@@ -30,10 +30,9 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
         new GuardedPhaseCreator(NpmPhases, IsNode),
         new GuardedPhaseCreator(LibraryPhases, IsMaven, PushesToDefaultBranch));
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec);
-    sdm.addSupportingCommands(
-        () => addK8sSpec,
-    );
-    sdm.addSupportingEvents(() => NoticeK8sDeployCompletion);
+    sdm.addSupportingCommands(() => addK8sSpec);
+    sdm.addSupportingEvents(() => NoticeK8sTestDeployCompletion,
+        () => NoticeK8sProdDeployCompletion);
     configureSpringSdm(sdm, opts);
     return sdm;
 }

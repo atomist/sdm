@@ -1,11 +1,12 @@
-import { NoticeK8sDeployCompletionOnStatus } from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sDeployCompletion";
+import { NoticeK8sTestDeployCompletionOnStatus } from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sDeployCompletion";
 import { RequestK8sDeployOnSuccessStatus } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
 import { RequestK8sDeployOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus1";
 import {
-    ContextToPlannedPhase, HttpServicePhases, ProductionDeploymentContext, StagingDeploymentContext,
+    ContextToPlannedPhase, HttpServicePhases, ProductionDeploymentContext, ProductionEndpointContext, StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
+import { NoticeK8sProdDeployCompletionOnStatus } from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sProdDeployCompletion";
 
 export const K8sStagingDeployOnSuccessStatus = () =>
     new RequestK8sDeployOnSuccessStatus(
@@ -20,6 +21,11 @@ export const K8sProductionDeployOnSuccessStatus = () =>
         ContextToPlannedPhase[ProductionDeploymentContext],
         K8sProductionDomain);
 
-export const NoticeK8sDeployCompletion = new NoticeK8sDeployCompletionOnStatus(
+export const NoticeK8sTestDeployCompletion = new NoticeK8sTestDeployCompletionOnStatus(
     ContextToPlannedPhase[StagingDeploymentContext],
     ContextToPlannedPhase[StagingEndpointContext]);
+
+
+export const NoticeK8sProdDeployCompletion = new NoticeK8sProdDeployCompletionOnStatus(
+    ContextToPlannedPhase[ProductionDeploymentContext],
+    ContextToPlannedPhase[ProductionEndpointContext]);
