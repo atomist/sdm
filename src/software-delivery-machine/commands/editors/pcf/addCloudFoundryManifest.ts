@@ -1,4 +1,5 @@
 import { HandleCommand } from "@atomist/automation-client";
+import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { editor } from "../../../../handlers/commands/editors/registerEditor";
 import { identification } from "../../../../handlers/events/delivery/build/local/maven/pomParser";
@@ -8,7 +9,13 @@ export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 
 export const addCloudFoundryManifest: HandleCommand<any> = editor(
     () => addCfManifest,
-    AddCloudFoundryManifestCommandName);
+    AddCloudFoundryManifestCommandName, {
+        intent: "Add kubernetes deployment spec",
+        editMode: () => new PullRequest("add-pcf-manifest",
+            "Add Cloud Foundry manifest",
+            "This will trigger the Software Development Machine to deploy to your Cloud Foundry space",
+            "Add Cloud Foundry manifest\n\n[atomist]"),
+    });
 
 export const addCfManifest: SimpleProjectEditor = (p, ctx) => {
     return p.findFile("pom.xml")
