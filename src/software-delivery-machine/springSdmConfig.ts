@@ -24,11 +24,11 @@ import { springBootGenerator } from "./commands/generators/spring/springBootGene
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
- * @param {SoftwareDeliveryMachine} sdm
+ * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
  * @param {{useCheckstyle: boolean}} opts
  */
-export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
-    sdm.addNewIssueListeners(requestDescription)
+export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
+    softwareDeliveryMachine.addNewIssueListeners(requestDescription)
         .addEditors(() => tryToUpgradeSpringBootVersion)
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
@@ -47,9 +47,7 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         }
     }
 
-    sdm.addCodeReactions(listChangedFiles)
-        // .addFingerprinters(mavenFingerprinter)
-        // .addFingerprintDifferenceListeners(diff1)
+    softwareDeliveryMachine.addCodeReactions(listChangedFiles)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addVerifiedDeploymentListeners(presentPromotionInformation)
         .addSupportingCommands(
@@ -58,6 +56,8 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         )
         .addSupportingEvents(OnDryRunBuildComplete, localDeployer);
 
+    // sdm.addFingerprinters(mavenFingerprinter)
+    // .addFingerprintDifferenceListeners(diff1)
 }
 
 const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
