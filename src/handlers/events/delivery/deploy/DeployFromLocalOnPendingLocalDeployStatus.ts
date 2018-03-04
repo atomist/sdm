@@ -31,6 +31,7 @@ import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 import { Deployer, SourceDeployer } from "../../../../spi/deploy/Deployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
+import { setDeployStatus, setEndpointStatus } from "./deploy";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -85,24 +86,24 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
         const da = null;
         const log = await createEphemeralProgressLog();
         try {
-            await params.deployer.deployFromSource(
+            const deployment = await params.deployer.deployFromSource(
                 id,
                 log,
                 {token: params.githubToken},
                 ctx.teamId);
-            await createStatus(params.githubToken, id, {
-                state: "success",
-                context: params.deployPhase.context,
-                description: params.deployPhase.completedDescription,
-            });
+            await setDeployStatus(params.githubToken, id,
+                "success",
+                params.deployPhase.context, undefined, params.deployPhase.completedDescription);
+            if (!!deployment.endpoint) {
+                await setEndpointStatus(params.githubToken, id,
+                    params.endpointPhase.context, deployment.endpoint, params.endpointPhase.completedDescription);
+            }
             return Success;
         } catch (e) {
             logger.warn("Deployment failed: %s", e);
-            await createStatus(params.githubToken, id, {
-                state: "failure",
-                context: params.deployPhase.context,
-                description: params.deployPhase.workingDescription,
-            });
+            await setDeployStatus(params.githubToken, id,
+                "failure",
+                params.deployPhase.context, undefined, params.deployPhase.workingDescription);
             return Failure;
         } finally {
             log.close();

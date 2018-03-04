@@ -65,6 +65,14 @@ export const LocalDeploymentPhase = new PlannedPhase({
     completedDescription: "Deployed locally",
 });
 
+export const LocalEndpointPhase = new PlannedPhase({
+    environment: IndependentOfEnvironment,
+    orderedName: "2-endpoint",
+    displayName: "locate local service endpoint",
+    completedDescription: "Here is the local service endpoint",
+
+});
+
 const AllKnownPhases = [
     ScanPhase,
     BuildPhase,
@@ -123,4 +131,5 @@ export const HttpServicePhases = new Phases([
     ProductionEndpointPhase]);
 
 export const LocalDeploymentPhases = new Phases([
-    LocalDeploymentPhase]);
+    LocalDeploymentPhase,
+    LocalEndpointPhase]);

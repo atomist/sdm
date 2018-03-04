@@ -7,7 +7,7 @@ import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
 import {
-    HttpServicePhases, LocalDeploymentPhase, LocalDeploymentPhases,
+    HttpServicePhases, LocalDeploymentPhase, LocalDeploymentPhases, LocalEndpointPhase,
     StagingEndpointPhase,
 } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
@@ -24,7 +24,8 @@ import { configureSpringSdm } from "./springSdmConfig";
 
 const LocalExecutableJarDeployer = LocalExecutableJarDeployOnSuccessStatus;
 
-const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(LocalDeploymentPhases, LocalDeploymentPhase, StagingEndpointPhase,
+const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
+    LocalDeploymentPhases, LocalDeploymentPhase, LocalEndpointPhase,
     MavenDeployer);
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {

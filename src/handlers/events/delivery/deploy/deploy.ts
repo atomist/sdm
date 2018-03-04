@@ -111,12 +111,12 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
     }
 }
 
-function setDeployStatus(token: string,
-                         id: GitHubRepoRef,
-                         state: StatusState,
-                         context: GitHubStatusContext,
-                         targetUrl: string,
-                         description?: string): Promise<any> {
+export function setDeployStatus(token: string,
+                                id: GitHubRepoRef,
+                                state: StatusState,
+                                context: GitHubStatusContext,
+                                targetUrl: string,
+                                description?: string): Promise<any> {
     logger.info(`Setting deploy status for ${context} to ${state} at ${targetUrl}`);
     return createStatus(token, id, {
         state,
@@ -126,10 +126,11 @@ function setDeployStatus(token: string,
     });
 }
 
-function setEndpointStatus(token: string, id: GitHubRepoRef,
-                           context: GitHubStatusContext,
-                           endpoint: string,
-                           description?: string): Promise<any> {
+export function setEndpointStatus(token: string,
+                                  id: GitHubRepoRef,
+                                  context: GitHubStatusContext,
+                                  endpoint: string,
+                                  description?: string): Promise<any> {
     return createStatus(token, id, {
         state: "success",
         target_url: endpoint,
