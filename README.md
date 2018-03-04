@@ -82,18 +82,6 @@ This is configurable
 ## Phases in Detail
 Each of the phases results in the triggering of domain specific listeners that are provided with the appropriate context to process the event: For example, access to the project source code in the case of a code review, or access to the reported URL for a deployed endpoint. Certain properties are common to all events, enabling communication with users via Slack, and providing credentials for calls to GitHub.
 
-The listener interfaces are
-
-| User/system action  |  Atomist phases | Event Handlers |
-|---|---|---|---|---|
-| Issue creation  |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> | 
-| Repo creation  |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> | 
-| Push to repo  |  <ul><li>Phase creation</li><li>Scan</li><li>Autofix</li><li>Review</li><li>Inspect</li><li>Build</li></ul> |  <ul><li>Handler1</li></ul>  |  
-| Push to repo  |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul>  |  
-| Deployment result |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |
-| Endpoint reported |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |  
-| Endpoint verification |  <ul><li>Handler1</li></ul> |  <ul><li>Handler1</li></ul> |
-
 All listener invocations receive at least the following generally useful information:
 
 ```typescript
