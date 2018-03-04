@@ -19,7 +19,8 @@ export const addK8sSpec: HandleCommand<any> = editor(
             `This will trigger the Software Development Machine to request deployment of this service in a Kubernetes environment.
 
 The Atomist playground kubernetes environment is restricted, so changes to this file will not change anything there.
-In your own kubernetes environment, you can do what you like; see https://github.com/atomist/k8-automation for a starting point.`,
+In your own kubernetes environment, you can do what you like; see https://github.com/atomist/k8-automation for a starting point.
+[atomist]`,
             "enable deployment to kubernetes"),
     });
 
