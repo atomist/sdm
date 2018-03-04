@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    Failure,
-    GraphQL,
-    HandleEvent,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { Failure, GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { push } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
@@ -61,24 +51,7 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        // const statusAndFriends: GitHubStatusAndFriends = {
-        //     context: status.context,
-        //     state: status.state,
-        //     targetUrl: status.targetUrl,
-        //     description: status.description,
-        //     siblings: status.commit.statuses,
-        // };
-        //
-        // // TODO: determine previous step based on the contexts of existing statuses
-        // if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
-        //     return Success;
-        // }
-        //
-        // if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
-        //     return Success;
-        // }
-        //
-        // // TODO: if any status is failed, do not deploy
+        // this happens immediately, not conditional on any other status
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
