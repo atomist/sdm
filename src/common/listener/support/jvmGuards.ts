@@ -1,11 +1,11 @@
 import { SpringBootProjectStructure } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectStructure";
-import { PushTest } from "../PhaseCreator";
+import { PhaseCreationInvocation, PushTest } from "../PhaseCreator";
+import { listChangedFiles } from "../../../software-delivery-machine/blueprint/review/listChangedFiles";
 
-export const IsMaven: PushTest = pi =>
+export const IsMaven: PushTest = (pi: PhaseCreationInvocation) =>
     pi.project.findFile("pom.xml")
         .then(() => true, () => false);
 
-export const IsSpringBoot: PushTest = async pi => {
-    const springBootStructure = await SpringBootProjectStructure.inferFromJavaSource(pi.project);
-    return !!springBootStructure;
-};
+export const IsSpringBoot: PushTest = (pi: PhaseCreationInvocation) =>
+    SpringBootProjectStructure.inferFromJavaSource(pi.project)
+        .then(springBootStructure => !!springBootStructure);
