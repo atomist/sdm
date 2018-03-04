@@ -3,17 +3,18 @@ import { springBootTagger } from "@atomist/spring-automation/commands/tag/spring
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
 import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
-import { LocalDeploymentPhase, LocalDeploymentPhases, LocalEndpointPhase } from "../handlers/events/delivery/phases/httpServicePhases";
-import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
+import {
+    LocalDeploymentPhase,
+    LocalDeploymentPhases,
+    LocalEndpointPhase,
+} from "../handlers/events/delivery/phases/httpServicePhases";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
-import { LookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
-import { diff1 } from "./blueprint/fingerprint/reactToFingerprintDiffs";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { listChangedFiles } from "./blueprint/review/listChangedFiles";
@@ -50,7 +51,6 @@ export function configureSpringSdm(sdm: SoftwareDeliveryMachine, opts: { useChec
         // .addFingerprinters(mavenFingerprinter)
         // .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)
-        .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
         .addVerifiedDeploymentListeners(presentPromotionInformation)
         .addSupportingCommands(
             DescribeStagingAndProd,

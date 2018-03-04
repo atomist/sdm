@@ -72,7 +72,9 @@ interface CountBySha {
 }
 
 function whatIsRunning(owner: string, repo: string, everythingRunning: RunningCommit[]): CountBySha {
-    const myCommits = everythingRunning.filter(c => c.repo.owner === owner && c.repo.name === repo);
+    const myCommits = everythingRunning
+        .filter(c => !!c.repo)
+        .filter(c => c.repo.owner === owner && c.repo.name === repo);
     return countBy(c => c.sha, myCommits);
 }
 

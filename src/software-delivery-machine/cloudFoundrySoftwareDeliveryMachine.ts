@@ -13,6 +13,7 @@ import {
 } from "../handlers/events/delivery/phases/httpServicePhases";
 import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
 import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
+import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
@@ -40,10 +41,11 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(NpmPhases, IsNode),
     );
-    sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest);
-    sdm.addSupportingCommands(
-        () => addCloudFoundryManifest,
-    )
+    sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
+        .addSupportingCommands(
+            () => addCloudFoundryManifest,
+        )
+        .addEndpointVerificationListeners(lookFor200OnEndpointRootGet())
         .addSupersededListeners(
             inv => {
                 logger.info("Will undeploy application %j", inv.id);
