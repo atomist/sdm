@@ -12,6 +12,17 @@ export const PushesToDefaultBranch: PushTest = p => {
 };
 
 /**
+ * Is this a push originated by Atomist? Note that we can't look at the committer,
+ * as if a user invoked a command handler, their credentials will be used
+ * @param {PhaseCreationInvocation} p
+ * @return {boolean}
+ * @constructor
+ */
+export const PushFromAtomist: PushTest = p => {
+    return p.push.after.message.includes("[atomist]");
+};
+
+/**
  * Match on any push
  * @param {PhaseCreationInvocation} p
  * @constructor

@@ -5,7 +5,7 @@ import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCrea
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
-import { PushesToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { PushesToDefaultBranch, PushFromAtomist, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import {
     HttpServicePhases, ImmaterialPhases,
@@ -36,7 +36,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
             HasCloudFoundryManifest,
             PushToPublicRepo),
-        new GuardedPhaseCreator(LocalDeploymentPhases, IsMaven, IsSpringBoot),
+        new GuardedPhaseCreator(LocalDeploymentPhases, not(PushFromAtomist), IsMaven, IsSpringBoot),
         new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
         new GuardedPhaseCreator(NpmPhases, IsNode),
     );

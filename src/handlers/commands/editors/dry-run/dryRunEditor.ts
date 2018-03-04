@@ -38,7 +38,7 @@ export function dryRunEditor<PARAMS extends EditOneOrAllParameters =
             p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
         editMode: ((params: PARAMS) => new NewBranchWithStatus(
             `edit-${name}-${Date.now()}`,
-            description,
+            `${description.substr(0, 50)}\n\n[atomist] ${description}`,
             params.targets.credentials,
             status)),
         ...details,
