@@ -1,12 +1,12 @@
-import { HandleCommand } from "@atomist/automation-client";
+import { HandleCommand, logger } from "@atomist/automation-client";
 import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
 import { gitHubRepoLoader } from "@atomist/automation-client/operations/common/gitHubRepoLoader";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
-import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Status } from "../../../../util/github/ghub";
+import { EditorCommandDetails, editorHandler } from "../toclient/editToCommand";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";
@@ -36,11 +36,14 @@ export function dryRunEditor<PARAMS extends EditOneOrAllParameters =
         repoFinder: allReposInTeam(),
         repoLoader:
             p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
-        editMode: ((params: PARAMS) => new NewBranchWithStatus(
-            `edit-${name}-${Date.now()}`,
-            `${description.substr(0, 50)}\n\n[atomist] ${description}`,
-            params.targets.credentials,
-            status)),
+        editMode: ((params: PARAMS) => {
+            logger.info("About to create edit mode for dry run editor: params=%j", params);
+            return new NewBranchWithStatus(
+                `edit-${name}-${Date.now()}`,
+                `${description.substr(0, 50)}\n\n[atomist] ${description}`,
+                params.targets.credentials,
+                status);
+        }),
         ...details,
     };
     return editorHandler(
