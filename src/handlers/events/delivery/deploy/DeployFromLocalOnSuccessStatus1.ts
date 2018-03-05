@@ -36,7 +36,6 @@ import {
     GitHubStatusAndFriends,
     Phases,
     PlannedPhase,
-    previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -45,6 +44,7 @@ import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { deploy } from "./deploy";
+import { previousPhaseSucceeded } from "../../../../common/phases/phaseOrdering";
 
 // TODO This class is copied from DeployFromLocalOnSuccessStatus to ensure
 // the subscription works with a different name

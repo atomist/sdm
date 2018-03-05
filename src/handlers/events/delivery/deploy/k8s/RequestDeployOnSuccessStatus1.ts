@@ -18,10 +18,11 @@ import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } fro
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
-    currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase, previousPhaseSucceeded,
+    currentPhaseIsStillPending, GitHubStatusAndFriends, Phases, PlannedPhase,
 } from "../../../../../common/phases/Phases";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
+import { previousPhaseSucceeded } from "../../../../../common/phases/phaseOrdering";
 
 export type K8Target = "testing" | "production";
 

@@ -29,8 +29,7 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
 import { splitContext } from "../../../../common/phases/gitHubContext";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, PlannedPhase } from "../../../../common/phases/Phases";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import {
@@ -38,6 +37,7 @@ import {
     StagingEndpointContext,
 } from "../phases/httpServicePhases";
 import { forApproval } from "./approvalGate";
+import { previousPhaseSucceeded } from "../../../../common/phases/phaseOrdering";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 

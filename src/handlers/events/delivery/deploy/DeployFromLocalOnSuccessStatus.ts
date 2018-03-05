@@ -35,7 +35,6 @@ import {
     GitHubStatusAndFriends,
     Phases,
     PlannedPhase,
-    previousPhaseSucceeded,
 } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -45,6 +44,7 @@ import { OnAnySuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { deploy } from "./deploy";
+import { previousPhaseSucceeded } from "../../../../common/phases/phaseOrdering";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
