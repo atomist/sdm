@@ -76,11 +76,20 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
             addressChannels: addressChannelsFor(push.repo, context),
         };
         const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
-            .map(async pc => {
+            .map(async (pc, index) => {
                 const relevant = !!pc.guard ? await pc.guard(pi) : true;
-                return relevant ?
-                    Promise.resolve(pc.createPhases(pi)) :
-                    Promise.resolve(undefined);
+                if (relevant) {
+                    const phases = pc.createPhases(pi);
+                    if (!!phases) {
+                        logger.info("Eligible PhaseCreator %s at %d returned phases %j", pc, index, phases);
+                    } else {
+                        logger.info("Eligible PhaseCreator %s at %d found no phases", pc, index);
+                    }
+                    return Promise.resolve(phases);
+                } else {
+                    logger.info("Ineligible PhaseCreator %s at %d will not be invoked", pc, index);
+                    return Promise.resolve(undefined);
+                }
             }));
         const phases = phaseCreatorResults.find(p => !!p);
         if (phases === ImmaterialPhases) {
