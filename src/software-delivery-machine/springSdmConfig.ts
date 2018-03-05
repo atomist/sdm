@@ -47,7 +47,8 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         }
     }
 
-    softwareDeliveryMachine.addCodeReactions(listChangedFiles)
+    softwareDeliveryMachine
+        // .addCodeReactions(listChangedFiles)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addVerifiedDeploymentListeners(presentPromotionInformation)
         .addSupportingCommands(
