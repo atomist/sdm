@@ -40,6 +40,7 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { ImmaterialPhases } from "../phases/httpServicePhases";
+import { failureOn } from "@atomist/automation-client/action/ActionResult";
 
 /**
  * Set up phases on a push (e.g. for delivery).
@@ -67,39 +68,47 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
         const project = await GitCommandGitProject.cloned(credentials, id);
+        const addressChannels = addressChannelsFor(push.repo, context);
         const pi: PhaseCreationInvocation = {
             id,
             project,
             credentials,
             push,
             context,
-            addressChannels: addressChannelsFor(push.repo, context),
+            addressChannels,
         };
-        const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
-            .map(async pc => {
-                const relevant = !!pc.guard ? await pc.guard(pi) : true;
-                if (relevant) {
-                    const phases = pc.createPhases(pi);
-                    logger.info("Eligible PhaseCreator %s returned %j", pc, phases);
-                    return Promise.resolve(phases);
-                } else {
-                    logger.info("Ineligible PhaseCreator %s will not be invoked", pc);
-                    return Promise.resolve(undefined);
-                }
-            }));
-        const determinedPhases = phaseCreatorResults.find(p => !!p);
-        if (determinedPhases === ImmaterialPhases) {
-            await createStatus(params.githubToken, id, {
-                context: "Immaterial",
-                state: "success",
-                description: "No significant change",
-            });
-        } else if (!determinedPhases) {
-            logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
-        } else {
-            await determinedPhases.setAllToPending(id, credentials);
+
+        try {
+            const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
+                .map(async pc => {
+                    const relevant = !!pc.guard ? await pc.guard(pi) : true;
+                    if (relevant) {
+                        const phases = pc.createPhases(pi);
+                        logger.info("Eligible PhaseCreator %s returned %j", pc, phases);
+                        return Promise.resolve(phases);
+                    } else {
+                        logger.info("Ineligible PhaseCreator %s will not be invoked", pc);
+                        return Promise.resolve(undefined);
+                    }
+                }));
+            const determinedPhases = phaseCreatorResults.find(p => !!p);
+            if (determinedPhases === ImmaterialPhases) {
+                await createStatus(params.githubToken, id, {
+                    context: "Immaterial",
+                    state: "success",
+                    description: "No significant change",
+                });
+            } else if (!determinedPhases) {
+                logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
+            } else {
+                await determinedPhases.setAllToPending(id, credentials);
+            }
+            return Success;
+        } catch (err) {
+            logger.error("Error determining phases: %s", err);
+            await addressChannels(`Serious error trying to determine phases. Please check SDM logs: ${err}`);
+            return { code: 1, message: "Failed: " + err };
         }
-        return Success;
     }
 }
 
