@@ -76,32 +76,28 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
             addressChannels: addressChannelsFor(push.repo, context),
         };
         const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
-            .map(async (pc, index) => {
+            .map(async pc => {
                 const relevant = !!pc.guard ? await pc.guard(pi) : true;
                 if (relevant) {
                     const phases = pc.createPhases(pi);
-                    if (!!phases) {
-                        logger.info("Eligible PhaseCreator %s at %d returned phases %j", pc, index, phases);
-                    } else {
-                        logger.info("Eligible PhaseCreator %s at %d found no phases", pc, index);
-                    }
+                    logger.info("Eligible PhaseCreator %s returned %j", pc, phases);
                     return Promise.resolve(phases);
                 } else {
-                    logger.info("Ineligible PhaseCreator %s at %d will not be invoked", pc, index);
+                    logger.info("Ineligible PhaseCreator %s will not be invoked", pc);
                     return Promise.resolve(undefined);
                 }
             }));
-        const phases = phaseCreatorResults.find(p => !!p);
-        if (phases === ImmaterialPhases) {
+        const determinedPhases = phaseCreatorResults.find(p => !!p);
+        if (determinedPhases === ImmaterialPhases) {
             await createStatus(params.githubToken, id, {
                 context: "Immaterial",
                 state: "success",
                 description: "No significant change",
             });
-        } else if (!phases) {
+        } else if (!determinedPhases) {
             logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
         } else {
-            await phases.setAllToPending(id, credentials);
+            await determinedPhases.setAllToPending(id, credentials);
         }
         return Success;
     }

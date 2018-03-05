@@ -5,6 +5,7 @@ import {
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 import * as GitHubApi from "@octokit/rest";
 import axios from "axios";
 import * as fs from "fs";
@@ -83,7 +84,7 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
  * @return {Promise<any>}
  */
 function saveFileAs(token: string, url: string, outputFilename: string): Promise<any> {
-    return axios.get(url, {
+    return doWithRetry(() => axios.get(url, {
         headers: {
             // TODO why doesn't auth work?
             // "Authorization": `token ${token}`,
@@ -91,9 +92,10 @@ function saveFileAs(token: string, url: string, outputFilename: string): Promise
             "Content-Type": "application/zip",
         },
         responseType: "arraybuffer",
-    }).then(result => {
-        return fs.writeFileSync(outputFilename, result.data);
-    });
+    }), `Download ${url} to ${outputFilename}`, {})
+        .then(result => {
+            return fs.writeFileSync(outputFilename, result.data);
+        });
 }
 
 export interface Asset {

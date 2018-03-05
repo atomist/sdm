@@ -1,5 +1,6 @@
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 
 export type State = "error" | "failure" | "pending" | "success";
@@ -15,10 +16,10 @@ export function createStatus(token: string, rr: GitHubRepoRef, status: Status): 
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
     logger.info("Updating github status: %s to %j", url, status);
-    return axios.post(url, status, config)
+    return doWithRetry(() => axios.post(url, status, config)
         .catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
-        );
+        ), `Updating github status: ${url} to ${JSON.stringify(status)}`, {});
 }
 
 export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]> {
@@ -46,10 +47,10 @@ export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosProm
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/tags`;
     logger.info("Updating github tag: %s to %j", url, tag);
-    return axios.post(url, tag, config)
+    return doWithRetry(() => axios.post(url, tag, config)
         .catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set tag ${JSON.stringify(tag)}: ${err.message}`)),
-        );
+        ), `Updating github tag: ${url} to ${JSON.stringify(tag)}`, {});
 }
 
 export function deleteRepository(token: string, rr: GitHubRepoRef): AxiosPromise {
@@ -78,10 +79,10 @@ export function createRelease(token: string, rr: GitHubRepoRef, release: Release
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases`;
     logger.info("Updating github release: %s to %j", url, release);
-    return axios.post(url, release, config)
+    return doWithRetry(() => axios.post(url, release, config)
         .catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set release ${JSON.stringify(release)}: ${err.message}`)),
-        );
+        ), `Updating github release: ${url} to ${JSON.stringify(release)}`, {});
 }
 
 export interface GitHubCommitsBetween {
