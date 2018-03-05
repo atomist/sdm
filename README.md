@@ -3,17 +3,17 @@
 **GitHub Software Delivery Machine**: An Atomist reference implementation.
 
 ## What is a "Software Delivery Machine?"
-A **software delivery machine** is a development process in a box. It automates all steps in the flow from commit to productions, and many other actions, using the consistent model provided by Atomist's API for software.
+A **software delivery machine** is a development process in a box. It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by Atomist's API for software.
 
 ## Implementations of Atomist
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
 
-This repository is a *reference implementation* of an Atomist, which focuses on the phases of a typical delivery flow. You can fork it and modify it as the starting point for your own Atomist implementation, or use it purely as a reference.
+This repository is a *reference implementation* of Atomist, which focuses on the phases of a typical delivery flow. You can fork it and modify it as the starting point for your own Atomist implementation, or use it purely as a reference.
 
 ## Concepts
 This repository shows how Atomist can automate important tasks and improve your delivery flow. Specifically:
 
-- How Atomist command handlers and event handlers can be used to create services
+- How Atomist command handlers can be used to create services
 the right way every time, and help keep them up to date 
 - How Atomist event handlers can drive and improve a custom delivery experience, from commit through 
 to deployment and testing
@@ -27,10 +27,28 @@ It demonstrates Atomist as the *API for software*, exposing
 Atomist is not tied to GitHub, but this repository focuses on using Atomist with GitHub.com or
 GitHub Enterprise.
 
-## Structure of This Project
-The exports in the `src/index.ts` file represent the public API of this repository, which is more likely than other code to remain stable.
+## Key Functionality
+The following key functionality of this project will be available when you run this automation client in your team:
 
-The `src/software-delivery-machine` directory contains an example of an implementation of Atomist, using the other functionality. This is the code you would be likely to change. 
+- *Project creation for Spring*. Atomist is not Spring specific, but we use Spring boot as an illustration here. Try `@atomist create spring`. The seed project used by default will be `spring-team/spring-rest-seed`. 
+ - If you want to add or modify the content of generated projects, modify `CustomSpringBootGeneratorParameters.ts` to specify your own seed. Just about any Spring Boot project will work as the transformation of a seed project is quite forgiving, and parses the seed to find the location and name of the `@SpringBootApplication` class, rather than relying on hard coding. 
+ - To perform sophisticated changes, such as dynamically computing content, modify the code in `springBootGenerator.ts`. 
+- *Delivery pipeline to either Kubernetes or Pivotal Cloud Foundry for Spring Boot projects*. This includes automatic local deployment of non-default branches on the same node as the automation client. The delivery pipeline is automatically triggered on pushes.
+- *Upgrading Spring Boot version* across one or many repositories. Try `@atomist try to upgrade spring boot`. This will create a branch upgrading to Spring Boot `1.5.9` and wait for the build to complete. If the build succeeds, a PR will be created; if it fails, an issue will be created linking to the failed build log and offending branch. To choose a specific Spring Boot version, or see what happens when a bogus version triggers a failure, try `@atomist try to upgrade spring boot desiredBootVersion=<version>`. If you run such a command in a channel linked to an Atomist repository, it will affect only that repository. If you run it in a channel that is not linked, it will affect all repositories by default. You can add a `targets.repos=<regex>` parameter to specify a regular expression to target a subset of repo names. For example: `@atomist try to upgrade spring boot targets.repos=test.*`.
+
+This project builds on other Atomist core functionality available from global automations, such as:
+
+- Atomist **lifecycle** for GitHub, showing commit, pull request and other activity through actionable messages.
+- Issue handling:
+	- `@atomist create issue`
+
+Type `@atomist show skills` in any channel to see a list of all available Atomist commands.
+
+## Structure of This Project
+The exports in the `src/index.ts` file represent the public API of this repository, which is more likely than other code to remain stable. 
+> In particular, the event listener interfaces discussed later in the document are expected to remain stable.
+
+The `src/software-delivery-machine` directory contains an example of an implementation of Atomist, using the other functionality. This is the code you are most likely to change to meet your requirements.
 
 ## Events
 The heart of Atomist is its event handling. As your code flows from commit
@@ -42,7 +60,52 @@ with its previous knowledge, and invokes your event handlers with rich context. 
 
 It also enables Atomist to provide you with visibility throughout the commit to deployment flow, in Slack or through the Atomist web dashboard.
 
-Event handlers subscribe to events using GraphQL subscriptions. This repository
+Event handlers subscribe to events using GraphQL subscriptions. The following example subscribes to completed builds:
+
+```graphql
+subscription OnBuildComplete {
+  Build {
+    buildId
+    buildUrl
+    compareUrl
+    name
+    status
+    commit {
+      sha
+      message
+      repo {
+        name
+        owner
+        gitHubId
+        allowRebaseMerge
+        channels {
+          name
+          id
+        }
+      }
+      statuses {
+        context
+        description
+        state
+        targetUrl
+      }
+    }
+  }
+}
+```
+Given our use of typescript, an event handler can subscribe to such events with the benefit of strong typing. For example, this Atomist event handler can respond to the above GraphQL subscription:
+
+```typescript
+@EventHandler("Set status on build complete",
+    GraphQL.subscriptionFromFile("graphql/subscription/OnBuildComplete.graphql"))
+export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
+
+    public async handle(event: EventFired<OnBuildComplete.Subscription>, 
+    	ctx: HandlerContext, 
+    	params: this): Promise<HandlerResult> {
+```
+
+This repository
 includes event handlers that subscribe to some of the most important events in a typical
 delivery flow. This enables dynamic and sophisticated delivery processes that are consistent across
 multiple projects.
@@ -77,10 +140,10 @@ We use the following GitHub statuses to drive our flow and show the stages:
 
 - tbd
 
-This is configurable
+> The use of GitHub statuses to drive and identify stages in the flow is a choice in this implementation. It's just one strategy and the core listener interfaces are decoupled from it.
 
 ## Phases in Detail
-Each of the phases results in the triggering of domain specific listeners that are provided with the appropriate context to process the event: For example, access to the project source code in the case of a code review, or access to the reported URL for a deployed endpoint. Certain properties are common to all events, enabling communication with users via Slack, and providing credentials for calls to GitHub.
+Each of the delivery phases results in the triggering of domain specific listeners that are provided with the appropriate context to process the event: For example, access to the project source code in the case of a code review, or access to the reported URL for a deployed endpoint. Certain properties are common to all events, enabling communication with users via Slack, and providing credentials for calls to GitHub.
 
 All listener invocations receive at least the following generally useful information:
 
@@ -90,7 +153,7 @@ export interface ListenerInvocation {
     /**
      * The repo this relates to
      */
-    id: GitHubRepoRef;
+    id: RemoteRepoRef;
 
     /**
      * Context of the Atomist EventHandler invocation. Use to run GraphQL
@@ -299,15 +362,20 @@ It also allows you to use a fluent builder approach to adding command handlers. 
 ### Example
 ```typescript
 const sdm = new SoftwareDeliveryMachine(
-        LocalBuildOnSuccessStatus,
-        () => LocalMavenDeployer);
-    sdm.addPromotedEnvironment(promotedEnvironment);
-    sdm.addPhaseCreators(
-        new SpringBootDeployPhaseCreator(),
-        new NodePhaseCreator(),
-        new JavaLibraryPhaseCreator(),
+        {
+            builder: K8sBuildOnSuccessStatus,
+            deployers: [
+                K8sStagingDeployOnSuccessStatus,
+                K8sProductionDeployOnSuccessStatus,
+            ],
+        },
+        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
+            HasK8Spec,
+            PushToPublicRepo),
+        new GuardedPhaseCreator(LocalDeploymentPhases, not(PushFromAtomist), IsMaven, IsSpringBoot),
+        new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(NpmPhases, IsNode),
     );
-
     sdm.addNewIssueListeners(requestDescription)
         .addEditors(() => tryToUpgradeSpringBootVersion)
         .addGenerators(() => springBootGenerator({

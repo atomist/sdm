@@ -33,7 +33,7 @@ import {NotARealUrl} from "./local/LocalBuilder";
 /**
  * Set build status on complete build
  */
-@EventHandler("Check endpoint",
+@EventHandler("Set status on build complete",
     GraphQL.subscriptionFromFile("graphql/subscription/OnBuildComplete.graphql"))
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
