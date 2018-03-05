@@ -19,11 +19,12 @@ import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-cl
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../../../../common/phases/Phases";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
+import { previousPhaseSucceeded } from "../../../../common/phases/phaseOrdering";
 
 export interface ConditionalBuilder {
     builder: Builder;

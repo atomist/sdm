@@ -120,6 +120,7 @@ export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<st
 
 export function isPublicRepo(rr: GitHubRepoRef): Promise<boolean> {
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
+    // this doesn't use the secret, so when would we ever see a private one anyway
     return axios.get(url)
         .then(ap => {
             const privateness = ap.data.private;
@@ -127,7 +128,12 @@ export function isPublicRepo(rr: GitHubRepoRef): Promise<boolean> {
             return !privateness;
         })
         .catch(ap => {
+            if (ap.response.status === 404) {
+                // we can't see the repo, probably because it's private
+                logger.info("Repo unseen: " + url);
+                return false;
+            }
             logger.warn(`Could not access ${url}: ${ap.response.status}`);
-            return false;
+            throw new Error("Unable to ascertain whether this is a public repo: " + ap.message);
         });
 }
