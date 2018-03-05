@@ -119,7 +119,14 @@ export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<st
 
 export function isPublicRepo(rr: GitHubRepoRef): Promise<boolean> {
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
-    return axios.head(url)
-        .then(ap => true)
-        .catch(ap => false);
+    return axios.get(url)
+        .then(ap => {
+            const privateness = ap.data.private;
+            logger.info(`Retrieved ${url}. Visibility is: ${privateness}`);
+            return !privateness;
+        })
+        .catch(ap => {
+            logger.warn(`Could not access ${url}: ${ap.response.status}`);
+            return false;
+        });
 }
