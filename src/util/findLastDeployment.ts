@@ -14,7 +14,7 @@ export async function findLastK8sDeployment(ctx: HandlerContext, rr: RepoRef,
             branch,
             statusContext: K8TargetBase + environment,
         });
-    if (!result) {
+    if (!result || !result.Repo[0]) {
         throw new Error(`No commit found on ${rr.owner}/${rr.repo}#${branch}`);
     }
     const commit = result.Repo[0].branches[0].commit;
