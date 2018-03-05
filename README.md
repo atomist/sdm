@@ -457,6 +457,10 @@ To start up these project, you will need the following on the deployment node:
 
 
 ### Environment Variables
+
+- `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
+one or two checks occur when they are not available, and a GitHub token must be supplied.
+
 For the optional Checkstyle integration to work, set up a Checkstyle environment variable as follows:
 
 ```

@@ -118,9 +118,10 @@ export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<st
         .then(ap => ap.data.commit.sha);
 }
 
-export function isPublicRepo(rr: GitHubRepoRef): Promise<boolean> {
+export function isPublicRepo(token: string, rr: GitHubRepoRef): Promise<boolean> {
+    const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
-    return axios.get(url)
+    return axios.get(url, config)
         .then(ap => {
             const privateness = ap.data.private;
             logger.info(`Retrieved ${url}. Visibility is: ${privateness}`);

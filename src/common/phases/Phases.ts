@@ -135,7 +135,8 @@ export function previousPhaseSucceeded(expectedPhases: Phases, currentContext: G
     if (previousPhase.context === status.context) {
         return true;
     } else {
-        logger.info(`${previousPhase} is right before ${currentPhase}; ignoring success of ${status.context}`);
+        logger.info("%j is right before %j; ignoring success of %s",
+            previousPhase, currentPhase, status.context);
         return false;
     }
 }

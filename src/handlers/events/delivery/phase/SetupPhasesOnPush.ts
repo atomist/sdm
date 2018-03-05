@@ -84,10 +84,10 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
                     const relevant = !!pc.guard ? await pc.guard(pi) : true;
                     if (relevant) {
                         const phases = pc.createPhases(pi);
-                        logger.info("Eligible PhaseCreator %s returned %j", pc, phases);
+                        logger.info("Eligible PhaseCreator %j returned %j", pc, phases);
                         return Promise.resolve(phases);
                     } else {
-                        logger.info("Ineligible PhaseCreator %s will not be invoked", pc);
+                        logger.info("Ineligible PhaseCreator %j will not be invoked", pc);
                         return Promise.resolve(undefined);
                     }
                 }));
