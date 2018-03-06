@@ -458,6 +458,7 @@ To start up these project, you will need the following on the deployment node:
 
 ### Environment Variables
 
+- `ATOMIST_WORKSPACE`: The Atomist workspace this automation will serve. For example, `export ATOMIST_WORKSPACE="T5964N9B7"`
 - `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
 one or two checks occur when they are not available, and a GitHub token must be supplied.
 
