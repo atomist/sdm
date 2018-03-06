@@ -8,7 +8,7 @@ export const affirmationEditor: HandleCommand<any> = editor(
     () => appendAffirmationToReadMe,
     "affirmation",
     {
-        editMode: { message: `Everyone needs encouragement sometimes`, branch: "master"} as BranchCommit,
+        editMode: {message: `Everyone needs encouragement sometimes`, branch: "master"} as BranchCommit,
     },
 );
 
@@ -30,10 +30,11 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToReadMe: SimpleProjectEditor = (p, ctx) => {
+export const appendAffirmationToReadMe: SimpleProjectEditor = async (p, ctx) => {
     const affirmation = randomAffirmation();
-    return ctx.messageClient.respond(`Adding to \`README.md\`: _${affirmation}_`)
-        .then(() => doWithFiles(p, "README.md", f =>
-            f.getContent().then(content =>
-                f.setContent(`${content}\n${affirmation}\n`))));
+    await ctx.messageClient.respond(`Adding to \`README.md\`: _${affirmation}_`);
+    return doWithFiles(p, "README.md", async f => {
+        const content = await f.getContent();
+        return f.setContent(`${content}\n${affirmation}\n`);
+    });
 };
