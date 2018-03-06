@@ -44,7 +44,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
         if (!!checkStylePath) {
-            this.addProjectReviewers(checkstyleReviewer(checkStylePath));
+            softwareDeliveryMachine.addProjectReviewers(checkstyleReviewer(checkStylePath));
         } else {
             logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
         }
