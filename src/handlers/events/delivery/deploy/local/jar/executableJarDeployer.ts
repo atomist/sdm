@@ -53,6 +53,7 @@ class ExecutableJarDeployer implements Deployer {
             atomistTeam,
             contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
         };
+        await managedDeployments.terminateIfRunning(da.id);
         const childProcess = spawn("java",
             [
                 "-jar",

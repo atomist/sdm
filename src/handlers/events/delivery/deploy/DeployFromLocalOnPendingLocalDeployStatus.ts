@@ -24,9 +24,9 @@ import { OnPendingLocalDeployStatus } from "../../../../typings/types";
 import { setDeployStatus, setEndpointStatus } from "./deploy";
 
 /**
- * Deploy a published artifact identified in an ImageLinked event.
+ * Deploy from local on pending status
  */
-@EventHandler("Deploy linked artifact",
+@EventHandler("Deploy from local on pending status",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPendingLocalDeployStatus.graphql"))
 export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<OnPendingLocalDeployStatus.Subscription> {
 
@@ -51,8 +51,7 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        // this happens immediately, not conditional on any other status
-
+        // This happens immediately, not conditional on any other status
         logger.info(`Running local deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
