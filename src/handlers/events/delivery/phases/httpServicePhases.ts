@@ -24,8 +24,8 @@ export const BuildPhase = new PlannedPhase({
 export const ArtifactPhase = new PlannedPhase({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
-    displayName: "find artifact",
-    completedDescription: "Located artifact",
+    displayName: "store artifact",
+    completedDescription: "Stored artifact",
 });
 
 export const StagingDeploymentPhase = new PlannedPhase({
