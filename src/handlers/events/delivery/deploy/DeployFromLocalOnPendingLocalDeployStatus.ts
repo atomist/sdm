@@ -22,6 +22,7 @@ import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
 import { setDeployStatus, setEndpointStatus } from "./deploy";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 
 /**
  * Deploy from local on pending status
@@ -56,9 +57,11 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const log = ConsoleProgressLog;
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
         try {
             const deployment = await params.deployer.deployFromSource(
                 id,
+                addressChannels,
                 log,
                 {token: params.githubToken},
                 ctx.teamId,

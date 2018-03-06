@@ -9,6 +9,7 @@ import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 
 /**
  * Managed deployments
@@ -40,12 +41,13 @@ class MavenSourceDeployer implements SourceDeployer {
     }
 
     public async deployFromSource(id: RemoteRepoRef,
+                                  addressChannels: AddressChannels,
                                   log: ProgressLog,
                                   creds: ProjectOperationCredentials,
                                   atomistTeam: string,
                                   branch: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;
-        const branchId = { ...id, branch };
+        const branchId = {...id, branch};
         const port = managedDeployments.findPort(branchId);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, branch, port, atomistTeam);
         const cloned = await GitCommandGitProject.cloned(creds, id);
@@ -62,6 +64,10 @@ class MavenSourceDeployer implements SourceDeployer {
             {
                 cwd: cloned.baseDir,
             });
+        if (!childProcess.pid) {
+            await addressChannels("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +
+                "Attempted to execute `mvn: spring-boot:run`");
+        }
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
         return new Promise((resolve, reject) => {

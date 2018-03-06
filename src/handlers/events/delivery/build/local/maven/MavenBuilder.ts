@@ -8,6 +8,7 @@ import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/Int
 import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
+import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 
 /**
  * Build with Maven in the local automation client.
@@ -26,7 +27,8 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                team: string,
-                               log: ProgressLog): Promise<LocalBuildInProgress> {
+                               log: ProgressLog,
+                               addressChannels: AddressChannels): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from Maven
         const pom = await p.findFile("pom.xml");
@@ -39,6 +41,10 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         ], {
             cwd: p.baseDir,
         });
+        if (!childProcess.pid) {
+            await addressChannels("Fatal error building using Maven--is `mvn` on your automation node path?\n" +
+                "Attempted to execute `mvn package`");
+        }
         const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
             childProcess.stdout.on("data", data => {
                 log.write(data.toString());

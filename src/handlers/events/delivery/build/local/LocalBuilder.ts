@@ -51,7 +51,7 @@ export abstract class LocalBuilder implements Builder {
         const log = await this.logFactory();
         const logInterpreter = this.logInterpreter;
 
-        const rb = await this.startBuild(creds, id, team, log);
+        const rb = await this.startBuild(creds, id, team, log, addressChannels);
         const buildComplete: Promise<HandlerResult> = rb.buildResult.then(br => {
             if (!br.error) {
                 return onExit(
@@ -77,8 +77,11 @@ export abstract class LocalBuilder implements Builder {
 
     public abstract logInterpreter(log: string): InterpretedLog | undefined;
 
-    protected abstract startBuild(creds: ProjectOperationCredentials, id: RemoteRepoRef,
-                                  team: string, log: ProgressLog): Promise<LocalBuildInProgress>;
+    protected abstract startBuild(creds: ProjectOperationCredentials,
+                                  id: RemoteRepoRef,
+                                  team: string,
+                                  log: ProgressLog,
+                                  addressChannels: AddressChannels): Promise<LocalBuildInProgress>;
 }
 
 function onStarted(runningBuild: LocalBuildInProgress, branch: string) {

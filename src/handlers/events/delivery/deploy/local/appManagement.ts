@@ -66,9 +66,10 @@ export class ManagedDeployments {
             victim.childProcess.kill();
             // Keep the port but deallocate the process
             victim.childProcess = undefined;
-            logger.info("Killed app [%j], but continuing to reserve port [%d]", id, victim.port);
+            logger.info("Killed app [%j] with pid %d, but continuing to reserve port [%d]",
+                id, victim.childProcess.pid, victim.port);
         } else {
-            logger.info("Was asked to killed app [%j], but no eligible process found", id);
+            logger.info("Was asked to kill app [%j], but no eligible process found", id);
         }
     }
 
