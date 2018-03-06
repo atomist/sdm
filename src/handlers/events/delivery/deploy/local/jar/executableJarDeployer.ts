@@ -8,7 +8,7 @@ import { Deployment, TargetInfo } from "../../../../../../spi/deploy/Deployment"
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
-import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
 
 /**
  * Managed deployments
@@ -48,15 +48,16 @@ class ExecutableJarDeployer implements Deployer {
         const baseUrl = this.opts.baseUrl;
         const port = managedDeployments.findPort(da.id);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
+        const startupInfo: StartupInfo = {
+            port,
+            atomistTeam,
+            contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
+        };
         const childProcess = spawn("java",
             [
                 "-jar",
                 da.filename,
-            ].concat(this.opts.commandLineArgumentsFor({
-                port,
-                atomistTeam,
-                contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
-            })),
+            ].concat(this.opts.commandLineArgumentsFor(startupInfo)),
             {
                 cwd: da.cwd,
             });
@@ -68,7 +69,7 @@ class ExecutableJarDeployer implements Deployer {
                 if (!!what && what.toString().includes("Tomcat started on port")) {
                     managedDeployments.recordDeployment({id: da.id, port, childProcess});
                     resolve({
-                        endpoint: `${baseUrl}:${port}`,
+                        endpoint: `${baseUrl}:${port}/${startupInfo.contextRoot}`,
                     });
                 }
             });
