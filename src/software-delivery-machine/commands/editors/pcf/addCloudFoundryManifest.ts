@@ -10,7 +10,7 @@ export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 export const addCloudFoundryManifest: HandleCommand<any> = editor(
     () => addCfManifest,
     AddCloudFoundryManifestCommandName, {
-        intent: "Add kubernetes deployment spec",
+        intent: "Add Cloud Foundry manifest",
         editMode: () => new PullRequest("add-pcf-manifest",
             "Add Cloud Foundry manifest",
             "This will trigger the Software Development Machine to deploy to your Cloud Foundry space",
