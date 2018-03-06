@@ -2,13 +2,13 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
+import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { identification } from "./pomParser";
-import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 
 /**
  * Build with Maven in the local automation client.

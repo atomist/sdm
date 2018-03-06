@@ -3,13 +3,13 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
+import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 import { Deployment } from "../../../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
-import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 
 /**
  * Managed deployments

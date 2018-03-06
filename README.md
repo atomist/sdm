@@ -178,7 +178,7 @@ export interface ListenerInvocation {
 ### Issue Creation
 When a new issue is created, you may want to notify people or perform an action.
 #### Listener interfaces
-`NewIssueListener`: [NewIssueListener](src/common/listener/NewIssueListener.ts)
+`NewIssueListener`: [NewIssueListener](src/common/listener/issueListeners.ts)
 
 #### Examples
 The following simple example notifies any user who raises an issue with insufficient detail in the body, via a 

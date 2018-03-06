@@ -16,6 +16,7 @@ import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccess
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
 import { requestDescription } from "./blueprint/issue/requestDescription";
+import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
@@ -28,7 +29,9 @@ import { springBootGenerator } from "./commands/generators/spring/springBootGene
  * @param {{useCheckstyle: boolean}} opts
  */
 export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
-    softwareDeliveryMachine.addNewIssueListeners(requestDescription)
+    softwareDeliveryMachine
+        .addNewIssueListeners(requestDescription)
+        .addClosedIssueListeners(thankYouYouRock)
         .addEditors(() => tryToUpgradeSpringBootVersion)
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
@@ -48,7 +51,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
     }
 
     softwareDeliveryMachine
-        // .addCodeReactions(listChangedFiles)
+    // .addCodeReactions(listChangedFiles)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addVerifiedDeploymentListeners(presentPromotionInformation)
         .addSupportingCommands(

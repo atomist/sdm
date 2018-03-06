@@ -19,10 +19,10 @@ import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-cl
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
 import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
 import { setDeployStatus, setEndpointStatus } from "./deploy";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 
 /**
  * Deploy from local on pending status

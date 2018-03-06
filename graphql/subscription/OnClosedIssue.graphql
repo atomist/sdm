@@ -1,5 +1,5 @@
-subscription OnNewIssue {
-  Issue {
+subscription OnClosedIssue {
+  Issue(state: closed) {
     number
     title
     body

@@ -24,44 +24,39 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { NewIssueInvocation, NewIssueListener } from "../../../common/listener/NewIssueListener";
+import { ClosedIssueInvocation, ClosedIssueListener } from "../../../common/listener/ClosedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
 /**
  * A new issue has been created.
  */
-@EventHandler("On issue creation",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
-export class OnNewIssue implements HandleEvent<schema.OnNewIssue.Subscription> {
+@EventHandler("On an issue being closed",
+    GraphQL.subscriptionFromFile("graphql/subscription/OnClosedIssue.graphql"))
+export class OnClosedIssue implements HandleEvent<schema.OnClosedIssue.Subscription> {
 
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
     private githubToken: string;
 
-    private newIssueListeners: NewIssueListener[];
+    private closedIssueListeners: ClosedIssueListener[];
 
-    constructor(...newIssueListeners: NewIssueListener[]) {
-        this.newIssueListeners = newIssueListeners;
+    constructor(...closedIssueListeners: ClosedIssueListener[]) {
+        this.closedIssueListeners = closedIssueListeners;
     }
 
-    public async handle(event: EventFired<schema.OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnClosedIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
-        const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
 
-        if (issue.updatedAt !== issue.createdAt) {
-            logger.info("Issue updated, not created: %s on %j", issue.number, id);
-            return Success;
-        }
-
-        const inv: NewIssueInvocation = {
+        const addressChannels = addressChannelsFor(issue.repo, context);
+        const inv: ClosedIssueInvocation = {
             id,
             addressChannels,
             context,
             issue,
             credentials: { token: params.githubToken},
         };
-        await Promise.all(params.newIssueListeners
+        await Promise.all(params.closedIssueListeners
             .map(l => l(inv)));
         return Success;
     }

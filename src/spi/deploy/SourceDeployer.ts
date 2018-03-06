@@ -1,9 +1,9 @@
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AddressChannels } from "../../common/slack/addressChannels";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment } from "./Deployment";
-import { AddressChannels } from "../../common/slack/addressChannels";
 
 /**
  * Implemented by classes that can deploy from source

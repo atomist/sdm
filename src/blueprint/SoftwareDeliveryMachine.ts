@@ -30,6 +30,7 @@ import { FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
+import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
@@ -40,6 +41,7 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import { OnClosedIssue } from "../handlers/events/issue/ClosedIssueHandler";
 import { OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
@@ -65,6 +67,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public functionalUnits: FunctionalUnit[] = [];
 
     public newIssueListeners: NewIssueListener[] = [];
+
+    public closedIssueListeners: ClosedIssueListener[] = [];
 
     public repoCreationListeners: RepoCreationListener[] = [];
 
@@ -190,6 +194,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new OnNewIssue(...this.newIssueListeners) : undefined,
+                this.closedIssueListeners.length > 0 ? () => new OnClosedIssue(...this.closedIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.fingerprinter,
@@ -233,6 +238,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addNewIssueListeners(...e: NewIssueListener[]): this {
         this.newIssueListeners = this.newIssueListeners.concat(e);
+        return this;
+    }
+
+    public addClosedIssueListeners(...e: ClosedIssueListener[]): this {
+        this.closedIssueListeners = this.closedIssueListeners.concat(e);
         return this;
     }
 
