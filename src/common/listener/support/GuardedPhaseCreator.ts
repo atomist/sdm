@@ -18,10 +18,23 @@ export class GuardedPhaseCreator implements PhaseCreator {
      * @param {PushTest} guards
      */
     constructor(private phases: Phases, guard1: PushTest, ...guards: PushTest[]) {
-        this.guard =  allSatisfied(guard1, ...guards);
+        this.guard = allSatisfied(guard1, ...guards);
     }
 
     public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
         return this.phases;
     }
+}
+
+/**
+ * Simple PhaseCreator DSL
+ * @param {PushTest} guard1
+ * @param {PushTest} guards
+ */
+export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): { usePhases(phases: Phases): PhaseCreator } {
+    return {
+        usePhases(phases) {
+            return new GuardedPhaseCreator(phases, guard1, ...guards);
+        },
+    };
 }

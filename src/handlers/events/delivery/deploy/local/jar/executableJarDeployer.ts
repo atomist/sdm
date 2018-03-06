@@ -52,7 +52,11 @@ class ExecutableJarDeployer implements Deployer {
             [
                 "-jar",
                 da.filename,
-            ].concat(this.opts.commandLineArgumentsFor({ port, atomistTeam, contextRoot: ""})),
+            ].concat(this.opts.commandLineArgumentsFor({
+                port,
+                atomistTeam,
+                contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
+            })),
             {
                 cwd: da.cwd,
             });

@@ -24,6 +24,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { failureOn } from "@atomist/automation-client/action/ActionResult";
 import { Parameters } from "@atomist/automation-client/decorators";
 import {
     EventFired,
@@ -40,7 +41,6 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { ImmaterialPhases } from "../phases/httpServicePhases";
-import { failureOn } from "@atomist/automation-client/action/ActionResult";
 
 /**
  * Set up phases on a push (e.g. for delivery).

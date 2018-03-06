@@ -3,11 +3,11 @@ import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/Gi
 import { isPublicRepo } from "../../../util/github/ghub";
 import { PushTest } from "../PhaseCreator";
 
-export const PushesToMaster: PushTest = pci => pci.push.branch === "master";
+export const PushToMaster: PushTest = pci => pci.push.branch === "master";
 
-export const PushesToDefaultBranch: PushTest = p => {
+export const PushToDefaultBranch: PushTest = p => {
     const flag = p.push.branch === p.push.repo.defaultBranch;
-    logger.info("Push to %j on branch %s: PushesToDefaultBranch=%d", p.id, p.push.branch);
+    logger.info("Push to %j on branch %s: PushToDefaultBranch=%d", p.id, p.push.branch);
     return flag;
 };
 

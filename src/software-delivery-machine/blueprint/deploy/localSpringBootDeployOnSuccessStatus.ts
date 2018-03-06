@@ -39,7 +39,7 @@ export const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessSt
         artifactStore,
         executableJarDeployer({
             baseUrl: "http://localhost",
-            lowerPort: 8080,
+            lowerPort: 8082,
             commandLineArgumentsFor: springBootExecutableJarArgs,
         }),
         () => ({
@@ -51,7 +51,7 @@ export const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessSt
 function springBootExecutableJarArgs(si: StartupInfo): string[] {
     return [
         `--server.port=${si.port}`,
-        `--ATOMIST_TEAM=${si.atomistTeam}`,
+        `--server.contextPath=${si.contextRoot}`,
     ];
 }
 
