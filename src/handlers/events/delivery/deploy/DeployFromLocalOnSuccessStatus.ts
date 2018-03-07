@@ -123,15 +123,12 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             return Success;
         }
 
-        // TODO: if any status is failed, do not deploy
-
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
             return failure(new Error("No image linked"));
         }
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
         const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
             repo: commit.repo.name,
             owner: commit.repo.owner,

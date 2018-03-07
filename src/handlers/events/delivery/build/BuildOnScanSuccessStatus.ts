@@ -18,16 +18,16 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import {
-    currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals, nothingFailed,
-    previousPhaseSucceeded,
-} from "../../../../common/goals/Goal";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 
+/**
+ * Implemented by classes that can choose a builder based on project content etc.
+ */
 export interface ConditionalBuilder {
     builder: Builder;
     test: (i: ProjectListenerInvocation) => Promise<boolean>;

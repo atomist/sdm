@@ -21,7 +21,7 @@ import { Goal } from "../../../../common/goals/Goal";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
-@EventHandler("Set build phase to complete with link to artifact",
+@EventHandler("Set build goal to complete with link to artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
@@ -35,7 +35,9 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
     constructor(private goal: Goal) {
     }
 
-    public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnImageLinked.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const imageLinked = event.data.ImageLinked[0];
         const commit = imageLinked.commit;
         const image = imageLinked.image;
@@ -43,14 +45,15 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         const builtStatus = commit.statuses.find(status => status.context === params.goal.context);
         if (!builtStatus) {
-            logger.info(`Deploy: builtStatus not found`);
-            return Promise.resolve(Success);
+            logger.info(`FindArtifactOnImageLinked: builtStatus not found`);
+            return Success;
         }
 
-        return createStatus(params.githubToken, id, {
+        await createStatus(params.githubToken, id, {
             state: "success",
             description: `${params.goal.completedDescription} ${image.imageName}`,
             context: params.goal.context,
-        }).then(success);
+        });
+        return Success;
     }
 }
