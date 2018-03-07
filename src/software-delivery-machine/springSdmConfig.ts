@@ -4,8 +4,8 @@ import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
 import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
 import {
-    LocalDeploymentGoals,
     LocalDeploymentGoal,
+    LocalDeploymentGoals,
     LocalEndpointGoal,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";

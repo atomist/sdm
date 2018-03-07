@@ -59,16 +59,16 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     /**
      *
      * @param {Goals} phases
-     * @param {Goal} deployPhase
-     * @param {Goal} endpointPhase
+     * @param {Goal} deployGoal
+     * @param {Goal} endpointGoal
      * @param {ArtifactStore} artifactStore
      * @param {Deployer<T extends TargetInfo>} deployer
      * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(private deployPhase: Goal,
-                private endpointPhase: Goal,
+    constructor(private deployGoal: Goal,
+                private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
                 public deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
@@ -81,8 +81,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
             return deploy({
-                deployPhase: this.deployPhase,
-                endpointPhase: this.endpointPhase,
+                deployPhase: this.deployGoal,
+                endpointPhase: this.endpointGoal,
                 id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
                 githubToken: commandParams.githubToken,
                 targetUrl: commandParams.targetUrl,
@@ -114,11 +114,12 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             siblings: status.commit.statuses,
         };
 
-        if (!params.deployPhase.preconditionsMet({token: params.githubToken}, id, event.data)) {
+        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+            logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Success;
         }
 
@@ -140,8 +141,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
 
         await dedup(commit.sha, () =>
             deploy({
-                deployPhase: params.deployPhase,
-                endpointPhase: params.endpointPhase,
+                deployPhase: params.deployGoal,
+                endpointPhase: params.endpointGoal,
                 id, githubToken: params.githubToken,
                 targetUrl: image.imageName,
                 artifactStore: this.artifactStore,

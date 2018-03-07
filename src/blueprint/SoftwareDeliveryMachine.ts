@@ -10,7 +10,7 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {
-    ArtifactContext, BuildGoal, ContextToPlannedPhase, ScanGoal,
+    ArtifactContext, BuildGoal, ContextToPlannedPhase, ScanGoal, StagingEndpointGoal,
     StagingVerifiedContext,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
@@ -169,7 +169,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             requestApproval: true,
         };
         return {
-            eventHandlers: [() => new OnEndpointStatus(stagingVerification)],
+            eventHandlers: [() => new OnEndpointStatus(StagingEndpointGoal, stagingVerification)],
             commandHandlers: [() => retryVerifyCommand(stagingVerification)],
         };
     }

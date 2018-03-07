@@ -15,28 +15,40 @@
  */
 
 import {
-    GraphQL, HandleCommand, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success,
+    GraphQL,
+    HandleCommand,
+    HandlerResult,
+    logger,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+    success,
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    addressSlackChannels,
+    buttonForCommand,
+    Destination,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
 import { splitContext } from "../../../../common/goals/gitHubContext";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, previousPhaseSucceeded } from "../../../../common/goals/Goal";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import {
-    HttpServiceGoals,
-    StagingEndpointContext,
-} from "../goals/httpServiceGoals";
+import { StagingEndpointContext } from "../goals/httpServiceGoals";
 import { forApproval } from "./approvalGate";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
@@ -62,12 +74,15 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private sdm: SdmVerification) {
+    constructor(public goal: Goal, private sdm: SdmVerification) {
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
@@ -77,15 +92,14 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             siblings: status.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(HttpServiceGoals, params.sdm.verifyPhase.context, statusAndFriends)) {
-            return Promise.resolve(Success);
+        if (!params.goal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+            logger.info("Preconditions not met for goal %s on %j", params.goal, id);
+            return Success;
         }
 
         if (!currentPhaseIsStillPending(params.sdm.verifyPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
-
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         return verifyImpl(params.sdm,
             {
