@@ -18,9 +18,9 @@ import { HandlerResult, logger, success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Action } from "@atomist/slack-messages";
+import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
+import { Goal } from "../../../../common/goals/Goal";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
-import { GitHubStatusContext } from "../../../../common/phases/gitHubContext";
-import { PlannedPhase } from "../../../../common/phases/Phases";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
@@ -31,8 +31,8 @@ import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 
 export interface DeployParams<T extends TargetInfo> {
-    deployPhase: PlannedPhase;
-    endpointPhase: PlannedPhase;
+    deployPhase: Goal;
+    endpointPhase: Goal;
     id: GitHubRepoRef;
     githubToken: string;
     targetUrl: string;

@@ -29,14 +29,14 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import {
     currentPhaseIsStillPending,
     GitHubStatusAndFriends,
-    Phases,
-    PlannedPhase,
+    Goal,
+    Goals,
     previousPhaseSucceeded,
-} from "../../../../common/phases/Phases";
+} from "../../../../common/goals/Goal";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
@@ -58,18 +58,17 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
 
     /**
      *
-     * @param {Phases} phases
-     * @param {PlannedPhase} deployPhase
-     * @param {PlannedPhase} endpointPhase
+     * @param {Goals} phases
+     * @param {Goal} deployGoal
+     * @param {Goal} endpointGoal
      * @param {ArtifactStore} artifactStore
      * @param {Deployer<T extends TargetInfo>} deployer
      * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(public phases: Phases,
-                private deployPhase: PlannedPhase,
-                private endpointPhase: PlannedPhase,
+    constructor(private deployGoal: Goal,
+                private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
                 public deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
@@ -82,8 +81,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
             return deploy({
-                deployPhase: this.deployPhase,
-                endpointPhase: this.endpointPhase,
+                deployPhase: this.deployGoal,
+                endpointPhase: this.endpointGoal,
                 id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
                 githubToken: commandParams.githubToken,
                 targetUrl: commandParams.targetUrl,
@@ -105,6 +104,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
         const commit = status.commit;
         const image = status.commit.image;
 
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -113,16 +114,14 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             siblings: status.commit.statuses,
         };
 
-        // TODO: determine previous step based on the contexts of existing statuses
-        if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
+        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+            logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Success;
         }
-
-        // TODO: if any status is failed, do not deploy
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -130,7 +129,6 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
         }
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
         const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
             repo: commit.repo.name,
             owner: commit.repo.owner,
@@ -138,12 +136,10 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             targetUrl: image.imageName,
         });
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         await dedup(commit.sha, () =>
             deploy({
-                deployPhase: params.deployPhase,
-                endpointPhase: params.endpointPhase,
+                deployPhase: params.deployGoal,
+                endpointPhase: params.endpointGoal,
                 id, githubToken: params.githubToken,
                 targetUrl: image.imageName,
                 artifactStore: this.artifactStore,

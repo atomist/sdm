@@ -21,7 +21,7 @@ import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentInvocation, VerifiedDeploymentListener } from "../../../../common/listener/VerifiedDeploymentListener";
 import { addressChannelsFor, messageDestinations } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { StagingVerifiedContext } from "../phases/httpServicePhases";
+import { StagingVerifiedContext } from "../goals/httpServiceGoals";
 
 /**
  * React to a verified deployment

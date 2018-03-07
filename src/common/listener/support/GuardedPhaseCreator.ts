@@ -1,4 +1,4 @@
-import { Phases } from "../../phases/Phases";
+import { Goals } from "../../goals/Goal";
 import { PhaseCreationInvocation, PhaseCreator, PushTest } from "../PhaseCreator";
 import { allSatisfied } from "./pushTestUtils";
 
@@ -13,15 +13,15 @@ export class GuardedPhaseCreator implements PhaseCreator {
     /**
      * Create a PhaseCreator that will always return the same phases if the guards
      * match
-     * @param {Phases} phases phases to return if the guards return OK
+     * @param {Goals} phases phases to return if the guards return OK
      * @param {PushTest} guard1
      * @param {PushTest} guards
      */
-    constructor(private phases: Phases, guard1: PushTest, ...guards: PushTest[]) {
+    constructor(private phases: Goals, guard1: PushTest, ...guards: PushTest[]) {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async createPhases(pi: PhaseCreationInvocation): Promise<Phases | undefined> {
+    public async createPhases(pi: PhaseCreationInvocation): Promise<Goals | undefined> {
         return this.phases;
     }
 }
@@ -31,9 +31,9 @@ export class GuardedPhaseCreator implements PhaseCreator {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): { usePhases(phases: Phases): PhaseCreator } {
+export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): { setGoals(phases: Goals): PhaseCreator } {
     return {
-        usePhases(phases) {
+        setGoals(phases) {
             return new GuardedPhaseCreator(phases, guard1, ...guards);
         },
     };

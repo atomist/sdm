@@ -43,10 +43,11 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase, ScanContext } from "../../phases/httpServicePhases";
+import { ContextToPlannedPhase, ScanContext } from "../../goals/httpServiceGoals";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
+import { Goal } from "../../../../../common/goals/Goal";
 import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { forApproval } from "../../verify/approvalGate";
@@ -65,10 +66,10 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
 
     private editorChain: ProjectEditor;
 
-    constructor(private projectReviewers: ProjectReviewer[],
+    constructor(public goal: Goal,
+                private projectReviewers: ProjectReviewer[],
                 private codeReactions: CodeReactionListener[],
-                editors: AnyProjectEditor[] = [],
-                private context: string = ScanContext) {
+                editors: AnyProjectEditor[] = []) {
         this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
     }
 
@@ -81,8 +82,8 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
-        if (status.context !== params.context || status.state !== "pending") {
-            logger.warn(`I was looking for ${params.context} being pending, but I heard about ${status.context} being ${status.state}`);
+        if (status.context !== params.goal.context || status.state !== "pending") {
+            logger.warn(`I was looking for ${params.goal.context} being pending, but I heard about ${status.context} being ${status.state}`);
             return Success;
         }
 
@@ -123,18 +124,18 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
 
             if (review.comments.length === 0) {
                 await markScanned(project.id as GitHubRepoRef,
-                    params.context, "success", credentials, false);
+                    params.goal.context, "success", credentials, false);
             } else {
                 // TODO might want to raise issue
                 // Fail it??
                 await sendReviewToSlack("Review comments", review, context, addressChannels)
                     .then(() => markScanned(project.id as GitHubRepoRef,
-                        params.context, "success", credentials, true));
+                        params.goal.context, "success", credentials, true));
             }
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.context, "error", credentials, false);
+                params.goal.context, "error", credentials, false);
             return failure(err);
         }
     }

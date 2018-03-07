@@ -15,28 +15,40 @@
  */
 
 import {
-    GraphQL, HandleCommand, HandlerResult, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success,
+    GraphQL,
+    HandleCommand,
+    HandlerResult,
+    logger,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+    success,
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    addressSlackChannels,
+    buttonForCommand,
+    Destination,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
+import { splitContext } from "../../../../common/goals/gitHubContext";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { splitContext } from "../../../../common/phases/gitHubContext";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import {
-    HttpServicePhases,
-    StagingEndpointContext,
-} from "../phases/httpServicePhases";
+import { StagingEndpointContext } from "../goals/httpServiceGoals";
 import { forApproval } from "./approvalGate";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
@@ -62,12 +74,15 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private sdm: SdmVerification) {
+    constructor(public goal: Goal, private sdm: SdmVerification) {
     }
 
-    public handle(event: EventFired<OnSuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
@@ -77,15 +92,14 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             siblings: status.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(HttpServicePhases, params.sdm.verifyPhase.context, statusAndFriends)) {
-            return Promise.resolve(Success);
+        if (!params.goal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+            logger.info("Preconditions not met for goal %s on %j", params.goal, id);
+            return Success;
         }
 
         if (!currentPhaseIsStillPending(params.sdm.verifyPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
-
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         return verifyImpl(params.sdm,
             {
@@ -101,7 +115,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
  */
 export interface SdmVerification {
     verifiers: EndpointVerificationListener[];
-    verifyPhase: PlannedPhase;
+    verifyPhase: Goal;
     requestApproval: boolean;
 }
 
@@ -152,12 +166,12 @@ function verifyImpl(sdm: SdmVerification,
         .then(success);
 }
 
-function reportFailedVerification(ac: AddressChannels, verifyPhase: PlannedPhase, id: RemoteRepoRef,
+function reportFailedVerification(ac: AddressChannels, verifyPhase: Goal, id: RemoteRepoRef,
                                   targetUrl: string, message: string) {
     return ac(failedVerificationMessage(verifyPhase, id, targetUrl, message));
 }
 
-function failedVerificationMessage(verifyPhase: PlannedPhase, id: RemoteRepoRef,
+function failedVerificationMessage(verifyPhase: Goal, id: RemoteRepoRef,
                                    targetUrl: string, message: string): slack.SlackMessage {
 
     const attachment: slack.Attachment = {
@@ -178,7 +192,7 @@ function linkToSha(id: RemoteRepoRef) {
         `${id.owner}/${id.repo}#${id.sha.substr(0, 6)}`);
 }
 
-function retryButton(verifyPhase: PlannedPhase, id: RemoteRepoRef, targetUrl: string): slack.Action {
+function retryButton(verifyPhase: Goal, id: RemoteRepoRef, targetUrl: string): slack.Action {
     return buttonForCommand({text: "Retry"},
         retryVerificationCommandName(verifyPhase), {
             repo: id.repo,
@@ -192,7 +206,7 @@ function setVerificationStatus(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef, state: StatusState,
                                requestApproval: boolean,
                                targetUrl: string,
-                               verifyPhase: PlannedPhase): Promise<any> {
+                               verifyPhase: Goal): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
         state,
         target_url: requestApproval ? forApproval(targetUrl) : targetUrl,
@@ -224,8 +238,8 @@ export class RetryVerifyParameters {
 
 }
 
-function retryVerificationCommandName(verifyPhase: PlannedPhase) {
-    // todo: get the env on the PlannedPhase
+function retryVerificationCommandName(verifyPhase: Goal) {
+    // todo: get the env on the Goal
     return "RetryFailedVerification" + splitContext(verifyPhase.context).env;
 }
 

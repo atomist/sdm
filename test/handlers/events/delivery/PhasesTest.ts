@@ -1,11 +1,11 @@
 import "mocha";
 import * as assert from "power-assert";
-import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/phases/gitHubContext";
+import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/goals/gitHubContext";
 import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ScanContext, StagingDeploymentContext,
     StagingEndpointContext,
-} from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
+} from "../../../../src/handlers/events/delivery/goals/httpServiceGoals";
 
 describe("Phase handling", () => {
    it("parses my contexts", () => {

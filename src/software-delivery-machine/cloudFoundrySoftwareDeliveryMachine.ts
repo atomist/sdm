@@ -8,12 +8,12 @@ import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import {
-    HttpServicePhases,
-    ImmaterialPhases,
-    LocalDeploymentPhases,
-} from "../handlers/events/delivery/phases/httpServicePhases";
-import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
+    HttpServiceGoals,
+    LocalDeploymentGoals,
+    NoGoals,
+} from "../handlers/events/delivery/goals/httpServiceGoals";
+import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
+import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
@@ -33,15 +33,15 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             ],
         },
         whenPushSatisfies(IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo))
-            .usePhases(ImmaterialPhases),
+            .setGoals(NoGoals),
         whenPushSatisfies(PushToDefaultBranch, IsMaven, IsSpringBoot, HasCloudFoundryManifest, PushToPublicRepo)
-            .usePhases(HttpServicePhases),
+            .setGoals(HttpServiceGoals),
         whenPushSatisfies(IsMaven, IsSpringBoot, not(PushFromAtomist))
-            .usePhases(LocalDeploymentPhases),
+            .setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
-            .usePhases(LibraryPhases),
+            .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
-            .usePhases(NpmPhases),
+            .setGoals(NpmGoals),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(

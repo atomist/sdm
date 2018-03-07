@@ -1,9 +1,11 @@
 import { BuildOnScanSuccessStatus } from "../../../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { K8sAutomationBuilder } from "../../../handlers/events/delivery/build/k8s/K8AutomationBuilder";
-import { BuildContext, HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import {
+    BuildContext, BuildGoal,
+    HttpServiceGoals,
+} from "../../../handlers/events/delivery/goals/httpServiceGoals";
 
 export const K8sBuildOnSuccessStatus = () =>
     new BuildOnScanSuccessStatus(
-        HttpServicePhases,
-        BuildContext,
+        BuildGoal,
         { builder: new K8sAutomationBuilder(), test: async () => true});

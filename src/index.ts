@@ -13,7 +13,7 @@ export * from "./common/listener/FingerprintDifferenceListener";
 export * from "./common/listener/CodeReactionListener";
 export * from "./common/listener/DeploymentListener";
 export * from "./common/listener/VerifiedDeploymentListener";
-export { Phases } from "./common/phases/Phases";
+export { Goals } from "./common/goals/Goal";
 
 export * from "./common/listener/PhaseCreator";
 export * from "./common/listener/support/pushTests";

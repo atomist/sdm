@@ -6,9 +6,9 @@ import { MaterialChangeToJavaRepo } from "../common/listener/support/materialCha
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
-import { HttpServicePhases, LocalDeploymentPhases } from "../handlers/events/delivery/phases/httpServicePhases";
-import { LibraryPhases } from "../handlers/events/delivery/phases/libraryPhases";
-import { NpmPhases } from "../handlers/events/delivery/phases/npmPhases";
+import { HttpServiceGoals, LocalDeploymentGoals } from "../handlers/events/delivery/goals/httpServiceGoals";
+import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
+import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import {
@@ -30,12 +30,12 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 K8sProductionDeployOnSuccessStatus,
             ],
         },
-        new GuardedPhaseCreator(HttpServicePhases, PushToDefaultBranch, IsMaven, IsSpringBoot,
+        new GuardedPhaseCreator(HttpServiceGoals, PushToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
             PushToPublicRepo),
-        new GuardedPhaseCreator(LocalDeploymentPhases, not(PushFromAtomist), IsMaven, IsSpringBoot),
-        new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(NpmPhases, IsNode),
+        new GuardedPhaseCreator(LocalDeploymentGoals, not(PushFromAtomist), IsMaven, IsSpringBoot),
+        new GuardedPhaseCreator(LibraryGoals, IsMaven, MaterialChangeToJavaRepo),
+        new GuardedPhaseCreator(NpmGoals, IsNode),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)

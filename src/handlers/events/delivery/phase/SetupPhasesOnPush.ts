@@ -35,12 +35,12 @@ import {
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { Goals } from "../../../../common/goals/Goal";
 import { PhaseCreationInvocation, PhaseCreator } from "../../../../common/listener/PhaseCreator";
-import { Phases } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { ImmaterialPhases } from "../phases/httpServicePhases";
+import { NoGoals } from "../goals/httpServiceGoals";
 
 /**
  * Set up phases on a push (e.g. for delivery).
@@ -79,7 +79,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         };
 
         try {
-            const phaseCreatorResults: Phases[] = await Promise.all(params.phaseCreators
+            const phaseCreatorResults: Goals[] = await Promise.all(params.phaseCreators
                 .map(async pc => {
                     const relevant = !!pc.guard ? await pc.guard(pi) : true;
                     if (relevant) {
@@ -92,7 +92,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
                     }
                 }));
             const determinedPhases = phaseCreatorResults.find(p => !!p);
-            if (determinedPhases === ImmaterialPhases) {
+            if (determinedPhases === NoGoals) {
                 await createStatus(params.githubToken, id, {
                     context: "Immaterial",
                     state: "success",
@@ -127,7 +127,7 @@ export class ApplyPhasesParameters {
     public sha?: string;
 }
 
-export function applyPhasesToCommit(phases: Phases) {
+export function applyPhasesToCommit(phases: Goals) {
     return async (ctx: HandlerContext,
                   params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
         const sha = params.sha ? params.sha :
