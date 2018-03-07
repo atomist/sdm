@@ -13,6 +13,9 @@ subscription OnAParticularStatus($context: String!) {
         owner
         name
         channels {
+          team {
+            id
+          }
           name
           id
         }

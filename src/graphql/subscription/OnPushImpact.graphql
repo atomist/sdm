@@ -32,6 +32,9 @@ subscription OnPushImpact {
             ownerType
           }
           channels {
+            team {
+              id
+            }
             channelId
             name
           }

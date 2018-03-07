@@ -12,6 +12,9 @@ subscription OnAnyPendingStatus {
         owner
         name
         channels {
+          team {
+            id
+          }
           name
           id
         }

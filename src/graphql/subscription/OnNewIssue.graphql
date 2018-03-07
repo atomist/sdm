@@ -18,6 +18,9 @@ subscription OnIssueAction {
       owner
       name
       channels {
+        team {
+          id
+        }
         name
       }
     }

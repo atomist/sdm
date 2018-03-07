@@ -12,6 +12,9 @@ subscription OnSuccessStatus($context: String!) {
         owner
         name
         channels {
+          team {
+            id
+          }
           name
           id
         }
