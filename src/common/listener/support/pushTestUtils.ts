@@ -1,5 +1,5 @@
 
-import { PushTest } from "../PhaseCreator";
+import { PushTest } from "../GoalSetter";
 
 /**
  * Return the opposite of this push test

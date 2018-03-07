@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { PushTest } from "../PhaseCreator";
+import { PushTest } from "../GoalSetter";
 
 export const IsNode: PushTest = async pi => {
     try {

@@ -18,7 +18,7 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new ComposedFunctionalUnit(
-       cloudFoundrySoftwareDeliveryMachine({useCheckstyle: false}),
+       cloudFoundrySoftwareDeliveryMachine({useCheckstyle: true}),
       // k8sSoftwareDeliveryMachine({useCheckstyle: false}),
 );
 

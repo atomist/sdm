@@ -1,7 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { isPublicRepo } from "../../../util/github/ghub";
-import { PushTest } from "../PhaseCreator";
+import { PushTest } from "../GoalSetter";
 
 export const PushToMaster: PushTest = pci => pci.push.branch === "master";
 
@@ -14,7 +14,7 @@ export const PushToDefaultBranch: PushTest = p => {
 /**
  * Is this a push originated by Atomist? Note that we can't look at the committer,
  * as if a user invoked a command handler, their credentials will be used
- * @param {PhaseCreationInvocation} p
+ * @param {GoalSetterInvocation} p
  * @return {boolean}
  * @constructor
  */
@@ -24,14 +24,14 @@ export const PushFromAtomist: PushTest = p => {
 
 /**
  * Match on any push
- * @param {PhaseCreationInvocation} p
+ * @param {GoalSetterInvocation} p
  * @constructor
  */
 export const AnyPush: PushTest = p => true;
 
 /**
  * Match only pushes on a public repo
- * @param {PhaseCreationInvocation} p
+ * @param {GoalSetterInvocation} p
  * @return {Promise<boolean>}
  * @constructor
  */

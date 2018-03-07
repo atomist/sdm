@@ -280,8 +280,8 @@ export interface PhaseCreator {
     guard?: PushTest;
 
     /**
-     * Determine the phases that apply to this PhaseCreationInvocation,
-     * or return undefined if this PhaseCreator doesn't know what to do with it.
+     * Determine the phases that apply to this GoalSetterInvocation
+     * or return undefined if this GoalSetter doesn't know what to do with it.
      * The latter is not an error.
      * @param {PhaseCreationInvocation} pci
      * @return {Promise<Phases>}

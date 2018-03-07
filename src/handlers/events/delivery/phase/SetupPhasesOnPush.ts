@@ -36,7 +36,7 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goals } from "../../../../common/goals/Goal";
-import { PhaseCreationInvocation, PhaseCreator } from "../../../../common/listener/PhaseCreator";
+import { GoalSetter, GoalSetterInvocation } from "../../../../common/listener/GoalSetter";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
@@ -52,13 +52,13 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private phaseCreators: PhaseCreator[];
+    private phaseCreators: GoalSetter[];
 
     /**
      * Configure phase creation
-     * @param phaseCreators first PhaseCreator that returns phases
+     * @param phaseCreators first GoalSetter that returns phases
      */
-    constructor(...phaseCreators: PhaseCreator[]) {
+    constructor(...phaseCreators: GoalSetter[]) {
         this.phaseCreators = phaseCreators;
     }
 
@@ -69,7 +69,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         const credentials = {token: params.githubToken};
         const project = await GitCommandGitProject.cloned(credentials, id);
         const addressChannels = addressChannelsFor(push.repo, context);
-        const pi: PhaseCreationInvocation = {
+        const pi: GoalSetterInvocation = {
             id,
             project,
             credentials,
@@ -84,10 +84,10 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
                     const relevant = !!pc.guard ? await pc.guard(pi) : true;
                     if (relevant) {
                         const phases = pc.createPhases(pi);
-                        logger.info("Eligible PhaseCreator %j returned %j", pc, phases);
+                        logger.info("Eligible GoalSetter %j returned %j", pc, phases);
                         return Promise.resolve(phases);
                     } else {
-                        logger.info("Ineligible PhaseCreator %j will not be invoked", pc);
+                        logger.info("Ineligible GoalSetter %j will not be invoked", pc);
                         return Promise.resolve(undefined);
                     }
                 }));

@@ -43,7 +43,7 @@ import { CodeReactionListener } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
-import { PhaseCreator } from "../common/listener/PhaseCreator";
+import { GoalSetter } from "../common/listener/GoalSetter";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
@@ -91,7 +91,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
 
-    private readonly phaseCreators: PhaseCreator[] = [];
+    private readonly phaseCreators: GoalSetter[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -361,7 +361,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
                     artifactStore: ArtifactStore,
                 },
-                ...phaseCreators: PhaseCreator[]) {
+                ...phaseCreators: GoalSetter[]) {
         this.phaseCreators = phaseCreators;
     }
 

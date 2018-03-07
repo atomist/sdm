@@ -22,6 +22,7 @@ import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { ohTheHorror, stopRaisingIssues } from "./blueprint/issue/play";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
@@ -30,7 +31,7 @@ import { springBootGenerator } from "./commands/generators/spring/springBootGene
  */
 export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
     softwareDeliveryMachine
-        .addNewIssueListeners(requestDescription)
+        .addNewIssueListeners(requestDescription, stopRaisingIssues, ohTheHorror)
         .addClosedIssueListeners(thankYouYouRock)
         .addEditors(() => tryToUpgradeSpringBootVersion)
         .addGenerators(() => springBootGenerator({

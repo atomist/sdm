@@ -1,6 +1,6 @@
 
 import { CloudFoundryManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
-import { PushTest } from "../PhaseCreator";
+import { PushTest } from "../GoalSetter";
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 

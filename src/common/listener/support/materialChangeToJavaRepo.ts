@@ -1,13 +1,13 @@
 import { logger } from "@atomist/automation-client";
 import { filesChangedSince } from "../../../util/git/filesChangedSince";
-import { PushTest } from "../PhaseCreator";
+import { PushTest } from "../GoalSetter";
 
 import * as _ from "lodash";
 
 /**
  * Veto if change to deployment unit doesn't seem important enough to
  * build and deploy
- * @param {PhaseCreationInvocation} pci
+ * @param {GoalSetterInvocation} pci
  * @return {Promise<void>}
  * @constructor
  */
