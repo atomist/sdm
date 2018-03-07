@@ -31,9 +31,9 @@ export class GuardedPhaseCreator implements PhaseCreator {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): { usePhases(phases: Goals): PhaseCreator } {
+export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): { setGoals(phases: Goals): PhaseCreator } {
     return {
-        usePhases(phases) {
+        setGoals(phases) {
             return new GuardedPhaseCreator(phases, guard1, ...guards);
         },
     };

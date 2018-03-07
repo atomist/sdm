@@ -21,7 +21,7 @@ export const BuildGoal = new Goal({
     completedDescription: "Build successful",
 });
 
-export const ArtifactPhase = new Goal({
+export const ArtifactGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "store artifact",
@@ -32,7 +32,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
     orderedName: "3-deploy", displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
-}, ArtifactPhase);
+}, ArtifactGoal);
 
 export const StagingEndpointGoal = new Goal({
     environment: StagingEnvironment,
@@ -88,7 +88,7 @@ export const NoGoal = new Goal({
 const AllKnownPhases = [
     ScanGoal,
     BuildGoal,
-    ArtifactPhase,
+    ArtifactGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
@@ -106,7 +106,6 @@ export const ProductionDeploymentContext = ProductionDeploymentGoal.context;
 export const ProductionEndpointContext = ProductionEndpointGoal.context;
 export const ScanContext = ScanGoal.context;
 export const BuildContext = BuildGoal.context;
-export const ArtifactContext = ArtifactPhase.context;
 
 export const ProductionMauve = "#cf5097";
 
@@ -145,7 +144,7 @@ export const NoGoals = new Goals([
 export const HttpServiceGoals = new Goals([
     ScanGoal,
     BuildGoal,
-    ArtifactPhase,
+    ArtifactGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,

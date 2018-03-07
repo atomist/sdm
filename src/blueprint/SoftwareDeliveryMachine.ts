@@ -10,7 +10,11 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {
-    ArtifactContext, BuildGoal, ContextToPlannedPhase, ScanGoal, StagingEndpointGoal,
+    ArtifactGoal,
+    BuildGoal,
+    ContextToPlannedPhase,
+    ScanGoal,
+    StagingEndpointGoal,
     StagingVerifiedContext,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
@@ -151,7 +155,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return [() => new FailDownstreamPhasesOnPhaseFailure()];
     }
 
-    private artifactFinder = () => new FindArtifactOnImageLinked(ContextToPlannedPhase[ArtifactContext]);
+    private artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?

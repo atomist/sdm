@@ -66,10 +66,6 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
             params.goal.context, params.conditionalBuilders.length, statusAndFriends);
 
-        // if (nothingFailed(statusAndFriends)) {
-        //     return Success;
-        // }
-
         if (!currentPhaseIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }

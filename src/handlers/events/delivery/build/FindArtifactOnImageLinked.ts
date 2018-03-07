@@ -32,7 +32,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
      * The phase to update when an artifact is linked.
      * When an artifact is linked to a commit, the build must be done.
      */
-    constructor(private artifactPhase: Goal) {
+    constructor(private goal: Goal) {
     }
 
     public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -41,7 +41,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         const image = imageLinked.image;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const builtStatus = commit.statuses.find(status => status.context === params.artifactPhase.context);
+        const builtStatus = commit.statuses.find(status => status.context === params.goal.context);
         if (!builtStatus) {
             logger.info(`Deploy: builtStatus not found`);
             return Promise.resolve(Success);
@@ -49,8 +49,8 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         return createStatus(params.githubToken, id, {
             state: "success",
-            description: `${params.artifactPhase.completedDescription} ${image.imageName}`,
-            context: params.artifactPhase.context,
+            description: `${params.goal.completedDescription} ${image.imageName}`,
+            context: params.goal.context,
         }).then(success);
     }
 }

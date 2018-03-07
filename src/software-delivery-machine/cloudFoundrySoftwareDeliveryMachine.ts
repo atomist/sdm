@@ -33,15 +33,15 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             ],
         },
         whenPushSatisfies(IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo))
-            .usePhases(NoGoals),
+            .setGoals(NoGoals),
         whenPushSatisfies(PushToDefaultBranch, IsMaven, IsSpringBoot, HasCloudFoundryManifest, PushToPublicRepo)
-            .usePhases(HttpServiceGoals),
+            .setGoals(HttpServiceGoals),
         whenPushSatisfies(IsMaven, IsSpringBoot, not(PushFromAtomist))
-            .usePhases(LocalDeploymentGoals),
+            .setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
-            .usePhases(LibraryGoals),
+            .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
-            .usePhases(NpmGoals),
+            .setGoals(NpmGoals),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
