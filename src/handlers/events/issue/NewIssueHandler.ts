@@ -33,7 +33,7 @@ import * as schema from "../../../typings/types";
  */
 @EventHandler("On issue creation",
     GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
-export class OnNewIssue implements HandleEvent<schema.OnNewIssue.Subscription> {
+export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
     private githubToken: string;
@@ -44,7 +44,7 @@ export class OnNewIssue implements HandleEvent<schema.OnNewIssue.Subscription> {
         this.newIssueListeners = newIssueListeners;
     }
 
-    public async handle(event: EventFired<schema.OnNewIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnIssueAction.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);

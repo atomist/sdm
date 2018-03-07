@@ -24,39 +24,44 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ClosedIssueInvocation, ClosedIssueListener } from "../../../common/listener/ClosedIssueListener";
+import { UpdatedIssueInvocation, UpdatedIssueListener } from "../../../common/listener/UpdatedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
 /**
- * A new issue has been created.
+ * An issue has been updated
  */
-@EventHandler("On an issue being closed",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnClosedIssue.graphql"))
-export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subscription> {
+@EventHandler("On issue update",
+    GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
+export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
     private githubToken: string;
 
-    private closedIssueListeners: ClosedIssueListener[];
+    private updatedIssueListeners: UpdatedIssueListener[];
 
-    constructor(...closedIssueListeners: ClosedIssueListener[]) {
-        this.closedIssueListeners = closedIssueListeners;
+    constructor(...updatedIssueListeners: UpdatedIssueListener[]) {
+        this.updatedIssueListeners = updatedIssueListeners;
     }
 
-    public async handle(event: EventFired<schema.OnClosedIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnIssueAction.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
+        const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
 
-        const addressChannels = addressChannelsFor(issue.repo, context);
-        const inv: ClosedIssueInvocation = {
+        if (issue.updatedAt === issue.createdAt) {
+            logger.info("Issue created, not updated: %s on %j", issue.number, id);
+            return Success;
+        }
+
+        const inv: UpdatedIssueInvocation = {
             id,
             addressChannels,
             context,
             issue,
             credentials: { token: params.githubToken},
         };
-        await Promise.all(params.closedIssueListeners
+        await Promise.all(params.updatedIssueListeners
             .map(l => l(inv)));
         return Success;
     }

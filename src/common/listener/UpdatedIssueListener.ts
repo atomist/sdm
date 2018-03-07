@@ -4,9 +4,9 @@ import { ListenerInvocation, SdmListener } from "./Listener";
 
 export type Issue = schema.OnIssueAction.Issue;
 
-export interface NewIssueInvocation extends ListenerInvocation {
+export interface UpdatedIssueInvocation extends ListenerInvocation {
 
     issue: Issue;
 }
 
-export type NewIssueListener = SdmListener<NewIssueInvocation>;
+export type UpdatedIssueListener = SdmListener<UpdatedIssueInvocation>;

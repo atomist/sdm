@@ -1,4 +1,4 @@
-subscription OnNewIssue {
+subscription OnIssueAction {
   Issue {
     number
     title

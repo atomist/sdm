@@ -45,11 +45,13 @@ import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { PhaseCreator } from "../common/listener/PhaseCreator";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
+import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
-import { OnClosedIssue } from "../handlers/events/issue/ClosedIssueHandler";
-import { OnNewIssue } from "../handlers/events/issue/NewIssueHandler";
+import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
+import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
+import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 
@@ -74,6 +76,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public functionalUnits: FunctionalUnit[] = [];
 
     public newIssueListeners: NewIssueListener[] = [];
+
+    public updatedIssueListeners: UpdatedIssueListener[] = [];
 
     public closedIssueListeners: ClosedIssueListener[] = [];
 
@@ -200,8 +204,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(this.deployers)
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
-                this.newIssueListeners.length > 0 ? () => new OnNewIssue(...this.newIssueListeners) : undefined,
-                this.closedIssueListeners.length > 0 ? () => new OnClosedIssue(...this.closedIssueListeners) : undefined,
+                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
+                this.updatedIssueListeners.length > 0 ? () => new UpdatedIssueHandler(...this.updatedIssueListeners) : undefined,
+                this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(...this.closedIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.fingerprinter,
@@ -245,6 +250,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addNewIssueListeners(...e: NewIssueListener[]): this {
         this.newIssueListeners = this.newIssueListeners.concat(e);
+        return this;
+    }
+
+    public addUpdatedIssueListeners(...e: UpdatedIssueListener[]): this {
+        this.updatedIssueListeners = this.updatedIssueListeners.concat(e);
         return this;
     }
 
