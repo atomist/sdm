@@ -2,8 +2,8 @@ import { BuildOnScanSuccessStatus } from "../../../handlers/events/delivery/buil
 import { K8sAutomationBuilder } from "../../../handlers/events/delivery/build/k8s/K8AutomationBuilder";
 import {
     BuildContext, BuildGoal,
-    HttpServicePhases,
-} from "../../../handlers/events/delivery/phases/httpServicePhases";
+    HttpServiceGoals,
+} from "../../../handlers/events/delivery/goals/httpServiceGoals";
 
 export const K8sBuildOnSuccessStatus = () =>
     new BuildOnScanSuccessStatus(

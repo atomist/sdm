@@ -41,21 +41,21 @@ export const StagingEndpointGoal = new Goal({
     completedDescription: "Here is the service endpoint in Test",
 });
 
-export const StagingVerifiedPhase = new Goal({
+export const StagingVerifiedGoal = new Goal({
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
 });
 
-export const ProductionDeploymentPhase = new Goal({
+export const ProductionDeploymentGoal = new Goal({
     environment: ProductionEnvironment,
     orderedName: "3-prod-deploy",
     displayName: "deploy to Prod",
     completedDescription: "Deployed to Prod",
 });
 
-export const ProductionEndpointPhase = new Goal({
+export const ProductionEndpointGoal = new Goal({
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
@@ -63,13 +63,13 @@ export const ProductionEndpointPhase = new Goal({
 
 });
 
-export const LocalDeploymentPhase = new Goal({
+export const LocalDeploymentGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "1-deploy locally",
     completedDescription: "Deployed locally",
 });
 
-export const LocalEndpointPhase = new Goal({
+export const LocalEndpointGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "2-endpoint",
     displayName: "locate local service endpoint",
@@ -77,7 +77,7 @@ export const LocalEndpointPhase = new Goal({
 
 });
 
-export const ImmaterialPhase = new Goal({
+export const NoGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "1-immaterial",
     displayName: "immaterial",
@@ -91,19 +91,19 @@ const AllKnownPhases = [
     ArtifactPhase,
     StagingDeploymentGoal,
     StagingEndpointGoal,
-    StagingVerifiedPhase,
-    ProductionDeploymentPhase,
-    ProductionEndpointPhase,
-    LocalDeploymentPhase,
-    LocalEndpointPhase,
-    ImmaterialPhase,
+    StagingVerifiedGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
+    LocalDeploymentGoal,
+    LocalEndpointGoal,
+    NoGoal,
 ];
 
 export const StagingDeploymentContext = StagingDeploymentGoal.context;
 export const StagingEndpointContext = StagingEndpointGoal.context;
-export const StagingVerifiedContext = StagingVerifiedPhase.context;
-export const ProductionDeploymentContext = ProductionDeploymentPhase.context;
-export const ProductionEndpointContext = ProductionEndpointPhase.context;
+export const StagingVerifiedContext = StagingVerifiedGoal.context;
+export const ProductionDeploymentContext = ProductionDeploymentGoal.context;
+export const ProductionEndpointContext = ProductionEndpointGoal.context;
 export const ScanContext = ScanGoal.context;
 export const BuildContext = BuildGoal.context;
 export const ArtifactContext = ArtifactPhase.context;
@@ -135,23 +135,23 @@ function defaultPhaseDefinition(ghsc: GitHubStatusContext): Goal {
  * The identity of this object is important.
  * @type {Goals}
  */
-export const ImmaterialPhases = new Goals([
-    ImmaterialPhase]);
+export const NoGoals = new Goals([
+    NoGoal]);
 
 /**
  * Goals for an Http service
  * @type {Goals}
  */
-export const HttpServicePhases = new Goals([
+export const HttpServiceGoals = new Goals([
     ScanGoal,
     BuildGoal,
     ArtifactPhase,
     StagingDeploymentGoal,
     StagingEndpointGoal,
-    StagingVerifiedPhase,
-    ProductionDeploymentPhase,
-    ProductionEndpointPhase]);
+    StagingVerifiedGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal]);
 
-export const LocalDeploymentPhases = new Goals([
-    LocalDeploymentPhase,
-    LocalEndpointPhase]);
+export const LocalDeploymentGoals = new Goals([
+    LocalDeploymentGoal,
+    LocalEndpointGoal]);

@@ -43,7 +43,7 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase, ScanContext } from "../../phases/httpServicePhases";
+import { ContextToPlannedPhase, ScanContext } from "../../goals/httpServiceGoals";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";

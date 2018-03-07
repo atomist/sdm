@@ -3,21 +3,21 @@ import { NoticeK8sProdDeployCompletionOnStatus } from "../../../handlers/events/
 import { RequestK8sDeployOnSuccessStatus } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
 import { RequestK8sDeployOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus1";
 import {
-    ContextToPlannedPhase, HttpServicePhases, ProductionDeploymentContext, ProductionEndpointContext, StagingDeploymentContext,
+    ContextToPlannedPhase, HttpServiceGoals, ProductionDeploymentContext, ProductionEndpointContext, StagingDeploymentContext,
     StagingEndpointContext,
-} from "../../../handlers/events/delivery/phases/httpServicePhases";
+} from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
 
 export const K8sStagingDeployOnSuccessStatus = () =>
     new RequestK8sDeployOnSuccessStatus(
-        HttpServicePhases,
+        HttpServiceGoals,
         ContextToPlannedPhase[StagingDeploymentContext],
         K8sTestingDomain);
 
 export const K8sProductionDeployOnSuccessStatus = () =>
     // TODO replace this evil hack of the duplicate class
     new RequestK8sDeployOnSuccessStatus1(
-        HttpServicePhases,
+        HttpServiceGoals,
         ContextToPlannedPhase[ProductionDeploymentContext],
         K8sProductionDomain);
 

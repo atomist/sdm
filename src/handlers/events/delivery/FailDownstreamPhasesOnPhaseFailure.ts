@@ -23,7 +23,7 @@ import {BaseContext, contextIsAfter, GitHubStatusContext, splitContext} from "..
 import {Goal, Goals} from "../../../common/goals/Goal";
 import {OnFailureStatus, OnSuccessStatus} from "../../../typings/types";
 import {createStatus, State} from "../../../util/github/ghub";
-import {contextToPlannedPhase, ContextToPlannedPhase} from "./phases/httpServicePhases";
+import {contextToPlannedPhase, ContextToPlannedPhase} from "./goals/httpServiceGoals";
 
 /**
  * Respond to a failure status by failing downstream phases

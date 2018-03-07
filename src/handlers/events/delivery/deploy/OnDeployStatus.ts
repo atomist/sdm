@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { StagingDeploymentContext } from "../phases/httpServicePhases";
+import { StagingDeploymentContext } from "../goals/httpServiceGoals";
 
 /**
  * React to a deployment.

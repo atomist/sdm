@@ -34,9 +34,9 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import {
-    HttpServicePhases,
+    HttpServiceGoals,
     StagingEndpointContext,
-} from "../phases/httpServicePhases";
+} from "../goals/httpServiceGoals";
 import { forApproval } from "./approvalGate";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
@@ -77,7 +77,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             siblings: status.commit.statuses,
         };
 
-        if (!previousPhaseSucceeded(HttpServicePhases, params.sdm.verifyPhase.context, statusAndFriends)) {
+        if (!previousPhaseSucceeded(HttpServiceGoals, params.sdm.verifyPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

@@ -9,7 +9,7 @@ import { createStatus } from "../../util/github/ghub";
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
-import { contextToKnownPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
+import { contextToKnownPhase } from "../../handlers/events/delivery/goals/httpServiceGoals";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 

@@ -40,7 +40,7 @@ import { PhaseCreationInvocation, PhaseCreator } from "../../../../common/listen
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { ImmaterialPhases } from "../phases/httpServicePhases";
+import { NoGoals } from "../goals/httpServiceGoals";
 
 /**
  * Set up phases on a push (e.g. for delivery).
@@ -92,7 +92,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
                     }
                 }));
             const determinedPhases = phaseCreatorResults.find(p => !!p);
-            if (determinedPhases === ImmaterialPhases) {
+            if (determinedPhases === NoGoals) {
                 await createStatus(params.githubToken, id, {
                     context: "Immaterial",
                     state: "success",

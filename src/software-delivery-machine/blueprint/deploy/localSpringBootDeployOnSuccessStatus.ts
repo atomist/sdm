@@ -20,10 +20,10 @@ import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/Loca
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import {
     ContextToPlannedPhase,
-    HttpServicePhases,
+    HttpServiceGoals,
     StagingDeploymentContext, StagingDeploymentGoal,
     StagingEndpointContext, StagingEndpointGoal,
-} from "../../../handlers/events/delivery/phases/httpServicePhases";
+} from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";

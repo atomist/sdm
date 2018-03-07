@@ -2,7 +2,7 @@ import { createEphemeralProgressLog } from "../../../common/log/EphemeralProgres
 import { BuildOnScanSuccessStatus } from "../../../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { MavenBuilder } from "../../../handlers/events/delivery/build/local/maven/MavenBuilder";
 import { NpmBuilder } from "../../../handlers/events/delivery/build/local/npm/NpmBuilder";
-import { BuildContext, BuildGoal, HttpServicePhases } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import { BuildContext, BuildGoal, HttpServiceGoals } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { artifactStore } from "../artifactStore";
 
 export const LocalBuildOnSuccessStatus = () =>

@@ -16,7 +16,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { VerifiedDeploymentInvocation } from "../../../common/listener/VerifiedDeploymentListener";
 import { runningAttachment } from "../../../handlers/commands/reportRunning";
-import { ProductionMauve } from "../../../handlers/events/delivery/phases/httpServicePhases";
+import { ProductionMauve } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { tipOfDefaultBranch } from "../../../util/github/ghub";
 import { K8sProductionDomain } from "./describeRunningServices";
 

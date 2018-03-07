@@ -5,7 +5,7 @@ import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ScanContext, StagingDeploymentContext,
     StagingEndpointContext,
-} from "../../../../src/handlers/events/delivery/phases/httpServicePhases";
+} from "../../../../src/handlers/events/delivery/goals/httpServiceGoals";
 
 describe("Phase handling", () => {
    it("parses my contexts", () => {

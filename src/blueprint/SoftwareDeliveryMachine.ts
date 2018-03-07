@@ -9,13 +9,13 @@ import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/Fin
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
-import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
-import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import {
     ArtifactContext, BuildGoal, ContextToPlannedPhase, ScanGoal,
     StagingVerifiedContext,
-} from "../handlers/events/delivery/phases/httpServicePhases";
+} from "../handlers/events/delivery/goals/httpServiceGoals";
+import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
+import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
+import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
