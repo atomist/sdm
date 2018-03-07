@@ -15,6 +15,7 @@ import {
 import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
 import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
+import { artifactStore } from "./blueprint/artifactStore";
 import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
@@ -31,6 +32,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
                 () => LocalExecutableJarDeployOnSuccessStatus,
                 CloudFoundryProductionDeployOnSuccessStatus,
             ],
+            artifactStore,
         },
         whenPushSatisfies(IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo))
             .setGoals(NoGoals),

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../common/goals/Goal";
+import { ArtifactInvocation, ArtifactListener } from "../../../../common/listener/ArtifactListener";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
@@ -28,11 +31,16 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
+    private listeners: ArtifactListener[];
+
     /**
      * The phase to update when an artifact is linked.
      * When an artifact is linked to a commit, the build must be done.
      */
-    constructor(private goal: Goal) {
+    constructor(public goal: Goal,
+                private artifactStore: ArtifactStore,
+                ...listeners: ArtifactListener[]) {
+        this.listeners = listeners;
     }
 
     public async handle(event: EventFired<OnImageLinked.Subscription>,
@@ -45,8 +53,23 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         const builtStatus = commit.statuses.find(status => status.context === params.goal.context);
         if (!builtStatus) {
-            logger.info(`FindArtifactOnImageLinked: builtStatus not found`);
+            logger.info("FindArtifactOnImageLinked: builtStatus not found for %j", id);
             return Success;
+        }
+
+        if (params.listeners.length > 0) {
+            const credentials = {token: params.githubToken};
+            logger.info("FindArtifactOnImageLinked: Scanning artifact for %j", id);
+            const deployableArtifact = await params.artifactStore.checkout(image.imageName, id, credentials);
+            const addressChannels = addressChannelsFor(commit.repo, context);
+            const ai: ArtifactInvocation = {
+                id,
+                context,
+                addressChannels,
+                deployableArtifact,
+                credentials,
+            };
+            await Promise.all(params.listeners.map(l => l(ai)));
         }
 
         await createStatus(params.githubToken, id, {

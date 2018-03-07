@@ -37,6 +37,7 @@ import { FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
+import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
@@ -52,6 +53,7 @@ import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnP
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
+import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 
@@ -96,6 +98,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private codeReactions: CodeReactionListener[] = [];
 
     private autoEditors: AnyProjectEditor[] = [];
+
+    private artifactListeners: ArtifactListener[] = [];
 
     private fingerprinters: Fingerprinter[] = [];
 
@@ -159,7 +163,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return [() => new FailDownstreamPhasesOnPhaseFailure()];
     }
 
-    private artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal);
+    private artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
+        this.opts.artifactStore,
+        ...this.artifactListeners)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -201,7 +207,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
-            .concat(this.deployers)
+            .concat(this.opts.deployers)
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -215,7 +221,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.phaseSetup,
                 this.oldPushSuperseder,
                 this.onSuperseded,
-                this.builder,
+                this.opts.builder,
                 this.onBuildComplete,
                 this.notifyOnDeploy,
                 this.onVerifiedStatus,
@@ -225,7 +231,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
         const mayHaveCommands: Array<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand> =
-            this.deployers.map(d => toFactory(d)());
+            this.opts.deployers.map(d => toFactory(d)());
         return this.generators
             .concat(this.editors)
             .concat(this.supportingCommands)
@@ -300,6 +306,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
+    public addArtifactListeners(...pls: ArtifactListener[]): this {
+        this.artifactListeners = this.artifactListeners.concat(pls);
+        return this;
+    }
+
     /**
      * Editors automatically invoked on eligible commits.
      * Note: be sure that these editors check and don't call
@@ -345,13 +356,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    constructor(opts: {
+    constructor(private opts: {
                     builder: Maker<StatusSuccessHandler>,
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
+                    artifactStore: ArtifactStore,
                 },
                 ...phaseCreators: PhaseCreator[]) {
-        this.builder = opts.builder;
-        this.deployers = opts.deployers;
         this.phaseCreators = phaseCreators;
     }
 
