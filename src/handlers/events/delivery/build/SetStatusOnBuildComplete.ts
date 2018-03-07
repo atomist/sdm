@@ -23,7 +23,7 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
 import {AddressChannels, addressChannelsFor} from "../../../../";
-import { PlannedPhase } from "../../../../common/phases/Phases";
+import { Goal } from "../../../../common/goals/Goal";
 import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
 import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
 import {createStatus, State} from "../../../../util/github/ghub";
@@ -40,7 +40,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private buildPhase: PlannedPhase,
+    constructor(private buildPhase: Goal,
                 private logInterpretation?: LogInterpretation) {
     }
 
@@ -108,7 +108,7 @@ function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
     }
 }
 
-async function setBuiltContext(phase: PlannedPhase, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+async function setBuiltContext(phase: Goal, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
     const description = state === "pending" ? phase.workingDescription : phase.completedDescription;
     return createStatus((creds as TokenCredentials).token, id, {
         state,

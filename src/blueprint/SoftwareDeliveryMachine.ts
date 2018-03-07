@@ -12,7 +12,10 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { ArtifactContext, BuildPhase, ContextToPlannedPhase, StagingVerifiedContext } from "../handlers/events/delivery/phases/httpServicePhases";
+import {
+    ArtifactContext, BuildGoal, ContextToPlannedPhase, ScanGoal,
+    StagingVerifiedContext,
+} from "../handlers/events/delivery/phases/httpServicePhases";
 import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
@@ -125,7 +128,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const inspections = this.codeReactions;
         const autoEditors = this.autoEditors;
         return (reviewers.length + inspections.length + autoEditors.length > 0) ?
-            () => new OnPendingScanStatus(reviewers, inspections, autoEditors) :
+            () => new OnPendingScanStatus(ScanGoal, reviewers, inspections, autoEditors) :
             undefined;
     }
 
@@ -178,7 +181,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuildPhase)
+        () => new SetStatusOnBuildComplete(BuildGoal)
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {

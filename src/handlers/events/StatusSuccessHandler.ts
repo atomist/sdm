@@ -1,5 +1,5 @@
 import { HandleEvent } from "@atomist/automation-client";
-import { Phases } from "../../common/phases/Phases";
+import { Goals } from "../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../typings/types";
 
 /**
@@ -10,6 +10,6 @@ export interface StatusSuccessHandler extends HandleEvent<OnAnySuccessStatus.Sub
     /**
      * If all phases are needed
      */
-    phases?: Phases;
+    phases?: Goals;
 
 }

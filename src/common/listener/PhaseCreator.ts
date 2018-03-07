@@ -1,5 +1,5 @@
 import { OnPushToAnyBranch } from "../../typings/types";
-import { Phases } from "../phases/Phases";
+import { Goals } from "../goals/Goal";
 import { ProjectListenerInvocation } from "./Listener";
 
 /**
@@ -18,7 +18,7 @@ export interface PhaseCreationInvocation extends ProjectListenerInvocation {
  * of the push. It is fundamental to determining the flow after the push:
  * for example: do we want to run a code scan?; do we want to build?; do
  * we want to deploy?
- * @returns Phases or undefined if it doesn't like the push or
+ * @returns Goals or undefined if it doesn't like the push or
  * understand the repo
  */
 export interface PhaseCreator {
@@ -35,8 +35,8 @@ export interface PhaseCreator {
      * or return undefined if this PhaseCreator doesn't know what to do with it.
      * The latter is not an error.
      * @param {PhaseCreationInvocation} pci
-     * @return {Promise<Phases>}
+     * @return {Promise<Goals>}
      */
-    createPhases(pci: PhaseCreationInvocation): Promise<Phases | undefined>;
+    createPhases(pci: PhaseCreationInvocation): Promise<Goals | undefined>;
 
 }

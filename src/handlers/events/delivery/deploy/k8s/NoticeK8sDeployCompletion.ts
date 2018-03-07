@@ -17,7 +17,7 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { PlannedPhase } from "../../../../../common/phases/Phases";
+import { Goal } from "../../../../../common/goals/Goal";
 import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
@@ -38,11 +38,11 @@ export class NoticeK8sTestDeployCompletionOnStatus implements HandleEvent<OnAPar
 
     /**
      *
-     * @param {PlannedPhase} deployPhase
-     * @param {PlannedPhase} endpointPhase
+     * @param {Goal} deployPhase
+     * @param {Goal} endpointPhase
      */
-    constructor(private deployPhase: PlannedPhase,
-                private endpointPhase: PlannedPhase) {
+    constructor(private deployPhase: Goal,
+                private endpointPhase: Goal) {
     }
 
     public async handle(event: EventFired<OnAParticularStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {

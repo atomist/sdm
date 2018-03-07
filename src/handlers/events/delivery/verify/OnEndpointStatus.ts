@@ -27,9 +27,9 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
+import { splitContext } from "../../../../common/goals/gitHubContext";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, previousPhaseSucceeded } from "../../../../common/goals/Goal";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { splitContext } from "../../../../common/phases/gitHubContext";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, PlannedPhase, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
@@ -101,7 +101,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
  */
 export interface SdmVerification {
     verifiers: EndpointVerificationListener[];
-    verifyPhase: PlannedPhase;
+    verifyPhase: Goal;
     requestApproval: boolean;
 }
 
@@ -152,12 +152,12 @@ function verifyImpl(sdm: SdmVerification,
         .then(success);
 }
 
-function reportFailedVerification(ac: AddressChannels, verifyPhase: PlannedPhase, id: RemoteRepoRef,
+function reportFailedVerification(ac: AddressChannels, verifyPhase: Goal, id: RemoteRepoRef,
                                   targetUrl: string, message: string) {
     return ac(failedVerificationMessage(verifyPhase, id, targetUrl, message));
 }
 
-function failedVerificationMessage(verifyPhase: PlannedPhase, id: RemoteRepoRef,
+function failedVerificationMessage(verifyPhase: Goal, id: RemoteRepoRef,
                                    targetUrl: string, message: string): slack.SlackMessage {
 
     const attachment: slack.Attachment = {
@@ -178,7 +178,7 @@ function linkToSha(id: RemoteRepoRef) {
         `${id.owner}/${id.repo}#${id.sha.substr(0, 6)}`);
 }
 
-function retryButton(verifyPhase: PlannedPhase, id: RemoteRepoRef, targetUrl: string): slack.Action {
+function retryButton(verifyPhase: Goal, id: RemoteRepoRef, targetUrl: string): slack.Action {
     return buttonForCommand({text: "Retry"},
         retryVerificationCommandName(verifyPhase), {
             repo: id.repo,
@@ -192,7 +192,7 @@ function setVerificationStatus(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef, state: StatusState,
                                requestApproval: boolean,
                                targetUrl: string,
-                               verifyPhase: PlannedPhase): Promise<any> {
+                               verifyPhase: Goal): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
         state,
         target_url: requestApproval ? forApproval(targetUrl) : targetUrl,
@@ -224,8 +224,8 @@ export class RetryVerifyParameters {
 
 }
 
-function retryVerificationCommandName(verifyPhase: PlannedPhase) {
-    // todo: get the env on the PlannedPhase
+function retryVerificationCommandName(verifyPhase: Goal) {
+    // todo: get the env on the Goal
     return "RetryFailedVerification" + splitContext(verifyPhase.context).env;
 }
 

@@ -7,12 +7,13 @@ import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
 import { contextToKnownPhase } from "../../handlers/events/delivery/phases/httpServicePhases";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 
-export interface PlannedPhaseDefinition {
+export interface GoalDefinition {
     environment: PhaseEnvironment;
     orderedName: string;
     displayName?: string;
@@ -20,10 +21,11 @@ export interface PlannedPhaseDefinition {
     workingDescription?: string;
 }
 
-export class PlannedPhase {
+export class Goal {
+
     public readonly context: GitHubStatusContext;
     public readonly name: string;
-    private readonly definition: PlannedPhaseDefinition;
+    private readonly definition: GoalDefinition;
 
     get completedDescription() {
         return this.definition.completedDescription || ("Complete: " + this.name);
@@ -33,7 +35,7 @@ export class PlannedPhase {
         return this.definition.workingDescription || ("Working: " + this.name);
     }
 
-    constructor(definition: PlannedPhaseDefinition) {
+    constructor(definition: GoalDefinition) {
         this.definition = definition;
 
         const numberAndName = /([0-9\.]+)-(.*)/;
@@ -46,14 +48,18 @@ export class PlannedPhase {
         this.name = definition.displayName || matchPhase[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
     }
+
+    public async preconditionsMet(creds: ProjectOperationCredentials, id: RemoteRepoRef): Promise<boolean> {
+        return true;
+    }
 }
 
 /**
  * Represents the phases of a delivery
  */
-export class Phases {
+export class Goals {
 
-    constructor(public phases: PlannedPhase[]) {
+    constructor(public phases: Goal[]) {
     }
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
@@ -106,7 +112,7 @@ export function nothingFailed(status: GitHubStatusAndFriends): boolean {
     return !status.siblings.some(sib => ["failure", "error"].includes(sib.state));
 }
 
-export function previousPhaseSucceeded(expectedPhases: Phases, currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+export function previousPhaseSucceeded(expectedPhases: Goals, currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     const currentPhase = contextToKnownPhase(currentContext);
     if (!currentPhase) {
         logger.warn("Unknown context! Returning false from previousPhaseSucceeded: " + currentContext);

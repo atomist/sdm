@@ -17,8 +17,8 @@
 import { Failure, GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Goal, Goals } from "../../../../common/goals/Goal";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
-import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
@@ -36,14 +36,14 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
 
     /**
      *
-     * @param {Phases} phases
-     * @param {PlannedPhase} deployPhase
-     * @param {PlannedPhase} endpointPhase
+     * @param {Goals} phases
+     * @param {Goal} deployPhase
+     * @param {Goal} endpointPhase
      * @param deployer source deployer to use
      */
-    constructor(public phases: Phases,
-                private deployPhase: PlannedPhase,
-                private endpointPhase: PlannedPhase,
+    constructor(public phases: Goals,
+                private deployPhase: Goal,
+                private endpointPhase: Goal,
                 private deployer: SourceDeployer) {
     }
 

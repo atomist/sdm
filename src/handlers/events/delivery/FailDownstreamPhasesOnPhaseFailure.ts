@@ -19,8 +19,8 @@ import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/au
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import Status = OnSuccessStatus.Status;
-import {BaseContext, contextIsAfter, GitHubStatusContext, splitContext} from "../../../common/phases/gitHubContext";
-import {Phases, PlannedPhase} from "../../../common/phases/Phases";
+import {BaseContext, contextIsAfter, GitHubStatusContext, splitContext} from "../../../common/goals/gitHubContext";
+import {Goal, Goals} from "../../../common/goals/Goal";
 import {OnFailureStatus, OnSuccessStatus} from "../../../typings/types";
 import {createStatus, State} from "../../../util/github/ghub";
 import {contextToPlannedPhase, ContextToPlannedPhase} from "./phases/httpServicePhases";
@@ -80,7 +80,7 @@ function gameOver(failedContext: GitHubStatusContext, currentlyPending: GitHubSt
         return Promise.resolve();
     }
 
-    const failedPhase: PlannedPhase = contextToPlannedPhase(failedContext);
+    const failedPhase: Goal = contextToPlannedPhase(failedContext);
 
     const phasesToReset = currentlyPending
         .filter(pendingContext => contextIsAfter(failedContext, pendingContext))

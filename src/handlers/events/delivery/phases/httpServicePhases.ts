@@ -5,57 +5,57 @@ import {
     ProductionEnvironment,
     splitContext,
     StagingEnvironment,
-} from "../../../../common/phases/gitHubContext";
-import { Phases, PlannedPhase } from "../../../../common/phases/Phases";
+} from "../../../../common/goals/gitHubContext";
+import { Goal, Goals } from "../../../../common/goals/Goal";
 
-export const ScanPhase = new PlannedPhase({
+export const ScanGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "1-scan",
     completedDescription: "Code scan passed",
 });
 
-export const BuildPhase = new PlannedPhase({
+export const BuildGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
 });
 
-export const ArtifactPhase = new PlannedPhase({
+export const ArtifactPhase = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "store artifact",
     completedDescription: "Stored artifact",
 });
 
-export const StagingDeploymentPhase = new PlannedPhase({
+export const StagingDeploymentPhase = new Goal({
     environment: StagingEnvironment,
     orderedName: "3-deploy", displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
 });
 
-export const StagingEndpointPhase = new PlannedPhase({
+export const StagingEndpointPhase = new Goal({
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
 });
 
-export const StagingVerifiedPhase = new PlannedPhase({
+export const StagingVerifiedPhase = new Goal({
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
 });
 
-export const ProductionDeploymentPhase = new PlannedPhase({
+export const ProductionDeploymentPhase = new Goal({
     environment: ProductionEnvironment,
     orderedName: "3-prod-deploy",
     displayName: "deploy to Prod",
     completedDescription: "Deployed to Prod",
 });
 
-export const ProductionEndpointPhase = new PlannedPhase({
+export const ProductionEndpointPhase = new Goal({
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
@@ -63,13 +63,13 @@ export const ProductionEndpointPhase = new PlannedPhase({
 
 });
 
-export const LocalDeploymentPhase = new PlannedPhase({
+export const LocalDeploymentPhase = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "1-deploy locally",
     completedDescription: "Deployed locally",
 });
 
-export const LocalEndpointPhase = new PlannedPhase({
+export const LocalEndpointPhase = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "2-endpoint",
     displayName: "locate local service endpoint",
@@ -77,7 +77,7 @@ export const LocalEndpointPhase = new PlannedPhase({
 
 });
 
-export const ImmaterialPhase = new PlannedPhase({
+export const ImmaterialPhase = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "1-immaterial",
     displayName: "immaterial",
@@ -86,8 +86,8 @@ export const ImmaterialPhase = new PlannedPhase({
 });
 
 const AllKnownPhases = [
-    ScanPhase,
-    BuildPhase,
+    ScanGoal,
+    BuildGoal,
     ArtifactPhase,
     StagingDeploymentPhase,
     StagingEndpointPhase,
@@ -104,47 +104,47 @@ export const StagingEndpointContext = StagingEndpointPhase.context;
 export const StagingVerifiedContext = StagingVerifiedPhase.context;
 export const ProductionDeploymentContext = ProductionDeploymentPhase.context;
 export const ProductionEndpointContext = ProductionEndpointPhase.context;
-export const ScanContext = ScanPhase.context;
-export const BuildContext = BuildPhase.context;
+export const ScanContext = ScanGoal.context;
+export const BuildContext = BuildGoal.context;
 export const ArtifactContext = ArtifactPhase.context;
 
 export const ProductionMauve = "#cf5097";
 
-export const ContextToPlannedPhase: { [key: string]: PlannedPhase } = {};
+export const ContextToPlannedPhase: { [key: string]: Goal } = {};
 AllKnownPhases.forEach(p => ContextToPlannedPhase[p.context] = p);
 
-export function contextToPlannedPhase(ghsc: GitHubStatusContext): PlannedPhase {
+export function contextToPlannedPhase(ghsc: GitHubStatusContext): Goal {
     return contextToKnownPhase(ghsc) ||
         defaultPhaseDefinition(ghsc);
 }
 
-export function contextToKnownPhase(ghsc: GitHubStatusContext): PlannedPhase {
+export function contextToKnownPhase(ghsc: GitHubStatusContext): Goal {
     return ContextToPlannedPhase[ghsc];
 }
 
-function defaultPhaseDefinition(ghsc: GitHubStatusContext): PlannedPhase {
+function defaultPhaseDefinition(ghsc: GitHubStatusContext): Goal {
     const interpreted = splitContext(ghsc);
-    return new PlannedPhase({
+    return new Goal({
         environment: interpreted.envPart + "/" as PhaseEnvironment,
         orderedName: interpreted.phasePart,
     });
 }
 
 /**
- * Special Phases object to be returned if changes are immaterial.
+ * Special Goals object to be returned if changes are immaterial.
  * The identity of this object is important.
- * @type {Phases}
+ * @type {Goals}
  */
-export const ImmaterialPhases = new Phases([
+export const ImmaterialPhases = new Goals([
     ImmaterialPhase]);
 
 /**
- * Phases for an Http service
- * @type {Phases}
+ * Goals for an Http service
+ * @type {Goals}
  */
-export const HttpServicePhases = new Phases([
-    ScanPhase,
-    BuildPhase,
+export const HttpServicePhases = new Goals([
+    ScanGoal,
+    BuildGoal,
     ArtifactPhase,
     StagingDeploymentPhase,
     StagingEndpointPhase,
@@ -152,6 +152,6 @@ export const HttpServicePhases = new Phases([
     ProductionDeploymentPhase,
     ProductionEndpointPhase]);
 
-export const LocalDeploymentPhases = new Phases([
+export const LocalDeploymentPhases = new Goals([
     LocalDeploymentPhase,
     LocalEndpointPhase]);

@@ -18,8 +18,11 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import {
+    currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals, nothingFailed,
+    previousPhaseSucceeded,
+} from "../../../../common/goals/Goal";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, nothingFailed, Phases, previousPhaseSucceeded } from "../../../../common/phases/Phases";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnySuccessStatus } from "../../../../typings/types";
@@ -42,8 +45,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
 
     private conditionalBuilders: ConditionalBuilder[];
 
-    constructor(public phases: Phases,
-                public ourContext: string,
+    constructor(public goal: Goal,
                 ...conditionalBuilders: ConditionalBuilder[]) {
         this.conditionalBuilders = conditionalBuilders;
     }
@@ -62,13 +64,13 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         };
 
         logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
-            params.ourContext, params.conditionalBuilders.length, statusAndFriends);
+            params.goal.context, params.conditionalBuilders.length, statusAndFriends);
 
-        if (nothingFailed(statusAndFriends) && !previousPhaseSucceeded(params.phases, params.ourContext, statusAndFriends)) {
-            return Success;
-        }
+        // if (nothingFailed(statusAndFriends)) {
+        //     return Success;
+        // }
 
-        if (!currentPhaseIsStillPending(params.ourContext, statusAndFriends)) {
+        if (!currentPhaseIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
 

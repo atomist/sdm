@@ -17,7 +17,7 @@
 import { GraphQL, HandlerResult, logger, Secret, Secrets, success, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { PlannedPhase } from "../../../../common/phases/Phases";
+import { Goal } from "../../../../common/goals/Goal";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
@@ -32,7 +32,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
      * The phase to update when an artifact is linked.
      * When an artifact is linked to a commit, the build must be done.
      */
-    constructor(private artifactPhase: PlannedPhase) {
+    constructor(private artifactPhase: Goal) {
     }
 
     public handle(event: EventFired<OnImageLinked.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {

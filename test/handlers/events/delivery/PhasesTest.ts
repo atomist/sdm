@@ -1,6 +1,6 @@
 import "mocha";
 import * as assert from "power-assert";
-import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/phases/gitHubContext";
+import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/goals/gitHubContext";
 import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ScanContext, StagingDeploymentContext,

@@ -1,7 +1,7 @@
-import { Phases } from "../../../../common/phases/Phases";
-import { BuildPhase, ScanPhase } from "./httpServicePhases";
+import { Goals } from "../../../../common/goals/Goal";
+import { BuildGoal, ScanGoal } from "./httpServicePhases";
 
-export const LibraryPhases = new Phases([
-    ScanPhase,
-    BuildPhase,
+export const LibraryPhases = new Goals([
+    ScanGoal,
+    BuildGoal,
 ]);
