@@ -29,7 +29,8 @@ export function messageDestinations(hasChannels: HasChannels, ctx: HandlerContex
     if (hasChannels.channels.length === 0) {
         throw new Error("I can't give you destinations for 0 channels");
     }
-    const slackTeam = hasChannels[0].channels.team.id;
+    // TODO: support multiple slack teams. Return an Array<Destination>
+    const slackTeam = hasChannels.channels[0].team.id;
     return addressSlackChannels(slackTeam, ...channelNames);
 }
 
