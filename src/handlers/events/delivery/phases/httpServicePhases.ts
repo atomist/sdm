@@ -6,7 +6,7 @@ import {
     splitContext,
     StagingEnvironment,
 } from "../../../../common/goals/gitHubContext";
-import { Goal, Goals } from "../../../../common/goals/Goal";
+import { Goal, Goals, GoalWithPrecondition } from "../../../../common/goals/Goal";
 
 export const ScanGoal = new Goal({
     environment: IndependentOfEnvironment,
@@ -28,13 +28,13 @@ export const ArtifactPhase = new Goal({
     completedDescription: "Stored artifact",
 });
 
-export const StagingDeploymentPhase = new Goal({
+export const StagingDeploymentGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
     orderedName: "3-deploy", displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
-});
+}, ArtifactPhase);
 
-export const StagingEndpointPhase = new Goal({
+export const StagingEndpointGoal = new Goal({
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
@@ -89,8 +89,8 @@ const AllKnownPhases = [
     ScanGoal,
     BuildGoal,
     ArtifactPhase,
-    StagingDeploymentPhase,
-    StagingEndpointPhase,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
     StagingVerifiedPhase,
     ProductionDeploymentPhase,
     ProductionEndpointPhase,
@@ -99,8 +99,8 @@ const AllKnownPhases = [
     ImmaterialPhase,
 ];
 
-export const StagingDeploymentContext = StagingDeploymentPhase.context;
-export const StagingEndpointContext = StagingEndpointPhase.context;
+export const StagingDeploymentContext = StagingDeploymentGoal.context;
+export const StagingEndpointContext = StagingEndpointGoal.context;
 export const StagingVerifiedContext = StagingVerifiedPhase.context;
 export const ProductionDeploymentContext = ProductionDeploymentPhase.context;
 export const ProductionEndpointContext = ProductionEndpointPhase.context;
@@ -146,8 +146,8 @@ export const HttpServicePhases = new Goals([
     ScanGoal,
     BuildGoal,
     ArtifactPhase,
-    StagingDeploymentPhase,
-    StagingEndpointPhase,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
     StagingVerifiedPhase,
     ProductionDeploymentPhase,
     ProductionEndpointPhase]);

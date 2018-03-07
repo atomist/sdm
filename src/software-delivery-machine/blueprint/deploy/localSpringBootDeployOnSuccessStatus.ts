@@ -21,8 +21,8 @@ import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/ma
 import {
     ContextToPlannedPhase,
     HttpServicePhases,
-    StagingDeploymentContext,
-    StagingEndpointContext,
+    StagingDeploymentContext, StagingDeploymentGoal,
+    StagingEndpointContext, StagingEndpointGoal,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
@@ -33,9 +33,8 @@ import { artifactStore } from "../artifactStore";
  */
 export const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
     new DeployFromLocalOnSuccessStatus<TargetInfo>(
-        HttpServicePhases,
-        ContextToPlannedPhase[StagingDeploymentContext],
-        ContextToPlannedPhase[StagingEndpointContext],
+        StagingDeploymentGoal,
+        StagingEndpointGoal,
         artifactStore,
         executableJarDeployer({
             baseUrl: "http://localhost",

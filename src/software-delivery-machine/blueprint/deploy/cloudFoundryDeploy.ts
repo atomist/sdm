@@ -26,7 +26,7 @@ import {
     HttpServicePhases,
     ProductionDeploymentContext,
     ProductionEndpointContext,
-    StagingDeploymentContext, StagingEndpointContext,
+    StagingDeploymentContext, StagingDeploymentGoal, StagingEndpointContext, StagingEndpointGoal,
 } from "../../../handlers/events/delivery/phases/httpServicePhases";
 import { artifactStore } from "../artifactStore";
 
@@ -37,9 +37,8 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  */
 export const CloudFoundryStagingDeployOnSuccessStatus = () =>
     new DeployFromLocalOnSuccessStatus(
-        HttpServicePhases,
-        ContextToPlannedPhase[StagingDeploymentContext],
-        ContextToPlannedPhase[StagingEndpointContext],
+        StagingDeploymentGoal,
+        StagingEndpointGoal,
         artifactStore,
         Deployer,
         () => ({

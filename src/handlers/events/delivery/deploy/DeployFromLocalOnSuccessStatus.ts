@@ -67,8 +67,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(public phases: Goals,
-                private deployPhase: Goal,
+    constructor(private deployPhase: Goal,
                 private endpointPhase: Goal,
                 private artifactStore: ArtifactStore,
                 public deployer: Deployer<T>,
@@ -105,6 +104,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
         const commit = status.commit;
         const image = status.commit.image;
 
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -113,8 +114,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             siblings: status.commit.statuses,
         };
 
-        // TODO: determine previous step based on the contexts of existing statuses
-        if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
+        if (!params.deployPhase.preconditionsMet({token: params.githubToken}, id, event.data)) {
             return Success;
         }
 
@@ -137,8 +137,6 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             sha: commit.sha,
             targetUrl: image.imageName,
         });
-
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         await dedup(commit.sha, () =>
             deploy({

@@ -3,7 +3,7 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { StatusState } from "../../typings/types";
+import { OnAnySuccessStatus, StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
@@ -49,8 +49,26 @@ export class Goal {
         this.context = BaseContext + definition.environment + definition.orderedName;
     }
 
-    public async preconditionsMet(creds: ProjectOperationCredentials, id: RemoteRepoRef): Promise<boolean> {
+    // TODO will decouple from github with statuses
+    public async preconditionsMet(creds: ProjectOperationCredentials,
+                                  id: RemoteRepoRef,
+                                  sub: OnAnySuccessStatus.Subscription): Promise<boolean> {
         return true;
+    }
+}
+
+export class GoalWithPrecondition extends Goal {
+
+    public readonly dependsOn: Goal[];
+
+    constructor(definition: GoalDefinition, ...dependsOn: Goal[]) {
+        super(definition);
+        this.dependsOn = dependsOn;
+    }
+
+    public async preconditionsMet(creds: ProjectOperationCredentials, id: RemoteRepoRef, sub: OnAnySuccessStatus.Subscription): Promise<boolean> {
+        const statusesWeNeed = this.dependsOn.map(s => s.context);
+        return !sub.Status.some(st => statusesWeNeed.includes(st.context) && st.state !== "success");
     }
 }
 
