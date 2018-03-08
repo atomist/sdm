@@ -5,6 +5,7 @@ import { LocalProject } from "@atomist/automation-client/project/local/LocalProj
 import { spawn } from "child_process";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
+import { ReviewerError } from "../../../../../../blueprint/ReviewerError";
 
 /**
  * Spawn Checkstyle Java process against the project directory.
@@ -38,16 +39,11 @@ export const checkstyleReviewer: (checkstylePath: string) =>
             childProcess.on("exit", (code, signal) => {
                 logger.info("Checkstyle ran on %j, code=%d, stdout=\n%s\nstderr=%s", p.id, code, stdout, stderr);
                 if (code !== 0 && stdout === "") {
-                    reject(new CheckstyleReviewerError(`Process returned ${code}: ${stderr}`, stderr))
+                    reject(new ReviewerError("CheckStyle", `Process returned ${code}: ${stderr}`, stderr))
                 }
                 return extract(stdout)
                     .then(cr => resolve(checkstyleReportToReview(p.id, cr, p.baseDir)),
-                        err => reject(new CheckstyleReviewerError(err.msg, stderr)));
+                        err => reject(new ReviewerError("CheckStyle", err.msg, stderr)));
             }))
     };
 
-export class CheckstyleReviewerError extends Error {
-    constructor(msg: string, public stderr: string) {
-        super(msg);
-    }
-}
