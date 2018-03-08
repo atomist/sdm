@@ -6,6 +6,13 @@ import { spawn } from "child_process";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
 
+/**
+ * Spawn Checkstyle Java process against the project directory.
+ * Parse Checkstyle XML out and transform it into our ProjectReview structure.
+ * An example of a common pattern for integrating third party static
+ * analysis or security tools.
+ * @param {string} checkstylePath the path to the CheckStyle jar on the local machine. (see README.md)
+ */
 export const checkstyleReviewer: (checkstylePath: string) =>
     (p: LocalProject, ctx: HandlerContext) => Promise<ProjectReview | ProjectReview> =
     (checkstylePath: string) => (p: GitProject, ctx: HandlerContext) => {
@@ -27,13 +34,20 @@ export const checkstyleReviewer: (checkstylePath: string) =>
         childProcess.stdout.on("data", data => stdout += data.toString());
         childProcess.stderr.on("data", data => stderr += data.toString());
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) =>
             childProcess.on("exit", (code, signal) => {
-                // TODO: if this did not exit cleanly, report that as an error somehow
                 logger.info("Checkstyle ran on %j, code=%d, stdout=\n%s\nstderr=%s", p.id, code, stdout, stderr);
+                if (code !== 0 && stdout === "") {
+                    reject(new CheckstyleReviewerError(`Process returned ${code}: ${stderr}`, stderr))
+                }
                 return extract(stdout)
-                    .then(cr =>
-                        resolve(checkstyleReportToReview(p.id, cr, p.baseDir)));
-            });
-        });
+                    .then(cr => resolve(checkstyleReportToReview(p.id, cr, p.baseDir)),
+                        err => reject(new CheckstyleReviewerError(err.msg, stderr)));
+            }))
     };
+
+export class CheckstyleReviewerError extends Error {
+    constructor(msg: string, public stderr: string) {
+        super(msg);
+    }
+}
