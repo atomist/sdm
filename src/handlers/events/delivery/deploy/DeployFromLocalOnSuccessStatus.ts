@@ -14,28 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    failure,
-    GraphQL,
-    HandleCommand,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import {
-    currentPhaseIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-    Goals,
-    previousGoalSucceeded,
-} from "../../../../common/goals/Goal";
+import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals, } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";

@@ -1,16 +1,10 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { OnAnySuccessStatus, StatusState } from "../../typings/types";
+import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import * as stringify from "json-stringify-safe";
-import { contextToKnownGoal } from "../../handlers/events/delivery/goals/httpServiceGoals";
-import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
@@ -127,44 +121,4 @@ export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, st
     logger.debug(`${currentPhase} is not still planned or skipped, so I'm not running it.
     State: ${myStatus.state} Description: ${myStatus.description}`);
     return false;
-}
-
-export function nothingFailed(status: GitHubStatusAndFriends): boolean {
-    return !status.siblings.some(sib => ["failure", "error"].includes(sib.state));
-}
-
-export function previousGoalSucceeded(expectedPhases: Goals,
-                                      currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const currentPhase = contextToKnownGoal(currentContext);
-    if (!currentPhase) {
-        logger.warn("Unknown context! Returning false from previousGoalSucceeded: " + currentContext);
-        return false;
-    }
-    if (status.state !== "success") {
-        logger.info(`Previous state ${status.context} wasn't success, but [${status.state}]`);
-        return false;
-    }
-    if (status.targetUrl.endsWith(ApprovalGateParam)) {
-        logger.info(`Approval gate detected in ${status.context}`);
-        return false;
-    }
-
-    const whereAmI = expectedPhases.phases.indexOf(currentPhase);
-    if (whereAmI < 0) {
-        logger.warn(`Inconsistency! Phase ${currentPhase} is known but is not part of Phases ${stringify(expectedPhases)}`);
-        return false;
-    }
-    if (whereAmI === 0) {
-        logger.info(`${currentPhase} is the first step.`);
-        return true;
-    }
-    // TODO: check the order of the statuses the commit has, instead of knowing which ones were planned
-    const previousPhase = expectedPhases.phases[whereAmI - 1];
-    if (previousPhase.context === status.context) {
-        return true;
-    } else {
-        logger.info("%j is right before %j; ignoring success of %s",
-            previousPhase, currentPhase, status.context);
-        return false;
-    }
 }

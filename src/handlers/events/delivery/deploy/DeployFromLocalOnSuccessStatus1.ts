@@ -22,7 +22,6 @@ import {
     logger,
     Secret,
     Secrets,
-    success,
     Success,
 } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
@@ -35,7 +34,6 @@ import {
     GitHubStatusAndFriends,
     Goal,
     Goals,
-    previousGoalSucceeded,
 } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -118,9 +116,11 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             description: status.description,
             siblings: status.commit.statuses,
         };
+        const creds = { token: params.githubToken};
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         // TODO: determine previous step based on the contexts of existing statuses
-        if (!previousGoalSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
+        if (!params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
             return Success;
         }
 
@@ -144,9 +144,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             targetUrl: image.imageName,
         });
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
-        await dedup(commit.sha, () =>
+       await dedup(commit.sha, () =>
             deploy({
                 deployPhase: params.deployPhase,
                 endpointPhase: params.endpointPhase,
