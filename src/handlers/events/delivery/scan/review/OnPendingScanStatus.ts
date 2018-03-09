@@ -51,6 +51,7 @@ import { Goal } from "../../../../../common/goals/Goal";
 import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { forApproval } from "../../verify/approvalGate";
+import { formatReviewerError, ReviewerError } from "../../../../../blueprint/ReviewerError";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -90,10 +91,16 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
         const addressChannels = addressChannelsFor(commit.repo, context);
         try {
             const project = await GitCommandGitProject.cloned(credentials, id);
-            const review: ProjectReview =
+            const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                 await Promise.all(params.projectReviewers
-                    .map(reviewer => reviewer(project, context, params as any)))
-                    .then(reviews => consolidate(reviews));
+                    .map(reviewer =>
+                        reviewer(project, context, params as any)
+                            .then(review => ({review}),
+                                error => ({error}))));
+            const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
+            const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
+
+            const review = consolidate(reviews);
 
             const push = commit.pushes[0];
             const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
@@ -122,15 +129,16 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
                     new SimpleRepoId(id.owner, id.repo));
             }
 
-            if (review.comments.length === 0) {
+            if (review.comments.length === 0 && reviewerErrors.length === 0) {
                 await markScanned(project.id as GitHubRepoRef,
                     params.goal.context, "success", credentials, false);
             } else {
                 // TODO might want to raise issue
                 // Fail it??
-                await sendReviewToSlack("Review comments", review, context, addressChannels)
-                    .then(() => markScanned(project.id as GitHubRepoRef,
-                        params.goal.context, "success", credentials, true));
+                await sendReviewToSlack("Review comments", review, context, addressChannels);
+                await sendErrorsToSlack(reviewerErrors, addressChannels);
+                await markScanned(project.id as GitHubRepoRef,
+                        params.goal.context, "success", credentials, true);
             }
             return Success;
         } catch (err) {
@@ -164,13 +172,22 @@ function consolidate(reviews: ProjectReview[]): ProjectReview {
     };
 }
 
-async function sendReviewToSlack(title: string, pr: ProjectReview, ctx: HandlerContext, addressChannels: AddressChannels) {
+async function sendReviewToSlack(title: string,
+                                 pr: ProjectReview,
+                                 ctx: HandlerContext,
+                                 addressChannels: AddressChannels) {
     const mesg: SlackMessage = {
         text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
         attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c)),
     };
     await addressChannels(mesg);
     return Success;
+}
+
+function sendErrorsToSlack(errors: ReviewerError[], addressChannels: AddressChannels) {
+    errors.forEach(async e => {
+        await addressChannels(formatReviewerError(e))
+    });
 }
 
 function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment): Attachment {
