@@ -114,7 +114,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             siblings: status.commit.statuses,
         };
 
-        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, statusAndFriends)) {
             logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
             return Success;
         }

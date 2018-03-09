@@ -52,7 +52,7 @@ export class Goal {
     // TODO will decouple from github with statuses
     public async preconditionsMet(creds: ProjectOperationCredentials,
                                   id: RemoteRepoRef,
-                                  sub: OnAnySuccessStatus.Subscription): Promise<boolean> {
+                                  sub: GitHubStatusAndFriends): Promise<boolean> {
         return true;
     }
 }
@@ -66,9 +66,12 @@ export class GoalWithPrecondition extends Goal {
         this.dependsOn = dependsOn;
     }
 
-    public async preconditionsMet(creds: ProjectOperationCredentials, id: RemoteRepoRef, sub: OnAnySuccessStatus.Subscription): Promise<boolean> {
+    public async preconditionsMet(creds: ProjectOperationCredentials,
+                                  id: RemoteRepoRef,
+                                  sub: GitHubStatusAndFriends): Promise<boolean> {
+
         const statusesWeNeed = this.dependsOn.map(s => s.context);
-        return !sub.Status.some(st => statusesWeNeed.includes(st.context) && st.state !== "success");
+        return !sub.siblings.some(st => statusesWeNeed.includes(st.context) && st.state !== "success");
     }
 }
 
