@@ -15,6 +15,7 @@ import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
+import { ohTheHorror, stopRaisingIssues } from "./blueprint/issue/play";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
@@ -22,7 +23,6 @@ import { listChangedFiles } from "./blueprint/review/listChangedFiles";
 import { logReview } from "./blueprint/review/logReview";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { ohTheHorror, stopRaisingIssues } from "./blueprint/issue/play";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy

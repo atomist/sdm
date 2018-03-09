@@ -9,7 +9,7 @@ import { createStatus } from "../../util/github/ghub";
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
-import { contextToKnownPhase } from "../../handlers/events/delivery/goals/httpServiceGoals";
+import { contextToKnownGoal } from "../../handlers/events/delivery/goals/httpServiceGoals";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 
@@ -130,10 +130,11 @@ export function nothingFailed(status: GitHubStatusAndFriends): boolean {
     return !status.siblings.some(sib => ["failure", "error"].includes(sib.state));
 }
 
-export function previousPhaseSucceeded(expectedPhases: Goals, currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const currentPhase = contextToKnownPhase(currentContext);
+export function previousGoalSucceeded(expectedPhases: Goals,
+                                      currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+    const currentPhase = contextToKnownGoal(currentContext);
     if (!currentPhase) {
-        logger.warn("Unknown context! Returning false from previousPhaseSucceeded: " + currentContext);
+        logger.warn("Unknown context! Returning false from previousGoalSucceeded: " + currentContext);
         return false;
     }
     if (status.state !== "success") {

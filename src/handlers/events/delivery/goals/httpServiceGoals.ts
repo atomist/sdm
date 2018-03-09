@@ -112,16 +112,16 @@ export const ProductionMauve = "#cf5097";
 export const ContextToPlannedPhase: { [key: string]: Goal } = {};
 AllKnownPhases.forEach(p => ContextToPlannedPhase[p.context] = p);
 
-export function contextToPlannedPhase(ghsc: GitHubStatusContext): Goal {
-    return contextToKnownPhase(ghsc) ||
-        defaultPhaseDefinition(ghsc);
+export function contextToGoal(ghsc: GitHubStatusContext): Goal {
+    return contextToKnownGoal(ghsc) ||
+        defaultGoal(ghsc);
 }
 
-export function contextToKnownPhase(ghsc: GitHubStatusContext): Goal {
+export function contextToKnownGoal(ghsc: GitHubStatusContext): Goal {
     return ContextToPlannedPhase[ghsc];
 }
 
-function defaultPhaseDefinition(ghsc: GitHubStatusContext): Goal {
+function defaultGoal(ghsc: GitHubStatusContext): Goal {
     const interpreted = splitContext(ghsc);
     return new Goal({
         environment: interpreted.envPart + "/" as PhaseEnvironment,

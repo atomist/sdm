@@ -34,7 +34,7 @@ import {
     GitHubStatusAndFriends,
     Goal,
     Goals,
-    previousPhaseSucceeded,
+    previousGoalSucceeded,
 } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";

@@ -47,11 +47,11 @@ import { ContextToPlannedPhase, ScanContext } from "../../goals/httpServiceGoals
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
+import { formatReviewerError, ReviewerError } from "../../../../../blueprint/ReviewerError";
 import { Goal } from "../../../../../common/goals/Goal";
 import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { forApproval } from "../../verify/approvalGate";
-import { formatReviewerError, ReviewerError } from "../../../../../blueprint/ReviewerError";
 
 /**
  * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
@@ -95,7 +95,7 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
                 await Promise.all(params.projectReviewers
                     .map(reviewer =>
                         reviewer(project, context, params as any)
-                            .then(review => ({review}),
+                            .then(rvw => ({review: rvw}),
                                 error => ({error}))));
             const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
             const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
@@ -186,7 +186,7 @@ async function sendReviewToSlack(title: string,
 
 function sendErrorsToSlack(errors: ReviewerError[], addressChannels: AddressChannels) {
     errors.forEach(async e => {
-        await addressChannels(formatReviewerError(e))
+        await addressChannels(formatReviewerError(e));
     });
 }
 

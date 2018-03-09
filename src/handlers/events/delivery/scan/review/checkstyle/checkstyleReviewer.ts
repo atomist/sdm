@@ -3,9 +3,9 @@ import { ProjectReview } from "@atomist/automation-client/operations/review/Revi
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
+import { ReviewerError } from "../../../../../../blueprint/ReviewerError";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
-import { ReviewerError } from "../../../../../../blueprint/ReviewerError";
 
 /**
  * Spawn Checkstyle Java process against the project directory.
@@ -39,11 +39,10 @@ export const checkstyleReviewer: (checkstylePath: string) =>
             childProcess.on("exit", (code, signal) => {
                 logger.info("Checkstyle ran on %j, code=%d, stdout=\n%s\nstderr=%s", p.id, code, stdout, stderr);
                 if (code !== 0 && stdout === "") {
-                    reject(new ReviewerError("CheckStyle", `Process returned ${code}: ${stderr}`, stderr))
+                    reject(new ReviewerError("CheckStyle", `Process returned ${code}: ${stderr}`, stderr));
                 }
                 return extract(stdout)
                     .then(cr => resolve(checkstyleReportToReview(p.id, cr, p.baseDir)),
                         err => reject(new ReviewerError("CheckStyle", err.msg, stderr)));
-            }))
+            }));
     };
-

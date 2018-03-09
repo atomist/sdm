@@ -23,7 +23,7 @@ import {BaseContext, contextIsAfter, GitHubStatusContext, splitContext} from "..
 import {Goal, Goals} from "../../../common/goals/Goal";
 import {OnFailureStatus, OnSuccessStatus} from "../../../typings/types";
 import {createStatus, State} from "../../../util/github/ghub";
-import {contextToPlannedPhase, ContextToPlannedPhase} from "./goals/httpServiceGoals";
+import {contextToGoal, ContextToPlannedPhase} from "./goals/httpServiceGoals";
 
 /**
  * Respond to a failure status by failing downstream phases
@@ -80,11 +80,11 @@ function gameOver(failedContext: GitHubStatusContext, currentlyPending: GitHubSt
         return Promise.resolve();
     }
 
-    const failedPhase: Goal = contextToPlannedPhase(failedContext);
+    const failedPhase: Goal = contextToGoal(failedContext);
 
     const phasesToReset = currentlyPending
         .filter(pendingContext => contextIsAfter(failedContext, pendingContext))
-        .map(p => contextToPlannedPhase(p));
+        .map(p => contextToGoal(p));
     return Promise.all(phasesToReset.map(
         p => setStatus(id, p.context, "failure", creds,
             `Skipping ${p.name} because ${failedPhase.name} failed`)));

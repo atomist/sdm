@@ -35,7 +35,7 @@ import {
     GitHubStatusAndFriends,
     Goal,
     Goals,
-    previousPhaseSucceeded,
+    previousGoalSucceeded,
 } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -120,7 +120,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         };
 
         // TODO: determine previous step based on the contexts of existing statuses
-        if (!previousPhaseSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
+        if (!previousGoalSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
             return Success;
         }
 
