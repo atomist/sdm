@@ -63,8 +63,13 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             siblings: status.commit.statuses,
         };
 
-        logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
-            params.goal.context, params.conditionalBuilders.length, statusAndFriends);
+        const creds = { token: params.githubToken};
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        
+        if (!params.goal.preconditionsMet(creds, id, statusAndFriends)) {
+            logger.debug("Build preconditions not met");
+            return Success;
+        }
 
         if (!currentPhaseIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
@@ -72,7 +77,6 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
         await dedup(commit.sha, async () =>  {
-            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
             const credentials = {token: params.githubToken};
             const project = await GitCommandGitProject.cloned(credentials, id);
 
