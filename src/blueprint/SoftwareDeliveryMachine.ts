@@ -11,7 +11,7 @@ import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatu
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {
     ArtifactGoal, AutofixGoal,
-    BuildGoal,
+    BuildGoal, CodeReactionGoal,
     ContextToPlannedPhase,
     ReviewGoal,
     StagingEndpointGoal,
@@ -50,10 +50,11 @@ import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import {
-    BuildOnScanSuccessStatus,
+    BuildOnPendingBuildStatus,
     ConditionalBuilder,
-} from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
+} from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
+import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
 import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
@@ -142,9 +143,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get reviewHandler(): Maker<OnPendingReviewStatus> {
-        return (this.projectReviewers.length + this.codeReactions.length) ?
-            () => new OnPendingReviewStatus(ReviewGoal, this.projectReviewers, this.codeReactions) :
-            undefined;
+        return () => new OnPendingReviewStatus(ReviewGoal, this.projectReviewers);
+    }
+
+    private get codeReactionsHandler(): Maker<OnPendingCodeReactionStatus> {
+        return () => new OnPendingCodeReactionStatus(CodeReactionGoal, this.codeReactions);
     }
 
     private get autofixHandler(): Maker<OnPendingAutofixStatus> {
@@ -161,7 +164,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     private get builder(): Maker<HandleEvent<any>> {
-        return () => new BuildOnScanSuccessStatus(BuildGoal, this.conditionalBuilders);
+        return () => new BuildOnPendingBuildStatus(BuildGoal, this.conditionalBuilders);
     }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
@@ -230,6 +233,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.semanticDiffReactor,
                 this.autofixHandler,
                 this.reviewHandler,
+                this.codeReactionsHandler,
                 this.phaseSetup,
                 this.oldPushSuperseder,
                 this.onSuperseded,

@@ -37,7 +37,6 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { Goal } from "../../../../../common/goals/Goal";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase } from "../../goals/httpServiceGoals";
 import { forApproval } from "../../verify/approvalGate";
 
 /**
@@ -88,12 +87,12 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
             }
 
             await markScanned(project.id as GitHubRepoRef,
-                params.goal.context, "success", credentials, false);
+                params.goal, "success", credentials, false);
 
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.goal.context, "error", credentials, false);
+                params.goal, "error", credentials, false);
             return failure(err);
         }
     }
@@ -102,14 +101,13 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
 // TODO fix this
 export const ScanBase = "https://scan.atomist.com";
 
-function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
+function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
                      creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const phase = ContextToPlannedPhase[context];
     const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
-        context,
-        description: phase.completedDescription,
+        context: goal.context,
+        description: goal.completedDescription,
     });
 }

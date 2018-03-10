@@ -20,12 +20,18 @@ export const ReviewGoal = new Goal({
     completedDescription: "Code review passed",
 });
 
-export const BuildGoal = new Goal({
+export const CodeReactionGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "1.5-react",
+    completedDescription: "Code reactions",
+});
+
+export const BuildGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
-});
+}, AutofixGoal);
 
 export const ArtifactGoal = new Goal({
     environment: IndependentOfEnvironment,
@@ -151,6 +157,7 @@ export const NoGoals = new Goals([
 export const HttpServiceGoals = new Goals([
     AutofixGoal,
     ReviewGoal,
+    CodeReactionGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,

@@ -38,14 +38,11 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase } from "../../goals/httpServiceGoals";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import { formatReviewerError, ReviewerError } from "../../../../../blueprint/ReviewerError";
 import { Goal } from "../../../../../common/goals/Goal";
-import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
-import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { forApproval } from "../../verify/approvalGate";
 
 /**
@@ -60,8 +57,8 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
     private githubToken: string;
 
     constructor(public goal: Goal,
-                private projectReviewers: ProjectReviewer[],
-                private codeReactions: CodeReactionListener[]) {}
+                private projectReviewers: ProjectReviewer[]) {
+    }
 
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
                         context: HandlerContext,
@@ -79,49 +76,38 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
 
         const addressChannels = addressChannelsFor(commit.repo, context);
         try {
-            const project = await GitCommandGitProject.cloned(credentials, id);
-            const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
-                await Promise.all(params.projectReviewers
-                    .map(reviewer =>
-                        reviewer(project, context, params as any)
-                            .then(rvw => ({review: rvw}),
-                                error => ({error}))));
-            const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
-            const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
+            if (params.projectReviewers.length > 0) {
+                const project = await GitCommandGitProject.cloned(credentials, id);
+                const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
+                    await Promise.all(params.projectReviewers
+                        .map(reviewer =>
+                            reviewer(project, context, params as any)
+                                .then(rvw => ({review: rvw}),
+                                    error => ({error}))));
+                const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
+                const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
 
-            const review = consolidate(reviews);
+                const review = consolidate(reviews);
 
-            const push = commit.pushes[0];
-            const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
-
-            const i: CodeReactionInvocation = {
-                id,
-                context,
-                addressChannels,
-                project,
-                credentials,
-                filesChanged,
-            };
-            const inspections: Promise<any> =
-                Promise.all(params.codeReactions
-                    .map(reaction => reaction(i)));
-            await inspections;
-
-            if (review.comments.length === 0 && reviewerErrors.length === 0) {
-                await markScanned(project.id as GitHubRepoRef,
-                    params.goal.context, "success", credentials, false);
+                if (review.comments.length === 0 && reviewerErrors.length === 0) {
+                    await markScanned(id,
+                        params.goal, "success", credentials, false);
+                } else {
+                    // TODO might want to raise issue
+                    // Fail it??
+                    await sendReviewToSlack("Review comments", review, context, addressChannels);
+                    await sendErrorsToSlack(reviewerErrors, addressChannels);
+                    await markScanned(project.id as GitHubRepoRef,
+                        params.goal, "success", credentials, true);
+                }
             } else {
-                // TODO might want to raise issue
-                // Fail it??
-                await sendReviewToSlack("Review comments", review, context, addressChannels);
-                await sendErrorsToSlack(reviewerErrors, addressChannels);
-                await markScanned(project.id as GitHubRepoRef,
-                        params.goal.context, "success", credentials, true);
+                // No reviewers
+                await markScanned(id, params.goal, "success", credentials, false);
             }
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.goal.context, "error", credentials, false);
+                params.goal, "error", credentials, false);
             return failure(err);
         }
     }
@@ -130,15 +116,14 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
 export const ScanBase = "https://scan.atomist.com";
 
 // TODO this should take a URL with detailed information
-function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
+function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
                      creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const phase = ContextToPlannedPhase[context];
     const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
-        context,
-        description: phase.completedDescription,
+        context: goal.context,
+        description: goal.completedDescription,
     });
 }
 

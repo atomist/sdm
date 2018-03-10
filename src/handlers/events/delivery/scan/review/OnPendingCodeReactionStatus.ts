@@ -29,13 +29,13 @@ import {
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { addressChannelsFor } from "../../../../../common/slack/addressChannels";
-import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
-import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase } from "../../goals/httpServiceGoals";
 import { Goal } from "../../../../../common/goals/Goal";
 import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
+import { addressChannelsFor } from "../../../../../common/slack/addressChannels";
+import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
+import { createStatus } from "../../../../../util/github/ghub";
+import { ContextToPlannedPhase } from "../../goals/httpServiceGoals";
 import { forApproval } from "../../verify/approvalGate";
 
 /**
@@ -62,6 +62,8 @@ export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStat
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
+        logger.info("Will run %d code reactions on %j", params.codeReactions.length, id);
+
         if (status.context !== params.goal.context || status.state !== "pending") {
             logger.warn(`I was looking for ${params.goal.context} being pending, but I heard about ${status.context} being ${status.state}`);
             return Success;
@@ -69,30 +71,31 @@ export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStat
 
         const addressChannels = addressChannelsFor(commit.repo, context);
         try {
-            const project = await GitCommandGitProject.cloned(credentials, id);
-            const push = commit.pushes[0];
-            const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
+            if (params.codeReactions.length > 0) {
+                const project = await GitCommandGitProject.cloned(credentials, id);
+                const push = commit.pushes[0];
+                const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
 
-            const i: CodeReactionInvocation = {
-                id,
-                context,
-                addressChannels,
-                project,
-                credentials,
-                filesChanged,
-            };
-            const inspections: Promise<any> =
-                Promise.all(params.codeReactions
-                    .map(reaction => reaction(i)));
-            await inspections;
+                const i: CodeReactionInvocation = {
+                    id,
+                    context,
+                    addressChannels,
+                    project,
+                    credentials,
+                    filesChanged,
+                };
+                const codeReactions: Promise<any> =
+                    Promise.all(params.codeReactions
+                        .map(reaction => reaction(i)));
+                await codeReactions;
+            }
 
-            await markScanned(project.id as GitHubRepoRef,
-                params.goal.context, "success", credentials, false);
-
+            await markScanned(id,
+                params.goal, "success", credentials, false);
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.goal.context, "error", credentials, false);
+                params.goal, "error", credentials, false);
             return failure(err);
         }
     }
@@ -101,14 +104,13 @@ export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStat
 export const ScanBase = "https://scan.atomist.com";
 
 // TODO this should take a URL with detailed information
-function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
+function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
                      creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const phase = ContextToPlannedPhase[context];
     const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
-        context,
-        description: phase.completedDescription,
+        context: goal.context,
+        description: goal.completedDescription,
     });
 }

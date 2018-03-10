@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSetter";
-import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
-import { OnAnySuccessStatus } from "../../../../typings/types";
+import { OnAnyPendingStatus, OnAnySuccessStatus } from "../../../../typings/types";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 
 /**
@@ -40,8 +39,8 @@ export interface ConditionalBuilder {
  * See a GitHub success status with context "scan" and trigger a build producing an artifact status
  */
 @EventHandler("Build on source scan success",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
+    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
+export class BuildOnPendingBuildStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -51,7 +50,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         this.conditionalBuilders = conditionalBuilders;
     }
 
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
@@ -63,6 +62,8 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
             description: status.description,
             siblings: status.commit.statuses,
         };
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const credentials = {token: params.githubToken};
 
         logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
             params.goal.context, params.conditionalBuilders.length, statusAndFriends);
@@ -70,11 +71,12 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         if (!currentPhaseIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
+        if (!params.goal.preconditionsMet(credentials, id, event.data)) {
+            return Success;
+        }
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
         await dedup(commit.sha, async () => {
-            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-            const credentials = {token: params.githubToken};
             const project = await GitCommandGitProject.cloned(credentials, id);
 
             const i: PushTestInvocation = {
