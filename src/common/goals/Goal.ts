@@ -6,6 +6,7 @@ import { createStatus } from "../../util/github/ghub";
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
+import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
 
 export interface GoalDefinition {
     environment: PhaseEnvironment;
@@ -64,9 +65,29 @@ export class GoalWithPrecondition extends Goal {
                                   id: RemoteRepoRef,
                                   sub: GitHubStatusAndFriends): Promise<boolean> {
 
-        const statusesWeNeed = this.dependsOn.map(s => s.context);
-        return !sub.siblings.some(st => statusesWeNeed.includes(st.context) && st.state !== "success");
+        const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
+        const errors = checks.filter(r => r.error !== undefined).map(r => r.error);
+        const reasonsToWait = checks.filter(r => r.wait !== undefined).map(r => r.wait);
+
+        errors.forEach(e => logger.debug("Could not establish preconditions for " + this.name + ": " + e));
+        reasonsToWait.forEach(e => logger.debug("Not triggering " + this.name + ": " + e));
+
+        return (errors.length === 0 && reasonsToWait.length === 0);
     }
+}
+
+function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {
+        const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
+        if (!detectedStatus) {
+            return {error: "Did not find a status for " + pg.context};
+        }
+        if (detectedStatus.state !== "success") {
+            return {wait: "Precondition " + pg.name + " not yet successful"}
+        }
+        if (requiresApproval(detectedStatus)) {
+            return {wait: "Precondition " + pg.name + " requires approval"}
+        }
+        return {};
 }
 
 /**
