@@ -36,6 +36,4 @@ export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): Push
     return new PushRule(guard1, guards);
 }
 
-export function onAnyPush(): PushRule {
-    return new PushRule(() => true, []);
-}
+export const OnAnyPush: PushRule = new PushRule(() => true, []);

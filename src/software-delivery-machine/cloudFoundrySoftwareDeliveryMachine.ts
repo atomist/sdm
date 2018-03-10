@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
+import { OnAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
@@ -45,7 +45,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         whenPushSatisfies(IsNode)
             .setGoals(NpmGoals)
             .buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
-        onAnyPush().buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
+        OnAnyPush.buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(

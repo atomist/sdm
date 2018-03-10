@@ -1,4 +1,4 @@
-import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
+import { OnAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
@@ -37,7 +37,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
         whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot).setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
         whenPushSatisfies(IsNode).setGoals(NpmGoals),
-        onAnyPush().buildWith(new K8sAutomationBuilder()),
+        OnAnyPush.buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)
