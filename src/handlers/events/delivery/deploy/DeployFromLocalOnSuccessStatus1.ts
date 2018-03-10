@@ -119,8 +119,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const creds = { token: params.githubToken};
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        // TODO: determine previous step based on the contexts of existing statuses
-        if (!params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
+        if (! await params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
             return Success;
         }
 

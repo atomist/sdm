@@ -61,7 +61,7 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         const creds = {token: params.githubToken};
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        if (!params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
+        if (! await params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
