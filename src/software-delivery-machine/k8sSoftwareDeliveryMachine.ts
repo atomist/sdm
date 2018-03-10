@@ -1,5 +1,5 @@
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
+import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
@@ -32,12 +32,12 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ],
             artifactStore,
         },
-        new GuardedPhaseCreator(HttpServiceGoals, PushToDefaultBranch, IsMaven, IsSpringBoot,
+        new GuardedGoalSetter(HttpServiceGoals, PushToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
             PushToPublicRepo),
-        new GuardedPhaseCreator(LocalDeploymentGoals, not(PushFromAtomist), IsMaven, IsSpringBoot),
-        new GuardedPhaseCreator(LibraryGoals, IsMaven, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(NpmGoals, IsNode),
+        new GuardedGoalSetter(LocalDeploymentGoals, not(PushFromAtomist), IsMaven, IsSpringBoot),
+        new GuardedGoalSetter(LibraryGoals, IsMaven, MaterialChangeToJavaRepo),
+        new GuardedGoalSetter(NpmGoals, IsNode),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)

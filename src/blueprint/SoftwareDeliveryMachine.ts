@@ -60,7 +60,7 @@ import { NewRepoHandling } from "./NewRepoHandling";
 /**
  * A reference blueprint for Atomist delivery.
  * Represents a possible delivery process spanning
- * phases of fingerprinting, reacting to fingerprint diffs,
+ * goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment.
  * Uses the builder pattern.
@@ -91,7 +91,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
 
-    private readonly phaseCreators: GoalSetter[] = [];
+    private readonly goalSetters: GoalSetter[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -145,10 +145,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get phaseSetup(): Maker<SetupPhasesOnPush> {
-        if (this.phaseCreators.length === 0) {
+        if (this.goalSetters.length === 0) {
             throw new Error("No phase creators");
         }
-        return () => new SetupPhasesOnPush(...this.phaseCreators);
+        return () => new SetupPhasesOnPush(...this.goalSetters);
     }
 
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
@@ -361,8 +361,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
                     artifactStore: ArtifactStore,
                 },
-                ...phaseCreators: GoalSetter[]) {
-        this.phaseCreators = phaseCreators;
+                ...goalSetters: GoalSetter[]) {
+        this.goalSetters = goalSetters;
     }
 
 }
