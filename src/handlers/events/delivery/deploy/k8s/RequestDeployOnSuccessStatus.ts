@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import {
-    currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals, previousGoalSucceeded,
+    currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals, previousGoalSucceeded,
 } from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
@@ -66,7 +66,7 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 

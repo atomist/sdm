@@ -8,9 +8,15 @@ import {
 } from "../../../../common/goals/gitHubContext";
 import { Goal, Goals, GoalWithPrecondition } from "../../../../common/goals/Goal";
 
+export const FingerprintGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "0.1-fingerprint",
+    completedDescription: "Fingerprinted",
+});
+
 export const AutofixGoal = new Goal({
     environment: IndependentOfEnvironment,
-    orderedName: "0-autofix",
+    orderedName: "0.2-autofix",
     completedDescription: "Autofixes OK",
 });
 
@@ -155,6 +161,7 @@ export const NoGoals = new Goals([
  * @type {Goals}
  */
 export const HttpServiceGoals = new Goals([
+    FingerprintGoal,
     AutofixGoal,
     ReviewGoal,
     CodeReactionGoal,

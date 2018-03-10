@@ -24,6 +24,9 @@ subscription OnAnyPendingStatus {
       }
       pushes {
         branch
+        after {
+          sha
+        }
         before {
           sha
         }

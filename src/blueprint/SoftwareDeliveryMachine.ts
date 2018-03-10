@@ -12,7 +12,7 @@ import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/
 import {
     ArtifactGoal, AutofixGoal,
     BuildGoal, CodeReactionGoal,
-    ContextToPlannedPhase,
+    ContextToPlannedPhase, FingerprintGoal,
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedContext,
@@ -20,7 +20,7 @@ import {
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
+import { FingerprintOnPendingStatus } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
     EndpointVerificationListener,
@@ -130,9 +130,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
     }
 
-    private get fingerprinter(): Maker<FingerprintOnPush> {
+    private get fingerprinter(): Maker<FingerprintOnPendingStatus> {
         return this.fingerprinters.length > 0 ?
-            () => new FingerprintOnPush(this.fingerprinters) :
+            () => new FingerprintOnPendingStatus(FingerprintGoal, this.fingerprinters) :
             undefined;
     }
 

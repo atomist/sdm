@@ -18,7 +18,7 @@ import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } fro
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
-    currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals, previousGoalSucceeded,
+    currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals, previousGoalSucceeded,
 } from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
@@ -67,7 +67,7 @@ export class RequestK8sDeployOnSuccessStatus1 implements HandleEvent<OnAnySucces
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
