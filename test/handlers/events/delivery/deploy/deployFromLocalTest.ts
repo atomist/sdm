@@ -1,5 +1,8 @@
 import { DeployFromLocalOnSuccessStatus1 } from "../../../../../src/handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
-import { LocalEndpointGoal, StagingDeploymentGoal } from "../../../../../src/handlers/events/delivery/goals/httpServiceGoals";
+import {
+    LocalEndpointGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
+    StagingDeploymentGoal
+} from "../../../../../src/handlers/events/delivery/goals/httpServiceGoals";
 import { HandlerContext } from "@atomist/automation-client";
 import "mocha";
 import * as assert from "power-assert";
@@ -8,7 +11,7 @@ describe("the local deploy", () => {
 
     it("does not go when artifact is not done", () => {
         const deployHandler = new DeployFromLocalOnSuccessStatus1(null,
-            StagingDeploymentGoal, LocalEndpointGoal, null, null, null);
+            ProductionDeploymentGoal, ProductionEndpointGoal, null, null, null);
         const handleResult = deployHandler.handle(buildSuccessEvent as any, {} as HandlerContext, deployHandler)
 
         return handleResult.then(res => {

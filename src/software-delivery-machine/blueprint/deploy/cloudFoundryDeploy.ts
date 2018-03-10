@@ -16,17 +16,14 @@
 
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import { DeployFromLocalOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
-import {
-    CloudFoundryInfo,
-    EnvironmentCloudFoundryTarget,
-} from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { EnvironmentCloudFoundryTarget, } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
-    ContextToPlannedPhase,
     HttpServiceGoals,
-    ProductionDeploymentContext,
-    ProductionEndpointContext,
-    StagingDeploymentContext, StagingDeploymentGoal, StagingEndpointContext, StagingEndpointGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { artifactStore } from "../artifactStore";
 
@@ -50,8 +47,8 @@ export const CloudFoundryStagingDeployOnSuccessStatus = () =>
 export const CloudFoundryProductionDeployOnSuccessStatus =
     () => new DeployFromLocalOnSuccessStatus1(
         HttpServiceGoals,
-        ContextToPlannedPhase[ProductionDeploymentContext],
-        ContextToPlannedPhase[ProductionEndpointContext],
+        ProductionDeploymentGoal,
+        ProductionEndpointGoal,
         artifactStore,
         Deployer,
         () => ({
