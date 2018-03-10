@@ -1,17 +1,17 @@
+import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
+import { K8sAutomationBuilder } from "../handlers/events/delivery/build/k8s/K8AutomationBuilder";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
 import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { artifactStore } from "./blueprint/artifactStore";
-import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import {
     K8sProductionDeployOnSuccessStatus,
     K8sStagingDeployOnSuccessStatus,
@@ -21,12 +21,10 @@ import {
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
-import { whenPushSatisfies } from "../blueprint/ruleDsl";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {
-            builder: K8sBuildOnSuccessStatus,
             deployers: [
                 K8sStagingDeployOnSuccessStatus,
                 K8sProductionDeployOnSuccessStatus,
@@ -39,6 +37,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
         whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot).setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
         whenPushSatisfies(IsNode).setGoals(NpmGoals),
+        onAnyPush().buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)

@@ -1,5 +1,5 @@
 import { Goals } from "../../goals/Goal";
-import { GoalSetter, GoalSetterInvocation, PushTest } from "../GoalSetter";
+import { GoalSetter, PushTest, PushTestInvocation } from "../GoalSetter";
 import { allSatisfied } from "./pushTestUtils";
 
 /**
@@ -21,7 +21,7 @@ export class GuardedGoalSetter implements GoalSetter {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async createPhases(pi: GoalSetterInvocation): Promise<Goals | undefined> {
+    public async createPhases(pi: PushTestInvocation): Promise<Goals | undefined> {
         return this.phases;
     }
 }

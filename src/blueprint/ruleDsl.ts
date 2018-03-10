@@ -35,3 +35,7 @@ export class PushRule {
 export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRule {
     return new PushRule(guard1, guards);
 }
+
+export function onAnyPush(): PushRule {
+    return new PushRule(() => true, []);
+}

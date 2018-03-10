@@ -36,7 +36,7 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goals } from "../../../../common/goals/Goal";
-import { GoalSetter, GoalSetterInvocation } from "../../../../common/listener/GoalSetter";
+import { GoalSetter, PushTestInvocation } from "../../../../common/listener/GoalSetter";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
@@ -69,7 +69,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         const credentials = {token: params.githubToken};
         const project = await GitCommandGitProject.cloned(credentials, id);
         const addressChannels = addressChannelsFor(push.repo, context);
-        const pi: GoalSetterInvocation = {
+        const pi: PushTestInvocation = {
             id,
             project,
             credentials,

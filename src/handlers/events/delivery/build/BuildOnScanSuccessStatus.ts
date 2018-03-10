@@ -19,6 +19,7 @@ import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-cl
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
+import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSetter";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
@@ -29,8 +30,10 @@ import { StatusSuccessHandler } from "../../StatusSuccessHandler";
  * Implemented by classes that can choose a builder based on project content etc.
  */
 export interface ConditionalBuilder {
+
+    guard: PushTest;
+
     builder: Builder;
-    test: (i: ProjectListenerInvocation) => Promise<boolean>;
 }
 
 /**
@@ -43,10 +46,8 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private conditionalBuilders: ConditionalBuilder[];
-
     constructor(public goal: Goal,
-                ...conditionalBuilders: ConditionalBuilder[]) {
+                private conditionalBuilders: ConditionalBuilder[]) {
         this.conditionalBuilders = conditionalBuilders;
     }
 
@@ -71,20 +72,42 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         }
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-        await dedup(commit.sha, async () =>  {
+        await dedup(commit.sha, async () => {
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
             const credentials = {token: params.githubToken};
             const project = await GitCommandGitProject.cloned(credentials, id);
 
-            const i: ProjectListenerInvocation = {
+            const i: PushTestInvocation = {
                 id,
                 project,
                 credentials,
                 context,
                 addressChannels: addressChannelsFor(commit.repo, context),
+                // TODO flesh this out properly
+                push: {
+                    id: null,
+                    branch: status.commit.pushes[0].branch,
+                    before: {
+                        sha: null,
+                        message: null,
+                        committer: {
+                            person: null,
+                        },
+                    },
+                    after: {
+                        sha: null,
+                        message: null,
+                        committer: {
+                            person: null,
+                        },
+                    },
+                    repo: commit.repo,
+                    commits: [status.commit],
+                },
             };
 
-            const builders: boolean[] = await Promise.all(params.conditionalBuilders.map(b => b.test(i)));
+            const builders: boolean[] = await Promise.all(params.conditionalBuilders
+                .map(b => b.guard(i)));
             const indx = builders.indexOf(true);
             if (indx < 0) {
                 throw new Error(`Don't know how to build project ${id.owner}${id.repo}`);
@@ -98,7 +121,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
 
             // the builder is expected to result in a complete Build event (which will update the build status)
             // and an ImageLinked event (which will update the artifact status).
-            return builder.initiateBuild(credentials, id, i.addressChannels, team, { branch: branchToMarkTheBuildWith });
+            return builder.initiateBuild(credentials, id, i.addressChannels, team, {branch: branchToMarkTheBuildWith});
         });
         return Success;
     }

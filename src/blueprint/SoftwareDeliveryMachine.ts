@@ -49,6 +49,10 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
+import {
+    BuildOnScanSuccessStatus,
+    ConditionalBuilder,
+} from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
 import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
@@ -57,7 +61,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { push } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -89,11 +92,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly builder: Maker<StatusSuccessHandler>;
-
     private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
 
     private readonly goalSetters: GoalSetter[] = [];
+
+    private readonly conditionalBuilders: ConditionalBuilder[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -153,7 +156,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new SetupPhasesOnPush(...this.goalSetters);
     }
 
-    public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
+    private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
+
+    private get builder(): Maker<HandleEvent<any>> {
+        return () => new BuildOnScanSuccessStatus(BuildGoal, this.conditionalBuilders);
+    }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
         return this.supersededListeners.length > 0 ?
@@ -223,7 +230,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.phaseSetup,
                 this.oldPushSuperseder,
                 this.onSuperseded,
-                this.opts.builder,
+                this.builder,
                 this.onBuildComplete,
                 this.notifyOnDeploy,
                 this.onVerifiedStatus,
@@ -359,12 +366,16 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     constructor(private opts: {
-                    builder: Maker<StatusSuccessHandler>,
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
                     artifactStore: ArtifactStore,
                 },
                 ...pushRules: PushRule[]) {
-        this.goalSetters = pushRules.map(rule => rule.goalSetter);
+        this.goalSetters = pushRules
+            .filter(rule => !!rule.goalSetter)
+            .map(rule => rule.goalSetter);
+        this.conditionalBuilders = pushRules
+            .filter(rule => !!rule.builder)
+            .map(rule => ({guard: rule.pushTest, builder: rule.builder}));
     }
 
 }

@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { whenPushSatisfies } from "../blueprint/ruleDsl";
+import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
@@ -7,6 +7,9 @@ import { MaterialChangeToJavaRepo } from "../common/listener/support/materialCha
 import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
+import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
+import { MavenBuilder } from "../handlers/events/delivery/build/local/maven/MavenBuilder";
+import { NpmBuilder } from "../handlers/events/delivery/build/local/npm/NpmBuilder";
 import {
     HttpServiceGoals,
     LocalDeploymentGoals,
@@ -16,7 +19,6 @@ import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
 import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { artifactStore } from "./blueprint/artifactStore";
-import { LocalBuildOnSuccessStatus } from "./blueprint/build/localBuildOnScanSuccessStatus";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
@@ -28,8 +30,6 @@ import { configureSpringSdm } from "./springSdmConfig";
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {
-            builder: LocalBuildOnSuccessStatus,
-            // CloudFoundryStagingDeployOnSuccessStatus;
             deployers: [
                 () => LocalExecutableJarDeployOnSuccessStatus,
                 CloudFoundryProductionDeployOnSuccessStatus,
@@ -45,7 +45,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
-            .setGoals(NpmGoals),
+            .setGoals(NpmGoals).buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
+        onAnyPush().buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
