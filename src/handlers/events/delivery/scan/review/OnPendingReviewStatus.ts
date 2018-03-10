@@ -30,11 +30,6 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { editOne } from "@atomist/automation-client/operations/edit/editAll";
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
@@ -43,7 +38,7 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase, ScanContext } from "../../goals/httpServiceGoals";
+import { ContextToPlannedPhase } from "../../goals/httpServiceGoals";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
@@ -54,25 +49,19 @@ import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { forApproval } from "../../verify/approvalGate";
 
 /**
- * Scan code on a push to master, invoking ProjectReviewers and arbitrary CodeReactions.
- * Run any autofix editors.
+ * Scan code on a push, invoking ProjectReviewers and arbitrary CodeReactions.
  * Result is setting GitHub status with context = "scan"
  */
 @EventHandler("Scan code",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
-export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
+export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private editorChain: ProjectEditor;
-
     constructor(public goal: Goal,
                 private projectReviewers: ProjectReviewer[],
-                private codeReactions: CodeReactionListener[],
-                editors: AnyProjectEditor[] = []) {
-        this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
-    }
+                private codeReactions: CodeReactionListener[]) {}
 
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
                         context: HandlerContext,
@@ -118,17 +107,6 @@ export class OnPendingScanStatus implements HandleEvent<OnAnyPendingStatus.Subsc
                     .map(reaction => reaction(i)));
             await inspections;
 
-            if (params.editorChain) {
-                // TODO parameterize this
-                const editMode: BranchCommit = {
-                    branch: commit.pushes[0].branch,
-                    message: "Autofixes",
-                };
-                logger.info("Editing %j with mode=%j", id, editMode);
-                await editOne(context, credentials, params.editorChain, editMode,
-                    new SimpleRepoId(id.owner, id.repo));
-            }
-
             if (review.comments.length === 0 && reviewerErrors.length === 0) {
                 await markScanned(project.id as GitHubRepoRef,
                     params.goal.context, "success", credentials, false);
@@ -159,7 +137,7 @@ function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
-        context: ScanContext,
+        context,
         description: phase.completedDescription,
     });
 }

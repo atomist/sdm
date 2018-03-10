@@ -10,10 +10,10 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {
-    ArtifactGoal,
+    ArtifactGoal, AutofixGoal,
     BuildGoal,
     ContextToPlannedPhase,
-    ScanGoal,
+    ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedContext,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
@@ -53,7 +53,8 @@ import {
     BuildOnScanSuccessStatus,
     ConditionalBuilder,
 } from "../handlers/events/delivery/build/BuildOnScanSuccessStatus";
-import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
+import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
@@ -140,13 +141,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get reviewRunner(): Maker<OnPendingScanStatus> {
-        const reviewers = this.projectReviewers;
-        const inspections = this.codeReactions;
-        const autoEditors = this.autoEditors;
-        return (reviewers.length + inspections.length + autoEditors.length > 0) ?
-            () => new OnPendingScanStatus(ScanGoal, reviewers, inspections, autoEditors) :
+    private get reviewHandler(): Maker<OnPendingReviewStatus> {
+        return (this.projectReviewers.length + this.codeReactions.length) ?
+            () => new OnPendingReviewStatus(ReviewGoal, this.projectReviewers, this.codeReactions) :
             undefined;
+    }
+
+    private get autofixHandler(): Maker<OnPendingAutofixStatus> {
+        return () => new OnPendingAutofixStatus(AutofixGoal, this.autoEditors);
     }
 
     private get phaseSetup(): Maker<SetupPhasesOnPush> {
@@ -226,7 +228,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.onNewRepoWithCode,
                 this.fingerprinter,
                 this.semanticDiffReactor,
-                this.reviewRunner,
+                this.autofixHandler,
+                this.reviewHandler,
                 this.phaseSetup,
                 this.oldPushSuperseder,
                 this.onSuperseded,

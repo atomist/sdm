@@ -8,10 +8,16 @@ import {
 } from "../../../../common/goals/gitHubContext";
 import { Goal, Goals, GoalWithPrecondition } from "../../../../common/goals/Goal";
 
-export const ScanGoal = new Goal({
+export const AutofixGoal = new Goal({
     environment: IndependentOfEnvironment,
-    orderedName: "1-scan",
-    completedDescription: "Code scan passed",
+    orderedName: "0-autofix",
+    completedDescription: "Autofixes OK",
+});
+
+export const ReviewGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "1-review",
+    completedDescription: "Code review passed",
 });
 
 export const BuildGoal = new Goal({
@@ -86,7 +92,8 @@ export const NoGoal = new Goal({
 });
 
 const AllKnownPhases = [
-    ScanGoal,
+    AutofixGoal,
+    ReviewGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,
@@ -104,7 +111,7 @@ export const StagingEndpointContext = StagingEndpointGoal.context;
 export const StagingVerifiedContext = StagingVerifiedGoal.context;
 export const ProductionDeploymentContext = ProductionDeploymentGoal.context;
 export const ProductionEndpointContext = ProductionEndpointGoal.context;
-export const ScanContext = ScanGoal.context;
+export const ScanContext = ReviewGoal.context;
 export const BuildContext = BuildGoal.context;
 
 export const ProductionMauve = "#cf5097";
@@ -142,7 +149,8 @@ export const NoGoals = new Goals([
  * @type {Goals}
  */
 export const HttpServiceGoals = new Goals([
-    ScanGoal,
+    AutofixGoal,
+    ReviewGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,
