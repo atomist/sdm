@@ -110,9 +110,10 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
                 .map(b => b.guard(i)));
             const indx = builders.indexOf(true);
             if (indx < 0) {
-                throw new Error(`Don't know how to build project ${id.owner}${id.repo}`);
+                throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
             }
             const builder = params.conditionalBuilders[indx].builder;
+            logger.info("Building project %s:%s with %j", id.owner, id.repo, builder);
 
             const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
             const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);

@@ -45,7 +45,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
-            .setGoals(NpmGoals).buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
+            .setGoals(NpmGoals)
+            .buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
         onAnyPush().buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)

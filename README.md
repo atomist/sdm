@@ -462,9 +462,12 @@ To start up these project, you will need the following on the deployment node:
 - `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
 one or two checks occur when they are not available, and a GitHub token must be supplied.
 
-For the optional Checkstyle integration to work, set up a Checkstyle environment variable as follows:
+For the optional Checkstyle integration to work, set up two Checkstyle environment variables as follows:
 
 ```
+# Toggle Checkstyle usage
+export USE_CHECKSTYLE=true
+
 # Path to checkstyle JAR
 export CHECKSTYLE_PATH="/Users/rodjohnson/tools/checkstyle-8.8/checkstyle-8.8-all.jar"
 ```

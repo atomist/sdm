@@ -108,9 +108,6 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const commit = status.commit;
         const image = status.commit.image;
 
-        logger.info("%%%% In DeployFromLocalOnSuccessStatus looking for %s, incoming status is %s",
-            params.deployPhase.context, status.context);
-
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
