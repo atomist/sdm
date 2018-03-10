@@ -38,7 +38,7 @@ import { createStatus } from "../../../../../util/github/ghub";
 /**
  * Fingerprint on any push
  */
-@EventHandler("On repo creation",
+@EventHandler("Fingerprint a commit when that goal is set",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
 export class FingerprintOnPendingStatus
     implements HandleEvent<schema.OnAnyPendingStatus.Subscription> {
