@@ -42,7 +42,7 @@ import { forApproval } from "../../verify/approvalGate";
  * Invoke any arbitrary CodeReactions on a push.
  * Result is setting GitHub status with context = "scan"
  */
-@EventHandler("Scan code",
+@EventHandler("React to code",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
 export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
@@ -91,25 +91,22 @@ export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStat
             }
 
             await markScanned(id,
-                params.goal, "success", credentials, false);
+                params.goal, "success", credentials);
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.goal, "error", credentials, false);
+                params.goal, "error", credentials);
             return failure(err);
         }
     }
 }
 
-export const ScanBase = "https://scan.atomist.com";
 
 // TODO this should take a URL with detailed information
 function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
-                     creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
+                     creds: ProjectOperationCredentials): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
         context: goal.context,
         description: goal.completedDescription,
     });
