@@ -25,8 +25,6 @@ import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddin
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
 
-// TODO take a deployer?
-
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {

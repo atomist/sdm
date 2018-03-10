@@ -21,7 +21,7 @@ import { identification } from "./pomParser";
 export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     constructor(artifactStore: ArtifactStore, logFactory: LogFactory) {
-        super(artifactStore, logFactory);
+        super("MavenBuilder", artifactStore, logFactory);
     }
 
     protected async startBuild(creds: ProjectOperationCredentials,
