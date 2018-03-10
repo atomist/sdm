@@ -21,6 +21,7 @@ import {
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
 import { configureSpringSdm } from "./springSdmConfig";
+import { whenPushSatisfies } from "../blueprint/ruleDsl";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -32,12 +33,12 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ],
             artifactStore,
         },
-        new GuardedGoalSetter(HttpServiceGoals, PushToDefaultBranch, IsMaven, IsSpringBoot,
+        whenPushSatisfies(PushToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
-            PushToPublicRepo),
-        new GuardedGoalSetter(LocalDeploymentGoals, not(PushFromAtomist), IsMaven, IsSpringBoot),
-        new GuardedGoalSetter(LibraryGoals, IsMaven, MaterialChangeToJavaRepo),
-        new GuardedGoalSetter(NpmGoals, IsNode),
+            PushToPublicRepo).setGoals(HttpServiceGoals),
+        whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot).setGoals(LocalDeploymentGoals),
+        whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
+        whenPushSatisfies(IsNode).setGoals(NpmGoals),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)

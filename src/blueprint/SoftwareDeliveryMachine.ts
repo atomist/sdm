@@ -56,6 +56,8 @@ import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandle
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { PushRule } from "./ruleDsl";
+import { push } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -361,8 +363,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
                     artifactStore: ArtifactStore,
                 },
-                ...goalSetters: GoalSetter[]) {
-        this.goalSetters = goalSetters;
+                ...pushRules: PushRule[]) {
+        this.goalSetters = pushRules.map(rule => rule.goalSetter);
     }
 
 }
