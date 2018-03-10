@@ -143,7 +143,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             targetUrl: image.imageName,
         });
 
-       await dedup(commit.sha, () =>
+        await dedup(commit.sha, () =>
             deploy({
                 deployPhase: params.deployPhase,
                 endpointPhase: params.endpointPhase,

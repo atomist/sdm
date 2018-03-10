@@ -1,12 +1,12 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
+import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
     environment: PhaseEnvironment;
@@ -82,10 +82,10 @@ function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?
             return {error: "Did not find a status for " + pg.context};
         }
         if (detectedStatus.state !== "success") {
-            return {wait: "Precondition " + pg.name + " not yet successful"}
+            return {wait: "Precondition '" + pg.name + "' not yet successful"};
         }
         if (requiresApproval(detectedStatus)) {
-            return {wait: "Precondition " + pg.name + " requires approval"}
+            return {wait: "Precondition '" + pg.name + "' requires approval"};
         }
         return {};
 }

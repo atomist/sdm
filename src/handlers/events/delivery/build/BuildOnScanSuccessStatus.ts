@@ -65,7 +65,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
 
         const creds = { token: params.githubToken};
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        
+
         if (! await params.goal.preconditionsMet(creds, id, statusAndFriends)) {
             logger.debug("Build preconditions not met");
             return Success;

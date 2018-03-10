@@ -2,8 +2,8 @@
  * Added to end of URL of a status to fire manual approval step
  * @type {string}
  */
-import { GitHubStatus } from "../../../../common/goals/Goal";
 import { logger } from "@atomist/automation-client";
+import { GitHubStatus } from "../../../../common/goals/Goal";
 
 export const ApprovalGateParam = "atomist:approve=true";
 
@@ -19,5 +19,5 @@ export function forApproval(url: string): string {
 }
 
 export function requiresApproval(ghs: GitHubStatus) {
-    return ghs.targetUrl.endsWith(ApprovalGateParam)
+    return ghs.targetUrl.endsWith(ApprovalGateParam);
 }
