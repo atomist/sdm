@@ -19,5 +19,5 @@ export function forApproval(url: string): string {
 }
 
 export function requiresApproval(ghs: GitHubStatus) {
-    return ghs.targetUrl.endsWith(ApprovalGateParam);
+    return ghs.targetUrl && ghs.targetUrl.endsWith(ApprovalGateParam);
 }
