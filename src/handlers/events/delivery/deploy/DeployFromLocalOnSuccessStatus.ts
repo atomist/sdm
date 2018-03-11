@@ -20,7 +20,6 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -30,6 +29,7 @@ import { OnAnySuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { deploy } from "./deploy";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -88,7 +88,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             siblings: status.commit.statuses,
         };
 
-        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+        if (! await params.deployGoal.preconditionsMet({token: params.githubToken}, id, statusAndFriends)) {
             logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
             return Success;
         }

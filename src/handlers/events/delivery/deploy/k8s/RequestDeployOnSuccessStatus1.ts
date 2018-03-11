@@ -17,11 +17,11 @@
 import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals, previousGoalSucceeded,
-} from "../../../../../common/goals/Goal";
+
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
+import { Goals } from "../../../../../";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../../common/goals/Goal";
 
 export type K8Target = "testing" | "production";
 
@@ -60,10 +60,10 @@ export class RequestK8sDeployOnSuccessStatus1 implements HandleEvent<OnAnySucces
             description: status.description,
             siblings: status.commit.statuses,
         };
+        const creds = { token: params.githubToken};
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
-        // (this is related to the next two TODOs)
-        if (!previousGoalSucceeded(params.goals, params.deployGoal.context, statusAndFriends)) {
+        if (! await params.deployGoal.preconditionsMet(creds, id, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
@@ -80,7 +80,6 @@ export class RequestK8sDeployOnSuccessStatus1 implements HandleEvent<OnAnySucces
 
         logger.info(`Requesting deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: k8AutomationDeployContext(params.target),
             state: "pending",

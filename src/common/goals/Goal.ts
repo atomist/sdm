@@ -1,17 +1,12 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { OnAnySuccessStatus, StatusState } from "../../typings/types";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import * as stringify from "json-stringify-safe";
-import { contextToKnownGoal } from "../../handlers/events/delivery/goals/httpServiceGoals";
-import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
+import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
 
 export interface GoalDefinition {
     environment: GoalEnvironment;
@@ -52,7 +47,7 @@ export class Goal {
     // TODO will decouple from github with statuses
     public async preconditionsMet(creds: ProjectOperationCredentials,
                                   id: RemoteRepoRef,
-                                  sub: OnAnySuccessStatus.Subscription): Promise<boolean> {
+                                  sub: GitHubStatusAndFriends): Promise<boolean> {
         return true;
     }
 }
@@ -66,10 +61,33 @@ export class GoalWithPrecondition extends Goal {
         this.dependsOn = dependsOn;
     }
 
-    public async preconditionsMet(creds: ProjectOperationCredentials, id: RemoteRepoRef, sub: OnAnySuccessStatus.Subscription): Promise<boolean> {
-        const statusesWeNeed = this.dependsOn.map(s => s.context);
-        return !sub.Status.some(st => statusesWeNeed.includes(st.context) && st.state !== "success");
+    public async preconditionsMet(creds: ProjectOperationCredentials,
+                                  id: RemoteRepoRef,
+                                  sub: GitHubStatusAndFriends): Promise<boolean> {
+
+        const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
+        const errors = checks.filter(r => r.error !== undefined).map(r => r.error);
+        const reasonsToWait = checks.filter(r => r.wait !== undefined).map(r => r.wait);
+
+        errors.forEach(e => logger.debug("Could not establish preconditions for " + this.name + ": " + e));
+        reasonsToWait.forEach(e => logger.debug("Not triggering " + this.name + ": " + e));
+
+        return (errors.length === 0 && reasonsToWait.length === 0);
     }
+}
+
+function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {
+        const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
+        if (!detectedStatus) {
+            return {error: "Did not find a status for " + pg.context};
+        }
+        if (detectedStatus.state !== "success") {
+            return {wait: "Precondition '" + pg.name + "' not yet successful"};
+        }
+        if (requiresApproval(detectedStatus)) {
+            return {wait: "Precondition '" + pg.name + "' requires approval"};
+        }
+        return {};
 }
 
 /**
@@ -124,44 +142,4 @@ export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, stat
     logger.debug(`${currentGoal} is not still planned or skipped, so I'm not running it.
     State: ${myStatus.state} Description: ${myStatus.description}`);
     return false;
-}
-
-export function nothingFailed(status: GitHubStatusAndFriends): boolean {
-    return !status.siblings.some(sib => ["failure", "error"].includes(sib.state));
-}
-
-export function previousGoalSucceeded(expectedGoals: Goals,
-                                      currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const currentGoal = contextToKnownGoal(currentContext);
-    if (!currentGoal) {
-        logger.warn("Unknown context! Returning false from previousGoalSucceeded: " + currentContext);
-        return false;
-    }
-    if (status.state !== "success") {
-        logger.info(`Previous state ${status.context} wasn't success, but [${status.state}]`);
-        return false;
-    }
-    if (status.targetUrl.endsWith(ApprovalGateParam)) {
-        logger.info(`Approval gate detected in ${status.context}`);
-        return false;
-    }
-
-    const whereAmI = expectedGoals.goals.indexOf(currentGoal);
-    if (whereAmI < 0) {
-        logger.warn(`Inconsistency! Goal ${currentGoal} is known but is not part of Goals ${stringify(expectedGoals)}`);
-        return false;
-    }
-    if (whereAmI === 0) {
-        logger.info(`${currentGoal} is the first step.`);
-        return true;
-    }
-    // TODO: check the order of the statuses the commit has, instead of knowing which ones were planned
-    const prevGoal = expectedGoals.goals[whereAmI - 1];
-    if (prevGoal.context === status.context) {
-        return true;
-    } else {
-        logger.info("%j is right before %j; ignoring success of %s",
-            prevGoal, currentGoal, status.context);
-        return false;
-    }
 }
