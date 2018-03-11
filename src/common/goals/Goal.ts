@@ -5,11 +5,11 @@ import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { BaseContext, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
-import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
-    environment: PhaseEnvironment;
+    environment: GoalEnvironment;
     orderedName: string;
     displayName?: string;
     completedDescription?: string;
@@ -34,13 +34,13 @@ export class Goal {
         this.definition = definition;
 
         const numberAndName = /([0-9\.]+)-(.*)/;
-        const matchPhase = definition.orderedName.match(numberAndName);
-        if (!matchPhase) {
+        const matchGoal = definition.orderedName.match(numberAndName);
+        if (!matchGoal) {
             logger.debug(`Ordered name must be '#-name'. Did not find number and name in ${definition.orderedName}`);
             return;
         }
 
-        this.name = definition.displayName || matchPhase[2];
+        this.name = definition.displayName || matchGoal[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
     }
 
@@ -91,17 +91,17 @@ function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?
 }
 
 /**
- * Represents the phases of a delivery
+ * Represents the goals of a delivery
  */
 export class Goals {
 
-    constructor(public phases: Goal[]) {
+    constructor(public goals: Goal[]) {
     }
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        return Promise.all(this.phases.map(phase =>
-            setPendingStatus(id, phase.context, creds,
-                `Planning to ${phase.name}`)));
+        return Promise.all(this.goals.map(goal =>
+            setPendingStatus(id, goal.context, creds,
+                `Planning to ${goal.name}`)));
     }
 
 }
@@ -127,11 +127,11 @@ export interface GitHubStatusAndFriends extends GitHubStatus {
     siblings: GitHubStatus[];
 }
 
-export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const myStatus = status.siblings.find(s => s.context === currentPhase);
+export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+    const myStatus = status.siblings.find(s => s.context === currentGoal);
     if (!myStatus) {
         // unexpected
-        throw new Error("what? I can't find myself. My status.context is " + currentPhase);
+        throw new Error("what? I can't find myself. My status.context is " + currentGoal);
     }
     if (myStatus.state === "pending" && myStatus.description.startsWith("Planning")) {
         return true;
@@ -139,7 +139,7 @@ export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, st
     if (myStatus.state === "failure" && myStatus.description.startsWith("Skip")) {
         return true;
     }
-    logger.debug(`${currentPhase} is not still planned or skipped, so I'm not running it.
+    logger.debug(`${currentGoal} is not still planned or skipped, so I'm not running it.
     State: ${myStatus.state} Description: ${myStatus.description}`);
     return false;
 }

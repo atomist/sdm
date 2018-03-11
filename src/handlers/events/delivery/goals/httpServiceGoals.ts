@@ -1,25 +1,43 @@
 import {
     GitHubStatusContext,
+    GoalEnvironment,
     IndependentOfEnvironment,
-    PhaseEnvironment,
     ProductionEnvironment,
     splitContext,
     StagingEnvironment,
 } from "../../../../common/goals/gitHubContext";
 import { Goal, Goals, GoalWithPrecondition } from "../../../../common/goals/Goal";
 
-export const ScanGoal = new Goal({
+export const FingerprintGoal = new Goal({
     environment: IndependentOfEnvironment,
-    orderedName: "1-scan",
-    completedDescription: "Code scan passed",
+    orderedName: "0.1-fingerprint",
+    completedDescription: "Fingerprinted",
 });
 
-export const BuildGoal = new Goal({
+export const AutofixGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "0.2-autofix",
+    completedDescription: "Autofixes OK",
+});
+
+export const ReviewGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "1-review",
+    completedDescription: "Code review passed",
+});
+
+export const CodeReactionGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "1.5-react",
+    completedDescription: "Code reactions",
+});
+
+export const BuildGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
-});
+}, AutofixGoal);
 
 export const ArtifactGoal = new Goal({
     environment: IndependentOfEnvironment,
@@ -85,8 +103,9 @@ export const NoGoal = new Goal({
 
 });
 
-const AllKnownPhases = [
-    ScanGoal,
+const AllKnownGoals = [
+    AutofixGoal,
+    ReviewGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,
@@ -104,13 +123,13 @@ export const StagingEndpointContext = StagingEndpointGoal.context;
 export const StagingVerifiedContext = StagingVerifiedGoal.context;
 export const ProductionDeploymentContext = ProductionDeploymentGoal.context;
 export const ProductionEndpointContext = ProductionEndpointGoal.context;
-export const ScanContext = ScanGoal.context;
+export const ScanContext = ReviewGoal.context;
 export const BuildContext = BuildGoal.context;
 
 export const ProductionMauve = "#cf5097";
 
-export const ContextToPlannedPhase: { [key: string]: Goal } = {};
-AllKnownPhases.forEach(p => ContextToPlannedPhase[p.context] = p);
+export const ContextToPlannedGoal: { [key: string]: Goal } = {};
+AllKnownGoals.forEach(p => ContextToPlannedGoal[p.context] = p);
 
 export function contextToGoal(ghsc: GitHubStatusContext): Goal {
     return contextToKnownGoal(ghsc) ||
@@ -118,14 +137,14 @@ export function contextToGoal(ghsc: GitHubStatusContext): Goal {
 }
 
 export function contextToKnownGoal(ghsc: GitHubStatusContext): Goal {
-    return ContextToPlannedPhase[ghsc];
+    return ContextToPlannedGoal[ghsc];
 }
 
 function defaultGoal(ghsc: GitHubStatusContext): Goal {
     const interpreted = splitContext(ghsc);
     return new Goal({
-        environment: interpreted.envPart + "/" as PhaseEnvironment,
-        orderedName: interpreted.phasePart,
+        environment: interpreted.envPart + "/" as GoalEnvironment,
+        orderedName: interpreted.goalPart,
     });
 }
 
@@ -142,7 +161,10 @@ export const NoGoals = new Goals([
  * @type {Goals}
  */
 export const HttpServiceGoals = new Goals([
-    ScanGoal,
+    FingerprintGoal,
+    AutofixGoal,
+    ReviewGoal,
+    CodeReactionGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,

@@ -1,17 +1,17 @@
+import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { GuardedPhaseCreator } from "../common/listener/support/GuardedPhaseCreator";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
-import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { PushFromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
+import { K8sAutomationBuilder } from "../handlers/events/delivery/build/k8s/K8AutomationBuilder";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
 import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { artifactStore } from "./blueprint/artifactStore";
-import { K8sBuildOnSuccessStatus } from "./blueprint/build/K8sBuildOnScanSuccess";
 import {
     K8sProductionDeployOnSuccessStatus,
     K8sStagingDeployOnSuccessStatus,
@@ -25,19 +25,20 @@ import { configureSpringSdm } from "./springSdmConfig";
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {
-            builder: K8sBuildOnSuccessStatus,
             deployers: [
                 K8sStagingDeployOnSuccessStatus,
                 K8sProductionDeployOnSuccessStatus,
             ],
             artifactStore,
         },
-        new GuardedPhaseCreator(HttpServiceGoals, PushToDefaultBranch, IsMaven, IsSpringBoot,
+
+        whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
-            PushToPublicRepo),
-        new GuardedPhaseCreator(LocalDeploymentGoals, not(PushFromAtomist), IsMaven, IsSpringBoot),
-        new GuardedPhaseCreator(LibraryGoals, IsMaven, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(NpmGoals, IsNode),
+            ToPublicRepo).setGoals(HttpServiceGoals),
+        whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot).setGoals(LocalDeploymentGoals),
+        whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
+        whenPushSatisfies(IsNode).setGoals(NpmGoals),
+        onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)

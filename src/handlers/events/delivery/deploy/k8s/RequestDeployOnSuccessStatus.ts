@@ -19,9 +19,11 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals } from "../../../../../common/goals/Goal";
+
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
+import { Goals } from "../../../../../";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../../common/goals/Goal";
 
 export type K8Target = "testing" | "production";
 
@@ -41,8 +43,8 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private phases: Goals,
-                private deployPhase: Goal,
+    constructor(private goals: Goals,
+                private deployGoal: Goal,
                 private target: K8Target) {
     }
 
@@ -61,15 +63,15 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         const creds = {token: params.githubToken};
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        if (! await params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
+        if (! await params.deployGoal.preconditionsMet(creds, id, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        // TODO: if any status is failed, do not deploy (excluding post-deploy phases)
+        // TODO: if any status is failed, do not deploy (excluding post-deploy goals)
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -84,8 +86,8 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             description: "Requested deploy by k8-automation",
         });
         await createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: params.deployPhase.context,
-            description: params.deployPhase.workingDescription,
+            context: params.deployGoal.context,
+            description: params.deployGoal.workingDescription,
             state: "pending",
         });
         return Success;

@@ -30,7 +30,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import {
-    currentPhaseIsStillPending,
+    currentGoalIsStillPending,
     GitHubStatusAndFriends,
     Goal,
     Goals,
@@ -59,18 +59,18 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
 
     /**
      *
-     * @param {Goals} phases
-     * @param {Goal} deployPhase
-     * @param {Goal} endpointPhase
+     * @param {Goals} goals
+     * @param {Goal} deployGoal
+     * @param {Goal} endpointGoal
      * @param {ArtifactStore} artifactStore
      * @param {Deployer<T extends TargetInfo>} deployer
      * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(private phases: Goals,
-                private deployPhase: Goal,
-                private endpointPhase: Goal,
+    constructor(private goals: Goals,
+                private deployGoal: Goal,
+                private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
                 public deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
@@ -83,8 +83,8 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
             return deploy({
-                deployPhase: this.deployPhase,
-                endpointPhase: this.endpointPhase,
+                deployGoal: this.deployGoal,
+                endpointGoal: this.endpointGoal,
                 id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
                 githubToken: commandParams.githubToken,
                 targetUrl: commandParams.targetUrl,
@@ -106,9 +106,6 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const commit = status.commit;
         const image = status.commit.image;
 
-        logger.info("%%%% In DeployFromLocalOnSuccessStatus looking for %s, incoming status is %s",
-            params.deployPhase.context, status.context);
-
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -119,11 +116,11 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const creds = { token: params.githubToken};
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        if (! await params.deployPhase.preconditionsMet(creds, id, statusAndFriends)) {
+        if (! await params.deployGoal.preconditionsMet(creds, id, statusAndFriends)) {
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Success;
         }
 
@@ -145,8 +142,8 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
 
         await dedup(commit.sha, () =>
             deploy({
-                deployPhase: params.deployPhase,
-                endpointPhase: params.endpointPhase,
+                deployGoal: params.deployGoal,
+                endpointGoal: params.endpointGoal,
                 id, githubToken: params.githubToken,
                 targetUrl: image.imageName,
                 artifactStore: this.artifactStore,

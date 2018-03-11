@@ -40,7 +40,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private buildPhase: Goal,
+    constructor(private buildGoal: Goal,
                 private logInterpretation?: LogInterpretation) {
     }
 
@@ -49,10 +49,10 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const commit = build.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const builtStatus = commit.statuses.find(s => s.context === params.buildPhase.context);
+        const builtStatus = commit.statuses.find(s => s.context === params.buildGoal.context);
         const ghStatusState = buildStatusToGitHubStatusState(build.status);
         if (!!builtStatus) {
-            await setBuiltContext(params.buildPhase,
+            await setBuiltContext(params.buildGoal,
                 ghStatusState,
                 build.buildUrl,
                 id,
@@ -108,12 +108,12 @@ function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
     }
 }
 
-async function setBuiltContext(phase: Goal, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-    const description = state === "pending" ? phase.workingDescription : phase.completedDescription;
+async function setBuiltContext(goal: Goal, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+    const description = state === "pending" ? goal.workingDescription : goal.completedDescription;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: (url === NotARealUrl ? undefined : url),
-        context: phase.context,
+        context: goal.context,
         description,
     });
 }

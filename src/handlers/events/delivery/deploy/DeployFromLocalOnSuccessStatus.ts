@@ -20,7 +20,6 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal, Goals } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -30,6 +29,7 @@ import { OnAnySuccessStatus } from "../../../../typings/types";
 import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { deploy } from "./deploy";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
@@ -41,17 +41,6 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    /**
-     *
-     * @param {Goals} phases
-     * @param {Goal} deployGoal
-     * @param {Goal} endpointGoal
-     * @param {ArtifactStore} artifactStore
-     * @param {Deployer<T extends TargetInfo>} deployer
-     * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
-     * For example, we may wish to deploy different repos to different Cloud Foundry spaces
-     * or Kubernetes clusters
-     */
     constructor(private deployGoal: Goal,
                 private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
@@ -66,8 +55,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
             return deploy({
-                deployPhase: this.deployGoal,
-                endpointPhase: this.endpointGoal,
+                deployGoal: this.deployGoal,
+                endpointGoal: this.endpointGoal,
                 id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
                 githubToken: commandParams.githubToken,
                 targetUrl: commandParams.targetUrl,
@@ -104,7 +93,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.deployGoal.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Success;
         }
 
@@ -123,8 +112,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
 
         await dedup(commit.sha, () =>
             deploy({
-                deployPhase: params.deployGoal,
-                endpointPhase: params.endpointGoal,
+                deployGoal: params.deployGoal,
+                endpointGoal: params.endpointGoal,
                 id, githubToken: params.githubToken,
                 targetUrl: image.imageName,
                 artifactStore: this.artifactStore,

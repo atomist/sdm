@@ -36,30 +36,30 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goals } from "../../../../common/goals/Goal";
-import { GoalSetter, GoalSetterInvocation } from "../../../../common/listener/GoalSetter";
+import { GoalSetter, PushTestInvocation } from "../../../../common/listener/GoalSetter";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { NoGoals } from "../goals/httpServiceGoals";
+import { NoGoals } from "./httpServiceGoals";
 
 /**
- * Set up phases on a push (e.g. for delivery).
+ * Set up goals on a push (e.g. for delivery).
  */
-@EventHandler("Set up phases",
+@EventHandler("Set up goals",
     GraphQL.subscriptionFromFile("graphql/subscription/OnPushToAnyBranch.graphql"))
-export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
+export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private phaseCreators: GoalSetter[];
+    private goalSetters: GoalSetter[];
 
     /**
-     * Configure phase creation
-     * @param phaseCreators first GoalSetter that returns phases
+     * Configure goal setting
+     * @param goalSetters first GoalSetter that returns goals wins
      */
-    constructor(...phaseCreators: GoalSetter[]) {
-        this.phaseCreators = phaseCreators;
+    constructor(...goalSetters: GoalSetter[]) {
+        this.goalSetters = goalSetters;
     }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
@@ -69,7 +69,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         const credentials = {token: params.githubToken};
         const project = await GitCommandGitProject.cloned(credentials, id);
         const addressChannels = addressChannelsFor(push.repo, context);
-        const pi: GoalSetterInvocation = {
+        const pi: PushTestInvocation = {
             id,
             project,
             credentials,
@@ -79,41 +79,41 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
         };
 
         try {
-            const phaseCreatorResults: Goals[] = await Promise.all(params.phaseCreators
+            const goalSetterResults: Goals[] = await Promise.all(params.goalSetters
                 .map(async pc => {
                     const relevant = !!pc.guard ? await pc.guard(pi) : true;
                     if (relevant) {
-                        const phases = pc.createPhases(pi);
-                        logger.info("Eligible GoalSetter %j returned %j", pc, phases);
-                        return Promise.resolve(phases);
+                        const goals = pc.chooseGoals(pi);
+                        logger.info("Eligible GoalSetter %j returned %j", pc, goals);
+                        return Promise.resolve(goals);
                     } else {
                         logger.info("Ineligible GoalSetter %j will not be invoked", pc);
                         return Promise.resolve(undefined);
                     }
                 }));
-            const determinedPhases = phaseCreatorResults.find(p => !!p);
-            if (determinedPhases === NoGoals) {
+            const determinedGoals = goalSetterResults.find(p => !!p);
+            if (determinedGoals === NoGoals) {
                 await createStatus(params.githubToken, id, {
                     context: "Immaterial",
                     state: "success",
                     description: "No significant change",
                 });
-            } else if (!determinedPhases) {
-                logger.info("No phases satisfied by push to %s:%s on %s", id.owner, id.repo, push.branch);
+            } else if (!determinedGoals) {
+                logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
             } else {
-                await determinedPhases.setAllToPending(id, credentials);
+                await determinedGoals.setAllToPending(id, credentials);
             }
             return Success;
         } catch (err) {
-            logger.error("Error determining phases: %s", err);
-            await addressChannels(`Serious error trying to determine phases. Please check SDM logs: ${err}`);
+            logger.error("Error determining goals: %s", err);
+            await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
             return { code: 1, message: "Failed: " + err };
         }
     }
 }
 
 @Parameters()
-export class ApplyPhasesParameters {
+export class ApplyGoalsParameters {
     @Secret(Secrets.UserToken)
     public githubToken: string;
 
@@ -127,7 +127,7 @@ export class ApplyPhasesParameters {
     public sha?: string;
 }
 
-export function applyPhasesToCommit(phases: Goals) {
+export function applyGoalsToCommit(goals: Goals) {
     return async (ctx: HandlerContext,
                   params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
         const sha = params.sha ? params.sha :
@@ -135,7 +135,7 @@ export function applyPhasesToCommit(phases: Goals) {
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
         const creds = {token: params.githubToken};
 
-        await phases.setAllToPending(id, creds);
+        await goals.setAllToPending(id, creds);
         await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
         return Success;
     };

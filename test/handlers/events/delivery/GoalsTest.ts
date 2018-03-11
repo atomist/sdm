@@ -7,7 +7,7 @@ import {
     StagingEndpointContext,
 } from "../../../../src/handlers/events/delivery/goals/httpServiceGoals";
 
-describe("Phase handling", () => {
+describe("Goal handling", () => {
    it("parses my contexts", () => {
        const result = splitContext(ScanContext);
        assert.equal(result.name, "scan");
@@ -15,7 +15,7 @@ describe("Phase handling", () => {
        assert.equal(result.env, "code");
        assert.equal(result.envOrder, 0);
        assert.equal(result.name, "scan");
-       assert.equal(result.phaseOrder, 1);
+       assert.equal(result.goalOrder, 1);
    });
 
    it("says endpoint is after deploy", () => {

@@ -31,8 +31,8 @@ import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 
 export interface DeployParams<T extends TargetInfo> {
-    deployPhase: Goal;
-    endpointPhase: Goal;
+    deployGoal: Goal;
+    endpointGoal: Goal;
     id: GitHubRepoRef;
     githubToken: string;
     targetUrl: string;
@@ -53,8 +53,8 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
     const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, log);
 
     try {
-        await setDeployStatus(params.githubToken, params.id, "pending", params.deployPhase.context,
-            undefined, `Working on ${params.deployPhase.name}`)
+        await setDeployStatus(params.githubToken, params.id, "pending", params.deployGoal.context,
+            undefined, `Working on ${params.deployGoal.name}`)
             .catch(err =>
                 logger.warn("Failed to update deploy status to tell people we are working on it"));
 
@@ -78,14 +78,14 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
 
         await setDeployStatus(params.githubToken, params.id,
             "success",
-            params.deployPhase.context,
+            params.deployGoal.context,
             log.url,
-            params.deployPhase.completedDescription);
+            params.deployGoal.completedDescription);
         if (deployment.endpoint) {
             await setEndpointStatus(params.githubToken, params.id,
-                params.endpointPhase.context,
+                params.endpointGoal.context,
                 deployment.endpoint,
-                params.endpointPhase.completedDescription)
+                params.endpointGoal.completedDescription)
                 .catch(endpointStatus => {
                     logger.error("Could not set Endpoint status: " + endpointStatus.message);
                     // do not fail this whole handler
@@ -105,9 +105,9 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
             await params.ac(":x: Failure deploying: " + err.message);
         }
         return setDeployStatus(params.githubToken, params.id, "failure",
-            params.deployPhase.context,
+            params.deployGoal.context,
             log.url,
-            `Failed to ${params.deployPhase.name}`).then(success);
+            `Failed to ${params.deployGoal.name}`).then(success);
     }
 }
 

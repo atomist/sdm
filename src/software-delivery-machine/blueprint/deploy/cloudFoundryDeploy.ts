@@ -22,8 +22,7 @@ import {
     HttpServiceGoals,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
+    StagingDeploymentGoal, StagingEndpointGoal
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { artifactStore } from "../artifactStore";
 

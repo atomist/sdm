@@ -2,7 +2,7 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
 import { HelloWorld } from "./handlers/commands/HelloWorld";
-import { applyHttpServicePhases } from "./software-delivery-machine/blueprint/phase/jvmPhaseManagement";
+import { applyHttpServiceGoals } from "./software-delivery-machine/blueprint/goal/jvmGoalManagement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/breakBuild";
@@ -18,8 +18,8 @@ const pj = require(`${appRoot.path}/package.json`);
 const token = process.env.GITHUB_TOKEN;
 
 const assembled = new ComposedFunctionalUnit(
-       cloudFoundrySoftwareDeliveryMachine({useCheckstyle: true}),
-      // k8sSoftwareDeliveryMachine({useCheckstyle: false}),
+       cloudFoundrySoftwareDeliveryMachine({useCheckstyle: process.env.USE_CHECKSTYLE === "true"}),
+      // k8sSoftwareDeliveryMachine({useCheckstyle: process.env.USE_CHECKSTYLE === "true"}),
 );
 
 export const configuration: Configuration = {
@@ -31,7 +31,7 @@ export const configuration: Configuration = {
     commands: assembled.commandHandlers.concat([
         HelloWorld,
         () => affirmationEditor,
-        () => applyHttpServicePhases,
+        () => applyHttpServiceGoals,
         () => breakBuildEditor,
         () => unbreakBuildEditor,
         () => javaAffirmationEditor,

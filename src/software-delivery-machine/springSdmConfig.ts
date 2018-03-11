@@ -8,6 +8,7 @@ import {
     LocalDeploymentGoals,
     LocalEndpointGoal,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
+import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
@@ -61,7 +62,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         )
         .addSupportingEvents(OnDryRunBuildComplete, localDeployer);
 
-    // sdm.addFingerprinters(mavenFingerprinter)
+    softwareDeliveryMachine.addFingerprinters(mavenFingerprinter);
     // .addFingerprintDifferenceListeners(diff1)
 }
 
