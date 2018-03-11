@@ -60,8 +60,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
     private githubToken: string;
 
     /**
-     *
-     * @param {Goals} goals
+     * Deploy from local on a desired deploy goal
      * @param {Goal} deployGoal
      * @param {Goal} endpointGoal
      * @param {ArtifactStore} artifactStore
@@ -70,7 +69,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(private goals: Goals,
+    constructor(
                 private deployGoal: Goal,
                 private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
@@ -108,6 +107,8 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const commit = status.commit;
         const image = status.commit.image;
 
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -116,8 +117,8 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             siblings: status.commit.statuses,
         };
 
-        // TODO: determine previous step based on the contexts of existing statuses
-        if (!previousGoalSucceeded(params.goals, params.deployGoal.context, statusAndFriends)) {
+        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+            logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
             return Success;
         }
 
@@ -125,23 +126,18 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             return Success;
         }
 
-        // TODO: if any status is failed, do not deploy
-
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
             return failure(new Error("No image linked"));
         }
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
         const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
             repo: commit.repo.name,
             owner: commit.repo.owner,
             sha: commit.sha,
             targetUrl: image.imageName,
         });
-
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         await dedup(commit.sha, () =>
             deploy({

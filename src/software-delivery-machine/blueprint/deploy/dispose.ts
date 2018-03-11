@@ -14,12 +14,18 @@ import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { AddressChannels } from "../../../";
-import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
-import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeployOnSuccessStatus";
+import {
+    CloudFoundryInfo,
+    EnvironmentCloudFoundryTarget,
+} from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { deleteRepository } from "../../../util/github/ghub";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
 
@@ -71,8 +77,9 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
  * For now, I'm assuming it's deployed in K8S which is the default.
  */
 async function disposeOfProjectK8s(creds: ProjectOperationCredentials, id: RemoteRepoRef, ac: AddressChannels) {
-    await Promise.all([K8sTestingDomain, K8sProductionDomain].map(env => undeployFromK8s(creds, id, env)
-        .then(() => ac("Undeployed from k8s in " + env))));
+    await Promise.all([K8sTestingDomain, K8sProductionDomain]
+        .map(env => undeployFromK8s(creds, id, env)
+            .then(() => ac("Undeployed from k8s in " + env))));
     await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
 }
 

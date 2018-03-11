@@ -17,11 +17,7 @@
 import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals, previousGoalSucceeded,
-} from "../../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals } from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 
@@ -33,26 +29,28 @@ export function k8AutomationDeployContext(target: K8Target): string {
     return `${K8TargetBase}${target}`;
 }
 
+// TODO this class goes once we remove duplication
+
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
 @EventHandler("Request k8s deploy of linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccessStatus.Subscription> {
+export class RequestK8sDeployOnSuccessStatus1 implements HandleEvent<OnAnySuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private goals: Goals,
-                private deployGoal: Goal,
+    constructor(private deployGoal: Goal,
                 private target: K8Target) {
     }
 
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
+                        context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
-
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -61,16 +59,14 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             siblings: status.commit.statuses,
         };
 
-        // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
-        if (!previousGoalSucceeded(params.goals, params.deployGoal.context, statusAndFriends)) {
-            return Promise.resolve(Success);
+        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+            logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
+            return Success;
         }
 
         if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
-
-        // TODO: if any status is failed, do not deploy (excluding post-deploy goals)
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -78,8 +74,6 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         }
 
         logger.info(`Requesting deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: k8AutomationDeployContext(params.target),
             state: "pending",
@@ -87,21 +81,10 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         });
         await createStatus(params.githubToken, id as GitHubRepoRef, {
             context: params.deployGoal.context,
-            description: params.deployGoal.workingDescription,
+            description: "Working on " + params.deployGoal.name,
             state: "pending",
         });
         return Success;
     }
 
-}
-
-export async function undeployFromK8s(creds: ProjectOperationCredentials,
-                                      id: RemoteRepoRef,
-                                      env: string) {
-    const undeployContext = "undeploy/atomist/k8s/" + env;
-    await createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
-        context: undeployContext,
-        state: "pending",
-        description: `Requested undeploy from ${env} by k8-automation`,
-    }).catch(err => Promise.resolve(new Error(`Could not undeploy from ${env}: ${err.message}`)));
 }

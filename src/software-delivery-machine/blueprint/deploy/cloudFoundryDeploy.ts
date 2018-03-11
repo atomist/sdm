@@ -20,7 +20,6 @@ import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ContextToPlannedGoal,
-    HttpServiceGoals,
     ProductionDeploymentContext,
     ProductionEndpointContext,
     StagingDeploymentGoal,
@@ -47,7 +46,6 @@ export const CloudFoundryStagingDeployOnSuccessStatus = () =>
 
 export const CloudFoundryProductionDeployOnSuccessStatus =
     () => new DeployFromLocalOnSuccessStatus1(
-        HttpServiceGoals,
         ContextToPlannedGoal[ProductionDeploymentContext],
         ContextToPlannedGoal[ProductionEndpointContext],
         artifactStore,
