@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
-import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
@@ -26,7 +25,6 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
-import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { StatusSuccessHandler } from "../../StatusSuccessHandler";
 import { deploy } from "./deploy";
 import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
@@ -36,41 +34,17 @@ import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../.
  */
 @EventHandler("Deploy linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements StatusSuccessHandler, EventWithCommand {
+export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements StatusSuccessHandler {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private deployGoal: Goal,
+    constructor(private commandName: string,
+                private deployGoal: Goal,
                 private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
                 public deployer: Deployer<T>,
                 private targeter: (id: RemoteRepoRef) => T) {
-    }
-
-    public get commandName() {
-        return "RetryDeployLocal";
-    }
-
-    public correspondingCommand(): HandleCommand {
-        return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
-            return deploy({
-                deployGoal: this.deployGoal,
-                endpointGoal: this.endpointGoal,
-                id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
-                githubToken: commandParams.githubToken,
-                targetUrl: commandParams.targetUrl,
-                artifactStore: this.artifactStore,
-                deployer: this.deployer,
-                targeter: this.targeter,
-                ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
-                team: ctx.teamId,
-                retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
-                    ...commandParams,
-                }),
-                logFactory: createEphemeralProgressLog,
-            });
-        }, RetryDeployParameters, this.commandName);
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {

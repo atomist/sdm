@@ -10,7 +10,7 @@ import {
 describe("the local deploy", () => {
 
     it("does not go when artifact is not done", () => {
-        const deployHandler = new DeployFromLocalOnSuccessStatus1(
+        const deployHandler = new DeployFromLocalOnSuccessStatus1("retryMe",
             ProductionDeploymentGoal, ProductionEndpointGoal, null, null, null);
         const handleResult = deployHandler.handle(buildSuccessEvent as any, {} as HandlerContext, deployHandler);
 

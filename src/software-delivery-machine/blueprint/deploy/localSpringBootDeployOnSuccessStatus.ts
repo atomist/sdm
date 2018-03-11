@@ -27,12 +27,15 @@ import {
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";
+import { retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
+import { HandleCommand, logger } from "@atomist/automation-client";
+import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 
 /**
  * Deploy to the automation client node
  */
-export const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
-    new DeployFromLocalOnSuccessStatus<TargetInfo>(
+const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
+    new DeployFromLocalOnSuccessStatus<TargetInfo>("DeployFromLocalExecutableJar",
         StagingDeploymentGoal,
         StagingEndpointGoal,
         artifactStore,
@@ -46,6 +49,32 @@ export const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessSt
             description: "Deployment alongside local automation client",
         }),
     );
+
+const LocalExecutableJarRetry: HandleCommand = retryDeployFromLocal("DeployFromLocalExecutableJar",
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
+    artifactStore,
+    executableJarDeployer({
+        baseUrl: "http://localhost",
+        lowerPort: 8082,
+        commandLineArgumentsFor: springBootExecutableJarArgs,
+    }),
+    () => ({
+        name: "Local",
+        description: "Deployment alongside local automation client",
+    }));
+
+const UndeployOnSuperseded = new OnSupersededStatus(inv => {
+    logger.info("Will undeploy application %j", inv.id);
+    return LocalExecutableJarDeployOnSuccessStatus.deployer.undeploy(inv.id);
+});
+
+export const LocalExecutableJarDeploy = {
+    eventHandlers: [
+        () => LocalExecutableJarDeployOnSuccessStatus,
+        () => UndeployOnSuperseded],
+    commandHandlers: [() => LocalExecutableJarRetry]
+};
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {
     return [

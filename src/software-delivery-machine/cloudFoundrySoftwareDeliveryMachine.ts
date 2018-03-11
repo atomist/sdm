@@ -20,16 +20,16 @@ import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
 import { artifactStore } from "./blueprint/artifactStore";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
-import { LocalExecutableJarDeployOnSuccessStatus } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { configureSpringSdm } from "./springSdmConfig";
+import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         {
             deployers: [
-                () => LocalExecutableJarDeployOnSuccessStatus,
+                LocalExecutableJarDeploy,
                 CloudFoundryProductionDeployOnSuccessStatus,
             ],
             artifactStore,
@@ -51,12 +51,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         .addSupportingCommands(
             () => addCloudFoundryManifest,
         )
-        .addEndpointVerificationListeners(lookFor200OnEndpointRootGet())
-        .addSupersededListeners(
-            inv => {
-                logger.info("Will undeploy application %j", inv.id);
-                return LocalExecutableJarDeployOnSuccessStatus.deployer.undeploy(inv.id);
-            });
+        .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
+
     configureSpringSdm(sdm, opts);
     return sdm;
 }

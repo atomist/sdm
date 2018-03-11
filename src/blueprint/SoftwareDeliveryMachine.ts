@@ -1,10 +1,9 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectListener } from "../common/listener/Listener";
 import { NewIssueListener } from "../common/listener/NewIssueListener";
-import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
@@ -92,7 +91,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
+    private readonly deployers: Array<FunctionalUnit>;
 
     private readonly goalSetters: GoalSetter[] = [];
 
@@ -219,7 +218,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return (this.goalCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
-            .concat(this.opts.deployers)
+            .concat(_.flatten(this.opts.deployers.map(fu => fu.eventHandlers)))
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -244,15 +243,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
-        const mayHaveCommands: Array<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand> =
-            this.opts.deployers.map(d => toFactory(d)());
         return this.generators
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.commandHandlers)))
-            .concat(mayHaveCommands
-                .filter(mhc => !!mhc.correspondingCommand)
-                .map(m => () => m.correspondingCommand()))
+            .concat(_.flatten(this.opts.deployers.map(fu => fu.commandHandlers)))
             .concat([this.showBuildLog])
             .concat(this.verifyEndpoint.commandHandlers)
             .filter(m => !!m);
@@ -371,7 +366,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     constructor(private opts: {
-                    deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
+                    deployers: Array<FunctionalUnit>,
                     artifactStore: ArtifactStore,
                 },
                 ...pushRules: PushRule[]) {

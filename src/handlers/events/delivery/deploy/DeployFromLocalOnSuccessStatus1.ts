@@ -41,7 +41,7 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
-import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
+import { RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { deploy } from "./deploy";
 
 // TODO This class is copied from DeployFromLocalOnSuccessStatus to ensure
@@ -52,7 +52,7 @@ import { deploy } from "./deploy";
  */
 @EventHandler("Deploy linked artifact",
     GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
+export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -67,7 +67,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
      * For example, we may wish to deploy different repos to different Cloud Foundry spaces
      * or Kubernetes clusters
      */
-    constructor(
+    constructor(private commandName: String,
                 private deployGoal: Goal,
                 private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,
@@ -75,30 +75,6 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 
-    public get commandName() {
-        return "RetryDeployLocal";
-    }
-
-    public correspondingCommand(): HandleCommand {
-        return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
-            return deploy({
-                deployGoal: this.deployGoal,
-                endpointGoal: this.endpointGoal,
-                id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
-                githubToken: commandParams.githubToken,
-                targetUrl: commandParams.targetUrl,
-                artifactStore: this.artifactStore,
-                deployer: this.deployer,
-                targeter: this.targeter,
-                ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
-                team: ctx.teamId,
-                retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
-                    ...commandParams,
-                }),
-                logFactory: createEphemeralProgressLog,
-            });
-        }, RetryDeployParameters, this.commandName);
-    }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
@@ -153,6 +129,32 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
 
         return Success;
     }
+}
+
+export function retryDeployFromLocal<T extends TargetInfo>(commandName: string,
+     deployGoal: Goal,
+     endpointGoal: Goal,
+     artifactStore: ArtifactStore,
+     deployer: Deployer<T>,
+     targeter: (id: RemoteRepoRef) => T): HandleCommand {
+    return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
+        return deploy({
+            deployGoal: deployGoal,
+            endpointGoal: endpointGoal,
+            id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
+            githubToken: commandParams.githubToken,
+            targetUrl: commandParams.targetUrl,
+            artifactStore: artifactStore,
+            deployer: deployer,
+            targeter: targeter,
+            ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
+            team: ctx.teamId,
+            retryButton: buttonForCommand({text: "Retry"}, commandName, {
+                ...commandParams,
+            }),
+            logFactory: createEphemeralProgressLog,
+        });
+    }, RetryDeployParameters, commandName);
 }
 
 const running = {};

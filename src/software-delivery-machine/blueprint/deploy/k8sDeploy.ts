@@ -11,16 +11,20 @@ import {
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
 
-export const K8sStagingDeployOnSuccessStatus = () =>
-    new RequestK8sDeployOnSuccessStatus(
-        ContextToPlannedGoal[StagingDeploymentContext],
-        K8sTestingDomain);
+export const K8sStagingDeployOnSuccessStatus = {
+    eventHandlers: [() =>
+        new RequestK8sDeployOnSuccessStatus(
+            ContextToPlannedGoal[StagingDeploymentContext],
+            K8sTestingDomain)], commandHandlers: []
+};
 
-export const K8sProductionDeployOnSuccessStatus = () =>
-    // TODO replace this evil hack of the duplicate class
-    new RequestK8sDeployOnSuccessStatus1(
-        ContextToPlannedGoal[ProductionDeploymentContext],
-        K8sProductionDomain);
+export const K8sProductionDeployOnSuccessStatus = {
+    eventHandlers: [() =>
+        // TODO replace this evil hack of the duplicate class
+        new RequestK8sDeployOnSuccessStatus1(
+            ContextToPlannedGoal[ProductionDeploymentContext],
+            K8sProductionDomain)], commandHandlers: []
+};
 
 export const NoticeK8sTestDeployCompletion = new NoticeK8sTestDeployCompletionOnStatus(
     ContextToPlannedGoal[StagingDeploymentContext],
