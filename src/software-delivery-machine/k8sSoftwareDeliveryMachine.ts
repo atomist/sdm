@@ -1,10 +1,10 @@
-import { OnAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
+import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
-import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { PushFromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import { K8sAutomationBuilder } from "../handlers/events/delivery/build/k8s/K8AutomationBuilder";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../handlers/events/delivery/goals/httpServiceGoals";
@@ -31,13 +31,13 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ],
             artifactStore,
         },
-        whenPushSatisfies(PushToDefaultBranch, IsMaven, IsSpringBoot,
+        whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
-            PushToPublicRepo).setGoals(HttpServiceGoals),
+            ToPublicRepo).setGoals(HttpServiceGoals),
         whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot).setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
         whenPushSatisfies(IsNode).setGoals(NpmGoals),
-        OnAnyPush.buildWith(new K8sAutomationBuilder()),
+        onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(() => addK8sSpec)

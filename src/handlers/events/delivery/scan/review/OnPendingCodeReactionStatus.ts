@@ -101,7 +101,6 @@ export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStat
     }
 }
 
-
 // TODO this should take a URL with detailed information
 function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
                      creds: ProjectOperationCredentials): Promise<any> {

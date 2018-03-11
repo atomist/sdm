@@ -1,11 +1,11 @@
 import { logger } from "@atomist/automation-client";
-import { OnAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
+import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
-import { PushFromAtomist, PushToDefaultBranch, PushToPublicRepo } from "../common/listener/support/pushTests";
+import { PushFromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
 import { MavenBuilder } from "../handlers/events/delivery/build/local/maven/MavenBuilder";
@@ -36,7 +36,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         },
         whenPushSatisfies(IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo))
             .setGoals(NoGoals),
-        whenPushSatisfies(PushToDefaultBranch, IsMaven, IsSpringBoot, HasCloudFoundryManifest, PushToPublicRepo)
+        whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot, HasCloudFoundryManifest, ToPublicRepo)
             .setGoals(HttpServiceGoals),
         whenPushSatisfies(IsMaven, IsSpringBoot, not(PushFromAtomist))
             .setGoals(LocalDeploymentGoals),
@@ -45,7 +45,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         whenPushSatisfies(IsNode)
             .setGoals(NpmGoals)
             .buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
-        OnAnyPush.buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
+        onAnyPush.buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
