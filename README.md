@@ -8,7 +8,9 @@ A **software delivery machine** is a development process in a box. It automates 
 ## Implementations of Atomist
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
 
-This repository is a *reference implementation* of Atomist, which focuses on the phases of a typical delivery flow. You can fork it and modify it as the starting point for your own Atomist implementation, or use it purely as a reference.
+This repository is a *reference implementation* of Atomist, which focuses on the goals of a typical delivery
+ flow. You can fork it and modify it as the starting point for your own Atomist implementation, 
+ or use it purely as a reference.
 
 ## Concepts
 This repository shows how Atomist can automate important tasks and improve your delivery flow. Specifically:
@@ -113,14 +115,14 @@ multiple projects.
 ## Core Concepts
 This reference implementation has the following core concepts:
 
-- Key phases in the delivery flow, with easy ways to respond to them
+- Key goals in the delivery flow, with easy ways to respond to them
 - Additional event handlers, relating to issues
 - Other automations, allowing you to create new services and update existing services
 - A buildable software delivery machine
 
-## Events and Phases
+## Events and Goals
 
-The key phases handled in this repository are:
+The key events handled in this repository are:
 
 - _On repo creation_. When a new repository has been created, we often want to perform
 additional actions, such as provisioning an issue tracker. We provide a hook for this
@@ -142,8 +144,13 @@ We use the following GitHub statuses to drive our flow and show the stages:
 
 > The use of GitHub statuses to drive and identify stages in the flow is a choice in this implementation. It's just one strategy and the core listener interfaces are decoupled from it.
 
-## Phases in Detail
-Each of the delivery phases results in the triggering of domain specific listeners that are provided with the appropriate context to process the event: For example, access to the project source code in the case of a code review, or access to the reported URL for a deployed endpoint. Certain properties are common to all events, enabling communication with users via Slack, and providing credentials for calls to GitHub.
+## Goals in Detail
+Each of the delivery goals results in the triggering of domain specific
+ listeners that are provided with the appropriate context to process the event: 
+ For example, access to the project source code in the case of a code review, 
+ or access to the reported URL for a deployed endpoint. 
+ Certain properties are common to all events, enabling communication with users via Slack, 
+ and providing credentials for calls to GitHub.
 
 All listener invocations receive at least the following generally useful information:
 
@@ -264,40 +271,46 @@ export interface ProjectListenerInvocation extends ListenerInvocation {
 
 }
 ```
-#### Phase Creation
-The first and most important reaction to a push is determining the set of *phases* that will be executed. This will drive further behavior: For example, do we need a code review? Do we need to deploy a push to this branch. Typically phase creation depends both on the characteristics of the push (usually, its branch), and the characteristics of the repo--for example, does it have a Cloud Foundry manifest?
+#### Goal Creation
+The first and most important reaction to a push is determining the set of *goals* that will be executed. 
+This will drive further behavior: For example, do we need a code review? 
+Do we need to deploy a push to this branch? Typically goal setting depends both on the
+ characteristics of the push (usually, its branch), and the characteristics of the project--for example, 
+ does it have a Cloud Foundry manifest?
 
-The `PhaseCreator` interface is thus a critical determinant of what happens next:
+The `GoalSetter` interface is thus a critical determinant of what happens next:
 
 ```typescript
-export interface PhaseCreator {
+export interface GoalSetter {
 
     /**
-     * Test the push as to whether we should even look inside it.
-     * If we return false here, our createPhases method will never be
+     * Test the push as to whether we should even think about creating goals for it.
+     * If we return false here, our chooseGoals method will never be
      * called for this push
      */
-    guard?: PushTest;
+    readonly guard?: PushTest;
 
     /**
-     * Determine the phases that apply to this PushTestInvocation
+     * Determine the goals that apply to this commit if the PushTest passes,
      * or return undefined if this GoalSetter doesn't know what to do with it.
      * The latter is not an error.
-     * @param {PhaseCreationInvocation} pci
-     * @return {Promise<Phases>}
+     * @param {GoalSetterInvocation} pci
+     * @return {Promise<Goals>}
      */
-    createPhases(pci: PhaseCreationInvocation): Promise<Phases | undefined>;
+    chooseGoals(pci: GoalSetterInvocation): Promise<Goals | undefined>;
+
 }
 ```
-Available interface is:
+The available interface is:
 
 ```typescript
-export interface PhaseCreationInvocation extends ProjectListenerInvocation {
+export interface GoalSetterInvocation extends ProjectListenerInvocation {
 
-    push: OnPushToAnyBranch.Push;
+    readonly push: OnPushToAnyBranch.Push;
 }
 ```
-If all `PhaseCreator` instances return `undefined` the commit will be tagged as "not material" and no further action will be taken.
+If all `GoalSetter` instances return `undefined` the commit will be tagged as "not material" 
+and no further action will be taken.
 
 #### Listener interfaces
 
@@ -361,21 +374,34 @@ It also allows you to use a fluent builder approach to adding command handlers. 
 
 ### Example
 ```typescript
-const sdm = new SoftwareDeliveryMachine(
+    const sdm = new SoftwareDeliveryMachine(
         {
             builder: K8sBuildOnSuccessStatus,
             deployers: [
                 K8sStagingDeployOnSuccessStatus,
                 K8sProductionDeployOnSuccessStatus,
             ],
+            artifactStore,
         },
-        new GuardedPhaseCreator(HttpServicePhases, PushesToDefaultBranch, IsMaven, IsSpringBoot,
-            HasK8Spec,
-            PushToPublicRepo),
-        new GuardedPhaseCreator(LocalDeploymentPhases, not(PushFromAtomist), IsMaven, IsSpringBoot),
-        new GuardedPhaseCreator(LibraryPhases, IsMaven, MaterialChangeToJavaRepo),
-        new GuardedPhaseCreator(NpmPhases, IsNode),
+        whenPushSatisfies(PushToDefaultBranch, IsMaven, IsSpringBoot, HasK8Spec, PushToPublicRepo)
+            .setGoals(HttpServiceGoals),
+        whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot)
+            .setGoals(LocalDeploymentGoals),
+        whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
+            .setGoals(LibraryGoals),
+        whenPushSatisfies(IsNode).setGoals(NpmGoals),
     );
+    sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
+        .addSupportingCommands(() => addK8sSpec)
+        .addSupportingEvents(() => NoticeK8sTestDeployCompletion,
+            () => NoticeK8sProdDeployCompletion)
+        .addEndpointVerificationListeners(
+            lookFor200OnEndpointRootGet({
+                retries: 15,
+                maxTimeout: 5000,
+                minTimeout: 3000,
+            }),
+        );
     sdm.addNewIssueListeners(requestDescription)
         .addEditors(() => tryToUpgradeSpringBootVersion)
         .addGenerators(() => springBootGenerator({
@@ -422,7 +448,8 @@ commands: assembled.commandHandlers.concat([
 
 ## Plugging in Third Party Tools
 
-This repo shows the use of Atomist to perform many steps itself. However, each of the phases used by Atomist here is pluggable.
+This repo shows the use of Atomist to perform many steps itself.
+ However, each of the goals used by Atomist here is pluggable.
 
 It's also easy to integrate third party tools like Checkstyle.
 

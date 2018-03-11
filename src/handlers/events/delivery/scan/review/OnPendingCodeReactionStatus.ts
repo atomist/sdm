@@ -35,8 +35,6 @@ import { addressChannelsFor } from "../../../../../common/slack/addressChannels"
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase } from "../../goals/httpServiceGoals";
-import { forApproval } from "../../verify/approvalGate";
 
 /**
  * Invoke any arbitrary CodeReactions on a push.

@@ -7,9 +7,4 @@ import { OnAnySuccessStatus } from "../../typings/types";
  */
 export interface StatusSuccessHandler extends HandleEvent<OnAnySuccessStatus.Subscription> {
 
-    /**
-     * If all phases are needed
-     */
-    phases?: Goals;
-
 }

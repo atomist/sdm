@@ -43,8 +43,8 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private phases: Goals,
-                private deployPhase: Goal,
+    constructor(private goals: Goals,
+                private deployGoal: Goal,
                 private target: K8Target) {
     }
 
@@ -62,15 +62,15 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
         };
 
         // TODO: continue as long as everything before me has succeeded, regardless of whether this is the triggering on
-        if (!previousGoalSucceeded(params.phases, params.deployPhase.context, statusAndFriends)) {
+        if (!previousGoalSucceeded(params.goals, params.deployGoal.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        if (!currentGoalIsStillPending(params.deployPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
-        // TODO: if any status is failed, do not deploy (excluding post-deploy phases)
+        // TODO: if any status is failed, do not deploy (excluding post-deploy goals)
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -86,8 +86,8 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             description: "Requested deploy by k8-automation",
         });
         await createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: params.deployPhase.context,
-            description: params.deployPhase.workingDescription,
+            context: params.deployGoal.context,
+            description: params.deployGoal.workingDescription,
             state: "pending",
         });
         return Success;

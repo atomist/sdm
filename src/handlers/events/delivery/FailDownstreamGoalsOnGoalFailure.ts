@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
-import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { contextIsAfter, GitHubStatusContext, splitContext } from "../../../common/goals/gitHubContext";
+import { Goal } from "../../../common/goals/Goal";
+import { OnFailureStatus, OnSuccessStatus } from "../../../typings/types";
+import { createStatus, State } from "../../../util/github/ghub";
+import { contextToGoal } from "./goals/httpServiceGoals";
 import Status = OnSuccessStatus.Status;
-import {BaseContext, contextIsAfter, GitHubStatusContext, splitContext} from "../../../common/goals/gitHubContext";
-import {Goal, Goals} from "../../../common/goals/Goal";
-import {OnFailureStatus, OnSuccessStatus} from "../../../typings/types";
-import {createStatus, State} from "../../../util/github/ghub";
-import {contextToGoal, ContextToPlannedPhase} from "./goals/httpServiceGoals";
 
 /**
- * Respond to a failure status by failing downstream phases
+ * Respond to a failure status by failing downstream goals
  */
-@EventHandler("Fail downstream phases on a phase failure",
+@EventHandler("Fail downstream goals on a goal failure",
     GraphQL.subscriptionFromFile("graphql/subscription/OnFailureStatus.graphql"))
-export class FailDownstreamPhasesOnPhaseFailure implements HandleEvent<OnFailureStatus.Subscription> {
+export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
@@ -64,9 +64,9 @@ export class FailDownstreamPhasesOnPhaseFailure implements HandleEvent<OnFailure
 }
 
 /**
- * Set all downstream phase to failure status given a specific failed phase.
+ * Set all downstream go to failure status given a specific failed goal.
  *
- * The phases are associated by the atomist-sdm/${env}/ prefix in their context.
+ * The goals are associated by the atomist-sdm/${env}/ prefix in their context.
  *
  */
 function gameOver(failedContext: GitHubStatusContext, currentlyPending: GitHubStatusContext[],
@@ -80,14 +80,14 @@ function gameOver(failedContext: GitHubStatusContext, currentlyPending: GitHubSt
         return Promise.resolve();
     }
 
-    const failedPhase: Goal = contextToGoal(failedContext);
+    const failedGoal: Goal = contextToGoal(failedContext);
 
-    const phasesToReset = currentlyPending
+    const goalsToReset = currentlyPending
         .filter(pendingContext => contextIsAfter(failedContext, pendingContext))
         .map(p => contextToGoal(p));
-    return Promise.all(phasesToReset.map(
+    return Promise.all(goalsToReset.map(
         p => setStatus(id, p.context, "failure", creds,
-            `Skipping ${p.name} because ${failedPhase.name} failed`)));
+            `Skipping ${p.name} because ${failedGoal.name} failed`)));
 }
 
 function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,

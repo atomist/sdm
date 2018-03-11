@@ -22,8 +22,7 @@ import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../.
 import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSetter";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
-import { OnAnyPendingStatus, OnAnySuccessStatus } from "../../../../typings/types";
-import { StatusSuccessHandler } from "../../StatusSuccessHandler";
+import { OnAnyPendingStatus } from "../../../../typings/types";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.

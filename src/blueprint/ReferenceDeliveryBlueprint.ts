@@ -7,7 +7,7 @@ import { FunctionalUnit } from "./FunctionalUnit";
 /**
  * A reference blueprint for Atomist delivery.
  * Represents a possible delivery process spanning
- * phases of fingerprinting, reacting to fingerprint diffs,
+ * goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment
  */

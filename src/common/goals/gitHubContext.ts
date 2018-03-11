@@ -1,15 +1,15 @@
 import { logger } from "@atomist/automation-client";
 
-// convention: "sdm/atomist/#-env/#-phase" (the numbers are for ordering)
+// convention: "sdm/atomist/#-env/#-goal" (the numbers are for ordering)
 export type GitHubStatusContext = string;
 
-export type PhaseEnvironment = "0-code/" | "1-staging/" | "2-prod/";
+export type GoalEnvironment = "0-code/" | "1-staging/" | "2-prod/";
 
 export const BaseContext = "sdm/atomist/";
-export const IndependentOfEnvironment: PhaseEnvironment = "0-code/";
-export const StagingEnvironment: PhaseEnvironment = "1-staging/";
+export const IndependentOfEnvironment: GoalEnvironment = "0-code/";
+export const StagingEnvironment: GoalEnvironment = "1-staging/";
 // should always be number dash name. The number may be a decimal
-export const ProductionEnvironment: PhaseEnvironment = "2-prod/";
+export const ProductionEnvironment: GoalEnvironment = "2-prod/";
 
 /**
  * if this is a context we created, then we can interpret it.
@@ -27,38 +27,38 @@ export function splitContext(context: GitHubStatusContext) {
             return;
         }
 
-        const phasePart = matchWhole[2];
+        const goalPart = matchWhole[2];
         const matchEnv = matchWhole[1].match(numberAndName);
-        const matchPhase = phasePart.match(numberAndName);
-        if (!matchPhase || !matchEnv) {
+        const matchGoal = goalPart.match(numberAndName);
+        if (!matchGoal || !matchEnv) {
             logger.debug(`Did not find number and name in ${matchWhole[1]} or ${matchWhole[2]}`);
             return;
         }
-        const name = matchPhase[2];
-        const phaseOrder = +matchPhase[1];
+        const name = matchGoal[2];
+        const goalOrder = +matchGoal[1];
 
         return {
             base: BaseContext, env: matchEnv[2], envOrder: +matchEnv[1], name,
-            phaseOrder,
+            goalOrder,
             envPart: matchWhole[1],
-            phasePart,
+            goalPart,
         };
     }
 }
 
 /*
- * true if contextB is in the same series of phases as A,
+ * true if contextB is in the same series of goals as A,
  * and A comes before B
  */
 export function contextIsAfter(contextA: GitHubStatusContext, contextB: GitHubStatusContext): boolean {
-    if (belongToSameSeriesOfPhases(contextA, contextB)) {
+    if (belongToSameSeriesOfGoals(contextA, contextB)) {
         const splitA = splitContext(contextA);
         const splitB = splitContext(contextB);
-        return splitA.envOrder < splitB.envOrder || splitA.phaseOrder < splitB.phaseOrder;
+        return splitA.envOrder < splitB.envOrder || splitA.goalOrder < splitB.goalOrder;
     }
 }
 
-function belongToSameSeriesOfPhases(contextA: GitHubStatusContext, contextB: GitHubStatusContext): boolean {
+function belongToSameSeriesOfGoals(contextA: GitHubStatusContext, contextB: GitHubStatusContext): boolean {
     const splitA = splitContext(contextA);
     const splitB = splitContext(contextB);
     return splitA && splitB && splitA.base === splitB.base;

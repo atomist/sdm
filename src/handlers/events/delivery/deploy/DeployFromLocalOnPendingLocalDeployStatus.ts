@@ -36,14 +36,14 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
 
     /**
      *
-     * @param {Goals} phases
-     * @param {Goal} deployPhase
-     * @param {Goal} endpointPhase
+     * @param {Goals} goals
+     * @param {Goal} deployGoal
+     * @param {Goal} endpointGoal
      * @param deployer source deployer to use
      */
-    constructor(public phases: Goals,
-                private deployPhase: Goal,
-                private endpointPhase: Goal,
+    constructor(public goals: Goals,
+                private deployGoal: Goal,
+                private endpointGoal: Goal,
                 private deployer: SourceDeployer) {
     }
 
@@ -68,17 +68,17 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
                 status.commit.pushes[0].branch);
             await setDeployStatus(params.githubToken, id,
                 "success",
-                params.deployPhase.context, undefined, params.deployPhase.completedDescription);
+                params.deployGoal.context, undefined, params.deployGoal.completedDescription);
             if (!!deployment.endpoint) {
                 await setEndpointStatus(params.githubToken, id,
-                    params.endpointPhase.context, deployment.endpoint, params.endpointPhase.completedDescription);
+                    params.endpointGoal.context, deployment.endpoint, params.endpointGoal.completedDescription);
             }
             return Success;
         } catch (e) {
             logger.warn("Deployment failed: %s", e);
             await setDeployStatus(params.githubToken, id,
                 "failure",
-                params.deployPhase.context, undefined, params.deployPhase.workingDescription);
+                params.deployGoal.context, undefined, params.deployGoal.workingDescription);
             return Failure;
         } finally {
             log.close();

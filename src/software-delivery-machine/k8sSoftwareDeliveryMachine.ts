@@ -31,6 +31,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ],
             artifactStore,
         },
+
         whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot,
             HasK8Spec,
             ToPublicRepo).setGoals(HttpServiceGoals),

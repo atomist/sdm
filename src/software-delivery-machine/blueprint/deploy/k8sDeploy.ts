@@ -3,7 +3,7 @@ import { NoticeK8sProdDeployCompletionOnStatus } from "../../../handlers/events/
 import { RequestK8sDeployOnSuccessStatus } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus";
 import { RequestK8sDeployOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/k8s/RequestDeployOnSuccessStatus1";
 import {
-    ContextToPlannedPhase, HttpServiceGoals, ProductionDeploymentContext, ProductionEndpointContext, StagingDeploymentContext,
+    ContextToPlannedGoal, HttpServiceGoals, ProductionDeploymentContext, ProductionEndpointContext, StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
@@ -11,20 +11,20 @@ import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices
 export const K8sStagingDeployOnSuccessStatus = () =>
     new RequestK8sDeployOnSuccessStatus(
         HttpServiceGoals,
-        ContextToPlannedPhase[StagingDeploymentContext],
+        ContextToPlannedGoal[StagingDeploymentContext],
         K8sTestingDomain);
 
 export const K8sProductionDeployOnSuccessStatus = () =>
     // TODO replace this evil hack of the duplicate class
     new RequestK8sDeployOnSuccessStatus1(
         HttpServiceGoals,
-        ContextToPlannedPhase[ProductionDeploymentContext],
+        ContextToPlannedGoal[ProductionDeploymentContext],
         K8sProductionDomain);
 
 export const NoticeK8sTestDeployCompletion = new NoticeK8sTestDeployCompletionOnStatus(
-    ContextToPlannedPhase[StagingDeploymentContext],
-    ContextToPlannedPhase[StagingEndpointContext]);
+    ContextToPlannedGoal[StagingDeploymentContext],
+    ContextToPlannedGoal[StagingEndpointContext]);
 
 export const NoticeK8sProdDeployCompletion = new NoticeK8sProdDeployCompletionOnStatus(
-    ContextToPlannedPhase[ProductionDeploymentContext],
-    ContextToPlannedPhase[ProductionEndpointContext]);
+    ContextToPlannedGoal[ProductionDeploymentContext],
+    ContextToPlannedGoal[ProductionEndpointContext]);

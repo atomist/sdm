@@ -34,7 +34,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
     private listeners: ArtifactListener[];
 
     /**
-     * The phase to update when an artifact is linked.
+     * The goal to update when an artifact is linked.
      * When an artifact is linked to a commit, the build must be done.
      */
     constructor(public goal: Goal,

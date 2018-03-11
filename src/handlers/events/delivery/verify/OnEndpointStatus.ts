@@ -97,7 +97,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             return Success;
         }
 
-        if (!currentGoalIsStillPending(params.sdm.verifyPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.sdm.verifyGoal.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
@@ -115,7 +115,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
  */
 export interface SdmVerification {
     verifiers: EndpointVerificationListener[];
-    verifyPhase: Goal;
+    verifyGoal: Goal;
     requestApproval: boolean;
 }
 
@@ -151,7 +151,7 @@ function verifyImpl(sdm: SdmVerification,
                 "success",
                 sdm.requestApproval,
                 targetUrl,
-                sdm.verifyPhase),
+                sdm.verifyGoal),
             err => {
                 // todo: report error in Slack? ... or load it to a log that links
                 logger.warn("Failing verification because: " + err);
@@ -159,26 +159,26 @@ function verifyImpl(sdm: SdmVerification,
                     "failure",
                     false,
                     targetUrl,
-                    sdm.verifyPhase)
+                    sdm.verifyGoal)
                     .then(() => reportFailedVerification(addressChannels,
-                        sdm.verifyPhase, li.id, targetUrl, err.message));
+                        sdm.verifyGoal, li.id, targetUrl, err.message));
             })
         .then(success);
 }
 
-function reportFailedVerification(ac: AddressChannels, verifyPhase: Goal, id: RemoteRepoRef,
+function reportFailedVerification(ac: AddressChannels, goal: Goal, id: RemoteRepoRef,
                                   targetUrl: string, message: string) {
-    return ac(failedVerificationMessage(verifyPhase, id, targetUrl, message));
+    return ac(failedVerificationMessage(goal, id, targetUrl, message));
 }
 
-function failedVerificationMessage(verifyPhase: Goal, id: RemoteRepoRef,
+function failedVerificationMessage(goal: Goal, id: RemoteRepoRef,
                                    targetUrl: string, message: string): slack.SlackMessage {
 
     const attachment: slack.Attachment = {
         fallback: "verification failure report",
         title: "Verification failed",
         text: `Failed to verify ${linkToSha(id)} at ${targetUrl}:\n> ${message}`,
-        actions: [retryButton(verifyPhase, id, targetUrl)],
+        actions: [retryButton(goal, id, targetUrl)],
         color: "#D94649",
     };
 
@@ -192,9 +192,9 @@ function linkToSha(id: RemoteRepoRef) {
         `${id.owner}/${id.repo}#${id.sha.substr(0, 6)}`);
 }
 
-function retryButton(verifyPhase: Goal, id: RemoteRepoRef, targetUrl: string): slack.Action {
+function retryButton(goal: Goal, id: RemoteRepoRef, targetUrl: string): slack.Action {
     return buttonForCommand({text: "Retry"},
-        retryVerificationCommandName(verifyPhase), {
+        retryVerificationCommandName(goal), {
             repo: id.repo,
             owner: id.owner,
             sha: id.sha,
@@ -206,12 +206,12 @@ function setVerificationStatus(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef, state: StatusState,
                                requestApproval: boolean,
                                targetUrl: string,
-                               verifyPhase: Goal): Promise<any> {
+                               verifyGoal: Goal): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
         state,
         target_url: requestApproval ? forApproval(targetUrl) : targetUrl,
-        context: verifyPhase.context,
-        description: state === "success" ? verifyPhase.completedDescription : ("Failed to " + verifyPhase.name),
+        context: verifyGoal.context,
+        description: state === "success" ? verifyGoal.completedDescription : ("Failed to " + verifyGoal.name),
     });
 }
 
@@ -238,14 +238,14 @@ export class RetryVerifyParameters {
 
 }
 
-function retryVerificationCommandName(verifyPhase: Goal) {
+function retryVerificationCommandName(verifyGoal: Goal) {
     // todo: get the env on the Goal
-    return "RetryFailedVerification" + splitContext(verifyPhase.context).env;
+    return "RetryFailedVerification" + splitContext(verifyGoal.context).env;
 }
 
 export function retryVerifyCommand(sdm: SdmVerification): HandleCommand<RetryVerifyParameters> {
     return commandHandlerFrom(verifyHandle(sdm), RetryVerifyParameters,
-        retryVerificationCommandName(sdm.verifyPhase),
+        retryVerificationCommandName(sdm.verifyGoal),
         "retry verification", "retry verification",
     );
 }

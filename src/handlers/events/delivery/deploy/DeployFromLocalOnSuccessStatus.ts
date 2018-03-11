@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    failure,
-    GraphQL,
-    HandleCommand,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
@@ -64,8 +55,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     public correspondingCommand(): HandleCommand {
         return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
             return deploy({
-                deployPhase: this.deployGoal,
-                endpointPhase: this.endpointGoal,
+                deployGoal: this.deployGoal,
+                endpointGoal: this.endpointGoal,
                 id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
                 githubToken: commandParams.githubToken,
                 targetUrl: commandParams.targetUrl,
@@ -121,8 +112,8 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
 
         await dedup(commit.sha, () =>
             deploy({
-                deployPhase: params.deployGoal,
-                endpointPhase: params.endpointGoal,
+                deployGoal: params.deployGoal,
+                endpointGoal: params.endpointGoal,
                 id, githubToken: params.githubToken,
                 targetUrl: image.imageName,
                 artifactStore: this.artifactStore,
