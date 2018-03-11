@@ -12,6 +12,8 @@ export interface PushThatTriggersBuild {
  */
 export interface Builder {
 
+    name: string;
+
     initiateBuild(creds: ProjectOperationCredentials,
                   id: RemoteRepoRef,
                   ac: AddressChannels,

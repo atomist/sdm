@@ -25,6 +25,7 @@ subscription OnAnySuccessStatus {
       }
       pushes {
         branch
+        id
       }
       image {
         image

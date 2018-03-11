@@ -10,17 +10,17 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
 import {
-    ArtifactGoal,
-    BuildGoal,
-    ContextToPlannedPhase,
-    ScanGoal,
+    ArtifactGoal, AutofixGoal,
+    BuildGoal, CodeReactionGoal,
+    ContextToPlannedPhase, FingerprintGoal,
+    ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedContext,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
 import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
-import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
+import { FingerprintOnPendingStatus } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
     EndpointVerificationListener,
@@ -49,18 +49,25 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { OnPendingScanStatus } from "../handlers/events/delivery/scan/review/OnPendingScanStatus";
+import {
+    BuildOnPendingBuildStatus,
+    ConditionalBuilder,
+} from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
+import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
+import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { PushRule } from "./ruleDsl";
 
 /**
  * A reference blueprint for Atomist delivery.
  * Represents a possible delivery process spanning
- * phases of fingerprinting, reacting to fingerprint diffs,
+ * goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment.
  * Uses the builder pattern.
@@ -87,11 +94,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly builder: Maker<StatusSuccessHandler>;
-
     private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
 
-    private readonly phaseCreators: GoalSetter[] = [];
+    private readonly goalSetters: GoalSetter[] = [];
+
+    private readonly conditionalBuilders: ConditionalBuilder[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -123,9 +130,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
     }
 
-    private get fingerprinter(): Maker<FingerprintOnPush> {
+    private get fingerprinter(): Maker<FingerprintOnPendingStatus> {
         return this.fingerprinters.length > 0 ?
-            () => new FingerprintOnPush(this.fingerprinters) :
+            () => new FingerprintOnPendingStatus(FingerprintGoal, this.fingerprinters) :
             undefined;
     }
 
@@ -135,23 +142,30 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get reviewRunner(): Maker<OnPendingScanStatus> {
-        const reviewers = this.projectReviewers;
-        const inspections = this.codeReactions;
-        const autoEditors = this.autoEditors;
-        return (reviewers.length + inspections.length + autoEditors.length > 0) ?
-            () => new OnPendingScanStatus(ScanGoal, reviewers, inspections, autoEditors) :
-            undefined;
+    private get reviewHandler(): Maker<OnPendingReviewStatus> {
+        return () => new OnPendingReviewStatus(ReviewGoal, this.projectReviewers);
+    }
+
+    private get codeReactionsHandler(): Maker<OnPendingCodeReactionStatus> {
+        return () => new OnPendingCodeReactionStatus(CodeReactionGoal, this.codeReactions);
+    }
+
+    private get autofixHandler(): Maker<OnPendingAutofixStatus> {
+        return () => new OnPendingAutofixStatus(AutofixGoal, this.autoEditors);
     }
 
     private get phaseSetup(): Maker<SetupPhasesOnPush> {
-        if (this.phaseCreators.length === 0) {
+        if (this.goalSetters.length === 0) {
             throw new Error("No phase creators");
         }
-        return () => new SetupPhasesOnPush(...this.phaseCreators);
+        return () => new SetupPhasesOnPush(...this.goalSetters);
     }
 
-    public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
+    private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
+
+    private get builder(): Maker<HandleEvent<any>> {
+        return () => new BuildOnPendingBuildStatus(BuildGoal, this.conditionalBuilders);
+    }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
         return this.supersededListeners.length > 0 ?
@@ -217,11 +231,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.onNewRepoWithCode,
                 this.fingerprinter,
                 this.semanticDiffReactor,
-                this.reviewRunner,
+                this.autofixHandler,
+                this.reviewHandler,
+                this.codeReactionsHandler,
                 this.phaseSetup,
                 this.oldPushSuperseder,
                 this.onSuperseded,
-                this.opts.builder,
+                this.builder,
                 this.onBuildComplete,
                 this.notifyOnDeploy,
                 this.onVerifiedStatus,
@@ -357,12 +373,16 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     constructor(private opts: {
-                    builder: Maker<StatusSuccessHandler>,
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
                     artifactStore: ArtifactStore,
                 },
-                ...phaseCreators: GoalSetter[]) {
-        this.phaseCreators = phaseCreators;
+                ...pushRules: PushRule[]) {
+        this.goalSetters = pushRules
+            .filter(rule => !!rule.goalSetter)
+            .map(rule => rule.goalSetter);
+        this.conditionalBuilders = pushRules
+            .filter(rule => !!rule.builder)
+            .map(rule => ({guard: rule.pushTest, builder: rule.builder}));
     }
 
 }

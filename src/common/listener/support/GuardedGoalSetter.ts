@@ -1,12 +1,12 @@
 import { Goals } from "../../goals/Goal";
-import { GoalSetter, GoalSetterInvocation, PushTest } from "../GoalSetter";
+import { GoalSetter, PushTest, PushTestInvocation } from "../GoalSetter";
 import { allSatisfied } from "./pushTestUtils";
 
 /**
  * GoalSetter wholly driven by one or more PushTest instances.
  * Always returns the same phases
  */
-export class GuardedPhaseCreator implements GoalSetter {
+export class GuardedGoalSetter implements GoalSetter {
 
     public guard: PushTest;
 
@@ -21,20 +21,7 @@ export class GuardedPhaseCreator implements GoalSetter {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async createPhases(pi: GoalSetterInvocation): Promise<Goals | undefined> {
+    public async createPhases(pi: PushTestInvocation): Promise<Goals | undefined> {
         return this.phases;
     }
-}
-
-/**
- * Simple GoalSetter DSL
- * @param {PushTest} guard1
- * @param {PushTest} guards
- */
-export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): { setGoals(phases: Goals): GoalSetter } {
-    return {
-        setGoals(phases) {
-            return new GuardedPhaseCreator(phases, guard1, ...guards);
-        },
-    };
 }

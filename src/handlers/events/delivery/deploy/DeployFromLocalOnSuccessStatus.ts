@@ -30,7 +30,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import {
-    currentPhaseIsStillPending,
+    currentGoalIsStillPending,
     GitHubStatusAndFriends,
     Goal,
     Goals,
@@ -119,7 +119,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.deployGoal.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Success;
         }
 

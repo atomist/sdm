@@ -44,7 +44,7 @@ import {
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
 import { splitContext } from "../../../../common/goals/gitHubContext";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
@@ -97,7 +97,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             return Success;
         }
 
-        if (!currentPhaseIsStillPending(params.sdm.verifyPhase.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.sdm.verifyPhase.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }
 
