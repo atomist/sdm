@@ -60,6 +60,7 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
 import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { ExecuteGoalOnSuccessStatus1 } from "../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -164,8 +165,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders))
-                
+                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnSuccessStatus1(name, BuildGoal, executeBuild(...this.conditionalBuilders))
             ],
             commandHandlers: []
         };
