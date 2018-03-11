@@ -154,7 +154,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get goalSetting(): Maker<SetGoalsOnPush> {
         if (this.goalSetters.length === 0) {
-            throw new Error("No phase creators");
+            throw new Error("No goal setters");
         }
         return () => new SetGoalsOnPush(...this.goalSetters);
     }

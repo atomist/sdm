@@ -15,8 +15,8 @@ export class PushRule {
         this.pushTest = allSatisfied(guard1, ...guards);
     }
 
-    public setGoals(phases): this {
-        this.goalSetter = new GuardedGoalSetter(phases, this.guard1, ...this.guards);
+    public setGoals(goals): this {
+        this.goalSetter = new GuardedGoalSetter(goals, this.guard1, ...this.guards);
         return this;
     }
 
