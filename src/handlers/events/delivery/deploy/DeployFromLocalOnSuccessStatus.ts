@@ -20,7 +20,7 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals, } from "../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal, } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -41,17 +41,6 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    /**
-     *
-     * @param {Goals} goals
-     * @param {Goal} deployGoal
-     * @param {Goal} endpointGoal
-     * @param {ArtifactStore} artifactStore
-     * @param {Deployer<T extends TargetInfo>} deployer
-     * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
-     * For example, we may wish to deploy different repos to different Cloud Foundry spaces
-     * or Kubernetes clusters
-     */
     constructor(private deployGoal: Goal,
                 private endpointGoal: Goal,
                 private artifactStore: ArtifactStore,

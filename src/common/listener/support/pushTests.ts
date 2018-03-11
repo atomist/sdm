@@ -5,16 +5,16 @@ import { PushTest } from "../GoalSetter";
 
 export const PushToMaster: PushTest = pci => pci.push.branch === "master";
 
-export const PushToDefaultBranch: PushTest = p => {
+export const ToDefaultBranch: PushTest = p => {
     const flag = p.push.branch === p.push.repo.defaultBranch;
-    logger.info("Push to %j on branch %s: PushToDefaultBranch=%d", p.id, p.push.branch);
+    logger.info("Push to %j on branch %s: ToDefaultBranch=%d", p.id, p.push.branch);
     return flag;
 };
 
 /**
  * Is this a push originated by Atomist? Note that we can't look at the committer,
  * as if a user invoked a command handler, their credentials will be used
- * @param {GoalSetterInvocation} p
+ * @param {PushTestInvocation} p
  * @return {boolean}
  * @constructor
  */
@@ -24,18 +24,18 @@ export const PushFromAtomist: PushTest = p => {
 
 /**
  * Match on any push
- * @param {GoalSetterInvocation} p
+ * @param {PushTestInvocation} p
  * @constructor
  */
 export const AnyPush: PushTest = p => true;
 
 /**
  * Match only pushes on a public repo
- * @param {GoalSetterInvocation} p
+ * @param {PushTestInvocation} p
  * @return {Promise<boolean>}
  * @constructor
  */
-export const PushToPublicRepo: PushTest = async p => {
+export const ToPublicRepo: PushTest = async p => {
     // Ask GitHub if the repo is public as we do not have this information in our model
     return isGitHubRepoRef(p.id) && (await isPublicRepo(process.env.GITHUB_TOKEN, p.id));
 };

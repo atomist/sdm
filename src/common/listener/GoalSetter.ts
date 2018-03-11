@@ -6,9 +6,9 @@ import { ProjectListenerInvocation } from "./Listener";
  * Return true if we like this push and think we should attempt
  * to determine goals for it.
  */
-export type PushTest = (p: GoalSetterInvocation) => boolean | Promise<boolean>;
+export type PushTest = (p: PushTestInvocation) => boolean | Promise<boolean>;
 
-export interface GoalSetterInvocation extends ProjectListenerInvocation {
+export interface PushTestInvocation extends ProjectListenerInvocation {
 
     readonly push: OnPushToAnyBranch.Push;
 }
@@ -31,12 +31,12 @@ export interface GoalSetter {
     readonly guard?: PushTest;
 
     /**
-     * Determine the goals that apply to this GoalSetterInvocation,
+     * Determine the goals that apply to this commit if the PushTest passes,
      * or return undefined if this GoalSetter doesn't know what to do with it.
      * The latter is not an error.
-     * @param {GoalSetterInvocation} pci
+     * @param {PushTestInvocation} pci
      * @return {Promise<Goals>}
      */
-    chooseGoals(pci: GoalSetterInvocation): Promise<Goals | undefined>;
+    chooseGoals(pci: PushTestInvocation): Promise<Goals | undefined>;
 
 }

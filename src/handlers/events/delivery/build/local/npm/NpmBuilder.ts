@@ -20,7 +20,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
     constructor(artifactStore: ArtifactStore, logFactory: LogFactory,
                 private buildCommand: string = "npm run build") {
-        super(artifactStore, logFactory);
+        super("NpmBuilder", artifactStore, logFactory);
     }
 
     protected async startBuild(creds: ProjectOperationCredentials,

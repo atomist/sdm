@@ -20,9 +20,13 @@ subscription OnAnyPendingStatus {
             id
           }
         }
+        defaultBranch
       }
       pushes {
         branch
+        after {
+          sha
+        }
         before {
           sha
         }
