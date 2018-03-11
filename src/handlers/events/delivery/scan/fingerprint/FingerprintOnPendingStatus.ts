@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import { HandlerContext, Success, } from "@atomist/automation-client/Handlers";
+import { HandlerContext, Success } from "@atomist/automation-client/Handlers";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { sendFingerprint } from "../../../../../util/webhook/sendFingerprint";
 
+import { HandlerResult } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { Fingerprinter } from "../../../../../common/listener/Fingerprinter";
+import { OnAnyPendingStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { ExecuteGoalOnSuccessStatus } from "../../deploy/DeployFromLocalOnSuccessStatus1";
-import { HandlerResult } from "@atomist/automation-client";
-import { OnAnyPendingStatus } from "../../../../../typings/types";
-
 
 export function executeFingerprints(...fingerprinters: Fingerprinter[]):
 (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalOnSuccessStatus) => Promise<HandlerResult> {
@@ -51,7 +50,7 @@ export function executeFingerprints(...fingerprinters: Fingerprinter[]):
             description: params.goal.completedDescription,
         });
         return Success;
-    }
+    };
 }
 
 function isFingerprint(a: any): a is Fingerprint {

@@ -44,7 +44,10 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
+import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { ExecuteGoalOnSuccessStatus1 } from "../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
 import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
@@ -57,9 +60,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
-import { ExecuteGoalOnSuccessStatus1 } from "../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
-import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -91,7 +91,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly deployers: Array<FunctionalUnit>;
+    private readonly deployers: FunctionalUnit[];
 
     private readonly goalSetters: GoalSetter[] = [];
 
@@ -132,8 +132,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: this.fingerprinters.length > 0 ?
                 [() => new ExecuteGoalOnPendingStatus("Fingerprinter", FingerprintGoal, executeFingerprints(...this.fingerprinters))] :
                 [],
-            commandHandlers: []
-        }
+            commandHandlers: [],
+        };
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -168,9 +168,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
-                () => new ExecuteGoalOnSuccessStatus1(name, BuildGoal, executeBuild(...this.conditionalBuilders))
+                () => new ExecuteGoalOnSuccessStatus1(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
             ],
-            commandHandlers: []
+            commandHandlers: [],
         };
     }
 
@@ -378,7 +378,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     constructor(private opts: {
-                    deployers: Array<FunctionalUnit>,
+                    deployers: FunctionalUnit[],
                     artifactStore: ArtifactStore,
                 },
                 ...pushRules: PushRule[]) {

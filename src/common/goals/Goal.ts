@@ -5,8 +5,8 @@ import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { BaseContext, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
+import { BaseContext, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
     environment: GoalEnvironment;

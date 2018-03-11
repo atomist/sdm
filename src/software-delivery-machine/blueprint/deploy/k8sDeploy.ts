@@ -15,7 +15,7 @@ export const K8sStagingDeployOnSuccessStatus = {
     eventHandlers: [() =>
         new RequestK8sDeployOnSuccessStatus(
             ContextToPlannedGoal[StagingDeploymentContext],
-            K8sTestingDomain)], commandHandlers: []
+            K8sTestingDomain)], commandHandlers: [],
 };
 
 export const K8sProductionDeployOnSuccessStatus = {
@@ -23,7 +23,7 @@ export const K8sProductionDeployOnSuccessStatus = {
         // TODO replace this evil hack of the duplicate class
         new RequestK8sDeployOnSuccessStatus1(
             ContextToPlannedGoal[ProductionDeploymentContext],
-            K8sProductionDomain)], commandHandlers: []
+            K8sProductionDomain)], commandHandlers: [],
 };
 
 export const NoticeK8sTestDeployCompletion = new NoticeK8sTestDeployCompletionOnStatus(

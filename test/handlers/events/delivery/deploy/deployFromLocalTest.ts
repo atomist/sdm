@@ -1,11 +1,11 @@
 import { HandlerContext } from "@atomist/automation-client";
 import "mocha";
 import * as assert from "power-assert";
+import { executeDeploy, ExecuteGoalOnSuccessStatus1 } from "../../../../../src/handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import {
     LocalEndpointGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
     StagingDeploymentGoal,
 } from "../../../../../src/handlers/events/delivery/goals/httpServiceGoals";
-import { executeDeploy, ExecuteGoalOnSuccessStatus1 } from "../../../../../src/handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 
 describe("the local deploy", () => {
 
@@ -13,7 +13,7 @@ describe("the local deploy", () => {
         const deployHandler = new ExecuteGoalOnSuccessStatus1("retryMe", ProductionDeploymentGoal,
             executeDeploy({
                 deployGoal: ProductionDeploymentGoal,
-                endpointGoal: ProductionEndpointGoal, artifactStore: null, deployer: null, targeter: null
+                endpointGoal: ProductionEndpointGoal, artifactStore: null, deployer: null, targeter: null,
             }));
         const handleResult = deployHandler.handle(buildSuccessEvent as any, {} as HandlerContext, deployHandler);
 

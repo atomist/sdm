@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal, } from "../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -29,8 +30,6 @@ import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { deploy } from "./deploy";
-import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-
 
 // TODO: rename to ExecuteGoalInvocation
 export interface ExecuteGoalOnSuccessStatus {
@@ -46,11 +45,11 @@ export class ExecuteGoalOnSuccessStatus1<T extends TargetInfo>
     implements HandleEvent<OnAnySuccessStatus.Subscription>,
         ExecuteGoalOnSuccessStatus,
         EventHandlerMetadata {
-    subscriptionName: string;
-    subscription: string;
-    name: string;
-    description: string;
-    secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
+    public subscriptionName: string;
+    public subscription: string;
+    public name: string;
+    public description: string;
+    public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
     public githubToken: string;
 
@@ -66,7 +65,6 @@ export class ExecuteGoalOnSuccessStatus1<T extends TargetInfo>
             GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"),
             this.subscriptionName);
     }
-
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
@@ -95,16 +93,16 @@ export class ExecuteGoalOnSuccessStatus1<T extends TargetInfo>
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
             return failure(new Error("No image linked"));
         }
-        return this.execute(status, ctx, params)
+        return this.execute(status, ctx, params);
     }
 }
 
 export interface DeploySpec<T extends TargetInfo> {
-    deployGoal: Goal,
-    endpointGoal: Goal,
-    artifactStore: ArtifactStore,
-    deployer: Deployer<T>,
-    targeter: (id: RemoteRepoRef) => T,
+    deployGoal: Goal;
+    endpointGoal: Goal;
+    artifactStore: ArtifactStore;
+    deployer: Deployer<T>;
+    targeter: (id: RemoteRepoRef) => T;
 }
 
 export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
@@ -140,7 +138,7 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
             }));
 
         return Success;
-    }
+    };
 }
 
 function retryCommandNameFor(deployName: string) {

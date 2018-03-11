@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import { HandleCommand, logger } from "@atomist/automation-client";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
+import { retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
@@ -24,12 +26,10 @@ import {
     StagingDeploymentContext, StagingDeploymentGoal,
     StagingEndpointContext, StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
+import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";
-import { retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
-import { HandleCommand, logger } from "@atomist/automation-client";
-import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 
 /**
  * Deploy to the automation client node
@@ -63,7 +63,7 @@ const LocalExecutableJarRetry: HandleCommand = retryDeployFromLocal("DeployFromL
         targeter: () => ({
             name: "Local",
             description: "Deployment alongside local automation client",
-        })
+        }),
     });
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
@@ -75,7 +75,7 @@ export const LocalExecutableJarDeploy = {
     eventHandlers: [
         () => LocalExecutableJarDeployOnSuccessStatus,
         () => UndeployOnSuperseded],
-    commandHandlers: [() => LocalExecutableJarRetry]
+    commandHandlers: [() => LocalExecutableJarRetry],
 };
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {

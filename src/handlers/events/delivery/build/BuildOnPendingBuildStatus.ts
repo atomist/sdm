@@ -16,6 +16,7 @@
 
 import { GraphQL, HandleEvent, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, HandlerContext } from "@atomist/automation-client/Handlers";
+import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
@@ -24,7 +25,6 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../../typings/types";
 import { ExecuteGoalOnSuccessStatus } from "../deploy/DeployFromLocalOnSuccessStatus1";
-import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -36,14 +36,13 @@ export interface ConditionalBuilder {
     builder: Builder;
 }
 
-
 export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatus.Subscription>,
     ExecuteGoalOnSuccessStatus, EventHandlerMetadata {
-    subscriptionName: string;
-    subscription: string;
-    name: string;
-    description: string;
-    secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
+    public subscriptionName: string;
+    public subscription: string;
+    public name: string;
+    public description: string;
+    public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
     public githubToken: string;
 
@@ -87,11 +86,11 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
 
         logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
-        return params.execute(status, ctx, params)
+        return params.execute(status, ctx, params);
     }
 }
 
-export function executeBuild(...conditionalBuilders: Array<ConditionalBuilder>) {
+export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
     return async (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalOnSuccessStatus) => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
@@ -149,7 +148,7 @@ export function executeBuild(...conditionalBuilders: Array<ConditionalBuilder>) 
             return builder.initiateBuild(credentials, id, i.addressChannels, team, {branch: branchToMarkTheBuildWith});
         });
         return Success;
-    }
+    };
 }
 
 const running = {};
