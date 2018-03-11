@@ -46,7 +46,6 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { BuildOnPendingBuildStatus, ConditionalBuilder } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
@@ -60,6 +59,7 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
+import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -161,8 +161,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     private get builder(): FunctionalUnit {
+        const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
         return {
-            eventHandlers: [() => new BuildOnPendingBuildStatus(BuildGoal, this.conditionalBuilders)],
+            eventHandlers: [
+                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders))
+                
+            ],
             commandHandlers: []
         };
     }

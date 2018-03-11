@@ -23,6 +23,8 @@ import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSe
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../../typings/types";
+import { ExecuteGoalOnSuccessStatus, ExecuteGoalOnSuccessStatus1 } from "../deploy/DeployFromLocalOnSuccessStatus1";
+import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -34,22 +36,29 @@ export interface ConditionalBuilder {
     builder: Builder;
 }
 
-/**
- * See a GitHub success status with context "scan" and trigger a build producing an artifact status
- */
-@EventHandler("Build on source scan success",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
-export class BuildOnPendingBuildStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
+
+export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatus.Subscription>,
+    ExecuteGoalOnSuccessStatus, EventHandlerMetadata {
+    subscriptionName: string;
+    subscription: string;
+    name: string;
+    description: string;
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    public githubToken: string;
 
-    constructor(public goal: Goal,
-                private conditionalBuilders: ConditionalBuilder[]) {
-        this.conditionalBuilders = conditionalBuilders;
+    constructor(public implementationName: string,
+                public goal: Goal,
+                private execute: (status: OnAnyPendingStatus.Status,
+                                  ctx: HandlerContext,
+                                  params: ExecuteGoalOnSuccessStatus) => Promise<HandlerResult>) {
+        this.subscriptionName = implementationName + "OnPendingStatus"
+        this.subscription = GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql");
+        this.name = implementationName + "OnPendingStatus";
+        this.description = `Execute ${goal.name} when requested`;
     }
 
-    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const team = commit.repo.org.chatTeam.id;
@@ -62,10 +71,10 @@ export class BuildOnPendingBuildStatus implements HandleEvent<OnAnyPendingStatus
             siblings: status.commit.statuses,
         };
 
-        const credentials = { token: params.githubToken};
+        const credentials = {token: params.githubToken};
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        if (! await params.goal.preconditionsMet(credentials, id, statusAndFriends)) {
+        if (!await params.goal.preconditionsMet(credentials, id, statusAndFriends)) {
             logger.debug("Build preconditions not met");
             return Success;
         }
@@ -74,17 +83,28 @@ export class BuildOnPendingBuildStatus implements HandleEvent<OnAnyPendingStatus
             return Success;
         }
 
-        logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+        logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
+      return params.execute(status, ctx, params)
+    }
+}
+
+export function executeBuild(...conditionalBuilders: Array<ConditionalBuilder>) {
+    return async (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalOnSuccessStatus) => {
+        const commit = status.commit;
         await dedup(commit.sha, async () => {
+            const credentials = {token: params.githubToken};
+            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+            const team = commit.repo.org.chatTeam.id;
+
             const project = await GitCommandGitProject.cloned(credentials, id);
 
             const i: PushTestInvocation = {
                 id,
                 project,
                 credentials,
-                context,
-                addressChannels: addressChannelsFor(commit.repo, context),
+                context: ctx,
+                addressChannels: addressChannelsFor(commit.repo, ctx),
                 // TODO flesh this out properly
                 push: {
                     id: null,
@@ -108,13 +128,13 @@ export class BuildOnPendingBuildStatus implements HandleEvent<OnAnyPendingStatus
                 },
             };
 
-            const builders: boolean[] = await Promise.all(params.conditionalBuilders
+            const builders: boolean[] = await Promise.all(conditionalBuilders
                 .map(b => b.guard(i)));
             const indx = builders.indexOf(true);
             if (indx < 0) {
                 throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
             }
-            const builder = params.conditionalBuilders[indx].builder;
+            const builder = conditionalBuilders[indx].builder;
             logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
 
             const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
