@@ -21,7 +21,7 @@ export class GuardedPhaseCreator implements GoalSetter {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async createPhases(pi: GoalSetterInvocation): Promise<Goals | undefined> {
+    public async chooseGoals(pi: GoalSetterInvocation): Promise<Goals | undefined> {
         return this.phases;
     }
 }

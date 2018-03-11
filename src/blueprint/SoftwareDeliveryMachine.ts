@@ -19,7 +19,7 @@ import {
 } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { SetupPhasesOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { SetGoalsOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
 import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
@@ -144,11 +144,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get phaseSetup(): Maker<SetupPhasesOnPush> {
+    private get phaseSetup(): Maker<SetGoalsOnPush> {
         if (this.phaseCreators.length === 0) {
             throw new Error("No phase creators");
         }
-        return () => new SetupPhasesOnPush(...this.phaseCreators);
+        return () => new SetGoalsOnPush(...this.phaseCreators);
     }
 
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
