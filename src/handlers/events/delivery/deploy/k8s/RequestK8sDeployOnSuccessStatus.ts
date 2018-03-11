@@ -17,14 +17,11 @@
 import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal, Goals } from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../../common/goals/Goal";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export type K8Target = "testing" | "production";
 
@@ -61,10 +58,11 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
             description: status.description,
             siblings: status.commit.statuses,
         };
+        const creds = {token: params.githubToken};
 
-        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+        if (! await params.deployGoal.preconditionsMet(creds, id, statusAndFriends)) {
             logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
-            return Success;
+            return Promise.resolve(Success);
         }
 
         if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {

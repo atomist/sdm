@@ -67,11 +67,12 @@ export const StagingVerifiedGoal = new Goal({
 });
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
-    environment: ProductionEnvironment,
-    orderedName: "3-prod-deploy",
-    displayName: "deploy to Prod",
-    completedDescription: "Deployed to Prod",
-}, StagingDeploymentGoal);
+        environment: ProductionEnvironment,
+        orderedName: "3-prod-deploy",
+        displayName: "deploy to Prod",
+        completedDescription: "Deployed to Prod",
+    },
+    ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionEndpointGoal = new Goal({
     environment: ProductionEnvironment,

@@ -61,20 +61,21 @@ export class BuildOnPendingBuildStatus implements HandleEvent<OnAnyPendingStatus
             description: status.description,
             siblings: status.commit.statuses,
         };
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const credentials = {token: params.githubToken};
 
-        logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
-            params.goal.context, params.conditionalBuilders.length, statusAndFriends);
+        const credentials = { token: params.githubToken};
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
+        if (! await params.goal.preconditionsMet(credentials, id, statusAndFriends)) {
+            logger.debug("Build preconditions not met");
+            return Success;
+        }
 
         if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
-        if (!params.goal.preconditionsMet(credentials, id, event.data)) {
-            return Success;
-        }
 
         logger.info(`Running build. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+
         await dedup(commit.sha, async () => {
             const project = await GitCommandGitProject.cloned(credentials, id);
 

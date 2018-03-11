@@ -22,7 +22,6 @@ import {
     logger,
     Secret,
     Secrets,
-    success,
     Success,
 } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
@@ -35,7 +34,6 @@ import {
     GitHubStatusAndFriends,
     Goal,
     Goals,
-    previousGoalSucceeded,
 } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -106,9 +104,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -116,8 +112,9 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             description: status.description,
             siblings: status.commit.statuses,
         };
+        const creds = { token: params.githubToken};
 
-        if (!params.deployGoal.preconditionsMet({token: params.githubToken}, id, event.data)) {
+        if (! await params.deployGoal.preconditionsMet(creds, id, statusAndFriends)) {
             logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
             return Success;
         }

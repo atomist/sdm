@@ -61,10 +61,11 @@ export class FingerprintOnPendingStatus
             description: status.description,
             siblings: status.commit.statuses,
         };
+
         if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
-        if (!params.goal.preconditionsMet(credentials, id, event.data)) {
+        if (!params.goal.preconditionsMet(credentials, id, statusAndFriends)) {
             return Success;
         }
 
