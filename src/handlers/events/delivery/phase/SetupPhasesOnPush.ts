@@ -83,7 +83,7 @@ export class SetupPhasesOnPush implements HandleEvent<OnPushToAnyBranch.Subscrip
                 .map(async pc => {
                     const relevant = !!pc.guard ? await pc.guard(pi) : true;
                     if (relevant) {
-                        const phases = pc.createPhases(pi);
+                        const phases = pc.chooseGoals(pi);
                         logger.info("Eligible GoalSetter %j returned %j", pc, phases);
                         return Promise.resolve(phases);
                     } else {

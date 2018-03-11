@@ -37,6 +37,6 @@ export interface GoalSetter {
      * @param {GoalSetterInvocation} pci
      * @return {Promise<Goals>}
      */
-    createPhases(pci: GoalSetterInvocation): Promise<Goals | undefined>;
+    chooseGoals(pci: GoalSetterInvocation): Promise<Goals | undefined>;
 
 }
