@@ -109,7 +109,6 @@ export interface GitHubStatusAndFriends extends GitHubStatus {
     siblings: GitHubStatus[];
 }
 
-
 export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     const myStatus = status.siblings.find(s => s.context === currentGoal);
     if (!myStatus) {

@@ -1,7 +1,7 @@
 import {
     GitHubStatusContext,
-    IndependentOfEnvironment,
     GoalEnvironment,
+    IndependentOfEnvironment,
     ProductionEnvironment,
     splitContext,
     StagingEnvironment,

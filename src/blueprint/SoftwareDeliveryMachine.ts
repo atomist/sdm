@@ -47,10 +47,13 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { BuildOnPendingBuildStatus, ConditionalBuilder, } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { BuildOnPendingBuildStatus, ConditionalBuilder } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
 import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
+import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
+import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
@@ -58,9 +61,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
-import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 
 /**
  * A reference blueprint for Atomist delivery.
