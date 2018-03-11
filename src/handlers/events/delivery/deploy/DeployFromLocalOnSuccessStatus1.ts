@@ -14,33 +14,19 @@
  * limitations under the License.
  */
 
-import {
-    failure,
-    GraphQL,
-    HandleCommand,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import {
-    currentGoalIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-    Goals,
-} from "../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal, } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
+import { OnAnySuccessStatus } from "../../../../typings/types";
 import { RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { deploy } from "./deploy";
 
