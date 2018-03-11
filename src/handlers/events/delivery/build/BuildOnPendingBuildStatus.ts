@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
+import { GraphQL, HandleEvent, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
@@ -23,7 +23,7 @@ import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSe
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../../typings/types";
-import { ExecuteGoalOnSuccessStatus, ExecuteGoalOnSuccessStatus1 } from "../deploy/DeployFromLocalOnSuccessStatus1";
+import { ExecuteGoalOnSuccessStatus } from "../deploy/DeployFromLocalOnSuccessStatus1";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
 /**
@@ -43,8 +43,8 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
     subscription: string;
     name: string;
     description: string;
+    secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
-    @Secret(Secrets.OrgToken)
     public githubToken: string;
 
     constructor(public implementationName: string,
@@ -52,16 +52,18 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 private execute: (status: OnAnyPendingStatus.Status,
                                   ctx: HandlerContext,
                                   params: ExecuteGoalOnSuccessStatus) => Promise<HandlerResult>) {
-        this.subscriptionName = implementationName + "OnPendingStatus"
-        this.subscription = GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql");
+        this.subscriptionName = implementationName + "OnPending";
+        this.subscription =
+            GraphQL.replaceOperationName(GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"),
+                this.subscriptionName);
         this.name = implementationName + "OnPendingStatus";
         this.description = `Execute ${goal.name} when requested`;
     }
 
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
+        logger.info("Might execute " + params.goal.name + " on " + params.implementationName + " after receiving pending status " + status.context);
         const commit = status.commit;
-        const team = commit.repo.org.chatTeam.id;
 
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
@@ -85,7 +87,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
 
         logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
 
-      return params.execute(status, ctx, params)
+        return params.execute(status, ctx, params)
     }
 }
 

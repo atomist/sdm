@@ -50,10 +50,9 @@ export class ExecuteGoalOnSuccessStatus1<T extends TargetInfo>
     subscription: string;
     name: string;
     description: string;
+    secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
-    @Secret(Secrets.OrgToken)
     public githubToken: string;
-
 
     constructor(public implementationName: string,
                 public goal: Goal,
@@ -63,7 +62,9 @@ export class ExecuteGoalOnSuccessStatus1<T extends TargetInfo>
         this.subscriptionName = implementationName + "OnSuccessStatus";
         this.name = implementationName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
-        this.subscription = GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql");
+        this.subscription = GraphQL.replaceOperationName(
+            GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"),
+            this.subscriptionName);
     }
 
 
