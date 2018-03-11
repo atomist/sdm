@@ -137,7 +137,7 @@ export const ProductionEndpointGoal = new Goal({
 
 export const LocalDeploymentGoal = new Goal({
     environment: IndependentOfEnvironment,
-    orderedName: "1-deploy locally",
+    orderedName: "1-deploy-locally",
     completedDescription: "Deployed locally",
 });
 
