@@ -32,6 +32,7 @@ import { deploy } from "./deploy";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
 
+// TODO: rename to ExecuteGoalInvocation
 export interface ExecuteGoalOnSuccessStatus {
     implementationName: string;
     githubToken: string;

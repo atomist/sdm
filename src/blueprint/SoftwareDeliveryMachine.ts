@@ -18,7 +18,6 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
-import { FingerprintOnPendingStatus } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
     EndpointVerificationListener,
@@ -29,7 +28,6 @@ import {
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
@@ -61,6 +59,7 @@ import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
 import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
 import { ExecuteGoalOnSuccessStatus1 } from "../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
+import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -128,10 +127,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
     }
 
-    private get fingerprinter(): Maker<FingerprintOnPendingStatus> {
-        return this.fingerprinters.length > 0 ?
-            () => new FingerprintOnPendingStatus(FingerprintGoal, this.fingerprinters) :
-            undefined;
+    private get fingerprinter(): FunctionalUnit {
+        return {
+            eventHandlers: this.fingerprinters.length > 0 ?
+                [() => new ExecuteGoalOnPendingStatus("Fingerprinter", FingerprintGoal, executeFingerprints(...this.fingerprinters))] :
+                [],
+            commandHandlers: []
+        }
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -228,6 +230,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
             .concat(_.flatten(this.opts.deployers.map(fu => fu.eventHandlers)))
             .concat(this.builder.eventHandlers)
+            .concat(this.fingerprinter.eventHandlers)
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -235,7 +238,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(...this.closedIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
-                this.fingerprinter,
                 this.semanticDiffReactor,
                 this.autofixHandler,
                 this.reviewHandler,
@@ -257,6 +259,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(_.flatten(this.functionalUnits.map(fu => fu.commandHandlers)))
             .concat(_.flatten(this.opts.deployers.map(fu => fu.commandHandlers)))
             .concat(this.builder.commandHandlers)
+            .concat(this.fingerprinter.commandHandlers)
             .concat([this.showBuildLog])
             .concat(this.verifyEndpoint.commandHandlers)
             .filter(m => !!m);
