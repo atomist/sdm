@@ -51,18 +51,20 @@ const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<Ta
     );
 
 const LocalExecutableJarRetry: HandleCommand = retryDeployFromLocal("DeployFromLocalExecutableJar",
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-    artifactStore,
-    executableJarDeployer({
-        baseUrl: "http://localhost",
-        lowerPort: 8082,
-        commandLineArgumentsFor: springBootExecutableJarArgs,
-    }),
-    () => ({
-        name: "Local",
-        description: "Deployment alongside local automation client",
-    }));
+    {
+        deployGoal: StagingDeploymentGoal,
+        endpointGoal: StagingEndpointGoal,
+        artifactStore,
+        deployer: executableJarDeployer({
+            baseUrl: "http://localhost",
+            lowerPort: 8082,
+            commandLineArgumentsFor: springBootExecutableJarArgs,
+        }),
+        targeter: () => ({
+            name: "Local",
+            description: "Deployment alongside local automation client",
+        })
+    });
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     logger.info("Will undeploy application %j", inv.id);
