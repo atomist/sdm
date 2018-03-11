@@ -160,8 +160,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
-    private get builder(): Maker<HandleEvent<any>> {
-        return () => new BuildOnPendingBuildStatus(BuildGoal, this.conditionalBuilders);
+    private get builder(): FunctionalUnit {
+        return {
+            eventHandlers: [() => new BuildOnPendingBuildStatus(BuildGoal, this.conditionalBuilders)],
+            commandHandlers: []
+        };
     }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
@@ -219,6 +222,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(this.supportingEvents)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
             .concat(_.flatten(this.opts.deployers.map(fu => fu.eventHandlers)))
+            .concat(this.builder.eventHandlers)
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -234,7 +238,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.goalSetting,
                 this.oldPushSuperseder,
                 this.onSuperseded,
-                this.builder,
                 this.onBuildComplete,
                 this.notifyOnDeploy,
                 this.onVerifiedStatus,
@@ -248,6 +251,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(this.supportingCommands)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.commandHandlers)))
             .concat(_.flatten(this.opts.deployers.map(fu => fu.commandHandlers)))
+            .concat(this.builder.commandHandlers)
             .concat([this.showBuildLog])
             .concat(this.verifyEndpoint.commandHandlers)
             .filter(m => !!m);
