@@ -115,7 +115,7 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         const creds = { token: params.githubToken};
 
         if (! await params.deployGoal.preconditionsMet(creds, id, statusAndFriends)) {
-            logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
+            logger.info("Preconditions not met for goal %s on %j", params.deployGoal.name, id);
             return Success;
         }
 

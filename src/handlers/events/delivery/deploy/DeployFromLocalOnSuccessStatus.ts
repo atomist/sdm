@@ -89,7 +89,7 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
         };
 
         if (! await params.deployGoal.preconditionsMet({token: params.githubToken}, id, statusAndFriends)) {
-            logger.info("Preconditions not met for goal %s on %j", params.deployGoal, id);
+            logger.info("Preconditions not met for goal %s on %j", params.deployGoal.name, id);
             return Success;
         }
 
