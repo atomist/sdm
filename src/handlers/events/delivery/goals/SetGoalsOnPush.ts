@@ -40,7 +40,7 @@ import { GoalSetter, GoalSetterInvocation } from "../../../../common/listener/Go
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { NoGoals } from "../goals/httpServiceGoals";
+import { NoGoals } from "./httpServiceGoals";
 
 /**
  * Set up goals on a push (e.g. for delivery).
@@ -127,7 +127,7 @@ export class ApplyGoalsParameters {
     public sha?: string;
 }
 
-export function applyGoalsToCommit(phases: Goals) {
+export function applyGoalsToCommit(goals: Goals) {
     return async (ctx: HandlerContext,
                   params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
         const sha = params.sha ? params.sha :
@@ -135,7 +135,7 @@ export function applyGoalsToCommit(phases: Goals) {
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
         const creds = {token: params.githubToken};
 
-        await phases.setAllToPending(id, creds);
+        await goals.setAllToPending(id, creds);
         await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
         return Success;
     };

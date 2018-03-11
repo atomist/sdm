@@ -43,7 +43,7 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ContextToPlannedPhase, ScanContext } from "../../goals/httpServiceGoals";
+import { ContextToPlannedGoal, ScanContext } from "../../goals/httpServiceGoals";
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
@@ -154,13 +154,13 @@ export const ScanBase = "https://scan.atomist.com";
 // TODO this should take a URL with detailed information
 function markScanned(id: GitHubRepoRef, context: string, state: StatusState,
                      creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const phase = ContextToPlannedPhase[context];
+    const goal = ContextToPlannedGoal[context];
     const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
         context: ScanContext,
-        description: phase.completedDescription,
+        description: goal.completedDescription,
     });
 }
 

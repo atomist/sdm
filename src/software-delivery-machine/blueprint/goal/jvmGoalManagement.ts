@@ -1,7 +1,7 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { HttpServiceGoals } from "../../../handlers/events/delivery/goals/httpServiceGoals";
-import { ApplyGoalsParameters, applyGoalsToCommit } from "../../../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { ApplyGoalsParameters, applyGoalsToCommit } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
 
 export const applyHttpServiceGoals: HandleCommand<ApplyGoalsParameters> =
     commandHandlerFrom(applyGoalsToCommit(HttpServiceGoals),

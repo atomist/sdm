@@ -1,7 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
-import { whenPushSatisfies } from "../common/listener/support/GuardedPhaseCreator";
+import { whenPushSatisfies } from "../common/listener/support/GuardedGoalSetter";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";

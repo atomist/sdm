@@ -284,20 +284,21 @@ The `GoalSetter` interface is thus a critical determinant of what happens next:
 export interface GoalSetter {
 
     /**
-     * Test the push as to whether we should even look inside it.
-     * If we return false here, our createPhases method will never be
+     * Test the push as to whether we should even think about creating goals for it.
+     * If we return false here, our chooseGoals method will never be
      * called for this push
      */
-    guard?: PushTest;
+    readonly guard?: PushTest;
 
     /**
-     * Determine the phases that apply to this GoalSetterInvocation
+     * Determine the goals that apply to this GoalSetterInvocation,
      * or return undefined if this GoalSetter doesn't know what to do with it.
      * The latter is not an error.
      * @param {GoalSetterInvocation} pci
      * @return {Promise<Goals>}
      */
-    createPhases(pci: GoalSetterInvocation): Promise<Goals | undefined>;
+    chooseGoals(pci: GoalSetterInvocation): Promise<Goals | undefined>;
+
 }
 ```
 The available interface is:

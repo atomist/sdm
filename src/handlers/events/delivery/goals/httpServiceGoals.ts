@@ -1,7 +1,7 @@
 import {
     GitHubStatusContext,
     IndependentOfEnvironment,
-    PhaseEnvironment,
+    GoalEnvironment,
     ProductionEnvironment,
     splitContext,
     StagingEnvironment,
@@ -85,7 +85,7 @@ export const NoGoal = new Goal({
 
 });
 
-const AllKnownPhases = [
+const AllKnownGoals = [
     ScanGoal,
     BuildGoal,
     ArtifactGoal,
@@ -109,8 +109,8 @@ export const BuildContext = BuildGoal.context;
 
 export const ProductionMauve = "#cf5097";
 
-export const ContextToPlannedPhase: { [key: string]: Goal } = {};
-AllKnownPhases.forEach(p => ContextToPlannedPhase[p.context] = p);
+export const ContextToPlannedGoal: { [key: string]: Goal } = {};
+AllKnownGoals.forEach(p => ContextToPlannedGoal[p.context] = p);
 
 export function contextToGoal(ghsc: GitHubStatusContext): Goal {
     return contextToKnownGoal(ghsc) ||
@@ -118,14 +118,14 @@ export function contextToGoal(ghsc: GitHubStatusContext): Goal {
 }
 
 export function contextToKnownGoal(ghsc: GitHubStatusContext): Goal {
-    return ContextToPlannedPhase[ghsc];
+    return ContextToPlannedGoal[ghsc];
 }
 
 function defaultGoal(ghsc: GitHubStatusContext): Goal {
     const interpreted = splitContext(ghsc);
     return new Goal({
-        environment: interpreted.envPart + "/" as PhaseEnvironment,
-        orderedName: interpreted.phasePart,
+        environment: interpreted.envPart + "/" as GoalEnvironment,
+        orderedName: interpreted.goalPart,
     });
 }
 

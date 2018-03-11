@@ -19,7 +19,7 @@ import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import {
-    ContextToPlannedPhase,
+    ContextToPlannedGoal,
     HttpServiceGoals,
     StagingDeploymentContext, StagingDeploymentGoal,
     StagingEndpointContext, StagingEndpointGoal,

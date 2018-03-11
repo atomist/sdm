@@ -11,10 +11,10 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as stringify from "json-stringify-safe";
 import { contextToKnownGoal } from "../../handlers/events/delivery/goals/httpServiceGoals";
 import { ApprovalGateParam } from "../../handlers/events/delivery/verify/approvalGate";
-import { BaseContext, GitHubStatusContext, PhaseEnvironment } from "./gitHubContext";
+import { BaseContext, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
-    environment: PhaseEnvironment;
+    environment: GoalEnvironment;
     orderedName: string;
     displayName?: string;
     completedDescription?: string;
@@ -39,13 +39,13 @@ export class Goal {
         this.definition = definition;
 
         const numberAndName = /([0-9\.]+)-(.*)/;
-        const matchPhase = definition.orderedName.match(numberAndName);
-        if (!matchPhase) {
+        const matchGoal = definition.orderedName.match(numberAndName);
+        if (!matchGoal) {
             logger.debug(`Ordered name must be '#-name'. Did not find number and name in ${definition.orderedName}`);
             return;
         }
 
-        this.name = definition.displayName || matchPhase[2];
+        this.name = definition.displayName || matchGoal[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
     }
 
@@ -73,17 +73,17 @@ export class GoalWithPrecondition extends Goal {
 }
 
 /**
- * Represents the phases of a delivery
+ * Represents the goals of a delivery
  */
 export class Goals {
 
-    constructor(public phases: Goal[]) {
+    constructor(public goals: Goal[]) {
     }
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        return Promise.all(this.phases.map(phase =>
-            setPendingStatus(id, phase.context, creds,
-                `Planning to ${phase.name}`)));
+        return Promise.all(this.goals.map(goal =>
+            setPendingStatus(id, goal.context, creds,
+                `Planning to ${goal.name}`)));
     }
 
 }
@@ -109,11 +109,11 @@ export interface GitHubStatusAndFriends extends GitHubStatus {
     siblings: GitHubStatus[];
 }
 
-export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const myStatus = status.siblings.find(s => s.context === currentPhase);
+export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
+    const myStatus = status.siblings.find(s => s.context === currentGoal);
     if (!myStatus) {
         // unexpected
-        throw new Error("what? I can't find myself. My status.context is " + currentPhase);
+        throw new Error("what? I can't find myself. My status.context is " + currentGoal);
     }
     if (myStatus.state === "pending" && myStatus.description.startsWith("Planning")) {
         return true;
@@ -121,7 +121,7 @@ export function currentPhaseIsStillPending(currentPhase: GitHubStatusContext, st
     if (myStatus.state === "failure" && myStatus.description.startsWith("Skip")) {
         return true;
     }
-    logger.debug(`${currentPhase} is not still planned or skipped, so I'm not running it.
+    logger.debug(`${currentGoal} is not still planned or skipped, so I'm not running it.
     State: ${myStatus.state} Description: ${myStatus.description}`);
     return false;
 }
@@ -130,10 +130,10 @@ export function nothingFailed(status: GitHubStatusAndFriends): boolean {
     return !status.siblings.some(sib => ["failure", "error"].includes(sib.state));
 }
 
-export function previousGoalSucceeded(expectedPhases: Goals,
+export function previousGoalSucceeded(expectedGoals: Goals,
                                       currentContext: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const currentPhase = contextToKnownGoal(currentContext);
-    if (!currentPhase) {
+    const currentGoal = contextToKnownGoal(currentContext);
+    if (!currentGoal) {
         logger.warn("Unknown context! Returning false from previousGoalSucceeded: " + currentContext);
         return false;
     }
@@ -146,22 +146,22 @@ export function previousGoalSucceeded(expectedPhases: Goals,
         return false;
     }
 
-    const whereAmI = expectedPhases.phases.indexOf(currentPhase);
+    const whereAmI = expectedGoals.goals.indexOf(currentGoal);
     if (whereAmI < 0) {
-        logger.warn(`Inconsistency! Phase ${currentPhase} is known but is not part of Phases ${stringify(expectedPhases)}`);
+        logger.warn(`Inconsistency! Goal ${currentGoal} is known but is not part of Goals ${stringify(expectedGoals)}`);
         return false;
     }
     if (whereAmI === 0) {
-        logger.info(`${currentPhase} is the first step.`);
+        logger.info(`${currentGoal} is the first step.`);
         return true;
     }
     // TODO: check the order of the statuses the commit has, instead of knowing which ones were planned
-    const previousPhase = expectedPhases.phases[whereAmI - 1];
-    if (previousPhase.context === status.context) {
+    const prevGoal = expectedGoals.goals[whereAmI - 1];
+    if (prevGoal.context === status.context) {
         return true;
     } else {
         logger.info("%j is right before %j; ignoring success of %s",
-            previousPhase, currentPhase, status.context);
+            prevGoal, currentGoal, status.context);
         return false;
     }
 }

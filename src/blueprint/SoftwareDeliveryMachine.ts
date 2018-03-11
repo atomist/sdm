@@ -8,18 +8,18 @@ import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamPhasesOnPhaseFailure } from "../handlers/events/delivery/FailDownstreamPhasesOnPhaseFailure";
+import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
     ArtifactGoal,
     BuildGoal,
-    ContextToPlannedPhase,
+    ContextToPlannedGoal,
     ScanGoal,
     StagingEndpointGoal,
-    StagingVerifiedContext,
+    StagingVerifiedContext, StagingVerifiedGoal,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
-import { OnSupersededStatus } from "../handlers/events/delivery/phase/OnSuperseded";
-import { SetSupersededStatus } from "../handlers/events/delivery/phase/SetSupersededStatus";
-import { SetGoalsOnPush } from "../handlers/events/delivery/phase/SetupPhasesOnPush";
+import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
+import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
+import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { FingerprintOnPush } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPush";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
@@ -60,7 +60,7 @@ import { NewRepoHandling } from "./NewRepoHandling";
 /**
  * A reference blueprint for Atomist delivery.
  * Represents a possible delivery process spanning
- * phases of fingerprinting, reacting to fingerprint diffs,
+ * goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment.
  * Uses the builder pattern.
@@ -91,7 +91,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
 
-    private readonly phaseCreators: GoalSetter[] = [];
+    private readonly goalSetters: GoalSetter[] = [];
 
     private projectReviewers: ProjectReviewer[] = [];
 
@@ -144,11 +144,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get phaseSetup(): Maker<SetGoalsOnPush> {
-        if (this.phaseCreators.length === 0) {
-            throw new Error("No phase creators");
+    private get goalSetting(): Maker<SetGoalsOnPush> {
+        if (this.goalSetters.length === 0) {
+            throw new Error("No goal setters");
         }
-        return () => new SetGoalsOnPush(...this.phaseCreators);
+        return () => new SetGoalsOnPush(...this.goalSetters);
     }
 
     public oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
@@ -159,8 +159,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get phaseCleanup(): Array<Maker<FailDownstreamPhasesOnPhaseFailure>> {
-        return [() => new FailDownstreamPhasesOnPhaseFailure()];
+    private get goalCleanup(): Array<Maker<FailDownstreamGoalsOnGoalFailure>> {
+        return [() => new FailDownstreamGoalsOnGoalFailure()];
     }
 
     private artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
@@ -179,7 +179,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         }
         const stagingVerification: SdmVerification = {
             verifiers: this.endpointVerificationListeners,
-            verifyPhase: ContextToPlannedPhase[StagingVerifiedContext],
+            verifyGoal: StagingVerifiedGoal,
             requestApproval: true,
         };
         return {
@@ -204,7 +204,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
-        return (this.phaseCleanup as Array<Maker<HandleEvent<any>>>)
+        return (this.goalCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
             .concat(this.opts.deployers)
@@ -218,7 +218,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.fingerprinter,
                 this.semanticDiffReactor,
                 this.reviewRunner,
-                this.phaseSetup,
+                this.goalSetting,
                 this.oldPushSuperseder,
                 this.onSuperseded,
                 this.opts.builder,
@@ -361,8 +361,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
                     artifactStore: ArtifactStore,
                 },
-                ...phaseCreators: GoalSetter[]) {
-        this.phaseCreators = phaseCreators;
+                ...goalSetters: GoalSetter[]) {
+        this.goalSetters = goalSetters;
     }
 
 }

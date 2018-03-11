@@ -38,11 +38,11 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
 
     /**
      *
-     * @param {Goal} deployPhase
-     * @param {Goal} endpointPhase
+     * @param {Goal} deployGoal
+     * @param {Goal} endpointGoal
      */
-    constructor(private deployPhase: Goal,
-                private endpointPhase: Goal) {
+    constructor(private deployGoal: Goal,
+                private endpointGoal: Goal) {
     }
 
     public async handle(event: EventFired<OnAParticularStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
@@ -63,17 +63,17 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         await createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: params.deployPhase.context,
+            context: params.deployGoal.context,
             state: status.state,
             // todo: don't say "complete" if it failed
-            description: params.deployPhase.completedDescription,
+            description: params.deployGoal.completedDescription,
             target_url: undefined,
         });
         if (status.state === "success" && status.targetUrl) {
             await createStatus(params.githubToken, id as GitHubRepoRef, {
-                context: params.endpointPhase.context,
+                context: params.endpointGoal.context,
                 state: "success",
-                description: params.endpointPhase.completedDescription,
+                description: params.endpointGoal.completedDescription,
                 // we expect k8-automation to have set the targetUrl on its deploy status to the endpoint URL
                 target_url: status.targetUrl,
             });

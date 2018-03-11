@@ -18,7 +18,7 @@ import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomi
 import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { currentPhaseIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { Builder } from "../../../../spi/build/Builder";
@@ -66,7 +66,7 @@ export class BuildOnScanSuccessStatus implements StatusSuccessHandler {
         logger.debug(`BuildOnScanSuccessStatus: our context=[%s], %d conditional builders, statusAndFriends=[%j]`,
             params.goal.context, params.conditionalBuilders.length, statusAndFriends);
 
-        if (!currentPhaseIsStillPending(params.goal.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
 

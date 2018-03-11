@@ -15,8 +15,8 @@ const K8AutomationBuildContext = "build/atomist/k8s";
  * When that is complete, it will send an ImageLinked event, and that means our artifact has been created.
  *
  * The message to k8-automation takes the form of a pending GitHub status.
- * Its response takes the form of a Build event which we will notice and update the Build phase,
- * and an ImageLink event which we will notice and update the Artifact phase with a link to that image.
+ * Its response takes the form of a Build event which we will notice and update the Build goal,
+ * and an ImageLink event which we will notice and update the Artifact goal with a link to that image.
  */
 export class K8sAutomationBuilder implements Builder, LogInterpretation {
     // tslint:disable-next-line:max-line-length

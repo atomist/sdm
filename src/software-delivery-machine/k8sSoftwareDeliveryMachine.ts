@@ -1,5 +1,5 @@
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { whenPushSatisfies } from "../common/listener/support/GuardedPhaseCreator";
+import { whenPushSatisfies } from "../common/listener/support/GuardedGoalSetter";
 import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
