@@ -18,8 +18,9 @@ export function parseCloudFoundryLogForEndpoint(cfLog: string): string | undefin
     return undefined;
 }
 
+// The cf cli changed from returning urls to routes in a recent version
 const mg = Microgrammar.fromString<{endpoint: string}>(
-    "urls:${endpoint}",
+    "routes:${endpoint}",
     {
         endpoint: /[http:\/\/]?[a-zA-Z0-9\-.]+/,
     },
