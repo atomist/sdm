@@ -32,6 +32,17 @@ export const CodeReactionGoal = new Goal({
     completedDescription: "Code reactions",
 });
 
+/**
+ * Just build, without any checks
+ * @type {Goal}
+ */
+export const JustBuildGoal = new Goal({
+    environment: IndependentOfEnvironment,
+    orderedName: "2-build",
+    workingDescription: "Building...",
+    completedDescription: "Build successful",
+});
+
 export const BuildGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2-build",

@@ -13,7 +13,7 @@ import {
     AutofixGoal,
     BuildGoal,
     CodeReactionGoal,
-    FingerprintGoal,
+    FingerprintGoal, JustBuildGoal,
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
@@ -169,7 +169,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
                 () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
             ],
             commandHandlers: [],
         };

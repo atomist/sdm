@@ -1,7 +1,7 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
