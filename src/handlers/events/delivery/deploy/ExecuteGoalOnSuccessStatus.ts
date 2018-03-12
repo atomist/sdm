@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
+import { GraphQL, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
-import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
-import { RetryDeployParameters } from "../../../commands/RetryDeploy";
-import { deploy } from "./deploy";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
@@ -89,12 +80,6 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
 
         if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
-        }
-
-        // TODO why is this tied to image? Isn't it generic
-        if (!image) {
-            logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
-            return failure(new Error("No image linked"));
         }
         return this.execute(status, ctx, params);
     }
