@@ -14,23 +14,40 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../../common/goals/Goal";
 import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { k8AutomationDeployContext, K8TargetBase } from "./RequestK8sDeployOnSuccessStatus";
+import {
+    k8AutomationDeployContext,
+    K8TargetBase,
+} from "./RequestK8sDeployOnSuccessStatus";
 
 // TODO parameterize once we can have multiple handlers
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Request k8s deploy of linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAParticularStatus.graphql", undefined,
-        {context: k8AutomationDeployContext(K8sTestingDomain)}))
+@EventHandler("Request k8s deploy of linked artifact", GraphQL.subscriptionFromFile(
+    "../../../../../graphql/subscription/OnAParticularStatus",
+    __dirname,
+    {
+        context: k8AutomationDeployContext(K8sTestingDomain),
+    }),
+)
 export class NoticeK8sTestDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

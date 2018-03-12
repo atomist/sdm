@@ -14,18 +14,33 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../common/goals/Goal";
-import { ArtifactInvocation, ArtifactListener } from "../../../../common/listener/ArtifactListener";
+import {
+    ArtifactInvocation,
+    ArtifactListener,
+} from "../../../../common/listener/ArtifactListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
-@EventHandler("Scan when artifact is found",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
+@EventHandler("Scan when artifact is found", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnImageLinked",
+    __dirname),
+)
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
     @Secret(Secrets.OrgToken)

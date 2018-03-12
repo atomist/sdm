@@ -14,21 +14,38 @@
  * limitations under the License.
  */
 
-import { Failure, GraphQL, HandleEvent, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    failure,
+    Failure,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal, Goals } from "../../../../common/goals/Goal";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { OnPendingLocalDeployStatus } from "../../../../typings/types";
-import { setDeployStatus, setEndpointStatus } from "./deploy";
+import {
+    setDeployStatus,
+    setEndpointStatus,
+} from "./deploy";
 
 /**
  * Deploy from local on pending status
  */
-@EventHandler("Deploy from local on pending status",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnPendingLocalDeployStatus.graphql"))
+@EventHandler("Deploy from local on pending status", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnPendingLocalDeployStatus",
+    __dirname),
+)
 export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<OnPendingLocalDeployStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -48,7 +65,8 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
     }
 
     public async handle(event: EventFired<OnPendingLocalDeployStatus.Subscription>,
-                        ctx: HandlerContext, params: this): Promise<HandlerResult> {
+                        ctx: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 

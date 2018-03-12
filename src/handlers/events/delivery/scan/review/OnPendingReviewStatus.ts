@@ -16,41 +16,57 @@
 
 import * as _ from "lodash";
 
-import { GraphQL, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
     failure,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
-} from "@atomist/automation-client/Handlers";
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
+import {
+    ProjectReview,
+    ReviewComment,
+} from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import * as slack from "@atomist/slack-messages";
-import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
-import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
-import { createStatus } from "../../../../../util/github/ghub";
-
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
-import { formatReviewerError, ReviewerError } from "../../../../../blueprint/ReviewerError";
+import * as slack from "@atomist/slack-messages";
+import {
+    Attachment,
+    SlackMessage,
+} from "@atomist/slack-messages";
+import {
+    formatReviewerError,
+    ReviewerError,
+} from "../../../../../blueprint/ReviewerError";
 import { Goal } from "../../../../../common/goals/Goal";
+import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
+import {
+    OnAnyPendingStatus,
+    StatusState } from "../../../../../typings/types";
+import { createStatus } from "../../../../../util/github/ghub";
 import { forApproval } from "../../verify/approvalGate";
 
 /**
  * Scan code on a push, invoking ProjectReviewers and arbitrary CodeReactions.
  * Result is setting GitHub status with context = "scan"
  */
-@EventHandler("Scan code",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
+@EventHandler("Scan code", GraphQL.subscriptionFromFile(
+    "../../../../../graphql/subscription/OnAnyPendingStatus",
+    __dirname),
+)
 export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

@@ -2,12 +2,24 @@ import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { exec, ExecOptions } from "child_process";
+import {
+    exec,
+    ExecOptions,
+} from "child_process";
 import { ArtifactStore } from "../../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
+import {
+    LogInterpretation,
+    LogInterpreter,
+} from "../../../../../../spi/log/InterpretedLog";
+import {
+    LogFactory,
+    ProgressLog,
+} from "../../../../../../spi/log/ProgressLog";
+import {
+    LocalBuilder,
+    LocalBuildInProgress,
+} from "../LocalBuilder";
 
 /**
  * Build with npm in the local automation client.

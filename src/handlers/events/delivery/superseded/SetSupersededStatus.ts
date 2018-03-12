@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
-} from "@atomist/automation-client/Handlers";
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnPushWithBefore } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
@@ -32,14 +35,18 @@ export const SupersededContext = "superseded";
 /**
  * Set superseded status on previous commit on a push
  */
-@EventHandler("Scan code on master",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnPushWithBefore.graphql"))
+@EventHandler("Scan code on master", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnPushWithBefore",
+    __dirname),
+)
 export class SetSupersededStatus implements HandleEvent<OnPushWithBefore.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    public async handle(event: EventFired<OnPushWithBefore.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnPushWithBefore.Subscription>,
+                        ctx: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const push = event.data.Push[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, push.before.sha);
         createStatus(params.githubToken, id, {

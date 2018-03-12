@@ -1,11 +1,20 @@
-import {success} from "@atomist/automation-client";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {AddressChannels} from "../../../../../common/slack/addressChannels";
-import {Builder, PushThatTriggersBuild} from "../../../../../spi/build/Builder";
-import {InterpretedLog, LogInterpretation} from "../../../../../spi/log/InterpretedLog";
-import {createStatus} from "../../../../../util/github/ghub";
+import { success } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AddressChannels } from "../../../../../common/slack/addressChannels";
+import {
+    Builder,
+    PushThatTriggersBuild,
+} from "../../../../../spi/build/Builder";
+import {
+    InterpretedLog,
+    LogInterpretation,
+} from "../../../../../spi/log/InterpretedLog";
+import { createStatus } from "../../../../../util/github/ghub";
 import { interpretMavenLog } from "../local/maven/mavenLogInterpreter";
 
 const K8AutomationBuildContext = "build/atomist/k8s";

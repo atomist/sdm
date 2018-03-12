@@ -1,7 +1,6 @@
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-
-import { logger } from "@atomist/automation-client";
 import axios from "axios";
 
 export function sendFingerprint(id: GitHubRepoRef, fingerprint: Fingerprint, team: string): Promise<any> {

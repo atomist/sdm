@@ -15,19 +15,17 @@
  */
 
 import {
-    GraphQL,
-    logger,
-    Secret,
-    Secrets,
-} from "@atomist/automation-client";
-import {
     EventFired,
     EventHandler,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
+    logger,
+    Secret,
+    Secrets,
     Success,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     UpdatedIssueInvocation,
@@ -39,8 +37,10 @@ import * as schema from "../../../typings/types";
 /**
  * An issue has been updated
  */
-@EventHandler("On issue update",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
+@EventHandler("On issue update", GraphQL.subscriptionFromFile(
+    "../../../graphql/subscription/OnNewIssue",
+    __dirname),
+)
 export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
     @Secret(Secrets.OrgToken)

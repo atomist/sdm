@@ -1,15 +1,29 @@
 // how to figure out what is running in Prod
 
-import {HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
-import {Parameters} from "@atomist/automation-client/decorators";
-import {commandHandlerFrom, OnCommand} from "@atomist/automation-client/onCommand";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {
+    HandleCommand,
+    HandlerContext,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
+import {
+    commandHandlerFrom,
+    OnCommand,
+} from "@atomist/automation-client/onCommand";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import * as _ from "lodash";
 import * as graphqlTypes from "../../typings/types";
-import {tipOfDefaultBranch} from "../../util/github/ghub";
-import {linkToDiff, renderDiff} from "../../util/slack/diffRendering";
+import { tipOfDefaultBranch } from "../../util/github/ghub";
+import {
+    linkToDiff,
+    renderDiff,
+} from "../../util/slack/diffRendering";
 
 @Parameters()
 export class ReportRunningParameters {
@@ -102,7 +116,7 @@ function linkToSha(id: RemoteRepoRef, sha: string) {
 
 async function gatherEverythingRunning(ctx: HandlerContext, domain: string): Promise<graphqlTypes.WhatIsRunning.Commits[]> {
     const result = await ctx.graphClient.executeQueryFromFile<graphqlTypes.WhatIsRunning.Query, { domain: string }>(
-        "graphql/query/WhatIsRunning", {domain});
+        "../../graphql/query/WhatIsRunning", { domain }, {}, __dirname);
     const runningCommits = _.flatMap(result.Application, app => app.commits);
     return runningCommits;
 }

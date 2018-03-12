@@ -1,9 +1,10 @@
-
-import { CheckstyleReport, FileReport } from "./CheckstyleReport";
-
-import {logger} from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import { promisify } from "util";
 import * as xml2js from "xml2js";
+import {
+    CheckstyleReport,
+    FileReport,
+} from "./CheckstyleReport";
 
 export async function extract(report: string): Promise<CheckstyleReport> {
     if (report === undefined || report === null) {

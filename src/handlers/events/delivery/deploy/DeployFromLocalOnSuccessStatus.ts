@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    failure,
+    GraphQL,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
+import {
+    currentGoalIsStillPending,
+    GitHubStatusAndFriends,
+    Goal,
+} from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
@@ -32,8 +46,10 @@ import { deploy } from "./deploy";
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
+@EventHandler("Deploy linked artifact", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnAnySuccessStatus",
+    __dirname),
+)
 export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements StatusSuccessHandler {
 
     @Secret(Secrets.OrgToken)
@@ -47,7 +63,9 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
                 private targeter: (id: RemoteRepoRef) => T) {
     }
 
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
+                        ctx: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;

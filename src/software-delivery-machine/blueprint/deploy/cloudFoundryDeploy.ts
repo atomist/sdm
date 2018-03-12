@@ -16,17 +16,18 @@
 
 import { FunctionalUnit } from "../../../";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
-import { executeDeploy, retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import {
-    ExecuteGoalOnSuccessStatus,
-} from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
+    executeDeploy,
+    retryDeployFromLocal
+} from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { ExecuteGoalOnSuccessStatus, } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
-    StagingDeploymentGoal, StagingEndpointGoal,
-
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { artifactStore } from "../artifactStore";
 

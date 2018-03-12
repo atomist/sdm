@@ -1,4 +1,7 @@
-import { HandlerContext, logger } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";

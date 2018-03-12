@@ -9,7 +9,10 @@ import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
-import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import {
+    DefaultLocalDeployerOptions,
+    LocalDeployerOptions,
+} from "../LocalDeployerOptions";
 
 /**
  * Managed deployments

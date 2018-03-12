@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    failure,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
@@ -25,14 +36,18 @@ import { DryRunContext } from "../../commands/editors/dry-run/dryRunEditor";
 /**
  * React to to result of a dry run build
  */
-@EventHandler("React to result of a dry run build",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnBuildCompleteForDryRun.graphql"))
+@EventHandler("React to result of a dry run build", GraphQL.subscriptionFromFile(
+    "../../../graphql/subscription/OnBuildCompleteForDryRun",
+    __dirname),
+)
 export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryRun.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    public async handle(event: EventFired<OnBuildCompleteForDryRun.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnBuildCompleteForDryRun.Subscription>,
+                        ctx: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const build = event.data.Build[0];
         const commit = build.commit;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

@@ -3,7 +3,10 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { DeployableArtifact } from "../artifact/ArtifactStore";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
-import { Deployment, TargetInfo } from "./Deployment";
+import {
+    Deployment,
+    TargetInfo,
+} from "./Deployment";
 
 export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
 
