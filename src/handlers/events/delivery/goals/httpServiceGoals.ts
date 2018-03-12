@@ -6,7 +6,11 @@ import {
     splitContext,
     StagingEnvironment,
 } from "../../../../common/goals/gitHubContext";
-import { Goal, Goals, GoalWithPrecondition } from "../../../../common/goals/Goal";
+import {
+    Goal,
+    Goals,
+    GoalWithPrecondition,
+} from "../../../../common/goals/Goal";
 
 export const FingerprintGoal = new Goal({
     environment: IndependentOfEnvironment,
@@ -78,12 +82,12 @@ export const StagingVerifiedGoal = new Goal({
 });
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
-        environment: ProductionEnvironment,
-        orderedName: "3-prod-deploy",
-        displayName: "deploy to Prod",
-        completedDescription: "Deployed to Prod",
-    },
-    ArtifactGoal, StagingVerifiedGoal);
+    environment: ProductionEnvironment,
+    orderedName: "3-prod-deploy",
+    displayName: "deploy to Prod",
+    completedDescription: "Deployed to Prod",
+},
+ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionEndpointGoal = new Goal({
     environment: ProductionEnvironment,

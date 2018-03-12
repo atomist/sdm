@@ -24,7 +24,6 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
-import { failureOn } from "@atomist/automation-client/action/ActionResult";
 import { Parameters } from "@atomist/automation-client/decorators";
 import {
     EventFired,
@@ -36,10 +35,16 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goals } from "../../../../common/goals/Goal";
-import { GoalSetter, PushTestInvocation } from "../../../../common/listener/GoalSetter";
+import {
+    GoalSetter,
+    PushTestInvocation,
+} from "../../../../common/listener/GoalSetter";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
-import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import {
+    createStatus,
+    tipOfDefaultBranch,
+} from "../../../../util/github/ghub";
 import { NoGoals } from "./httpServiceGoals";
 
 /**
@@ -62,7 +67,9 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         this.goalSetters = goalSetters;
     }
 
-    public async handle(event: EventFired<OnPushToAnyBranch.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnPushToAnyBranch.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
         const commit = push.commits[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
