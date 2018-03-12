@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import * as _ from "lodash";
-
-import { GraphQL, Secret, Secrets } from "@atomist/automation-client";
+import {
+    GraphQL,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -25,11 +27,12 @@ import {
     HandlerResult,
     Success,
 } from "@atomist/automation-client/Handlers";
-
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import * as _ from "lodash";
 import {
     FingerprintDifference,
-    FingerprintDifferenceInvocation, FingerprintDifferenceListener,
+    FingerprintDifferenceInvocation,
+    FingerprintDifferenceListener,
     FingerprintValue,
 } from "../../../../../common/listener/FingerprintDifferenceListener";
 import { addressChannelsFor } from "../../../../../common/slack/addressChannels";
@@ -43,13 +46,15 @@ import * as schema from "../../../../../typings/types";
 export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
-    @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
+    @Secret(Secrets.OrgToken)
     private githubToken: string;
 
     constructor(private differenceListeners: FingerprintDifferenceListener[]) {
     }
 
-    public async handle(event: EventFired<schema.OnPushImpact.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnPushImpact.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const pushImpact = event.data.PushImpact[0];
 
         const after = pushImpact.push.after;
@@ -67,16 +72,17 @@ export class ReactToSemanticDiffsOnPushImpact
             .concat(newValues.map(f => f.name)));
 
         const diffs: FingerprintDifference[] =
-            allNames.map(name => ({
-                oldValue: oldValues.find(f => f.name === name),
-                newValue: newValues.find(f => f.name === name),
-            }))
+            allNames
+                .map(name => ({
+                    oldValue: oldValues.find(f => f.name === name),
+                    newValue: newValues.find(f => f.name === name),
+                }))
                 .filter(fv => _.get(fv, "oldValue.sha") !== _.get(fv, "newValue.sha"));
 
         const inv: FingerprintDifferenceInvocation = {
             id,
             context,
-            credentials: {token: params.githubToken},
+            credentials: { token: params.githubToken },
             addressChannels: addressChannelsFor(after.repo, context),
             diffs,
         };

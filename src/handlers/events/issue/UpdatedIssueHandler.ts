@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { GraphQL, logger, Secret, Secrets } from "@atomist/automation-client";
+import {
+    GraphQL,
+    logger,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
@@ -24,7 +29,10 @@ import {
     Success,
 } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { UpdatedIssueInvocation, UpdatedIssueListener } from "../../../common/listener/UpdatedIssueListener";
+import {
+    UpdatedIssueInvocation,
+    UpdatedIssueListener,
+} from "../../../common/listener/UpdatedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
@@ -35,7 +43,7 @@ import * as schema from "../../../typings/types";
     GraphQL.subscriptionFromFile("graphql/subscription/OnNewIssue.graphql"))
 export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
-    @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
+    @Secret(Secrets.OrgToken)
     private githubToken: string;
 
     private updatedIssueListeners: UpdatedIssueListener[];
@@ -44,7 +52,9 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
         this.updatedIssueListeners = updatedIssueListeners;
     }
 
-    public async handle(event: EventFired<schema.OnIssueAction.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnIssueAction.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);

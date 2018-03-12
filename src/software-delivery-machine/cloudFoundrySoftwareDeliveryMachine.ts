@@ -1,11 +1,20 @@
-import { logger } from "@atomist/automation-client";
-import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
+import {
+    onAnyPush,
+    whenPushSatisfies,
+} from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
-import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
+import {
+    IsMaven,
+    IsSpringBoot,
+} from "../common/listener/support/jvmGuards";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
-import { PushFromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushTests";
+import {
+    PushFromAtomist,
+    ToDefaultBranch,
+    ToPublicRepo,
+} from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
 import { MavenBuilder } from "../handlers/events/delivery/build/local/maven/MavenBuilder";
