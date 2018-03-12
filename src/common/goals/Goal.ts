@@ -1,5 +1,8 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
@@ -16,6 +19,9 @@ export interface GoalDefinition {
     workingDescription?: string;
 }
 
+/**
+ * Represents a delivery action, such as Build or Deploy.
+ */
 export class Goal {
 
     public readonly context: GitHubStatusContext;
@@ -44,7 +50,7 @@ export class Goal {
         this.context = BaseContext + definition.environment + definition.orderedName;
     }
 
-    // TODO will decouple from github with statuses
+    // TODO decouple from github statuses
     public async preconditionsMet(creds: ProjectOperationCredentials,
                                   id: RemoteRepoRef,
                                   sub: GitHubStatusAndFriends): Promise<boolean> {
@@ -66,28 +72,34 @@ export class GoalWithPrecondition extends Goal {
                                   sub: GitHubStatusAndFriends): Promise<boolean> {
 
         const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
-        const errors = checks.filter(r => r.error !== undefined).map(r => r.error);
-        const reasonsToWait = checks.filter(r => r.wait !== undefined).map(r => r.wait);
+        const errors: string[] = checks.filter(r => r.error !== undefined)
+            .map(r => r.error);
+        const reasonsToWait: string[] = checks.filter(r => r.wait !== undefined).map(r => r.wait);
 
         errors.forEach(e => logger.debug("Could not establish preconditions for " + this.name + ": " + e));
         reasonsToWait.forEach(e => logger.debug("Not triggering " + this.name + ": " + e));
-
-        return (errors.length === 0 && reasonsToWait.length === 0);
+        const met = errors.length === 0 && reasonsToWait.length === 0;
+        if (!met) {
+            logger.info("Preconditions not met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
+                this.name, this.dependsOn.map(g => g.name),
+                id, errors.join(","), reasonsToWait.join(","));
+        }
+        return met;
     }
 }
 
 function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {
-        const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
-        if (!detectedStatus) {
-            return {error: "Did not find a status for " + pg.context};
-        }
-        if (detectedStatus.state !== "success") {
-            return {wait: "Precondition '" + pg.name + "' not yet successful"};
-        }
-        if (requiresApproval(detectedStatus)) {
-            return {wait: "Precondition '" + pg.name + "' requires approval"};
-        }
-        return {};
+    const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
+    if (!detectedStatus) {
+        return {error: "Did not find a status for " + pg.context};
+    }
+    if (detectedStatus.state !== "success") {
+        return {wait: "Precondition '" + pg.name + "' not yet successful"};
+    }
+    if (requiresApproval(detectedStatus)) {
+        return {wait: "Precondition '" + pg.name + "' requires approval"};
+    }
+    return {};
 }
 
 /**
