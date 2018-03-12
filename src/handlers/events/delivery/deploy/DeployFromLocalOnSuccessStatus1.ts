@@ -14,100 +14,63 @@
  * limitations under the License.
  */
 
-import {
-    failure,
-    GraphQL,
-    HandleCommand,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    success,
-    Success,
-} from "@atomist/automation-client";
+import { failure, GraphQL, HandleCommand, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import {
-    currentGoalIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-    Goals,
-    previousGoalSucceeded,
-} from "../../../../common/goals/Goal";
+import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus, OnSuccessStatus } from "../../../../typings/types";
-import { EventWithCommand, RetryDeployParameters } from "../../../commands/RetryDeploy";
+import { OnAnySuccessStatus } from "../../../../typings/types";
+import { RetryDeployParameters } from "../../../commands/RetryDeploy";
 import { deploy } from "./deploy";
 
-// TODO This class is copied from DeployFromLocalOnSuccessStatus to ensure
-// the subscription works with a different name
+// TODO: rename to ExecuteGoalInvocation
+export interface ExecuteGoalOnSuccessStatus {
+    implementationName: string;
+    githubToken: string;
+    goal: Goal;
+}
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Deploy linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
-export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements HandleEvent<OnAnySuccessStatus.Subscription>, EventWithCommand {
+export class ExecuteGoalOnSuccessStatus1<T extends TargetInfo>
+    implements HandleEvent<OnAnySuccessStatus.Subscription>,
+        ExecuteGoalOnSuccessStatus,
+        EventHandlerMetadata {
+    public subscriptionName: string;
+    public subscription: string;
+    public name: string;
+    public description: string;
+    public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
-    @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    public githubToken: string;
 
-    /**
-     *
-     * @param {Goals} goals
-     * @param {Goal} deployGoal
-     * @param {Goal} endpointGoal
-     * @param {ArtifactStore} artifactStore
-     * @param {Deployer<T extends TargetInfo>} deployer
-     * @param {(id: RemoteRepoRef) => T} targeter tells what target to use for this repo.
-     * For example, we may wish to deploy different repos to different Cloud Foundry spaces
-     * or Kubernetes clusters
-     */
-    constructor(private goals: Goals,
-                private deployGoal: Goal,
-                private endpointGoal: Goal,
-                private artifactStore: ArtifactStore,
-                public deployer: Deployer<T>,
-                private targeter: (id: RemoteRepoRef) => T) {
-    }
-
-    public get commandName() {
-        return "RetryDeployLocal";
-    }
-
-    public correspondingCommand(): HandleCommand {
-        return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
-            return deploy({
-                deployGoal: this.deployGoal,
-                endpointGoal: this.endpointGoal,
-                id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
-                githubToken: commandParams.githubToken,
-                targetUrl: commandParams.targetUrl,
-                artifactStore: this.artifactStore,
-                deployer: this.deployer,
-                targeter: this.targeter,
-                ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
-                team: ctx.teamId,
-                retryButton: buttonForCommand({text: "Retry"}, this.commandName, {
-                    ...commandParams,
-                }),
-                logFactory: createEphemeralProgressLog,
-            });
-        }, RetryDeployParameters, this.commandName);
+    constructor(public implementationName: string,
+                public goal: Goal,
+                private execute: (status: OnAnySuccessStatus.Status,
+                                  ctx: HandlerContext,
+                                  params: ExecuteGoalOnSuccessStatus) => Promise<HandlerResult>) {
+        this.subscriptionName = implementationName + "OnSuccessStatus";
+        this.name = implementationName + "OnSuccessStatus";
+        this.description = `Execute ${goal.name} on prior goal success`;
+        this.subscription = GraphQL.replaceOperationName(
+            GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"),
+            this.subscriptionName);
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;
-
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
             state: status.state,
@@ -115,17 +78,39 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             description: status.description,
             siblings: status.commit.statuses,
         };
+        const creds = {token: params.githubToken};
 
-        // TODO: determine previous step based on the contexts of existing statuses
-        if (!previousGoalSucceeded(params.goals, params.deployGoal.context, statusAndFriends)) {
+        if (!await params.goal.preconditionsMet(creds, id, statusAndFriends)) {
+            logger.info("Preconditions not met for goal %s on %j", params.goal.name, id);
             return Success;
         }
 
-        if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
+        if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
 
-        // TODO: if any status is failed, do not deploy
+        if (!image) {
+            logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
+            return failure(new Error("No image linked"));
+        }
+        return this.execute(status, ctx, params);
+    }
+}
+
+export interface DeploySpec<T extends TargetInfo> {
+    deployGoal: Goal;
+    endpointGoal: Goal;
+    artifactStore: ArtifactStore;
+    deployer: Deployer<T>;
+    targeter: (id: RemoteRepoRef) => T;
+}
+
+export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
+    return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalOnSuccessStatus) => {
+        const commit = status.commit;
+        const image = status.commit.image;
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const deployName = params.implementationName;
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -133,25 +118,19 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
         }
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
-        const retryButton = buttonForCommand({text: "Retry"}, this.commandName, {
+        const retryButton = buttonForCommand({text: "Retry"}, retryCommandNameFor(deployName), {
             repo: commit.repo.name,
             owner: commit.repo.owner,
             sha: commit.sha,
             targetUrl: image.imageName,
         });
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         await dedup(commit.sha, () =>
             deploy({
-                deployGoal: params.deployGoal,
-                endpointGoal: params.endpointGoal,
-                id, githubToken: params.githubToken,
+                ...spec,
+                id,
+                githubToken: params.githubToken,
                 targetUrl: image.imageName,
-                artifactStore: this.artifactStore,
-                deployer: params.deployer,
-                targeter: params.targeter,
                 ac: addressChannelsFor(commit.repo, ctx),
                 team: ctx.teamId,
                 retryButton,
@@ -159,7 +138,33 @@ export class DeployFromLocalOnSuccessStatus1<T extends TargetInfo> implements Ha
             }));
 
         return Success;
-    }
+    };
+}
+
+function retryCommandNameFor(deployName: string) {
+    return "Retry" + deployName;
+}
+
+export function retryDeployFromLocal<T extends TargetInfo>(deployName: string,
+                                                           spec: DeploySpec<T>): HandleCommand {
+    return commandHandlerFrom((ctx: HandlerContext, commandParams: RetryDeployParameters) => {
+        return deploy({
+            deployGoal: spec.deployGoal,
+            endpointGoal: spec.endpointGoal,
+            id: new GitHubRepoRef(commandParams.owner, commandParams.repo, commandParams.sha),
+            githubToken: commandParams.githubToken,
+            targetUrl: commandParams.targetUrl,
+            artifactStore: spec.artifactStore,
+            deployer: spec.deployer,
+            targeter: spec.targeter,
+            ac: (msg, opts) => ctx.messageClient.respond(msg, opts),
+            team: ctx.teamId,
+            retryButton: buttonForCommand({text: "Retry"}, retryCommandNameFor(deployName), {
+                ...commandParams,
+            }),
+            logFactory: createEphemeralProgressLog,
+        });
+    }, RetryDeployParameters, retryCommandNameFor(deployName));
 }
 
 const running = {};

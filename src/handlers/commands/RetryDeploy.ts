@@ -1,10 +1,6 @@
 import {HandleCommand, MappedParameter, MappedParameters, Parameter, Secret, Secrets} from "@atomist/automation-client";
 import {Parameters} from "@atomist/automation-client/decorators";
 
-export interface EventWithCommand {
-    correspondingCommand?: () => HandleCommand;
-}
-
 @Parameters()
 export class RetryDeployParameters {
 

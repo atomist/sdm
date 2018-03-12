@@ -1,10 +1,9 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectListener } from "../common/listener/Listener";
 import { NewIssueListener } from "../common/listener/NewIssueListener";
-import { EventWithCommand } from "../handlers/commands/RetryDeploy";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
@@ -19,7 +18,6 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../handlers/events/delivery/goals/httpServiceGoals";
-import { FingerprintOnPendingStatus } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
     EndpointVerificationListener,
@@ -30,7 +28,6 @@ import {
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { OnSuccessStatus } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
@@ -47,8 +44,10 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { BuildOnPendingBuildStatus, ConditionalBuilder } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
+import { ExecuteGoalOnSuccessStatus1 } from "../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
 import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
@@ -92,7 +91,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>;
+    private readonly deployers: FunctionalUnit[];
 
     private readonly goalSetters: GoalSetter[] = [];
 
@@ -128,10 +127,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
     }
 
-    private get fingerprinter(): Maker<FingerprintOnPendingStatus> {
-        return this.fingerprinters.length > 0 ?
-            () => new FingerprintOnPendingStatus(FingerprintGoal, this.fingerprinters) :
-            undefined;
+    private get fingerprinter(): FunctionalUnit {
+        return {
+            eventHandlers: this.fingerprinters.length > 0 ?
+                [() => new ExecuteGoalOnPendingStatus("Fingerprinter", FingerprintGoal, executeFingerprints(...this.fingerprinters))] :
+                [],
+            commandHandlers: [],
+        };
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -161,8 +163,15 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
-    private get builder(): Maker<HandleEvent<any>> {
-        return () => new BuildOnPendingBuildStatus(BuildGoal, this.conditionalBuilders);
+    private get builder(): FunctionalUnit {
+        const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
+        return {
+            eventHandlers: [
+                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnSuccessStatus1(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+            ],
+            commandHandlers: [],
+        };
     }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
@@ -219,7 +228,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return (this.goalCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
-            .concat(this.opts.deployers)
+            .concat(_.flatten(this.opts.deployers.map(fu => fu.eventHandlers)))
+            .concat(this.builder.eventHandlers)
+            .concat(this.fingerprinter.eventHandlers)
             .concat(this.verifyEndpoint.eventHandlers)
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -227,7 +238,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(...this.closedIssueListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
-                this.fingerprinter,
                 this.semanticDiffReactor,
                 this.autofixHandler,
                 this.reviewHandler,
@@ -235,7 +245,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.goalSetting,
                 this.oldPushSuperseder,
                 this.onSuperseded,
-                this.builder,
                 this.onBuildComplete,
                 this.notifyOnDeploy,
                 this.onVerifiedStatus,
@@ -244,15 +253,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
-        const mayHaveCommands: Array<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand> =
-            this.opts.deployers.map(d => toFactory(d)());
         return this.generators
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat(_.flatten(this.functionalUnits.map(fu => fu.commandHandlers)))
-            .concat(mayHaveCommands
-                .filter(mhc => !!mhc.correspondingCommand)
-                .map(m => () => m.correspondingCommand()))
+            .concat(_.flatten(this.opts.deployers.map(fu => fu.commandHandlers)))
+            .concat(this.builder.commandHandlers)
+            .concat(this.fingerprinter.commandHandlers)
             .concat([this.showBuildLog])
             .concat(this.verifyEndpoint.commandHandlers)
             .filter(m => !!m);
@@ -371,7 +378,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     constructor(private opts: {
-                    deployers: Array<Maker<HandleEvent<OnSuccessStatus.Subscription> & EventWithCommand>>,
+                    deployers: FunctionalUnit[],
                     artifactStore: ArtifactStore,
                 },
                 ...pushRules: PushRule[]) {

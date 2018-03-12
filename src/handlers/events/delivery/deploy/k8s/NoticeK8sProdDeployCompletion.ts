@@ -21,7 +21,7 @@ import { Goal } from "../../../../../common/goals/Goal";
 import { K8sProductionDomain, K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { k8AutomationDeployContext, K8TargetBase } from "./RequestDeployOnSuccessStatus";
+import { k8AutomationDeployContext, K8TargetBase } from "./RequestK8sDeployOnSuccessStatus";
 
 // TODO parameterize once we can have multiple handlers
 

@@ -92,8 +92,8 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             siblings: status.commit.statuses,
         };
 
-        if (!params.goal.preconditionsMet({token: params.githubToken}, id, event.data)) {
-            logger.info("Preconditions not met for goal %s on %j", params.goal, id);
+        if (! await params.goal.preconditionsMet({token: params.githubToken}, id, statusAndFriends)) {
+            logger.info("Preconditions not met for goal %s on %j", params.goal.name, id);
             return Success;
         }
 

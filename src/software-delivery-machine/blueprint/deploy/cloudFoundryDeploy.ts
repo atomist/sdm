@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import { FunctionalUnit } from "../../../";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
-import { DeployFromLocalOnSuccessStatus1 } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
+import {
+    executeDeploy, ExecuteGoalOnSuccessStatus1,
+    retryDeployFromLocal,
+} from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
-    ContextToPlannedGoal,
-    HttpServiceGoals,
-    ProductionDeploymentContext,
-    ProductionEndpointContext,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
+    StagingDeploymentGoal, StagingEndpointGoal,
+
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { artifactStore } from "../artifactStore";
 
@@ -34,7 +36,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  * Deploy everything to the same Cloud Foundry space
  */
 export const CloudFoundryStagingDeployOnSuccessStatus = () =>
-    new DeployFromLocalOnSuccessStatus(
+    new DeployFromLocalOnSuccessStatus("RetryDeployFromLocal",
         StagingDeploymentGoal,
         StagingEndpointGoal,
         artifactStore,
@@ -45,15 +47,31 @@ export const CloudFoundryStagingDeployOnSuccessStatus = () =>
         }),
     );
 
-export const CloudFoundryProductionDeployOnSuccessStatus =
-    () => new DeployFromLocalOnSuccessStatus1(
-        HttpServiceGoals,
-        ContextToPlannedGoal[ProductionDeploymentContext],
-        ContextToPlannedGoal[ProductionEndpointContext],
-        artifactStore,
-        Deployer,
-        () => ({
-            ...new EnvironmentCloudFoundryTarget(),
-            space: "ri-production",
+export const CloudFoundryProductionDeployOnSuccessStatus: FunctionalUnit = {
+
+    eventHandlers: [() => new ExecuteGoalOnSuccessStatus1("DeployFromLocal1",
+        ProductionDeploymentGoal,
+        executeDeploy({
+            deployGoal: ProductionDeploymentGoal,
+            endpointGoal: ProductionEndpointGoal,
+            artifactStore,
+            deployer: Deployer,
+            targeter: () => ({
+                ...new EnvironmentCloudFoundryTarget(),
+                space: "ri-production",
+            }),
         }),
-    );
+    )],
+
+    commandHandlers: [() => retryDeployFromLocal("DeployFromLocal1",
+        {
+            deployGoal: ProductionDeploymentGoal,
+            endpointGoal: ProductionEndpointGoal,
+            artifactStore,
+            deployer: Deployer,
+            targeter: () => ({
+                ...new EnvironmentCloudFoundryTarget(),
+                space: "ri-production",
+            }),
+        })],
+};
