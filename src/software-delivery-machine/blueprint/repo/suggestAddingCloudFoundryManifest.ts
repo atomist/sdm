@@ -26,6 +26,7 @@ export async function suggestAddingCloudFoundryManifest(inv: ProjectListenerInvo
             return inv.addressChannels(message);
         }
     } catch {
-        // It's not a Maven project, we don't know how to deploy it
+        // It's not a Spring Boot Maven project.
+        // Do nothing as we don't know how to deploy it
     }
 }

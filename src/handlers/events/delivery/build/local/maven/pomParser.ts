@@ -4,7 +4,7 @@ import { VersionedArtifact } from "./VersionedArtifact";
 import * as xml2js from "xml2js";
 
 /**
- * Return version info from the POM
+ * Return version info from the POM using xml2j XML parser
  * @param {string} pom
  * @return {Promise<VersionedArtifact>}
  */

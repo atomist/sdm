@@ -1,14 +1,19 @@
 import { HandleCommand } from "@atomist/automation-client";
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
+import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { editor } from "../../../handlers/commands/editors/registerEditor";
 
+/**
+ * Function returning a command handler around the appendAffirmationToReadMe
+ * editor
+ * @type {HandleCommand<EditOneOrAllParameters>}
+ */
 export const affirmationEditor: HandleCommand<any> = editor(
     () => appendAffirmationToReadMe,
     "affirmation",
     {
-        editMode: {message: `Everyone needs encouragement sometimes`, branch: "master"} as BranchCommit,
+        editMode: commitToMaster("Everyone needs encouragement sometimes"),
     },
 );
 

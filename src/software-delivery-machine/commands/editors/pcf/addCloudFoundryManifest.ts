@@ -11,22 +11,22 @@ export const addCloudFoundryManifest: HandleCommand<any> = editor(
     () => addCfManifest,
     AddCloudFoundryManifestCommandName, {
         intent: "Add Cloud Foundry manifest",
-        editMode: () => new PullRequest("add-pcf-manifest",
+        editMode: () => new PullRequest(
+            `add-pcf-manifest-${new Date().getTime()}`,
             "Add Cloud Foundry manifest",
             "This will trigger the Software Development Machine to deploy to your Cloud Foundry space",
             "Add Cloud Foundry manifest\n\n[atomist]"),
     });
 
-export const addCfManifest: SimpleProjectEditor = (p, ctx) => {
-    return p.findFile("pom.xml")
-        .then(pom => pom.getContent()
-            .then(content => identification(content))
-            .then(ident => {
-                return p.addFile(CloudFoundryManifestPath, javaManifestFor(ident.artifact, ctx.teamId));
-            }))
-        .catch(err => p);
+// We know that there's a POM if this get invoked
+export const addCfManifest: SimpleProjectEditor = async (p, ctx) => {
+    const pom = await p.findFile("pom.xml");
+    const content = await pom.getContent();
+    const ident = await identification(content);
+    return p.addFile(CloudFoundryManifestPath, javaManifestFor(ident.artifact, ctx.teamId));
 };
 
+// Simple template for Cloud Foundry manifest
 const javaManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
