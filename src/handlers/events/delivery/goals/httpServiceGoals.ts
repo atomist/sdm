@@ -124,7 +124,7 @@ export const StagingEndpointContext = StagingEndpointGoal.context;
 export const StagingVerifiedContext = StagingVerifiedGoal.context;
 export const ProductionDeploymentContext = ProductionDeploymentGoal.context;
 export const ProductionEndpointContext = ProductionEndpointGoal.context;
-export const ScanContext = ReviewGoal.context;
+export const ReviewContext = ReviewGoal.context;
 export const BuildContext = BuildGoal.context;
 
 export const ProductionMauve = "#cf5097";

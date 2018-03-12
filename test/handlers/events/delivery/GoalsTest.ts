@@ -3,18 +3,17 @@ import * as assert from "power-assert";
 import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/goals/gitHubContext";
 import {
     BuildContext,
-    ProductionDeploymentContext, ProductionEndpointContext, ScanContext, StagingDeploymentContext,
+    ProductionDeploymentContext, ProductionEndpointContext, ReviewContext, StagingDeploymentContext,
     StagingEndpointContext,
 } from "../../../../src/handlers/events/delivery/goals/httpServiceGoals";
 
 describe("Goal handling", () => {
    it("parses my contexts", () => {
-       const result = splitContext(ScanContext);
-       assert.equal(result.name, "scan");
+       const result = splitContext(ReviewContext);
+       assert.equal(result.name, "review");
        assert.equal(result.base, BaseContext);
        assert.equal(result.env, "code");
        assert.equal(result.envOrder, 0);
-       assert.equal(result.name, "scan");
        assert.equal(result.goalOrder, 1);
    });
 

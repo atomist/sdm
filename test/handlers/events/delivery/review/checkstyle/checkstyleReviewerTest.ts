@@ -1,39 +1,32 @@
 import "mocha";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
 import { ReviewerError } from "../../../../../../src/blueprint/ReviewerError";
-import {
-    checkstyleReviewer,
-} from "../../../../../../src/handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
+import { checkstyleReviewer } from "../../../../../../src/handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 
-// TODO fix this hard coded path
-// const checkstylePath = process.env.CHECKSTYLE_PATH;
-const CheckstylePath = "/Users/jessitron/Downloads/checkstyle-8.8-all.jar";
-
-// const LocalCloneOfSeed = "/Users/rodjohnson/temp/spring-rest-seed";
-const LocalCloneOfSeed = "/Users/jessitron/code/spring-team/spring-rest-seed";
+const checkstylePath = process.env.CHECKSTYLE_PATH;
 
 describe("checkstyleReviewer", () => {
 
-    it.skip("should work", async () => {
-        const id = new GitHubRepoRef("atomist-seeds", "spring-rest-seed");
-        const p = new NodeFsLocalProject(id, LocalCloneOfSeed);
-        const review = await checkstyleReviewer(CheckstylePath)(p, null);
+    it("should succeed in reviewing review", async () => {
+        const p = await GitCommandGitProject.cloned({ token: process.env.GITHUB_TOKEN},
+            new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        const review = await checkstyleReviewer(checkstylePath)(p, null);
         assert(!!review);
-        assert(review.comments.length === 10);
+        assert(review.comments.length > 1);
         console.log(JSON.stringify(review));
-    });
+    }).timeout(10000);
 
-    it.skip("should report problem", done => {
-        const id = new GitHubRepoRef("atomist-seeds", "spring-rest-seed");
-        const p = new NodeFsLocalProject(id, LocalCloneOfSeed);
-        checkstyleReviewer("not-a-thing")(p, null).then(
+    it("should handle invalid checkstyle path", async () => {
+        const p = await GitCommandGitProject.cloned({ token: process.env.GITHUB_TOKEN},
+            new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
+        checkstyleReviewer("invalid checkstyle path")(p, null).then(
             unexpectedSuccess => assert(false, "This should have failed"),
             (err: ReviewerError) =>
                 assert(err.stderr.includes("Unable to access jarfile not-a-thing"),
-        )).then(() => done(), done);
-    });
+        ));
+    }).timeout(10000);
 
 });
