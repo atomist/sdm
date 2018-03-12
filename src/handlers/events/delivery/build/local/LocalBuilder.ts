@@ -76,7 +76,12 @@ export abstract class LocalBuilder implements Builder {
         return buildComplete;
     }
 
-    public abstract logInterpreter(log: string): InterpretedLog | undefined;
+    /**
+     * Implemented to interpret build logs
+     * @param {string} log
+     * @return {InterpretedLog}
+     */
+    public abstract logInterpreter: LogInterpreter;
 
     protected abstract startBuild(creds: ProjectOperationCredentials,
                                   id: RemoteRepoRef,

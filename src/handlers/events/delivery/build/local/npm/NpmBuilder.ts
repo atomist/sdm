@@ -5,7 +5,7 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { exec, ExecOptions } from "child_process";
 import { ArtifactStore } from "../../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
+import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
@@ -52,7 +52,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
     }
 
-    public logInterpreter(log: string): InterpretedLog | undefined {
+    public logInterpreter: LogInterpreter = log => {
         const relevantPart = log.split("\n")
             .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))
             .join("\n");

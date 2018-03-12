@@ -5,9 +5,10 @@ import { spawn } from "child_process";
 import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpretation } from "../../../../../../spi/log/InterpretedLog";
+import { LogInterpretation, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
+import { interpretMavenLog } from "./mavenLogInterpreter";
 import { identification } from "./pomParser";
 
 /**
@@ -62,21 +63,8 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         return rb;
     }
 
-    public logInterpreter(log: string): InterpretedLog | undefined {
-        return interpretMavenLog(log);
-    }
+    public logInterpreter: LogInterpreter = log => interpretMavenLog(log);
 
-}
-
-export function interpretMavenLog(log: string): InterpretedLog | undefined {
-    const relevantPart = log.split("\n")
-        .filter(l => l.startsWith("[ERROR]"))
-        .join("\n");
-    return {
-        relevantPart,
-        message: "Maven errors",
-        includeFullLog: true,
-    };
 }
 
 class UpdatingBuild implements LocalBuildInProgress {

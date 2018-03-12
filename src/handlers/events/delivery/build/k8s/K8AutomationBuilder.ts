@@ -6,7 +6,7 @@ import {AddressChannels} from "../../../../../common/slack/addressChannels";
 import {Builder, PushThatTriggersBuild} from "../../../../../spi/build/Builder";
 import {InterpretedLog, LogInterpretation} from "../../../../../spi/log/InterpretedLog";
 import {createStatus} from "../../../../../util/github/ghub";
-import {interpretMavenLog} from "../local/maven/MavenBuilder";
+import { interpretMavenLog } from "../local/maven/mavenLogInterpreter";
 
 const K8AutomationBuildContext = "build/atomist/k8s";
 /**
