@@ -1,4 +1,3 @@
-
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { promisify } from "util";

@@ -14,27 +14,51 @@
  * limitations under the License.
  */
 
-import {GraphQL, HandlerResult, logger, Secret, Secrets, Success} from "@atomist/automation-client";
-import {EventFired, EventHandler, HandleEvent, HandlerContext} from "@atomist/automation-client/Handlers";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {ProjectOperationCredentials, TokenCredentials} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {
+    EventFired,
+    EventHandler,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import {AddressChannels, addressChannelsFor} from "../../../../";
+import {
+    AddressChannels,
+    addressChannelsFor,
+} from "../../../../";
 import { Goal } from "../../../../common/goals/Goal";
-import {LogInterpretation} from "../../../../spi/log/InterpretedLog";
-import {BuildStatus, OnBuildComplete} from "../../../../typings/types";
-import {createStatus, State} from "../../../../util/github/ghub";
-import {reportFailureInterpretation} from "../../../../util/slack/reportFailureInterpretation";
-import {NotARealUrl} from "./local/LocalBuilder";
+import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
+import {
+    BuildStatus,
+    OnBuildComplete,
+} from "../../../../typings/types";
+import {
+    createStatus,
+    State,
+} from "../../../../util/github/ghub";
+import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { NotARealUrl } from "./local/LocalBuilder";
 
 /**
  * Set build status on complete build
  */
-@EventHandler("Set status on build complete",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnBuildComplete.graphql"))
+@EventHandler("Set status on build complete", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnBuildComplete",
+    __dirname),
+)
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -44,7 +68,8 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
                 private logInterpretation?: LogInterpretation) {
     }
 
-    public async handle(event: EventFired<OnBuildComplete.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnBuildComplete.Subscription>,
+                        ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const build = event.data.Build[0];
         const commit = build.commit;
 
@@ -66,8 +91,10 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     }
 }
 
-export async function displayBuildLogFailure(id: RemoteRepoRef, build: { buildUrl?: string, status?: string} ,
-                                             ac: AddressChannels, logInterpretation?: LogInterpretation) {
+export async function displayBuildLogFailure(id: RemoteRepoRef,
+                                             build: { buildUrl?: string, status?: string} ,
+                                             ac: AddressChannels,
+                                             logInterpretation?: LogInterpretation) {
     const buildUrl = build.buildUrl;
     if (buildUrl) {
         logger.info("Retrieving failed build log from " + buildUrl);
@@ -108,7 +135,11 @@ function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
     }
 }
 
-async function setBuiltContext(goal: Goal, state: State, url: string, id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
+async function setBuiltContext(goal: Goal,
+                               state: State,
+                               url: string,
+                               id: GitHubRepoRef,
+                               creds: ProjectOperationCredentials): Promise<any> {
     const description = state === "pending" ? goal.workingDescription : goal.completedDescription;
     return createStatus((creds as TokenCredentials).token, id, {
         state,

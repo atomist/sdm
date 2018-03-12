@@ -14,24 +14,30 @@
  * limitations under the License.
  */
 
-import { GraphQL, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
+    Secret,
+    Secrets,
     Success,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RepoCreationInvocation, RepoCreationListener } from "../../../common/listener/RepoCreationListener";
+import {
+    RepoCreationInvocation,
+    RepoCreationListener,
+} from "../../../common/listener/RepoCreationListener";
 import * as schema from "../../../typings/types";
 
 /**
  * A new repo has been created. We don't know if it has code.
  */
-@EventHandler("On repo creation",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnRepoCreation.graphql"))
+@EventHandler("On repo creation", GraphQL.subscriptionFromFile(
+    "../../../graphql/subscription/OnRepoCreation",
+    __dirname))
 export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -43,7 +49,9 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
         this.newRepoActions = newRepoActions;
     }
 
-    public async handle(event: EventFired<schema.OnRepoCreation.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnRepoCreation.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
         const id = new GitHubRepoRef(repo.owner, repo.name);
         const invocation: RepoCreationInvocation = {

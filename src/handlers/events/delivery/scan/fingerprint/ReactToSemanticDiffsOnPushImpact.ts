@@ -15,18 +15,16 @@
  */
 
 import {
-    GraphQL,
-    Secret,
-    Secrets,
-} from "@atomist/automation-client";
-import {
     EventFired,
     EventHandler,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
+    Secret,
+    Secrets,
     Success,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as _ from "lodash";
 import {
@@ -41,8 +39,10 @@ import * as schema from "../../../../../typings/types";
 /**
  * React to a PushImpact event to react to semantic diffs
  */
-@EventHandler("Find semantic diffs from a PushImpact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnPushImpact.graphql"))
+@EventHandler("Find semantic diffs from a PushImpact", GraphQL.subscriptionFromFile(
+    "../../../../../graphql/subscription/OnPushImpact",
+    __dirname),
+)
 export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 

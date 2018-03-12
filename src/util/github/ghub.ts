@@ -1,7 +1,10 @@
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
-import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
+import axios, {
+    AxiosPromise,
+    AxiosRequestConfig,
+} from "axios";
 
 export type State = "error" | "failure" | "pending" | "success";
 

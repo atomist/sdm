@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-import { GraphQL, logger, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
+    Secret,
+    Secrets,
     Success,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ClosedIssueInvocation, ClosedIssueListener } from "../../../common/listener/ClosedIssueListener";
+import {
+    ClosedIssueInvocation,
+    ClosedIssueListener,
+} from "../../../common/listener/ClosedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
 /**
  * A new issue has been created.
  */
-@EventHandler("On an issue being closed",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnClosedIssue.graphql"))
+@EventHandler("On an issue being closed", GraphQL.subscriptionFromFile(
+    "../../../graphql/subscription/OnClosedIssue",
+    __dirname),
+)
 export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subscription> {
 
     @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
@@ -44,7 +51,9 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
         this.closedIssueListeners = closedIssueListeners;
     }
 
-    public async handle(event: EventFired<schema.OnClosedIssue.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnClosedIssue.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
 

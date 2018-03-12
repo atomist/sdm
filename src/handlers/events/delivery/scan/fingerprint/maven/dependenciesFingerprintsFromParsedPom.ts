@@ -1,7 +1,10 @@
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { VersionedArtifact } from "@atomist/spring-automation/commands/generator/java/JavaProjectParameters";
 import { computeShaOf } from "../../../../../../util/misc/sha";
-import { coordinates, toVersionedArtifact } from "./artifact";
+import {
+    coordinates,
+    toVersionedArtifact,
+} from "./artifact";
 
 /**
  * Don't call except via mavenFingerprinter

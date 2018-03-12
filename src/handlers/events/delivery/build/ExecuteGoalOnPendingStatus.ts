@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandleEvent, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
+import {
+    currentGoalIsStillPending,
+    GitHubStatusAndFriends,
+    Goal,
+} from "../../../../common/goals/Goal";
 import { PushTest } from "../../../../common/listener/GoalSetter";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../../typings/types";
-import { ExecuteGoalInvocation, Executor } from "../deploy/ExecuteGoalOnSuccessStatus";
+import {
+    ExecuteGoalInvocation,
+    Executor,
+} from "../deploy/ExecuteGoalOnSuccessStatus";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -49,14 +64,16 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 public goal: Goal,
                 private execute: Executor) {
         this.subscriptionName = implementationName + "OnPending";
-        this.subscription =
-            GraphQL.replaceOperationName(GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"),
-                this.subscriptionName);
+        this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
+            GraphQL.subscriptionFromFile("../../../../graphql/subscription/OnAnyPendingStatus", __dirname),
+            this.subscriptionName));
         this.name = implementationName + "OnPendingStatus";
         this.description = `Execute ${goal.name} when requested`;
     }
 
-    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
+                        ctx: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         logger.info("Might execute " + params.goal.name + " on " + params.implementationName + " after receiving pending status " + status.context);
         const commit = status.commit;

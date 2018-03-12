@@ -4,11 +4,18 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../../../spi/deploy/Deployer";
-import { Deployment, TargetInfo } from "../../../../../../spi/deploy/Deployment";
+import {
+    Deployment,
+    TargetInfo,
+} from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments } from "../appManagement";
-import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
+import {
+    DefaultLocalDeployerOptions,
+    LocalDeployerOptions,
+    StartupInfo,
+} from "../LocalDeployerOptions";
 
 /**
  * Managed deployments

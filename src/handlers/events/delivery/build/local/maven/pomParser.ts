@@ -1,7 +1,6 @@
 import { promisify } from "util";
-import { VersionedArtifact } from "./VersionedArtifact";
-
 import * as xml2js from "xml2js";
+import { VersionedArtifact } from "./VersionedArtifact";
 
 /**
  * Return version info from the POM using xml2j XML parser

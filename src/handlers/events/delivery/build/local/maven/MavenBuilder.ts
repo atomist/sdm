@@ -5,9 +5,18 @@ import { spawn } from "child_process";
 import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../../spi/deploy/Deployment";
-import { LogInterpretation, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
+import {
+    LogInterpretation,
+    LogInterpreter,
+} from "../../../../../../spi/log/InterpretedLog";
+import {
+    LogFactory,
+    ProgressLog,
+} from "../../../../../../spi/log/ProgressLog";
+import {
+    LocalBuilder,
+    LocalBuildInProgress,
+} from "../LocalBuilder";
 import { interpretMavenLog } from "./mavenLogInterpreter";
 import { identification } from "./pomParser";
 

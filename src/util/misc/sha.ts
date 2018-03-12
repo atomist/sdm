@@ -1,4 +1,3 @@
-
 import * as jsSHA from "jssha";
 
 export function isValidSHA1(s: string): boolean {

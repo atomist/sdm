@@ -1,4 +1,8 @@
-import { HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    HandlerResult,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
@@ -7,11 +11,18 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import axios from "axios";
 import { AddressChannels } from "../../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
-import { Builder, PushThatTriggersBuild } from "../../../../../spi/build/Builder";
-import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import {
-    LogFactory, ProgressLog,
+    Builder,
+    PushThatTriggersBuild,
+} from "../../../../../spi/build/Builder";
+import { AppInfo } from "../../../../../spi/deploy/Deployment";
+import {
+    InterpretedLog,
+    LogInterpreter,
+} from "../../../../../spi/log/InterpretedLog";
+import {
+    LogFactory,
+    ProgressLog,
 } from "../../../../../spi/log/ProgressLog";
 import { reportFailureInterpretation } from "../../../../../util/slack/reportFailureInterpretation";
 import { postLinkImageWebhook } from "../../../../../util/webhook/ImageLink";

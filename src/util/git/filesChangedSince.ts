@@ -1,4 +1,3 @@
-
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 

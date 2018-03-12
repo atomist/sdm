@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
+import {
+    currentGoalIsStillPending,
+    GitHubStatusAndFriends,
+    Goal,
+} from "../../../../common/goals/Goal";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 
@@ -54,12 +66,16 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
         this.subscriptionName = implementationName + "OnSuccessStatus";
         this.name = implementationName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
-        this.subscription = GraphQL.replaceOperationName(
-            GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"),
-            this.subscriptionName);
+        this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
+            GraphQL.subscriptionFromFile(
+                "../../../../graphql/subscription/OnAnySuccessStatus",
+                __dirname),
+            this.subscriptionName));
     }
 
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
+                        ctx: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;

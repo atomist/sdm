@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
+import {
+    DeploymentListener,
+    DeploymentListenerInvocation,
+} from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { StagingDeploymentContext } from "../goals/httpServiceGoals";
@@ -25,11 +38,13 @@ import { StagingDeploymentContext } from "../goals/httpServiceGoals";
 /**
  * React to a deployment.
  */
-@EventHandler("React to a successful deployment",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql",
-        undefined, {
+@EventHandler("React to a successful deployment", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnSuccessStatus",
+    __dirname,
+    {
             context: StagingDeploymentContext,
-        }))
+    }),
+)
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -41,7 +56,8 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         this.listeners = listeners;
     }
 
-    public async handle(event: EventFired<OnSuccessStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<OnSuccessStatus.Subscription>,
+                        context: HandlerContext, params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 

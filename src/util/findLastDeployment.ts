@@ -1,4 +1,7 @@
-import { HandlerContext, logger } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as https from "https";
 import { LastEndpoint } from "../typings/types";
@@ -8,12 +11,14 @@ const K8TargetBase = "deploy/atomist/k8s/";
 export async function findLastK8sDeployment(ctx: HandlerContext, rr: RepoRef,
                                             branch: string, environment: string) {
     const result = await ctx.graphClient.executeQueryFromFile<LastEndpoint.Query, LastEndpoint.Variables>(
-        "graphql/query/LastEndpoint", {
+        "../graphql/query/LastEndpoint", {
             name: rr.repo,
             owner: rr.owner,
             branch,
             statusContext: K8TargetBase + environment,
-        });
+        },
+        {},
+        __dirname);
     if (!result || !result.Repo[0]) {
         throw new Error(`No commit found on ${rr.owner}/${rr.repo}#${branch}`);
     }

@@ -14,29 +14,35 @@
  * limitations under the License.
  */
 
-import { GraphQL, logger, Secret, Secrets } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
+    logger,
+    Secret,
+    Secrets,
     Success,
-} from "@atomist/automation-client/Handlers";
-
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { AddressChannels } from "../../../common/slack/addressChannels";
-import * as schema from "../../../typings/types";
-
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { ProjectListener, ProjectListenerInvocation } from "../../../common/listener/Listener";
+import {
+    ProjectListener,
+    ProjectListenerInvocation,
+} from "../../../common/listener/Listener";
+import { AddressChannels } from "../../../common/slack/addressChannels";
+import * as schema from "../../../typings/types";
 
 /**
  * A new repo has been created, and it has some code in it.
  */
-@EventHandler("On repo creation",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnFirstPushToRepo.graphql"))
+@EventHandler("On repo creation", GraphQL.subscriptionFromFile(
+    "../../../graphql/subscription/OnFirstPushToRepo",
+    __dirname),
+)
 export class OnFirstPushToRepo
     implements HandleEvent<schema.OnFirstPushToRepo.Subscription> {
 
@@ -47,7 +53,8 @@ export class OnFirstPushToRepo
     }
 
     public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,
-                        context: HandlerContext, params: this): Promise<HandlerResult> {
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const push = event.data.Push[0];
 
         if (!!push.before) {

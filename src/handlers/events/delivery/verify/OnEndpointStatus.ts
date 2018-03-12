@@ -15,8 +15,12 @@
  */
 
 import {
+    EventFired,
+    EventHandler,
     GraphQL,
     HandleCommand,
+    HandleEvent,
+    HandlerContext,
     HandlerResult,
     logger,
     MappedParameter,
@@ -28,7 +32,6 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
@@ -42,12 +45,29 @@ import {
     Destination,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { AddressChannels, addressDestination, messageDestinations } from "../../../../";
+import {
+    AddressChannels,
+    addressDestination,
+    messageDestinations,
+} from "../../../../";
 import { splitContext } from "../../../../common/goals/gitHubContext";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../common/goals/Goal";
-import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { OnSuccessStatus, StatusState } from "../../../../typings/types";
-import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import {
+    currentGoalIsStillPending,
+    GitHubStatusAndFriends,
+    Goal,
+} from "../../../../common/goals/Goal";
+import {
+    ListenerInvocation,
+    SdmListener,
+} from "../../../../common/listener/Listener";
+import {
+    OnSuccessStatus,
+    StatusState,
+} from "../../../../typings/types";
+import {
+    createStatus,
+    tipOfDefaultBranch,
+} from "../../../../util/github/ghub";
 import { StagingEndpointContext } from "../goals/httpServiceGoals";
 import { forApproval } from "./approvalGate";
 
@@ -64,11 +84,13 @@ export type EndpointVerificationListener = SdmListener<EndpointVerificationInvoc
 /**
  * React to an endpoint reported in a GitHub status.
  */
-@EventHandler("React to an endpoint",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnSuccessStatus.graphql", undefined,
-        {
-            context: StagingEndpointContext,
-        }))
+@EventHandler("React to an endpoint", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnSuccessStatus",
+    __dirname,
+    {
+        context: StagingEndpointContext,
+    }),
+)
 export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

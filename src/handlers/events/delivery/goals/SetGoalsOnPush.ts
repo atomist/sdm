@@ -15,7 +15,12 @@
  */
 
 import {
+    EventFired,
+    EventHandler,
     GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
     logger,
     MappedParameter,
     MappedParameters,
@@ -25,13 +30,6 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-} from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goals } from "../../../../common/goals/Goal";
@@ -50,8 +48,10 @@ import { NoGoals } from "./httpServiceGoals";
 /**
  * Set up goals on a push (e.g. for delivery).
  */
-@EventHandler("Set up goals",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnPushToAnyBranch.graphql"))
+@EventHandler("Set up goals", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnPushToAnyBranch",
+    __dirname),
+)
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)

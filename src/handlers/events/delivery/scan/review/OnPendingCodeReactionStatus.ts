@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import { GraphQL, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
     failure,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
-} from "@atomist/automation-client/Handlers";
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
@@ -30,9 +34,15 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goal } from "../../../../../common/goals/Goal";
-import { CodeReactionInvocation, CodeReactionListener } from "../../../../../common/listener/CodeReactionListener";
+import {
+    CodeReactionInvocation,
+    CodeReactionListener,
+} from "../../../../../common/listener/CodeReactionListener";
 import { addressChannelsFor } from "../../../../../common/slack/addressChannels";
-import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
+import {
+    OnAnyPendingStatus,
+    StatusState,
+} from "../../../../../typings/types";
 import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { createStatus } from "../../../../../util/github/ghub";
 
@@ -40,8 +50,10 @@ import { createStatus } from "../../../../../util/github/ghub";
  * Invoke any arbitrary CodeReactions on a push.
  * Result is setting GitHub status with context = "scan"
  */
-@EventHandler("React to code",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
+@EventHandler("React to code", GraphQL.subscriptionFromFile(
+    "../../../../../graphql/subscription/OnAnyPendingStatus",
+    __dirname),
+)
 export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

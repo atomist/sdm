@@ -14,12 +14,30 @@
  * limitations under the License.
  */
 
-import { failure, GraphQL, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    failure,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { currentGoalIsStillPending, GitHubStatusAndFriends, Goal } from "../../../../../common/goals/Goal";
+import {
+    currentGoalIsStillPending,
+    GitHubStatusAndFriends,
+    Goal,
+} from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 
@@ -34,8 +52,10 @@ export function k8AutomationDeployContext(target: K8Target): string {
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Request k8s deploy of linked artifact",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnySuccessStatus.graphql"))
+@EventHandler("Request k8s deploy of linked artifact", GraphQL.subscriptionFromFile(
+    "../../../../../graphql/subscription/OnAnySuccessStatus",
+    __dirname),
+)
 export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -46,7 +66,8 @@ export class RequestK8sDeployOnSuccessStatus implements HandleEvent<OnAnySuccess
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
-                        context: HandlerContext, params: this): Promise<HandlerResult> {
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
         const image = status.commit.image;

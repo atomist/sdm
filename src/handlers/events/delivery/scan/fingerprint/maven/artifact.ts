@@ -1,4 +1,3 @@
-
 import { VersionedArtifact } from "@atomist/spring-automation/commands/generator/java/JavaProjectParameters";
 
 export function coordinates(va: VersionedArtifact): string {

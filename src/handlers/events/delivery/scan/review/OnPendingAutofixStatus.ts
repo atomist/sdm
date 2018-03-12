@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import { GraphQL, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import {
     EventFired,
     EventHandler,
     failure,
+    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
-} from "@atomist/automation-client/Handlers";
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
@@ -31,11 +35,17 @@ import {
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { editOne } from "@atomist/automation-client/operations/edit/editAll";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { AnyProjectEditor, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import {
+    AnyProjectEditor,
+    ProjectEditor,
+} from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Goal } from "../../../../../common/goals/Goal";
-import { OnAnyPendingStatus, StatusState } from "../../../../../typings/types";
+import {
+    OnAnyPendingStatus,
+    StatusState,
+} from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { forApproval } from "../../verify/approvalGate";
 
@@ -43,8 +53,10 @@ import { forApproval } from "../../verify/approvalGate";
  * Run any autofix editors on a push.
  * Set GitHub success status
  */
-@EventHandler("Make autofixes",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnAnyPendingStatus.graphql"))
+@EventHandler("Make autofixes", GraphQL.subscriptionFromFile(
+    "../../../../../graphql/subscription/OnAnyPendingStatus",
+    __dirname),
+)
 export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

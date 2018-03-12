@@ -1,6 +1,9 @@
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { Float } from "@atomist/microgrammar/primitives";
-import { InterpretedLog, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
+import {
+    InterpretedLog,
+    LogInterpreter,
+} from "../../../../../../spi/log/InterpretedLog";
 
 // TODO base on common build info
 export interface MavenInfo {

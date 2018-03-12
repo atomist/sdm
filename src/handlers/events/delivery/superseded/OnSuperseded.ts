@@ -14,18 +14,32 @@
  * limitations under the License.
  */
 
-import { GraphQL, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
-import { EventFired, EventHandler, HandleEvent, HandlerContext } from "@atomist/automation-client/Handlers";
+import {
+    EventFired,
+    EventHandler,
+    GraphQL,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { SupersededListener, SupersededListenerInvocation } from "../../../../common/listener/SupersededListener";
+import {
+    SupersededListener,
+    SupersededListenerInvocation,
+} from "../../../../common/listener/SupersededListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
 
 /**
  * Respond to a superseded push
  */
-@EventHandler("React to a superseded push",
-    GraphQL.subscriptionFromFile("graphql/subscription/OnSupersededStatus.graphql"))
+@EventHandler("React to a superseded push", GraphQL.subscriptionFromFile(
+    "../../../../graphql/subscription/OnSupersededStatus",
+    __dirname),
+)
 export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -37,7 +51,9 @@ export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus
         this.listeners = listeners;
     }
 
-    public async handle(event: EventFired<schema.OnSupersededStatus.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
+    public async handle(event: EventFired<schema.OnSupersededStatus.Subscription>,
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
 

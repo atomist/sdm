@@ -2,7 +2,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels } from "../../common/slack/addressChannels";
 import { InterpretedLog } from "../../spi/log/InterpretedLog";
-import { ProgressLog } from "../../spi/log/ProgressLog";
 
 export async function reportFailureInterpretation(stepName: string,
                                                   interpretation: InterpretedLog,
