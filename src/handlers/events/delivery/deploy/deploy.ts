@@ -90,6 +90,14 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
                     logger.error("Could not set Endpoint status: " + endpointStatus.message);
                     // do not fail this whole handler
                 });
+        } else {
+            await params.ac("Deploy succeeded, but the endpoint didn't appear in the log.");
+            await params.ac({
+                content: progressLog.log,
+                fileType: "text",
+                fileName: `deploy-success-${params.id.sha}.log`,
+            } as any);
+            logger.warn("No endpoint returned by deployment")
         }
     } catch (err) {
         logger.error(err.message);
