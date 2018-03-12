@@ -24,7 +24,7 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
-@EventHandler("Set build goal to complete with link to artifact",
+@EventHandler("Scan when artifact is found",
     GraphQL.subscriptionFromFile("graphql/subscription/OnImageLinked.graphql"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
@@ -51,9 +51,9 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         const image = imageLinked.image;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const builtStatus = commit.statuses.find(status => status.context === params.goal.context);
-        if (!builtStatus) {
-            logger.info("FindArtifactOnImageLinked: builtStatus not found for %j", id);
+        const desiredStatus = commit.statuses.find(status => status.context === params.goal.context);
+        if (!desiredStatus) {
+            logger.info("FindArtifactOnImageLinked: context %s not found for %j", params.goal.context, id);
             return Success;
         }
 

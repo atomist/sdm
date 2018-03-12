@@ -44,8 +44,9 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { ConditionalBuilder, executeBuild, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/BuildOnPendingBuildStatus";
-import { ExecuteGoalOnSuccessStatus1 } from "../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
+import { executeBuild } from "../handlers/events/delivery/build/executeBuild";
+import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
+import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
@@ -168,7 +169,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
-                () => new ExecuteGoalOnSuccessStatus1(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
             ],
             commandHandlers: [],
         };

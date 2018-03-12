@@ -16,16 +16,11 @@
 
 import { HandleCommand, logger } from "@atomist/automation-client";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
-import { retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
+import { retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
-import {
-    ContextToPlannedGoal,
-    HttpServiceGoals,
-    StagingDeploymentContext, StagingDeploymentGoal,
-    StagingEndpointContext, StagingEndpointGoal,
-} from "../../../handlers/events/delivery/goals/httpServiceGoals";
+import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";

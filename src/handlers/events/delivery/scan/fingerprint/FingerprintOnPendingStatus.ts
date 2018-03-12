@@ -26,11 +26,11 @@ import * as _ from "lodash";
 import { Fingerprinter } from "../../../../../common/listener/Fingerprinter";
 import { OnAnyPendingStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ExecuteGoalOnSuccessStatus } from "../../deploy/DeployFromLocalOnSuccessStatus1";
+import { ExecuteGoalInvocation } from "../../deploy/ExecuteGoalOnSuccessStatus";
 
 export function executeFingerprints(...fingerprinters: Fingerprinter[]):
-(status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalOnSuccessStatus) => Promise<HandlerResult> {
-    return async (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalOnSuccessStatus) => {
+(status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => Promise<HandlerResult> {
+    return async (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
         const credentials = { token: params.githubToken };
 

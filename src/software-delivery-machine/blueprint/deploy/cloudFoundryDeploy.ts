@@ -16,10 +16,10 @@
 
 import { FunctionalUnit } from "../../../";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
+import { executeDeploy, retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import {
-    executeDeploy, ExecuteGoalOnSuccessStatus1,
-    retryDeployFromLocal,
-} from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus1";
+    ExecuteGoalOnSuccessStatus,
+} from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
@@ -49,7 +49,7 @@ export const CloudFoundryStagingDeployOnSuccessStatus = () =>
 
 export const CloudFoundryProductionDeployOnSuccessStatus: FunctionalUnit = {
 
-    eventHandlers: [() => new ExecuteGoalOnSuccessStatus1("DeployFromLocal1",
+    eventHandlers: [() => new ExecuteGoalOnSuccessStatus("DeployFromLocal1",
         ProductionDeploymentGoal,
         executeDeploy({
             deployGoal: ProductionDeploymentGoal,
