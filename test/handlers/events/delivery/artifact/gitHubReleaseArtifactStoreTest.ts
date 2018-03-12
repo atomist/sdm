@@ -5,7 +5,7 @@ import * as fs from "fs";
 import * as assert from "power-assert";
 import {
     GitHubReleaseArtifactStore,
-} from "../../../../../src/handlers/events/delivery/artifact/github/GitHubReleaseArtifactStore";
+} from "../../../../../src/common/artifact/github/GitHubReleaseArtifactStore";
 
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import * as p from "path";

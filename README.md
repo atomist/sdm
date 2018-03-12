@@ -52,6 +52,9 @@ The exports in the `src/index.ts` file represent the public API of this reposito
 
 The `src/software-delivery-machine` directory contains an example of an implementation of Atomist, using the other functionality. This is the code you are most likely to change to meet your requirements.
 
+The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure
+such as artifact storage, logging, build and deployment.
+
 ## Events
 The heart of Atomist is its event handling. As your code flows from commit
 through to deployment and beyond, Atomist receives events, correlates the incoming data

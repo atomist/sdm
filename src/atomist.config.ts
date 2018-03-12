@@ -1,7 +1,6 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
-import { HelloWorld } from "./handlers/commands/HelloWorld";
 import { applyHttpServiceGoals } from "./software-delivery-machine/blueprint/goal/jvmGoalManagement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
@@ -29,7 +28,6 @@ export const configuration: Configuration = {
          process.env.ATOMIST_WORKSPACE,
     ], // <-- run @atomist pwd in your slack team to obtain the team id, then set your env variable
     commands: assembled.commandHandlers.concat([
-        HelloWorld,
         () => affirmationEditor,
         () => applyHttpServiceGoals,
         () => breakBuildEditor,
