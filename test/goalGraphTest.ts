@@ -14,7 +14,7 @@ function goalsToDot(goals: Goals, name: string) {
     `${validDotName(g)} [label="${g.name}"]`);
 
     const edges: string[][] = goals.goals.map(g => {
-        const precursors = (g as GoalWithPrecondition).dependsOn || guessPreviousGoals(goals, g);
+        const precursors = (g as GoalWithPrecondition).dependsOn || [] // guessPreviousGoals(goals, g);
         return precursors.map(p => `${validDotName(p)} -> ${validDotName(g)}`)
     });
 
