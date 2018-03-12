@@ -145,8 +145,8 @@ export interface GitHubStatusAndFriends extends GitHubStatus {
 export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     const myStatus = status.siblings.find(s => s.context === currentGoal);
     if (!myStatus) {
-        // unexpected
-        throw new Error("what? I can't find myself. My status.context is " + currentGoal);
+        logger.info("Status.context is %s but there is nothing with this context", currentGoal);
+        return false;
     }
     if (myStatus.state === "pending" && myStatus.description.startsWith("Planning")) {
         return true;
