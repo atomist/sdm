@@ -42,7 +42,7 @@ import * as schema from "../../../typings/types";
 )
 export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subscription> {
 
-    @Secret(Secrets.userToken(["repo", "user:email", "read:user"]))
+    @Secret(Secrets.OrgToken)
     private githubToken: string;
 
     private closedIssueListeners: ClosedIssueListener[];
