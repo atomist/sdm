@@ -107,7 +107,10 @@ function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?
  */
 export class Goals {
 
-    constructor(public goals: Goal[]) {
+    public readonly goals: Goal[];
+
+    constructor(...goals: Goal[]) {
+        this.goals = goals;
     }
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {

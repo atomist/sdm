@@ -154,14 +154,14 @@ function defaultGoal(ghsc: GitHubStatusContext): Goal {
  * The identity of this object is important.
  * @type {Goals}
  */
-export const NoGoals = new Goals([
-    NoGoal]);
+export const NoGoals = new Goals(
+    NoGoal);
 
 /**
  * Goals for an Http service
  * @type {Goals}
  */
-export const HttpServiceGoals = new Goals([
+export const HttpServiceGoals = new Goals(
     FingerprintGoal,
     AutofixGoal,
     ReviewGoal,
@@ -172,8 +172,8 @@ export const HttpServiceGoals = new Goals([
     StagingEndpointGoal,
     StagingVerifiedGoal,
     ProductionDeploymentGoal,
-    ProductionEndpointGoal]);
+    ProductionEndpointGoal);
 
-export const LocalDeploymentGoals = new Goals([
+export const LocalDeploymentGoals = new Goals(
     LocalDeploymentGoal,
-    LocalEndpointGoal]);
+    LocalEndpointGoal);
