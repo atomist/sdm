@@ -1,5 +1,7 @@
 import { logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { Issue } from "@atomist/automation-client/util/gitHub";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios, {
     AxiosPromise,
@@ -134,4 +136,13 @@ export function isPublicRepo(token: string, rr: GitHubRepoRef): Promise<boolean>
             logger.warn(`Could not access ${url}: ${ap.response.status}`);
             return false;
         });
+}
+
+// TODO move to client
+export function updateIssue(token: string, rr: RemoteRepoRef,
+                            issueNumber: number, issue: Issue): AxiosPromise {
+    const grr = isGitHubRepoRef(rr) ? rr : new GitHubRepoRef(rr.owner, rr.repo, rr.sha);
+    const url = `${grr.apiBase}/repos/${grr.owner}/${grr.repo}/issues/${issueNumber}`;
+    logger.debug(`Request to '${url}' to update issue`);
+    return axios.patch(url, issue, authHeaders(token));
 }
