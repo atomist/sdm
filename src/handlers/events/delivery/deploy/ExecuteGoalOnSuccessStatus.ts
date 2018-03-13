@@ -32,9 +32,9 @@ import {
     Goal,
 } from "../../../../common/goals/Goal";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus } from "../../../../typings/types";
-import { setDeployStatus } from "./deploy";
 import { createStatus } from "../../../../util/github/ghub";
+import { HasChannels } from "../../../../";
+import { OnAnySuccessStatus, StatusState } from "../../../../typings/types";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
@@ -42,9 +42,60 @@ export interface ExecuteGoalInvocation {
     goal: Goal;
 }
 
-export type Executor = (status: OnAnySuccessStatus.Status,
+export type Executor = (status: StatusForExecuteGoal.Status,
                         ctx: HandlerContext,
                         params: ExecuteGoalInvocation) => Promise<HandlerResult>;
+
+export namespace StatusForExecuteGoal {
+
+    export type Org = {
+        chatTeam?: ChatTeam | null;
+    }
+
+    export type ChatTeam = {
+        id?: string | null;
+    }
+
+    export type Pushes = {
+        branch?: string | null;
+        id?: string | null;
+    }
+
+    export type Image = {
+        image?: string | null;
+        imageName?: string | null;
+    }
+    export interface Repo extends HasChannels {
+        owner?: string | null;
+        name?: string | null;
+        defaultBranch?: string | null;
+        org?: Org | null;
+    }
+
+    export interface Statuses {
+        context?: string | null;
+        description?: string | null;
+        state?: StatusState | null;
+        targetUrl?: string | null;
+    }
+
+    export interface Commit {
+        sha?: string | null;
+        message?: string | null;
+        statuses?: Statuses[] | null;
+        repo?: Repo | null;
+        pushes?: Pushes[] | null;
+        image?: Image | null;
+    }
+
+    export interface Status {
+        commit?: Commit | null;
+        state?: StatusState | null;
+        targetUrl?: string | null;
+        context?: string | null;
+        description?: string | null;
+    }
+}
 
 /**
  * Deploy a published artifact identified in an ImageLinked event.
