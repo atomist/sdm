@@ -15,10 +15,7 @@
  */
 
 import { FunctionalUnit } from "../../../";
-import {
-    executeDeploy,
-    retryDeployFromLocal,
-} from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { executeDeploy, retryGoal, } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
@@ -29,6 +26,7 @@ import {
     StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { DefaultArtifactStore } from "../artifactStore";
+import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
@@ -46,12 +44,14 @@ const StagingDeploySpec = {
 };
 
 export const CloudFoundryStagingDeployOnSuccessStatus: FunctionalUnit = {
-    eventHandlers: [() =>
-        new ExecuteGoalOnSuccessStatus("DeployFromLocal",
+    eventHandlers: [
+        () => new ExecuteGoalOnSuccessStatus("DeployFromLocal",
+            StagingDeploymentGoal,
+            executeDeploy(StagingDeploySpec)),
+        () => new ExecuteGoalOnPendingStatus("DeployFromLocal",
             StagingDeploymentGoal,
             executeDeploy(StagingDeploySpec))],
-    commandHandlers: [() => retryDeployFromLocal("DeployFromLocal",
-        StagingDeploySpec)],
+    commandHandlers: [() => retryGoal("DeployFromLocal", ProductionDeploymentGoal)],
 };
 
 const ProductionDeploySpec = {
@@ -67,11 +67,14 @@ const ProductionDeploySpec = {
 
 export const CloudFoundryProductionDeployOnSuccessStatus: FunctionalUnit = {
 
-    eventHandlers: [() => new ExecuteGoalOnSuccessStatus("DeployFromLocal1",
-        ProductionDeploymentGoal,
-        executeDeploy(ProductionDeploySpec),
-    )],
+    eventHandlers: [
+        () => new ExecuteGoalOnSuccessStatus("DeployFromLocal1",
+            ProductionDeploymentGoal,
+            executeDeploy(ProductionDeploySpec)),
+        () => new ExecuteGoalOnPendingStatus("DeployFromLocal1",
+            ProductionDeploymentGoal,
+            executeDeploy(ProductionDeploySpec)),
+    ],
 
-    commandHandlers: [() => retryDeployFromLocal("DeployFromLocal1",
-        ProductionDeploySpec)],
+    commandHandlers: [() => retryGoal("DeployFromLocal1", ProductionDeploymentGoal)],
 };

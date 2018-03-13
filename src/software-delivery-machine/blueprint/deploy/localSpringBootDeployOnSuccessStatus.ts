@@ -15,13 +15,12 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { DeploySpec, executeDeploy, retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { DeploySpec, executeDeploy, retryGoal } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
-import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import {
@@ -30,6 +29,7 @@ import {
     targetInfoForAllBranches
 } from "../../../handlers/events/delivery/deploy/local/appManagement";
 import { Deployer, FunctionalUnit } from "../../../";
+import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
 
 /**
  * Deploy to the automation client node
@@ -58,9 +58,12 @@ export const LocalExecutableJarDeploy: FunctionalUnit = {
         () => new ExecuteGoalOnSuccessStatus("DeployFromLocalExecutableJar",
             LocalExecutableJarDeploySpec.deployGoal,
             executeDeploy(LocalExecutableJarDeploySpec)),
+        () => new ExecuteGoalOnPendingStatus("DeployFromLocalExecutableJar",
+            LocalExecutableJarDeploySpec.deployGoal,
+            executeDeploy(LocalExecutableJarDeploySpec)),
         () => UndeployOnSuperseded],
-    commandHandlers: [() => retryDeployFromLocal("DeployFromLocalExecutableJar",
-        LocalExecutableJarDeploySpec)],
+    commandHandlers: [() => retryGoal("DeployFromLocalExecutableJar",
+        LocalExecutableJarDeploySpec.deployGoal)],
 };
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {

@@ -14,36 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    failure,
-    Failure,
-    GraphQL,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Goal, Goals } from "../../../../common/goals/Goal";
-import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
-import { OnPendingLocalDeployStatus } from "../../../../typings/types";
-import {
-    setDeployStatus,
-    setEndpointStatus,
-} from "./deploy";
-import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
 import { MavenDeployer } from "../../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/httpServiceGoals";
 import { FunctionalUnit } from "../../../../index";
 import { ExecuteGoalOnPendingStatus } from "../build/ExecuteGoalOnPendingStatus";
-import { executeDeploy, retryDeployFromLocal } from "./executeDeploy";
+import { executeDeploy, retryGoal } from "./executeDeploy";
 import { CloningArtifactStore } from "./local/maven/mavenSourceDeployer";
 import { ManagedDeploymentTargeter } from "./local/appManagement";
 
@@ -62,5 +37,5 @@ export const LocalDeployment: FunctionalUnit = {
             LocalDeploymentGoal,
             executeDeploy(LocalDeployFromCloneSpec)),
     ],
-    commandHandlers: [() => retryDeployFromLocal("LocalDeployFromClone", LocalDeployFromCloneSpec)],
+    commandHandlers: [() => retryGoal("LocalDeployFromClone", LocalDeploymentGoal)],
 };

@@ -43,6 +43,14 @@ export class Goal {
         return this.definition.failedDescription || ("Failed: " + this.name);
     }
 
+    get requestedDescription() {
+        return "Planning to " + this.name;
+    }
+
+    get retryIntent() {
+        return "trigger " + this.name
+    }
+
     constructor(definition: GoalDefinition) {
         this.definition = definition;
 
