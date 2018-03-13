@@ -43,8 +43,8 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     constructor(public opts: LocalDeployerOptions) {
     }
 
-    public async undeploy(id: RemoteRepoRef): Promise<any> {
-        return managedDeployments.terminateIfRunning(id);
+    public async undeploy(id: ManagedDeploymentTargetInfo): Promise<any> {
+        return managedDeployments.terminateIfRunning(id.managedDeploymentKey);
     }
 
     public async deploy(da: DeployableArtifact,

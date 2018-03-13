@@ -24,7 +24,11 @@ import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
-import { ManagedDeploymentTargeter, ManagedDeploymentTargetInfo } from "../../../handlers/events/delivery/deploy/local/appManagement";
+import {
+    ManagedDeploymentTargeter,
+    ManagedDeploymentTargetInfo,
+    targetInfoForAllBranches
+} from "../../../handlers/events/delivery/deploy/local/appManagement";
 import { FunctionalUnit } from "../../../";
 
 /**
@@ -46,7 +50,7 @@ const LocalExecutableJarDeploySpec: DeploySpec<ManagedDeploymentTargetInfo> = {
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     logger.info("Will undeploy application %j", inv.id);
-    return LocalExecutableJarDeploySpec.deployer.undeploy(inv.id);
+    return LocalExecutableJarDeploySpec.deployer.undeploy(targetInfoForAllBranches(inv.id));
 });
 
 export const LocalExecutableJarDeploy: FunctionalUnit = {

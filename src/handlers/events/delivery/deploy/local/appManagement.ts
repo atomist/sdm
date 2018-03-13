@@ -20,10 +20,21 @@ export interface ManagedDeploymentTargetInfo extends TargetInfo {
 export const ManagedDeploymentTargeter: Targeter<ManagedDeploymentTargetInfo> = (id: RemoteRepoRef, branch: string) => {
     const branchId = {...id, branch};
     return {
-        name: "Local from source",
+        name: "Run alongside this automation",
         description: `Locally run ${id.sha} from branch ${branch}`,
         managedDeploymentKey: branchId
     }
+}
+
+// this is currently used in shutdown
+// because Superseded should be per-branch, but isn't yet.
+// At least this makes it explicit we don't have it quite right yet
+export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTargetInfo {
+    return {
+        managedDeploymentKey: {...id, branch: undefined},
+        name: "Run alongside this automation",
+        description: `Locally run ${id.sha} from an unknown branch`
+    };
 }
 
 /**

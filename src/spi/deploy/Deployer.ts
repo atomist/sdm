@@ -15,7 +15,7 @@ export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpre
      * or Kubernetes that handles rolling update
      * @return {Promise<any>}
      */
-    undeploy?(id: RemoteRepoRef): Promise<any>;
+    undeploy?(id: T): Promise<any>;
 
     deploy(da: DeployableArtifact,
            ti: T,
