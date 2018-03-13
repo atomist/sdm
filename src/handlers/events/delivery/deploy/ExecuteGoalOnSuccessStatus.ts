@@ -46,6 +46,7 @@ export type Executor = (status: StatusForExecuteGoal.Status,
                         ctx: HandlerContext,
                         params: ExecuteGoalInvocation) => Promise<HandlerResult>;
 
+// tslint:disable-next-line:no-namespace
 export namespace StatusForExecuteGoal {
 
     export interface Org {
