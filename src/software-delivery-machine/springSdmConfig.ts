@@ -1,17 +1,13 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { FunctionalUnit } from "../";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
-import { ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
-import { deployOnLocal, LocalDeployment } from "../handlers/events/delivery/deploy/deployOnLocal";
-import { LocalDeploymentGoal, LocalEndpointGoal } from "../handlers/events/delivery/goals/httpServiceGoals";
+import { LocalDeployment } from "../handlers/events/delivery/deploy/deployOnLocal";
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
-import { MavenDeployer } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
 import { capitalizer } from "./blueprint/issue/capitalizer";
@@ -21,7 +17,6 @@ import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { logReview } from "./blueprint/review/logReview";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
-import { executeDeploy } from "../handlers/events/delivery/deploy/executeDeploy";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy

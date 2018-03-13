@@ -64,37 +64,3 @@ export const LocalDeployment: FunctionalUnit = {
     ],
     commandHandlers: [() => retryDeployFromLocal("LocalDeployFromClone", LocalDeployFromCloneSpec)],
 };
-
-export function deployOnLocal(endpointGoal: Goal, deployer): Executor {
-    return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
-        const commit = status.commit;
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const log = ConsoleProgressLog;
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
-        try {
-            const deployment = await deployer.deployFromSource(
-                id,
-                addressChannels,
-                log,
-                {token: params.githubToken},
-                ctx.teamId,
-                status.commit.pushes[0].branch);
-            await setDeployStatus(params.githubToken, id,
-                "success",
-                params.goal.context, undefined, params.goal.completedDescription);
-            if (!!deployment.endpoint) {
-                await setEndpointStatus(params.githubToken, id,
-                    endpointGoal.context, deployment.endpoint, endpointGoal.completedDescription);
-            }
-            return Success;
-        } catch (e) {
-            logger.warn("Deployment failed: %s", e);
-            await setDeployStatus(params.githubToken, id,
-                "failure",
-                params.goal.context, undefined, params.goal.failedDescription);
-            return Failure;
-        } finally {
-            log.close();
-        }
-    };
-}
