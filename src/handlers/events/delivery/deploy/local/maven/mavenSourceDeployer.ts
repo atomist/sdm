@@ -3,16 +3,13 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
-import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 import { Deployment } from "../../../../../../spi/deploy/Deployment";
-import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { ManagedDeployments } from "../appManagement";
-import {
-    DefaultLocalDeployerOptions,
-    LocalDeployerOptions,
-} from "../LocalDeployerOptions";
+import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions, } from "../LocalDeployerOptions";
+import { ArtifactStore, DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
+import { AppInfo, Deployer } from "../../../../../../";
 
 /**
  * Managed deployments
@@ -23,7 +20,7 @@ let managedDeployments: ManagedDeployments;
  * Use Maven to deploy
  * @param opts options
  */
-export function mavenDeployer(opts: LocalDeployerOptions): SourceDeployer {
+export function mavenDeployer(opts: LocalDeployerOptions): Deployer {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -34,27 +31,45 @@ export function mavenDeployer(opts: LocalDeployerOptions): SourceDeployer {
     });
 }
 
-class MavenSourceDeployer implements SourceDeployer {
+export class CloningArtifactStore implements ArtifactStore {
+    public storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string> {
+        throw new Error("Not implemented")
+    }
+
+    public async checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
+        const cloned = await GitCommandGitProject.cloned(creds, id);
+        return {
+            cwd: cloned.baseDir, filename: ".",
+            name: `${id.owner}/${id.repo}`,
+            version: id.sha,
+            id: id
+        };
+    }
+}
+
+
+class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
+
 
     constructor(public opts: LocalDeployerOptions) {
     }
 
-    public async undeploy(id: RemoteRepoRef, branch: string): Promise<any> {
-        return managedDeployments.terminateIfRunning({...id, branch});
+    public async undeploy(ti: ManagedDeploymentTargetInfo): Promise<any> {
+        return managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
     }
 
-    public async deployFromSource(id: RemoteRepoRef,
-                                  addressChannels: AddressChannels,
-                                  log: ProgressLog,
-                                  creds: ProjectOperationCredentials,
-                                  atomistTeam: string,
-                                  branch: string): Promise<Deployment> {
-        const baseUrl = this.opts.baseUrl;
-        const branchId = {...id, branch};
-        const port = managedDeployments.findPort(branchId);
-        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, branch, port, atomistTeam);
-        const cloned = await GitCommandGitProject.cloned(creds, id);
-        await managedDeployments.terminateIfRunning(branchId);
+    public async deploy(da: DeployableArtifact,
+                        ti: ManagedDeploymentTargetInfo,
+                        log: ProgressLog,
+                        creds: ProjectOperationCredentials,
+                        atomistTeam: string): Promise<Deployment> {
+
+        const port = managedDeployments.findPort(ti.managedDeploymentKey);
+        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", da.id, ti.managedDeploymentKey.branch, port, atomistTeam);
+
+        await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+
+        const branchId = ti.managedDeploymentKey;
         const startupInfo = {
             port,
             atomistTeam,
@@ -65,10 +80,10 @@ class MavenSourceDeployer implements SourceDeployer {
                 "spring-boot:run",
             ].concat(this.opts.commandLineArgumentsFor(startupInfo)),
             {
-                cwd: cloned.baseDir,
+                cwd: da.cwd,
             });
         if (!childProcess.pid) {
-            await addressChannels("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +
+            throw new Error("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +
                 "Attempted to execute `mvn: spring-boot:run`");
         }
         childProcess.stdout.on("data", what => log.write(what.toString()));
@@ -82,7 +97,7 @@ class MavenSourceDeployer implements SourceDeployer {
                         port, childProcess,
                     });
                     resolve({
-                        endpoint: `${baseUrl}:${port}/${startupInfo.contextRoot}`,
+                        endpoint: `${this.opts.baseUrl}:${port}/${startupInfo.contextRoot}`,
                     });
                 }
             });

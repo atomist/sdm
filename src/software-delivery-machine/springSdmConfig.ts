@@ -4,7 +4,7 @@ import { FunctionalUnit } from "../";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
 import { ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
-import { deployOnLocal } from "../handlers/events/delivery/deploy/deployOnLocal";
+import { deployOnLocal, LocalDeployment } from "../handlers/events/delivery/deploy/deployOnLocal";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
@@ -21,6 +21,7 @@ import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { logReview } from "./blueprint/review/logReview";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { executeDeploy } from "../handlers/events/delivery/deploy/executeDeploy";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
@@ -58,17 +59,9 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
             () => disposeProjectHandler,
         )
         .addSupportingEvents(OnDryRunBuildComplete)
-        .addFunctionalUnits(localDeployer);
+        .addFunctionalUnits(LocalDeployment);
 
     softwareDeliveryMachine.addFingerprinters(mavenFingerprinter);
     // .addFingerprintDifferenceListeners(diff1)
 }
 
-const localDeployer: FunctionalUnit = {
-    eventHandlers: [
-        () => new ExecuteGoalOnPendingStatus("LocalDeploy",
-        LocalDeploymentGoal,
-            deployOnLocal(LocalEndpointGoal, MavenDeployer)),
-    ],
-    commandHandlers: [],
-};

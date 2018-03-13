@@ -65,6 +65,7 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
         if (!artifactCheckout) {
             throw new Error("No DeployableArtifact passed in");
         }
+
         const deployment = await params.deployer.deploy(
             artifactCheckout,
             params.targeter(params.id, params.branch),

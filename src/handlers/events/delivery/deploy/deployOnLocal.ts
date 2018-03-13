@@ -39,6 +39,31 @@ import {
     setEndpointStatus,
 } from "./deploy";
 import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
+import { MavenDeployer } from "../../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/httpServiceGoals";
+import { FunctionalUnit } from "../../../../index";
+import { ExecuteGoalOnPendingStatus } from "../build/ExecuteGoalOnPendingStatus";
+import { executeDeploy, retryDeployFromLocal } from "./executeDeploy";
+import { CloningArtifactStore } from "./local/maven/mavenSourceDeployer";
+import { ManagedDeploymentTargeter } from "./local/appManagement";
+
+const LocalDeployFromCloneSpec =
+    {
+        deployGoal: LocalDeploymentGoal,
+        endpointGoal: LocalEndpointGoal,
+        artifactStore: new CloningArtifactStore(),
+        deployer: MavenDeployer,
+        targeter: ManagedDeploymentTargeter
+    };
+
+export const LocalDeployment: FunctionalUnit = {
+    eventHandlers: [
+        () => new ExecuteGoalOnPendingStatus("LocalDeployFromClone",
+            LocalDeploymentGoal,
+            executeDeploy(LocalDeployFromCloneSpec)),
+    ],
+    commandHandlers: [() => retryDeployFromLocal("LocalDeployFromClone", LocalDeployFromCloneSpec)],
+};
 
 export function deployOnLocal(endpointGoal: Goal, deployer): Executor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {

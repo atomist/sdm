@@ -29,7 +29,7 @@ import {
     ManagedDeploymentTargetInfo,
     targetInfoForAllBranches
 } from "../../../handlers/events/delivery/deploy/local/appManagement";
-import { FunctionalUnit } from "../../../";
+import { Deployer, FunctionalUnit } from "../../../";
 
 /**
  * Deploy to the automation client node
@@ -70,7 +70,7 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export const MavenDeployer: SourceDeployer =
+export const MavenDeployer: Deployer =
     mavenDeployer({
         baseUrl: "http://localhost",
         lowerPort: 9090,
