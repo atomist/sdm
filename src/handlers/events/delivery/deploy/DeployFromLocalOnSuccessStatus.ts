@@ -80,11 +80,15 @@ export class DeployFromLocalOnSuccessStatus<T extends TargetInfo> implements Sta
             siblings: status.commit.statuses,
         };
 
-        if (! await params.deployGoal.preconditionsMet({token: params.githubToken}, id, statusAndFriends)) {
-            logger.info("Preconditions not met for goal %s on %j", params.deployGoal.name, id);
+        const preconsStatus = await params.deployGoal.preconditionsStatus({token: params.githubToken}, id, statusAndFriends);
+        if (preconsStatus === "failure") {
+            logger.info("Preconditions failed for goal %s on %j", params.deployGoal.name, id);
+            return failure(new Error("Precondition error"));
+        }
+        if (preconsStatus === "waiting") {
+            logger.info("Preconditions not yet met for goal %s on %j", params.deployGoal.name, id);
             return Success;
         }
-
         if (!currentGoalIsStillPending(params.deployGoal.context, statusAndFriends)) {
             return Success;
         }

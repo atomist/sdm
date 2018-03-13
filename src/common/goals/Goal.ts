@@ -19,6 +19,8 @@ export interface GoalDefinition {
     workingDescription?: string;
 }
 
+export type PreconditionsStatus = "waiting" | "success" | "failure";
+
 /**
  * Represents a delivery action, such as Build or Deploy.
  */
@@ -51,10 +53,10 @@ export class Goal {
     }
 
     // TODO decouple from github statuses
-    public async preconditionsMet(creds: ProjectOperationCredentials,
-                                  id: RemoteRepoRef,
-                                  sub: GitHubStatusAndFriends): Promise<boolean> {
-        return true;
+    public async preconditionsStatus(creds: ProjectOperationCredentials,
+                                     id: RemoteRepoRef,
+                                     sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
+        return "success";
     }
 }
 
@@ -67,10 +69,9 @@ export class GoalWithPrecondition extends Goal {
         this.dependsOn = dependsOn;
     }
 
-    public async preconditionsMet(creds: ProjectOperationCredentials,
-                                  id: RemoteRepoRef,
-                                  sub: GitHubStatusAndFriends): Promise<boolean> {
-
+    public async preconditionsStatus(creds: ProjectOperationCredentials,
+                                     id: RemoteRepoRef,
+                                     sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
         const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
         const errors: string[] = checks.filter(r => r.error !== undefined)
             .map(r => r.error);
@@ -78,13 +79,19 @@ export class GoalWithPrecondition extends Goal {
 
         errors.forEach(e => logger.debug("Could not establish preconditions for " + this.name + ": " + e));
         reasonsToWait.forEach(e => logger.debug("Not triggering " + this.name + ": " + e));
-        const met = errors.length === 0 && reasonsToWait.length === 0;
-        if (!met) {
-            logger.info("Preconditions not met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
+        if (errors.length > 0) {
+            logger.info("Preconditions failed on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
                 this.name, this.dependsOn.map(g => g.name),
                 id, errors.join(","), reasonsToWait.join(","));
+            return "failure";
         }
-        return met;
+        if (reasonsToWait.length > 0) {
+            logger.info("Preconditions not yet met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
+                this.name, this.dependsOn.map(g => g.name),
+                id, errors.join(","), reasonsToWait.join(","));
+            return "waiting";
+        }
+        return "success";
     }
 }
 
@@ -93,8 +100,11 @@ function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?
     if (!detectedStatus) {
         return {error: "Did not find a status for " + pg.context};
     }
-    if (detectedStatus.state !== "success") {
+    if (detectedStatus.state === "pending") {
         return {wait: "Precondition '" + pg.name + "' not yet successful"};
+    }
+    if (detectedStatus.state !== "success") {
+        return {error: "Precondition '" + pg.name + `' in state [${detectedStatus.state}]`};
     }
     if (requiresApproval(detectedStatus)) {
         return {wait: "Precondition '" + pg.name + "' requires approval"};

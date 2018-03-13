@@ -148,13 +148,21 @@ export async function executeGoal(execute: Executor, status: StatusForExecuteGoa
         description: status.description,
         siblings: status.commit.statuses,
     };
-    const creds = {token: params.githubToken};
-
-    if (!await params.goal.preconditionsMet(creds, id, statusAndFriends)) {
-        logger.info("Preconditions not met for goal %s on %j", params.goal.name, id);
+    logger.info("Checking preconditions for goal %s on %j...", params.goal.name, id);
+    const preconsStatus = await params.goal.preconditionsStatus({token: params.githubToken}, id, statusAndFriends);
+    if (preconsStatus === "failure") {
+        logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
+        createStatus(params.githubToken, id as GitHubRepoRef, {
+            context: params.goal.context,
+            description: params.goal.workingDescription,
+            state: "failure",
+        });
         return Success;
     }
-
+    if (preconsStatus === "waiting") {
+        logger.info("Preconditions not yet met for goal %s on %j", params.goal.name, id);
+        return Success;
+    }
     if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
         return Success;
     }

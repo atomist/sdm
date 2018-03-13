@@ -16,7 +16,7 @@
 
 import {
     EventFired,
-    EventHandler,
+    EventHandler, failure,
     GraphQL,
     HandleCommand,
     HandleEvent,
@@ -114,11 +114,15 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
             siblings: status.commit.statuses,
         };
 
-        if (! await params.goal.preconditionsMet({token: params.githubToken}, id, statusAndFriends)) {
-            logger.info("Preconditions not met for goal %s on %j", params.goal.name, id);
+        const preconsStatus = await params.goal.preconditionsStatus({token: params.githubToken}, id, statusAndFriends);
+        if (preconsStatus === "failure") {
+            logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
+            return failure(new Error("Precondition error"));
+        }
+        if (preconsStatus === "waiting") {
+            logger.info("Preconditions not yet met for goal %s on %j", params.goal.name, id);
             return Success;
         }
-
         if (!currentGoalIsStillPending(params.sdm.verifyGoal.context, statusAndFriends)) {
             return Promise.resolve(Success);
         }

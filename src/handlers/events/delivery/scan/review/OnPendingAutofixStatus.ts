@@ -98,27 +98,22 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
                     new SimpleRepoId(id.owner, id.repo));
             }
 
-            await markScanned(project.id as GitHubRepoRef,
-                params.goal, "success", credentials, false);
+            await markStatus(project.id as GitHubRepoRef,
+                params.goal, "success", credentials);
 
             return Success;
         } catch (err) {
-            await markScanned(id,
-                params.goal, "error", credentials, false);
+            await markStatus(id,
+                params.goal, "error", credentials);
             return failure(err);
         }
     }
 }
 
-// TODO fix this
-export const ScanBase = "https://scan.atomist.com";
-
-function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
-                     creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
+function markStatus(id: GitHubRepoRef, goal: Goal, state: StatusState,
+                    creds: ProjectOperationCredentials): Promise<any> {
     return createStatus((creds as TokenCredentials).token, id, {
         state,
-        target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
         context: goal.context,
         description: goal.completedDescription,
     });

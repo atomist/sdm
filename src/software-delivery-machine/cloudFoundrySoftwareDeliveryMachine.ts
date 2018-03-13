@@ -29,7 +29,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             ],
             artifactStore,
         },
-        whenPushSatisfies(IsMaven, IsSpringBoot, not(MaterialChangeToJavaRepo))
+        whenPushSatisfies(IsMaven, IsSpringBoot,
+            not(PushFromAtomist), not(MaterialChangeToJavaRepo))
             .setGoals(NoGoals),
         whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot, HasCloudFoundryManifest, ToPublicRepo)
             .setGoals(HttpServiceGoals),
@@ -42,6 +43,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             .buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
         onAnyPush.buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
     );
+
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
             () => addCloudFoundryManifest,
