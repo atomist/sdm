@@ -26,15 +26,15 @@ import {
 } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { HasChannels } from "../../../../";
+import { HasChannels } from "../../../index";
 import {
     currentGoalIsStillPending,
     GitHubStatusAndFriends,
     Goal,
-} from "../../../../common/goals/Goal";
-import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus, StatusState } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
+} from "../../../common/goals/Goal";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
+import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
+import { createStatus } from "../../../util/github/ghub";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;

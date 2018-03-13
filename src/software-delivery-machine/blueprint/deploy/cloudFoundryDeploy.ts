@@ -15,8 +15,8 @@
  */
 
 import { FunctionalUnit } from "../../../";
-import { executeDeploy, retryGoal, } from "../../../handlers/events/delivery/deploy/executeDeploy";
-import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
+import { executeDeploy, } from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
@@ -26,7 +26,8 @@ import {
     StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { DefaultArtifactStore } from "../artifactStore";
-import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
+import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
+import { retryGoal } from "../../../handlers/commands/RetryGoal";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 

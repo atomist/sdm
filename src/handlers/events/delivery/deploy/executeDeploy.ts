@@ -1,4 +1,3 @@
-import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { Goal } from "../../../../common/goals/Goal";
@@ -9,24 +8,13 @@ import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { deploy, DeployParams, Targeter } from "./deploy";
-import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "./ExecuteGoalOnSuccessStatus";
-import {
-    failure,
-    HandleCommand,
-    HandlerContext,
-    logger,
-    MappedParameter,
-    MappedParameters,
-    Parameter,
-    Secret,
-    Secrets,
-    Success
-} from "@atomist/automation-client";
+import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "../ExecuteGoalOnSuccessStatus";
+import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { AddressChannels, ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog, ProgressLog } from "../../../../";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
-import { Parameters } from "@atomist/automation-client/decorators";
-import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import { createStatus } from "../../../../util/github/ghub";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { retryCommandNameFor } from "../../../commands/RetryGoal";
 
 
 export interface DeploySpec<T extends TargetInfo> {
@@ -111,39 +99,6 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
             description: executeGoalInvocation.goal.failedDescription,
         }).then(no => ({code: 0, message: err.message}));
     }
-}
-
-function retryCommandNameFor(deployName: string) {
-    return "Retry" + deployName;
-}
-
-@Parameters()
-export class RetryGoalParameters {
-
-    @Secret(Secrets.UserToken)
-    public githubToken: string;
-
-    // I think I should be using `target` somehow? because we need provider too
-    @MappedParameter(MappedParameters.GitHubOwner)
-    public owner: string;
-
-    @MappedParameter(MappedParameters.GitHubRepository)
-    public repo: string;
-
-    @Parameter({required: false})
-    public sha: string;
-}
-
-export function retryGoal(implementationName: string, goal: Goal): HandleCommand {
-    return commandHandlerFrom(async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
-        const sha = commandParams.sha || await tipOfDefaultBranch(commandParams.githubToken, new GitHubRepoRef(commandParams.owner, commandParams.repo));
-        const id = new GitHubRepoRef(commandParams.owner, commandParams.repo, sha);
-        await createStatus(commandParams.githubToken, id, {
-            context: goal.context,
-            state: "pending",
-            description: goal.requestedDescription
-        });
-    }, RetryGoalParameters, retryCommandNameFor(implementationName), "Retry an execution of " + goal.name, goal.retryIntent)
 }
 
 const running = {};

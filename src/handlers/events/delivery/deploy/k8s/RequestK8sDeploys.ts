@@ -40,7 +40,7 @@ import {
 } from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ExecuteGoalInvocation, Executor } from "../ExecuteGoalOnSuccessStatus";
+import { ExecuteGoalInvocation, Executor } from "../../ExecuteGoalOnSuccessStatus";
 
 export type K8Target = "testing" | "production";
 

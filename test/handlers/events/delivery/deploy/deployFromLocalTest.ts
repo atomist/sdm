@@ -4,7 +4,7 @@ import * as assert from "power-assert";
 import { executeDeploy } from "../../../../../src/handlers/events/delivery/deploy/executeDeploy";
 import {
     ExecuteGoalOnSuccessStatus,
-} from "../../../../../src/handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
+} from "../../../../../src/handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,

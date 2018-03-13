@@ -30,16 +30,16 @@ import {
     currentGoalIsStillPending,
     GitHubStatusAndFriends,
     Goal,
-} from "../../../../common/goals/Goal";
-import { PushTest } from "../../../../common/listener/GoalSetter";
-import { Builder } from "../../../../spi/build/Builder";
-import { OnAnyPendingStatus } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
+} from "../../../common/goals/Goal";
+import { PushTest } from "../../../common/listener/GoalSetter";
+import { Builder } from "../../../spi/build/Builder";
+import { OnAnyPendingStatus } from "../../../typings/types";
+import { createStatus } from "../../../util/github/ghub";
 import {
     executeGoal,
     ExecuteGoalInvocation,
     Executor,
-} from "../deploy/ExecuteGoalOnSuccessStatus";
+} from "./ExecuteGoalOnSuccessStatus";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.

@@ -17,10 +17,11 @@
 import { MavenDeployer } from "../../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/httpServiceGoals";
 import { FunctionalUnit } from "../../../../index";
-import { ExecuteGoalOnPendingStatus } from "../build/ExecuteGoalOnPendingStatus";
-import { executeDeploy, retryGoal } from "./executeDeploy";
+import { ExecuteGoalOnPendingStatus } from "../ExecuteGoalOnPendingStatus";
+import { executeDeploy } from "./executeDeploy";
 import { CloningArtifactStore } from "./local/maven/mavenSourceDeployer";
 import { ManagedDeploymentTargeter } from "./local/appManagement";
+import { retryGoal } from "../../../commands/RetryGoal";
 
 const LocalDeployFromCloneSpec =
     {

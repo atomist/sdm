@@ -5,8 +5,8 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { PushTestInvocation } from "../../../../common/listener/GoalSetter";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus } from "../../../../typings/types";
-import { ExecuteGoalInvocation } from "../deploy/ExecuteGoalOnSuccessStatus";
-import { ConditionalBuilder } from "./ExecuteGoalOnPendingStatus";
+import { ExecuteGoalInvocation } from "../ExecuteGoalOnSuccessStatus";
+import { ConditionalBuilder } from "../ExecuteGoalOnPendingStatus";
 
 export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
 
