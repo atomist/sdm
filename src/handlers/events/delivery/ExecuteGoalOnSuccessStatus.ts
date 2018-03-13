@@ -126,7 +126,7 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
         this.description = `Execute ${goal.name} on prior goal success`;
         this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
             GraphQL.subscriptionFromFile(
-                "../../../../graphql/subscription/OnAnySuccessStatus",
+                "../../../graphql/subscription/OnAnySuccessStatus",
                 __dirname),
             this.subscriptionName));
     }

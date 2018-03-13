@@ -48,7 +48,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 private execute: Executor) {
         this.subscriptionName = implementationName + "OnPending";
         this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
-            GraphQL.subscriptionFromFile("../../../../graphql/subscription/OnAnyPendingStatus", __dirname),
+            GraphQL.subscriptionFromFile("../../../graphql/subscription/OnAnyPendingStatus", __dirname),
             this.subscriptionName));
         this.name = implementationName + "OnPendingStatus";
         this.description = `Execute ${goal.name} when requested`;
