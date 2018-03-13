@@ -14,32 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    GraphQL,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success, } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    currentGoalIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-} from "../../../common/goals/Goal";
 import { PushTest } from "../../../common/listener/GoalSetter";
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";
-import { createStatus } from "../../../util/github/ghub";
-import {
-    executeGoal,
-    ExecuteGoalInvocation,
-    Executor,
-} from "./ExecuteGoalOnSuccessStatus";
+import { executeGoal, ExecuteGoalInvocation, Executor, } from "./ExecuteGoalOnSuccessStatus";
+import { Goal } from "../../../common/goals/Goal";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.

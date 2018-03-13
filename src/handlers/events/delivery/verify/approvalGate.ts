@@ -2,8 +2,7 @@
  * Added to end of URL of a status to fire manual approval step
  * @type {string}
  */
-import { logger } from "@atomist/automation-client";
-import { GitHubStatus } from "../../../../common/goals/Goal";
+import { GitHubStatus } from "../../../../common/goals/gitHubContext";
 
 export const ApprovalGateParam = "atomist:approve=true";
 

@@ -1,7 +1,19 @@
 import { logger } from "@atomist/automation-client";
+import { StatusState } from "../../typings/types";
 
 // convention: "sdm/atomist/#-env/#-goal" (the numbers are for ordering)
 export type GitHubStatusContext = string;
+
+export interface GitHubStatus {
+    context?: GitHubStatusContext;
+    description?: string;
+    state?: StatusState;
+    targetUrl?: string;
+}
+
+export interface GitHubStatusAndFriends extends GitHubStatus {
+    siblings: GitHubStatus[];
+}
 
 export type GoalEnvironment = "0-code/" | "1-staging/" | "2-prod/";
 

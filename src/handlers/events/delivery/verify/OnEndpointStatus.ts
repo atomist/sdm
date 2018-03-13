@@ -16,7 +16,8 @@
 
 import {
     EventFired,
-    EventHandler, failure,
+    EventHandler,
+    failure,
     GraphQL,
     HandleCommand,
     HandleEvent,
@@ -34,40 +35,16 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    addressSlackChannels,
-    buttonForCommand,
-    Destination,
-} from "@atomist/automation-client/spi/message/MessageClient";
+import { addressSlackChannels, buttonForCommand, Destination, } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import {
-    AddressChannels,
-    addressDestination,
-    messageDestinations,
-} from "../../../../";
-import { splitContext } from "../../../../common/goals/gitHubContext";
-import {
-    currentGoalIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-} from "../../../../common/goals/Goal";
-import {
-    ListenerInvocation,
-    SdmListener,
-} from "../../../../common/listener/Listener";
-import {
-    OnSuccessStatus,
-    StatusState,
-} from "../../../../typings/types";
-import {
-    createStatus,
-    tipOfDefaultBranch,
-} from "../../../../util/github/ghub";
+import { AddressChannels, addressDestination, messageDestinations, } from "../../../../";
+import { GitHubStatusAndFriends, splitContext } from "../../../../common/goals/gitHubContext";
+import { currentGoalIsStillPending, Goal, } from "../../../../common/goals/Goal";
+import { ListenerInvocation, SdmListener, } from "../../../../common/listener/Listener";
+import { OnSuccessStatus, StatusState, } from "../../../../typings/types";
+import { createStatus, tipOfDefaultBranch, } from "../../../../util/github/ghub";
 import { StagingEndpointContext } from "../goals/httpServiceGoals";
 import { forApproval } from "./approvalGate";
 

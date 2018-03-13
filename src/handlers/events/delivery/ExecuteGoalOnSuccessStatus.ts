@@ -29,12 +29,12 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { HasChannels } from "../../../index";
 import {
     currentGoalIsStillPending,
-    GitHubStatusAndFriends,
     Goal,
 } from "../../../common/goals/Goal";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
+import { GitHubStatusAndFriends } from "../../../common/goals/gitHubContext";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
