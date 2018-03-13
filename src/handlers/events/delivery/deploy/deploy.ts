@@ -26,30 +26,31 @@ import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T
 
-export interface DeployParams<T extends TargetInfo> {
+export interface DeployArtifactParams<T extends TargetInfo> {
+    id: GitHubRepoRef;
+    credentials: ProjectOperationCredentials;
+    addressChannels: AddressChannels;
+    team: string;
     deployGoal: Goal;
     endpointGoal: Goal;
-    id: GitHubRepoRef;
-    githubToken: string;
-    targetUrl: string;
     artifactStore: ArtifactStore;
     deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
-    ac: AddressChannels;
-    team: string;
+    targetUrl: string;
     progressLog: ProgressLog;
     branch: string;
 }
 
-export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<void> {
+export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<T>): Promise<void> {
     logger.info("Deploying with params=%j", params);
     const progressLog = params.progressLog;
 
         const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
-            {token: params.githubToken})
+            params.credentials)
             .catch(err => {
                 progressLog.write("Error checking out artifact: " + err.message);
                 throw err;
@@ -62,16 +63,17 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
             artifactCheckout,
             params.targeter(params.id, params.branch),
             progressLog,
-            {token: params.githubToken},
+            params.credentials,
             params.team);
 
-        await setDeployStatus(params.githubToken, params.id,
+        await setStatus(params.credentials, params.id,
             "success",
             params.deployGoal.context,
             progressLog.url,
             params.deployGoal.completedDescription);
         if (deployment.endpoint) {
-            await setEndpointStatus(params.githubToken, params.id,
+            await setStatus(params.credentials, params.id,
+                "success",
                 params.endpointGoal.context,
                 deployment.endpoint,
                 params.endpointGoal.completedDescription)
@@ -80,8 +82,8 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
                     // do not fail this whole handler
                 });
         } else {
-            await params.ac("Deploy succeeded, but the endpoint didn't appear in the log.");
-            await params.ac({
+            await params.addressChannels("Deploy succeeded, but the endpoint didn't appear in the log.");
+            await params.addressChannels({
                 content: progressLog.log,
                 fileType: "text",
                 fileName: `deploy-success-${params.id.sha}.log`,
@@ -90,14 +92,14 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
         }
 }
 
-export function setDeployStatus(token: string,
+export function setStatus(credentials: ProjectOperationCredentials,
                                 id: GitHubRepoRef,
                                 state: StatusState,
                                 context: GitHubStatusContext,
                                 targetUrl: string,
                                 description?: string): Promise<any> {
     logger.info(`Setting deploy status for ${context} to ${state} at ${targetUrl}`);
-    return createStatus(token, id, {
+    return createStatus((credentials as TokenCredentials).token, id, {
         state,
         target_url: targetUrl,
         context,
@@ -105,15 +107,3 @@ export function setDeployStatus(token: string,
     });
 }
 
-export function setEndpointStatus(token: string,
-                                  id: GitHubRepoRef,
-                                  context: GitHubStatusContext,
-                                  endpoint: string,
-                                  description?: string): Promise<any> {
-    return createStatus(token, id, {
-        state: "success",
-        target_url: endpoint,
-        context,
-        description,
-    });
-}

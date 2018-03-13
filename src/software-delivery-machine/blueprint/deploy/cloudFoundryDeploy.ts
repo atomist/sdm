@@ -15,7 +15,7 @@
  */
 
 import { FunctionalUnit } from "../../../";
-import { executeDeploy, } from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { deployArtifactWithLogs, executeDeployArtifact, runWithLog, } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
@@ -48,10 +48,10 @@ export const CloudFoundryStagingDeployOnSuccessStatus: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnSuccessStatus("DeployFromLocal",
             StagingDeploymentGoal,
-            executeDeploy(StagingDeploySpec)),
+            deployArtifactWithLogs(StagingDeploySpec)),
         () => new ExecuteGoalOnPendingStatus("DeployFromLocal",
             StagingDeploymentGoal,
-            executeDeploy(StagingDeploySpec))],
+            deployArtifactWithLogs(StagingDeploySpec))],
     commandHandlers: [() => retryGoal("DeployFromLocal", ProductionDeploymentGoal)],
 };
 
@@ -71,10 +71,10 @@ export const CloudFoundryProductionDeployOnSuccessStatus: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnSuccessStatus("DeployFromLocal1",
             ProductionDeploymentGoal,
-            executeDeploy(ProductionDeploySpec)),
+            deployArtifactWithLogs(ProductionDeploySpec)),
         () => new ExecuteGoalOnPendingStatus("DeployFromLocal1",
             ProductionDeploymentGoal,
-            executeDeploy(ProductionDeploySpec)),
+            deployArtifactWithLogs(ProductionDeploySpec)),
     ],
 
     commandHandlers: [() => retryGoal("DeployFromLocal1", ProductionDeploymentGoal)],

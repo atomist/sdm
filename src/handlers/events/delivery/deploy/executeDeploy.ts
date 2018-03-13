@@ -7,16 +7,17 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
-import { deploy, DeployParams, Targeter } from "./deploy";
-import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "../ExecuteGoalOnSuccessStatus";
-import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
+import { deploy, DeployArtifactParams, Targeter } from "./deploy";
+import { ExecuteGoalInvocation, ExecuteGoalResult, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
+import { failure, HandlerContext, HandlerResult, logger, success, Success } from "@atomist/automation-client";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { createStatus } from "../../../../util/github/ghub";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { retryCommandNameFor } from "../../../commands/RetryGoal";
-import { MultiProgressLog , ConsoleProgressLog, InMemoryProgressLog } from "../../../../common/log/progressLogs";
+import { MultiProgressLog, ConsoleProgressLog, InMemoryProgressLog } from "../../../../common/log/progressLogs";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { ListenerInvocation } from "../../../../";
 
 
 export interface DeploySpec<T extends TargetInfo> {
@@ -27,46 +28,65 @@ export interface DeploySpec<T extends TargetInfo> {
     targeter: Targeter<T>;
 }
 
-export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>): Executor {
+export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
+                                                 logInterpreter?: LogInterpreter): Executor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
-        const image = status.commit.image;
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
 
         const log = await createEphemeralProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, new InMemoryProgressLog(), log);
-        const ac = addressChannelsFor(commit.repo, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const credentials = {token: params.githubToken};
 
-        const errorReport = howToReportError(params, ac, progressLog, id, spec.deployer.logInterpreter);
+        const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
 
-        if (!image && !spec.artifactStore.imageUrlIsOptional) {
-            progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
-            await errorReport(new Error("No image linked"));
-        } else {
-            logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-            const pushBranch = commit.pushes[0].branch;
-            logger.info(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
-
-
-            await dedup(commit.sha, async () => {
-                const deployParams: DeployParams<T> = {
-                    ...spec,
-                    id,
-                    githubToken: params.githubToken,
-                    targetUrl: image ? image.imageName : undefined,
-                    ac,
-                    team: ctx.teamId,
-                    progressLog,
-                    branch: pushBranch,
-                };
-                deploy(deployParams).catch(err => errorReport(err))
-            });
-        }
+        await whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials});
 
         await progressLog.close();
         return Promise.resolve(Success as ExecuteGoalResult);
     };
+}
+
+export interface RunWithLogInvocation<T extends TargetInfo> extends ListenerInvocation {
+    status: StatusForExecuteGoal.Status,
+    progressLog: ProgressLog,
+    reportError: (Error) => Promise<ExecuteGoalResult>
+}
+
+export function deployArtifactWithLogs<T extends TargetInfo>(spec: DeploySpec<T>) {
+    return runWithLog(executeDeployArtifact(spec), spec.deployer.logInterpreter);
+}
+
+export function executeDeployArtifact<T extends TargetInfo>(spec: DeploySpec<T>): ((rwli: RunWithLogInvocation<T>) => Promise<ExecuteGoalResult>) {
+    return async (rwli: RunWithLogInvocation<T>) => {
+        const commit = rwli.status.commit;
+        const image = rwli.status.commit.image;
+        const pushBranch = commit.pushes[0].branch;
+        rwli.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
+        const deployParams: DeployArtifactParams<T> = {
+            ...spec,
+            credentials: rwli.credentials,
+            addressChannels: rwli.addressChannels,
+            id: rwli.id as GitHubRepoRef,
+            targetUrl: image.imageName,
+            team: rwli.context.teamId,
+            progressLog: rwli.progressLog,
+            branch: pushBranch,
+        };
+
+        if (!image && !spec.artifactStore.imageUrlIsOptional) {
+            rwli.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
+            return rwli.reportError(new Error("No image linked"));
+        } else {
+            logger.info(`Running deploy. Triggered by ${rwli.status.state} status: ${rwli.status.context}: ${rwli.status.description}`);
+            return dedup(commit.sha, () =>
+                deploy(deployParams)
+                    .catch(err => rwli.reportError(err)))
+                .then(success);
+        }
+    }
 }
 
 function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,

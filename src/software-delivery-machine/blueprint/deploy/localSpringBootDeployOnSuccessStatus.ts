@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { DeploySpec, executeDeploy } from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { deployArtifactWithLogs, DeploySpec, executeDeployArtifact } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
@@ -58,10 +58,10 @@ export const LocalExecutableJarDeploy: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnSuccessStatus("DeployFromLocalExecutableJar",
             LocalExecutableJarDeploySpec.deployGoal,
-            executeDeploy(LocalExecutableJarDeploySpec)),
+            deployArtifactWithLogs(LocalExecutableJarDeploySpec)),
         () => new ExecuteGoalOnPendingStatus("DeployFromLocalExecutableJar",
             LocalExecutableJarDeploySpec.deployGoal,
-            executeDeploy(LocalExecutableJarDeploySpec)),
+            deployArtifactWithLogs(LocalExecutableJarDeploySpec)),
         () => UndeployOnSuperseded],
     commandHandlers: [() => retryGoal("DeployFromLocalExecutableJar",
         LocalExecutableJarDeploySpec.deployGoal)],
