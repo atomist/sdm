@@ -46,6 +46,11 @@ export class MultiProgressLog implements ProgressLog {
         const hasLog = this.logs.find(l => !!l.log);
         return !!hasLog ? hasLog.log : undefined;
     }
+
+    get url(): string {
+        const hasUrl = this.logs.find(l => !!l.url);
+        return !!hasUrl ? hasUrl.url : undefined;
+    }
 }
 
 /**

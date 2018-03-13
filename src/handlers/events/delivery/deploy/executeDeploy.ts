@@ -1,7 +1,3 @@
-import {
-    failure, HandleCommand, HandlerContext, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
-    Success
-} from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
@@ -12,11 +8,19 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
-import { RetryDeployParameters } from "../../../commands/RetryDeploy";
-import { deploy, Targeter } from "./deploy";
+import { deploy, DeployParams, setDeployStatus, Targeter } from "./deploy";
 import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "./ExecuteGoalOnSuccessStatus";
+import {
+    failure, HandleCommand, HandlerContext, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success,
+    success
+} from "@atomist/automation-client";
+import { AddressChannels, ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog, ProgressLog } from "../../../../";
+import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import { LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+
 
 export interface DeploySpec<T extends TargetInfo> {
     deployGoal: Goal;
@@ -31,39 +35,75 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>): Execut
         const commit = status.commit;
         const image = status.commit.image;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const deployName = params.implementationName;
+
+
+        const log = await createEphemeralProgressLog();
+        const progressLog = new MultiProgressLog(ConsoleProgressLog, new InMemoryProgressLog(), log);
+        const ac = addressChannelsFor(commit.repo, ctx);
+
+        const errorReport = howToReportError(params, ac, progressLog, id, spec.deployer.logInterpreter);
 
         if (!image && !spec.artifactStore.imageUrlIsOptional) {
-            logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
-            return failure(new Error("No image linked"));
+            progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
+            await errorReport(new Error("No image linked"));
+        } else {
+            logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+            const pushBranch = commit.pushes[0].branch;
+            logger.info(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
+
+
+            await dedup(commit.sha, async () => {
+                const deployParams: DeployParams<T> = {
+                    ...spec,
+                    id,
+                    githubToken: params.githubToken,
+                    targetUrl: image ? image.imageName : undefined,
+                    ac,
+                    team: ctx.teamId,
+                    progressLog,
+                    branch: pushBranch,
+                };
+                deploy(deployParams).catch(err => errorReport(err))
+            });
         }
 
-        logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-        const pushBranch = commit.pushes[0].branch;
-        logger.info(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
-        const retryButton = buttonForCommand({text: "Retry"}, retryCommandNameFor(deployName), {
-            repo: commit.repo.name,
-            owner: commit.repo.owner,
-            sha: commit.sha,
-            targetUrl: image.imageName,
-            branch: pushBranch,
-        });
-
-        await dedup(commit.sha, () =>
-            deploy({
-                ...spec,
-                id,
-                githubToken: params.githubToken,
-                targetUrl: image ? image.imageName: undefined,
-                ac: addressChannelsFor(commit.repo, ctx),
-                team: ctx.teamId,
-                retryButton,
-                logFactory: createEphemeralProgressLog,
-                branch: pushBranch,
-            }));
-
+        await progressLog.close();
         return Promise.resolve(Success as ExecuteGoalResult);
     };
+}
+
+function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
+                          addressChannels: AddressChannels,
+                          progressLog: ProgressLog,
+                          id: GitHubRepoRef,
+                          logInterpreter?: LogInterpreter) {
+    return async (err: Error) => {
+        logger.error(err.message);
+        logger.error(err.stack);
+
+        const retryButton = buttonForCommand({text: "Retry"},
+            retryCommandNameFor(executeGoalInvocation.implementationName), {
+                repo: id.repo,
+                owner: id.owner,
+                sha: id.sha,
+            });
+
+        const interpretation = logInterpreter && !!progressLog.log && logInterpreter(progressLog.log);
+        // The deployer might have information about the failure; report it in the channels
+        if (interpretation) {
+            await reportFailureInterpretation("deploy", interpretation,
+                {url: progressLog.url, log: progressLog.log},
+                id, addressChannels, retryButton);
+        } else {
+            await addressChannels(":x: Failure deploying: " + err.message);
+        }
+        return createStatus(executeGoalInvocation.githubToken, id, {
+            state: "failure",
+            target_url: progressLog.url,
+            context: executeGoalInvocation.goal.context,
+            description: executeGoalInvocation.goal.failedDescription,
+        }).then(no => ({code: 0, message: err.message}));
+    }
 }
 
 function retryCommandNameFor(deployName: string) {
@@ -83,7 +123,7 @@ export class RetryGoalParameters {
     @MappedParameter(MappedParameters.GitHubRepository)
     public repo: string;
 
-    @Parameter({ required: false })
+    @Parameter({required: false})
     public sha: string;
 }
 

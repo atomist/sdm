@@ -29,6 +29,7 @@ import { LogFactory } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { ProgressLog } from "../../../../";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T
 
@@ -37,25 +38,20 @@ export interface DeployParams<T extends TargetInfo> {
     endpointGoal: Goal;
     id: GitHubRepoRef;
     githubToken: string;
-    targetUrl?: string;
+    targetUrl: string;
     artifactStore: ArtifactStore;
     deployer: Deployer<T>;
     targeter: Targeter<T>;
     ac: AddressChannels;
-    retryButton?: Action;
     team: string;
-    logFactory: LogFactory;
-    branch: string,
+    progressLog: ProgressLog;
+    branch: string;
 }
 
-export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
+export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<void> {
     logger.info("Deploying with params=%j", params);
-    const log = await params.logFactory();
+    const progressLog = params.progressLog;
 
-    const savingLog = new InMemoryProgressLog();
-    const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, log);
-
-    try {
         const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
             {token: params.githubToken})
             .catch(err => {
@@ -73,12 +69,10 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
             {token: params.githubToken},
             params.team);
 
-        await progressLog.close();
-
         await setDeployStatus(params.githubToken, params.id,
             "success",
             params.deployGoal.context,
-            log.url,
+            progressLog.url,
             params.deployGoal.completedDescription);
         if (deployment.endpoint) {
             await setEndpointStatus(params.githubToken, params.id,
@@ -98,24 +92,6 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
             } as any);
             logger.warn("No endpoint returned by deployment");
         }
-    } catch (err) {
-        logger.error(err.message);
-        logger.error(err.stack);
-        await progressLog.close();
-        const interpretation = params.deployer.logInterpreter && !!log.log && params.deployer.logInterpreter(log.log);
-        // The deployer might have information about the failure; report it in the channels
-        if (interpretation) {
-            await reportFailureInterpretation("deploy", interpretation,
-                {url: log.url, log: log.log},
-                params.id, params.ac, params.retryButton);
-        } else {
-            await params.ac(":x: Failure deploying: " + err.message);
-        }
-        return setDeployStatus(params.githubToken, params.id, "failure",
-            params.deployGoal.context,
-            log.url,
-            `Failed to ${params.deployGoal.name}`).then(success);
-    }
 }
 
 export function setDeployStatus(token: string,
