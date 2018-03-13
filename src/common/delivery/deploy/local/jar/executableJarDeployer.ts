@@ -46,12 +46,12 @@ export function executableJarDeployer(opts: LocalDeployerOptions): ArtifactDeplo
     });
 }
 
-class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo> {
+class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo, Deployment> {
 
     constructor(public opts: LocalDeployerOptions) {
     }
 
-    public async undeploy(id: ManagedDeploymentTargetInfo): Promise<any> {
+    public async undeploy(id: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<any> {
         return managedDeployments.terminateIfRunning(id.managedDeploymentKey);
     }
 

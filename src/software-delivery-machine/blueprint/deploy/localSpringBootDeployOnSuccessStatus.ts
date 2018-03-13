@@ -51,7 +51,7 @@ const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetIn
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     logger.info("Will undeploy application %j", inv.id);
-    return LocalExecutableJarDeploySpec.deployer.undeploy(targetInfoForAllBranches(inv.id));
+    return LocalExecutableJarDeploySpec.deployer.undeploy(targetInfoForAllBranches(inv.id), undefined, undefined);
 });
 
 export const LocalExecutableJarDeploy: FunctionalUnit = {

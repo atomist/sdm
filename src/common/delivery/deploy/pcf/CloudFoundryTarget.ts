@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { TargetInfo } from "../../../../spi/deploy/Deployment";
+import {Deployment, TargetInfo} from "../../../../spi/deploy/Deployment";
 
 export const PCFTestingDomain = "ri-staging";
 export const PCFProductionDomain = "ri-production";
@@ -32,6 +32,12 @@ export interface CloudFoundryInfo extends TargetInfo {
     password: string;
     space: string;
     org: string;
+
+}
+
+export interface CloudFoundryDeployment extends Deployment {
+
+    appName: string
 
 }
 
