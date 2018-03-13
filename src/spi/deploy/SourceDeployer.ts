@@ -3,6 +3,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { AddressChannels } from "../../common/slack/addressChannels";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment } from "./Deployment";
+import { ManagedDeploymentTargetInfo } from "../../handlers/events/delivery/deploy/local/appManagement";
 
 /**
  * Implemented by classes that can deploy from source
@@ -15,9 +16,8 @@ export interface SourceDeployer {
     undeploy(id: RemoteRepoRef, branch: string): Promise<any>;
 
     deployFromSource(id: RemoteRepoRef,
-                     addressChannels: AddressChannels,
+                     ti: ManagedDeploymentTargetInfo,
                      log: ProgressLog,
                      creds: ProjectOperationCredentials,
-                     atomistTeam: string,
-                     branch: string): Promise<Deployment>;
+                     atomistTeam: string): Promise<Deployment>;
 }
