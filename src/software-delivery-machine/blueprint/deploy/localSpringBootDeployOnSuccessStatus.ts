@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-import { HandleCommand, logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import { DeploySpec, executeDeploy, retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
+import { ManagedDeploymentTargeter, ManagedDeploymentTargetInfo } from "../../../handlers/events/delivery/deploy/local/appManagement";
+import { FunctionalUnit } from "../../../";
 
 /**
  * Deploy to the automation client node
  */
 
 
-const LocalExecutableJarDeploySpec: DeploySpec<TargetInfo> = {
+const LocalExecutableJarDeploySpec: DeploySpec<ManagedDeploymentTargetInfo> = {
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
     artifactStore,
@@ -40,10 +41,7 @@ const LocalExecutableJarDeploySpec: DeploySpec<TargetInfo> = {
         lowerPort: 8082,
         commandLineArgumentsFor: springBootExecutableJarArgs,
     }),
-    targeter: () => ({
-        name: "Local",
-        description: "Deployment alongside local automation client",
-    }),
+    targeter: ManagedDeploymentTargeter,
 };
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
@@ -51,7 +49,7 @@ const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     return LocalExecutableJarDeploySpec.deployer.undeploy(inv.id);
 });
 
-export const LocalExecutableJarDeploy = {
+export const LocalExecutableJarDeploy: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnSuccessStatus("DeployFromLocalExecutableJar",
             LocalExecutableJarDeploySpec.deployGoal,

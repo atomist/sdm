@@ -10,7 +10,7 @@ import {
 } from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { ManagedDeployments } from "../appManagement";
+import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import {
     DefaultLocalDeployerOptions,
     LocalDeployerOptions,
@@ -27,7 +27,7 @@ let managedDeployments: ManagedDeployments;
  * Not for production use.
  * @param opts options
  */
-export function executableJarDeployer(opts: LocalDeployerOptions): Deployer {
+export function executableJarDeployer(opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -38,7 +38,7 @@ export function executableJarDeployer(opts: LocalDeployerOptions): Deployer {
     });
 }
 
-class ExecutableJarDeployer implements Deployer {
+class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo> {
 
     constructor(public opts: LocalDeployerOptions) {
     }
@@ -48,19 +48,19 @@ class ExecutableJarDeployer implements Deployer {
     }
 
     public async deploy(da: DeployableArtifact,
-                        ti: TargetInfo,
+                        ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         creds: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;
-        const port = managedDeployments.findPort(da.id);
+        const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {
             port,
             atomistTeam,
             contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
         };
-        await managedDeployments.terminateIfRunning(da.id);
+        await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
         const childProcess = spawn("java",
             [
                 "-jar",
@@ -75,7 +75,7 @@ class ExecutableJarDeployer implements Deployer {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    managedDeployments.recordDeployment({id: da.id, port, childProcess});
+                    managedDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess});
                     resolve({
                         endpoint: `${baseUrl}:${port}/${startupInfo.contextRoot}`,
                     });
