@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-import { HandlerResult, logger, success } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Action } from "@atomist/slack-messages";
 import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
 import { Goal } from "../../../../common/goals/Goal";
-import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { LogFactory } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { ProgressLog } from "../../../../";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T
