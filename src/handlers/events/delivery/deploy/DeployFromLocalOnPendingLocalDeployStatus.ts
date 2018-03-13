@@ -71,5 +71,5 @@ export function deployOnLocal(endpointGoal: Goal, deployer): Executor {
         } finally {
             log.close();
         }
-    }
+    };
 }

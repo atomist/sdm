@@ -18,9 +18,9 @@ import { FunctionalUnit } from "../../../";
 import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import {
     executeDeploy,
-    retryDeployFromLocal
+    retryDeployFromLocal,
 } from "../../../handlers/events/delivery/deploy/executeDeploy";
-import { ExecuteGoalOnSuccessStatus, } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
+import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import { EnvironmentCloudFoundryTarget } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
@@ -43,7 +43,7 @@ const StagingDeploySpec = {
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-staging",
-    })
+    }),
 };
 
 export const CloudFoundryStagingDeployOnSuccessStatus: FunctionalUnit = {
@@ -52,7 +52,7 @@ export const CloudFoundryStagingDeployOnSuccessStatus: FunctionalUnit = {
             StagingDeploymentGoal,
             executeDeploy(StagingDeploySpec))],
     commandHandlers: [() => retryDeployFromLocal("DeployFromLocal",
-        StagingDeploySpec)]
+        StagingDeploySpec)],
 };
 
 const ProductionDeploySpec = {

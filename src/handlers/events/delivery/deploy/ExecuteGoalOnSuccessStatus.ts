@@ -26,15 +26,15 @@ import {
 } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { HasChannels } from "../../../../";
 import {
     currentGoalIsStillPending,
     GitHubStatusAndFriends,
     Goal,
 } from "../../../../common/goals/Goal";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { createStatus } from "../../../../util/github/ghub";
-import { HasChannels } from "../../../../";
 import { OnAnySuccessStatus, StatusState } from "../../../../typings/types";
+import { createStatus } from "../../../../util/github/ghub";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
@@ -48,20 +48,20 @@ export type Executor = (status: StatusForExecuteGoal.Status,
 
 export namespace StatusForExecuteGoal {
 
-    export type Org = {
+    export interface Org {
         chatTeam?: ChatTeam | null;
     }
 
-    export type ChatTeam = {
+    export interface ChatTeam {
         id?: string | null;
     }
 
-    export type Pushes = {
+    export interface Pushes {
         branch?: string | null;
         id?: string | null;
     }
 
-    export type Image = {
+    export interface Image {
         image?: string | null;
         imageName?: string | null;
     }
@@ -133,7 +133,6 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
         return executeGoal(this.execute, status, ctx, params);
     }
 }
-
 
 export async function executeGoal(execute: Executor, status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) {
     const commit = status.commit;

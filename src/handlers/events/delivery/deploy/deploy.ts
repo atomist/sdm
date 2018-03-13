@@ -92,7 +92,7 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
                 fileType: "text",
                 fileName: `deploy-success-${params.id.sha}.log`,
             } as any);
-            logger.warn("No endpoint returned by deployment")
+            logger.warn("No endpoint returned by deployment");
         }
     } catch (err) {
         logger.error(err.message);

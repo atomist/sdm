@@ -68,7 +68,7 @@ export function requestDeployToK8s(target: K8Target): Executor {
             state: "pending",
             description: "Requested deploy by k8-automation",
         });
-    }
+    };
 }
 
 export async function undeployFromK8s(creds: ProjectOperationCredentials,
