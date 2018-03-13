@@ -89,7 +89,7 @@ export class ManagedDeployments {
     public async terminateIfRunning(id: BranchRepoRef): Promise<any> {
         const victim = this.deployments.find(d => d.id.sha === id.sha ||
             (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
-        if (!!victim) {
+        if (!!victim && !!victim.childProcess) {
             victim.childProcess.kill();
             // Keep the port but deallocate the process
             logger.info("Killed app [%j] with pid %d, but continuing to reserve port [%d]",
