@@ -42,6 +42,10 @@ export interface ExecuteGoalInvocation {
     goal: Goal;
 }
 
+export interface ExecuteGoalResult extends HandlerResult {
+    log?: string
+}
+
 export type Executor = (status: StatusForExecuteGoal.Status,
                         ctx: HandlerContext,
                         params: ExecuteGoalInvocation) => Promise<HandlerResult>;
@@ -176,5 +180,15 @@ export async function executeGoal(execute: Executor, status: StatusForExecuteGoa
     }).catch(err =>
         logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
 
-    return execute(status, ctx, params);
+    return execute(status, ctx, params).then(handleExecuteResult);
+}
+
+async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<HandlerResult> {
+
+    if (executeResult.log) {
+        logger.info("Log received. Length is " + executeResult.log.length);
+    }
+
+    // Return the minimal fields for HandlerResult, because they get printed to the log.
+    return {code: executeResult.code, message: executeResult.message};
 }

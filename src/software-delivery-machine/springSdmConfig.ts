@@ -4,7 +4,7 @@ import { FunctionalUnit } from "../";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
 import { ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
-import { deployOnLocal } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
+import { deployOnLocal } from "../handlers/events/delivery/deploy/deployOnLocal";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
