@@ -8,18 +8,25 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
-import { deploy, DeployParams, setDeployStatus, Targeter } from "./deploy";
+import { deploy, DeployParams, Targeter } from "./deploy";
 import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "./ExecuteGoalOnSuccessStatus";
 import {
-    failure, HandleCommand, HandlerContext, logger, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success,
-    success
+    failure,
+    HandleCommand,
+    HandlerContext,
+    logger,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+    Success
 } from "@atomist/automation-client";
 import { AddressChannels, ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog, ProgressLog } from "../../../../";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 
 
 export interface DeploySpec<T extends TargetInfo> {

@@ -4,7 +4,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { Deployment } from "../../../../../../spi/deploy/Deployment";
-import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
+import { InterpretedLog, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, } from "../LocalDeployerOptions";
@@ -109,44 +109,60 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
-        if (!log) {
-            logger.warn("log was empty");
-            return undefined;
-        }
-
-        const maybeFailedToStart = appFailedToStart(log);
-        if (maybeFailedToStart) {
-            return {
-                relevantPart: maybeFailedToStart,
-                message: "Application failed to start",
-                includeFullLog: false,
-            };
-        }
-
-        // default to maven errors
-        const maybeMavenErrors = mavenErrors(log);
-        if (maybeMavenErrors) {
-            logger.info("recognized maven error");
-            return {
-                relevantPart: maybeMavenErrors,
-                message: "Maven errors",
-                includeFullLog: true,
-            };
-        }
-
-        // or it could be this problem here
-        if (log.match(/Error checking out artifact/)) {
-            logger.info("Recognized artifact error");
-            return {
-                relevantPart: log,
-                message: "I lost the local cache. Please rebuild",
-                includeFullLog: false,
-            };
-        }
-
-        logger.info("Did not find anything to recognize in the log");
+        return springBootRunLogInterpreter(log) || shortLogInterpreter(log);
     }
 
+}
+
+const shortLogInterpreter: LogInterpreter = (log: string) => {
+    if (log.length < 200) {
+        return {
+            relevantPart: log,
+            message: "This is the whole log.",
+            includeFullLog: false
+        }
+    }
+};
+
+const springBootRunLogInterpreter: LogInterpreter = (log: string) => {
+    logger.debug("Interpreting log");
+
+    if (!log) {
+        logger.warn("log was empty");
+        return undefined;
+    }
+
+    const maybeFailedToStart = appFailedToStart(log);
+    if (maybeFailedToStart) {
+        return {
+            relevantPart: maybeFailedToStart,
+            message: "Application failed to start",
+            includeFullLog: false,
+        };
+    }
+
+    // default to maven errors
+    const maybeMavenErrors = mavenErrors(log);
+    if (maybeMavenErrors) {
+        logger.info("recognized maven error");
+        return {
+            relevantPart: maybeMavenErrors,
+            message: "Maven errors",
+            includeFullLog: true,
+        };
+    }
+
+    // or it could be this problem here
+    if (log.match(/Error checking out artifact/)) {
+        logger.info("Recognized artifact error");
+        return {
+            relevantPart: log,
+            message: "I lost the local cache. Please rebuild",
+            includeFullLog: false,
+        };
+    }
+
+    logger.info("Did not find anything to recognize in the log");
 }
 
 function appFailedToStart(log: string) {
