@@ -32,6 +32,9 @@ export function mavenDeployer(opts: LocalDeployerOptions): Deployer {
 }
 
 export class CloningArtifactStore implements ArtifactStore {
+
+    public readonly imageUrlIsOptional = true;
+
     public storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string> {
         throw new Error("Not implemented")
     }
