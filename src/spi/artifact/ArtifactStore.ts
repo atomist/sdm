@@ -8,6 +8,12 @@ import { AppInfo } from "../deploy/Deployment";
 export interface ArtifactStore {
 
     /**
+     * Most artifact stores will work from an image URL.
+     * But a few are special, and the source is enough.
+     */
+    imageUrlIsOptional?: boolean
+
+    /**
      * Store an artifact we have locally at the given absolute path
      * @param {AppInfo} appInfo
      * @param {string} localFile

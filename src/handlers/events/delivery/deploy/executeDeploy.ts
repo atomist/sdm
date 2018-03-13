@@ -28,7 +28,7 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>): Execut
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const deployName = params.implementationName;
 
-        if (!image) {
+        if (!image && !spec.artifactStore.imageUrlIsOptional) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
             return failure(new Error("No image linked"));
         }
@@ -49,7 +49,7 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>): Execut
                 ...spec,
                 id,
                 githubToken: params.githubToken,
-                targetUrl: image.imageName,
+                targetUrl: image ? image.imageName: undefined,
                 ac: addressChannelsFor(commit.repo, ctx),
                 team: ctx.teamId,
                 retryButton,

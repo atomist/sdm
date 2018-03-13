@@ -24,7 +24,7 @@ import {
 import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
 import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
-import { artifactStore } from "./blueprint/artifactStore";
+import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import {
     K8sProductionDeployOnSuccessStatus,
     K8sStagingDeployOnSuccessStatus,
@@ -42,7 +42,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 K8sStagingDeployOnSuccessStatus,
                 K8sProductionDeployOnSuccessStatus,
             ],
-            artifactStore,
+            artifactStore: DefaultArtifactStore,
         },
 
         whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot,

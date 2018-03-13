@@ -22,7 +22,7 @@ import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/ma
 import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
-import { artifactStore } from "../artifactStore";
+import { DefaultArtifactStore } from "../artifactStore";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 import {
     ManagedDeploymentTargeter,
@@ -39,7 +39,7 @@ import { Deployer, FunctionalUnit } from "../../../";
 const LocalExecutableJarDeploySpec: DeploySpec<ManagedDeploymentTargetInfo> = {
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
-    artifactStore,
+    artifactStore: DefaultArtifactStore,
     deployer: executableJarDeployer({
         baseUrl: "http://localhost",
         lowerPort: 8082,

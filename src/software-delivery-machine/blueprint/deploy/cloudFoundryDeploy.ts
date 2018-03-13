@@ -28,7 +28,7 @@ import {
     StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/httpServiceGoals";
-import { artifactStore } from "../artifactStore";
+import { DefaultArtifactStore } from "../artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
@@ -37,7 +37,7 @@ export const Deployer = new CommandLineCloudFoundryDeployer();
  */
 const StagingDeploySpec = {
     deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal,
-    artifactStore,
+    artifactStore: DefaultArtifactStore,
     deployer: Deployer,
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
@@ -57,7 +57,7 @@ export const CloudFoundryStagingDeployOnSuccessStatus: FunctionalUnit = {
 const ProductionDeploySpec = {
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,
-    artifactStore,
+    artifactStore: DefaultArtifactStore,
     deployer: Deployer,
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),

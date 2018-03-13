@@ -37,7 +37,7 @@ export interface DeployParams<T extends TargetInfo> {
     endpointGoal: Goal;
     id: GitHubRepoRef;
     githubToken: string;
-    targetUrl: string;
+    targetUrl?: string;
     artifactStore: ArtifactStore;
     deployer: Deployer<T>;
     targeter: Targeter<T>;
