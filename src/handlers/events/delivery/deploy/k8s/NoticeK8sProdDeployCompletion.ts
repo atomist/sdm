@@ -34,7 +34,7 @@ import { createStatus } from "../../../../../util/github/ghub";
 import {
     k8AutomationDeployContext,
     K8TargetBase,
-} from "./RequestK8sDeployOnSuccessStatus";
+} from "./RequestK8sDeploys";
 
 // TODO parameterize once we can have multiple handlers
 
