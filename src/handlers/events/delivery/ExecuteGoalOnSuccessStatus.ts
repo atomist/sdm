@@ -26,7 +26,6 @@ import {
 } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { HasChannels } from "../../../index";
 import {
     currentGoalIsStillPending,
     Goal,
@@ -35,6 +34,7 @@ import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { GitHubStatusAndFriends } from "../../../common/goals/gitHubContext";
+import { HasChannels } from "../../../common/slack/addressChannels";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;

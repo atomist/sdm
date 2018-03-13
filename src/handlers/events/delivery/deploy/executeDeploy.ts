@@ -10,11 +10,13 @@ import { OnAnySuccessStatus } from "../../../../typings/types";
 import { deploy, DeployParams, Targeter } from "./deploy";
 import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "../ExecuteGoalOnSuccessStatus";
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
-import { AddressChannels, ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog, ProgressLog } from "../../../../";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { createStatus } from "../../../../util/github/ghub";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { retryCommandNameFor } from "../../../commands/RetryGoal";
+import { MultiProgressLog , ConsoleProgressLog, InMemoryProgressLog } from "../../../../common/log/progressLogs";
+import { AddressChannels } from "../../../../common/slack/addressChannels";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 
 
 export interface DeploySpec<T extends TargetInfo> {

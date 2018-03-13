@@ -39,7 +39,7 @@ import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automat
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressSlackChannels, buttonForCommand, Destination, } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { AddressChannels, addressDestination, messageDestinations, } from "../../../../";
+import { AddressChannels, addressDestination, messageDestinations, } from "../../../../common/slack/addressChannels";
 import { GitHubStatusAndFriends, splitContext } from "../../../../common/goals/gitHubContext";
 import { currentGoalIsStillPending, Goal, } from "../../../../common/goals/Goal";
 import { ListenerInvocation, SdmListener, } from "../../../../common/listener/Listener";

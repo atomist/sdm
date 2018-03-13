@@ -1,8 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess } from "child_process";
-import { TargetInfo } from "../../../../../index";
 import { Targeter } from "../deploy";
+import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 
 export interface BranchRepoRef extends RemoteRepoRef {
     branch?: string;

@@ -9,7 +9,8 @@ import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, } from "../LocalDeployerOptions";
 import { ArtifactStore, DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
-import { AppInfo, Deployer } from "../../../../../../";
+import { Deployer } from "../../../../../../spi/deploy/Deployer";
+import { AppInfo } from "../../../../../../spi/deploy/Deployment";
 
 /**
  * Managed deployments

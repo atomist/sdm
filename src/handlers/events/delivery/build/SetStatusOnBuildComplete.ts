@@ -38,7 +38,7 @@ import * as stringify from "json-stringify-safe";
 import {
     AddressChannels,
     addressChannelsFor,
-} from "../../../../";
+} from "../../../../common/slack/addressChannels";
 import { Goal } from "../../../../common/goals/Goal";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import {

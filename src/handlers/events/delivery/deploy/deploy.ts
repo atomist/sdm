@@ -25,7 +25,7 @@ import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { ProgressLog } from "../../../../";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T
 
