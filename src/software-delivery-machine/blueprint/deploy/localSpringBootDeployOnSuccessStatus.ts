@@ -15,8 +15,7 @@
  */
 
 import { HandleCommand, logger } from "@atomist/automation-client";
-import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
-import { retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { DeploySpec, executeDeploy, retryDeployFromLocal } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
@@ -25,52 +24,41 @@ import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { artifactStore } from "../artifactStore";
+import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
 
 /**
  * Deploy to the automation client node
  */
-const LocalExecutableJarDeployOnSuccessStatus: DeployFromLocalOnSuccessStatus<TargetInfo> =
-    new DeployFromLocalOnSuccessStatus<TargetInfo>("DeployFromLocalExecutableJar",
-        StagingDeploymentGoal,
-        StagingEndpointGoal,
-        artifactStore,
-        executableJarDeployer({
-            baseUrl: "http://localhost",
-            lowerPort: 8082,
-            commandLineArgumentsFor: springBootExecutableJarArgs,
-        }),
-        () => ({
-            name: "Local",
-            description: "Deployment alongside local automation client",
-        }),
-    );
 
-const LocalExecutableJarRetry: HandleCommand = retryDeployFromLocal("DeployFromLocalExecutableJar",
-    {
-        deployGoal: StagingDeploymentGoal,
-        endpointGoal: StagingEndpointGoal,
-        artifactStore,
-        deployer: executableJarDeployer({
-            baseUrl: "http://localhost",
-            lowerPort: 8082,
-            commandLineArgumentsFor: springBootExecutableJarArgs,
-        }),
-        targeter: () => ({
-            name: "Local",
-            description: "Deployment alongside local automation client",
-        }),
-    });
+
+const LocalExecutableJarDeploySpec: DeploySpec<TargetInfo> = {
+    deployGoal: StagingDeploymentGoal,
+    endpointGoal: StagingEndpointGoal,
+    artifactStore,
+    deployer: executableJarDeployer({
+        baseUrl: "http://localhost",
+        lowerPort: 8082,
+        commandLineArgumentsFor: springBootExecutableJarArgs,
+    }),
+    targeter: () => ({
+        name: "Local",
+        description: "Deployment alongside local automation client",
+    }),
+};
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     logger.info("Will undeploy application %j", inv.id);
-    return LocalExecutableJarDeployOnSuccessStatus.deployer.undeploy(inv.id);
+    return LocalExecutableJarDeploySpec.deployer.undeploy(inv.id);
 });
 
 export const LocalExecutableJarDeploy = {
     eventHandlers: [
-        () => LocalExecutableJarDeployOnSuccessStatus,
+        () => new ExecuteGoalOnSuccessStatus("DeployFromLocalExecutableJar",
+            LocalExecutableJarDeploySpec.deployGoal,
+            executeDeploy(LocalExecutableJarDeploySpec)),
         () => UndeployOnSuperseded],
-    commandHandlers: [() => LocalExecutableJarRetry],
+    commandHandlers: [() => retryDeployFromLocal("DeployFromLocalExecutableJar",
+        LocalExecutableJarDeploySpec)],
 };
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {

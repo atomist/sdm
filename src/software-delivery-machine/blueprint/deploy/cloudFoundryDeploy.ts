@@ -15,7 +15,6 @@
  */
 
 import { FunctionalUnit } from "../../../";
-import { DeployFromLocalOnSuccessStatus } from "../../../handlers/events/delivery/deploy/DeployFromLocalOnSuccessStatus";
 import {
     executeDeploy,
     retryDeployFromLocal,
