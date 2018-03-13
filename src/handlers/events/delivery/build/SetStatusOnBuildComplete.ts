@@ -64,7 +64,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    constructor(private buildGoal: Goal,
+    constructor(private buildGoals: [Goal],
                 private logInterpretation?: LogInterpretation) {
     }
 
@@ -74,25 +74,30 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const commit = build.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const builtStatus = commit.statuses.find(s => s.context === params.buildGoal.context);
-        const ghStatusState = buildStatusToGitHubStatusState(build.status);
-        if (!!builtStatus) {
-            await setBuiltContext(params.buildGoal,
-                ghStatusState,
-                build.buildUrl,
-                id,
-                {token: params.githubToken});
-        }
-        if (build.status === "failed" && build.buildUrl) {
-            const ac = addressChannelsFor(commit.repo, ctx);
-            await displayBuildLogFailure(id, build, ac, params.logInterpretation);
-        }
+        await params.buildGoals.forEach(async buildGoal => {
+            const builtStatus = commit.statuses.find(s => s.context === buildGoal.context);
+            const ghStatusState = buildStatusToGitHubStatusState(build.status);
+            if (!!builtStatus) {
+                logger.info(`updating build status: ${buildGoal.context}`);
+                await setBuiltContext(buildGoal,
+                    ghStatusState,
+                    build.buildUrl,
+                    id,
+                    {token: params.githubToken});
+            } else {
+                logger.info(`No build status found for ${buildGoal.context} so not setting it to complete`)
+            }
+            if (build.status === "failed" && build.buildUrl) {
+                const ac = addressChannelsFor(commit.repo, ctx);
+                await displayBuildLogFailure(id, build, ac, params.logInterpretation);
+            }
+        });
         return Success;
     }
 }
 
 export async function displayBuildLogFailure(id: RemoteRepoRef,
-                                             build: { buildUrl?: string, status?: string} ,
+                                             build: { buildUrl?: string, status?: string },
                                              ac: AddressChannels,
                                              logInterpretation?: LogInterpretation) {
     const buildUrl = build.buildUrl;

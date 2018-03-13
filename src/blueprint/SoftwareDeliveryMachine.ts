@@ -219,7 +219,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete(BuildGoal)
+        () => new SetStatusOnBuildComplete([BuildGoal, JustBuildGoal]);
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {
