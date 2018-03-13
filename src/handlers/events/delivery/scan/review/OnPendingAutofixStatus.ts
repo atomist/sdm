@@ -91,7 +91,7 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
                 // TODO parameterize this
                 const editMode: BranchCommit = {
                     branch: commit.pushes[0].branch,
-                    message: "Autofixes",
+                    message: "Autofixes\n\n[atomist]",
                 };
                 logger.info("Editing %j with mode=%j", id, editMode);
                 await editOne(context, credentials, params.editorChain, editMode,
