@@ -1,6 +1,5 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { Deployment } from "../../../../../../spi/deploy/Deployment";
@@ -8,9 +7,8 @@ import { InterpretedLog, LogInterpreter } from "../../../../../../spi/log/Interp
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, } from "../LocalDeployerOptions";
-import { ArtifactStore, DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../../../spi/deploy/Deployer";
-import { AppInfo } from "../../../../../../spi/deploy/Deployment";
+import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 /**
  * Managed deployments
@@ -21,7 +19,7 @@ let managedDeployments: ManagedDeployments;
  * Use Maven to deploy
  * @param opts options
  */
-export function mavenDeployer(opts: LocalDeployerOptions): ArtifactDeployer {
+export function mavenDeployer(opts: LocalDeployerOptions): SourceDeployer {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -32,28 +30,7 @@ export function mavenDeployer(opts: LocalDeployerOptions): ArtifactDeployer {
     });
 }
 
-export class CloningArtifactStore implements ArtifactStore {
-
-    public readonly imageUrlIsOptional = true;
-
-    public storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string> {
-        throw new Error("Not implemented")
-    }
-
-    public async checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
-        const cloned = await GitCommandGitProject.cloned(creds, id);
-        return {
-            cwd: cloned.baseDir, filename: ".",
-            name: `${id.owner}/${id.repo}`,
-            version: id.sha,
-            id: id
-        };
-    }
-}
-
-
-class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo> {
-
+class MavenSourceDeployer implements SourceDeployer {
 
     constructor(public opts: LocalDeployerOptions) {
     }
@@ -62,16 +39,18 @@ class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInf
         return managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
     }
 
-    public async deploy(da: DeployableArtifact,
+    public async deployFromSource(id: GitHubRepoRef,
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         creds: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment> {
 
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
-        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", da.id, ti.managedDeploymentKey.branch, port, atomistTeam);
+        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
 
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+
+        const cloned = await GitCommandGitProject.cloned(creds, id);
 
         const branchId = ti.managedDeploymentKey;
         const startupInfo = {
@@ -84,7 +63,7 @@ class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInf
                 "spring-boot:run",
             ].concat(this.opts.commandLineArgumentsFor(startupInfo)),
             {
-                cwd: da.cwd,
+                cwd: cloned.baseDir,
             });
         if (!childProcess.pid) {
             throw new Error("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +

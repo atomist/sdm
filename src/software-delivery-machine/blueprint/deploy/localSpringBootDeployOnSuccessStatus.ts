@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { deployArtifactWithLogs, DeploySpec, executeDeployArtifact } from "../../../handlers/events/delivery/deploy/executeDeploy";
+import { deployArtifactWithLogs, ArtifactDeploySpec, executeDeployArtifact } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
@@ -31,13 +31,14 @@ import {
 import { ArtifactDeployer, FunctionalUnit } from "../../../";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { retryGoal } from "../../../handlers/commands/RetryGoal";
+import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 
 /**
  * Deploy to the automation client node
  */
 
 
-const LocalExecutableJarDeploySpec: DeploySpec<ManagedDeploymentTargetInfo> = {
+const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetInfo> = {
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
@@ -74,7 +75,7 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export const MavenDeployer: ArtifactDeployer =
+export const MavenDeployer: SourceDeployer =
     mavenDeployer({
         baseUrl: "http://localhost",
         lowerPort: 9090,

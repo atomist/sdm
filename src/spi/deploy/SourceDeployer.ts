@@ -4,6 +4,7 @@ import { AddressChannels } from "../../common/slack/addressChannels";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment } from "./Deployment";
 import { ManagedDeploymentTargetInfo } from "../../handlers/events/delivery/deploy/local/appManagement";
+import { LogInterpreter } from "../log/InterpretedLog";
 
 /**
  * Implemented by classes that can deploy from source
@@ -13,11 +14,13 @@ export interface SourceDeployer {
     /**
      * Undeploy a branch
      */
-    undeploy(id: RemoteRepoRef, branch: string): Promise<any>;
+    undeploy(ti: ManagedDeploymentTargetInfo): Promise<any>;
 
     deployFromSource(id: RemoteRepoRef,
                      ti: ManagedDeploymentTargetInfo,
                      log: ProgressLog,
                      creds: ProjectOperationCredentials,
                      atomistTeam: string): Promise<Deployment>;
+
+    logInterpreter?: LogInterpreter
 }

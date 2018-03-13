@@ -17,26 +17,22 @@
 import { MavenDeployer } from "../../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/httpServiceGoals";
 import { ExecuteGoalOnPendingStatus } from "../ExecuteGoalOnPendingStatus";
-import { executeDeployArtifact, runWithLog } from "./executeDeploy";
-import { CloningArtifactStore } from "./local/maven/mavenSourceDeployer";
-import { ManagedDeploymentTargeter } from "./local/appManagement";
+import { executeDeploySource, runWithLog, SourceDeploySpec } from "./executeDeploy";
 import { retryGoal } from "../../../commands/RetryGoal";
 import { FunctionalUnit } from "../../../../blueprint/FunctionalUnit";
 
-const LocalDeployFromCloneSpec =
+const LocalDeployFromCloneSpec: SourceDeploySpec =
     {
         deployGoal: LocalDeploymentGoal,
         endpointGoal: LocalEndpointGoal,
-        artifactStore: new CloningArtifactStore(),
         deployer: MavenDeployer,
-        targeter: ManagedDeploymentTargeter
     };
 
 export const LocalDeployment: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnPendingStatus("LocalDeployFromClone",
             LocalDeploymentGoal,
-            runWithLog(executeDeployArtifact(LocalDeployFromCloneSpec), LocalDeployFromCloneSpec.deployer.logInterpreter)),
+            runWithLog(executeDeploySource(LocalDeployFromCloneSpec), LocalDeployFromCloneSpec.deployer.logInterpreter)),
     ],
     commandHandlers: [() => retryGoal("LocalDeployFromClone", LocalDeploymentGoal)],
 };
