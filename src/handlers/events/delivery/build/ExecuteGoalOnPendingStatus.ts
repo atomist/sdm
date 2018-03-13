@@ -77,6 +77,13 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
+
+        // todo: put this in a subscription parameter. It should work, in this architecture
+        if (status.context !== params.goal.context) {
+            logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`)
+            return Success;
+        }
+
         return executeGoal(this.execute, status, ctx, params);
     }
 }
