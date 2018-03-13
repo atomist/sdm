@@ -68,11 +68,6 @@ export function requestDeployToK8s(target: K8Target): Executor {
             state: "pending",
             description: "Requested deploy by k8-automation",
         });
-        await createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: params.goal.context,
-            description: "Working on " + params.goal.name,
-            state: "pending",
-        });
     }
 }
 

@@ -53,11 +53,6 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
     const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, log);
 
     try {
-        await setDeployStatus(params.githubToken, params.id, "pending", params.deployGoal.context,
-            undefined, `Working on ${params.deployGoal.name}`)
-            .catch(err =>
-                logger.warn("Failed to update deploy status to tell people we are working on it"));
-
         const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
             {token: params.githubToken})
             .catch(err => {

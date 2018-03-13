@@ -15,7 +15,7 @@ import { FunctionalUnit } from "../../../";
 
 export const K8sStagingDeployOnSuccessStatus: FunctionalUnit = {
     eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("K8ProductionDeploy",
+        () => new ExecuteGoalOnSuccessStatus("K8TestDeploy",
             ProductionDeploymentGoal,
             requestDeployToK8s(K8sTestingDomain))
     ],

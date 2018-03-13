@@ -38,6 +38,7 @@ import {
     ExecuteGoalInvocation,
     Executor,
 } from "../deploy/ExecuteGoalOnSuccessStatus";
+import { createStatus } from "../../../../util/github/ghub";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -99,6 +100,14 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
         }
 
         logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+
+        await createStatus(params.githubToken, id as GitHubRepoRef, {
+            context: params.goal.context,
+            description: params.goal.workingDescription,
+            state: "pending",
+        }).catch(err =>
+            logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
+
         return params.execute(status, ctx, params);
     }
 }

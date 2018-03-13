@@ -33,6 +33,8 @@ import {
 } from "../../../../common/goals/Goal";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
+import { setDeployStatus } from "./deploy";
+import { createStatus } from "../../../../util/github/ghub";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
@@ -78,7 +80,7 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
-        const image = status.commit.image;
+
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const statusAndFriends: GitHubStatusAndFriends = {
             context: status.context,
@@ -97,6 +99,16 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
         if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
             return Success;
         }
+
+        logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+
+        await createStatus(params.githubToken, id as GitHubRepoRef, {
+            context: params.goal.context,
+            description: params.goal.workingDescription,
+            state: "pending",
+        }).catch(err =>
+                logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
+
         return this.execute(status, ctx, params);
     }
 }
