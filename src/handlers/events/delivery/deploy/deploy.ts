@@ -30,6 +30,8 @@ import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 
+export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T
+
 export interface DeployParams<T extends TargetInfo> {
     deployGoal: Goal;
     endpointGoal: Goal;
@@ -38,7 +40,7 @@ export interface DeployParams<T extends TargetInfo> {
     targetUrl: string;
     artifactStore: ArtifactStore;
     deployer: Deployer<T>;
-    targeter: (id: RemoteRepoRef) => T;
+    targeter: Targeter<T>;
     ac: AddressChannels;
     retryButton?: Action;
     team: string;
@@ -65,7 +67,7 @@ export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Pro
         }
         const deployment = await params.deployer.deploy(
             artifactCheckout,
-            params.targeter(params.id),
+            params.targeter(params.id, params.branch),
             progressLog,
             {token: params.githubToken},
             params.team);

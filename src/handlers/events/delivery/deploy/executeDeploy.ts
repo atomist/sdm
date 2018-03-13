@@ -1,5 +1,4 @@
-import { failure, HandleCommand, HandlerContext, logger, Success } from "@atomist/automation-client";
-import { HandlerResult } from "@atomist/automation-client";
+import { failure, HandleCommand, HandlerContext, logger, Success, success } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
@@ -12,18 +11,18 @@ import { Deployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { RetryDeployParameters } from "../../../commands/RetryDeploy";
-import { deploy } from "./deploy";
-import { ExecuteGoalInvocation } from "./ExecuteGoalOnSuccessStatus";
+import { deploy, Targeter } from "./deploy";
+import { ExecuteGoalInvocation, ExecuteGoalResult, Executor } from "./ExecuteGoalOnSuccessStatus";
 
 export interface DeploySpec<T extends TargetInfo> {
     deployGoal: Goal;
     endpointGoal: Goal;
     artifactStore: ArtifactStore;
     deployer: Deployer<T>;
-    targeter: (id: RemoteRepoRef) => T;
+    targeter: Targeter<T>;
 }
 
-export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
+export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>): Executor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const image = status.commit.image;
@@ -59,7 +58,7 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
                 branch: pushBranch,
             }));
 
-        return Success;
+        return Promise.resolve(Success as ExecuteGoalResult);
     };
 }
 
