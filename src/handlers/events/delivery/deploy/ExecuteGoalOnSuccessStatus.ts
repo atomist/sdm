@@ -130,36 +130,43 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
-        const commit = status.commit;
-
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const statusAndFriends: GitHubStatusAndFriends = {
-            context: status.context,
-            state: status.state,
-            targetUrl: status.targetUrl,
-            description: status.description,
-            siblings: status.commit.statuses,
-        };
-        const creds = {token: params.githubToken};
-
-        if (!await params.goal.preconditionsMet(creds, id, statusAndFriends)) {
-            logger.info("Preconditions not met for goal %s on %j", params.goal.name, id);
-            return Success;
-        }
-
-        if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
-            return Success;
-        }
-
-        logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
-        await createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: params.goal.context,
-            description: params.goal.workingDescription,
-            state: "pending",
-        }).catch(err =>
-                logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
-
-        return this.execute(status, ctx, params);
+        return executeGoal(this.execute, status, ctx, params);
     }
+}
+
+
+export async function executeGoal(execute: Executor, status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) {
+    const commit = status.commit;
+
+    logger.info(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
+
+    const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+    const statusAndFriends: GitHubStatusAndFriends = {
+        context: status.context,
+        state: status.state,
+        targetUrl: status.targetUrl,
+        description: status.description,
+        siblings: status.commit.statuses,
+    };
+    const creds = {token: params.githubToken};
+
+    if (!await params.goal.preconditionsMet(creds, id, statusAndFriends)) {
+        logger.info("Preconditions not met for goal %s on %j", params.goal.name, id);
+        return Success;
+    }
+
+    if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
+        return Success;
+    }
+
+    logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+
+    await createStatus(params.githubToken, id as GitHubRepoRef, {
+        context: params.goal.context,
+        description: params.goal.workingDescription,
+        state: "pending",
+    }).catch(err =>
+        logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
+
+    return execute(status, ctx, params);
 }
