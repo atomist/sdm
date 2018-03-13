@@ -10,5 +10,5 @@ export const PCFProductionDomain = "ri-production";
 
 export const DescribeStagingAndProd: () => HandleCommand<ReportRunningParameters> = () => reportRunningCommand(
     [
-        {domain: K8sTestingDomain, color: "#aa93c4"},
-        {domain: K8sProductionDomain, color: ProductionMauve}]);
+        {domain: PCFTestingDomain, color: "#aa93c4"},
+        {domain: PCFProductionDomain, color: ProductionMauve}]);

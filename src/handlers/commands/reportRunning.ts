@@ -104,7 +104,7 @@ function countBy<T>(f: (T) => string, data: T[]): { [key: string]: number } {
 function describeCurrentlyRunning(id: RemoteRepoRef, countBySha: CountBySha, endDescription?: string): string {
     const shas = Object.keys(countBySha);
     if (shas.length === 0) {
-        return "No running services recorded";
+        return `It looks like ${id.repo} is not yet running in production. It should be safe to deploy.`;
     }
     return shas.map(s => `${countBySha[s]} reported running at ${linkToSha(id, s)} ${
         s === id.sha ? (endDescription ? "(" + endDescription + ")" : "") : linkToDiff(id, s, id.sha, endDescription)}`).join("\n");
