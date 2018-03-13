@@ -67,7 +67,8 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
 const localDeployer: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnPendingStatus("LocalDeploy",
-        LocalDeploymentGoal, deployOnLocal(LocalEndpointGoal, MavenDeployer)),
+        LocalDeploymentGoal,
+            deployOnLocal(LocalEndpointGoal, MavenDeployer)),
     ],
     commandHandlers: [],
 };

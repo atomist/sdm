@@ -66,7 +66,7 @@ export function deployOnLocal(endpointGoal: Goal, deployer): Executor {
             logger.warn("Deployment failed: %s", e);
             await setDeployStatus(params.githubToken, id,
                 "failure",
-                params.goal.context, undefined, params.goal.workingDescription);
+                params.goal.context, undefined, params.goal.failedDescription);
             return Failure;
         } finally {
             log.close();

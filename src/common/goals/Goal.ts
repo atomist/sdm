@@ -17,6 +17,7 @@ export interface GoalDefinition {
     displayName?: string;
     completedDescription?: string;
     workingDescription?: string;
+    failedDescription?: string
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";
@@ -36,6 +37,10 @@ export class Goal {
 
     get workingDescription() {
         return this.definition.workingDescription || ("Working: " + this.name);
+    }
+
+    get failedDescription() {
+        return this.definition.failedDescription || ("Failed: " + this.name);
     }
 
     constructor(definition: GoalDefinition) {
