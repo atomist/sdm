@@ -14,6 +14,9 @@ export class RetryDeployParameters {
     public sha: string;
 
     @Parameter()
+    public branch: string;
+
+    @Parameter()
     public targetUrl: string;
 
     @Secret(Secrets.UserToken)

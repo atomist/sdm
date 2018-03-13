@@ -36,11 +36,14 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
         }
 
         logger.info(`Running deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
+        const pushBranch = commit.pushes[0].branch;
+        logger.info(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
         const retryButton = buttonForCommand({text: "Retry"}, retryCommandNameFor(deployName), {
             repo: commit.repo.name,
             owner: commit.repo.owner,
             sha: commit.sha,
             targetUrl: image.imageName,
+            branch: pushBranch,
         });
 
         await dedup(commit.sha, () =>
@@ -53,6 +56,7 @@ export function executeDeploy<T extends TargetInfo>(spec: DeploySpec<T>) {
                 team: ctx.teamId,
                 retryButton,
                 logFactory: createEphemeralProgressLog,
+                branch: pushBranch,
             }));
 
         return Success;
@@ -81,6 +85,7 @@ export function retryDeployFromLocal<T extends TargetInfo>(deployName: string,
                 ...commandParams,
             }),
             logFactory: createEphemeralProgressLog,
+            branch: commandParams.branch
         });
     }, RetryDeployParameters, retryCommandNameFor(deployName));
 }

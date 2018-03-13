@@ -43,6 +43,7 @@ export interface DeployParams<T extends TargetInfo> {
     retryButton?: Action;
     team: string;
     logFactory: LogFactory;
+    branch: string,
 }
 
 export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
