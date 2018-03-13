@@ -98,7 +98,7 @@ export class GoalWithPrecondition extends Goal {
 function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {
     const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
     if (!detectedStatus) {
-        return {error: "Did not find a status for " + pg.context};
+        return {wait: "Did not find a status for " + pg.context};
     }
     if (detectedStatus.state === "pending") {
         return {wait: "Precondition '" + pg.name + "' not yet successful"};

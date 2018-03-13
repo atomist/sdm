@@ -92,9 +92,7 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
 
 /**
  * Set all downstream go to failure status given a specific failed goal.
- *
  * The goals are associated by the atomist-sdm/${env}/ prefix in their context.
- *
  */
 function gameOver(failedContext: GitHubStatusContext,
                   currentlyPending: GitHubStatusContext[],
@@ -102,7 +100,6 @@ function gameOver(failedContext: GitHubStatusContext,
                   creds: ProjectOperationCredentials): Promise<any> {
 
     const interpretedContext = splitContext(failedContext);
-
     if (!interpretedContext) {
         // this is not our status
         logger.info("not relevant: " + failedContext);
