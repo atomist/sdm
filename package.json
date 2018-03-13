@@ -23,11 +23,15 @@
     "@atomist/spring-automation": "^0.6.2",
     "app-root-path": "^2.0.1",
     "artifactory-publisher": "^1.1.4",
+    "axios": "^0.18.0",
     "build": "^0.1.4",
     "copyfiles": "^1.2.0",
+    "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
+    "lodash": "^4.17.5",
     "run": "^1.4.0",
     "strip-ansi": "^4.0.0",
+    "tmp-promise": "^1.0.4",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
