@@ -21,7 +21,7 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { AddressChannels } from "../../../";
-import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeployOnSuccessStatus";
+import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,

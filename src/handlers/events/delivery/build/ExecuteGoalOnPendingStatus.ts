@@ -34,7 +34,9 @@ import {
 import { PushTest } from "../../../../common/listener/GoalSetter";
 import { Builder } from "../../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../../typings/types";
+import { createStatus } from "../../../../util/github/ghub";
 import {
+    executeGoal,
     ExecuteGoalInvocation,
     Executor,
 } from "../deploy/ExecuteGoalOnSuccessStatus";
@@ -75,30 +77,6 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
-        logger.info("Might execute " + params.goal.name + " on " + params.implementationName + " after receiving pending status " + status.context);
-        const commit = status.commit;
-
-        const statusAndFriends: GitHubStatusAndFriends = {
-            context: status.context,
-            state: status.state,
-            targetUrl: status.targetUrl,
-            description: status.description,
-            siblings: status.commit.statuses,
-        };
-
-        const credentials = {token: params.githubToken};
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
-        if (!await params.goal.preconditionsMet(credentials, id, statusAndFriends)) {
-            logger.debug("Build preconditions not met");
-            return Success;
-        }
-
-        if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
-            return Success;
-        }
-
-        logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-        return params.execute(status, ctx, params);
+        return executeGoal(this.execute, status, ctx, params);
     }
 }

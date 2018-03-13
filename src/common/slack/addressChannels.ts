@@ -13,7 +13,7 @@ import { SlackMessage } from "@atomist/slack-messages";
 export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions) => Promise<any>;
 
 export interface HasChannels {
-    channels?: Array<{ name?: string }>;
+    channels?: Array<{ name?: string, id?: string }>;
 }
 
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {

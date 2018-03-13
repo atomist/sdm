@@ -1,13 +1,11 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
+import { FunctionalUnit } from "../";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { tagRepo } from "../common/listener/tagRepo";
-import { DeployFromLocalOnPendingLocalDeployStatus } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
-import {
-    LocalDeploymentGoal,
-    LocalDeploymentGoals,
-    LocalEndpointGoal,
-} from "../handlers/events/delivery/goals/httpServiceGoals";
+import { ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/build/ExecuteGoalOnPendingStatus";
+import { deployOnLocal } from "../handlers/events/delivery/deploy/DeployFromLocalOnPendingLocalDeployStatus";
+import { LocalDeploymentGoal, LocalEndpointGoal } from "../handlers/events/delivery/goals/httpServiceGoals";
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
@@ -58,12 +56,17 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
             DescribeStagingAndProd,
             () => disposeProjectHandler,
         )
-        .addSupportingEvents(OnDryRunBuildComplete, localDeployer);
+        .addSupportingEvents(OnDryRunBuildComplete)
+        .addFunctionalUnits(localDeployer);
 
     softwareDeliveryMachine.addFingerprinters(mavenFingerprinter);
     // .addFingerprintDifferenceListeners(diff1)
 }
 
-const localDeployer = () => new DeployFromLocalOnPendingLocalDeployStatus(
-    LocalDeploymentGoals, LocalDeploymentGoal, LocalEndpointGoal,
-    MavenDeployer);
+const localDeployer: FunctionalUnit = {
+    eventHandlers: [
+        () => new ExecuteGoalOnPendingStatus("LocalDeploy",
+        LocalDeploymentGoal, deployOnLocal(LocalEndpointGoal, MavenDeployer)),
+    ],
+    commandHandlers: [],
+};

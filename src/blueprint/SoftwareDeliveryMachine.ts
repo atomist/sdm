@@ -375,7 +375,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addFunctionalUnits(fus: FunctionalUnit[]): this {
+    public addFunctionalUnits(...fus: FunctionalUnit[]): this {
         this.functionalUnits = this.functionalUnits.concat(fus);
         return this;
     }

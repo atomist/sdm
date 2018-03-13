@@ -38,46 +38,16 @@ import {
     setDeployStatus,
     setEndpointStatus,
 } from "./deploy";
+import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
 
-/**
- * Deploy from local on pending status
- */
-@EventHandler("Deploy from local on pending status", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnPendingLocalDeployStatus",
-    __dirname),
-)
-export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<OnPendingLocalDeployStatus.Subscription> {
-
-    @Secret(Secrets.OrgToken)
-    private githubToken: string;
-
-    /**
-     *
-     * @param {Goals} goals
-     * @param {Goal} deployGoal
-     * @param {Goal} endpointGoal
-     * @param deployer source deployer to use
-     */
-    constructor(public goals: Goals,
-                private deployGoal: Goal,
-                private endpointGoal: Goal,
-                private deployer: SourceDeployer) {
-    }
-
-    public async handle(event: EventFired<OnPendingLocalDeployStatus.Subscription>,
-                        ctx: HandlerContext,
-                        params: this): Promise<HandlerResult> {
-        const status = event.data.Status[0];
+export function deployOnLocal(endpointGoal: Goal, deployer): Executor {
+    return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
-
-        // This happens immediately, not conditional on any other status
-        logger.info(`Running local deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const log = ConsoleProgressLog;
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         try {
-            const deployment = await params.deployer.deployFromSource(
+            const deployment = await deployer.deployFromSource(
                 id,
                 addressChannels,
                 log,
@@ -86,20 +56,20 @@ export class DeployFromLocalOnPendingLocalDeployStatus implements HandleEvent<On
                 status.commit.pushes[0].branch);
             await setDeployStatus(params.githubToken, id,
                 "success",
-                params.deployGoal.context, undefined, params.deployGoal.completedDescription);
+                params.goal.context, undefined, params.goal.completedDescription);
             if (!!deployment.endpoint) {
                 await setEndpointStatus(params.githubToken, id,
-                    params.endpointGoal.context, deployment.endpoint, params.endpointGoal.completedDescription);
+                    endpointGoal.context, deployment.endpoint, endpointGoal.completedDescription);
             }
             return Success;
         } catch (e) {
             logger.warn("Deployment failed: %s", e);
             await setDeployStatus(params.githubToken, id,
                 "failure",
-                params.deployGoal.context, undefined, params.deployGoal.workingDescription);
+                params.goal.context, undefined, params.goal.workingDescription);
             return Failure;
         } finally {
             log.close();
         }
-    }
+    };
 }
