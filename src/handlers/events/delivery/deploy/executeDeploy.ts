@@ -4,7 +4,7 @@ import { Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus } from "../../../../typings/types";
 import { deploy, DeployParams, Targeter } from "./deploy";
@@ -23,7 +23,7 @@ export interface DeploySpec<T extends TargetInfo> {
     deployGoal: Goal;
     endpointGoal: Goal;
     artifactStore: ArtifactStore;
-    deployer: Deployer<T>;
+    deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
 }
 

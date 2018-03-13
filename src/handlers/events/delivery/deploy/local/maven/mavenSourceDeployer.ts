@@ -9,7 +9,7 @@ import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, } from "../LocalDeployerOptions";
 import { ArtifactStore, DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../../../spi/deploy/Deployer";
 import { AppInfo } from "../../../../../../spi/deploy/Deployment";
 
 /**
@@ -21,7 +21,7 @@ let managedDeployments: ManagedDeployments;
  * Use Maven to deploy
  * @param opts options
  */
-export function mavenDeployer(opts: LocalDeployerOptions): Deployer {
+export function mavenDeployer(opts: LocalDeployerOptions): ArtifactDeployer {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -52,7 +52,7 @@ export class CloningArtifactStore implements ArtifactStore {
 }
 
 
-class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
+class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo> {
 
 
     constructor(public opts: LocalDeployerOptions) {

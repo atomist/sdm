@@ -21,7 +21,7 @@ import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
 import { Goal } from "../../../../common/goals/Goal";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
@@ -36,7 +36,7 @@ export interface DeployParams<T extends TargetInfo> {
     githubToken: string;
     targetUrl: string;
     artifactStore: ArtifactStore;
-    deployer: Deployer<T>;
+    deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
     ac: AddressChannels;
     team: string;

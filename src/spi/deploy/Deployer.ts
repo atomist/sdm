@@ -4,7 +4,7 @@ import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo, } from "./Deployment";
 
-export interface Deployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
+export interface ArtifactDeployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
 
     /**
      * Implemented by deployers that don't sit on an infrastructure like Cloud Foundry

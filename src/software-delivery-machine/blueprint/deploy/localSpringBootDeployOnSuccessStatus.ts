@@ -28,7 +28,7 @@ import {
     ManagedDeploymentTargetInfo,
     targetInfoForAllBranches
 } from "../../../handlers/events/delivery/deploy/local/appManagement";
-import { Deployer, FunctionalUnit } from "../../../";
+import { ArtifactDeployer, FunctionalUnit } from "../../../";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { retryGoal } from "../../../handlers/commands/RetryGoal";
 
@@ -74,7 +74,7 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export const MavenDeployer: Deployer =
+export const MavenDeployer: ArtifactDeployer =
     mavenDeployer({
         baseUrl: "http://localhost",
         lowerPort: 9090,
