@@ -14,129 +14,139 @@
  * limitations under the License.
  */
 
-import { HandlerResult, logger, success } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Action } from "@atomist/slack-messages";
+import { Deployment } from "../../../../";
 import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
 import { Goal } from "../../../../common/goals/Goal";
-import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { LogFactory } from "../../../../spi/log/ProgressLog";
+import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { ManagedDeploymentTargeter } from "./local/appManagement";
 
-export interface DeployParams<T extends TargetInfo> {
+export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
+
+export interface DeployArtifactParams<T extends TargetInfo> {
+    id: GitHubRepoRef;
+    credentials: ProjectOperationCredentials;
+    addressChannels: AddressChannels;
+    team: string;
     deployGoal: Goal;
     endpointGoal: Goal;
-    id: GitHubRepoRef;
-    githubToken: string;
-    targetUrl: string;
     artifactStore: ArtifactStore;
-    deployer: Deployer<T>;
-    targeter: (id: RemoteRepoRef) => T;
-    ac: AddressChannels;
-    retryButton?: Action;
-    team: string;
-    logFactory: LogFactory;
+    deployer: ArtifactDeployer<T>;
+    targeter: Targeter<T>;
+    targetUrl: string;
+    progressLog: ProgressLog;
+    branch: string;
 }
 
-export async function deploy<T extends TargetInfo>(params: DeployParams<T>): Promise<HandlerResult> {
+export interface DeploySourceParams {
+    id: GitHubRepoRef;
+    credentials: ProjectOperationCredentials;
+    addressChannels: AddressChannels;
+    team: string;
+    deployGoal: Goal;
+    endpointGoal: Goal;
+    deployer: SourceDeployer;
+    progressLog: ProgressLog;
+    branch: string;
+}
+
+export async function deploySource(params: DeploySourceParams): Promise<void> {
     logger.info("Deploying with params=%j", params);
-    const log = await params.logFactory();
 
-    const savingLog = new InMemoryProgressLog();
-    const progressLog = new MultiProgressLog(ConsoleProgressLog, savingLog, log);
+    const target = ManagedDeploymentTargeter(params.id, params.branch);
 
-    try {
-        const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
-            {token: params.githubToken})
-            .catch(err => {
-                progressLog.write("Error checking out artifact: " + err.message);
-                throw err;
-            });
-        if (!artifactCheckout) {
-            throw new Error("No DeployableArtifact passed in");
-        }
-        const deployment = await params.deployer.deploy(
-            artifactCheckout,
-            params.targeter(params.id),
-            progressLog,
-            {token: params.githubToken},
-            params.team);
+    const deployment = await params.deployer.deployFromSource(
+        params.id,
+        target,
+        params.progressLog,
+        params.credentials,
+        params.team);
 
-        await progressLog.close();
+    await reactToSuccessfulDeploy(params, deployment);
+}
 
-        await setDeployStatus(params.githubToken, params.id,
+export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<T>): Promise<void> {
+    logger.info("Deploying with params=%j", params);
+    const progressLog = params.progressLog;
+
+    const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
+        params.credentials)
+        .catch(err => {
+            progressLog.write("Error checking out artifact: " + err.message);
+            throw err;
+        });
+    if (!artifactCheckout) {
+        throw new Error("No DeployableArtifact passed in");
+    }
+
+    const deployment = await params.deployer.deploy(
+        artifactCheckout,
+        params.targeter(params.id, params.branch),
+        progressLog,
+        params.credentials,
+        params.team);
+
+    await reactToSuccessfulDeploy(params, deployment);
+}
+
+export async function reactToSuccessfulDeploy(params: {
+    deployGoal: Goal,
+    endpointGoal: Goal,
+    credentials: ProjectOperationCredentials,
+    id: RemoteRepoRef,
+    addressChannels: AddressChannels
+    progressLog: ProgressLog,
+},                                            deployment: Deployment) {
+
+    await
+        setStatus(params.credentials, params.id,
             "success",
             params.deployGoal.context,
-            log.url,
+            params.progressLog.url,
             params.deployGoal.completedDescription);
-        if (deployment.endpoint) {
-            await setEndpointStatus(params.githubToken, params.id,
-                params.endpointGoal.context,
-                deployment.endpoint,
-                params.endpointGoal.completedDescription)
-                .catch(endpointStatus => {
-                    logger.error("Could not set Endpoint status: " + endpointStatus.message);
-                    // do not fail this whole handler
-                });
-        } else {
-            await params.ac("Deploy succeeded, but the endpoint didn't appear in the log.");
-            await params.ac({
-                content: progressLog.log,
+    if (deployment.endpoint) {
+        await setStatus(params.credentials, params.id,
+            "success",
+            params.endpointGoal.context,
+            deployment.endpoint,
+            params.endpointGoal.completedDescription)
+            .catch(endpointStatus => {
+                logger.error("Could not set Endpoint status: " + endpointStatus.message);
+                // do not fail this whole handler
+            });
+    } else {
+        await
+            params.addressChannels("Deploy succeeded, but the endpoint didn't appear in the log.");
+        await
+            params.addressChannels({
+                content: params.progressLog.log,
                 fileType: "text",
                 fileName: `deploy-success-${params.id.sha}.log`,
             } as any);
-            logger.warn("No endpoint returned by deployment");
-        }
-    } catch (err) {
-        logger.error(err.message);
-        logger.error(err.stack);
-        await progressLog.close();
-        const interpretation = params.deployer.logInterpreter && !!log.log && params.deployer.logInterpreter(log.log);
-        // The deployer might have information about the failure; report it in the channels
-        if (interpretation) {
-            await reportFailureInterpretation("deploy", interpretation,
-                {url: log.url, log: log.log},
-                params.id, params.ac, params.retryButton);
-        } else {
-            await params.ac(":x: Failure deploying: " + err.message);
-        }
-        return setDeployStatus(params.githubToken, params.id, "failure",
-            params.deployGoal.context,
-            log.url,
-            `Failed to ${params.deployGoal.name}`).then(success);
+        logger.warn("No endpoint returned by deployment");
     }
 }
 
-export function setDeployStatus(token: string,
-                                id: GitHubRepoRef,
-                                state: StatusState,
-                                context: GitHubStatusContext,
-                                targetUrl: string,
-                                description?: string): Promise<any> {
+export function setStatus(credentials: ProjectOperationCredentials,
+                          id: RemoteRepoRef,
+                          state: StatusState,
+                          context: GitHubStatusContext,
+                          targetUrl: string,
+                          description?: string): Promise<any> {
     logger.info(`Setting deploy status for ${context} to ${state} at ${targetUrl}`);
-    return createStatus(token, id, {
+    return createStatus((credentials as TokenCredentials).token, id as GitHubRepoRef, {
         state,
         target_url: targetUrl,
-        context,
-        description,
-    });
-}
-
-export function setEndpointStatus(token: string,
-                                  id: GitHubRepoRef,
-                                  context: GitHubStatusContext,
-                                  endpoint: string,
-                                  description?: string): Promise<any> {
-    return createStatus(token, id, {
-        state: "success",
-        target_url: endpoint,
         context,
         description,
     });

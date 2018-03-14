@@ -14,32 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    GraphQL,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    currentGoalIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-} from "../../../../common/goals/Goal";
-import { PushTest } from "../../../../common/listener/GoalSetter";
-import { Builder } from "../../../../spi/build/Builder";
-import { OnAnyPendingStatus } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
-import {
-    executeGoal,
-    ExecuteGoalInvocation,
-    Executor,
-} from "../deploy/ExecuteGoalOnSuccessStatus";
+import { Goal } from "../../../common/goals/Goal";
+import { PushTest } from "../../../common/listener/GoalSetter";
+import { Builder } from "../../../spi/build/Builder";
+import { OnAnyPendingStatus } from "../../../typings/types";
+import { executeGoal, ExecuteGoalInvocation, Executor } from "./ExecuteGoalOnSuccessStatus";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -67,7 +48,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 private execute: Executor) {
         this.subscriptionName = implementationName + "OnPending";
         this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
-            GraphQL.subscriptionFromFile("../../../../graphql/subscription/OnAnyPendingStatus", __dirname),
+            GraphQL.subscriptionFromFile("../../../graphql/subscription/OnAnyPendingStatus", __dirname),
             this.subscriptionName));
         this.name = implementationName + "OnPendingStatus";
         this.description = `Execute ${goal.name} when requested`;
@@ -77,6 +58,13 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
+
+        // todo: put this in a subscription parameter. It should work, in this architecture
+        if (status.context !== params.goal.context) {
+            logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
+            return Success;
+        }
+
         return executeGoal(this.execute, status, ctx, params);
     }
 }

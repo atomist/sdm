@@ -1,10 +1,10 @@
 import { HandlerContext } from "@atomist/automation-client";
 import "mocha";
 import * as assert from "power-assert";
-import { executeDeploy } from "../../../../../src/handlers/events/delivery/deploy/executeDeploy";
+import { executeDeployArtifact, runWithLog } from "../../../../../src/handlers/events/delivery/deploy/executeDeploy";
 import {
     ExecuteGoalOnSuccessStatus,
-} from "../../../../../src/handlers/events/delivery/deploy/ExecuteGoalOnSuccessStatus";
+} from "../../../../../src/handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -14,10 +14,13 @@ describe("the local deploy", () => {
 
     it("does not go when artifact is not done", () => {
         const deployHandler = new ExecuteGoalOnSuccessStatus("retryMe", ProductionDeploymentGoal,
-            executeDeploy({
+            runWithLog(executeDeployArtifact({
                 deployGoal: ProductionDeploymentGoal,
-                endpointGoal: ProductionEndpointGoal, artifactStore: null, deployer: null, targeter: null,
-            }));
+                endpointGoal: ProductionEndpointGoal,
+                artifactStore: null,
+                deployer: null,
+                targeter: null,
+            })));
         const handleResult = deployHandler.handle(buildSuccessEvent as any, {} as HandlerContext, deployHandler);
 
         return handleResult.then(res => {

@@ -13,7 +13,7 @@ import { HttpServiceGoals, LocalDeploymentGoals, NoGoals } from "../handlers/eve
 import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
 import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
 import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
-import { artifactStore } from "./blueprint/artifactStore";
+import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
@@ -27,7 +27,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
                 LocalExecutableJarDeploy,
                 CloudFoundryProductionDeployOnSuccessStatus,
             ],
-            artifactStore,
+            artifactStore: DefaultArtifactStore,
         },
         whenPushSatisfies(IsMaven, IsSpringBoot,
             not(PushFromAtomist), not(MaterialChangeToJavaRepo))
@@ -40,8 +40,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
             .setGoals(NpmGoals)
-            .buildWith(new NpmBuilder(artifactStore, createEphemeralProgressLog)),
-        onAnyPush.buildWith(new MavenBuilder(artifactStore, createEphemeralProgressLog)),
+            .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
+        onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
     );
 
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)

@@ -27,7 +27,7 @@ export * from "./common/log/slackProgressLog";
 export * from "./spi/deploy/Deployment";
 export * from "./spi/build/Builder";
 export * from "./spi/deploy/Deployment";
-export * from "./spi/deploy/Deployer";
+export * from "./spi/deploy/ArtifactDeployer";
 
 export { SoftwareDeliveryMachine } from "./blueprint/SoftwareDeliveryMachine";
 export { IssueHandling } from "./blueprint/IssueHandling";

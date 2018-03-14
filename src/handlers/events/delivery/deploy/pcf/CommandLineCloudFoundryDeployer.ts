@@ -4,7 +4,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../../spi/deploy/ArtifactDeployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
@@ -14,16 +14,16 @@ import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget
  * Spawn a new process to use the Cloud Foundry CLI to push.
  * Note that this isn't thread safe concerning multiple logins or spaces.
  */
-export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
+export class CommandLineCloudFoundryDeployer implements ArtifactDeployer<CloudFoundryInfo> {
 
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
-                        creds: ProjectOperationCredentials): Promise<Deployment> {
+                        credentials: ProjectOperationCredentials): Promise<Deployment> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
-        const sources = await GitCommandGitProject.cloned(creds, da.id);
+        const sources = await GitCommandGitProject.cloned(credentials, da.id);
         const manifestFile = await sources.findFile(CloudFoundryManifestPath);
 
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
@@ -71,8 +71,4 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         };
     }
 
-}
-
-function toUrl(name: string) {
-    return `http://${name}.cfapps.io/`;
 }

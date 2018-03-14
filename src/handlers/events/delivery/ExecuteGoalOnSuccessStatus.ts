@@ -26,20 +26,24 @@ import {
 } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { HasChannels } from "../../../../";
+import { GitHubStatusAndFriends } from "../../../common/goals/gitHubContext";
 import {
     currentGoalIsStillPending,
-    GitHubStatusAndFriends,
     Goal,
-} from "../../../../common/goals/Goal";
-import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus, StatusState } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
+} from "../../../common/goals/Goal";
+import { HasChannels } from "../../../common/slack/addressChannels";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
+import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
+import { createStatus } from "../../../util/github/ghub";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
     githubToken: string;
     goal: Goal;
+}
+
+export interface ExecuteGoalResult extends HandlerResult {
+    log?: string;
 }
 
 export type Executor = (status: StatusForExecuteGoal.Status,
@@ -122,7 +126,7 @@ export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
         this.description = `Execute ${goal.name} on prior goal success`;
         this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
             GraphQL.subscriptionFromFile(
-                "../../../../graphql/subscription/OnAnySuccessStatus",
+                "../../../graphql/subscription/OnAnySuccessStatus",
                 __dirname),
             this.subscriptionName));
     }
@@ -176,5 +180,15 @@ export async function executeGoal(execute: Executor, status: StatusForExecuteGoa
     }).catch(err =>
         logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
 
-    return execute(status, ctx, params);
+    return execute(status, ctx, params).then(handleExecuteResult);
+}
+
+async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<HandlerResult> {
+
+    if (executeResult.log) {
+        logger.info("Log received. Length is " + executeResult.log.length);
+    }
+
+    // Return the minimal fields for HandlerResult, because they get printed to the log.
+    return {code: executeResult.code, message: executeResult.message};
 }

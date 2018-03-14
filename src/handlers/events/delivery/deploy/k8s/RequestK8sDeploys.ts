@@ -14,33 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    failure,
-    GraphQL,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { failure, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    currentGoalIsStillPending,
-    GitHubStatusAndFriends,
-    Goal,
-} from "../../../../../common/goals/Goal";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ExecuteGoalInvocation, Executor } from "../ExecuteGoalOnSuccessStatus";
+import { ExecuteGoalInvocation, Executor } from "../../ExecuteGoalOnSuccessStatus";
 
 export type K8Target = "testing" | "production";
 

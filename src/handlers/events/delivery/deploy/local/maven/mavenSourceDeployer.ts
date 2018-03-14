@@ -1,18 +1,14 @@
 import { logger } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
-import { AddressChannels } from "../../../../../../common/slack/addressChannels";
 import { Deployment } from "../../../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
-import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
+import { InterpretedLog, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
-import { ManagedDeployments } from "../appManagement";
-import {
-    DefaultLocalDeployerOptions,
-    LocalDeployerOptions,
-} from "../LocalDeployerOptions";
+import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 
 /**
  * Managed deployments
@@ -39,22 +35,23 @@ class MavenSourceDeployer implements SourceDeployer {
     constructor(public opts: LocalDeployerOptions) {
     }
 
-    public async undeploy(id: RemoteRepoRef, branch: string): Promise<any> {
-        return managedDeployments.terminateIfRunning({...id, branch});
+    public async undeploy(ti: ManagedDeploymentTargetInfo): Promise<any> {
+        return managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
     }
 
-    public async deployFromSource(id: RemoteRepoRef,
-                                  addressChannels: AddressChannels,
+    public async deployFromSource(id: GitHubRepoRef,
+                                  ti: ManagedDeploymentTargetInfo,
                                   log: ProgressLog,
                                   creds: ProjectOperationCredentials,
-                                  atomistTeam: string,
-                                  branch: string): Promise<Deployment> {
-        const baseUrl = this.opts.baseUrl;
-        const branchId = {...id, branch};
-        const port = managedDeployments.findPort(branchId);
-        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, branch, port, atomistTeam);
+                                  atomistTeam: string): Promise<Deployment> {
+
+        const port = managedDeployments.findPort(ti.managedDeploymentKey);
+        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
+
+        await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+
         const cloned = await GitCommandGitProject.cloned(creds, id);
-        await managedDeployments.terminateIfRunning(branchId);
+        const branchId = ti.managedDeploymentKey;
         const startupInfo = {
             port,
             atomistTeam,
@@ -68,7 +65,7 @@ class MavenSourceDeployer implements SourceDeployer {
                 cwd: cloned.baseDir,
             });
         if (!childProcess.pid) {
-            await addressChannels("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +
+            throw new Error("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +
                 "Attempted to execute `mvn: spring-boot:run`");
         }
         childProcess.stdout.on("data", what => log.write(what.toString()));
@@ -82,7 +79,7 @@ class MavenSourceDeployer implements SourceDeployer {
                         port, childProcess,
                     });
                     resolve({
-                        endpoint: `${baseUrl}:${port}/${startupInfo.contextRoot}`,
+                        endpoint: `${this.opts.baseUrl}:${port}/${startupInfo.contextRoot}`,
                     });
                 }
             });
@@ -94,45 +91,61 @@ class MavenSourceDeployer implements SourceDeployer {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
-        if (!log) {
-            logger.warn("log was empty");
-            return undefined;
-        }
-
-        const maybeFailedToStart = appFailedToStart(log);
-        if (maybeFailedToStart) {
-            return {
-                relevantPart: maybeFailedToStart,
-                message: "Application failed to start",
-                includeFullLog: false,
-            };
-        }
-
-        // default to maven errors
-        const maybeMavenErrors = mavenErrors(log);
-        if (maybeMavenErrors) {
-            logger.info("recognized maven error");
-            return {
-                relevantPart: maybeMavenErrors,
-                message: "Maven errors",
-                includeFullLog: true,
-            };
-        }
-
-        // or it could be this problem here
-        if (log.match(/Error checking out artifact/)) {
-            logger.info("Recognized artifact error");
-            return {
-                relevantPart: log,
-                message: "I lost the local cache. Please rebuild",
-                includeFullLog: false,
-            };
-        }
-
-        logger.info("Did not find anything to recognize in the log");
+        return springBootRunLogInterpreter(log) || shortLogInterpreter(log);
     }
 
 }
+
+const shortLogInterpreter: LogInterpreter = (log: string) => {
+    if (log.length < 200) {
+        return {
+            relevantPart: log,
+            message: "This is the whole log.",
+            includeFullLog: false,
+        };
+    }
+};
+
+const springBootRunLogInterpreter: LogInterpreter = (log: string) => {
+    logger.debug("Interpreting log");
+
+    if (!log) {
+        logger.warn("log was empty");
+        return undefined;
+    }
+
+    const maybeFailedToStart = appFailedToStart(log);
+    if (maybeFailedToStart) {
+        return {
+            relevantPart: maybeFailedToStart,
+            message: "Application failed to start",
+            includeFullLog: false,
+        };
+    }
+
+    // default to maven errors
+    const maybeMavenErrors = mavenErrors(log);
+    if (maybeMavenErrors) {
+        logger.info("recognized maven error");
+        return {
+            relevantPart: maybeMavenErrors,
+            message: "Maven errors",
+            includeFullLog: true,
+        };
+    }
+
+    // or it could be this problem here
+    if (log.match(/Error checking out artifact/)) {
+        logger.info("Recognized artifact error");
+        return {
+            relevantPart: log,
+            message: "I lost the local cache. Please rebuild",
+            includeFullLog: false,
+        };
+    }
+
+    logger.info("Did not find anything to recognize in the log");
+};
 
 function appFailedToStart(log: string) {
     const lines = log.split("\n");

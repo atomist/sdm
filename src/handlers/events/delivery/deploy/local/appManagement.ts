@@ -1,6 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess } from "child_process";
+import { TargetInfo } from "../../../../../spi/deploy/Deployment";
+import { Targeter } from "../deploy";
 
 export interface BranchRepoRef extends RemoteRepoRef {
     branch?: string;
@@ -8,6 +10,30 @@ export interface BranchRepoRef extends RemoteRepoRef {
 
 export function isBranchRepoRef(rr: RemoteRepoRef): rr is BranchRepoRef {
     return !!(rr as BranchRepoRef).branch;
+}
+
+export interface ManagedDeploymentTargetInfo extends TargetInfo {
+    managedDeploymentKey: BranchRepoRef;
+}
+
+export const ManagedDeploymentTargeter: Targeter<ManagedDeploymentTargetInfo> = (id: RemoteRepoRef, branch: string) => {
+    const branchId = {...id, branch};
+    return {
+        name: "Run alongside this automation",
+        description: `Locally run ${id.sha} from branch ${branch}`,
+        managedDeploymentKey: branchId,
+    };
+};
+
+// this is currently used in shutdown
+// because Superseded should be per-branch, but isn't yet.
+// At least this makes it explicit we don't have it quite right yet
+export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTargetInfo {
+    return {
+        managedDeploymentKey: {...id, branch: undefined},
+        name: "Run alongside this automation",
+        description: `Locally run ${id.sha} from an unknown branch`,
+    };
 }
 
 /**
@@ -62,12 +88,12 @@ export class ManagedDeployments {
     public async terminateIfRunning(id: BranchRepoRef): Promise<any> {
         const victim = this.deployments.find(d => d.id.sha === id.sha ||
             (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
-        if (!!victim) {
+        if (!!victim && !!victim.childProcess) {
             victim.childProcess.kill();
             // Keep the port but deallocate the process
-            victim.childProcess = undefined;
             logger.info("Killed app [%j] with pid %d, but continuing to reserve port [%d]",
                 id, victim.childProcess.pid, victim.port);
+            victim.childProcess = undefined;
         } else {
             logger.info("Was asked to kill app [%j], but no eligible process found", id);
         }

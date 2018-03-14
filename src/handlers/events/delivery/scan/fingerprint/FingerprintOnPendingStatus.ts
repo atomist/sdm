@@ -27,7 +27,7 @@ import { Fingerprinter } from "../../../../../common/listener/Fingerprinter";
 import { OnAnyPendingStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { sendFingerprint } from "../../../../../util/webhook/sendFingerprint";
-import { ExecuteGoalInvocation } from "../../deploy/ExecuteGoalOnSuccessStatus";
+import { ExecuteGoalInvocation } from "../../ExecuteGoalOnSuccessStatus";
 
 export function executeFingerprints(...fingerprinters: Fingerprinter[]):
 (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => Promise<HandlerResult> {

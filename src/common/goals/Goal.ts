@@ -3,13 +3,12 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { StatusState } from "../../typings/types";
 import { createStatus } from "../../util/github/ghub";
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
-import { BaseContext, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
+import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
     environment: GoalEnvironment;
@@ -17,6 +16,7 @@ export interface GoalDefinition {
     displayName?: string;
     completedDescription?: string;
     workingDescription?: string;
+    failedDescription?: string;
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";
@@ -36,6 +36,18 @@ export class Goal {
 
     get workingDescription() {
         return this.definition.workingDescription || ("Working: " + this.name);
+    }
+
+    get failedDescription() {
+        return this.definition.failedDescription || ("Failed: " + this.name);
+    }
+
+    get requestedDescription() {
+        return "Planning to " + this.name;
+    }
+
+    get retryIntent() {
+        return "trigger " + this.name;
     }
 
     constructor(definition: GoalDefinition) {
@@ -139,17 +151,6 @@ function setPendingStatus(id: GitHubRepoRef, context: GitHubStatusContext,
         context,
         description,
     });
-}
-
-export interface GitHubStatus {
-    context?: GitHubStatusContext;
-    description?: string;
-    state?: StatusState;
-    targetUrl?: string;
-}
-
-export interface GitHubStatusAndFriends extends GitHubStatus {
-    siblings: GitHubStatus[];
 }
 
 export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
