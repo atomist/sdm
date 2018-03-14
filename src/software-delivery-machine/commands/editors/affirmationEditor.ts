@@ -2,7 +2,7 @@ import { HandleCommand } from "@atomist/automation-client";
 import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { editor } from "../../../handlers/commands/editors/registerEditor";
+import { editor, EmptyParameters } from "../../../handlers/commands/editors/registerEditor";
 
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
@@ -12,6 +12,7 @@ import { editor } from "../../../handlers/commands/editors/registerEditor";
 export const affirmationEditor: HandleCommand<any> = editor(
     () => appendAffirmationToReadMe,
     "affirmation",
+    EmptyParameters,
     {
         editMode: commitToMaster("Everyone needs encouragement sometimes"),
     },
