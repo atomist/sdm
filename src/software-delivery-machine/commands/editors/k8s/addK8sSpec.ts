@@ -1,7 +1,7 @@
 import { HandleCommand, logger } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { editor } from "../../../../handlers/commands/editors/registerEditor";
+import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 import { deploymentTemplate } from "./deploymentTemplate";
 
 export const AddK8sSpecCommandName = "AddK8sSpecCommandName";
@@ -10,9 +10,11 @@ export const AtomistK8sSpecFile = "atomist-k8s-deployment.json";
 
 export const ImagePlaceholder = "image_placeholder";
 
-export const addK8sSpec: HandleCommand<any> = editor(
+export const addK8sSpec: HandleCommand<any> = editorCommand(
     () => addK8sSpecEditor,
-    AddK8sSpecCommandName, {
+    AddK8sSpecCommandName,
+    EmptyParameters,
+    {
         intent: "Add kubernetes deployment spec",
         editMode: () => new PullRequest("enable-k8s",
             "Enable deployment to Kubernetes",

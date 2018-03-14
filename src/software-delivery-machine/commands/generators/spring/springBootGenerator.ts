@@ -61,7 +61,7 @@ export const setAtomistTeamInApplicationYml =
 export const sampleEditor: EditorFactory<CustomSpringBootGeneratorParameters> =
     params => async p => {
         /**
-         * Add any custom editor code to manipulate project ere
+         * Add any custom editor code to manipulate project here
          */
         return p;
     };
