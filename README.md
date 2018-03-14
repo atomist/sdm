@@ -3,7 +3,7 @@
 **GitHub Software Delivery Machine**: An Atomist reference implementation.
 
 ## What is a "Software Delivery Machine?"
-A **software delivery machine** is a development process in a box. It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by Atomist's API for software.
+A **software delivery machine** is a development process in a box. It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by Atomist's *API for software*.
 
 ## Implementations of Atomist
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
@@ -503,3 +503,10 @@ export CHECKSTYLE_PATH="/Users/rodjohnson/tools/checkstyle-8.8/checkstyle-8.8-al
 ```
 
 Get checkstyle-8.8-all.jar from [Checkstyle's download page](https://sourceforge.net/projects/checkstyle/files/checkstyle/8.8/).
+
+## Roadmap
+
+This project is under active development, and still in flux. Some goals:
+
+- Breaking the repo into two, to separate the runnable instance from a library module exposing listener interfaces and other public types and common functionality.
+- Support for BitBucket, as well as GitHub. This will likely take the form of a parallel `bitbucket-sdm` project depending on a common `sdm-core` module.
