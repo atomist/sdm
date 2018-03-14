@@ -12,6 +12,7 @@ import {
     javaAffirmationEditor,
     javaBranchAffirmationEditor,
 } from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
+import { removeFileEditor } from "./software-delivery-machine/commands/editors/removeFile";
 import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/k8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
@@ -39,6 +40,7 @@ export const configuration: Configuration = {
         () => unbreakBuildEditor,
         () => javaAffirmationEditor,
         () => javaBranchAffirmationEditor,
+        () => removeFileEditor,
     ]),
     events: assembled.eventHandlers.concat([]),
     token,

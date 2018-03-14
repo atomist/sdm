@@ -11,6 +11,8 @@ import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";
 
+// TODO upgrade this to be consistent with editorCommand
+
 /**
  * Edit setting a status
  * @param {(params: PARAMS) => AnyProjectEditor} edd

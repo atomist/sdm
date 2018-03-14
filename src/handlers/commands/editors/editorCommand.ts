@@ -15,6 +15,13 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import * as assert from "power-assert";
 
 /**
+ * Wrap an editor in a command handler, allowing use of custom parameters.
+ * Targeting (targets property) is handled automatically if the parameters
+ * do not implement TargetsParams
+ * @param edd function to make a fresh editor instance from the params
+ * @param name editor name
+ * @param paramsMaker parameters factory, typically the name of a class with a no arg constructor
+ * @param details optional details to customize behavior
  * Add intent "edit <name>"
  */
 export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
@@ -34,24 +41,32 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
             description)),
         ...details,
     };
-    const combinedParamsMaker: Maker<EditorOrReviewerParameters & PARAMS> = () => {
-        const rawParms: PARAMS = toFactory(paramsMaker)();
-        const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-        const targets = new GitHubFallbackReposParameters();
-        allParms.targets = targets;
-        allParms.bindAndValidate = () => {
-            validate(targets);
-        };
-        return allParms;
-    };
 
-    // TODO what if it's already of the right type?
+    const sampleParams = toFactory(paramsMaker)();
+
+    const paramsMakerToUse: Maker<EditorOrReviewerParameters & PARAMS> =
+        isEditorOrReviewerParameters(sampleParams) ?
+            paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
+            () => {
+                const rawParms: PARAMS = toFactory(paramsMaker)();
+                const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
+                const targets = new GitHubFallbackReposParameters();
+                allParms.targets = targets;
+                allParms.bindAndValidate = () => {
+                    validate(targets);
+                };
+                return allParms;
+            };
 
     return editorHandler(
         edd as any,
-        combinedParamsMaker,
+        paramsMakerToUse,
         name,
         detailsToUse);
+}
+
+function isEditorOrReviewerParameters(p: any): p is EditorOrReviewerParameters {
+    return !!(p as EditorOrReviewerParameters).targets;
 }
 
 function validate(targets: GitHubFallbackReposParameters) {
