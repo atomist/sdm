@@ -1,8 +1,8 @@
 import { FunctionalUnit } from "../../../";
-import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { NoticeK8sTestDeployCompletionOnStatus } from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sDeployCompletion";
 import { NoticeK8sProdDeployCompletionOnStatus } from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sProdDeployCompletion";
 import { requestDeployToK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
+import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,

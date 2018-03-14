@@ -16,7 +16,7 @@ export interface GoalDefinition {
     displayName?: string;
     completedDescription?: string;
     workingDescription?: string;
-    failedDescription?: string
+    failedDescription?: string;
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";
@@ -47,7 +47,7 @@ export class Goal {
     }
 
     get retryIntent() {
-        return "trigger " + this.name
+        return "trigger " + this.name;
     }
 
     constructor(definition: GoalDefinition) {

@@ -16,22 +16,22 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { Deployment } from "../../../../";
 import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
 import { Goal } from "../../../../common/goals/Goal";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
+import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { Deployment } from "../../../../";
-import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { ManagedDeploymentTargeter } from "./local/appManagement";
 
-export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T
+export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
 export interface DeployArtifactParams<T extends TargetInfo> {
     id: GitHubRepoRef;
@@ -60,11 +60,10 @@ export interface DeploySourceParams {
     branch: string;
 }
 
-
 export async function deploySource(params: DeploySourceParams): Promise<void> {
     logger.info("Deploying with params=%j", params);
 
-    const target = ManagedDeploymentTargeter(params.id,params.branch);
+    const target = ManagedDeploymentTargeter(params.id, params.branch);
 
     const deployment = await params.deployer.deployFromSource(
         params.id,
@@ -100,7 +99,6 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
     await reactToSuccessfulDeploy(params, deployment);
 }
 
-
 export async function reactToSuccessfulDeploy(params: {
     deployGoal: Goal,
     endpointGoal: Goal,
@@ -108,7 +106,7 @@ export async function reactToSuccessfulDeploy(params: {
     id: RemoteRepoRef,
     addressChannels: AddressChannels
     progressLog: ProgressLog,
-}, deployment: Deployment) {
+},                                            deployment: Deployment) {
 
     await
         setStatus(params.credentials, params.id,
@@ -153,4 +151,3 @@ export function setStatus(credentials: ProjectOperationCredentials,
         description,
     });
 }
-

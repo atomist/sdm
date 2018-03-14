@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { MavenDeployer } from "../../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
-import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/httpServiceGoals";
-import { ExecuteGoalOnPendingStatus } from "../ExecuteGoalOnPendingStatus";
-import { executeDeploySource, runWithLog, SourceDeploySpec } from "./executeDeploy";
-import { retryGoal } from "../../../commands/RetryGoal";
 import { FunctionalUnit } from "../../../../blueprint/FunctionalUnit";
+import { MavenDeployer } from "../../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { retryGoal } from "../../../commands/RetryGoal";
+import { ExecuteGoalOnPendingStatus } from "../ExecuteGoalOnPendingStatus";
+import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/httpServiceGoals";
+import { executeDeploySource, runWithLog, SourceDeploySpec } from "./executeDeploy";
 
-const LocalDeployFromCloneSpec: SourceDeploySpec =
-    {
+const LocalDeployFromCloneSpec: SourceDeploySpec = {
         deployGoal: LocalDeploymentGoal,
         endpointGoal: LocalEndpointGoal,
         deployer: MavenDeployer,

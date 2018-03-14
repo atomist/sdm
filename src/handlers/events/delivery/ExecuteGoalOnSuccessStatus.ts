@@ -26,15 +26,15 @@ import {
 } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubStatusAndFriends } from "../../../common/goals/gitHubContext";
 import {
     currentGoalIsStillPending,
     Goal,
 } from "../../../common/goals/Goal";
+import { HasChannels } from "../../../common/slack/addressChannels";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
-import { GitHubStatusAndFriends } from "../../../common/goals/gitHubContext";
-import { HasChannels } from "../../../common/slack/addressChannels";
 
 export interface ExecuteGoalInvocation {
     implementationName: string;
@@ -43,7 +43,7 @@ export interface ExecuteGoalInvocation {
 }
 
 export interface ExecuteGoalResult extends HandlerResult {
-    log?: string
+    log?: string;
 }
 
 export type Executor = (status: StatusForExecuteGoal.Status,

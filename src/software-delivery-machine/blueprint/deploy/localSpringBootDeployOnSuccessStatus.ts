@@ -15,28 +15,27 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { deployArtifactWithLogs, ArtifactDeploySpec, executeDeployArtifact } from "../../../handlers/events/delivery/deploy/executeDeploy";
-import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
-import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
-import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
-import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
-import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
-import { DefaultArtifactStore } from "../artifactStore";
-import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { ArtifactDeployer, FunctionalUnit } from "../../../";
+import { retryGoal } from "../../../handlers/commands/RetryGoal";
+import { ArtifactDeploySpec, deployArtifactWithLogs, executeDeployArtifact } from "../../../handlers/events/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
-    targetInfoForAllBranches
+    targetInfoForAllBranches,
 } from "../../../handlers/events/delivery/deploy/local/appManagement";
-import { ArtifactDeployer, FunctionalUnit } from "../../../";
+import { executableJarDeployer } from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
+import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
+import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
-import { retryGoal } from "../../../handlers/commands/RetryGoal";
+import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
+import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
+import { DefaultArtifactStore } from "../artifactStore";
 
 /**
  * Deploy to the automation client node
  */
-
 
 const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetInfo> = {
     deployGoal: StagingDeploymentGoal,

@@ -1,9 +1,17 @@
-import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets } from "@atomist/automation-client";
-import { createStatus, tipOfDefaultBranch } from "../../util/github/ghub";
-import { Goal } from "../../common/goals/Goal";
+import {
+    HandleCommand,
+    HandlerContext,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Parameters } from "@atomist/automation-client/decorators";
+import { Goal } from "../../common/goals/Goal";
+import { createStatus, tipOfDefaultBranch } from "../../util/github/ghub";
 
 @Parameters()
 export class RetryGoalParameters {
@@ -24,14 +32,16 @@ export class RetryGoalParameters {
 
 export function retryGoal(implementationName: string, goal: Goal): HandleCommand {
     return commandHandlerFrom(async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
-        const sha = commandParams.sha || await tipOfDefaultBranch(commandParams.githubToken, new GitHubRepoRef(commandParams.owner, commandParams.repo));
+        const sha = commandParams.sha || await tipOfDefaultBranch(commandParams.githubToken,
+            new GitHubRepoRef(commandParams.owner,
+                commandParams.repo));
         const id = new GitHubRepoRef(commandParams.owner, commandParams.repo, sha);
         await createStatus(commandParams.githubToken, id, {
             context: goal.context,
             state: "pending",
-            description: goal.requestedDescription
+            description: goal.requestedDescription,
         });
-    }, RetryGoalParameters, retryCommandNameFor(implementationName), "Retry an execution of " + goal.name, goal.retryIntent)
+    }, RetryGoalParameters, retryCommandNameFor(implementationName), "Retry an execution of " + goal.name, goal.retryIntent);
 }
 
 export function retryCommandNameFor(deployName: string) {

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { EventFired, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success, } from "@atomist/automation-client";
+import { EventFired, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
+import { Goal } from "../../../common/goals/Goal";
 import { PushTest } from "../../../common/listener/GoalSetter";
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";
-import { executeGoal, ExecuteGoalInvocation, Executor, } from "./ExecuteGoalOnSuccessStatus";
-import { Goal } from "../../../common/goals/Goal";
+import { executeGoal, ExecuteGoalInvocation, Executor } from "./ExecuteGoalOnSuccessStatus";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -61,7 +61,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
 
         // todo: put this in a subscription parameter. It should work, in this architecture
         if (status.context !== params.goal.context) {
-            logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`)
+            logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
             return Success;
         }
 

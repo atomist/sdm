@@ -1,26 +1,24 @@
+import { failure, HandlerContext, HandlerResult, logger, success, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { ListenerInvocation } from "../../../../";
 import { Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
+import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { OnAnySuccessStatus } from "../../../../typings/types";
-import { deploy, DeployArtifactParams, deploySource, DeploySourceParams, Targeter } from "./deploy";
-import { ExecuteGoalInvocation, ExecuteGoalResult, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
-import { failure, HandlerContext, HandlerResult, logger, success, Success } from "@atomist/automation-client";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
-import { createStatus } from "../../../../util/github/ghub";
-import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
-import { retryCommandNameFor } from "../../../commands/RetryGoal";
-import { MultiProgressLog, ConsoleProgressLog, InMemoryProgressLog } from "../../../../common/log/progressLogs";
-import { AddressChannels } from "../../../../common/slack/addressChannels";
-import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ListenerInvocation } from "../../../../";
-import { ManagedDeploymentTargetInfo } from "./local/appManagement";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
-
+import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { OnAnySuccessStatus } from "../../../../typings/types";
+import { createStatus } from "../../../../util/github/ghub";
+import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { retryCommandNameFor } from "../../../commands/RetryGoal";
+import { ExecuteGoalInvocation, ExecuteGoalResult, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
+import { deploy, DeployArtifactParams, deploySource, DeploySourceParams, Targeter } from "./deploy";
 
 export interface ArtifactDeploySpec<T extends TargetInfo> {
     deployGoal: Goal;
@@ -34,7 +32,6 @@ export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocatio
                                                  logInterpreter?: LogInterpreter): Executor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
-
 
         const log = await createEphemeralProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, new InMemoryProgressLog(), log);
@@ -52,16 +49,18 @@ export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocatio
 }
 
 export interface RunWithLogInvocation extends ListenerInvocation {
-    status: StatusForExecuteGoal.Status,
-    progressLog: ProgressLog,
-    reportError: (Error) => Promise<ExecuteGoalResult>
+    status: StatusForExecuteGoal.Status;
+    progressLog: ProgressLog;
+    reportError: (Error) => Promise<ExecuteGoalResult>;
 }
 
 export function deployArtifactWithLogs<T extends TargetInfo>(spec: ArtifactDeploySpec<T>) {
     return runWithLog(executeDeployArtifact(spec), spec.deployer.logInterpreter);
 }
 
-export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): ((rwli: RunWithLogInvocation) => Promise<ExecuteGoalResult>) {
+export type ExecuteWithLog = (rwli: RunWithLogInvocation) => Promise<ExecuteGoalResult>;
+
+export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): ExecuteWithLog {
     return async (rwli: RunWithLogInvocation) => {
         const commit = rwli.status.commit;
         const image = rwli.status.commit.image;
@@ -88,7 +87,7 @@ export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploy
                     .catch(err => rwli.reportError(err)))
                 .then(success);
         }
-    }
+    };
 }
 
 export interface SourceDeploySpec {
@@ -117,7 +116,7 @@ export function executeDeploySource(spec: SourceDeploySpec): ((rwli: RunWithLogI
             deploySource(deployParams)
                 .catch(err => rwli.reportError(err)))
             .then(success);
-    }
+    };
 }
 
 function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
@@ -151,7 +150,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
             context: executeGoalInvocation.goal.context,
             description: executeGoalInvocation.goal.failedDescription,
         }).then(no => ({code: 0, message: err.message}));
-    }
+    };
 }
 
 const running = {};

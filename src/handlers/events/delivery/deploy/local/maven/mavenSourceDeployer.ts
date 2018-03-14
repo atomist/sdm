@@ -1,14 +1,14 @@
 import { logger } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { Deployment } from "../../../../../../spi/deploy/Deployment";
+import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
 import { InterpretedLog, LogInterpreter } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
-import { DefaultLocalDeployerOptions, LocalDeployerOptions, } from "../LocalDeployerOptions";
-import { SourceDeployer } from "../../../../../../spi/deploy/SourceDeployer";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 
 /**
  * Managed deployments
@@ -40,10 +40,10 @@ class MavenSourceDeployer implements SourceDeployer {
     }
 
     public async deployFromSource(id: GitHubRepoRef,
-                        ti: ManagedDeploymentTargetInfo,
-                        log: ProgressLog,
-                        creds: ProjectOperationCredentials,
-                        atomistTeam: string): Promise<Deployment> {
+                                  ti: ManagedDeploymentTargetInfo,
+                                  log: ProgressLog,
+                                  creds: ProjectOperationCredentials,
+                                  atomistTeam: string): Promise<Deployment> {
 
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
@@ -102,8 +102,8 @@ const shortLogInterpreter: LogInterpreter = (log: string) => {
         return {
             relevantPart: log,
             message: "This is the whole log.",
-            includeFullLog: false
-        }
+            includeFullLog: false,
+        };
     }
 };
 
@@ -146,7 +146,7 @@ const springBootRunLogInterpreter: LogInterpreter = (log: string) => {
     }
 
     logger.info("Did not find anything to recognize in the log");
-}
+};
 
 function appFailedToStart(log: string) {
     const lines = log.split("\n");

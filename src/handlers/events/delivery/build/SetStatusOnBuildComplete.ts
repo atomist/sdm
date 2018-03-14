@@ -35,11 +35,11 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
+import { Goal } from "../../../../common/goals/Goal";
 import {
     AddressChannels,
     addressChannelsFor,
 } from "../../../../common/slack/addressChannels";
-import { Goal } from "../../../../common/goals/Goal";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import {
     BuildStatus,
@@ -85,7 +85,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
                     id,
                     {token: params.githubToken});
             } else {
-                logger.info(`No build status found for ${buildGoal.context} so not setting it to complete`)
+                logger.info(`No build status found for ${buildGoal.context} so not setting it to complete`);
             }
             if (build.status === "failed" && build.buildUrl) {
                 const ac = addressChannelsFor(commit.repo, ctx);

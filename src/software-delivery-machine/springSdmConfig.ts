@@ -59,4 +59,3 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
     softwareDeliveryMachine.addFingerprinters(mavenFingerprinter);
     // .addFingerprintDifferenceListeners(diff1)
 }
-

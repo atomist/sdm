@@ -1,8 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess } from "child_process";
-import { Targeter } from "../deploy";
 import { TargetInfo } from "../../../../../spi/deploy/Deployment";
+import { Targeter } from "../deploy";
 
 export interface BranchRepoRef extends RemoteRepoRef {
     branch?: string;
@@ -11,7 +11,6 @@ export interface BranchRepoRef extends RemoteRepoRef {
 export function isBranchRepoRef(rr: RemoteRepoRef): rr is BranchRepoRef {
     return !!(rr as BranchRepoRef).branch;
 }
-
 
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
     managedDeploymentKey: BranchRepoRef;
@@ -22,9 +21,9 @@ export const ManagedDeploymentTargeter: Targeter<ManagedDeploymentTargetInfo> = 
     return {
         name: "Run alongside this automation",
         description: `Locally run ${id.sha} from branch ${branch}`,
-        managedDeploymentKey: branchId
-    }
-}
+        managedDeploymentKey: branchId,
+    };
+};
 
 // this is currently used in shutdown
 // because Superseded should be per-branch, but isn't yet.
@@ -33,7 +32,7 @@ export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTa
     return {
         managedDeploymentKey: {...id, branch: undefined},
         name: "Run alongside this automation",
-        description: `Locally run ${id.sha} from an unknown branch`
+        description: `Locally run ${id.sha} from an unknown branch`,
     };
 }
 
