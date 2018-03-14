@@ -1,21 +1,13 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../../../spi/deploy/Deployer";
-import {
-    Deployment,
-    TargetInfo,
-} from "../../../../../../spi/deploy/Deployment";
+import { ArtifactDeployer } from "../../../../../../spi/deploy/ArtifactDeployer";
+import { Deployment } from "../../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
-import {
-    DefaultLocalDeployerOptions,
-    LocalDeployerOptions,
-    StartupInfo,
-} from "../LocalDeployerOptions";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
 
 /**
  * Managed deployments
@@ -24,7 +16,7 @@ let managedDeployments: ManagedDeployments;
 
 /**
  * Start up an executable Jar on the same node as the automation client.
- * Not for production use.
+ * Not intended as a Paas, but for use during demos and development.
  * @param opts options
  */
 export function executableJarDeployer(opts: LocalDeployerOptions): ArtifactDeployer<ManagedDeploymentTargetInfo> {
@@ -50,7 +42,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
     public async deploy(da: DeployableArtifact,
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
-                        creds: ProjectOperationCredentials,
+                        credentials: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment> {
         const baseUrl = this.opts.baseUrl;
         const port = managedDeployments.findPort(ti.managedDeploymentKey);

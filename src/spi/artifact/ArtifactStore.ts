@@ -41,7 +41,7 @@ export interface StoredArtifact {
 }
 
 /**
- * Checked out artifact
+ * Checked out artifact available on local file system
  */
 export interface DeployableArtifact extends AppInfo {
 

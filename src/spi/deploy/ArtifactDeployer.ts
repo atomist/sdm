@@ -4,6 +4,10 @@ import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo } from "./Deployment";
 
+/**
+ * Implemented by classes that can deploy from a published artifact that was build
+ * by execution of a previous Build goal.
+ */
 export interface ArtifactDeployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
 
     /**
@@ -16,7 +20,7 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo> extends Log
     deploy(da: DeployableArtifact,
            ti: T,
            log: ProgressLog,
-           creds: ProjectOperationCredentials,
+           credentials: ProjectOperationCredentials,
            team: string): Promise<Deployment>;
 
 }

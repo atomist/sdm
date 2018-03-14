@@ -23,7 +23,7 @@ import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
 import { Goal } from "../../../../common/goals/Goal";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";

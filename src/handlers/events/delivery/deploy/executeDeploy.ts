@@ -8,7 +8,7 @@ import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../..
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../spi/deploy/Deployer";
+import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";

@@ -51,7 +51,6 @@ class MavenSourceDeployer implements SourceDeployer {
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
 
         const cloned = await GitCommandGitProject.cloned(creds, id);
-
         const branchId = ti.managedDeploymentKey;
         const startupInfo = {
             port,
