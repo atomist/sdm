@@ -13,6 +13,7 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 
 import { Parameters } from "@atomist/automation-client/decorators";
 import * as assert from "power-assert";
+import { chattyEditorFactory } from "./editorWrappers";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
@@ -43,7 +44,7 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
     };
 
     return editorHandler(
-        edd as any,
+        chattyEditorFactory(edd) as any,
         toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker),
         name,
         detailsToUse);

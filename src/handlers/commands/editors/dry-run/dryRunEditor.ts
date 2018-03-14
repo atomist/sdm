@@ -9,6 +9,7 @@ import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Status } from "../../../../util/github/ghub";
 import { EmptyParameters, toEditorOrReviewerParametersMaker } from "../editorCommand";
+import { chattyEditorFactory } from "../editorWrappers";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";
@@ -53,7 +54,7 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
         ...details,
     };
     return editorHandler(
-        edd as any,
+        chattyEditorFactory(edd) as any,
         toEditorOrReviewerParametersMaker(paramsMaker),
         name,
         detailsToUse);
