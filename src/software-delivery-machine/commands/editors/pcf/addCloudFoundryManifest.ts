@@ -7,8 +7,12 @@ import { CloudFoundryManifestPath } from "../../../../handlers/events/delivery/d
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 
-export const addCloudFoundryManifest: HandleCommand<any> = editorCommand(
-    () => addCfManifest,
+/**
+ * Command handler wrapping addCloudFoundryManifest editor
+ * @type {HandleCommand<EditOneOrAllParameters>}
+ */
+export const addCloudFoundryManifest: HandleCommand = editorCommand(
+    () => addCloudFoundryManifestEditor,
     AddCloudFoundryManifestCommandName,
     EmptyParameters,
     {
@@ -21,7 +25,7 @@ export const addCloudFoundryManifest: HandleCommand<any> = editorCommand(
     });
 
 // We know that there's a POM if this get invoked
-export const addCfManifest: SimpleProjectEditor = async (p, ctx) => {
+export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx) => {
     const pom = await p.findFile("pom.xml");
     const content = await pom.getContent();
     const ident = await identification(content);

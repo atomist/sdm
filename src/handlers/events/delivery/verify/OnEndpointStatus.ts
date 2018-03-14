@@ -35,9 +35,16 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { addressSlackChannels, buttonForCommand, Destination } from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    addressSlackChannels,
+    buttonForCommand,
+    Destination,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { GitHubStatusAndFriends, splitContext } from "../../../../common/goals/gitHubContext";
 import { currentGoalIsStillPending, Goal } from "../../../../common/goals/Goal";
@@ -151,7 +158,7 @@ function verifyImpl(sdm: SdmVerification,
         .then(
             () => setVerificationStatus(li.credentials,
                 li.id,
-                "success",
+                StatusState.success,
                 sdm.requestApproval,
                 targetUrl,
                 sdm.verifyGoal),
@@ -159,7 +166,7 @@ function verifyImpl(sdm: SdmVerification,
                 // todo: report error in Slack? ... or load it to a log that links
                 logger.warn("Failing verification because: " + err);
                 return setVerificationStatus(li.credentials, li.id,
-                    "failure",
+                    StatusState.failure,
                     false,
                     targetUrl,
                     sdm.verifyGoal)

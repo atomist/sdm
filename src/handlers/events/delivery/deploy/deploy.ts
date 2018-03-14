@@ -16,7 +16,10 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Deployment } from "../../../../";
 import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
@@ -28,6 +31,7 @@ import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusState } from "../../../../typings/types";
+
 import { createStatus } from "../../../../util/github/ghub";
 import { ManagedDeploymentTargeter } from "./local/appManagement";
 
@@ -108,15 +112,14 @@ export async function reactToSuccessfulDeploy(params: {
     progressLog: ProgressLog,
 },                                            deployment: Deployment) {
 
-    await
-        setStatus(params.credentials, params.id,
-            "success",
-            params.deployGoal.context,
-            params.progressLog.url,
-            params.deployGoal.completedDescription);
+    await setStatus(params.credentials, params.id,
+        StatusState.success,
+        params.deployGoal.context,
+        params.progressLog.url,
+        params.deployGoal.completedDescription);
     if (deployment.endpoint) {
         await setStatus(params.credentials, params.id,
-            "success",
+            StatusState.success,
             params.endpointGoal.context,
             deployment.endpoint,
             params.endpointGoal.completedDescription)
