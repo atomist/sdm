@@ -51,7 +51,10 @@ import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush
 import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
-import { OnPendingReviewStatus } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
+import {
+    OnPendingReviewStatus,
+    ReviewerRegistration,
+} from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -98,7 +101,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly conditionalBuilders: ConditionalBuilder[] = [];
 
-    private projectReviewers: ProjectReviewer[] = [];
+    private reviewerRegistrations: ReviewerRegistration[] = [];
 
     private codeReactions: CodeReactionListener[] = [];
 
@@ -144,7 +147,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get reviewHandler(): Maker<OnPendingReviewStatus> {
-        return () => new OnPendingReviewStatus(ReviewGoal, this.projectReviewers);
+        return () => new OnPendingReviewStatus(ReviewGoal, this.reviewerRegistrations);
     }
 
     private get codeReactionsHandler(): Maker<OnPendingCodeReactionStatus> {
@@ -320,8 +323,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addProjectReviewers(...reviewers: ProjectReviewer[]): this {
-        this.projectReviewers = this.projectReviewers.concat(reviewers);
+    public addReviewerRegistrations(...reviewers: ReviewerRegistration[]): this {
+        this.reviewerRegistrations = this.reviewerRegistrations.concat(reviewers);
         return this;
     }
 

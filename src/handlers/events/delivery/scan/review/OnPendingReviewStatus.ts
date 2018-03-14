@@ -40,28 +40,42 @@ import {
     ReviewComment,
 } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { Project } from "@atomist/automation-client/project/Project";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
-import * as slack from "@atomist/slack-messages";
 import {
     Attachment,
     SlackMessage,
 } from "@atomist/slack-messages";
+import * as slack from "@atomist/slack-messages";
 import {
     formatReviewerError,
     ReviewerError,
 } from "../../../../../blueprint/ReviewerError";
 import { Goal } from "../../../../../common/goals/Goal";
+import { PushTest } from "../../../../../common/listener/GoalSetter";
 import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
 import {
     OnAnyPendingStatus,
-    StatusState } from "../../../../../typings/types";
+    StatusState,
+} from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { forApproval } from "../../verify/approvalGate";
 
+export type ProjectTest = (p: Project) => Promise<boolean> | boolean;
+
+export interface TargetedReviewer {
+
+    projectTest: ProjectTest;
+
+    projectReviewer: ProjectReviewer;
+}
+
+export type ReviewerRegistration = ProjectReviewer | TargetedReviewer;
+
 /**
- * Scan code on a push, invoking ProjectReviewers and arbitrary CodeReactions.
- * Result is setting GitHub status with context = "scan"
+ * Scan code on a push, invoking ProjectReviewers.
+ * Result is setting GitHub goal status.
  */
 @EventHandler("Scan code", GraphQL.subscriptionFromFile(
     "../../../../../graphql/subscription/OnAnyPendingStatus",
@@ -73,7 +87,7 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
     private githubToken: string;
 
     constructor(public goal: Goal,
-                private projectReviewers: ProjectReviewer[]) {
+                private reviewerRegistrations: ReviewerRegistration[]) {
     }
 
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
@@ -92,10 +106,11 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
 
         const addressChannels = addressChannelsFor(commit.repo, context);
         try {
-            if (params.projectReviewers.length > 0) {
+            if (params.reviewerRegistrations.length > 0) {
                 const project = await GitCommandGitProject.cloned(credentials, id);
+                const relevantReviewers = await toRelevantReviewers(params.reviewerRegistrations, project);
                 const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
-                    await Promise.all(params.projectReviewers
+                    await Promise.all(relevantReviewers
                         .map(reviewer =>
                             reviewer(project, context, params as any)
                                 .then(rvw => ({review: rvw}),
@@ -127,6 +142,19 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
             return failure(err);
         }
     }
+}
+
+function isTargetedReviewer(r: ReviewerRegistration): r is TargetedReviewer {
+    return !!(r as TargetedReviewer).projectTest;
+}
+
+function toRelevantReviewers(registrations: ReviewerRegistration[], p: Project): Promise<ProjectReviewer[]> {
+    const allTargeted: TargetedReviewer[] = registrations.map(r => isTargetedReviewer(r) ? r : {
+        projectTest: () => true,
+        projectReviewer: r,
+    });
+    return Promise.all(allTargeted.map(t => t.projectTest(p) ? t.projectReviewer : undefined))
+        .then(elts => elts.filter(elt => !!elt));
 }
 
 export const ScanBase = "https://scan.atomist.com";

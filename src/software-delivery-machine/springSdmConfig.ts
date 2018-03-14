@@ -35,11 +35,11 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
             PublishNewRepo)
-        .addProjectReviewers(logReview);
+        .addReviewerRegistrations(logReview);
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
         if (!!checkStylePath) {
-            softwareDeliveryMachine.addProjectReviewers(checkstyleReviewer(checkStylePath));
+            softwareDeliveryMachine.addReviewerRegistrations(checkstyleReviewer(checkStylePath));
         } else {
             logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
         }
