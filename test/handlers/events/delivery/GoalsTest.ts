@@ -5,7 +5,7 @@ import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ReviewContext, StagingDeploymentContext,
     StagingEndpointContext,
-} from "../../../../src/handlers/events/delivery/goals/httpServiceGoals";
+} from "../../../../src/handlers/events/delivery/goals/commonGoals";
 
 describe("Goal handling", () => {
 

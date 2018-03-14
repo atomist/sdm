@@ -45,7 +45,7 @@ import {
     createStatus,
     State,
 } from "../../../util/github/ghub";
-import { contextToGoal } from "./goals/httpServiceGoals";
+import { contextToGoal } from "./goals/commonGoals";
 import Status = OnSuccessStatus.Status;
 
 /**

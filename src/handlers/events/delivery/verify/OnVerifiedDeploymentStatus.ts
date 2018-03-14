@@ -37,7 +37,7 @@ import {
     messageDestinations,
 } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { StagingVerifiedContext } from "../goals/httpServiceGoals";
+import { StagingVerifiedContext } from "../goals/commonGoals";
 
 /**
  * React to a verified deployment

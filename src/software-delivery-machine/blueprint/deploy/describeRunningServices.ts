@@ -1,6 +1,6 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { reportRunningCommand, ReportRunningParameters } from "../../../handlers/commands/reportRunning";
-import { ProductionMauve } from "../../../handlers/events/delivery/goals/httpServiceGoals";
+import { ProductionMauve } from "../../../handlers/events/delivery/goals/commonGoals";
 
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";

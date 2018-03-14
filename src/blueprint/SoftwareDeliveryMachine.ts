@@ -17,7 +17,7 @@ import {
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
-} from "../handlers/events/delivery/goals/httpServiceGoals";
+} from "../handlers/events/delivery/goals/commonGoals";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
 import {
     EndpointVerificationListener,

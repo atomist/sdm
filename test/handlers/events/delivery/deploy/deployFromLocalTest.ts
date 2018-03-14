@@ -8,7 +8,7 @@ import {
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
-} from "../../../../../src/handlers/events/delivery/goals/httpServiceGoals";
+} from "../../../../../src/handlers/events/delivery/goals/commonGoals";
 
 describe("the local deploy", () => {
 

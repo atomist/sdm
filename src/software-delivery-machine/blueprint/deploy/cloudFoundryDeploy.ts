@@ -26,7 +26,7 @@ import {
     ProductionEndpointGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
-} from "../../../handlers/events/delivery/goals/httpServiceGoals";
+} from "../../../handlers/events/delivery/goals/commonGoals";
 import { DefaultArtifactStore } from "../artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();

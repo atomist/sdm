@@ -33,7 +33,7 @@ import {
 } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { StagingDeploymentContext } from "../goals/httpServiceGoals";
+import { StagingDeploymentContext } from "../goals/commonGoals";
 
 /**
  * React to a deployment.

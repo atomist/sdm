@@ -2,7 +2,7 @@ import { Goals } from "../../../../common/goals/Goal";
 import {
     JustBuildGoal,
     ReviewGoal,
-} from "./httpServiceGoals";
+} from "./commonGoals";
 
 export const LibraryGoals = new Goals(
     ReviewGoal,

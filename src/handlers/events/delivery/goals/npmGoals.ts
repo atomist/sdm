@@ -2,7 +2,7 @@ import { Goals } from "../../../../common/goals/Goal";
 import {
     BuildGoal,
     ReviewGoal,
-} from "./httpServiceGoals";
+} from "./commonGoals";
 
 export const NpmGoals = new Goals(
     ReviewGoal,

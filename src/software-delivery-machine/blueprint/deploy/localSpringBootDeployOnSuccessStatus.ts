@@ -28,7 +28,7 @@ import { StartupInfo } from "../../../handlers/events/delivery/deploy/local/Loca
 import { mavenDeployer } from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
-import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/httpServiceGoals";
+import { StagingDeploymentGoal, StagingEndpointGoal } from "../../../handlers/events/delivery/goals/commonGoals";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";

@@ -52,7 +52,7 @@ import { ListenerInvocation, SdmListener } from "../../../../common/listener/Lis
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { StagingEndpointContext } from "../goals/httpServiceGoals";
+import { StagingEndpointContext } from "../goals/commonGoals";
 import { forApproval } from "./approvalGate";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {

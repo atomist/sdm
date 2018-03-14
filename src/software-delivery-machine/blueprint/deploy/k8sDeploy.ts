@@ -8,7 +8,7 @@ import {
     ProductionEndpointGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
-} from "../../../handlers/events/delivery/goals/httpServiceGoals";
+} from "../../../handlers/events/delivery/goals/commonGoals";
 import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
 
 export const K8sStagingDeployOnSuccessStatus: FunctionalUnit = {

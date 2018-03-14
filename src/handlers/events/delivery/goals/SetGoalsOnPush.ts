@@ -43,7 +43,7 @@ import {
     createStatus,
     tipOfDefaultBranch,
 } from "../../../../util/github/ghub";
-import { NoGoals } from "./httpServiceGoals";
+import { NoGoals } from "./commonGoals";
 
 /**
  * Set up goals on a push (e.g. for delivery).
