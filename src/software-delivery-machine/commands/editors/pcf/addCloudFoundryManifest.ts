@@ -1,13 +1,13 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { editor, EmptyParameters } from "../../../../handlers/commands/editors/registerEditor";
+import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 import { identification } from "../../../../handlers/events/delivery/build/local/maven/pomParser";
 import { CloudFoundryManifestPath } from "../../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 
-export const addCloudFoundryManifest: HandleCommand<any> = editor(
+export const addCloudFoundryManifest: HandleCommand<any> = editorCommand(
     () => addCfManifest,
     AddCloudFoundryManifestCommandName,
     EmptyParameters,

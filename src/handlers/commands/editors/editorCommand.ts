@@ -1,27 +1,26 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
 import { gitHubRepoLoader } from "@atomist/automation-client/operations/common/gitHubRepoLoader";
+import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
+import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
-import { FallbackReposParameters } from "@atomist/spring-automation/commands/editor/FallbackReposParameters";
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
-import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 
-import * as assert from "power-assert";
 import { Parameters } from "@atomist/automation-client/decorators";
+import * as assert from "power-assert";
 
 /**
  * Add intent "edit <name>"
  */
-export function editor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
-                                                 name: string,
-                                                 paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
-                                                 details: Partial<EditorCommandDetails> = {}): HandleCommand<EditOneOrAllParameters> {
+export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
+                                                        name: string,
+                                                        paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
+                                                        details: Partial<EditorCommandDetails> = {}): HandleCommand<EditOneOrAllParameters> {
 
     const description = details.description || name;
     const detailsToUse: EditorCommandDetails = {
@@ -62,6 +61,9 @@ function validate(targets: GitHubFallbackReposParameters) {
     }
 }
 
+/**
+ * Convenient empty parameters class
+ */
 @Parameters()
 export class EmptyParameters {
 }

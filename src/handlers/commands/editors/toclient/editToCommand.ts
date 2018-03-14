@@ -21,7 +21,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 export type EditModeOrFactory<PARAMS> = EditMode | ((p: PARAMS) => EditMode);
 
 /**
- * Further details of an editor to allow selective customization
+ * Further details of an editorCommand to allow selective customization
  */
 export interface EditorCommandDetails<PARAMS = any> extends CommandDetails<PARAMS> {
 
@@ -38,7 +38,7 @@ function defaultDetails(name: string): EditorCommandDetails {
 
 /**
  * Create a handle function that edits one or many repos, following AllReposByDefaultParameters
- * @param pe function returning a project editor instance appropriate for the parameters
+ * @param pe function returning a project editorCommand instance appropriate for the parameters
  * @param factory parameters factory
  * @param {string} name
  * @param {string} details object allowing customization beyond reasonable defaults

@@ -4,7 +4,7 @@ import { ProjectListenerInvocation } from "../../../common/listener/Listener";
 import { AddK8sSpecCommandName } from "../../commands/editors/k8s/addK8sSpec";
 
 /**
- * Present a button suggesting a Kubernetes spec is added by an editor
+ * Present a button suggesting a Kubernetes spec is added by an editorCommand
  * @param {ProjectListenerInvocation} inv
  * @return {Promise<any>}
  */

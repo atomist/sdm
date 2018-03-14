@@ -1,11 +1,11 @@
 import { HandleCommand, HandlerContext } from "@atomist/automation-client";
 import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
-import { editor, EmptyParameters } from "../../../handlers/commands/editors/registerEditor";
+import { editorCommand, EmptyParameters } from "../../../handlers/commands/editors/editorCommand";
 
 export const BadJavaFileName = "src/main/java/Bad.java";
 
-export const breakBuildEditor: HandleCommand<any> = editor(
+export const breakBuildEditor: HandleCommand<any> = editorCommand(
     () => breakBuild,
     "breakBuild",
     EmptyParameters,
@@ -17,7 +17,7 @@ async function breakBuild(p: Project, ctx: HandlerContext) {
     return await p.addFile(BadJavaFileName, "this is not Java");
 }
 
-export const unbreakBuildEditor: HandleCommand<any> = editor(
+export const unbreakBuildEditor: HandleCommand<any> = editorCommand(
     () => unbreakBuild,
     "unbreakBuild",
     EmptyParameters,
