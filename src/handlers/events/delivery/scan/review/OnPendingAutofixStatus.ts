@@ -99,12 +99,12 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
             }
 
             await markStatus(project.id as GitHubRepoRef,
-                params.goal, "success", credentials);
+                params.goal, StatusState.success, credentials);
 
             return Success;
         } catch (err) {
             await markStatus(id,
-                params.goal, "error", credentials);
+                params.goal, StatusState.error, credentials);
             return failure(err);
         }
     }

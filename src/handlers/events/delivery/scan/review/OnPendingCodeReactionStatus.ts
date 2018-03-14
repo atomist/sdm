@@ -101,11 +101,11 @@ export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStat
             }
 
             await markScanned(id,
-                params.goal, "success", credentials);
+                params.goal,  StatusState.success, credentials);
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.goal, "error", credentials);
+                params.goal,  StatusState.error, credentials);
             return failure(err);
         }
     }

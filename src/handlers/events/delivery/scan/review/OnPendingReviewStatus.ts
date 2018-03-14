@@ -122,23 +122,23 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
 
                 if (review.comments.length === 0 && reviewerErrors.length === 0) {
                     await markScanned(id,
-                        params.goal, "success", credentials, false);
+                        params.goal, StatusState.success, credentials, false);
                 } else {
                     // TODO might want to raise issue
                     // Fail it??
                     await sendReviewToSlack("Review comments", review, context, addressChannels);
                     await sendErrorsToSlack(reviewerErrors, addressChannels);
                     await markScanned(project.id as GitHubRepoRef,
-                        params.goal, "success", credentials, true);
+                        params.goal,  StatusState.success, credentials, true);
                 }
             } else {
                 // No reviewers
-                await markScanned(id, params.goal, "success", credentials, false);
+                await markScanned(id, params.goal, StatusState.success, credentials, false);
             }
             return Success;
         } catch (err) {
             await markScanned(id,
-                params.goal, "error", credentials, false);
+                params.goal,  StatusState.error, credentials, false);
             return failure(err);
         }
     }
