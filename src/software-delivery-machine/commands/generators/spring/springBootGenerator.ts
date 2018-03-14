@@ -1,6 +1,9 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { EditorFactory, generatorHandler } from "@atomist/automation-client/operations/generate/generatorToCommand";
+import {
+    EditorFactory, GeneratorCommandDetails,
+    generatorHandler,
+} from "@atomist/automation-client/operations/generate/generatorToCommand";
 import * as utils from "@atomist/automation-client/project/util/projectUtils";
 
 import { springBootProjectEditor } from "@atomist/spring-automation/commands/generator/spring/springBootGenerator";
@@ -13,19 +16,23 @@ import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
  * Relies on generic Atomist Java & Spring functionality in spring-automations
  * @param config config for a Java generator, including location of seed
  * @param additionalActions zero or more additional editor actions
+ * @param details allow customization
  * @return {HandleCommand<SpringBootGeneratorParameters>}
  */
 export function springBootGenerator(config: JavaGeneratorConfig,
-                                    ...additionalActions: Array<EditorFactory<CustomSpringBootGeneratorParameters>>) {
+                                    additionalActions: Array<EditorFactory<CustomSpringBootGeneratorParameters>>,
+                                    details: Partial<GeneratorCommandDetails<CustomSpringBootGeneratorParameters>> = {}) {
     return generatorHandler<CustomSpringBootGeneratorParameters>(
         (params, ctx) => chainEditors(
-            springBootProjectEditor(params),
             updateReadme(params),
             setAtomistTeamInApplicationYml(params, ctx),
-            ...additionalActions.map(f => f(params, ctx))),
+            springBootProjectEditor(params),
+            ...additionalActions.map(f => f(params, ctx)),
+        ),
         () => new CustomSpringBootGeneratorParameters(config),
         "customSpringBootGenerator",
         {
+            ...details,
             intent: "create spring",
             tags: ["spring", "boot", "java"],
         });
@@ -52,18 +59,6 @@ export const setAtomistTeamInApplicationYml =
     (params, ctx) => async p => {
         return utils.doWithFiles(p, "src/main/resources/application.yml", f =>
             f.replace(/\${ATOMIST_TEAM}/, ctx.teamId));
-    };
-
-/**
- * Sample editor instance
- * @param {CustomSpringBootGeneratorParameters} params
- */
-export const sampleEditor: EditorFactory<CustomSpringBootGeneratorParameters> =
-    params => async p => {
-        /**
-         * Add any custom editor code to manipulate project here
-         */
-        return p;
     };
 
 function titleBlock(params: CustomSpringBootGeneratorParameters): string {
