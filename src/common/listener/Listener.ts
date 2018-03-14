@@ -1,40 +1,13 @@
-import { HandlerContext } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Function1 } from "lodash";
-import { AddressChannels } from "../slack/addressChannels";
+import { SdmContext } from "../context/SdmContext";
 
 /**
  * Common parameters to an invocation of a listener to one of the
  * SDM's specific events. These are fired by our event handlers to allow
  * multiple, domain specific, listeners to be invoked.
  */
-export interface ListenerInvocation {
-
-    /**
-     * The repo this relates to
-     */
-    id: RemoteRepoRef;
-
-    /**
-     * Context of the Atomist EventHandler invocation. Use to run GraphQL
-     * queries, use the messageClient directly and find
-     * the team and correlation id
-     */
-    context: HandlerContext;
-
-    /**
-     * If available, provides a way to address the channel(s) related to this repo.
-     */
-    addressChannels?: AddressChannels;
-
-    /**
-     * Credentials for use with source control hosts such as GitHub
-     */
-    credentials: ProjectOperationCredentials;
-
-}
+export type ListenerInvocation = SdmContext;
 
 export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R extends any = any> =
     Function1<I, Promise<R>>;

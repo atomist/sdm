@@ -2,6 +2,7 @@ import { failure, HandlerContext, HandlerResult, logger, success, Success } from
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { ListenerInvocation } from "../../../../";
+import { SdmContext } from "../../../../common/context/SdmContext";
 import { Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
@@ -48,7 +49,7 @@ export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocatio
     };
 }
 
-export interface RunWithLogInvocation extends ListenerInvocation {
+export interface RunWithLogContext extends SdmContext {
     status: StatusForExecuteGoal.Status;
     progressLog: ProgressLog;
     reportError: (Error) => Promise<ExecuteGoalResult>;
@@ -58,33 +59,33 @@ export function deployArtifactWithLogs<T extends TargetInfo>(spec: ArtifactDeplo
     return runWithLog(executeDeployArtifact(spec), spec.deployer.logInterpreter);
 }
 
-export type ExecuteWithLog = (rwli: RunWithLogInvocation) => Promise<ExecuteGoalResult>;
+export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
 export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): ExecuteWithLog {
-    return async (rwli: RunWithLogInvocation) => {
-        const commit = rwli.status.commit;
-        const image = rwli.status.commit.image;
+    return async (rwlc: RunWithLogContext) => {
+        const commit = rwlc.status.commit;
+        const image = rwlc.status.commit.image;
         const pushBranch = commit.pushes[0].branch;
-        rwli.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
+        rwlc.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
         const deployParams: DeployArtifactParams<T> = {
             ...spec,
-            credentials: rwli.credentials,
-            addressChannels: rwli.addressChannels,
-            id: rwli.id as GitHubRepoRef,
+            credentials: rwlc.credentials,
+            addressChannels: rwlc.addressChannels,
+            id: rwlc.id as GitHubRepoRef,
             targetUrl: image.imageName,
-            team: rwli.context.teamId,
-            progressLog: rwli.progressLog,
+            team: rwlc.context.teamId,
+            progressLog: rwlc.progressLog,
             branch: pushBranch,
         };
 
         if (!image && !spec.artifactStore.imageUrlIsOptional) {
-            rwli.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
-            return rwli.reportError(new Error("No image linked"));
+            rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
+            return rwlc.reportError(new Error("No image linked"));
         } else {
-            logger.info(`Running deploy. Triggered by ${rwli.status.state} status: ${rwli.status.context}: ${rwli.status.description}`);
+            logger.info(`Running deploy. Triggered by ${rwlc.status.state} status: ${rwlc.status.context}: ${rwlc.status.description}`);
             return dedup(commit.sha, () =>
                 deploy(deployParams)
-                    .catch(err => rwli.reportError(err)))
+                    .catch(err => rwlc.reportError(err)))
                 .then(success);
         }
     };
@@ -96,8 +97,8 @@ export interface SourceDeploySpec {
     deployer: SourceDeployer;
 }
 
-export function executeDeploySource(spec: SourceDeploySpec): ((rwli: RunWithLogInvocation) => Promise<ExecuteGoalResult>) {
-    return async (rwli: RunWithLogInvocation) => {
+export function executeDeploySource(spec: SourceDeploySpec): ((rwli: RunWithLogContext) => Promise<ExecuteGoalResult>) {
+    return async (rwli: RunWithLogContext) => {
         const commit = rwli.status.commit;
         const pushBranch = commit.pushes[0].branch;
         rwli.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
