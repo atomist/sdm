@@ -31,7 +31,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
             seedRepo: "spring-rest-seed",
-        }))
+        }, []))
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
             PublishNewRepo)

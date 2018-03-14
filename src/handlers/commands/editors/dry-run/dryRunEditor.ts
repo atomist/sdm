@@ -3,12 +3,12 @@ import { allReposInTeam } from "@atomist/automation-client/operations/common/all
 import { gitHubRepoLoader } from "@atomist/automation-client/operations/common/gitHubRepoLoader";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
+import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Status } from "../../../../util/github/ghub";
 import { EmptyParameters, toEditorOrReviewerParametersMaker } from "../editorCommand";
-import { EditorCommandDetails, editorHandler } from "../toclient/editToCommand";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";

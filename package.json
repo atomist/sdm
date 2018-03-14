@@ -26,6 +26,7 @@
     "axios": "^0.18.0",
     "build": "^0.1.4",
     "copyfiles": "^1.2.0",
+    "curry": "^1.2.0",
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
     "lodash": "^4.17.5",
