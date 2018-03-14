@@ -3,8 +3,7 @@ import { Goals } from "../goals/Goal";
 import { ProjectListenerInvocation } from "./Listener";
 
 /**
- * Return true if we like this push and think we should attempt
- * to determine goals for it.
+ * Return true if we like this push and think a particular set of goals apply to it.
  */
 export type PushTest = (p: PushTestInvocation) => boolean | Promise<boolean>;
 
