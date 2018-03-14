@@ -21,7 +21,6 @@ describe("checkstyleReportToReview", () => {
         assert(review.comments[0].severity === "error");
         assert(review.comments[0].sourceLocation.lineFrom1 === 0);
         assert(review.comments[2].sourceLocation.path === "src/main/java/thing/Test2.java");
-
     });
 
 });

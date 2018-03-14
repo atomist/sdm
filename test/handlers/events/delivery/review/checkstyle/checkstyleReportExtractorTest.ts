@@ -15,7 +15,6 @@ describe("checkstyleReportExtractor", () => {
         assert(file.errors.length === 2);
         file.errors.forEach(f => assert(!!f.message, "Message must be set"));
         file.errors.forEach(f => assert(!!f.severity, "Severity must be set"));
-
     });
 
 });

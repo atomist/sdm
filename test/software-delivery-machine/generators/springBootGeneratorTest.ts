@@ -49,7 +49,6 @@ describe("custom Spring Boot generator", () => {
                 params.bindAndValidate();
                 await updateReadme(params)(p);
                 const readmeContent = p.findFileSync("README.md").getContentSync();
-                console.log(readmeContent);
                 assert(readmeContent.includes("# repoName"), "Should include repo name");
                 assert(readmeContent.includes("seed project \`foo:bar"));
             });
@@ -63,7 +62,6 @@ describe("custom Spring Boot generator", () => {
             const ctx = { teamId: "T1000"};
             await setAtomistTeamInApplicationYml(undefined, ctx)(p);
             const yml = p.findFileSync("src/main/resources/application.yml").getContentSync();
-            console.log(yml);
             assert(yml.includes("/teams/T1000"), "Should include Atomist team");
         });
     });

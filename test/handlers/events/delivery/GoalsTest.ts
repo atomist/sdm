@@ -8,6 +8,7 @@ import {
 } from "../../../../src/handlers/events/delivery/goals/httpServiceGoals";
 
 describe("Goal handling", () => {
+
    it("parses my contexts", () => {
        const result = splitContext(ReviewContext);
        assert.equal(result.name, "review");

@@ -23,7 +23,6 @@ describe("GitHubReleaseArtifactStore", () => {
                 id,
                 {token: process.env.GITHUB_TOKEN})
                 .then(da => {
-                    console.log(JSON.stringify(da));
                     const path = `${da.cwd}/${da.filename}`;
                     assert(fs.existsSync(path), `File [${path}] must exist`);
                     const cwd = p.dirname(path);
