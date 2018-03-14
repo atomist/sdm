@@ -1,7 +1,7 @@
 import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
-import { IsMaven, IsSpringBoot } from "../common/listener/support/jvmGuards";
+import { HasSpringBootApplicationClass, IsMaven } from "../common/listener/support/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { NamedSeedRepo } from "../common/listener/support/NamedSeedRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
@@ -31,13 +31,13 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             ],
             artifactStore: DefaultArtifactStore,
         },
-        whenPushSatisfies(IsMaven, IsSpringBoot,
+        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass,
             not(PushFromAtomist), not(MaterialChangeToJavaRepo))
             .setGoals(NoGoals),
-        whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot, HasCloudFoundryManifest,
+        whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
             ToPublicRepo, not(NamedSeedRepo))
             .setGoals(HttpServiceGoals),
-        whenPushSatisfies(IsMaven, IsSpringBoot, not(PushFromAtomist))
+        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(PushFromAtomist))
             .setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .setGoals(LibraryGoals),

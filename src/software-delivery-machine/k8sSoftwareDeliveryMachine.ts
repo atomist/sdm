@@ -4,9 +4,9 @@ import {
 } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import {
+    HasSpringBootApplicationClass,
     IsMaven,
-    IsSpringBoot,
-} from "../common/listener/support/jvmGuards";
+} from "../common/listener/support/jvmPushTests";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
@@ -45,10 +45,10 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             artifactStore: DefaultArtifactStore,
         },
 
-        whenPushSatisfies(ToDefaultBranch, IsMaven, IsSpringBoot,
+        whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass,
             HasK8Spec,
             ToPublicRepo).setGoals(HttpServiceGoals),
-        whenPushSatisfies(not(PushFromAtomist), IsMaven, IsSpringBoot).setGoals(LocalDeploymentGoals),
+        whenPushSatisfies(not(PushFromAtomist), IsMaven, HasSpringBootApplicationClass).setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
         whenPushSatisfies(IsNode).setGoals(NpmGoals),
         onAnyPush.buildWith(new K8sAutomationBuilder()),
