@@ -42,27 +42,32 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         ...details,
     };
 
-    const sampleParams = toFactory(paramsMaker)();
-
-    const paramsMakerToUse: Maker<EditorOrReviewerParameters & PARAMS> =
-        isEditorOrReviewerParameters(sampleParams) ?
-            paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
-            () => {
-                const rawParms: PARAMS = toFactory(paramsMaker)();
-                const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-                const targets = new GitHubFallbackReposParameters();
-                allParms.targets = targets;
-                allParms.bindAndValidate = () => {
-                    validate(targets);
-                };
-                return allParms;
-            };
-
     return editorHandler(
         edd as any,
-        paramsMakerToUse,
+        toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker),
         name,
         detailsToUse);
+}
+
+/**
+ * Return a parameters maker that is targeting aware
+ * @param {Maker<PARAMS>} paramsMaker
+ * @return {Maker<EditorOrReviewerParameters & PARAMS>}
+ */
+export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>): Maker<EditorOrReviewerParameters & PARAMS> {
+    const sampleParams = toFactory(paramsMaker)();
+    return isEditorOrReviewerParameters(sampleParams) ?
+        paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
+        () => {
+            const rawParms: PARAMS = toFactory(paramsMaker)();
+            const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
+            const targets = new GitHubFallbackReposParameters();
+            allParms.targets = targets;
+            allParms.bindAndValidate = () => {
+                validate(targets);
+            };
+            return allParms;
+        };
 }
 
 function isEditorOrReviewerParameters(p: any): p is EditorOrReviewerParameters {
