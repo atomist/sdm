@@ -6,7 +6,7 @@ import { editorCommand, EmptyParameters } from "../../../handlers/commands/edito
 
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
- * editorCommand
+ * editor
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
 export const affirmationEditor: HandleCommand<any> = editorCommand(

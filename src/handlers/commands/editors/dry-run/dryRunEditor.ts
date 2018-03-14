@@ -43,7 +43,7 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
         repoLoader:
             p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
         editMode: ((params: PARAMS & EditorOrReviewerParameters) => {
-            logger.info("About to create edit mode for dry run editorCommand: params=%j", params);
+            logger.info("About to create edit mode for dry run editor: params=%j", params);
             return new NewBranchWithStatus(
                 `edit-${name}-${Date.now()}`,
                 `${description.substr(0, 50)}\n\n[atomist] ${description}`,

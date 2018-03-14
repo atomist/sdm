@@ -12,7 +12,7 @@ import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
  * Function to create a Spring Boot generator.
  * Relies on generic Atomist Java & Spring functionality in spring-automations
  * @param config config for a Java generator, including location of seed
- * @param additionalActions zero or more additional editorCommand actions
+ * @param additionalActions zero or more additional editor actions
  * @return {HandleCommand<SpringBootGeneratorParameters>}
  */
 export function springBootGenerator(config: JavaGeneratorConfig,
@@ -55,13 +55,13 @@ export const setAtomistTeamInApplicationYml =
     };
 
 /**
- * Sample editorCommand instance
+ * Sample editor instance
  * @param {CustomSpringBootGeneratorParameters} params
  */
 export const sampleEditor: EditorFactory<CustomSpringBootGeneratorParameters> =
     params => async p => {
         /**
-         * Add any custom editorCommand code to manipulate project ere
+         * Add any custom editor code to manipulate project here
          */
         return p;
     };
