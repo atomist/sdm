@@ -47,7 +47,6 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         .addClosedIssueListeners(thankYouYouRock)
         .addEditors(
             () => tryToUpgradeSpringBootVersion,
-            () => applyHttpServiceGoals,
             () => applyApacheLicenseHeaderEditor,
         )
         .addGenerators(() => springBootGenerator({
@@ -57,7 +56,8 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
             PublishNewRepo)
-        .addReviewerRegistrations(logReview);
+        .addReviewerRegistrations(logReview)
+        .addSupportingCommands(() => applyHttpServiceGoals);
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
         if (!!checkStylePath) {
