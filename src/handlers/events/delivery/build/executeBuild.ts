@@ -15,7 +15,7 @@ export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
         await dedup(commit.sha, async () => {
             const credentials = {token: params.githubToken};
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-            const team = commit.repo.org.chatTeam.id;
+            const atomistTeam = ctx.teamId;
 
             const project = await GitCommandGitProject.cloned(credentials, id);
 
@@ -64,7 +64,7 @@ export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
 
             // the builder is expected to result in a complete Build event (which will update the build status)
             // and an ImageLinked event (which will update the artifact status).
-            return builder.initiateBuild(credentials, id, i.addressChannels, team, {branch: branchToMarkTheBuildWith});
+            return builder.initiateBuild(credentials, id, i.addressChannels, atomistTeam, {branch: branchToMarkTheBuildWith});
         });
         return Success;
     };

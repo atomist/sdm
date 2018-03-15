@@ -24,7 +24,7 @@ export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext
     }
 }
 
-export function messageDestinations(hasChannels: HasChannels, ctx: HandlerContext): Destination {
+export function messageDestinations(hasChannels: HasChannels, ctx?: HandlerContext): Destination {
     const channelNames = hasChannels.channels.map(c => c.name);
     if (hasChannels.channels.length === 0) {
         throw new Error("I can't give you destinations for 0 channels");

@@ -36,7 +36,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     protected async startBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
-                               team: string,
+                               atomistTeam: string,
                                log: ProgressLog,
                                addressChannels: AddressChannels): Promise<LocalBuildInProgress> {
         const p = await GitCommandGitProject.cloned(creds, id);
@@ -66,7 +66,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
                 resolve({error: true, code});
             });
         });
-        const rb = new UpdatingBuild(id, buildResult, team, log.url);
+        const rb = new UpdatingBuild(id, buildResult, atomistTeam, log.url);
         rb.ai = appId;
         rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
         return rb;
