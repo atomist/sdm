@@ -1,7 +1,7 @@
 import { HandleCommand, HandlerContext } from "@atomist/automation-client";
 import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
-import { editorCommand, EmptyParameters } from "../../../handlers/commands/editors/editorCommand";
+import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 
 export const BadJavaFileName = "src/main/java/Bad.java";
 

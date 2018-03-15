@@ -2,32 +2,36 @@ import { HandleCommand } from "@atomist/automation-client";
 import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { editorCommand, EmptyParameters } from "../../../handlers/commands/editors/editorCommand";
+import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
+import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 import { OptionalBranchParameters } from "./OptionalBranchParameters";
 
 /**
- * Function returning a command handler around the appendAffirmationToReadMe
- * editor
+ * Harmlessly modify a Java file on master
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const affirmationEditor: HandleCommand<any> = editorCommand(
-    () => appendAffirmationToReadMe,
-    "affirmation",
+export const javaAffirmationEditor: HandleCommand<any> = editorCommand(
+    () => appendAffirmationToJava,
+    "java affirmation",
     EmptyParameters,
     {
-        editMode: commitToMaster("Everyone needs encouragement sometimes"),
+        editMode: commitToMaster(`Everyone needs encouragement to write Java`),
     },
 );
 
-export const branchAffirmationEditor: HandleCommand<any> = editorCommand(
-    () => appendAffirmationToReadMe,
-    "branch affirmation",
+/**
+ * Harmlessly modify a Java file on a branch
+ * @type {HandleCommand<EditOneOrAllParameters>}
+ */
+export const javaBranchAffirmationEditor: HandleCommand<any> = editorCommand(
+    () => appendAffirmationToJava,
+    "java branch affirmation",
     OptionalBranchParameters,
     {
         // Be sure to create a new instance each time to ensure unique branch names
-        editMode: bap => ({
+        editMode: obp => ({
             message: `Everyone needs encouragement to write Java`,
-            branch: bap.branch || "ja-" + new Date().getTime(),
+            branch: obp.branch || "ja-" + new Date().getTime(),
         }),
     },
 );
@@ -50,11 +54,16 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToReadMe: SimpleProjectEditor = async (p, ctx) => {
+export const appendAffirmationToJava: SimpleProjectEditor = (p, ctx) => {
     const affirmation = randomAffirmation();
-    await ctx.messageClient.respond(`Adding to \`README.md\`: _${affirmation}_`);
-    return doWithFiles(p, "README.md", async f => {
-        const content = await f.getContent();
-        return f.setContent(`${content}\n${affirmation}\n`);
+    let count = 0;
+    return doWithFiles(p, AllJavaFiles, f => {
+        f.getContent().then(async content => {
+            if (count++ >= 1) {
+                return;
+            }
+            await ctx.messageClient.respond(`Prepending to \`${f.name}\`: _${affirmation}_`);
+            return f.setContent(`// ${affirmation}\n\n${content}`);
+        });
     });
 };

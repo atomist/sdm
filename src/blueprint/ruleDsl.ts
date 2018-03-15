@@ -1,8 +1,8 @@
+import { Goals } from "../";
 import { GoalSetter, PushTest } from "../common/listener/GoalSetter";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { allSatisfied } from "../common/listener/support/pushTestUtils";
 import { Builder } from "../spi/build/Builder";
-import { Goals } from "../";
 
 export class PushRule {
 

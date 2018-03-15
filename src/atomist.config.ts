@@ -3,16 +3,16 @@ import * as appRoot from "app-root-path";
 import { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
 import { applyHttpServiceGoals } from "./software-delivery-machine/blueprint/goal/jvmGoalManagement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
-import { affirmationEditor, branchAffirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
+import { affirmationEditor, branchAffirmationEditor } from "./software-delivery-machine/commands/editors/demo/affirmationEditor";
 import {
     breakBuildEditor,
     unbreakBuildEditor,
-} from "./software-delivery-machine/commands/editors/breakBuild";
+} from "./software-delivery-machine/commands/editors/demo/breakBuild";
 import {
     javaAffirmationEditor,
     javaBranchAffirmationEditor,
-} from "./software-delivery-machine/commands/editors/javaAffirmationEditor";
-import { removeFileEditor } from "./software-delivery-machine/commands/editors/removeFile";
+} from "./software-delivery-machine/commands/editors/demo/javaAffirmationEditor";
+import { removeFileEditor } from "./software-delivery-machine/commands/editors/helper/removeFile";
 import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/k8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
