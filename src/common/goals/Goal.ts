@@ -152,9 +152,10 @@ export class Goals {
     }
 
     public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        return Promise.all(this.goals.map(goal =>
-            setPendingStatus(id, goal.context, creds,
-                `Planning to ${goal.name}`)));
+        return Promise.all(this.goals.map(goal => {
+            return setPendingStatus(id, goal.context, creds,
+                goal.requestedDescription)
+        }));
     }
 
 }
