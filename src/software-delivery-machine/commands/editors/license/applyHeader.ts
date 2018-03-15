@@ -64,7 +64,7 @@ export async function applyHeaderProjectEditor(p: Project, ctx: HandlerContext, 
             return;
         }
         if (alreadyHasHeader(content)) {
-            return ctx.messageClient.respond(`${f.path} already has a different header`);
+            return ctx.messageClient.respond(`\`${f.path}\` already has a different header`);
         }
         ++headersAdded;
         return f.setContent(params.header + "\n\n" + content);
@@ -75,5 +75,5 @@ export async function applyHeaderProjectEditor(p: Project, ctx: HandlerContext, 
 
 function alreadyHasHeader(content: string): boolean {
     // TODO this is naive...could match a non license header
-    return !!content.match(/\/\*/);
+    return content.startsWith("/*") && !content.startsWith("/**");
 }
