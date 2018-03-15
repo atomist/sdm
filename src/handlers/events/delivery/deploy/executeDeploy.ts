@@ -17,7 +17,6 @@
 import { failure, HandlerContext, HandlerResult, logger, success, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { ListenerInvocation } from "../../../../";
 import { SdmContext } from "../../../../common/context/SdmContext";
 import { Goal } from "../../../../common/goals/Goal";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";

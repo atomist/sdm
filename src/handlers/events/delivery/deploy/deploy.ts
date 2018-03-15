@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {logger} from "@atomist/automation-client";
+import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Deployment } from "../../../../";
-import { GitHubStatusContext } from "../../../../common/goals/gitHubContext";
-import { Goal } from "../../../../common/goals/Goal";
-import { AddressChannels } from "../../../../common/slack/addressChannels";
-import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
-import { TargetInfo } from "../../../../spi/deploy/Deployment";
-import { SourceDeployer } from "../../../../spi/deploy/SourceDeployer";
-import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { StatusState } from "../../../../typings/types";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {GitHubStatusContext} from "../../../../common/goals/gitHubContext";
+import {Goal} from "../../../../common/goals/Goal";
+import {AddressChannels} from "../../../../common/slack/addressChannels";
+import {ArtifactStore} from "../../../../spi/artifact/ArtifactStore";
+import {ArtifactDeployer} from "../../../../spi/deploy/ArtifactDeployer";
+import {Deployment, TargetInfo} from "../../../../spi/deploy/Deployment";
+import {SourceDeployer} from "../../../../spi/deploy/SourceDeployer";
+import {ProgressLog} from "../../../../spi/log/ProgressLog";
+import {StatusState} from "../../../../typings/types";
 
-import { createStatus } from "../../../../util/github/ghub";
-import { ManagedDeploymentTargeter } from "./local/appManagement";
+import {createStatus} from "../../../../util/github/ghub";
+import {ManagedDeploymentTargeter} from "./local/appManagement";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
@@ -104,13 +103,14 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
 }
 
 export async function reactToSuccessfulDeploy(params: {
-    deployGoal: Goal,
-    endpointGoal: Goal,
-    credentials: ProjectOperationCredentials,
-    id: RemoteRepoRef,
-    addressChannels: AddressChannels
-    progressLog: ProgressLog,
-},                                            deployment: Deployment) {
+                                                  deployGoal: Goal,
+                                                  endpointGoal: Goal,
+                                                  credentials: ProjectOperationCredentials,
+                                                  id: RemoteRepoRef,
+                                                  addressChannels: AddressChannels
+                                                  progressLog: ProgressLog,
+                                              },
+                                              deployment: Deployment) {
 
     await setStatus(params.credentials, params.id,
         StatusState.success,
