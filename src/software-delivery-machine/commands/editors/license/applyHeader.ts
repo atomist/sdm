@@ -50,7 +50,7 @@ export const applyApacheLicenseHeaderEditor: HandleCommand = editorCommand(
     {
         editMode: ahp => new PullRequest(
             ahp.branch || "ah-" + new Date().getTime(),
-            `Apply license header (${ahp.license})`,
+            `Apply license header (${ahp.license})\n\n[atomist]`,
         ),
     });
 
