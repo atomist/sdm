@@ -3,6 +3,7 @@ import { commitToMaster } from "@atomist/automation-client/operations/edit/editM
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { editorCommand, EmptyParameters } from "../../../handlers/commands/editors/editorCommand";
+import { OptionalBranchParameters } from "./OptionalBranchParameters";
 
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
@@ -15,6 +16,19 @@ export const affirmationEditor: HandleCommand<any> = editorCommand(
     EmptyParameters,
     {
         editMode: commitToMaster("Everyone needs encouragement sometimes"),
+    },
+);
+
+export const branchAffirmationEditor: HandleCommand<any> = editorCommand(
+    () => appendAffirmationToReadMe,
+    "branch affirmation",
+    OptionalBranchParameters,
+    {
+        // Be sure to create a new instance each time to ensure unique branch names
+        editMode: bap => ({
+            message: `Everyone needs encouragement to write Java`,
+            branch: bap.branch || "ja-" + new Date().getTime(),
+        }),
     },
 );
 

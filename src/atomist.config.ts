@@ -3,7 +3,7 @@ import * as appRoot from "app-root-path";
 import { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
 import { applyHttpServiceGoals } from "./software-delivery-machine/blueprint/goal/jvmGoalManagement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
-import { affirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
+import { affirmationEditor, branchAffirmationEditor } from "./software-delivery-machine/commands/editors/affirmationEditor";
 import {
     breakBuildEditor,
     unbreakBuildEditor,
@@ -35,6 +35,7 @@ export const configuration: Configuration = {
     ],
     commands: assembled.commandHandlers.concat([
         () => affirmationEditor,
+        () => branchAffirmationEditor,
         () => applyHttpServiceGoals,
         () => breakBuildEditor,
         () => unbreakBuildEditor,

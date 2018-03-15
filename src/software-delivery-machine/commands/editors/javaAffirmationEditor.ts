@@ -4,6 +4,7 @@ import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand, EmptyParameters } from "../../../handlers/commands/editors/editorCommand";
+import { OptionalBranchParameters } from "./OptionalBranchParameters";
 
 /**
  * Harmlessly modify a Java file on master
@@ -25,12 +26,12 @@ export const javaAffirmationEditor: HandleCommand<any> = editorCommand(
 export const javaBranchAffirmationEditor: HandleCommand<any> = editorCommand(
     () => appendAffirmationToJava,
     "java branch affirmation",
-    EmptyParameters,
+    OptionalBranchParameters,
     {
         // Be sure to create a new instance each time to ensure unique branch names
-        editMode: () => ({
+        editMode: obp => ({
             message: `Everyone needs encouragement to write Java`,
-            branch: "ja-" + new Date().getTime(),
+            branch: obp.branch || "ja-" + new Date().getTime(),
         }),
     },
 );
