@@ -12,6 +12,9 @@ subscription OnFailureStatus {
         owner
         name
         channels {
+          team {
+            id
+          }
           name
           id
         }

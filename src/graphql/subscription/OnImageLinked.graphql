@@ -16,6 +16,9 @@ subscription OnImageLinked {
         owner
         name
         channels {
+          team {
+            id
+          }
           name
           id
         }

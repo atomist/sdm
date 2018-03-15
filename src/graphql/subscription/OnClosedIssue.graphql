@@ -18,6 +18,9 @@ subscription OnClosedIssue {
       owner
       name
       channels {
+        team {
+          id
+        }
         name
       }
     }

@@ -28,6 +28,9 @@ subscription OnPushToAnyBranch {
       owner
       name
       channels {
+        team {
+          id
+        }
         name
         id
       }

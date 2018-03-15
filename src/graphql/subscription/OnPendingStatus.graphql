@@ -12,6 +12,9 @@ subscription OnPendingStatus($context: String!) {
         owner
         name
         channels {
+          team {
+            id
+          }
           name
           id
         }

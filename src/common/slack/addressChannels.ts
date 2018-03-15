@@ -13,7 +13,7 @@ import { SlackMessage } from "@atomist/slack-messages";
 export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions) => Promise<any>;
 
 export interface HasChannels {
-    channels?: Array<{ name?: string, id?: string }>;
+    channels?: Array<{ name?: string, id?: string, team?: { id?: string }}>;
 }
 
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
@@ -24,9 +24,14 @@ export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext
     }
 }
 
-export function messageDestinations(hasChannels: HasChannels, ctx: HandlerContext): Destination {
-    const channels = hasChannels.channels.map(c => c.name);
-    return addressSlackChannels(ctx.teamId, ...channels);
+export function messageDestinations(hasChannels: HasChannels, ctx?: HandlerContext): Destination {
+    const channelNames = hasChannels.channels.map(c => c.name);
+    if (hasChannels.channels.length === 0) {
+        throw new Error("I can't give you destinations for 0 channels");
+    }
+    // TODO: support multiple slack teams. Return an Array<Destination>
+    const slackTeam = hasChannels.channels[0].team.id;
+    return addressSlackChannels(slackTeam, ...channelNames);
 }
 
 export function addressDestination(destination: Destination, ctx: HandlerContext): AddressChannels {
