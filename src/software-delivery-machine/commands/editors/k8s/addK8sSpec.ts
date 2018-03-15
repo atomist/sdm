@@ -10,7 +10,7 @@ export const AtomistK8sSpecFile = "atomist-k8s-deployment.json";
 
 export const ImagePlaceholder = "image_placeholder";
 
-export const addK8sSpec: HandleCommand<any> = editorCommand(
+export const addK8sSpec: HandleCommand = editorCommand(
     () => addK8sSpecEditor,
     AddK8sSpecCommandName,
     EmptyParameters,

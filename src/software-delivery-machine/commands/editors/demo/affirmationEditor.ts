@@ -3,14 +3,14 @@ import { commitToMaster } from "@atomist/automation-client/operations/edit/editM
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
-import { OptionalBranchParameters } from "./OptionalBranchParameters";
+import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
 
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
  * editor
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const affirmationEditor: HandleCommand<any> = editorCommand(
+export const affirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToReadMe,
     "affirmation",
     EmptyParameters,
@@ -19,7 +19,7 @@ export const affirmationEditor: HandleCommand<any> = editorCommand(
     },
 );
 
-export const branchAffirmationEditor: HandleCommand<any> = editorCommand(
+export const branchAffirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToReadMe,
     "branch affirmation",
     OptionalBranchParameters,

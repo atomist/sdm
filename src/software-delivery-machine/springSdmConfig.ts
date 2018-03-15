@@ -10,11 +10,13 @@ import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServic
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
+import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
 import { capitalizer } from "./blueprint/issue/capitalizer";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { logReview } from "./blueprint/review/logReview";
+import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
@@ -27,7 +29,11 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
     softwareDeliveryMachine
         .addNewIssueListeners(requestDescription, capitalizer)
         .addClosedIssueListeners(thankYouYouRock)
-        .addEditors(() => tryToUpgradeSpringBootVersion)
+        .addEditors(
+            () => tryToUpgradeSpringBootVersion,
+            () => applyHttpServiceGoals,
+            () => applyApacheLicenseHeaderEditor,
+        )
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
             seedRepo: "spring-rest-seed",

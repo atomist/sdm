@@ -3,7 +3,7 @@ import { setSpringBootVersionEditor } from "@atomist/spring-automation/commands/
 import { UnleashPhilParameters } from "@atomist/spring-automation/commands/editor/spring/unleashPhil";
 import { dryRunEditor } from "../../../../handlers/commands/editors/dry-run/dryRunEditor";
 
-export const tryToUpgradeSpringBootVersion: HandleCommand<any> = dryRunEditor<UnleashPhilParameters>(
+export const tryToUpgradeSpringBootVersion: HandleCommand = dryRunEditor<UnleashPhilParameters>(
     params => setSpringBootVersionEditor(params.desiredBootVersion),
     UnleashPhilParameters,
     "boot-upgrade", {

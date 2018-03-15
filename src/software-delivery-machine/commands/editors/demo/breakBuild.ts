@@ -5,7 +5,7 @@ import { editorCommand, EmptyParameters } from "../../../../handlers/commands/ed
 
 export const BadJavaFileName = "src/main/java/Bad.java";
 
-export const breakBuildEditor: HandleCommand<any> = editorCommand(
+export const breakBuildEditor: HandleCommand = editorCommand(
     () => breakBuild,
     "breakBuild",
     EmptyParameters,
@@ -17,7 +17,7 @@ async function breakBuild(p: Project, ctx: HandlerContext) {
     return await p.addFile(BadJavaFileName, "this is not Java");
 }
 
-export const unbreakBuildEditor: HandleCommand<any> = editorCommand(
+export const unbreakBuildEditor: HandleCommand = editorCommand(
     () => unbreakBuild,
     "unbreakBuild",
     EmptyParameters,

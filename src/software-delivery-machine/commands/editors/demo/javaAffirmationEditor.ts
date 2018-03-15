@@ -4,13 +4,13 @@ import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
-import { OptionalBranchParameters } from "./OptionalBranchParameters";
+import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
 
 /**
  * Harmlessly modify a Java file on master
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const javaAffirmationEditor: HandleCommand<any> = editorCommand(
+export const javaAffirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToJava,
     "java affirmation",
     EmptyParameters,
@@ -23,7 +23,7 @@ export const javaAffirmationEditor: HandleCommand<any> = editorCommand(
  * Harmlessly modify a Java file on a branch
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const javaBranchAffirmationEditor: HandleCommand<any> = editorCommand(
+export const javaBranchAffirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToJava,
     "java branch affirmation",
     OptionalBranchParameters,
