@@ -1,5 +1,6 @@
 
 import { logger } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor, EditResult, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
@@ -24,15 +25,16 @@ export function chattyEditorFactory<PARAMS>(f: (params: PARAMS) => AnyProjectEdi
  */
 export function chattyEditor(underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context, parms) => {
+        const id = project.id as RemoteRepoRef;
         try {
             const er = await underlyingEditor(project, context, parms);
             const status = await project.gitStatus();
             if (status.isClean) {
-                await context.messageClient.respond("Nothing to do");
+                await context.messageClient.respond(`Nothing to do on \`${id.url}\``);
             }
             return er as any;
         } catch (err) {
-            await context.messageClient.respond("Nothing done");
+            await context.messageClient.respond(`Nothing done on \`${id.url}\``);
             logger.warn("Editor error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false } as EditResult;
         }

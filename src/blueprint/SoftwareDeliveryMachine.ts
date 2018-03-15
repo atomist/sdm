@@ -43,12 +43,13 @@ import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
+import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { executeBuild } from "../handlers/events/delivery/build/executeBuild";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/FingerprintOnPendingStatus";
+import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/executeFingerprints";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
 import {
@@ -136,7 +137,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: this.fingerprinters.length > 0 ?
                 [() => new ExecuteGoalOnPendingStatus("Fingerprinter", FingerprintGoal, executeFingerprints(...this.fingerprinters))] :
                 [],
-            commandHandlers: [],
+            commandHandlers: [
+                () => retryGoal("Fingerprinter", FingerprintGoal),
+            ],
         };
     }
 
