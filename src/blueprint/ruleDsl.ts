@@ -2,6 +2,7 @@ import { GoalSetter, PushTest } from "../common/listener/GoalSetter";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { allSatisfied } from "../common/listener/support/pushTestUtils";
 import { Builder } from "../spi/build/Builder";
+import { Goals } from "../";
 
 export class PushRule {
 
@@ -15,7 +16,7 @@ export class PushRule {
         this.pushTest = allSatisfied(guard1, ...guards);
     }
 
-    public setGoals(goals): this {
+    public setGoals(goals: Goals): this {
         this.goalSetter = new GuardedGoalSetter(goals, this.guard1, ...this.guards);
         return this;
     }
