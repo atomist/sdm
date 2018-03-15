@@ -14,29 +14,35 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client/configuration";
+import {Configuration} from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
-import { ComposedFunctionalUnit } from "./blueprint/ComposedFunctionalUnit";
-import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
+import {ComposedFunctionalUnit} from "./blueprint/ComposedFunctionalUnit";
+import {cloudFoundrySoftwareDeliveryMachine} from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 import {
     affirmationEditor,
     branchAffirmationEditor,
 } from "./software-delivery-machine/commands/editors/demo/affirmationEditor";
-import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/demo/breakBuild";
+import {breakBuildEditor, unbreakBuildEditor} from "./software-delivery-machine/commands/editors/demo/breakBuild";
 import {
     javaAffirmationEditor,
     javaBranchAffirmationEditor,
 } from "./software-delivery-machine/commands/editors/demo/javaAffirmationEditor";
-import { removeFileEditor } from "./software-delivery-machine/commands/editors/helper/removeFile";
+import {removeFileEditor} from "./software-delivery-machine/commands/editors/helper/removeFile";
+import {k8sSoftwareDeliveryMachine} from "./software-delivery-machine/k8sSoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
 
 const token = process.env.GITHUB_TOKEN;
 
+/*
+ * The provided software delivery machines include cloud foundry (which runs locally for Test environment, by default, and your PCF for Prod)
+ * and kubernetes (which deploys Spring-boot services to an Atomist-provided cluster for Test and Prod).
+ * Take your pick.
+ */
 const assembled = new ComposedFunctionalUnit(
-      cloudFoundrySoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true" }),
-      // k8sSoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true" }),
+    cloudFoundrySoftwareDeliveryMachine({useCheckstyle: process.env.USE_CHECKSTYLE === "true"}),
+// k8sSoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true"})
 );
 
 export const configuration: Configuration = {
@@ -45,7 +51,7 @@ export const configuration: Configuration = {
     // <-- obtain the ID from the settings page of your Atomist workspace at https://app.atomist.com,
     // then set your env variable
     teamIds: [
-         process.env.ATOMIST_WORKSPACE,
+        process.env.ATOMIST_WORKSPACE,
     ],
     commands: assembled.commandHandlers.concat([
         () => affirmationEditor,

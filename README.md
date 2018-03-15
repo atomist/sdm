@@ -46,15 +46,6 @@ This project builds on other Atomist core functionality available from global au
 
 Type `@atomist show skills` in any channel to see a list of all available Atomist commands.
 
-## Structure of This Project
-The exports in the `src/index.ts` file represent the public API of this repository, which is more likely than other code to remain stable. 
-> In particular, the event listener interfaces discussed later in the document are expected to remain stable.
-
-The `src/software-delivery-machine` directory contains an example of an implementation of Atomist, using the other functionality. This is the code you are most likely to change to meet your requirements.
-
-The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure
-such as artifact storage, logging, build and deployment.
-
 ## Events
 The heart of Atomist is its event handling. As your code flows from commit
 through to deployment and beyond, Atomist receives events, correlates the incoming data
@@ -140,10 +131,38 @@ and also demonstrate how to add GitHub topics based on initial repo content.
 - _On successful deployment_, as shown by a GitHub status.
 - _On validation of a deployed endpoint_, as shown by a GitHub status.
 
-## GitHub Statuses
-We use the following GitHub statuses to drive our flow and show the stages:
 
-- tbd
+## Structure of This Project
+
+This repository contains the entire implementation of the software delivery machine
+built on Atomist event and command handlers. It's all here if you want to dig into it,
+ but most of your changes will be 
+at a higher level: choosing goals and adding high-level listeners.
+
+Start with `atomist.config.ts` and find the choice of Software Delivery Machine to start with,
+`cloudFoundrySoftwareDeliveryMachine` or kubernetes. Click into the definition of those to see the setting of goals
+and all the other components that go into the machine.
+
+This code is in `src/software-delivery-machine`, and that is where we recommend you make changes.
+
+### Library code
+
+The following directories will later become available as a library. We'll keep working on the implementations,
+while the interfaces will change less.
+> In particular, the event listener interfaces discussed later in the document are expected to remain stable.
+
+- The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure
+such as artifact storage, logging, build and deployment.
+- `src/blueprint`
+- `src/common`
+- `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
+- `src/handlers` contains handlers that implement general SDM concepts.
+- `src/typings` is where generated-from-graphql types wind up. Refresh these with `npm run gql:gen` 
+if you update any GraphQL files in `src/graphql`.
+- `src/util` 
+
+## GitHub Statuses
+We use the following GitHub statuses as events to drive our flow and show the goals:
 
 > The use of GitHub statuses to drive and identify stages in the flow is a choice in this implementation. It's just one strategy and the core listener interfaces are decoupled from it.
 
