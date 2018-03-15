@@ -16,7 +16,6 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectListener } from "../common/listener/Listener";
 import { NewIssueListener } from "../common/listener/NewIssueListener";
@@ -29,7 +28,8 @@ import {
     AutofixGoal,
     BuildGoal,
     CodeReactionGoal,
-    FingerprintGoal, JustBuildGoal,
+    FingerprintGoal,
+    JustBuildGoal,
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
@@ -68,10 +68,7 @@ import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush
 import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/executeFingerprints";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
-import {
-    OnPendingReviewStatus,
-    ReviewerRegistration,
-} from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
+import { OnPendingReviewStatus, ReviewerRegistration } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -249,15 +246,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         };
     }
 
-    private get allFunctionalUnits(): Array<FunctionalUnit> {
+    private get allFunctionalUnits(): FunctionalUnit[] {
         return this.functionalUnits
             .concat(this.opts.deployers)
             .concat([
                 this.builder,
                 this.fingerprinter,
                 this.verifyEndpoint,
-                NoGoalHandler,
-            ])
+            ]);
     }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
