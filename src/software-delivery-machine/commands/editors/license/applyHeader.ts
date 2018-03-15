@@ -1,4 +1,6 @@
-import { HandleCommand, HandlerContext, logger, Parameter, Parameters } from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, Parameters } from "@atomist/automation-client";
+import { Parameter } from "@atomist/automation-client";
+import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
@@ -8,13 +10,24 @@ import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
 @Parameters()
 export class ApplyHeaderParameters extends OptionalBranchParameters {
 
-    constructor(public header: string) {
-        super();
+    @Parameter({required: false})
+    public glob: string = AllJavaFiles;
+
+    @Parameter({required: false})
+    public license: "apache" = "apache";
+
+    get header(): string {
+        switch (this.license) {
+            case "apache" :
+                return ApacheHeader;
+            default :
+                throw new Error(`'${this.license}' is not a supported license`);
+        }
     }
 }
 
 /* tslint:disable */
-const ApacheHeader = `/*
+export const ApacheHeader = `/*
  * Copyright © 2018 Atomist, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,17 +46,34 @@ const ApacheHeader = `/*
 export const applyApacheLicenseHeaderEditor: HandleCommand = editorCommand(
     () => applyHeaderProjectEditor,
     "addHeader",
-    () => new ApplyHeaderParameters(ApacheHeader),
+    ApplyHeaderParameters,
     {
-        editMode: ahp => ({
-            message: `Apply header from ${ahp.donorPath}`,
-            branch: ahp.branch || "ah-" + new Date().getTime(),
-        }),
+        editMode: ahp => new PullRequest(
+            ahp.branch || "ah-" + new Date().getTime(),
+            `Apply license header (${ahp.license})`,
+        ),
     });
 
 export async function applyHeaderProjectEditor(p: Project, ctx: HandlerContext, params: ApplyHeaderParameters) {
-    return await doWithFiles(p, AllJavaFiles, async f => {
+    let headersAdded = 0;
+    let matchingFiles = 0;
+    await doWithFiles(p, params.glob, async f => {
+        ++matchingFiles;
         const content = await f.getContent();
-        return f.setContent(params.header + "\n" + content);
+        if (content.includes(params.header)) {
+            return;
+        }
+        if (alreadyHasHeader(content)) {
+            return ctx.messageClient.respond(`${f.path} already has a different header`);
+        }
+        ++headersAdded;
+        return f.setContent(params.header + "\n\n" + content);
     });
+    await ctx.messageClient.respond(`${matchingFiles} files matched \`${params.glob}\`. ${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped`);
+    return p;
+}
+
+function alreadyHasHeader(content: string): boolean {
+    // TODO this is naive...could match a non license header
+    return !!content.match(/\/\*/);
 }
