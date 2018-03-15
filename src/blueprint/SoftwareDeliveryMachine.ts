@@ -249,14 +249,21 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         };
     }
 
+    private get allFunctionalUnits(): Array<FunctionalUnit> {
+        return this.functionalUnits
+            .concat(this.opts.deployers)
+            .concat([
+                this.builder,
+                this.fingerprinter,
+                this.verifyEndpoint,
+                NoGoalHandler,
+            ])
+    }
+
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.goalCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
-            .concat(_.flatten(this.functionalUnits.map(fu => fu.eventHandlers)))
-            .concat(_.flatten(this.opts.deployers.map(fu => fu.eventHandlers)))
-            .concat(this.builder.eventHandlers)
-            .concat(this.fingerprinter.eventHandlers)
-            .concat(this.verifyEndpoint.eventHandlers)
+            .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
                 this.updatedIssueListeners.length > 0 ? () => new UpdatedIssueHandler(...this.updatedIssueListeners) : undefined,
@@ -279,14 +286,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
         return this.generators
+            .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.commandHandlers)))
             .concat(this.editors)
             .concat(this.supportingCommands)
-            .concat(_.flatten(this.functionalUnits.map(fu => fu.commandHandlers)))
-            .concat(_.flatten(this.opts.deployers.map(fu => fu.commandHandlers)))
-            .concat(this.builder.commandHandlers)
-            .concat(this.fingerprinter.commandHandlers)
             .concat([this.showBuildLog])
-            .concat(this.verifyEndpoint.commandHandlers)
             .filter(m => !!m);
     }
 
