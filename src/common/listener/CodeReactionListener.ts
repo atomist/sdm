@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 /**
  * Log from which we've been able to glean further information
  * @type D type of additional structured data, if available

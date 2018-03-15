@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { CloudFoundryManifestPath } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { PushTest } from "../GoalSetter";
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 

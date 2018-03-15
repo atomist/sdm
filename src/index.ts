@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 export * from "./common/listener/Listener";
 
 export * from "./common/listener/NewIssueListener";

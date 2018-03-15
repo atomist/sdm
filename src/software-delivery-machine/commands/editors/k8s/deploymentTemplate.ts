@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 const creator = `atomist.k8-automation`;
 
 /**

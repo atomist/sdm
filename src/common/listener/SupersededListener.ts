@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import * as schema from "../../typings/types";
 import { ListenerInvocation, SdmListener } from "./Listener";
 

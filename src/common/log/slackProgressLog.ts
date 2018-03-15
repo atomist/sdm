@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { HandlerContext } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { addressChannelsFor, HasChannels } from "../slack/addressChannels";

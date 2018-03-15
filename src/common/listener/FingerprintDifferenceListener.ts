@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { ListenerInvocation, SdmListener } from "./Listener";
 
 export interface FingerprintValue {
