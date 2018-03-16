@@ -32,7 +32,6 @@ import {
     Goal,
 } from "../../../common/goals/Goal";
 import { HasChannels } from "../../../common/slack/addressChannels";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 
@@ -105,7 +104,7 @@ export namespace StatusForExecuteGoal {
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-export class ExecuteGoalOnSuccessStatus<T extends TargetInfo>
+export class ExecuteGoalOnSuccessStatus
     implements HandleEvent<OnAnySuccessStatus.Subscription>,
         ExecuteGoalInvocation,
         EventHandlerMetadata {
