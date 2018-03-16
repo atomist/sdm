@@ -55,6 +55,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
                                id: RemoteRepoRef,
                                team: string,
                                log: ProgressLog): Promise<LocalBuildInProgress> {
+        logger.info("NpmBuilder.startBuild on %s, buildCommand=[%s]", id.url, this.buildCommand);
         const p = await GitCommandGitProject.cloned(creds, id);
         // Find the artifact info from package.json
         const pom = await p.findFile("package.json");
@@ -77,7 +78,6 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
             logger.info("Build FAILURE: %j", b.buildResultAchieved);
             return b;
         }
-
     }
 
     public logInterpreter: LogInterpreter = log => {

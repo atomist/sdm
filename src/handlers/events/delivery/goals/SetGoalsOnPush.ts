@@ -92,13 +92,15 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                     if (relevant) {
                         const goals = pc.chooseGoals(pi);
                         logger.info("Eligible GoalSetter %j returned %j", pc, goals);
-                        return Promise.resolve(goals);
+                        return goals;
                     } else {
                         logger.info("Ineligible GoalSetter %j will not be invoked", pc);
-                        return Promise.resolve(undefined);
+                        return undefined;
                     }
                 }));
             const determinedGoals = goalSetterResults.find(p => !!p);
+            logger.info("Goals for push on %j are %j", id, determinedGoals);
+
             if (determinedGoals === NoGoals) {
                 await createStatus(params.githubToken, id, {
                     context: "Immaterial",

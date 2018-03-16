@@ -19,12 +19,14 @@ import { PushTest } from "../GoalSetter";
 
 export const IsNode: PushTest = async pi => {
     try {
-        logger.info("node PushTest on %s:%s", pi.project.id.owner, pi.project.id.repo);
         const f = await pi.project.findFile("package.json");
         const contents = await f.getContent();
         const json = JSON.parse(contents);
+        logger.info("Node PushTest on %s:%s returning TRUE", pi.project.id.owner, pi.project.id.repo);
         return true;
-    } catch {
+    } catch (err) {
+        logger.info("Node PushTest on %s:%s returning FALSE (%s)",
+            pi.project.id.owner, pi.project.id.repo, err);
         return false;
     }
 };
