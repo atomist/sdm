@@ -22,10 +22,8 @@ import { LocalDeployment } from "../handlers/events/delivery/deploy/deployOnLoca
 import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
 import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
-import { DescribeStagingAndProd } from "./blueprint/deploy/describeRunningServices";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
-import { presentPromotionInformation } from "./blueprint/deploy/presentPromotionInformation";
 import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
 import { capitalizer } from "./blueprint/issue/capitalizer";
 import { requestDescription } from "./blueprint/issue/requestDescription";
@@ -70,9 +68,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
     softwareDeliveryMachine
     // .addCodeReactions(listChangedFiles)
         .addDeploymentListeners(PostToDeploymentsChannel)
-        .addVerifiedDeploymentListeners(presentPromotionInformation)
         .addSupportingCommands(
-            DescribeStagingAndProd,
             () => disposeProjectHandler,
         )
         .addSupportingEvents(OnDryRunBuildComplete)

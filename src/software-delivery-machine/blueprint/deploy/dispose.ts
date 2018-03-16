@@ -43,7 +43,10 @@ import {
     EnvironmentCloudFoundryTarget,
 } from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
 import { deleteRepository } from "../../../util/github/ghub";
-import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
+
+export const K8sTestingDomain = "testing";
+export const K8sProductionDomain = "production";
+
 
 @Parameters()
 export class DisposeParameters {

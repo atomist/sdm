@@ -30,14 +30,44 @@ export interface Status {
     context?: string;
 }
 
-export function createStatus(token: string, rr: GitHubRepoRef, status: Status): AxiosPromise {
+export function createStatus(token: string, rr: GitHubRepoRef, inputStatus: Status): AxiosPromise {
     const config = authHeaders(token);
+    const saferStatus = ensureValidUrl(inputStatus);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
-    logger.info("Updating github status: %s to %j", url, status);
-    return doWithRetry(() => axios.post(url, status, config)
+    logger.info("Updating github status: %s to %j", url, saferStatus);
+    return doWithRetry(() => axios.post(url, saferStatus, config)
         .catch(err =>
-            Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(status)}: ${err.message}`)),
-        ), `Updating github status: ${url} to ${JSON.stringify(status)}`, {});
+            Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(saferStatus)}: ${err.message}`)),
+        ), `Updating github status: ${url} to ${JSON.stringify(saferStatus)}`, {});
+}
+
+/*
+ * If you send a targetUrl that doesn't work, GitHub will not accept the status.
+ * Commonly on findArtifact, we get a Docker image name instead, and people really want
+ * to put that in the URL but it doesn't work.
+ *
+ * This limitation exists only because we are using GitHub Statuses for Goals right now,
+ * and when we move to a custom event it won't be the same problem. So it makes sense
+ * to encode the limitation here.
+ *
+ * Yes the description is going to be ugly. Deal with it.
+ */
+function ensureValidUrl(inputStatus: Status): Status {
+
+    if (inputStatus.target_url === undefined) {
+        return inputStatus;
+    }
+    if (inputStatus.target_url.startsWith("http")) {
+        return inputStatus;
+    }
+    logger.warn("I know you won't like this, but you can't send a non-url in target_url, so I'm appending it to the description");
+
+    return {
+        target_url: undefined,
+        description: inputStatus.description + " at " + inputStatus.target_url,
+        state: inputStatus.state,
+        context: inputStatus.context,
+    }
 }
 
 export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]> {
