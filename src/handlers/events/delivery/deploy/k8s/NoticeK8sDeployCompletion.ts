@@ -28,13 +28,16 @@ import {
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../../common/goals/Goal";
-import { K8sTestingDomain } from "../../../../../software-delivery-machine/blueprint/deploy/describeRunningServices";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import {
     k8AutomationDeployContext,
     K8TargetBase,
 } from "./RequestK8sDeploys";
+
+export const K8sTestingDomain = "testing";
+export const K8sProductionDomain = "production";
+
 
 // TODO parameterize once we can have multiple handlers
 

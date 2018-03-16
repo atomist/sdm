@@ -25,7 +25,10 @@ import {
     StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../handlers/events/delivery/goals/commonGoals";
-import { K8sProductionDomain, K8sTestingDomain } from "./describeRunningServices";
+
+export const K8sTestingDomain = "testing";
+export const K8sProductionDomain = "production";
+
 
 export const K8sStagingDeployOnSuccessStatus: FunctionalUnit = {
     eventHandlers: [

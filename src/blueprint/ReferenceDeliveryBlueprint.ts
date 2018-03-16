@@ -16,8 +16,6 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { PromotionParameters } from "../software-delivery-machine/blueprint/deploy/presentPromotionInformation";
-import { OnDeployToProductionFingerprint } from "../typings/types";
 import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
