@@ -23,8 +23,8 @@ export interface PushThatTriggersBuild {
 }
 
 /**
- * Responsible for initiating a build. Wherever the build runs,
- * it is responsible for emitting Atomist build events.
+ * Responsible for initiating a build and storing an artifact.
+ * Wherever the build runs, it is responsible for emitting Atomist build events.
  */
 export interface Builder {
 

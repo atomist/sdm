@@ -50,12 +50,12 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         super("MavenBuilder", artifactStore, logFactory);
     }
 
-    protected async startBuild(creds: ProjectOperationCredentials,
+    protected async startBuild(credentials: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                atomistTeam: string,
                                log: ProgressLog,
                                addressChannels: AddressChannels): Promise<LocalBuildInProgress> {
-        const p = await GitCommandGitProject.cloned(creds, id);
+        const p = await GitCommandGitProject.cloned(credentials, id);
         // Find the artifact info from Maven
         const pom = await p.findFile("pom.xml");
         const content = await pom.getContent();
