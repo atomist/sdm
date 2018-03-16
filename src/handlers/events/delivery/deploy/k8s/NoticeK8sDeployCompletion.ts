@@ -38,7 +38,6 @@ import {
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";
 
-
 // TODO parameterize once we can have multiple handlers
 
 /**

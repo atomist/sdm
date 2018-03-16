@@ -29,7 +29,6 @@ import {
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";
 
-
 export const K8sStagingDeployOnSuccessStatus: FunctionalUnit = {
     eventHandlers: [
         () => new ExecuteGoalOnSuccessStatus("K8TestDeploy",

@@ -67,7 +67,7 @@ function ensureValidUrl(inputStatus: Status): Status {
         description: inputStatus.description + " at " + inputStatus.target_url,
         state: inputStatus.state,
         context: inputStatus.context,
-    }
+    };
 }
 
 export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]> {

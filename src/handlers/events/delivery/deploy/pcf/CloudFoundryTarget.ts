@@ -16,7 +16,6 @@
 
 import { TargetInfo } from "../../../../../spi/deploy/Deployment";
 
-
 export const PCFTestingDomain = "ri-staging";
 export const PCFProductionDomain = "ri-production";
 

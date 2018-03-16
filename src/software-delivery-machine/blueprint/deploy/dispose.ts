@@ -47,7 +47,6 @@ import { deleteRepository } from "../../../util/github/ghub";
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";
 
-
 @Parameters()
 export class DisposeParameters {
 

@@ -40,8 +40,6 @@ import {
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";
 
-
-
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
