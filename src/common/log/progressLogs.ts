@@ -26,7 +26,9 @@ export const DevNullProgressLog: ProgressLog = {
 };
 
 export const ConsoleProgressLog: ProgressLog = {
+    log: "",
     write(what) {
+        this.log += what;
         console.log(what);
     },
     flush() { return Promise.resolve(); },

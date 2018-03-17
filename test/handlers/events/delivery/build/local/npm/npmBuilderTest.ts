@@ -2,17 +2,22 @@ import "mocha";
 
 import * as assert from "power-assert";
 
-import { NpmBuilder } from "../../../../../../../src/handlers/events/delivery/build/local/npm/NpmBuilder";
-import { createEphemeralProgressLog } from "../../../../../../../src/common/log/EphemeralProgressLog";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
 import { LocalBuildInProgress } from "../../../../../../../src/handlers/events/delivery/build/local/LocalBuilder";
+import {
+    NpmBuilder,
+    RunBuild,
+    RunCompile,
+} from "../../../../../../../src/handlers/events/delivery/build/local/npm/NpmBuilder";
+import { SpawnCommand } from "../../../../../../../src/util/misc/spawned";
 
 class TestableNpmBuilder extends NpmBuilder {
 
     public runningBuild: LocalBuildInProgress;
 
-    constructor(buildCommand: string, private handleResult: (success: boolean) => any) {
-        super(undefined, createEphemeralProgressLog, buildCommand);
+    constructor(buildCommand: SpawnCommand, private handleResult: (success: boolean) => any) {
+        super(undefined, async () => ConsoleProgressLog, buildCommand);
     }
 
     protected async onStarted(runningBuild: LocalBuildInProgress, branch: string): Promise<LocalBuildInProgress> {
@@ -29,7 +34,15 @@ class TestableNpmBuilder extends NpmBuilder {
 describe("NpmBuilder", () => {
 
     it("should compile", async () => {
-        const b = new TestableNpmBuilder("npm run compile",
+        const b = new TestableNpmBuilder(RunCompile,
+            success => assert(success, "Build should have succeeded"));
+        await b.initiateBuild({token: process.env.GITHUB_TOKEN},
+            new GitHubRepoRef("atomist", "github-sdm"),
+            async () => true, "T123", { branch: "master"});
+    }).timeout(100000);
+
+    it("should test", async () => {
+        const b = new TestableNpmBuilder(RunBuild,
             success => assert(success, "Build should have succeeded"));
         await b.initiateBuild({token: process.env.GITHUB_TOKEN},
             new GitHubRepoRef("atomist", "github-sdm"),
