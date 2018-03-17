@@ -26,12 +26,29 @@ subscription OnAnyPendingStatus {
         defaultBranch
       }
       pushes {
+        id
         branch
         after {
           sha
+          message
+          committer {
+            person {
+              chatId {
+                screenName
+              }
+            }
+          }
         }
         before {
           sha
+          message
+          committer {
+            person {
+              chatId {
+                screenName
+              }
+            }
+          }
         }
       }
     }

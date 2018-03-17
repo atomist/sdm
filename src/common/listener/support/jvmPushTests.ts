@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { SpringBootProjectStructure } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectStructure";
 import { PushTest, PushTestInvocation } from "../GoalSetter";
 
@@ -24,6 +26,9 @@ import { PushTest, PushTestInvocation } from "../GoalSetter";
  */
 export const IsMaven: PushTest = async (pi: PushTestInvocation) =>
     !!(await pi.project.getFile("pom.xml"));
+
+export const IsJava: PushTest = async (pi: PushTestInvocation) =>
+    await fileExists(pi.project, AllJavaFiles, () => true);
 
 /**
  * Does this project have a Spring Boot application class?

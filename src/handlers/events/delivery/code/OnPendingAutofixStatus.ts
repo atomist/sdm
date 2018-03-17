@@ -35,20 +35,14 @@ import {
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { editOne } from "@atomist/automation-client/operations/edit/editAll";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import {
-    AnyProjectEditor,
-    ProjectEditor,
-} from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { AutofixRegistration } from "../../../../common/delivery/code/CodeActionRegistration";
+import { AutofixRegistration, relevantCodeActions } from "../../../../common/delivery/code/codeActionRegistrations";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import {
-    OnAnyPendingStatus,
-    StatusState,
-} from "../../../../typings/types";
+import { PushTestInvocation } from "../../../../common/listener/GoalSetter";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { forApproval } from "../verify/approvalGate";
 
 /**
  * Run any autofix editors on a push.
@@ -84,31 +78,35 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
             return Success;
         }
 
-        const editors = params.registrations.map(r => r.action);
-        const editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
-
-        logger.info("Will apply %d eligible autofixes to %j", editors.length, id);
         try {
-            const project = await GitCommandGitProject.cloned(credentials, id);
-
-            if (!!editorChain) {
-                // TODO parameterize this
-                const editMode: BranchCommit = {
-                    branch: commit.pushes[0].branch,
-                    message: "Autofixes\n\n[atomist]",
+            if (params.registrations.length > 0) {
+                const project = await GitCommandGitProject.cloned(credentials, id);
+                const pti: PushTestInvocation = {
+                    id,
+                    project,
+                    credentials,
+                    context,
+                    addressChannels: addressChannelsFor(commit.repo, context),
+                    push: commit.pushes[0],
                 };
-                logger.info("Editing %j with mode=%j", id, editMode);
-                await editOne(context, credentials, editorChain, editMode,
-                    new SimpleRepoId(id.owner, id.repo));
+                const editors = await relevantCodeActions(params.registrations, pti);
+                logger.info("Will apply %d eligible autofixes to %j", editors.length, id);
+                const editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
+                if (!!editorChain) {
+                    // TODO parameterize this
+                    const editMode: BranchCommit = {
+                        branch: commit.pushes[0].branch,
+                        message: "Autofixes\n\n[atomist]",
+                    };
+                    logger.info("Editing %j with mode=%j", id, editMode);
+                    await editOne(context, credentials, editorChain, editMode,
+                        new SimpleRepoId(id.owner, id.repo));
+                }
             }
-
-            await markStatus(project.id as GitHubRepoRef,
-                params.goal, StatusState.success, credentials);
-
+            await markStatus(id, params.goal, StatusState.success, credentials);
             return Success;
         } catch (err) {
-            await markStatus(id,
-                params.goal, StatusState.error, credentials);
+            await markStatus(id, params.goal, StatusState.error, credentials);
             return failure(err);
         }
     }

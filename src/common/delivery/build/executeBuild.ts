@@ -26,46 +26,27 @@ import { addressChannelsFor } from "../../slack/addressChannels";
 
 export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
 
-    return async (status: OnAnyPendingStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
+    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
             const credentials = {token: params.githubToken};
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-            const atomistTeam = ctx.teamId;
+            const atomistTeam = context.teamId;
 
             const project = await GitCommandGitProject.cloned(credentials, id);
 
-            const i: PushTestInvocation = {
+            const push = status.commit.pushes[0];
+            const pti: PushTestInvocation = {
                 id,
                 project,
                 credentials,
-                context: ctx,
-                addressChannels: addressChannelsFor(commit.repo, ctx),
-                // TODO flesh this out properly
-                push: {
-                    id: null,
-                    branch: status.commit.pushes[0].branch,
-                    before: {
-                        sha: null,
-                        message: null,
-                        committer: {
-                            person: null,
-                        },
-                    },
-                    after: {
-                        sha: null,
-                        message: null,
-                        committer: {
-                            person: null,
-                        },
-                    },
-                    repo: commit.repo,
-                    commits: [status.commit],
-                },
+                context,
+                addressChannels: addressChannelsFor(commit.repo, context),
+                push,
             };
 
             const builders: boolean[] = await Promise.all(conditionalBuilders
-                .map(b => b.guard(i)));
+                .map(b => b.guard(pti)));
             const indx = builders.indexOf(true);
             if (indx < 0) {
                 throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
@@ -80,7 +61,7 @@ export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
 
             // the builder is expected to result in a complete Build event (which will update the build status)
             // and an ImageLinked event (which will update the artifact status).
-            return builder.initiateBuild(credentials, id, i.addressChannels, atomistTeam, {branch: branchToMarkTheBuildWith});
+            return builder.initiateBuild(credentials, id, pti.addressChannels, atomistTeam, {branch: branchToMarkTheBuildWith});
         });
         return Success;
     };

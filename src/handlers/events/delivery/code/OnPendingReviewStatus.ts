@@ -52,8 +52,9 @@ import {
     formatReviewerError,
     ReviewerError,
 } from "../../../../blueprint/ReviewerError";
+import { relevantCodeActions, ReviewerRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { PushTest } from "../../../../common/listener/GoalSetter";
+import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSetter";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import {
     OnAnyPendingStatus,
@@ -61,17 +62,6 @@ import {
 } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { forApproval } from "../verify/approvalGate";
-
-export type ProjectTest = (p: Project) => Promise<boolean> | boolean;
-
-export interface TargetedReviewer {
-
-    projectTest: ProjectTest;
-
-    projectReviewer: ProjectReviewer;
-}
-
-export type ReviewerRegistration = ProjectReviewer | TargetedReviewer;
 
 /**
  * Scan code on a push, invoking ProjectReviewers.
@@ -108,7 +98,15 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
         try {
             if (params.reviewerRegistrations.length > 0) {
                 const project = await GitCommandGitProject.cloned(credentials, id);
-                const relevantReviewers = await toRelevantReviewers(params.reviewerRegistrations, project);
+                const pti: PushTestInvocation = {
+                    id,
+                    project,
+                    credentials,
+                    context,
+                    addressChannels: addressChannelsFor(commit.repo, context),
+                    push: commit.pushes[0],
+                };
+                const relevantReviewers = await relevantCodeActions(params.reviewerRegistrations, pti);
                 const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                     await Promise.all(relevantReviewers
                         .map(reviewer =>
@@ -142,19 +140,6 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
             return failure(err);
         }
     }
-}
-
-function isTargetedReviewer(r: ReviewerRegistration): r is TargetedReviewer {
-    return !!(r as TargetedReviewer).projectTest;
-}
-
-function toRelevantReviewers(registrations: ReviewerRegistration[], p: Project): Promise<ProjectReviewer[]> {
-    const allTargeted: TargetedReviewer[] = registrations.map(r => isTargetedReviewer(r) ? r : {
-        projectTest: () => true,
-        projectReviewer: r,
-    });
-    return Promise.all(allTargeted.map(t => t.projectTest(p) ? t.projectReviewer : undefined))
-        .then(elts => elts.filter(elt => !!elt));
 }
 
 export const ScanBase = "https://scan.atomist.com";

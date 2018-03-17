@@ -49,7 +49,7 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
-import { AutofixRegistration } from "../common/delivery/code/CodeActionRegistration";
+import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/code/codeActionRegistrations";
 import { executeFingerprints } from "../common/delivery/code/fingerprint/executeFingerprints";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
@@ -66,7 +66,7 @@ import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { OnPendingAutofixStatus } from "../handlers/events/delivery/code/OnPendingAutofixStatus";
 import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/code/OnPendingCodeReactionStatus";
-import { OnPendingReviewStatus, ReviewerRegistration } from "../handlers/events/delivery/code/OnPendingReviewStatus";
+import { OnPendingReviewStatus } from "../handlers/events/delivery/code/OnPendingReviewStatus";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";

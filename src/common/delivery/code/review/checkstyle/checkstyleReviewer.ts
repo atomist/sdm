@@ -23,6 +23,8 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { ReviewerError } from "../../../../../blueprint/ReviewerError";
+import { IsJava } from "../../../../listener/support/jvmPushTests";
+import { ReviewerRegistration } from "../../codeActionRegistrations";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
 
@@ -65,3 +67,9 @@ export const checkstyleReviewer: (checkstylePath: string) =>
                         err => reject(new ReviewerError("CheckStyle", err.msg, stderr)));
             }));
     };
+
+export const CheckstyleReviewerRegistration: ReviewerRegistration = {
+    pushTest: IsJava,
+    name: "Checkstyle",
+    action: checkstyleReviewer(process.env.CHECKSTYLE_PATH),
+};

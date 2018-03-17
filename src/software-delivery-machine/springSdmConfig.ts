@@ -18,7 +18,10 @@ import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { mavenFingerprinter } from "../common/delivery/code/fingerprint/maven/mavenFingerprinter";
-import { checkstyleReviewer } from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
+import {
+    checkstyleReviewer,
+    CheckstyleReviewerRegistration,
+} from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
 import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../common/listener/tagRepo";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
@@ -29,7 +32,6 @@ import { capitalizer } from "./blueprint/issue/capitalizer";
 import { requestDescription } from "./blueprint/issue/requestDescription";
 import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
-import { logReview } from "./blueprint/review/logReview";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
@@ -54,12 +56,11 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
             PublishNewRepo)
-        .addReviewerRegistrations(logReview)
         .addSupportingCommands(() => applyHttpServiceGoals);
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
         if (!!checkStylePath) {
-            softwareDeliveryMachine.addReviewerRegistrations(checkstyleReviewer(checkStylePath));
+            softwareDeliveryMachine.addReviewerRegistrations(CheckstyleReviewerRegistration);
         } else {
             logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
         }
