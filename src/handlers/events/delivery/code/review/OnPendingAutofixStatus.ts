@@ -48,6 +48,7 @@ import {
 } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { forApproval } from "../../verify/approvalGate";
+import { AutofixRegistration } from "../../../../../common/delivery/code/AutofixRegistration";
 
 /**
  * Run any autofix editors on a push.
@@ -62,11 +63,11 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private editorChain: ProjectEditor;
+    private registrations: AutofixRegistration[];
 
     constructor(public goal: Goal,
-                private editors: AnyProjectEditor[] = []) {
-        this.editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
+                registrations: AutofixRegistration[] = []) {
+        this.registrations = registrations;
     }
 
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
@@ -83,18 +84,21 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
             return Success;
         }
 
-        logger.info("Will apply %d autofixes to %j", params.editors.length, id);
+        const editors = params.registrations.map(r => r.editor);
+        const editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
+
+        logger.info("Will apply %d eligible autofixes to %j", editors.length, id);
         try {
             const project = await GitCommandGitProject.cloned(credentials, id);
 
-            if (params.editorChain) {
+            if (!!editorChain) {
                 // TODO parameterize this
                 const editMode: BranchCommit = {
                     branch: commit.pushes[0].branch,
                     message: "Autofixes\n\n[atomist]",
                 };
                 logger.info("Editing %j with mode=%j", id, editMode);
-                await editOne(context, credentials, params.editorChain, editMode,
+                await editOne(context, credentials, editorChain, editMode,
                     new SimpleRepoId(id.owner, id.repo));
             }
 

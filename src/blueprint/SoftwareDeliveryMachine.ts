@@ -78,6 +78,7 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
+import { AutofixRegistration } from "../common/delivery/code/AutofixRegistration";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -119,7 +120,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private codeReactions: CodeReactionListener[] = [];
 
-    private autoEditors: AnyProjectEditor[] = [];
+    private autofixRegistrations: AutofixRegistration[] = [];
 
     private artifactListeners: ArtifactListener[] = [];
 
@@ -171,7 +172,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get autofixHandler(): Maker<OnPendingAutofixStatus> {
-        return () => new OnPendingAutofixStatus(AutofixGoal, this.autoEditors);
+        return () => new OnPendingAutofixStatus(AutofixGoal, this.autofixRegistrations);
     }
 
     private get goalSetting(): Maker<SetGoalsOnPush> {
@@ -358,11 +359,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     /**
      * Editors automatically invoked on eligible commits.
-     * Note: be sure that these editors check and don't call
+     * Note: be sure that these editors check and don't cause
      * infinite recursion!!
      */
-    public addAutoEditors(...e: AnyProjectEditor[]): this {
-        this.autoEditors = this.autoEditors.concat(e);
+    public addAutofixes(...ars: AutofixRegistration[]): this {
+        this.autofixRegistrations = this.autofixRegistrations.concat(ars);
         return this;
     }
 
