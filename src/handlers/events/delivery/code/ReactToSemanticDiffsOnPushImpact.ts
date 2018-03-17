@@ -28,19 +28,18 @@ import {
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as _ from "lodash";
 import {
-    FingerprintDifference,
-    FingerprintDifferenceInvocation,
+    FingerprintDifference, FingerprintDifferenceInvocation,
     FingerprintDifferenceListener,
     FingerprintValue,
-} from "../../../../../common/listener/FingerprintDifferenceListener";
-import { addressChannelsFor } from "../../../../../common/slack/addressChannels";
-import * as schema from "../../../../../typings/types";
+} from "../../../../common/listener/FingerprintDifferenceListener";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import * as schema from "../../../../typings/types";
 
 /**
  * React to a PushImpact event to react to semantic diffs
  */
 @EventHandler("Find semantic diffs from a PushImpact", GraphQL.subscriptionFromFile(
-    "../../../../../graphql/subscription/OnPushImpact",
+    "../../../../graphql/subscription/OnPushImpact",
     __dirname),
 )
 export class ReactToSemanticDiffsOnPushImpact

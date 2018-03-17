@@ -41,21 +41,21 @@ import {
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { Goal } from "../../../../../common/delivery/goals/Goal";
+import { AutofixRegistration } from "../../../../common/delivery/code/CodeActionRegistration";
+import { Goal } from "../../../../common/delivery/goals/Goal";
 import {
     OnAnyPendingStatus,
     StatusState,
-} from "../../../../../typings/types";
-import { createStatus } from "../../../../../util/github/ghub";
-import { forApproval } from "../../verify/approvalGate";
-import { AutofixRegistration } from "../../../../../common/delivery/code/AutofixRegistration";
+} from "../../../../typings/types";
+import { createStatus } from "../../../../util/github/ghub";
+import { forApproval } from "../verify/approvalGate";
 
 /**
  * Run any autofix editors on a push.
  * Set GitHub success status
  */
 @EventHandler("Make autofixes", GraphQL.subscriptionFromFile(
-    "../../../../../graphql/subscription/OnAnyPendingStatus",
+    "../../../../graphql/subscription/OnAnyPendingStatus",
     __dirname),
 )
 export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
@@ -84,7 +84,7 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
             return Success;
         }
 
-        const editors = params.registrations.map(r => r.editor);
+        const editors = params.registrations.map(r => r.action);
         const editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
 
         logger.info("Will apply %d eligible autofixes to %j", editors.length, id);

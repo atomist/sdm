@@ -51,16 +51,16 @@ import * as slack from "@atomist/slack-messages";
 import {
     formatReviewerError,
     ReviewerError,
-} from "../../../../../blueprint/ReviewerError";
-import { Goal } from "../../../../../common/delivery/goals/Goal";
-import { PushTest } from "../../../../../common/listener/GoalSetter";
-import { AddressChannels, addressChannelsFor } from "../../../../../common/slack/addressChannels";
+} from "../../../../blueprint/ReviewerError";
+import { Goal } from "../../../../common/delivery/goals/Goal";
+import { PushTest } from "../../../../common/listener/GoalSetter";
+import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import {
     OnAnyPendingStatus,
     StatusState,
-} from "../../../../../typings/types";
-import { createStatus } from "../../../../../util/github/ghub";
-import { forApproval } from "../../verify/approvalGate";
+} from "../../../../typings/types";
+import { createStatus } from "../../../../util/github/ghub";
+import { forApproval } from "../verify/approvalGate";
 
 export type ProjectTest = (p: Project) => Promise<boolean> | boolean;
 
@@ -78,7 +78,7 @@ export type ReviewerRegistration = ProjectReviewer | TargetedReviewer;
  * Result is setting GitHub goal status.
  */
 @EventHandler("Scan code", GraphQL.subscriptionFromFile(
-    "../../../../../graphql/subscription/OnAnyPendingStatus",
+    "../../../../graphql/subscription/OnAnyPendingStatus",
     __dirname),
 )
 export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {

@@ -19,7 +19,7 @@ import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/Gi
 import { isPublicRepo } from "../../../util/github/ghub";
 import { PushTest } from "../GoalSetter";
 
-export const PushToMaster: PushTest = pci => pci.push.branch === "master";
+export const ToMaster: PushTest = pci => pci.push.branch === "master";
 
 export const ToDefaultBranch: PushTest = p => {
     const flag = p.push.branch === p.push.repo.defaultBranch;
@@ -34,7 +34,7 @@ export const ToDefaultBranch: PushTest = p => {
  * @return {boolean}
  * @constructor
  */
-export const PushFromAtomist: PushTest = p => {
+export const FromAtomist: PushTest = p => {
     return p.push.after.message.includes("[atomist]");
 };
 

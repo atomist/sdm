@@ -32,7 +32,7 @@ import { ProjectListener } from "../common/listener/Listener";
 import { NewIssueListener } from "../common/listener/NewIssueListener";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/fingerprint/ReactToSemanticDiffsOnPushImpact";
+import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
@@ -49,6 +49,7 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
+import { AutofixRegistration } from "../common/delivery/code/CodeActionRegistration";
 import { executeFingerprints } from "../common/delivery/code/fingerprint/executeFingerprints";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
@@ -63,9 +64,9 @@ import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { OnPendingAutofixStatus } from "../handlers/events/delivery/code/review/OnPendingAutofixStatus";
-import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/code/review/OnPendingCodeReactionStatus";
-import { OnPendingReviewStatus, ReviewerRegistration } from "../handlers/events/delivery/code/review/OnPendingReviewStatus";
+import { OnPendingAutofixStatus } from "../handlers/events/delivery/code/OnPendingAutofixStatus";
+import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/code/OnPendingCodeReactionStatus";
+import { OnPendingReviewStatus, ReviewerRegistration } from "../handlers/events/delivery/code/OnPendingReviewStatus";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -78,7 +79,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { AutofixRegistration } from "../common/delivery/code/AutofixRegistration";
 
 /**
  * A reference blueprint for Atomist delivery.

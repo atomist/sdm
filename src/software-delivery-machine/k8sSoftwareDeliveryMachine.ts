@@ -34,7 +34,7 @@ import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { IsNode } from "../common/listener/support/nodeGuards";
 import {
-    PushFromAtomist,
+    FromAtomist,
     ToDefaultBranch,
     ToPublicRepo,
 } from "../common/listener/support/pushTests";
@@ -64,7 +64,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
         whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass,
             HasK8Spec,
             ToPublicRepo).setGoals(HttpServiceGoals),
-        whenPushSatisfies(not(PushFromAtomist), IsMaven, HasSpringBootApplicationClass).setGoals(LocalDeploymentGoals),
+        whenPushSatisfies(not(FromAtomist), IsMaven, HasSpringBootApplicationClass).setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
         whenPushSatisfies(IsNode).setGoals(NpmGoals),
         onAnyPush.buildWith(new K8sAutomationBuilder()),
