@@ -19,6 +19,13 @@ import {
     whenPushSatisfies,
 } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { K8sAutomationBuilder } from "../common/delivery/build/k8s/K8AutomationBuilder";
+import {
+    HttpServiceGoals,
+    LocalDeploymentGoals,
+} from "../common/delivery/goals/common/httpServiceGoals";
+import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
+import { NpmGoals } from "../common/delivery/goals/common/npmGoals";
 import {
     HasSpringBootApplicationClass,
     IsMaven,
@@ -32,14 +39,7 @@ import {
     ToPublicRepo,
 } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
-import { K8sAutomationBuilder } from "../handlers/events/delivery/build/k8s/K8AutomationBuilder";
-import {
-    HttpServiceGoals,
-    LocalDeploymentGoals,
-} from "../handlers/events/delivery/goals/httpServiceGoals";
-import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
-import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
-import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
+import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
 import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import {
     K8sProductionDeployOnSuccessStatus,

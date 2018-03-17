@@ -15,7 +15,7 @@
  */
 
 import { HandleEvent } from "@atomist/automation-client";
-import { Goals } from "../../common/goals/Goal";
+import { Goals } from "../../common/delivery/goals/Goal";
 import { OnAnySuccessStatus } from "../../typings/types";
 
 /**

@@ -27,7 +27,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Goal } from "../../../../../common/goals/Goal";
+import { Goal } from "../../../../../common/delivery/goals/Goal";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import {

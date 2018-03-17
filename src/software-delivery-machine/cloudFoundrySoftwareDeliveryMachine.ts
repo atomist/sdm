@@ -16,6 +16,12 @@
 
 import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { MavenBuilder } from "../common/delivery/build/local/maven/MavenBuilder";
+import { NpmBuilder } from "../common/delivery/build/local/npm/NpmBuilder";
+import { NoGoals } from "../common/delivery/goals/common/commonGoals";
+import { HttpServiceGoals, LocalDeploymentGoals } from "../common/delivery/goals/common/httpServiceGoals";
+import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
+import { NpmGoals } from "../common/delivery/goals/common/npmGoals";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { HasSpringBootApplicationClass, IsMaven } from "../common/listener/support/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
@@ -24,13 +30,7 @@ import { IsNode } from "../common/listener/support/nodeGuards";
 import { PushFromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
-import { MavenBuilder } from "../handlers/events/delivery/build/local/maven/MavenBuilder";
-import { NpmBuilder } from "../handlers/events/delivery/build/local/npm/NpmBuilder";
-import { NoGoals } from "../handlers/events/delivery/goals/commonGoals";
-import { HttpServiceGoals, LocalDeploymentGoals } from "../handlers/events/delivery/goals/httpServiceGoals";
-import { LibraryGoals } from "../handlers/events/delivery/goals/libraryGoals";
-import { NpmGoals } from "../handlers/events/delivery/goals/npmGoals";
-import { lookFor200OnEndpointRootGet } from "../handlers/events/delivery/verify/common/lookFor200OnEndpointRootGet";
+import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
 import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";

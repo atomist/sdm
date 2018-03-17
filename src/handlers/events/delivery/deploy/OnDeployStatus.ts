@@ -27,13 +27,13 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { StagingDeploymentContext } from "../../../../common/delivery/goals/common/commonGoals";
 import {
     DeploymentListener,
     DeploymentListenerInvocation,
 } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { StagingDeploymentContext } from "../goals/commonGoals";
 
 /**
  * React to a deployment.

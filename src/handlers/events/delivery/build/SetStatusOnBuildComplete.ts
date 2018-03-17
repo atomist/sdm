@@ -35,7 +35,8 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import { Goal } from "../../../../common/goals/Goal";
+import { NotARealUrl } from "../../../../common/delivery/build/local/LocalBuilder";
+import { Goal } from "../../../../common/delivery/goals/Goal";
 import {
     AddressChannels,
     addressChannelsFor,
@@ -50,7 +51,6 @@ import {
     State,
 } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
-import { NotARealUrl } from "./local/LocalBuilder";
 
 /**
  * Set build status on complete build

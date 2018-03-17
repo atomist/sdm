@@ -1,11 +1,11 @@
 import "mocha";
 import * as assert from "power-assert";
-import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/goals/gitHubContext";
 import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ReviewContext, StagingDeploymentContext,
     StagingEndpointContext,
-} from "../../../../src/handlers/events/delivery/goals/commonGoals";
+} from "../../../../src/common/delivery/goals/common/commonGoals";
+import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/delivery/goals/gitHubContext";
 
 describe("Goal handling", () => {
 

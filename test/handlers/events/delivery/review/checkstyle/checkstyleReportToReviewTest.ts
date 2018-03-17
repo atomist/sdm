@@ -3,8 +3,8 @@ import "mocha";
 import * as assert from "power-assert";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { extract } from "../../../../../../src/handlers/events/delivery/scan/review/checkstyle/checkstyleReportExtractor";
-import { checkstyleReportToReview } from "../../../../../../src/handlers/events/delivery/scan/review/checkstyle/checkStyleReportToReview";
+import { extract } from "../../../../../../src/handlers/events/delivery/code/review/checkstyle/checkstyleReportExtractor";
+import { checkstyleReportToReview } from "../../../../../../src/handlers/events/delivery/code/review/checkstyle/checkStyleReportToReview";
 import { xml2valid1 } from "./checkstyleReportExtractorTest";
 
 describe("checkstyleReportToReview", () => {

@@ -27,6 +27,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
 import Status = OnSuccessStatus.Status;
 import {
     VerifiedDeploymentInvocation,
@@ -37,7 +38,6 @@ import {
     messageDestinations,
 } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { StagingVerifiedContext } from "../goals/commonGoals";
 
 /**
  * React to a verified deployment

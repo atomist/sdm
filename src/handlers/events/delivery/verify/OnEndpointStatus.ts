@@ -46,13 +46,13 @@ import {
     Destination,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { GitHubStatusAndFriends, splitContext } from "../../../../common/goals/gitHubContext";
-import { currentGoalIsStillPending, Goal } from "../../../../common/goals/Goal";
+import { StagingEndpointContext } from "../../../../common/delivery/goals/common/commonGoals";
+import { GitHubStatusAndFriends, splitContext } from "../../../../common/delivery/goals/gitHubContext";
+import { currentGoalIsStillPending, Goal } from "../../../../common/delivery/goals/Goal";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
 import { AddressChannels, addressDestination, messageDestinations } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { StagingEndpointContext } from "../goals/commonGoals";
 import { forApproval } from "./approvalGate";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {

@@ -1,14 +1,14 @@
 import { HandlerContext } from "@atomist/automation-client";
 import "mocha";
 import * as assert from "power-assert";
-import { executeDeployArtifact, runWithLog } from "../../../../../src/handlers/events/delivery/deploy/executeDeploy";
-import {
-    ExecuteGoalOnSuccessStatus,
-} from "../../../../../src/handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { executeDeployArtifact, runWithLog } from "../../../../../src/common/delivery/deploy/executeDeploy";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
-} from "../../../../../src/handlers/events/delivery/goals/commonGoals";
+} from "../../../../../src/common/delivery/goals/common/commonGoals";
+import {
+    ExecuteGoalOnSuccessStatus,
+} from "../../../../../src/handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 
 describe("the local deploy", () => {
 

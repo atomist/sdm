@@ -16,19 +16,19 @@
 
 import {logger} from "@atomist/automation-client";
 import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
-import {retryGoal} from "../../../handlers/commands/RetryGoal";
-import {ArtifactDeploySpec, deployArtifactWithLogs} from "../../../handlers/events/delivery/deploy/executeDeploy";
+import {ArtifactDeploySpec, deployArtifactWithLogs} from "../../../common/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
     targetInfoForAllBranches,
-} from "../../../handlers/events/delivery/deploy/local/appManagement";
-import {executableJarDeployer} from "../../../handlers/events/delivery/deploy/local/jar/executableJarDeployer";
-import {StartupInfo} from "../../../handlers/events/delivery/deploy/local/LocalDeployerOptions";
-import {mavenDeployer} from "../../../handlers/events/delivery/deploy/local/maven/mavenSourceDeployer";
+} from "../../../common/delivery/deploy/local/appManagement";
+import {executableJarDeployer} from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
+import {StartupInfo} from "../../../common/delivery/deploy/local/LocalDeployerOptions";
+import {mavenDeployer} from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
+import {StagingDeploymentGoal, StagingEndpointGoal} from "../../../common/delivery/goals/common/commonGoals";
+import {retryGoal} from "../../../handlers/commands/RetryGoal";
 import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
-import {StagingDeploymentGoal, StagingEndpointGoal} from "../../../handlers/events/delivery/goals/commonGoals";
 import {OnSupersededStatus} from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import {SourceDeployer} from "../../../spi/deploy/SourceDeployer";
 import {DefaultArtifactStore} from "../artifactStore";

@@ -2,7 +2,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import "mocha";
 import * as assert from "power-assert";
-import { mavenFingerprinter } from "../../../../../../../src/handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
+import { mavenFingerprinter } from "../../../../../../../src/common/delivery/code/fingerprint/maven/mavenFingerprinter";
 
 describe("mavenFingerprinter", () => {
 

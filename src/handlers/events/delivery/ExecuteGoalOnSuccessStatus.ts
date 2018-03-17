@@ -26,11 +26,11 @@ import {
 } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitHubStatusAndFriends } from "../../../common/goals/gitHubContext";
+import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
 import {
     currentGoalIsStillPending,
     Goal,
-} from "../../../common/goals/Goal";
+} from "../../../common/delivery/goals/Goal";
 import { HasChannels } from "../../../common/slack/addressChannels";
 import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";

@@ -17,12 +17,6 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { ProjectListener } from "../common/listener/Listener";
-import { NewIssueListener } from "../common/listener/NewIssueListener";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
-import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -33,8 +27,14 @@ import {
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
-} from "../handlers/events/delivery/goals/commonGoals";
-import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/scan/fingerprint/ReactToSemanticDiffsOnPushImpact";
+} from "../common/delivery/goals/common/commonGoals";
+import { ProjectListener } from "../common/listener/Listener";
+import { NewIssueListener } from "../common/listener/NewIssueListener";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
+import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
+import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/fingerprint/ReactToSemanticDiffsOnPushImpact";
+import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
+import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
     EndpointVerificationListener,
     OnEndpointStatus,
@@ -48,6 +48,8 @@ import { FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
+import { executeBuild } from "../common/delivery/build/executeBuild";
+import { executeFingerprints } from "../common/delivery/code/fingerprint/executeFingerprints";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -61,14 +63,12 @@ import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { executeBuild } from "../handlers/events/delivery/build/executeBuild";
+import { OnPendingAutofixStatus } from "../handlers/events/delivery/code/review/OnPendingAutofixStatus";
+import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/code/review/OnPendingCodeReactionStatus";
+import { OnPendingReviewStatus, ReviewerRegistration } from "../handlers/events/delivery/code/review/OnPendingReviewStatus";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { executeFingerprints } from "../handlers/events/delivery/scan/fingerprint/executeFingerprints";
-import { OnPendingAutofixStatus } from "../handlers/events/delivery/scan/review/OnPendingAutofixStatus";
-import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/scan/review/OnPendingCodeReactionStatus";
-import { OnPendingReviewStatus, ReviewerRegistration } from "../handlers/events/delivery/scan/review/OnPendingReviewStatus";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";

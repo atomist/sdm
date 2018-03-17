@@ -3,13 +3,13 @@ import "mocha";
 import * as assert from "power-assert";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
-import { LocalBuildInProgress } from "../../../../../../../src/handlers/events/delivery/build/local/LocalBuilder";
+import { LocalBuildInProgress } from "../../../../../../../src/common/delivery/build/local/LocalBuilder";
 import {
     NpmBuilder,
     RunBuild,
     RunCompile,
-} from "../../../../../../../src/handlers/events/delivery/build/local/npm/NpmBuilder";
+} from "../../../../../../../src/common/delivery/build/local/npm/NpmBuilder";
+import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
 import { SpawnCommand } from "../../../../../../../src/util/misc/spawned";
 
 class TestableNpmBuilder extends NpmBuilder {

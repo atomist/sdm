@@ -31,12 +31,13 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { contextToGoal } from "../../../common/delivery/goals/common/commonGoals";
 import {
     contextIsAfter,
     GitHubStatusContext,
     splitContext,
-} from "../../../common/goals/gitHubContext";
-import { Goal } from "../../../common/goals/Goal";
+} from "../../../common/delivery/goals/gitHubContext";
+import { Goal } from "../../../common/delivery/goals/Goal";
 import {
     OnFailureStatus,
     OnSuccessStatus,
@@ -45,7 +46,6 @@ import {
     createStatus,
     State,
 } from "../../../util/github/ghub";
-import { contextToGoal } from "./goals/commonGoals";
 import Status = OnSuccessStatus.Status;
 
 /**

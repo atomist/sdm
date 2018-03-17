@@ -16,7 +16,7 @@
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ManagedDeploymentTargetInfo } from "../../handlers/events/delivery/deploy/local/appManagement";
+import { ManagedDeploymentTargetInfo } from "../../common/delivery/deploy/local/appManagement";
 import { LogInterpreter } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment } from "./Deployment";

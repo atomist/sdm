@@ -1,6 +1,6 @@
 import "mocha";
 import * as assert from "power-assert";
-import { interpretMavenLog } from "../../../../../../../src/handlers/events/delivery/build/local/maven/mavenLogInterpreter";
+import { interpretMavenLog } from "../../../../../../../src/common/delivery/build/local/maven/mavenLogInterpreter";
 
 describe("interpretMavenLog", () => {
 

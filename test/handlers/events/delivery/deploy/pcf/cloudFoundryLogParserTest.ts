@@ -2,7 +2,7 @@
 import "mocha";
 
 import * as assert from "power-assert";
-import { parseCloudFoundryLogForEndpoint } from "../../../../../../src/handlers/events/delivery/deploy/pcf/cloudFoundryLogParser";
+import { parseCloudFoundryLogForEndpoint } from "../../../../../../src/common/delivery/deploy/pcf/cloudFoundryLogParser";
 
 describe("CloudFoundryProgressLog", () => {
 

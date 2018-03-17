@@ -15,18 +15,18 @@
  */
 
 import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
-import {retryGoal} from "../../../handlers/commands/RetryGoal";
-import {deployArtifactWithLogs} from "../../../handlers/events/delivery/deploy/executeDeploy";
-import {EnvironmentCloudFoundryTarget} from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
-import {CommandLineCloudFoundryDeployer} from "../../../handlers/events/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
-import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
-import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import {deployArtifactWithLogs} from "../../../common/delivery/deploy/executeDeploy";
+import {EnvironmentCloudFoundryTarget} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import {CommandLineCloudFoundryDeployer} from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
-} from "../../../handlers/events/delivery/goals/commonGoals";
+} from "../../../common/delivery/goals/common/commonGoals";
+import {retryGoal} from "../../../handlers/commands/RetryGoal";
+import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
+import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import {DefaultArtifactStore} from "../artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();

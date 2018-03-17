@@ -36,12 +36,12 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import {AddressChannels} from "../../../common/slack/addressChannels";
-import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
-} from "../../../handlers/events/delivery/deploy/pcf/CloudFoundryTarget";
+} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import {AddressChannels} from "../../../common/slack/addressChannels";
+import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 import { deleteRepository } from "../../../util/github/ghub";
 
 export const K8sTestingDomain = "testing";

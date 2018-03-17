@@ -16,7 +16,7 @@
 
 import { EventFired, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { Goal } from "../../../common/goals/Goal";
+import { Goal } from "../../../common/delivery/goals/Goal";
 import { PushTest } from "../../../common/listener/GoalSetter";
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";

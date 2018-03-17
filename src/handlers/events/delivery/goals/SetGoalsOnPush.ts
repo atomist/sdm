@@ -32,7 +32,8 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { Goals } from "../../../../common/goals/Goal";
+import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
+import { Goals } from "../../../../common/delivery/goals/Goal";
 import {
     GoalSetter,
     PushTestInvocation,
@@ -43,7 +44,6 @@ import {
     createStatus,
     tipOfDefaultBranch,
 } from "../../../../util/github/ghub";
-import { NoGoals } from "./commonGoals";
 
 /**
  * Set up goals on a push (e.g. for delivery).

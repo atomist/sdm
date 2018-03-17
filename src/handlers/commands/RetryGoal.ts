@@ -26,7 +26,7 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Goal } from "../../common/goals/Goal";
+import { Goal } from "../../common/delivery/goals/Goal";
 import { createStatus, tipOfDefaultBranch } from "../../util/github/ghub";
 
 @Parameters()

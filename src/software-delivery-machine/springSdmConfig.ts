@@ -17,10 +17,10 @@
 import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { mavenFingerprinter } from "../common/delivery/code/fingerprint/maven/mavenFingerprinter";
+import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../common/listener/tagRepo";
-import { LocalDeployment } from "../handlers/events/delivery/deploy/deployOnLocal";
-import { mavenFingerprinter } from "../handlers/events/delivery/scan/fingerprint/maven/mavenFingerprinter";
-import { checkstyleReviewer } from "../handlers/events/delivery/scan/review/checkstyle/checkstyleReviewer";
+import { checkstyleReviewer } from "../handlers/events/delivery/code/review/checkstyle/checkstyleReviewer";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
