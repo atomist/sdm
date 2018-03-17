@@ -89,18 +89,16 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
                     addressChannels: addressChannelsFor(commit.repo, context),
                     push: commit.pushes[0],
                 };
-                const editors = await relevantCodeActions(params.registrations, pti);
+                const editors = await relevantCodeActions<AutofixRegistration>(params.registrations, pti);
                 logger.info("Will apply %d eligible autofixes to %j", editors.length, id);
-                const editorChain = editors.length > 0 ? chainEditors(...editors) : undefined;
+                const editorChain = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
                 if (!!editorChain) {
-                    // TODO parameterize this
                     const editMode: BranchCommit = {
                         branch: commit.pushes[0].branch,
-                        message: "Autofixes\n\n[atomist]",
+                        message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
                     };
                     logger.info("Editing %j with mode=%j", id, editMode);
-                    await editOne(context, credentials, editorChain, editMode,
-                        new SimpleRepoId(id.owner, id.repo));
+                    await editOne(context, credentials, editorChain, editMode, id);
                 }
             }
             await markStatus(id, params.goal, StatusState.success, credentials);

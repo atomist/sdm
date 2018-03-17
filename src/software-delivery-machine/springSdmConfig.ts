@@ -25,6 +25,7 @@ import {
 import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../common/listener/tagRepo";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
+import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistTypeScriptHeader";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
 import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
@@ -68,6 +69,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
 
     softwareDeliveryMachine
     // .addCodeReactions(listChangedFiles)
+        .addAutofixes(AddAtomistTypeScriptHeader)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addSupportingCommands(
             () => disposeProjectHandler,

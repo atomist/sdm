@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Goals } from "../Goal";
-import { AutofixGoal, BuildGoal, ReviewGoal } from "./commonGoals";
+import {
+    FingerprintDifferenceInvocation,
+    FingerprintDifferenceListener,
+} from "../../../../common/listener/FingerprintDifferenceListener";
 
-export const NpmGoals = new Goals(
-    ReviewGoal,
-    AutofixGoal,
-    BuildGoal,
-);
+export const diff1: FingerprintDifferenceListener = async (fdi: FingerprintDifferenceInvocation) => {
+    console.log(JSON.stringify(fdi.diffs));
+    // console.log("HAHA HA diff on " + JSON.stringify(fdi.id) + " of " + diff.map(d => d.newValue.name).join(","));
+};

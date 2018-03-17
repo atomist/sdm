@@ -1,4 +1,4 @@
-import { HandleCommand, HandlerContext, Parameters } from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, logger, Parameters } from "@atomist/automation-client";
 import { Parameter } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
@@ -54,7 +54,9 @@ export const applyApacheLicenseHeaderEditor: HandleCommand = editorCommand(
         ),
     });
 
-export async function applyHeaderProjectEditor(p: Project, ctx: HandlerContext, params: ApplyHeaderParameters) {
+export async function applyHeaderProjectEditor(p: Project,
+                                               ctx: HandlerContext,
+                                               params: ApplyHeaderParameters): Promise<Project> {
     let headersAdded = 0;
     let matchingFiles = 0;
     await doWithFiles(p, params.glob, async f => {
@@ -69,6 +71,7 @@ export async function applyHeaderProjectEditor(p: Project, ctx: HandlerContext, 
         ++headersAdded;
         return f.setContent(params.header + "\n\n" + content);
     });
+    logger.info("%d files matched [%s]. %s headers added. %d files skipped", matchingFiles, params.glob, headersAdded, matchingFiles - headersAdded);
     await ctx.messageClient.respond(`${matchingFiles} files matched \`${params.glob}\`. ${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped`);
     return p;
 }

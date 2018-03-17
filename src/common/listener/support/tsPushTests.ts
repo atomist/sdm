@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    FingerprintDifferenceInvocation,
-    FingerprintDifferenceListener,
-} from "../../../common/listener/FingerprintDifferenceListener";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { PushTest, PushTestInvocation } from "../GoalSetter";
 
-export const diff1: FingerprintDifferenceListener = async (fdi: FingerprintDifferenceInvocation) => {
-    console.log(JSON.stringify(fdi.diffs));
-    // console.log("HAHA HA diff on " + JSON.stringify(fdi.id) + " of " + diff.map(d => d.newValue.name).join(","));
-};
+export const IsTypeScript: PushTest = async (pi: PushTestInvocation) =>
+    await fileExists(pi.project, "**/*.ts", () => true);

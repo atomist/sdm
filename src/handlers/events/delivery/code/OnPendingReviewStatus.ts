@@ -110,7 +110,7 @@ export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Sub
                 const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                     await Promise.all(relevantReviewers
                         .map(reviewer =>
-                            reviewer(project, context, params as any)
+                            reviewer.action(project, context, params as any)
                                 .then(rvw => ({review: rvw}),
                                     error => ({error}))));
                 const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
