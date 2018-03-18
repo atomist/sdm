@@ -17,18 +17,18 @@
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { SpringBootProjectStructure } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectStructure";
-import { PushTest, PushTestInvocation } from "../GoalSetter";
+import { PushTest, pushTest, PushTestInvocation } from "../GoalSetter";
 
 /**
  * Is this a Maven project
  * @param {PushTestInvocation} pi
  * @constructor
  */
-export const IsMaven: PushTest = async (pi: PushTestInvocation) =>
-    !!(await pi.project.getFile("pom.xml"));
+export const IsMaven: PushTest = pushTest("Is Maven", async (pi: PushTestInvocation) =>
+    !!(await pi.project.getFile("pom.xml")));
 
-export const IsJava: PushTest = async (pi: PushTestInvocation) =>
-    await fileExists(pi.project, AllJavaFiles, () => true);
+export const IsJava: PushTest = pushTest("Is Java", async (pi: PushTestInvocation) =>
+    await fileExists(pi.project, AllJavaFiles, () => true));
 
 /**
  * Does this project have a Spring Boot application class?
@@ -37,6 +37,6 @@ export const IsJava: PushTest = async (pi: PushTestInvocation) =>
  * @param {PushTestInvocation} pi
  * @constructor
  */
-export const HasSpringBootApplicationClass: PushTest = (pi: PushTestInvocation) =>
-    SpringBootProjectStructure.inferFromJavaSource(pi.project)
-        .then(springBootStructure => !!springBootStructure);
+export const HasSpringBootApplicationClass = pushTest(
+    "Has Spring Boot @Application class",
+    async pi => !!(await SpringBootProjectStructure.inferFromJavaSource(pi.project)));

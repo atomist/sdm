@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import {Goals} from "../common/delivery/goals/Goal";
+import { Goals } from "../common/delivery/goals/Goal";
 import { GoalSetter, PushTest } from "../common/listener/GoalSetter";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
+import { AnyPush } from "../common/listener/support/pushTests";
 import { allSatisfied } from "../common/listener/support/pushTestUtils";
 import { Builder } from "../spi/build/Builder";
 
@@ -28,9 +29,7 @@ export class PushRule {
 
     public readonly pushTest: PushTest;
 
-    public reason: string;
-
-    constructor(private guard1: PushTest, private guards: PushTest[]) {
+    constructor(private guard1: PushTest, private guards: PushTest[], public reason: string = undefined) {
         this.pushTest = allSatisfied(guard1, ...guards);
     }
 
@@ -77,4 +76,4 @@ export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): Push
     return new PushRuleExplanation(new PushRule(guard1, guards));
 }
 
-export const onAnyPush: PushRule = new PushRule(() => true, []);
+export const onAnyPush: PushRule = new PushRule(AnyPush, [], "On any push");

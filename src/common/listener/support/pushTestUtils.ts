@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushTest } from "../GoalSetter";
+import { PushTest, pushTest } from "../GoalSetter";
 
 /**
  * Return the opposite of this push test
@@ -22,7 +22,7 @@ import { PushTest } from "../GoalSetter";
  * @return {PushTest}
  */
 export function not(t: PushTest): PushTest {
-    return async pi => !(await t(pi));
+    return pushTest(`not (${t.name})`, async pi => !(await t.test(pi)));
 }
 
 /**
@@ -31,8 +31,9 @@ export function not(t: PushTest): PushTest {
  * @return {PushTest}
  */
 export function allSatisfied(...guards: PushTest[]): PushTest {
-    return async pci => {
-        const guardResults: boolean[] = await Promise.all(guards.map(g => g(pci)));
-        return !guardResults.some(r => !r);
-    };
+    return pushTest(guards.map(g => g.name).join(" && "),
+        async pci => {
+            const guardResults: boolean[] = await Promise.all(guards.map(g => g.test(pci)));
+            return !guardResults.some(r => !r);
+        });
 }

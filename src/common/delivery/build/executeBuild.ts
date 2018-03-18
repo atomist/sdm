@@ -46,7 +46,7 @@ export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
             };
 
             const builders: boolean[] = await Promise.all(conditionalBuilders
-                .map(b => b.guard(pti)));
+                .map(b => b.guard.test(pti)));
             const indx = builders.indexOf(true);
             if (indx < 0) {
                 throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);

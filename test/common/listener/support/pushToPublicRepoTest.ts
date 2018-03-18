@@ -8,13 +8,13 @@ describe("pushToPublicRepo", () => {
 
     it("should work against public repo", async () => {
         const id = new GitHubRepoRef("atomist", "github-sdm");
-        const r = await ToPublicRepo({id} as any as PushTestInvocation);
+        const r = await ToPublicRepo.test({id} as any as PushTestInvocation);
         assert(r);
     });
 
     it("should work against private repo", async () => {
         const id = new GitHubRepoRef("atomisthq", "internal-automation");
-        const r = await ToPublicRepo({id} as any as PushTestInvocation);
+        const r = await ToPublicRepo.test({id} as any as PushTestInvocation);
         assert(!r);
     });
 

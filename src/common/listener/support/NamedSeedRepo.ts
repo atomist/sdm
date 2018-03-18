@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushTest } from "../GoalSetter";
+import { PushTest, pushTest } from "../GoalSetter";
 
 /**
  * Is this a seed repo, based on the naming convention
@@ -22,4 +22,4 @@ import { PushTest } from "../GoalSetter";
  * @param {PushTestInvocation} pi
  * @constructor
  */
-export const NamedSeedRepo: PushTest = pi => pi.id.repo.includes("-seed");
+export const NamedSeedRepo: PushTest = pushTest("Named seed repo", pi => pi.id.repo.includes("-seed"));

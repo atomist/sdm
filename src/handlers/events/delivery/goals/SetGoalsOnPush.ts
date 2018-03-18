@@ -88,7 +88,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         try {
             const goalSetterResults: Goals[] = await Promise.all(params.goalSetters
                 .map(async pc => {
-                    const relevant = !!pc.guard ? await pc.guard(pi) : true;
+                    const relevant = !!pc.guard ? await pc.guard.test(pi) : true;
                     if (relevant) {
                         const goals = pc.chooseGoals(pi);
                         logger.info("Eligible GoalSetter %j returned %j", pc, goals);

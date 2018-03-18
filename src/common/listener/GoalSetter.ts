@@ -21,7 +21,19 @@ import { ProjectListenerInvocation } from "./Listener";
 /**
  * Return true if we like this push and think a particular set of goals apply to it.
  */
-export type PushTest = (p: PushTestInvocation) => boolean | Promise<boolean>;
+export interface PushTest {
+
+    name: string;
+
+    test(p: PushTestInvocation): boolean | Promise<boolean>;
+}
+
+export function pushTest(name: string, test: (p: PushTestInvocation) => boolean | Promise<boolean>): PushTest {
+    return {
+        name,
+        test,
+    };
+}
 
 export interface PushTestInvocation extends ProjectListenerInvocation {
 

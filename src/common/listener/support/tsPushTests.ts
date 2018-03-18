@@ -15,7 +15,9 @@
  */
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { PushTest, PushTestInvocation } from "../GoalSetter";
+import { PushTest, pushTest, PushTestInvocation } from "../GoalSetter";
 
-export const IsTypeScript: PushTest = async (pi: PushTestInvocation) =>
-    await fileExists(pi.project, "**/*.ts", () => true);
+export const IsTypeScript: PushTest = pushTest(
+    "Is TypeScript",
+    async (pi: PushTestInvocation) => await fileExists(pi.project, "**/*.ts", () => true),
+);

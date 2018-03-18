@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { filesChangedSince } from "../../../util/git/filesChangedSince";
-import { PushTest } from "../GoalSetter";
+import { PushTest, pushTest } from "../GoalSetter";
 
 import * as _ from "lodash";
 
@@ -27,7 +27,7 @@ import * as _ from "lodash";
  * @return {Promise<void>}
  * @constructor
  */
-export const MaterialChangeToJavaRepo: PushTest = async pci => {
+export const MaterialChangeToJavaRepo = pushTest("Material change to Java repo", async pci => {
     const beforeSha = _.get(pci, "push.before.sha");
     if (!beforeSha) {
         logger.info("Cannot determine if change is material on %j: can't find old sha", pci.id);
@@ -47,4 +47,4 @@ export const MaterialChangeToJavaRepo: PushTest = async pci => {
     logger.info("Change is immaterial on %j: changed files=[%s]", pci.id, changedFiles.join(","));
     // await pci.addressChannels(`Sorry. I'm not going to waste electricity on changes to [${changedFiles.join(",")}]`);
     return false;
-};
+});
