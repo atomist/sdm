@@ -16,6 +16,9 @@ export class ApplyHeaderParameters extends OptionalBranchParameters {
     @Parameter({required: false})
     public license: "apache" = "apache";
 
+    @Parameter({required: false})
+    public readonly successEmoji = ":carousel_horse:";
+
     get header(): string {
         switch (this.license) {
             case "apache" :
@@ -73,7 +76,9 @@ export async function applyHeaderProjectEditor(p: Project,
         return f.setContent(params.header + "\n\n" + content);
     });
     logger.info("%d files matched [%s]. %s headers added. %d files skipped", matchingFiles, params.glob, headersAdded, matchingFiles - headersAdded);
-    await ctx.messageClient.respond(`${matchingFiles} files matched \`${params.glob}\`. ${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped`);
+    if (headersAdded > 0) {
+        await ctx.messageClient.respond(`*License header editor*: ${matchingFiles} files matched \`${params.glob}\`. ${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped ${params.successEmoji}`);
+    }
     return p;
 }
 

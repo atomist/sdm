@@ -9,5 +9,6 @@ OurParams.glob = "**/*.ts";
 export const AddAtomistTypeScriptHeader: AutofixRegistration = {
     name: "TypeScript header",
     pushTest: IsTypeScript,
-    action: (p, context, params) => applyHeaderProjectEditor(p, context, OurParams),
+    // Ignored any parameters passed in, which will be undefined in an autofix, and provide predefined parameters
+    action: (p, context) => applyHeaderProjectEditor(p, context, OurParams),
 };

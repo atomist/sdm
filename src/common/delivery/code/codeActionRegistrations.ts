@@ -8,6 +8,14 @@ export interface CodeActionRegistration<A> {
     action: A;
 }
 
+/**
+ * Register an editor for autofix. An editor for autofix
+ * should not rely on parameters being passed in. An existing editor can be wrapped
+ * to use predefined parameters.
+ * Any use of MessageClient.respond in an editor used in an autofix will be redirected to
+ * linked channels as autofixes are normally invoked in an EventHandler and EventHandlers
+ * do not support respond.
+ */
 export interface AutofixRegistration extends CodeActionRegistration<AnyProjectEditor> {
     name: string;
 }

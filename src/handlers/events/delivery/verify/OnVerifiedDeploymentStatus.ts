@@ -35,7 +35,7 @@ import {
 } from "../../../../common/listener/VerifiedDeploymentListener";
 import {
     addressChannelsFor,
-    messageDestinations,
+    messageDestinationsFor,
 } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 
@@ -77,7 +77,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
             context,
             status,
             addressChannels: addressChannelsFor(commit.repo, context),
-            messageDestination: messageDestinations(commit.repo, context),
+            messageDestination: messageDestinationsFor(commit.repo, context),
             credentials: {token: params.githubToken},
         };
 

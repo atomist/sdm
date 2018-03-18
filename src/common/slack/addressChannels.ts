@@ -17,7 +17,7 @@
 import { HandlerContext } from "@atomist/automation-client";
 import {
     addressSlackChannels,
-    Destination,
+    Destination, MessageClient,
     MessageOptions,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
@@ -34,13 +34,13 @@ export interface HasChannels {
 
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
     if (!!hasChannels.channels) {
-        return addressDestination(messageDestinations(hasChannels, ctx), ctx);
+        return addressDestinations(ctx, messageDestinationsFor(hasChannels, ctx));
     } else {
         return () => Promise.resolve();
     }
 }
 
-export function messageDestinations(hasChannels: HasChannels, ctx?: HandlerContext): Destination {
+export function messageDestinationsFor(hasChannels: HasChannels, ctx?: HandlerContext): Destination {
     const channelNames = hasChannels.channels.map(c => c.name);
     if (hasChannels.channels.length === 0) {
         throw new Error("I can't give you destinations for 0 channels");
@@ -50,6 +50,6 @@ export function messageDestinations(hasChannels: HasChannels, ctx?: HandlerConte
     return addressSlackChannels(slackTeam, ...channelNames);
 }
 
-export function addressDestination(destination: Destination, ctx: HandlerContext): AddressChannels {
-    return (msg, opts) => ctx.messageClient.send(msg, destination, opts);
+export function addressDestinations(ctx: HandlerContext, ...destinations: Destination[]): AddressChannels {
+    return (msg, opts) => ctx.messageClient.send(msg, destinations, opts);
 }

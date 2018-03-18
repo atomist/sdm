@@ -1,13 +1,15 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { editOne } from "@atomist/automation-client/operations/edit/editAll";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
+import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { editRepo } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { OnAnyPendingStatus } from "../../../../typings/types";
 import { PushTestInvocation } from "../../../listener/GoalSetter";
-import { addressChannelsFor } from "../../../slack/addressChannels";
+import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
+import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
 
 export type CommitShape = OnAnyPendingStatus.Commit;
@@ -40,14 +42,15 @@ export async function executeAutofixes(
         };
         const editors = await relevantCodeActions<AutofixRegistration>(registrations, pti);
         logger.info("Will apply %d eligible autofixes to %j", editors.length, pti.id);
-        const editorChain = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
-        if (!!editorChain) {
+        const singleEditor: ProjectEditor = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
+        if (!!singleEditor) {
             const editMode: BranchCommit = {
                 branch: pti.push.branch,
                 message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
             };
             logger.info("Editing %s with mode=%j", pti.id.url, editMode);
-            await editOne(context, pti.credentials, editorChain, editMode, pti.id);
+            await editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
+                pti.project, singleEditor, editMode);
         }
     }
 }

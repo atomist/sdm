@@ -50,7 +50,7 @@ import { StagingEndpointContext } from "../../../../common/delivery/goals/common
 import { GitHubStatusAndFriends, splitContext } from "../../../../common/delivery/goals/gitHubContext";
 import { currentGoalIsStillPending, Goal } from "../../../../common/delivery/goals/Goal";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { AddressChannels, addressDestination, messageDestinations } from "../../../../common/slack/addressChannels";
+import { AddressChannels, addressDestinations, messageDestinationsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { forApproval } from "./approvalGate";
@@ -113,7 +113,7 @@ export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscriptio
 
         return verifyImpl(params.sdm,
             {
-                context, id, messageDestination: messageDestinations(commit.repo, context),
+                context, id, messageDestination: messageDestinationsFor(commit.repo, context),
                 credentials: {token: params.githubToken},
             },
             status.targetUrl);
@@ -145,7 +145,7 @@ function verifyImpl(sdm: SdmVerification,
                         messageDestination: Destination,
                     },
                     targetUrl: string) {
-    const addressChannels = addressDestination(li.messageDestination, li.context);
+    const addressChannels = addressDestinations(li.context, li.messageDestination);
     const i: EndpointVerificationInvocation = {
         id: li.id,
         url: targetUrl,
