@@ -18,22 +18,10 @@ import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { mavenFingerprinter } from "../common/delivery/code/fingerprint/maven/mavenFingerprinter";
-import {
-    checkstyleReviewer,
-    CheckstyleReviewerRegistration,
-} from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
+import { CheckstyleReviewerRegistration } from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
 import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../common/listener/tagRepo";
-import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
-import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistTypeScriptHeader";
-import { disposeProjectHandler } from "./blueprint/deploy/dispose";
-import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
 import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
-import { capitalizer } from "./blueprint/issue/capitalizer";
-import { requestDescription } from "./blueprint/issue/requestDescription";
-import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
-import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
-import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
 
@@ -42,13 +30,10 @@ import { springBootGenerator } from "./commands/generators/spring/springBootGene
  * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
  * @param {{useCheckstyle: boolean}} opts
  */
-export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
+export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
     softwareDeliveryMachine
-        .addNewIssueListeners(requestDescription, capitalizer)
-        .addClosedIssueListeners(thankYouYouRock)
         .addEditors(
             () => tryToUpgradeSpringBootVersion,
-            () => applyApacheLicenseHeaderEditor,
         )
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
@@ -56,7 +41,7 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
         }, []))
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
-            PublishNewRepo)
+        )
         .addSupportingCommands(() => applyHttpServiceGoals);
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
@@ -68,15 +53,6 @@ export function configureSpringSdm(softwareDeliveryMachine: SoftwareDeliveryMach
     }
 
     softwareDeliveryMachine
-    // .addCodeReactions(listChangedFiles)
-        .addAutofixes(AddAtomistTypeScriptHeader)
-        .addDeploymentListeners(PostToDeploymentsChannel)
-        .addSupportingCommands(
-            () => disposeProjectHandler,
-        )
-        .addSupportingEvents(OnDryRunBuildComplete)
-        .addFunctionalUnits(LocalDeployment);
-
-    softwareDeliveryMachine.addFingerprinters(mavenFingerprinter);
-    // .addFingerprintDifferenceListeners(diff1)
+        .addFunctionalUnits(LocalDeployment)
+        .addFingerprinters(mavenFingerprinter);
 }

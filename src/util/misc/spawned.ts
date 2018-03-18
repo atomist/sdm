@@ -21,7 +21,7 @@ export interface SpawnWatchOptions {
  * output to log
  * @param {"child_process".ChildProcess} childProcess
  * @param {ProgressLog} log
- * @param {ErrorFinder} errorFinder
+ * @param opts: Options for error parsing, ANSI code stripping etc.
  * @return {Promise<ChildProcessResult>}
  */
 export function watchSpawned(childProcess: ChildProcess,
@@ -34,16 +34,13 @@ export function watchSpawned(childProcess: ChildProcess,
             ...opts,
         };
 
-        function toLog(data) {
-            return optsToUse.stripAnsi ? strip_ansi(data.toString()) : data.toString();
+        function sendToLog(data) {
+            const formatted = optsToUse.stripAnsi ? strip_ansi(data.toString()) : data.toString();
+            return log.write(formatted);
         }
 
-        childProcess.stdout.on("data", data => {
-            log.write(toLog(data));
-        });
-        childProcess.stderr.on("data", data => {
-            log.write(toLog(data));
-        });
+        childProcess.stdout.on("data", data => sendToLog(data));
+        childProcess.stderr.on("data", data => sendToLog(data));
         childProcess.addListener("exit", (code, signal) => {
             resolve({
                 error: opts.errorFinder(code, signal, log),

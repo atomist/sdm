@@ -36,7 +36,9 @@ import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/
 import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
-import { configureSpringSdm } from "./springSdmConfig";
+import { addNodeSupport } from "./nodeSupport";
+import { addSpringSupport } from "./springSupport";
+import { addTeamPolicies } from "./teamPolicies";
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -69,6 +71,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         )
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
 
-    configureSpringSdm(sdm, opts);
+    addSpringSupport(sdm, opts);
+    addNodeSupport(sdm);
+    addTeamPolicies(sdm);
     return sdm;
 }

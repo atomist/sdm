@@ -49,7 +49,9 @@ import {
 } from "./blueprint/deploy/k8sDeploy";
 import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
-import { configureSpringSdm } from "./springSdmConfig";
+import { addNodeSupport } from "./nodeSupport";
+import { addSpringSupport } from "./springSupport";
+import { addTeamPolicies } from "./teamPolicies";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -80,6 +82,8 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
                 minTimeout: 3000,
             }),
         );
-    configureSpringSdm(sdm, opts);
+    addSpringSupport(sdm, opts);
+    addNodeSupport(sdm);
+    addTeamPolicies(sdm);
     return sdm;
 }

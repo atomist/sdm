@@ -57,10 +57,10 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
         logger.info("NpmBuilder.startBuild on %s, buildCommands=[%j]", id.url, this.buildCommands);
         const p = await GitCommandGitProject.cloned(credentials, id);
         // Find the artifact info from package.json
-        const pom = await p.findFile("package.json");
-        const content = await pom.getContent();
-        const json = JSON.parse(content);
-        const appId: AppInfo = {id, name: json.name, version: json.version};
+        const packageJson = await p.findFile("package.json");
+        const content = await packageJson.getContent();
+        const pkg = JSON.parse(content);
+        const appId: AppInfo = {id, name: pkg.name, version: pkg.version};
         const opts = {
             cwd: p.baseDir,
         };
