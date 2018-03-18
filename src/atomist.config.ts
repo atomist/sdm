@@ -18,6 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import * as _ from "lodash";
+import { DeployEnablementIngester } from "./ingesters/deployEnablement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
 
 // tslint:disable-next-line:no-var-requires
@@ -32,12 +33,12 @@ const AtomistWorkspacePrefix = "ATOMIST_WORKSPACE_";
 const token = process.env.GITHUB_TOKEN;
 
 /*
- * The provided software delivery machines include cloud foundry (which runs locally for Test environment, by default, and your PCF for Prod)
- * and kubernetes (which deploys Spring-boot services to an Atomist-provided cluster for Test and Prod).
- * Take your pick.
+ * The provided software delivery machines include cloud foundry (which runs locally for Test environment,
+ * by default, and your PCF for Prod) and kubernetes (which deploys Spring-boot services to an Atomist-provided
+ * cluster for Test and Prod). Take your pick.
  */
 const assembled =
-    cloudFoundrySoftwareDeliveryMachine({useCheckstyle: process.env.USE_CHECKSTYLE === "true"});
+    cloudFoundrySoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true" });
 // k8sSoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true"})
 
 export const configuration: Configuration = {
@@ -48,6 +49,10 @@ export const configuration: Configuration = {
     teamIds: extractWorkspacesFromEnvironment(),
     commands: assembled.commandHandlers.concat([]),
     events: assembled.eventHandlers.concat([]),
+    // TODO CD move ingesters to different global automation
+    ingesters: [
+        DeployEnablementIngester,
+    ],
     token,
     http: {
         enabled: false,
