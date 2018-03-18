@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import "mocha";
 
 import { HandlerContext } from "@atomist/automation-client";

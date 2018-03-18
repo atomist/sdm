@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
 import { IsTypeScript } from "../../../../common/listener/support/tsPushTests";
 import { ApplyHeaderParameters, applyHeaderProjectEditor } from "../../../commands/editors/license/applyHeader";
