@@ -16,7 +16,10 @@
 
 import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { LocalCommandAutofix } from "../common/delivery/code/autofix/LocalCommandAutofix";
+import { IsTypeScript } from "../common/listener/support/tsPushTests";
 import { tagRepo } from "../common/listener/tagRepo";
+import { asSpawnCommand } from "../util/misc/spawned";
 import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistTypeScriptHeader";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
 
@@ -36,5 +39,10 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         .addNewRepoWithCodeActions(
             tagRepo(nodeTagger),
         )
-        .addAutofixes(AddAtomistTypeScriptHeader);
+        .addAutofixes(
+            AddAtomistTypeScriptHeader,
+            new LocalCommandAutofix("tslint",
+                IsTypeScript,
+                asSpawnCommand("npm run lint:fix")),
+        );
 }

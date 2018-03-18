@@ -39,8 +39,7 @@ export type CommitShape = OnAnyPendingStatus.Commit;
  * @param {AutofixRegistration[]} registrations
  * @return {Promise<void>}
  */
-export async function executeAutofixes(
-                                       commit: CommitShape,
+export async function executeAutofixes(commit: CommitShape,
                                        context: HandlerContext,
                                        credentials: ProjectOperationCredentials,
                                        registrations: AutofixRegistration[]) {
@@ -57,7 +56,8 @@ export async function executeAutofixes(
             push,
         };
         const editors = await relevantCodeActions<AutofixRegistration>(registrations, pti);
-        logger.info("Will apply %d eligible autofixes to %j", editors.length, pti.id);
+        logger.info("Will apply %d eligible autofixes of %d to %j",
+            editors.length, registrations.length, pti.id);
         const singleEditor: ProjectEditor = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
         if (!!singleEditor) {
             const editMode: BranchCommit = {
