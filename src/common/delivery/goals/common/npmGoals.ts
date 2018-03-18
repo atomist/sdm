@@ -17,7 +17,8 @@
 import { Goals } from "../Goal";
 import { AutofixGoal, BuildGoal, ReviewGoal } from "./commonGoals";
 
-export const NpmGoals = new Goals(
+export const NpmBuildGoals = new Goals(
+    "npm build",
     ReviewGoal,
     AutofixGoal,
     BuildGoal,

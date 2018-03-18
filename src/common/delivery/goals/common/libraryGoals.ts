@@ -21,6 +21,7 @@ import {
 } from "./commonGoals";
 
 export const LibraryGoals = new Goals(
+    "Library",
     ReviewGoal,
     JustBuildGoal,
 );

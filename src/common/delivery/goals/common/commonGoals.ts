@@ -186,4 +186,5 @@ function defaultGoal(ghsc: GitHubStatusContext): Goal {
  * @type {Goals}
  */
 export const NoGoals = new Goals(
+    "No action needed",
     NoGoal);

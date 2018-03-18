@@ -27,6 +27,7 @@ import {
  * @type {Goals}
  */
 export const HttpServiceGoals = new Goals(
+    "HTTP Service",
     FingerprintGoal,
     AutofixGoal,
     ReviewGoal,
@@ -40,5 +41,6 @@ export const HttpServiceGoals = new Goals(
     ProductionEndpointGoal);
 
 export const LocalDeploymentGoals = new Goals(
+    "Local Deployment",
     LocalDeploymentGoal,
     LocalEndpointGoal);

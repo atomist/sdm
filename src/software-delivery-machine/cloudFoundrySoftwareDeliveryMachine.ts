@@ -21,7 +21,7 @@ import { NpmBuilder } from "../common/delivery/build/local/npm/NpmBuilder";
 import { NoGoals } from "../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
-import { NpmGoals } from "../common/delivery/goals/common/npmGoals";
+import { NpmBuildGoals } from "../common/delivery/goals/common/npmGoals";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
 import { HasSpringBootApplicationClass, IsMaven } from "../common/listener/support/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
@@ -60,7 +60,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
-            .setGoals(NpmGoals)
+            .setGoals(NpmBuildGoals)
             .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
         onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
     );

@@ -25,7 +25,7 @@ import {
     LocalDeploymentGoals,
 } from "../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
-import { NpmGoals } from "../common/delivery/goals/common/npmGoals";
+import { NpmBuildGoals } from "../common/delivery/goals/common/npmGoals";
 import {
     HasSpringBootApplicationClass,
     IsMaven,
@@ -68,7 +68,7 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             ToPublicRepo).setGoals(HttpServiceGoals),
         whenPushSatisfies(not(FromAtomist), IsMaven, HasSpringBootApplicationClass).setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
-        whenPushSatisfies(IsNode).setGoals(NpmGoals),
+        whenPushSatisfies(IsNode).setGoals(NpmBuildGoals),
         onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)

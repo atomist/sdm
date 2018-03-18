@@ -147,7 +147,7 @@ export class Goals {
 
     public readonly goals: Goal[];
 
-    constructor(...goals: Goal[]) {
+    constructor(public name: string, ...goals: Goal[]) {
         this.goals = goals;
     }
 
