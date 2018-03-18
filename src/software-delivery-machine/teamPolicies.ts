@@ -23,6 +23,7 @@ import { requestDescription } from "./blueprint/issue/requestDescription";
 import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
+import axios from "axios";
 
 /**
  * Set up team policies
@@ -35,6 +36,13 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         .addEditors(
             () => applyApacheLicenseHeaderEditor,
         )
+        .addAutofixes({
+            name: "License Fix",
+            action: async p => {
+                const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
+                return p.addFile("LICENSE", license.data);
+            },
+        })
         .addNewRepoWithCodeActions(
             PublishNewRepo)
 

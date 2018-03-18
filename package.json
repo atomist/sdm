@@ -18,7 +18,7 @@
     "url": "https://github.com/atomist/github-sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "https://r.atomist.com/ryoIOsU3FM",
+    "@atomist/automation-client": "https://r.atomist.com/BkBzMp_2KG",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/spring-automation": "^0.6.3",
     "app-root-path": "^2.0.1",
@@ -31,6 +31,7 @@
     "jssha": "^2.3.1",
     "lodash": "^4.17.5",
     "run": "^1.4.0",
+    "sprintf-js": "^1.1.1",
     "strip-ansi": "^4.0.0",
     "tmp-promise": "^1.0.4",
     "xml2js": "^0.4.19"

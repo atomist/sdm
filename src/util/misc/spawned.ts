@@ -18,6 +18,8 @@ import { logger } from "@atomist/automation-client";
 import { ChildProcess } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
+import { sprintf } from "sprintf-js";
+
 import * as strip_ansi from "strip-ansi";
 
 export type ErrorFinder = (code: number, signal: string, log: ProgressLog) => boolean;
@@ -77,6 +79,10 @@ export interface SpawnCommand {
 
     command: string;
     args?: string[];
+}
+
+export function stringifySpawnCommand(sc: SpawnCommand): string {
+    return sprintf("%s %s", sc.command, !!sc.args ? sc.args.join(" ") : "");
 }
 
 /**

@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    failure,
     GraphQL,
     HandleEvent,
     HandlerContext,
@@ -74,13 +73,12 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
 
         try {
             await executeAutofixes(commit, context, credentials, params.registrations);
-            await markStatus(repoRefWithSha, params.goal, StatusState.success, credentials);
-            return Success;
+            logger.info("All autofixes executed OK on %s", repoRefWithSha.url);
         } catch (err) {
-            logger.info("Error executing autofixes on %s", repoRefWithSha.url, err);
-            await markStatus(repoRefWithSha, params.goal, StatusState.error, credentials);
-            return failure(err);
+            logger.warn("Error executing autofixes on %s", repoRefWithSha.url, err);
         }
+        await markStatus(repoRefWithSha, params.goal, StatusState.success, credentials);
+        return Success;
     }
 }
 
