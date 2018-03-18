@@ -49,17 +49,21 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             ],
             artifactStore: DefaultArtifactStore,
         },
-        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass,
-            not(FromAtomist), not(MaterialChangeToJavaRepo))
+        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
+            .itMeans("No material change to Java")
             .setGoals(NoGoals),
         whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
             ToPublicRepo, not(NamedSeedRepo))
+            .itMeans("Spring Boot service to deploy")
             .setGoals(HttpServiceGoals),
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
+            .itMeans("Spring Boot service local deploy")
             .setGoals(LocalDeploymentGoals),
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
+            .itMeans("Build Java")
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
+            .itMeans("Build with npm")
             .setGoals(NpmBuildGoals)
             .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
         onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog)),

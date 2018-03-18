@@ -28,20 +28,44 @@ export class PushRule {
 
     public readonly pushTest: PushTest;
 
+    public reason: string;
+
     constructor(private guard1: PushTest, private guards: PushTest[]) {
         this.pushTest = allSatisfied(guard1, ...guards);
     }
 
     public setGoals(goals: Goals): this {
+        this.verify();
         this.goalSetter = new GuardedGoalSetter(goals, this.guard1, ...this.guards);
         return this;
     }
 
     public buildWith(builder: Builder): PushRule {
+        this.verify();
         this.builder = builder;
         return this;
     }
 
+    public verify(): this {
+        if (!this.reason) {
+            throw new Error("Incomplete PushTest: Required reason");
+        }
+        return this;
+    }
+
+}
+
+/**
+ * Interim DSL stage
+ */
+export class PushRuleExplanation {
+
+    constructor(private pushRule: PushRule) {}
+
+    public itMeans(reason: string): PushRule {
+        this.pushRule.reason = reason;
+        return this.pushRule.verify();
+    }
 }
 
 /**
@@ -49,8 +73,8 @@ export class PushRule {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRule {
-    return new PushRule(guard1, guards);
+export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation {
+    return new PushRuleExplanation(new PushRule(guard1, guards));
 }
 
 export const onAnyPush: PushRule = new PushRule(() => true, []);

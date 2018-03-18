@@ -65,10 +65,15 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
 
         whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass,
             HasK8Spec,
-            ToPublicRepo).setGoals(HttpServiceGoals),
-        whenPushSatisfies(not(FromAtomist), IsMaven, HasSpringBootApplicationClass).setGoals(LocalDeploymentGoals),
-        whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo).setGoals(LibraryGoals),
-        whenPushSatisfies(IsNode).setGoals(NpmBuildGoals),
+            ToPublicRepo)
+            .itMeans("Spring Boot service to deploy")
+            .setGoals(HttpServiceGoals),
+        whenPushSatisfies(not(FromAtomist), IsMaven, HasSpringBootApplicationClass)
+            .itMeans("Spring Boot service local deploy")
+            .setGoals(LocalDeploymentGoals),
+        whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
+            .itMeans("Build Java")
+            .setGoals(LibraryGoals),
         onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
