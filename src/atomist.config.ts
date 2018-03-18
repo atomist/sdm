@@ -55,6 +55,9 @@ export const configuration: Configuration = {
     applicationEvents: {
         enabled: true,
     },
+    logging: {
+        level: "debug",
+    },
 };
 
 /**
