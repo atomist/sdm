@@ -35,7 +35,11 @@ import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpoi
 import {
     disableDeploy,
     enableDeploy,
+<<<<<<< HEAD
 } from "../handlers/commands/SetDeployEnablement";
+=======
+} from "../handlers/commands/ToggleDeployEnablement";
+>>>>>>> add IsDeployEnabled push test
 import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
