@@ -60,7 +60,7 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
     };
 
     return editorHandler(
-        chattyEditorFactory(edd) as any,
+        chattyEditorFactory(name, edd) as any,
         toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker),
         name,
         detailsToUse);

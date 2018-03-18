@@ -25,34 +25,36 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 /**
  * Decorate an editor factory to make editors it creates chatty, so they respond to
  * Slack if there's nothing to do
+ * @param editorName name of the editor
  * @param {(params: PARAMS) => AnyProjectEditor} f
  * @return {(params: PARAMS) => AnyProjectEditor}
  */
-export function chattyEditorFactory<PARAMS>(f: (params: PARAMS) => AnyProjectEditor): (params: PARAMS) => ProjectEditor {
+export function chattyEditorFactory<PARAMS>(editorName: string, f: (params: PARAMS) => AnyProjectEditor): (params: PARAMS) => ProjectEditor {
     return params => {
         const underlyingEditor: AnyProjectEditor = f(params);
-        return chattyEditor(underlyingEditor);
+        return chattyEditor(editorName, underlyingEditor);
     };
 }
 
 /**
  * Wrap this editor to make it chatty, so it responds to
  * Slack if there's nothing to do
+ * @param editorName name of the editor
  * @param {AnyProjectEditor} underlyingEditor
  * @return {(project: GitProject, context, parms) => Promise<any | EditResult>}
  */
-export function chattyEditor(underlyingEditor: AnyProjectEditor): ProjectEditor {
+export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
             const editResult = await toEditor(underlyingEditor)(project, context, parms);
-            logger.info("chattyEditor: git status on %j is %j: editResult=%j", project.id, await project.gitStatus(), editResult);
+            logger.info("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
             if (!editResult.edited) {
-                await context.messageClient.respond(`Nothing to do on \`${id.url}\``);
+                await context.messageClient.respond(`*${editorName}*: Nothing to do on \`${id.url}\``);
             }
             return editResult;
         } catch (err) {
-            await context.messageClient.respond(`Nothing done on \`${id.url}\``);
+            await context.messageClient.respond(`*${editorName}*: Nothing done on \`${id.url}\``);
             logger.warn("Editor error acting on %j: %s", project.id, err);
             return { target: project, edited: false, success: false } as EditResult;
         }

@@ -70,7 +70,7 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
         ...details,
     };
     return editorHandler(
-        chattyEditorFactory(edd) as any,
+        chattyEditorFactory(name, edd) as any,
         toEditorOrReviewerParametersMaker(paramsMaker),
         name,
         detailsToUse);
