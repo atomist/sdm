@@ -15,9 +15,9 @@ This repository is a *reference implementation* of Atomist, which focuses on the
 ## Concepts
 This repository shows how Atomist can automate important tasks and improve your delivery flow. Specifically:
 
-- How Atomist command handlers can be used to create services
+- How Atomist **command handlers** can be used to create services
 the right way every time, and help keep them up to date 
-- How Atomist event handlers can drive and improve a custom delivery experience, from commit through 
+- How Atomist **event handlers** can drive and improve a custom delivery experience, from commit through 
 to deployment and testing
 
 It demonstrates Atomist as the *API for software*, exposing
@@ -53,8 +53,9 @@ with its previous knowledge, and invokes your event handlers with rich context. 
 
 - Scanning code for security or quality issues on every push
 - Driving deployments and promotion between environments
+- Perform custom actions on deployment, such as kick off integration test suites.
 
-It also enables Atomist to provide you with visibility throughout the commit to deployment flow, in Slack or through the Atomist web dashboard.
+Its correlated event model also enables Atomist to provide you with visibility throughout the commit to deployment flow, in Slack or through the Atomist web dashboard.
 
 Event handlers subscribe to events using GraphQL subscriptions. The following example subscribes to completed builds:
 
@@ -89,7 +90,7 @@ subscription OnBuildComplete {
   }
 }
 ```
-Given our use of typescript, an event handler can subscribe to such events with the benefit of strong typing. For example, this Atomist event handler can respond to the above GraphQL subscription:
+When using TypeScript (our recommended language), an event handler can subscribe to such events with the benefit of strong typing. For example, this Atomist event handler can respond to the above GraphQL subscription:
 
 ```typescript
 @EventHandler("Set status on build complete",
@@ -101,18 +102,10 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     	params: this): Promise<HandlerResult> {
 ```
 
-This repository
-includes event handlers that subscribe to some of the most important events in a typical
-delivery flow. This enables dynamic and sophisticated delivery processes that are consistent across
-multiple projects.
-
-## Core Concepts
-This reference implementation has the following core concepts:
-
-- Key goals in the delivery flow, with easy ways to respond to them
-- Additional event handlers, relating to issues
-- Other automations, allowing you to create new services and update existing services
-- A buildable software delivery machine
+> This repository
+> includes event handlers that subscribe to some of the most important events in a typical
+> delivery flow. This enables dynamic and sophisticated delivery processes that are consistent across
+> multiple projects.
 
 ## Events and Goals
 
@@ -124,13 +117,12 @@ and also demonstrate how to add GitHub topics based on initial repo content.
 - _On push to a repo._ This is often a trigger for code review or other actions based on code. Specifically, we allow
    - Analysis of semantic diffs: What is the meaning of what changed?
 	- Code review, including using external tools such as Checkstyle
-	- Autofixes
-	- Arbitrary actions on the code, such as notifying people or systems of the changes
-- _On build result_
-- _On image link._ A trigger for deployment.
+	- Autofixes: Linting or making other automatic corrections such as supplying missing license files
+	- Arbitrary actions on the code, such as notifying people or systems of significant changes
+- _On build result_: For example, notifying a committer who has broken the build, or setting a build status.
+- _On image link (a binary artifact has been built)_ A trigger for deployment.
 - _On successful deployment_, as shown by a GitHub status.
 - _On validation of a deployed endpoint_, as shown by a GitHub status.
-
 
 ## Structure of This Project
 
@@ -267,8 +259,9 @@ A push to the source control hosting system is typically a very important trigge
 
 - Code Review
 - Code
+- tbc
 
-There are multiple listeners associated with pushes.
+There are multiple domain-specific listeners associated with pushes.
 
 Most of the listeners use or extend `ProjectListener`, which listens to the following extension of `ListenerInvocation`:
 
@@ -392,9 +385,11 @@ tbc
 
 Your event listeners need to be invoked by Atomist handlers. The `SoftwareDeliveryMachine` takes care of this, ensuring that the correct handlers are emitted for use in `atomist.config.ts`.
 
-It also allows you to use a fluent builder approach to adding command handlers. generators and editors.
+It also allows you to use a fluent builder approach to adding command handlers, generators and editors.
 
 ### Example
+For example:
+
 ```typescript
     const sdm = new SoftwareDeliveryMachine(
         {
@@ -435,9 +430,8 @@ It also allows you to use a fluent builder approach to adding command handlers. 
             tagRepo(springBootTagger),
             suggestAddingCloudFoundryManifest,
             PublishNewRepo)
-        .addProjectReviewers(logReview);
-   
-    sdm.addCodeReactions(listChangedFiles)
+        .addProjectReviewers(logReview)
+        .addCodeReactions(listChangedFiles)
         .addFingerprinters(mavenFingerprinter)
         .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)
@@ -457,7 +451,7 @@ It also allows you to use a fluent builder approach to adding command handlers. 
 ```
 The `SoftwareDeliveryMachine` instance will create the necessary Atomist event handlers to export.
 
-In `atomist.config.ts` you can bring them in as follows:
+In `atomist.config.ts` you can bring them in simply as follows:
 
 ```typescript
 commands: assembled.commandHandlers.concat([
@@ -504,6 +498,12 @@ To start up these project, you will need the following on the deployment node:
 - JDK, for Maven and Checkstyle
 - Maven, with `mvn` on the path
 
+To start the project, type:
+
+```
+atomist start
+```
+
 
 ### Environment Variables
 
@@ -529,7 +529,7 @@ export USE_CHECKSTYLE=true
 export CHECKSTYLE_PATH="/Users/rodjohnson/tools/checkstyle-8.8/checkstyle-8.8-all.jar"
 ```
 
-Get checkstyle-8.8-all.jar from [Checkstyle's download page](https://sourceforge.net/projects/checkstyle/files/checkstyle/8.8/).
+Get `checkstyle-8.8-all.jar` from [Checkstyle's download page](https://sourceforge.net/projects/checkstyle/files/checkstyle/8.8/).
 
 ## Roadmap
 
