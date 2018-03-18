@@ -507,7 +507,15 @@ To start up these project, you will need the following on the deployment node:
 
 ### Environment Variables
 
-- `ATOMIST_WORKSPACE`: The Atomist workspace this automation will serve. For example, `export ATOMIST_WORKSPACE="T5964N9B7"`
+- `ATOMIST_WORKSPACE`: A single Atomist workspace this automation will serve. For example, `export ATOMIST_WORKSPACE="T5964N9B7"`. Alternatively you can subscribe to events from multiple workspaces if you have multiple keys of the form `ATOMIST_WORKSPACE_<name>`. For example:
+
+```bash
+export ATOMIST_WORKSPACE_SPRING_TEAM="T5964N9B7"
+export ATOMIST_WORKSPACE_COMMUNITY="T29E48P34"
+```
+If an `ATOMIST_WORKSPACE` environment variable is specified, it will always take precedence and other
+named workspaces will be ignored.
+
 - `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
 one or two checks occur when they are not available, and a GitHub token must be supplied.
 

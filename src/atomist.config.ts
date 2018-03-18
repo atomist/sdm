@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
+import * as _ from "lodash";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
-import { affirmationEditor, branchAffirmationEditor } from "./software-delivery-machine/commands/editors/demo/affirmationEditor";
-import { breakBuildEditor, unbreakBuildEditor } from "./software-delivery-machine/commands/editors/demo/breakBuild";
-import { javaAffirmationEditor, javaBranchAffirmationEditor } from "./software-delivery-machine/commands/editors/demo/javaAffirmationEditor";
-import { removeFileEditor } from "./software-delivery-machine/commands/editors/helper/removeFile";
 
 // tslint:disable-next-line:no-var-requires
 const pj = require(`${appRoot.path}/package.json`);
+
+/**
+ * Prefix for Atomist workspaces in config
+ * @type {string}
+ */
+const AtomistWorkspacePrefix = "ATOMIST_WORKSPACE_";
 
 const token = process.env.GITHUB_TOKEN;
 
@@ -41,18 +45,8 @@ export const configuration: Configuration = {
     version: pj.version,
     // <-- obtain the ID from the settings page of your Atomist workspace at https://app.atomist.com,
     // then set your env variable
-    teamIds: [
-        process.env.ATOMIST_WORKSPACE,
-    ],
-    commands: assembled.commandHandlers.concat([
-        () => affirmationEditor,
-        () => branchAffirmationEditor,
-        () => breakBuildEditor,
-        () => unbreakBuildEditor,
-        () => javaAffirmationEditor,
-        () => javaBranchAffirmationEditor,
-        () => removeFileEditor,
-    ]),
+    teamIds: extractWorkspacesFromEnvironment(),
+    commands: assembled.commandHandlers.concat([]),
     events: assembled.eventHandlers.concat([]),
     token,
     http: {
@@ -62,3 +56,25 @@ export const configuration: Configuration = {
         enabled: true,
     },
 };
+
+/**
+ * Extract workspaces from environment variables
+ * @return {string[]}
+ */
+function extractWorkspacesFromEnvironment(): string[] {
+    if (!!process.env.ATOMIST_WORKSPACE) {
+        return [process.env.ATOMIST_WORKSPACE];
+    }
+
+    let workspaces: string[] = [];
+    for (const key in process.env) {
+        if (key.startsWith(AtomistWorkspacePrefix)) {
+            const teamId = process.env[key];
+            logger.info("Adding workspace %s, team id=%s", key.substr(AtomistWorkspacePrefix.length), teamId);
+            workspaces.push(teamId);
+        }
+    }
+    workspaces = _.uniq(workspaces);
+    logger.info("Teams to be used=%s", workspaces.join());
+    return workspaces;
+}

@@ -29,7 +29,7 @@ export class PushRule {
 
     public readonly pushTest: PushTest;
 
-    constructor(private guard1: PushTest, private guards: PushTest[], public reason: string = undefined) {
+    constructor(private guard1: PushTest, private guards: PushTest[], public reason?: string) {
         this.pushTest = allSatisfied(guard1, ...guards);
     }
 
