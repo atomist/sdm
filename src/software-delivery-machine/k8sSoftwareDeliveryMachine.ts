@@ -25,6 +25,7 @@ import {
     LocalDeploymentGoals,
 } from "../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
+import { IsDeployEnabled } from "../common/listener/support/deployPushTests";
 import {
     HasSpringBootApplicationClass,
     IsMaven,
@@ -39,7 +40,7 @@ import {
 import { not } from "../common/listener/support/pushTestUtils";
 import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy,
-    enableDeploy } from "../handlers/commands/ToggleDeployEnablement";
+    enableDeploy } from "../handlers/commands/SetDeployEnablement";
 import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import {
     K8sProductionDeployOnSuccessStatus,
@@ -53,7 +54,6 @@ import { addDemoEditors } from "./demoEditors";
 import { addNodeSupport } from "./nodeSupport";
 import { addSpringSupport } from "./springSupport";
 import { addTeamPolicies } from "./teamPolicies";
-import { IsDeployEnabled } from "../common/listener/support/deployPushTests";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(

@@ -32,7 +32,7 @@ import {
 import { success } from "../../util/slack/messages";
 
 @Parameters()
-export class ToggleDeployEnablementParameters {
+export class SetDeployEnablementParameters {
 
     @MappedParameter(MappedParameters.GitHubOwner)
     public owner: string;
@@ -45,8 +45,8 @@ export class ToggleDeployEnablementParameters {
 
 }
 
-function toggleEnablement(enable: boolean) {
-    return (ctx: HandlerContext, params: ToggleDeployEnablementParameters) => {
+function setEnablement(enable: boolean) {
+    return (ctx: HandlerContext, params: SetDeployEnablementParameters) => {
         const deployEnablement: DeployEnablement = {
             state: enable ? "requested" : "disabled",
             owner: params.owner,
@@ -62,20 +62,20 @@ function toggleEnablement(enable: boolean) {
     };
 }
 
-export function enableDeploy(): HandleCommand<ToggleDeployEnablementParameters> {
+export function enableDeploy(): HandleCommand<SetDeployEnablementParameters> {
     return commandHandlerFrom(
-        toggleEnablement(true),
-        ToggleDeployEnablementParameters,
+        setEnablement(true),
+        SetDeployEnablementParameters,
         "EnableDeploy",
         "Enable deployment via Atomist SDM",
         "enable deploy",
     );
 }
 
-export function disableDeploy(): HandleCommand<ToggleDeployEnablementParameters> {
+export function disableDeploy(): HandleCommand<SetDeployEnablementParameters> {
     return commandHandlerFrom(
-        toggleEnablement(false),
-        ToggleDeployEnablementParameters,
+        setEnablement(false),
+        SetDeployEnablementParameters,
         "DisableDeploy",
         "Disable deployment via Atomist SDM",
         "disable deploy",
