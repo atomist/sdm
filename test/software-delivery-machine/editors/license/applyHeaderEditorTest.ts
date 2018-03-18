@@ -15,7 +15,11 @@ const Context = {
             return undefined;
         },
     },
-}as any;
+} as any;
+
+import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
+import * as fs from "fs";
+import * as tmp from "tmp-promise";
 
 describe("applyHeaderEditor", () => {
 
@@ -28,6 +32,23 @@ describe("applyHeaderEditor", () => {
         assert(p.fileExistsSync("src/main/java/Thing1.java"));
         const content = p.findFileSync("src/main/java/Thing1.java").getContentSync();
         assert(content.startsWith(ApacheHeader));
+    });
+
+    it("should add header when not found and persist to disk", async () => {
+        const tmpDir = tmp.dirSync({unsafeCleanup: true}).name;
+        const p = new NodeFsLocalProject(new SimpleRepoId("owner", "repoName"), tmpDir);
+        p.addFileSync("src/main/java/Thing.java", WithApacheHeader);
+        p.addFileSync("src/main/java/Thing1.java", "public class Thing1 {}");
+        const c1 = fs.readFileSync(tmpDir + "/src/main/java/Thing1.java");
+        assert(!c1.toString().startsWith(ApacheHeader), "Header should not yet be there");
+        assert(!!c1);
+        const params = new ApplyHeaderParameters();
+        await applyHeaderProjectEditor(p, Context, params);
+        assert(p.fileExistsSync("src/main/java/Thing1.java"));
+        const content = p.findFileSync("src/main/java/Thing1.java").getContentSync();
+        assert(content.startsWith(ApacheHeader));
+        const c2 = fs.readFileSync(tmpDir + "/src/main/java/Thing1.java");
+        assert(c2.toString().startsWith(ApacheHeader), "Should have persisted to file system");
     });
 
     it("should not add header when already present", async () => {

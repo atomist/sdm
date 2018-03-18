@@ -68,6 +68,7 @@ export async function applyHeaderProjectEditor(p: Project,
         if (alreadyHasHeader(content)) {
             return ctx.messageClient.respond(`\`${f.path}\` already has a different header`);
         }
+        logger.info("Adding header of length %d to %s", params.header.length, f.path);
         ++headersAdded;
         return f.setContent(params.header + "\n\n" + content);
     });

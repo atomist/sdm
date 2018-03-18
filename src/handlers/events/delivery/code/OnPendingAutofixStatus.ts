@@ -32,15 +32,9 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { editOne } from "@atomist/automation-client/operations/edit/editAll";
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { AutofixRegistration, relevantCodeActions } from "../../../../common/delivery/code/codeActionRegistrations";
+import { executeAutofixes } from "../../../../common/delivery/code/autofix/executeAutofixes";
+import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { PushTestInvocation } from "../../../../common/listener/GoalSetter";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnAnyPendingStatus, StatusState } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
@@ -70,7 +64,7 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const repoRefWithSha = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
         if (status.context !== params.goal.context || status.state !== "pending") {
@@ -79,32 +73,12 @@ export class OnPendingAutofixStatus implements HandleEvent<OnAnyPendingStatus.Su
         }
 
         try {
-            if (params.registrations.length > 0) {
-                const project = await GitCommandGitProject.cloned(credentials, id);
-                const pti: PushTestInvocation = {
-                    id,
-                    project,
-                    credentials,
-                    context,
-                    addressChannels: addressChannelsFor(commit.repo, context),
-                    push: commit.pushes[0],
-                };
-                const editors = await relevantCodeActions<AutofixRegistration>(params.registrations, pti);
-                logger.info("Will apply %d eligible autofixes to %j", editors.length, id);
-                const editorChain = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
-                if (!!editorChain) {
-                    const editMode: BranchCommit = {
-                        branch: commit.pushes[0].branch,
-                        message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
-                    };
-                    logger.info("Editing %j with mode=%j", id, editMode);
-                    await editOne(context, credentials, editorChain, editMode, id);
-                }
-            }
-            await markStatus(id, params.goal, StatusState.success, credentials);
+            await executeAutofixes(commit, context, credentials, params.registrations);
+            await markStatus(repoRefWithSha, params.goal, StatusState.success, credentials);
             return Success;
         } catch (err) {
-            await markStatus(id, params.goal, StatusState.error, credentials);
+            logger.info("Error executing autofixes on %s", repoRefWithSha.url, err);
+            await markStatus(repoRefWithSha, params.goal, StatusState.error, credentials);
             return failure(err);
         }
     }
