@@ -67,7 +67,7 @@ export async function applyHeaderProjectEditor(p: Project,
         if (content.includes(params.header)) {
             return;
         }
-        if (alreadyHasHeader(content)) {
+        if (alreadyHasHeader(params.header, content)) {
             return ctx.messageClient.respond(`\`${f.path}\` already has a different header`);
         }
         logger.info("Adding header of length %d to %s", params.header.length, f.path);
@@ -81,7 +81,6 @@ export async function applyHeaderProjectEditor(p: Project,
     return p;
 }
 
-function alreadyHasHeader(content: string): boolean {
-    // TODO this is naive...could match a non license header
-    return content.startsWith("/*") && !content.startsWith("/**");
+function alreadyHasHeader(header: string, content: string): boolean {
+    return content.startsWith("/*") && !content.startsWith(header);
 }

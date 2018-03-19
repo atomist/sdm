@@ -19,6 +19,7 @@ import { affirmationEditor } from "./commands/editors/demo/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./commands/editors/demo/breakBuild";
 import { javaAffirmationEditor } from "./commands/editors/demo/javaAffirmationEditor";
 import { removeFileEditor } from "./commands/editors/helper/removeFile";
+import { whackHeaderEditor } from "./commands/editors/demo/removeTypeScriptHeader";
 
 /**
  * Editors for use in demos
@@ -32,5 +33,6 @@ export function addDemoEditors(softwareDeliveryMachine: SoftwareDeliveryMachine)
             () => unbreakBuildEditor,
             () => javaAffirmationEditor,
             () => removeFileEditor,
+            () => whackHeaderEditor,
         );
 }
