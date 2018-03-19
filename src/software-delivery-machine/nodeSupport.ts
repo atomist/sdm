@@ -38,9 +38,9 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         //     seedOwner: "spring-team",
         //     seedRepo: "spring-rest-seed",
         // }, []))
-        .addNewRepoWithCodeActions(
-            tagRepo(nodeTagger),
-        )
+        // .addNewRepoWithCodeActions(
+        //     tagRepo(nodeTagger),
+        // )
         .addAutofixes(
             AddAtomistTypeScriptHeader,
             new LocalCommandAutofix("tslint",
