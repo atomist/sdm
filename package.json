@@ -24,6 +24,7 @@
     "app-root-path": "^2.0.1",
     "artifactory-publisher": "^1.1.4",
     "axios": "^0.18.0",
+    "base64-js": "^1.2.3",
     "build": "^0.1.4",
     "copyfiles": "^1.2.0",
     "curry": "^1.2.0",

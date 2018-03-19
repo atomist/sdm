@@ -23,6 +23,7 @@ import { HttpServiceGoals, LocalDeploymentGoals } from "../common/delivery/goals
 import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals } from "../common/delivery/goals/common/npmGoals";
 import { HasCloudFoundryManifest } from "../common/listener/support/cloudFoundryManifestPushTest";
+import { IsDeployEnabled } from "../common/listener/support/deployPushTests";
 import { HasSpringBootApplicationClass, IsMaven } from "../common/listener/support/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { NamedSeedRepo } from "../common/listener/support/NamedSeedRepo";
@@ -40,6 +41,7 @@ import { addDemoEditors } from "./demoEditors";
 import { addNodeSupport } from "./nodeSupport";
 import { addSpringSupport } from "./springSupport";
 import { addTeamPolicies } from "./teamPolicies";
+import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -54,7 +56,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             .itMeans("No material change to Java")
             .setGoals(NoGoals),
         whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
-            ToPublicRepo, not(NamedSeedRepo))
+            ToPublicRepo, not(NamedSeedRepo), IsDeployEnabled)
             .itMeans("Spring Boot service to deploy")
             .setGoals(HttpServiceGoals),
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
@@ -73,6 +75,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
             () => addCloudFoundryManifest,
+            () => enableDeploy(),
+            () => disableDeploy(),
         )
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
 

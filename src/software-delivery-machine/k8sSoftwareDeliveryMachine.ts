@@ -25,14 +25,12 @@ import {
     LocalDeploymentGoals,
 } from "../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
-import { NpmBuildGoals } from "../common/delivery/goals/common/npmGoals";
 import {
     HasSpringBootApplicationClass,
     IsMaven,
 } from "../common/listener/support/jvmPushTests";
 import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
-import { IsNode } from "../common/listener/support/nodeGuards";
 import {
     FromAtomist,
     ToDefaultBranch,
@@ -53,6 +51,8 @@ import { addDemoEditors } from "./demoEditors";
 import { addNodeSupport } from "./nodeSupport";
 import { addSpringSupport } from "./springSupport";
 import { addTeamPolicies } from "./teamPolicies";
+import { IsDeployEnabled } from "../common/listener/support/deployPushTests";
+import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -64,9 +64,13 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             artifactStore: DefaultArtifactStore,
         },
 
-        whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass,
+        whenPushSatisfies(
+            ToDefaultBranch,
+            IsMaven,
+            HasSpringBootApplicationClass,
             HasK8Spec,
-            ToPublicRepo)
+            ToPublicRepo,
+            IsDeployEnabled)
             .itMeans("Spring Boot service to deploy")
             .setGoals(HttpServiceGoals),
         whenPushSatisfies(not(FromAtomist), IsMaven, HasSpringBootApplicationClass)
@@ -78,7 +82,11 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
         onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
     sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
-        .addSupportingCommands(() => addK8sSpec)
+        .addSupportingCommands(
+            () => addK8sSpec,
+            () => enableDeploy(),
+            () => disableDeploy(),
+        )
         .addSupportingEvents(() => NoticeK8sTestDeployCompletion,
             () => NoticeK8sProdDeployCompletion)
         .addEndpointVerificationListeners(
