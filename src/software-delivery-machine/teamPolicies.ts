@@ -43,6 +43,37 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         .addSupportingCommands(
             () => disposeProjectHandler,
         )
-        .addSupportingEvents(OnDryRunBuildComplete);
+        .addSupportingEvents(OnDryRunBuildComplete)
+        /*.addAutofixes({
+            name: "License Fix",
+            action: async p => {
+                const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
+                return p.addFile("LICENSE", license.data);
+            },
+        })*/
+        /*.addCodeReactions(async cri => {
+            const status = await cri.project.gitStatus();
+            const result = await cri.context.graphClient.executeQuery<any, any>(
+                `query Commit($sha: String!) {
+                            Commit(sha: $sha) {
+                                sha
+                                message
+                                author {
+                                    login
+                                    person {
+                                        chatId {
+                                            screenName
+                                        }
+                                    }
+                                }
+                            }
+                      }`,
+                { sha: status.sha });
+
+            const message = result.Commit[0].message;
+            if (message.split("\n").length < 2) {
+                return cri.addressChannels(`Commit \`${status.sha.slice(0, 6)}\` doesn't have a proper commit message :rage:`);
+            }
+        })*/;
     // .addFingerprintDifferenceListeners(diff1)
 }
