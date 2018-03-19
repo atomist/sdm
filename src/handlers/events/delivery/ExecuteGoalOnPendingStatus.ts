@@ -69,6 +69,14 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
             logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
             return Success;
         }
+        // this will change when we have Goal events that don't double-up the pending bit
+        if (status.description === params.goal.workingDescription) {
+            logger.info("This one is working.");
+            return Success;
+        }
+        if(status.description !== params.goal.requestedDescription) {
+            logger.warn("This pending status doesn't look right: " + status.context + " expected: " + params.goal.requestedDescription)
+        }
 
         try {
             const result = await executeGoal(this.execute, status, ctx, params);
