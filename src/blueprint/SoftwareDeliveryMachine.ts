@@ -15,7 +15,6 @@
  */
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
     ArtifactGoal,
@@ -64,7 +63,7 @@ import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { OnPendingCodeReactionStatus } from "../handlers/events/delivery/code/OnPendingCodeReactionStatus";
+import { executeCodeReactions } from "../handlers/events/delivery/code/executeCodeReactions";
 import { OnPendingReviewStatus } from "../handlers/events/delivery/code/OnPendingReviewStatus";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
@@ -149,7 +148,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get fingerprinter(): FunctionalUnit {
         return {
             eventHandlers: this.fingerprinters.length > 0 ?
-                [() => new ExecuteGoalOnPendingStatus("Fingerprinter", FingerprintGoal, executeFingerprints(...this.fingerprinters))] :
+                [() => new ExecuteGoalOnPendingStatus("Fingerprinter",
+                    FingerprintGoal,
+                    executeFingerprints(...this.fingerprinters))] :
                 [],
             commandHandlers: [
                 () => retryGoal("Fingerprinter", FingerprintGoal),
@@ -167,14 +168,22 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new OnPendingReviewStatus(ReviewGoal, this.reviewerRegistrations);
     }
 
-    private get codeReactionsHandler(): Maker<OnPendingCodeReactionStatus> {
-        return () => new OnPendingCodeReactionStatus(CodeReactionGoal, this.codeReactions);
+    private get codeReactionHandling(): FunctionalUnit {
+        return {
+            eventHandlers: [
+                () => new ExecuteGoalOnPendingStatus("CodeReactions",
+                    CodeReactionGoal,
+                    executeCodeReactions(this.codeReactions), true)
+            ],
+            commandHandlers: []
+        };
     }
 
     private get autofix(): FunctionalUnit {
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal, executeAutofixes(this.autofixRegistrations))
+                () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal,
+                    executeAutofixes(this.autofixRegistrations), true)
             ],
             commandHandlers: []
         };
@@ -260,6 +269,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.fingerprinter,
                 this.verifyEndpoint,
                 this.autofix,
+                this.codeReactionHandling,
             ]);
     }
 
@@ -275,7 +285,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,
                 this.reviewHandler,
-                this.codeReactionsHandler,
                 this.goalSetting,
                 this.oldPushSuperseder,
                 this.onSuperseded,
