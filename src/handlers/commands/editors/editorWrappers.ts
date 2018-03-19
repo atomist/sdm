@@ -51,7 +51,8 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
-            const editResult = await toEditor(underlyingEditor)(project, context, parms);
+            const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
+            const editResult = await confirmEditedness(tentativeEditResult);
             logger.info("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
             if (!editResult.edited) {
                 await context.messageClient.respond(`*${editorName}*: Nothing to do on \`${id.url}\``);
@@ -94,4 +95,16 @@ export function localCommandsEditor(commands: SpawnCommand[],
         const status = await p.gitStatus();
         return {edited: !status.isClean, target: p, success: !commandResult.error};
     };
+}
+
+async function confirmEditedness(editResult: EditResult): Promise<EditResult> {
+    if (editResult.edited === undefined) {
+        const gs = await (editResult.target as GitProject).gitStatus();
+        return {
+            ...editResult,
+            edited: !gs.isClean,
+        };
+    } else {
+        return editResult;
+    }
 }
