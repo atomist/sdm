@@ -54,7 +54,7 @@ export function createStatus(token: string, rr: GitHubRepoRef, inputStatus: Stat
  */
 function ensureValidUrl(inputStatus: Status): Status {
 
-    if (inputStatus.target_url === undefined) {
+    if (inputStatus.target_url === undefined || inputStatus.target_url === "") {
         return inputStatus;
     }
     if (inputStatus.target_url.startsWith("http")) {
