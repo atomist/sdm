@@ -4,6 +4,7 @@ import { doWithFiles } from "@atomist/automation-client/project/util/projectUtil
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 @Parameters()
 export class ApplyHeaderParameters extends RequestedCommitParameters {
@@ -74,15 +75,17 @@ export async function applyHeaderProjectEditor(p: Project,
         ++headersAdded;
         return f.setContent(params.header + "\n\n" + content);
     });
+    const sha: string = !!(p as GitProject).gitStatus ? (await (p as GitProject).gitStatus()).sha : p.id.sha;
     logger.info("%d files matched [%s]. %s headers added. %d files skipped", matchingFiles, params.glob, headersAdded, matchingFiles - headersAdded);
     if (headersAdded > 0) {
-        await ctx.messageClient.respond(`*License header editor*: ${matchingFiles} files matched \`${params.glob}\`. ${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped ${params.successEmoji}`);
+        await ctx.messageClient.respond(`*License header editor* on \`${sha}\`: ${matchingFiles} files matched \`${params.glob}\`. ` +
+            `${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped ${params.successEmoji}`);
     }
     return p;
 }
 
 function hasDifferentHeader(header: string, content: string): boolean {
-    if(content.startsWith("/*")) {
+    if (content.startsWith("/*")) {
         if (content.startsWith(header)) {
             // great
             return false;

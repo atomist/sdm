@@ -36,6 +36,13 @@ export const whackHeaderEditor: HandleCommand = editorCommand(
 
 const HeaderRegex = /^\/\*[\s\S]*?\*\/\s*/;
 
+/**
+ * Whack the first TypeScript header we get hold off.
+ * Intended for demo use.
+ * @param {Project} p
+ * @param {HandlerContext} ctx
+ * @return {Promise<Project>}
+ */
 const whackSomeHeader: SimpleProjectEditor = (p, ctx) => {
     let count = 0;
     return doWithFiles(p, "src/**/*.ts", async f => {
@@ -46,7 +53,7 @@ const whackSomeHeader: SimpleProjectEditor = (p, ctx) => {
         if (count++ >= 1) {
             return;
         }
-        await ctx.messageClient.respond(`Removing a header from ${f.path}`);
+        await ctx.messageClient.respond(`Removing a header from \`${f.path}\``);
         return f.setContent(fileContent.replace(HeaderRegex, ""));
     });
 };

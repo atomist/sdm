@@ -69,8 +69,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): Executor
                         message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
                     };
                     logger.info("Editing %s with mode=%j", pti.id.url, editMode);
-                    await
-                        editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
+                    await editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
                             pti.project, singleEditor, editMode);
                 }
                 return Success;
