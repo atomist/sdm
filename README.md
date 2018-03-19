@@ -1,9 +1,13 @@
 # GitHub SDM
 
-**GitHub Software Delivery Machine**: An Atomist reference implementation.
+GitHub **Software Delivery Machine**: An Atomist reference implementation.
 
-## What is a "Software Delivery Machine?"
-A **software delivery machine** is a development process in a box. It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by Atomist's *API for software*.
+## What is a Software Delivery Machine?
+>A **software delivery machine** is a development process in a box. 
+
+It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by Atomist's *API for software*.
+
+> Many teams have a blueprint in their mind for how they'd like to deliver software and ease their day to day work, but find it hard to realize. A Software Delivery Machine makes it possible.
 
 ## Implementations of Atomist
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
