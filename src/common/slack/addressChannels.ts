@@ -45,7 +45,7 @@ export function messageDestinationsFor(hasChannels: HasChannels, ctx?: HandlerCo
 
     // TODO: support multiple slack teams. Return an Array<Destination>
     const slackTeam = hasChannels.channels[0].team.id;
-    return addressSlackChannels(slackTeam, channelNames[0], ...channelNames);
+    return addressSlackChannels(slackTeam, channelNames[0], ...channelNames.slice(1));
 }
 
 export function addressDestinations(ctx: HandlerContext, ...destinations: Destination[]): AddressChannels {
