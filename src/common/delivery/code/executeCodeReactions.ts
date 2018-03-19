@@ -38,21 +38,22 @@ export function executeCodeReactions(codeReactions: CodeReactionListener[]): Goa
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         if (codeReactions.length > 0) {
-                const project = await GitCommandGitProject.cloned(credentials, id);
-                const push = commit.pushes[0];
-                const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
+            const project = await GitCommandGitProject.cloned(credentials, id);
+            const push = commit.pushes[0];
+            const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
 
-                const i: CodeReactionInvocation = {
-                    id,
-                    context: ctx,
-                    addressChannels,
-                    project,
-                    credentials,
-                    filesChanged,
-                };
-                const allReactions: Promise<any> =
-                    Promise.all(codeReactions.map(reaction => reaction(i)));
-                await allReactions;
-            }
+            const i: CodeReactionInvocation = {
+                id,
+                context: ctx,
+                addressChannels,
+                project,
+                credentials,
+                filesChanged,
+            };
+            const allReactions: Promise<any> =
+                Promise.all(codeReactions.map(reaction => reaction(i)));
+            await allReactions;
+        }
+        return Success;
     };
 }
