@@ -65,7 +65,7 @@ import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymen
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { executeCodeReactions } from "../handlers/events/delivery/code/executeCodeReactions";
-import { executeReview } from "../handlers/events/delivery/code/OnPendingReviewStatus";
+import { executeReview } from "../handlers/events/delivery/code/executeReview";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
