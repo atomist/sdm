@@ -21,6 +21,7 @@ import { IsTypeScript } from "../common/listener/support/tsPushTests";
 import { tagRepo } from "../common/listener/tagRepo";
 import { asSpawnCommand } from "../util/misc/spawned";
 import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistTypeScriptHeader";
+import { whackHeaderEditor } from "./commands/editors/demo/removeTypeScriptHeader";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
 
 /**

@@ -15,11 +15,10 @@
  */
 
 import { HandleCommand } from "@atomist/automation-client";
-import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
-import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
+import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
@@ -29,22 +28,9 @@ import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
 export const affirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToReadMe,
     "affirmation",
-    EmptyParameters,
+    () => new RequestedCommitParameters("Everyone needs encouragement"),
     {
-        editMode: commitToMaster("Everyone needs encouragement sometimes"),
-    },
-);
-
-export const branchAffirmationEditor: HandleCommand = editorCommand(
-    () => appendAffirmationToReadMe,
-    "branch affirmation",
-    OptionalBranchParameters,
-    {
-        // Be sure to create a new instance each time to ensure unique branch names
-        editMode: bap => ({
-            message: `Everyone needs encouragement to write Java`,
-            branch: bap.branch || "ja-" + new Date().getTime(),
-        }),
+        editMode: ap => ap.editMode,
     },
 );
 
@@ -66,9 +52,9 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToReadMe: SimpleProjectEditor = async (p, ctx) => {
+export const appendAffirmationToReadMe: SimpleProjectEditor<RequestedCommitParameters> = async (p, ctx, params) => {
     const affirmation = randomAffirmation();
-    await ctx.messageClient.respond(`Adding to \`README.md\`: _${affirmation}_`);
+    await ctx.messageClient.respond(`Adding to \`README.md\` via \`${params.branchToUse}\`: _${affirmation}_`);
     return doWithFiles(p, "README.md", async f => {
         const content = await f.getContent();
         return f.setContent(`${content}\n${affirmation}\n`);

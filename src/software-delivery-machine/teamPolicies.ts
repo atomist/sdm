@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import axios from "axios";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
 import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
 import { disposeProjectHandler } from "./blueprint/deploy/dispose";
@@ -35,6 +36,13 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         .addEditors(
             () => applyApacheLicenseHeaderEditor,
         )
+        .addAutofixes({
+            name: "License Fix",
+            action: async p => {
+                const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
+                return p.addFile("LICENSE", license.data);
+            },
+        })
         .addNewRepoWithCodeActions(
             PublishNewRepo)
 

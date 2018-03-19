@@ -45,78 +45,39 @@ import {
 } from "../../../../typings/types";
 import { filesChangedSince } from "../../../../util/git/filesChangedSince";
 import { createStatus } from "../../../../util/github/ghub";
+import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
 
-/**
- * Invoke any arbitrary CodeReactions on a push.
- * Result is setting GitHub status with context = "scan"
- */
-@EventHandler("React to code", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnAnyPendingStatus",
-    __dirname),
-)
-export class OnPendingCodeReactionStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
-
-    @Secret(Secrets.OrgToken)
-    private githubToken: string;
-
-    constructor(public goal: Goal,
-                private codeReactions: CodeReactionListener[]) {
-    }
-
-    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
-                        context: HandlerContext,
-                        params: this): Promise<HandlerResult> {
-        const status = event.data.Status[0];
+export function executeCodeReactions(codeReactions: CodeReactionListener[]): Executor {
+    return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
-        logger.info("Will run %d code reactions on %j", params.codeReactions.length, id);
+        logger.info("Will run %d code reactions on %j", codeReactions.length, id);
 
         if (status.context !== params.goal.context || status.state !== "pending") {
             logger.warn(`I was looking for ${params.goal.context} being pending, but I heard about ${status.context} being ${status.state}`);
             return Success;
         }
 
-        const addressChannels = addressChannelsFor(commit.repo, context);
-        try {
-            if (params.codeReactions.length > 0) {
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        if (codeReactions.length > 0) {
                 const project = await GitCommandGitProject.cloned(credentials, id);
                 const push = commit.pushes[0];
                 const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
 
                 const i: CodeReactionInvocation = {
                     id,
-                    context,
+                    context: ctx,
                     addressChannels,
                     project,
                     credentials,
                     filesChanged,
                 };
-                const codeReactions: Promise<any> =
-                    Promise.all(params.codeReactions
-                        .map(reaction => reaction(i)));
-                await codeReactions;
+                const allReactions: Promise<any> =
+                    Promise.all(codeReactions.map(reaction => reaction(i)));
+                await allReactions;
             }
-
-            await markScanned(id,
-                params.goal,  StatusState.success, credentials);
-            return Success;
-        } catch (err) {
-            await markScanned(id,
-                params.goal,  StatusState.error, credentials);
-            return failure(err);
-        }
-    }
-}
-
-// TODO this should take a URL with detailed information
-function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
-                     creds: ProjectOperationCredentials): Promise<any> {
-    return createStatus((creds as TokenCredentials).token, id, {
-        state,
-        context: goal.context,
-        description: goal.completedDescription,
-    });
+    };
 }

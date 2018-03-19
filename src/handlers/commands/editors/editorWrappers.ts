@@ -21,6 +21,10 @@ import {
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { spawn, SpawnOptions } from "child_process";
+import { ConsoleProgressLog } from "../../../common/log/progressLogs";
+import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
 
 /**
  * Decorate an editor factory to make editors it creates chatty, so they respond to
@@ -47,7 +51,8 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
-            const editResult = await toEditor(underlyingEditor)(project, context, parms);
+            const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
+            const editResult = await confirmEditedness(tentativeEditResult);
             logger.info("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
             if (!editResult.edited) {
                 await context.messageClient.respond(`*${editorName}*: Nothing to do on \`${id.url}\``);
@@ -56,7 +61,50 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
         } catch (err) {
             await context.messageClient.respond(`*${editorName}*: Nothing done on \`${id.url}\``);
             logger.warn("Editor error acting on %j: %s", project.id, err);
-            return { target: project, edited: false, success: false } as EditResult;
+            return {target: project, edited: false, success: false} as EditResult;
         }
     };
+}
+
+/**
+ * Create a project editor wrapping spawned local commands
+ * run on the project
+ * @param {SpawnCommand[]} commands to execute
+ * @param log progress log (optional, stream to console if not passed in)
+ * @return {ProjectEditor}
+ */
+export function localCommandsEditor(commands: SpawnCommand[],
+                                    log: ProgressLog = ConsoleProgressLog): ProjectEditor {
+    return async (p: GitProject) => {
+        const opts: SpawnOptions = {cwd: p.baseDir};
+        let commandResult: ChildProcessResult;
+        for (const cmd of commands) {
+            logger.info("Executing command %s", stringifySpawnCommand(cmd));
+            commandResult = await watchSpawned(
+                spawn(cmd.command, cmd.args, opts),
+                log,
+                {
+                    errorFinder: (code, signal) => code !== 0,
+                    stripAnsi: true,
+                });
+            if (commandResult.error) {
+                logger.warn("Error in autofix: %s", commandResult.error);
+                break;
+            }
+        }
+        const status = await p.gitStatus();
+        return {edited: !status.isClean, target: p, success: !commandResult.error};
+    };
+}
+
+async function confirmEditedness(editResult: EditResult): Promise<EditResult> {
+    if (editResult.edited === undefined) {
+        const gs = await (editResult.target as GitProject).gitStatus();
+        return {
+            ...editResult,
+            edited: !gs.isClean,
+        };
+    } else {
+        return editResult;
+    }
 }

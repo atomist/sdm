@@ -15,21 +15,13 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess } from "child_process";
 import { TargetInfo } from "../../../../spi/deploy/Deployment";
 import { Targeter } from "../deploy";
 
-export interface BranchRepoRef extends RemoteRepoRef {
-    branch?: string;
-}
-
-export function isBranchRepoRef(rr: RemoteRepoRef): rr is BranchRepoRef {
-    return !!(rr as BranchRepoRef).branch;
-}
-
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
-    managedDeploymentKey: BranchRepoRef;
+    managedDeploymentKey: RemoteRepoRef;
 }
 
 export const ManagedDeploymentTargeter: Targeter<ManagedDeploymentTargetInfo> = (id: RemoteRepoRef, branch: string) => {
@@ -46,7 +38,7 @@ export const ManagedDeploymentTargeter: Targeter<ManagedDeploymentTargetInfo> = 
 // At least this makes it explicit we don't have it quite right yet
 export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTargetInfo {
     return {
-        managedDeploymentKey: {...id, branch: undefined},
+        managedDeploymentKey: id,
         name: "Run alongside this automation",
         description: `Locally run ${id.sha} from an unknown branch`,
     };
@@ -57,7 +49,7 @@ export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTa
  */
 export interface DeployedApp {
 
-    id: BranchRepoRef;
+    id: RepoRef;
 
     port: number;
 
@@ -83,7 +75,7 @@ export class ManagedDeployments {
      * @return {number}
      */
     public findPort(id: RemoteRepoRef): number {
-        const running = isBranchRepoRef(id) ?
+        const running = !!id.branch ?
             this.deployments
                 .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch) :
             this.deployments
@@ -101,7 +93,7 @@ export class ManagedDeployments {
      * @param {BranchRepoRef} id
      * @return {Promise<any>}
      */
-    public async terminateIfRunning(id: BranchRepoRef): Promise<any> {
+    public async terminateIfRunning(id: RemoteRepoRef): Promise<any> {
         const victim = this.deployments.find(d => d.id.sha === id.sha ||
             (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
         if (!!victim && !!victim.childProcess) {
