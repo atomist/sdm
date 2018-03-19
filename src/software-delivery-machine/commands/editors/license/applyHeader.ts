@@ -67,7 +67,7 @@ export async function applyHeaderProjectEditor(p: Project,
         if (content.includes(params.header)) {
             return;
         }
-        if (alreadyHasHeader(params.header, content)) {
+        if (hasDifferentHeader(params.header, content)) {
             return ctx.messageClient.respond(`\`${f.path}\` already has a different header`);
         }
         logger.info("Adding header of length %d to %s", params.header.length, f.path);
@@ -81,6 +81,14 @@ export async function applyHeaderProjectEditor(p: Project,
     return p;
 }
 
-function alreadyHasHeader(header: string, content: string): boolean {
-    return content.startsWith("/*") && !content.startsWith(header);
+function hasDifferentHeader(header: string, content: string): boolean {
+    if(content.startsWith("/*")) {
+        if (content.startsWith(header)) {
+            // great
+            return false;
+        }
+        logger.debug("I was looking for: " + header);
+        logger.debug("This file here starts with: " + content.slice(0, 300));
+        return true;
+    }
 }
