@@ -12,3 +12,5 @@ npm-debug.log
 /release
 graphql.config.json
 git-info.json
+
+/log/automation-client.log
