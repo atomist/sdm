@@ -511,15 +511,20 @@ atomist start
 
 ### Environment Variables
 
-- `ATOMIST_WORKSPACE`: A single Atomist workspace this automation will serve. For example, `export ATOMIST_WORKSPACE="T5964N9B7"`.
- Alternatively you can subscribe to events from multiple workspaces if you have multiple keys of the form `ATOMIST_WORKSPACE_<name>`. For example:
+- `ATOMIST_TEAM`: A single Atomist workspace this automation will serve. For example, `export ATOMIST_TEAM="T5964N9B7"`.
+
+Alternatively you can subscribe to events from multiple workspaces with `ATOMIST_TEAMS`. For example:
 
 ```bash
-export ATOMIST_WORKSPACE_SPRING_TEAM="T5964N9B7"
-export ATOMIST_WORKSPACE_COMMUNITY="T29E48P34"
+export ATOMIST_TEAMS="T5964N9B7,T29E48P34"
 ```
-If an `ATOMIST_WORKSPACE` environment variable is specified, it will always take precedence and other
+
+If an `ATOMIST_TEAMS` environment variable is specified, it will always take precedence and other
 named workspaces will be ignored.
+
+The workspace id of your Atomist workspace can be obtained from the dashboard running at: https://app.atomist.com. Once
+logged in, visit the Settings page of your selected workspace. Make sure to copy the Atomist workspace id; not the Slack 
+workspace id.
 
 - `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
 one or two checks occur when they are not available, and a GitHub token must be supplied.
@@ -535,6 +540,13 @@ export CHECKSTYLE_PATH="/Users/rodjohnson/tools/checkstyle-8.8/checkstyle-8.8-al
 ```
 
 Get `checkstyle-8.8-all.jar` from [Checkstyle's download page](https://sourceforge.net/projects/checkstyle/files/checkstyle/8.8/).
+
+In order to enable Pivotal Cloud Foundry deployment, the following environment variables are required:
+
+- `PIVOTAL_USER`: your Pivotal Cloud Foundry user name
+- `PIVOTAL_PASSWORD`: your Pivotal Cloud Foundry password 
+- `PCF_ORG`: your Pivotal Cloud Foundry organization name
+- `PCF_SPACE`: your Pivotal Cloud Foundry space name within `$PCE_ORG`
 
 ## Roadmap
 

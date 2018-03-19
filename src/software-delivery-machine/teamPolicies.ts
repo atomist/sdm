@@ -36,13 +36,6 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         .addEditors(
             () => applyApacheLicenseHeaderEditor,
         )
-        .addAutofixes({
-            name: "License Fix",
-            action: async p => {
-                const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
-                return p.addFile("LICENSE", license.data);
-            },
-        })
         .addNewRepoWithCodeActions(
             PublishNewRepo)
 
