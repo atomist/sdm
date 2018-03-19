@@ -30,7 +30,7 @@ import { RequestedCommitParameters } from "../support/RequestedCommitParameters"
 export const javaAffirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToJava,
     "java affirmation",
-    () => new RequestedCommitParameters("Everyone needs encouragement to create Java"),
+    () => new RequestedCommitParameters("Everyone needs encouragement to write Java"),
     {
         editMode: ap => ap.editMode,
         intent: "javakick",

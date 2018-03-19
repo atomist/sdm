@@ -209,8 +209,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders), true),
-                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders), true),
+                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
                 () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
                 () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
             ],
