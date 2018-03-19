@@ -22,20 +22,19 @@ import { ProjectEditor } from "@atomist/automation-client/operations/edit/projec
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { editRepo } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
-import { OnAnyPendingStatus } from "../../../../typings/types";
+import {
+    ExecuteGoalInvocation,
+    Executor,
+    StatusForExecuteGoal
+} from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { PushTestInvocation } from "../../../listener/GoalSetter";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
 
-export type CommitShape = OnAnyPendingStatus.Commit;
-
 /**
  * Execute autofixes against this push
  * Throw an error on failure
- * @param {CommitShape} commit
- * @param {HandlerContext} context
  * @param {ProjectOperationCredentials} credentials
  * @param {AutofixRegistration[]} registrations
  * @return {Promise<void>}
