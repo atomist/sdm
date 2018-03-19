@@ -14,23 +14,19 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    HandlerResult,
-    Success,
-} from "@atomist/automation-client/Handlers";
+import { HandlerContext, Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { ExecuteGoalInvocation } from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { OnAnyPendingStatus } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
+import { ExecuteGoalInvocation, ExecuteGoalResult } from "../../goals/goalExecution";
 
 export function executeFingerprints(...fingerprinters: Fingerprinter[]):
-(status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => Promise<HandlerResult> {
+(status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => Promise<ExecuteGoalResult> {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
         const credentials = { token: params.githubToken };

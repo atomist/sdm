@@ -66,15 +66,14 @@ export class RequestedCommitParameters {
     }
 
     get editMode(): EditMode {
-        const message = this.commitMessage + "\n\n[atomist]";
         switch (this.presentAs) {
             case "pr" :
                 return new PullRequest(
                     this.branchToUse,
                     this.commitMessage,
-                    message);
+                    this.commitMessage);
             case "branch" :
-                return {branch: this.branchToUse, message} as BranchCommit;
+                return {branch: this.branchToUse, message: this.commitMessage} as BranchCommit;
         }
     }
 

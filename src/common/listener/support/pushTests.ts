@@ -21,7 +21,7 @@ import { PushTest, pushTest } from "../GoalSetter";
 
 export const ToDefaultBranch = pushTest("Push to default branch", p => {
     const flag = p.push.branch === p.push.repo.defaultBranch;
-    logger.info("Push to %j on branch %s: ToDefaultBranch=%d", p.id, p.push.branch);
+    logger.info("Push to %j on branch %s: ToDefaultBranch=%d", p.id, p.push.branch, flag);
     return flag;
 });
 

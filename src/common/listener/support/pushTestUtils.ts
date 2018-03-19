@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { PushTest, pushTest } from "../GoalSetter";
 
 /**
@@ -27,13 +28,19 @@ export function not(t: PushTest): PushTest {
 
 /**
  * Return true if all are satisfied
- * @param {PushTest} guards
+ * @param {PushTest} pushTests
  * @return {PushTest}
  */
-export function allSatisfied(...guards: PushTest[]): PushTest {
-    return pushTest(guards.map(g => g.name).join(" && "),
+export function allSatisfied(...pushTests: PushTest[]): PushTest {
+    return pushTest(pushTests.map(g => g.name).join(" && "),
         async pci => {
-            const guardResults: boolean[] = await Promise.all(guards.map(g => g.test(pci)));
-            return !guardResults.some(r => !r);
+            const allResults: boolean[] = await Promise.all(
+                pushTests.map(async pt => {
+                    const result = await pt.test(pci);
+                    logger.debug("Result of PushTest %s was %d", pt.name, result);
+                    return result;
+                }),
+            );
+            return !allResults.includes(false);
         });
 }

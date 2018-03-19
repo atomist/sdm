@@ -18,12 +18,6 @@ import { failure, HandlerContext, logger, success, Success } from "@atomist/auto
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { retryCommandNameFor } from "../../../handlers/commands/RetryGoal";
-import {
-    ExecuteGoalInvocation,
-    ExecuteGoalResult,
-    Executor,
-    StatusForExecuteGoal,
-} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
@@ -38,6 +32,10 @@ import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
 import { Goal } from "../goals/Goal";
+import {
+    ExecuteGoalInvocation, ExecuteGoalResult,
+    GoalExecutor, StatusForExecuteGoal,
+} from "../goals/goalExecution";
 import { deploy, DeployArtifactParams, deploySource, DeploySourceParams, Targeter } from "./deploy";
 
 export interface ArtifactDeploySpec<T extends TargetInfo> {
@@ -49,7 +47,7 @@ export interface ArtifactDeploySpec<T extends TargetInfo> {
 }
 
 export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
-                                                 logInterpreter?: LogInterpreter): Executor {
+                                                 logInterpreter?: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 

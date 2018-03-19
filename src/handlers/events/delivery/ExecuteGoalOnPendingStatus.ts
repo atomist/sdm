@@ -19,11 +19,12 @@ import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automa
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal } from "../../../common/delivery/goals/Goal";
+import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../../common/delivery/goals/goalExecution";
 import { PushTest } from "../../../common/listener/GoalSetter";
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
-import { executeGoal, ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
+import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
 
 /**
@@ -49,7 +50,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
 
     constructor(public implementationName: string,
                 public goal: Goal,
-                private execute: Executor,
+                private execute: GoalExecutor,
                 private handleGoalUpdates: boolean = false) {
         this.subscriptionName = implementationName + "OnPending";
         this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(

@@ -15,15 +15,15 @@
  */
 
 import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
+import { whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
+import { Install } from "../common/delivery/build/local/npm/NpmBuilder";
 import { LocalCommandAutofix } from "../common/delivery/code/autofix/LocalCommandAutofix";
 import { IsTypeScript } from "../common/listener/support/tsPushTests";
 import { tagRepo } from "../common/listener/tagRepo";
 import { asSpawnCommand } from "../util/misc/spawned";
 import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistTypeScriptHeader";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
-import { Install } from "../common/delivery/build/local/npm/NpmBuilder";
-import { whenPushSatisfies } from "../blueprint/ruleDsl";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy

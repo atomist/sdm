@@ -22,4 +22,6 @@ import { PushTest, pushTest } from "../GoalSetter";
  * @param {PushTestInvocation} pi
  * @constructor
  */
-export const NamedSeedRepo: PushTest = pushTest("Named seed repo", pi => pi.id.repo.includes("-seed"));
+export const NamedSeedRepo: PushTest = pushTest(
+    "Named seed repo",
+    pi => pi.id.repo.includes("-seed"));

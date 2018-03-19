@@ -18,9 +18,9 @@ import { failure, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../../../../common/delivery/goals/goalExecution";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ExecuteGoalInvocation, Executor } from "../../ExecuteGoalOnSuccessStatus";
 
 export type K8Target = "testing" | "production";
 
@@ -30,9 +30,8 @@ export function k8AutomationDeployContext(target: K8Target): string {
     return `${K8TargetBase}${target}`;
 }
 
-export function requestDeployToK8s(target: K8Target): Executor {
+export function requestDeployToK8s(target: K8Target): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
-
         const commit = status.commit;
         const image = status.commit.image;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

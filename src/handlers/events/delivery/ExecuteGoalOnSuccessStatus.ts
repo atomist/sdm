@@ -27,84 +27,13 @@ import {
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
-import {
-    currentGoalIsStillPending,
-    Goal,
-} from "../../../common/delivery/goals/Goal";
-import { HasChannels } from "../../../common/slack/addressChannels";
-import { OnAnySuccessStatus, StatusState } from "../../../typings/types";
+import { currentGoalIsStillPending, Goal } from "../../../common/delivery/goals/Goal";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor, StatusForExecuteGoal } from "../../../common/delivery/goals/goalExecution";
+import { OnAnySuccessStatus } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 
-export interface ExecuteGoalInvocation {
-    implementationName: string;
-    githubToken: string;
-    goal: Goal;
-}
-
-export interface ExecuteGoalResult extends HandlerResult {
-    targetUrl?: string;
-    requireApproval?: boolean;
-}
-
-export type Executor = (status: StatusForExecuteGoal.Status,
-                        ctx: HandlerContext,
-                        params: ExecuteGoalInvocation) => Promise<ExecuteGoalResult>;
-
-// tslint:disable-next-line:no-namespace
-export namespace StatusForExecuteGoal {
-
-    export interface Org {
-        chatTeam?: ChatTeam | null;
-    }
-
-    export interface ChatTeam {
-        id?: string | null;
-    }
-
-    export interface Pushes {
-        before?: Commit;
-        branch?: string | null;
-        id?: string | null;
-    }
-
-    export interface Image {
-        image?: string | null;
-        imageName?: string | null;
-    }
-    export interface Repo extends HasChannels {
-        owner?: string | null;
-        name?: string | null;
-        defaultBranch?: string | null;
-        org?: Org | null;
-    }
-
-    export interface Statuses {
-        context?: string | null;
-        description?: string | null;
-        state?: StatusState | null;
-        targetUrl?: string | null;
-    }
-
-    export interface Commit {
-        sha?: string | null;
-        message?: string | null;
-        statuses?: Statuses[] | null;
-        repo?: Repo | null;
-        pushes?: Pushes[] | null;
-        image?: Image | null;
-    }
-
-    export interface Status {
-        commit?: Commit | null;
-        state?: StatusState | null;
-        targetUrl?: string | null;
-        context?: string | null;
-        description?: string | null;
-    }
-}
-
 /**
- * Deploy a published artifact identified in an ImageLinked event.
+ * Execute a goal on a success status
  */
 export class ExecuteGoalOnSuccessStatus
     implements HandleEvent<OnAnySuccessStatus.Subscription>,
@@ -121,7 +50,7 @@ export class ExecuteGoalOnSuccessStatus
 
     constructor(public implementationName: string,
                 public goal: Goal,
-                private execute: Executor) {
+                private execute: GoalExecutor) {
         this.subscriptionName = implementationName + "OnSuccessStatus";
         this.name = implementationName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
@@ -140,14 +69,12 @@ export class ExecuteGoalOnSuccessStatus
     }
 }
 
-export async function executeGoal(execute: Executor,
+export async function executeGoal(execute: GoalExecutor,
                                   status: StatusForExecuteGoal.Status,
                                   ctx: HandlerContext,
                                   params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> {
     const commit = status.commit;
-
     logger.info(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
-
     const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
     const statusAndFriends: GitHubStatusAndFriends = {
         context: status.context,

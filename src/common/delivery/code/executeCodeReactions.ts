@@ -14,40 +14,15 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    failure,
-    GraphQL,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import {
-    CodeReactionInvocation,
-    CodeReactionListener,
-} from "../../../../common/listener/CodeReactionListener";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import {
-    OnAnyPendingStatus,
-    StatusState,
-} from "../../../../typings/types";
-import { filesChangedSince } from "../../../../util/git/filesChangedSince";
-import { createStatus } from "../../../../util/github/ghub";
-import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
+import { filesChangedSince } from "../../../util/git/filesChangedSince";
+import { CodeReactionInvocation, CodeReactionListener } from "../../listener/CodeReactionListener";
+import { addressChannelsFor } from "../../slack/addressChannels";
+import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../goals/goalExecution";
 
-export function executeCodeReactions(codeReactions: CodeReactionListener[]): Executor {
+export function executeCodeReactions(codeReactions: CodeReactionListener[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 

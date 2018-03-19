@@ -50,7 +50,9 @@ import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
 import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
 import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/code/codeActionRegistrations";
+import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprints } from "../common/delivery/code/fingerprint/executeFingerprints";
+import { executeReview } from "../common/delivery/code/review/executeReview";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -64,8 +66,6 @@ import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { executeCodeReactions } from "../handlers/events/delivery/code/executeCodeReactions";
-import { executeReview } from "../handlers/events/delivery/code/executeReview";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -209,8 +209,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
-                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders), true),
+                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders), true),
                 () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
                 () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
             ],

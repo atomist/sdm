@@ -16,55 +16,21 @@
 
 import * as _ from "lodash";
 
-import {
-    EventFired,
-    EventHandler,
-    failure,
-    GraphQL,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { failure, HandlerContext, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import {
-    ProjectReview,
-    ReviewComment,
-} from "@atomist/automation-client/operations/review/ReviewResult";
+import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { Project } from "@atomist/automation-client/project/Project";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
-import {
-    Attachment,
-    SlackMessage,
-} from "@atomist/slack-messages";
 import * as slack from "@atomist/slack-messages";
-import {
-    formatReviewerError,
-    ReviewerError,
-} from "../../../../blueprint/ReviewerError";
-import { relevantCodeActions, ReviewerRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import { PushTest, PushTestInvocation } from "../../../../common/listener/GoalSetter";
-import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
-import {
-    OnAnyPendingStatus,
-    StatusState,
-} from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
-import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
-import { forApproval } from "../verify/approvalGate";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import { formatReviewerError, ReviewerError } from "../../../../blueprint/ReviewerError";
+import { PushTestInvocation } from "../../../listener/GoalSetter";
+import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
+import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../goals/goalExecution";
+import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 
-export function executeReview(reviewerRegistrations: ReviewerRegistration[]): Executor {
+export function executeReview(reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

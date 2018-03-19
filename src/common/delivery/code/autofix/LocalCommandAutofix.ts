@@ -1,9 +1,9 @@
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { isPushRule, PushRule } from "../../../../blueprint/ruleDsl";
 import { localCommandsEditor } from "../../../../handlers/commands/editors/editorWrappers";
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../listener/GoalSetter";
 import { AutofixRegistration } from "../codeActionRegistrations";
-import { isPushRule, PushRule } from "../../../../blueprint/ruleDsl";
 
 /**
  * Register an autofix based on local commands

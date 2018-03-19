@@ -15,18 +15,16 @@
  */
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
-import { HandlerResult} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ConditionalBuilder } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
-import { ExecuteGoalInvocation } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { PushTestInvocation } from "../../listener/GoalSetter";
 import { addressChannelsFor } from "../../slack/addressChannels";
+import { ExecuteGoalInvocation, ExecuteGoalResult } from "../goals/goalExecution";
 
 export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
-
-    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
+    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
             const credentials = {token: params.githubToken};
