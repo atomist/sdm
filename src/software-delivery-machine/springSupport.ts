@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { mavenFingerprinter } from "../common/delivery/code/fingerprint/maven/mavenFingerprinter";
-import { CheckstyleReviewerRegistration } from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
 import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../common/listener/tagRepo";
-import { AddAtomistJavaHeader } from "./blueprint/code/autofix/addAtomistHeader";
 import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
@@ -44,17 +40,7 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
             tagRepo(springBootTagger),
         )
         .addSupportingCommands(() => applyHttpServiceGoals);
-    if (opts.useCheckstyle) {
-        const checkStylePath = process.env.CHECKSTYLE_PATH;
-        if (!!checkStylePath) {
-            softwareDeliveryMachine.addReviewerRegistrations(CheckstyleReviewerRegistration);
-        } else {
-            logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
-        }
-    }
 
     softwareDeliveryMachine
-        .addFunctionalUnits(LocalDeployment)
-        .addFingerprinters(mavenFingerprinter)
-        .addAutofixes(AddAtomistJavaHeader);
+        .addFunctionalUnits(LocalDeployment);
 }

@@ -39,6 +39,7 @@ import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDepl
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "./demoEditors";
+import { addJavaSupport } from "./javaSupport";
 import { addNodeSupport } from "./nodeSupport";
 import { addSpringSupport } from "./springSupport";
 import { addTeamPolicies } from "./teamPolicies";
@@ -80,6 +81,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         )
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
 
+    addJavaSupport(sdm, opts);
     addSpringSupport(sdm, opts);
     addNodeSupport(sdm);
     addTeamPolicies(sdm);
