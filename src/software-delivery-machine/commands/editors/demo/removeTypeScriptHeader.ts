@@ -15,12 +15,10 @@
  */
 
 import { HandleCommand } from "@atomist/automation-client";
-import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
-import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
-import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
+import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
 /**
  * Harmlessly modify a TS file on master
@@ -29,9 +27,9 @@ import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
 export const whackHeaderEditor: HandleCommand = editorCommand(
     () => whackSomeHeader,
     "removeHeader",
-    OptionalBranchParameters,
+    () => new RequestedCommitParameters("Who needs all these extra characters"),
     {
-        editMode: commitToMaster(`Who needs all these extra characters`),
+        editMode: ahp => ahp.editMode,
         intent: "remove a header",
     },
 );
