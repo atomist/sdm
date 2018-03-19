@@ -21,6 +21,7 @@ import { mavenFingerprinter } from "../common/delivery/code/fingerprint/maven/ma
 import { CheckstyleReviewerRegistration } from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
 import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../common/listener/tagRepo";
+import { AddAtomistJavaHeader } from "./blueprint/code/autofix/addAtomistHeader";
 import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
@@ -54,5 +55,6 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
 
     softwareDeliveryMachine
         .addFunctionalUnits(LocalDeployment)
-        .addFingerprinters(mavenFingerprinter);
+        .addFingerprinters(mavenFingerprinter)
+        .addAutofixes(AddAtomistJavaHeader);
 }
