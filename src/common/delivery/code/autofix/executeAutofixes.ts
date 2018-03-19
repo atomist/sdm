@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
+import { HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
@@ -27,6 +27,7 @@ import { PushTestInvocation } from "../../../listener/GoalSetter";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
+import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 
 export type CommitShape = OnAnyPendingStatus.Commit;
 
@@ -39,34 +40,45 @@ export type CommitShape = OnAnyPendingStatus.Commit;
  * @param {AutofixRegistration[]} registrations
  * @return {Promise<void>}
  */
-export async function executeAutofixes(commit: CommitShape,
-                                       context: HandlerContext,
-                                       credentials: ProjectOperationCredentials,
-                                       registrations: AutofixRegistration[]) {
-    if (registrations.length > 0) {
-        const push = commit.pushes[0];
-        const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
-        const project = await GitCommandGitProject.cloned(credentials, editableRepoRef);
-        const pti: PushTestInvocation = {
-            id: editableRepoRef,
-            project,
-            credentials,
-            context,
-            addressChannels: addressChannelsFor(commit.repo, context),
-            push,
-        };
-        const editors = await relevantCodeActions<AutofixRegistration>(registrations, pti);
-        logger.info("Will apply %d eligible autofixes of %d to %j",
-            editors.length, registrations.length, pti.id);
-        const singleEditor: ProjectEditor = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
-        if (!!singleEditor) {
-            const editMode: BranchCommit = {
-                branch: pti.push.branch,
-                message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
-            };
-            logger.info("Editing %s with mode=%j", pti.id.url, editMode);
-            await editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
-                pti.project, singleEditor, editMode);
+export function executeAutofixes(registrations: AutofixRegistration[]): Executor {
+    return async (status: StatusForExecuteGoal.Status,
+                  context: HandlerContext,
+                  egi: ExecuteGoalInvocation): Promise<HandlerResult> => {
+        try {
+            const commit = status.commit;
+            const credentials = {token: egi.githubToken};
+            if (registrations.length > 0) {
+                const push = commit.pushes[0];
+                const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
+                const project = await GitCommandGitProject.cloned(credentials, editableRepoRef);
+                const pti: PushTestInvocation = {
+                    id: editableRepoRef,
+                    project,
+                    credentials,
+                    context,
+                    addressChannels: addressChannelsFor(commit.repo, context),
+                    push,
+                };
+                const editors = await relevantCodeActions<AutofixRegistration>(registrations, pti);
+                logger.info("Will apply %d eligible autofixes of %d to %j",
+                    editors.length, registrations.length, pti.id);
+                const singleEditor: ProjectEditor = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
+                if (!!singleEditor) {
+                    const editMode: BranchCommit = {
+                        branch: pti.push.branch,
+                        message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
+                    };
+                    logger.info("Editing %s with mode=%j", pti.id.url, editMode);
+                    await
+                        editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
+                            pti.project, singleEditor, editMode);
+                }
+                return Success;
+            }
+        } catch (err) {
+            logger.warn("Autofixing failed with " + err.message);
+            logger.warn("Ignoring failure");
+            return Success;
         }
     }
 }

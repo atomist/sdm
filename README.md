@@ -507,7 +507,8 @@ atomist start
 
 ### Environment Variables
 
-- `ATOMIST_WORKSPACE`: A single Atomist workspace this automation will serve. For example, `export ATOMIST_WORKSPACE="T5964N9B7"`. Alternatively you can subscribe to events from multiple workspaces if you have multiple keys of the form `ATOMIST_WORKSPACE_<name>`. For example:
+- `ATOMIST_WORKSPACE`: A single Atomist workspace this automation will serve. For example, `export ATOMIST_WORKSPACE="T5964N9B7"`.
+ Alternatively you can subscribe to events from multiple workspaces if you have multiple keys of the form `ATOMIST_WORKSPACE_<name>`. For example:
 
 ```bash
 export ATOMIST_WORKSPACE_SPRING_TEAM="T5964N9B7"
@@ -518,7 +519,7 @@ named workspaces will be ignored.
 
 - `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
 one or two checks occur when they are not available, and a GitHub token must be supplied.
-
+ 
 For the optional Checkstyle integration to work, set up two Checkstyle environment variables as follows:
 
 ```
