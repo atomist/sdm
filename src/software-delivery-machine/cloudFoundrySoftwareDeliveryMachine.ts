@@ -27,7 +27,7 @@ import { IsDeployEnabled } from "../common/listener/support/deployPushTests";
 import { HasSpringBootApplicationClass, IsMaven } from "../common/listener/support/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import { NamedSeedRepo } from "../common/listener/support/NamedSeedRepo";
-import { IsNode } from "../common/listener/support/nodeGuards";
+import { IsNode } from "../common/listener/support/nodePushTests";
 import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushTests";
 import { not } from "../common/listener/support/pushTestUtils";
 import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
