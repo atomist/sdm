@@ -16,14 +16,14 @@
 
 import { EventFired, failure, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { PushTest } from "../../../common/listener/GoalSetter";
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus, StatusState } from "../../../typings/types";
-import { executeGoal, ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { createStatus } from "../../../util/github/ghub";
+import { executeGoal, ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
 
 /**
@@ -64,7 +64,6 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                         params: this): Promise<HandlerResult> {
         const status: StatusForExecuteGoal.Status = event.data.Status[0];
 
-
         // todo: put this in a subscription parameter. It should work, in this architecture
         if (status.context !== params.goal.context) {
             logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
@@ -97,14 +96,13 @@ function repoRef(status: StatusForExecuteGoal.Status) {
 }
 
 function credentials(inv: ExecuteGoalInvocation) {
-    return { token: inv.githubToken }
+    return { token: inv.githubToken };
 }
-
 
 const ScanBase = "https://scan.atomist.com";
 
 function markStatus(id: GitHubRepoRef, goal: Goal, state: StatusState,
-                     creds: ProjectOperationCredentials, targetUrl?: string, requireApproval?: boolean): Promise<any> {
+                    creds: ProjectOperationCredentials, targetUrl?: string, requireApproval?: boolean): Promise<any> {
     const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,

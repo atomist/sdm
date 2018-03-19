@@ -22,12 +22,12 @@ import { ProjectEditor } from "@atomist/automation-client/operations/edit/projec
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { editRepo } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { OnAnyPendingStatus } from "../../../../typings/types";
 import { PushTestInvocation } from "../../../listener/GoalSetter";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
-import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 
 export type CommitShape = OnAnyPendingStatus.Commit;
 
@@ -80,5 +80,5 @@ export function executeAutofixes(registrations: AutofixRegistration[]): Executor
             logger.warn("Ignoring failure");
             return Success;
         }
-    }
+    };
 }

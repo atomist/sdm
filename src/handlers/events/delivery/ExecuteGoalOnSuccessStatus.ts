@@ -62,7 +62,7 @@ export namespace StatusForExecuteGoal {
     }
 
     export interface Pushes {
-        before? : Commit;
+        before?: Commit;
         branch?: string | null;
         id?: string | null;
     }

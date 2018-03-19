@@ -48,6 +48,7 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
+import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
 import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/code/codeActionRegistrations";
 import { executeFingerprints } from "../common/delivery/code/fingerprint/executeFingerprints";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
@@ -64,6 +65,7 @@ import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymen
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { executeCodeReactions } from "../handlers/events/delivery/code/executeCodeReactions";
+import { executeReview } from "../handlers/events/delivery/code/OnPendingReviewStatus";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -76,8 +78,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
-import { executeReview } from "../handlers/events/delivery/code/OnPendingReviewStatus";
 
 /**
  * A reference blueprint for Atomist delivery.
@@ -171,7 +171,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     ReviewGoal,
                     executeReview(this.reviewerRegistrations),
                     true)],
-            commandHandlers: []
+            commandHandlers: [],
         };
     }
 
@@ -180,9 +180,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus("CodeReactions",
                     CodeReactionGoal,
-                    executeCodeReactions(this.codeReactions), true)
+                    executeCodeReactions(this.codeReactions), true),
             ],
-            commandHandlers: []
+            commandHandlers: [],
         };
     }
 
@@ -190,9 +190,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal,
-                    executeAutofixes(this.autofixRegistrations), true)
+                    executeAutofixes(this.autofixRegistrations), true),
             ],
-            commandHandlers: []
+            commandHandlers: [],
         };
     }
 

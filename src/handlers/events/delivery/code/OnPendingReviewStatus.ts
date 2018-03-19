@@ -61,8 +61,8 @@ import {
     StatusState,
 } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
-import { forApproval } from "../verify/approvalGate";
 import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
+import { forApproval } from "../verify/approvalGate";
 
 export function executeReview(reviewerRegistrations: ReviewerRegistration[]): Executor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
@@ -95,24 +95,23 @@ export function executeReview(reviewerRegistrations: ReviewerRegistration[]): Ex
                 const review = consolidate(reviews);
 
                 if (review.comments.length === 0 && reviewerErrors.length === 0) {
-                    return { code: 0, requireApproval: false }
+                    return { code: 0, requireApproval: false };
                 } else {
                     // TODO might want to raise issue
                     // Fail it??
                     await sendReviewToSlack("Review comments", review, ctx, addressChannels);
                     await sendErrorsToSlack(reviewerErrors, addressChannels);
-                    return { code: 0, requireApproval: true }
+                    return { code: 0, requireApproval: true };
                 }
             } else {
                 // No reviewers
-                return { code: 0, requireApproval: false }
+                return { code: 0, requireApproval: false };
             }
         } catch (err) {
             return failure(err);
         }
-    }
+    };
 }
-
 
 function consolidate(reviews: ProjectReview[]): ProjectReview {
     // TODO check they are all the same id and that there's more than one

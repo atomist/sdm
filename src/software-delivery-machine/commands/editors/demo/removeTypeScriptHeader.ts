@@ -32,10 +32,9 @@ export const whackHeaderEditor: HandleCommand = editorCommand(
     OptionalBranchParameters,
     {
         editMode: commitToMaster(`Who needs all these extra characters`),
-        intent: "remove a header"
+        intent: "remove a header",
     },
 );
-
 
 const HeaderRegex = /^\/\*[\s\S]*?\*\/\s*/;
 

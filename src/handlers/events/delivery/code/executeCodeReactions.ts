@@ -62,7 +62,7 @@ export function executeCodeReactions(codeReactions: CodeReactionListener[]): Exe
         }
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);
-            if (codeReactions.length > 0) {
+        if (codeReactions.length > 0) {
                 const project = await GitCommandGitProject.cloned(credentials, id);
                 const push = commit.pushes[0];
                 const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
@@ -79,5 +79,5 @@ export function executeCodeReactions(codeReactions: CodeReactionListener[]): Exe
                     Promise.all(codeReactions.map(reaction => reaction(i)));
                 await allReactions;
             }
-    }
+    };
 }
