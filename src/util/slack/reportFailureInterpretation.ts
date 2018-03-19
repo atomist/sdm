@@ -40,7 +40,7 @@ export async function reportFailureInterpretation(stepName: string,
         await ac({
             content: fullLog.log,
             fileType: "text",
-            fileName: `deploy-failure-${id.sha}.log`,
+            fileName: `${stepName}-failure-${id.sha}.log`,
         } as any);
     }
 }

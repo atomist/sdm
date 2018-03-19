@@ -22,6 +22,8 @@ import { tagRepo } from "../common/listener/tagRepo";
 import { asSpawnCommand } from "../util/misc/spawned";
 import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistTypeScriptHeader";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
+import { Install } from "../common/delivery/build/local/npm/NpmBuilder";
+import { whenPushSatisfies } from "../blueprint/ruleDsl";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
@@ -42,7 +44,8 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         .addAutofixes(
             AddAtomistTypeScriptHeader,
             new LocalCommandAutofix("tslint",
-                IsTypeScript,
+                whenPushSatisfies(IsTypeScript).itMeans("TypeScript repo"),
+                Install,
                 asSpawnCommand("npm run lint:fix")),
         );
 }

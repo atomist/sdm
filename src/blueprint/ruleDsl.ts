@@ -54,6 +54,11 @@ export class PushRule {
 
 }
 
+export function isPushRule(a: any): a is PushRule {
+    const maybePushRule = a as PushRule;
+    return !!maybePushRule.pushTest && !!maybePushRule.verify;
+}
+
 /**
  * Interim DSL stage
  */

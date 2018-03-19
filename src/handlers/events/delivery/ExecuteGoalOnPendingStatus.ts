@@ -74,8 +74,8 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
             logger.info("This one is working.");
             return Success;
         }
-        if(status.description !== params.goal.requestedDescription) {
-            logger.warn("This pending status doesn't look right: " + status.context + " expected: " + params.goal.requestedDescription)
+        if (status.description !== params.goal.requestedDescription) {
+            logger.warn("This pending status doesn't look right: " + status.context + " expected: " + params.goal.requestedDescription);
         }
 
         try {

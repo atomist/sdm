@@ -1,10 +1,10 @@
 import { HandleCommand, HandlerContext, logger, Parameter, Parameters } from "@atomist/automation-client";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 @Parameters()
 export class ApplyHeaderParameters extends RequestedCommitParameters {

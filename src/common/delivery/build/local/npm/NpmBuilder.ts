@@ -67,7 +67,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
         try {
             const errorFinder = (code, signal, l) => {
-                return l.log.includes("[error]");
+                return l.log.startsWith("[error]") || l.log.includes("ERR!");
             };
             let buildResult: ChildProcessResult;
             for (const buildCommand of this.buildCommands) {

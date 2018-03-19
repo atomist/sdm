@@ -3,6 +3,7 @@ import { localCommandsEditor } from "../../../../handlers/commands/editors/edito
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../listener/GoalSetter";
 import { AutofixRegistration } from "../codeActionRegistrations";
+import { isPushRule, PushRule } from "../../../../blueprint/ruleDsl";
 
 /**
  * Register an autofix based on local commands
@@ -13,10 +14,13 @@ export class LocalCommandAutofix implements AutofixRegistration {
 
     private readonly commands: SpawnCommand[];
 
+    public readonly pushTest: PushTest;
+
     constructor(public name: string,
-                public pushTest: PushTest,
+                pushSpecifier: PushTest | PushRule,
                 command1: SpawnCommand,
                 ...additionalCommands: SpawnCommand[]) {
+        this.pushTest = isPushRule(pushSpecifier) ? pushSpecifier.pushTest : pushSpecifier;
         this.commands = [command1].concat(additionalCommands);
         this.action = localCommandsEditor(this.commands);
     }

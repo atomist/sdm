@@ -32,6 +32,7 @@ import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/s
 import { not } from "../common/listener/support/pushTestUtils";
 import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
+import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
 import { DefaultArtifactStore } from "./blueprint/artifactStore";
 import { CloudFoundryProductionDeployOnSuccessStatus } from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
@@ -41,7 +42,6 @@ import { addDemoEditors } from "./demoEditors";
 import { addNodeSupport } from "./nodeSupport";
 import { addSpringSupport } from "./springSupport";
 import { addTeamPolicies } from "./teamPolicies";
-import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(

@@ -25,7 +25,7 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import {
     ExecuteGoalInvocation,
     Executor,
-    StatusForExecuteGoal
+    StatusForExecuteGoal,
 } from "../../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { PushTestInvocation } from "../../../listener/GoalSetter";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
