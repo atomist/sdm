@@ -62,99 +62,57 @@ import {
 } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { forApproval } from "../verify/approvalGate";
+import { ExecuteGoalInvocation, Executor, StatusForExecuteGoal } from "../ExecuteGoalOnSuccessStatus";
 
-/**
- * Scan code on a push, invoking ProjectReviewers.
- * Result is setting GitHub goal status.
- */
-@EventHandler("Scan code", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnAnyPendingStatus",
-    __dirname),
-)
-export class OnPendingReviewStatus implements HandleEvent<OnAnyPendingStatus.Subscription> {
-
-    @Secret(Secrets.OrgToken)
-    private githubToken: string;
-
-    constructor(public goal: Goal,
-                private reviewerRegistrations: ReviewerRegistration[]) {
-    }
-
-    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
-                        context: HandlerContext,
-                        params: this): Promise<HandlerResult> {
-        const status = event.data.Status[0];
+export function executeReview(reviewerRegistrations: ReviewerRegistration[]): Executor {
+    return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
 
-        if (status.context !== params.goal.context || status.state !== "pending") {
-            logger.warn(`I was looking for ${params.goal.context} being pending, but I heard about ${status.context} being ${status.state}`);
-            return Success;
-        }
-
-        const addressChannels = addressChannelsFor(commit.repo, context);
         try {
-            if (params.reviewerRegistrations.length > 0) {
+            if (reviewerRegistrations.length > 0) {
                 const project = await GitCommandGitProject.cloned(credentials, id);
                 const pti: PushTestInvocation = {
                     id,
                     project,
                     credentials,
-                    context,
-                    addressChannels: addressChannelsFor(commit.repo, context),
+                    context: ctx,
+                    addressChannels: addressChannelsFor(commit.repo, ctx),
                     push: commit.pushes[0],
                 };
-                const relevantReviewers = await relevantCodeActions(params.reviewerRegistrations, pti);
+                const relevantReviewers = await relevantCodeActions(reviewerRegistrations, pti);
                 const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                     await Promise.all(relevantReviewers
-                        .map(reviewer =>
-                            reviewer.action(project, context, params as any)
-                                .then(rvw => ({review: rvw}),
-                                    error => ({error}))));
+                    .map(reviewer =>
+                        reviewer.action(project, ctx, params as any)
+                            .then(rvw => ({review: rvw}),
+                                error => ({error}))));
                 const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
                 const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
 
                 const review = consolidate(reviews);
 
                 if (review.comments.length === 0 && reviewerErrors.length === 0) {
-                    await markScanned(id,
-                        params.goal, StatusState.success, credentials, false);
+                    return { code: 0, requireApproval: false }
                 } else {
                     // TODO might want to raise issue
                     // Fail it??
-                    await sendReviewToSlack("Review comments", review, context, addressChannels);
+                    await sendReviewToSlack("Review comments", review, ctx, addressChannels);
                     await sendErrorsToSlack(reviewerErrors, addressChannels);
-                    await markScanned(project.id as GitHubRepoRef,
-                        params.goal,  StatusState.success, credentials, true);
+                    return { code: 0, requireApproval: true }
                 }
             } else {
                 // No reviewers
-                await markScanned(id, params.goal, StatusState.success, credentials, false);
+                return { code: 0, requireApproval: false }
             }
-            return Success;
         } catch (err) {
-            await markScanned(id,
-                params.goal,  StatusState.error, credentials, false);
             return failure(err);
         }
     }
 }
 
-export const ScanBase = "https://scan.atomist.com";
-
-// TODO this should take a URL with detailed information
-function markScanned(id: GitHubRepoRef, goal: Goal, state: StatusState,
-                     creds: ProjectOperationCredentials, requireApproval: boolean): Promise<any> {
-    const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
-    return createStatus((creds as TokenCredentials).token, id, {
-        state,
-        target_url: requireApproval ? forApproval(baseUrl) : baseUrl,
-        context: goal.context,
-        description: goal.completedDescription,
-    });
-}
 
 function consolidate(reviews: ProjectReview[]): ProjectReview {
     // TODO check they are all the same id and that there's more than one

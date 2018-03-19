@@ -42,12 +42,13 @@ export interface ExecuteGoalInvocation {
 }
 
 export interface ExecuteGoalResult extends HandlerResult {
-    log?: string;
+    targetUrl?: string;
+    requireApproval?: boolean;
 }
 
 export type Executor = (status: StatusForExecuteGoal.Status,
                         ctx: HandlerContext,
-                        params: ExecuteGoalInvocation) => Promise<HandlerResult>;
+                        params: ExecuteGoalInvocation) => Promise<ExecuteGoalResult>;
 
 // tslint:disable-next-line:no-namespace
 export namespace StatusForExecuteGoal {
@@ -135,11 +136,14 @@ export class ExecuteGoalOnSuccessStatus
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
-        return executeGoal(this.execute, status, ctx, params);
+        return executeGoal(this.execute, status, ctx, params).then(handleExecuteResult);
     }
 }
 
-export async function executeGoal(execute: Executor, status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) {
+export async function executeGoal(execute: Executor,
+                                  status: StatusForExecuteGoal.Status,
+                                  ctx: HandlerContext,
+                                  params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> {
     const commit = status.commit;
 
     logger.info(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
@@ -180,15 +184,10 @@ export async function executeGoal(execute: Executor, status: StatusForExecuteGoa
     }).catch(err =>
         logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
 
-    return execute(status, ctx, params).then(handleExecuteResult);
+    return execute(status, ctx, params);
 }
 
 async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<HandlerResult> {
-
-    if (executeResult.log) {
-        logger.info("Log received. Length is " + executeResult.log.length);
-    }
-
     // Return the minimal fields for HandlerResult, because they get printed to the log.
     return {code: executeResult.code, message: executeResult.message};
 }

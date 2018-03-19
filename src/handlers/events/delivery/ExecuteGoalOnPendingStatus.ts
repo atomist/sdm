@@ -24,6 +24,7 @@ import { executeGoal, ExecuteGoalInvocation, Executor, StatusForExecuteGoal } fr
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { createStatus } from "../../../util/github/ghub";
+import { forApproval } from "./verify/approvalGate";
 
 /**
  * Implemented by classes that can choose a builder based on project content etc.
@@ -71,9 +72,13 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
         }
 
         try {
-            await executeGoal(this.execute, status, ctx, params);
+            const result = await executeGoal(this.execute, status, ctx, params);
             if (params.handleGoalUpdates) {
-                await markStatus(repoRef(status), params.goal, StatusState.success, credentials(params));
+                await markStatus(repoRef(status), params.goal,
+                    result.code === 0 ? StatusState.success : StatusState.failure,
+                    credentials(params),
+                    result.targetUrl,
+                    result.requireApproval);
             }
             return Success;
         } catch (err) {
@@ -95,10 +100,15 @@ function credentials(inv: ExecuteGoalInvocation) {
     return { token: inv.githubToken }
 }
 
+
+const ScanBase = "https://scan.atomist.com";
+
 function markStatus(id: GitHubRepoRef, goal: Goal, state: StatusState,
-                    creds: ProjectOperationCredentials): Promise<any> {
+                     creds: ProjectOperationCredentials, targetUrl?: string, requireApproval?: boolean): Promise<any> {
+    const baseUrl = `${ScanBase}/${id.owner}/${id.repo}/${id.sha}`;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
+        target_url: requireApproval ? forApproval(targetUrl || baseUrl) : targetUrl,
         context: goal.context,
         description: goal.completedDescription,
     });
