@@ -1,14 +1,12 @@
-import { HandleCommand, HandlerContext, logger, Parameters } from "@atomist/automation-client";
-import { Parameter } from "@atomist/automation-client";
-import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
+import { HandleCommand, HandlerContext, logger, Parameter, Parameters } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
-import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
+import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
 @Parameters()
-export class ApplyHeaderParameters extends OptionalBranchParameters {
+export class ApplyHeaderParameters extends RequestedCommitParameters {
 
     @Parameter({required: false})
     public glob: string = AllJavaFiles;
@@ -18,6 +16,10 @@ export class ApplyHeaderParameters extends OptionalBranchParameters {
 
     @Parameter({required: false})
     public readonly successEmoji = ":carousel_horse:";
+
+    constructor() {
+        super("Add missing license headers");
+    }
 
     get header(): string {
         switch (this.license) {
@@ -51,10 +53,7 @@ export const applyApacheLicenseHeaderEditor: HandleCommand = editorCommand(
     "addHeader",
     ApplyHeaderParameters,
     {
-        editMode: ahp => new PullRequest(
-            ahp.branch || "ah-" + new Date().getTime(),
-            `Apply license header (${ahp.license})\n\n[atomist]`,
-        ),
+        editMode: ahp => ahp.editMode
     });
 
 export async function applyHeaderProjectEditor(p: Project,

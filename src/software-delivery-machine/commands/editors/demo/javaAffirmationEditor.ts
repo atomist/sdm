@@ -15,12 +15,13 @@
  */
 
 import { HandleCommand } from "@atomist/automation-client";
-import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import JSON = Mocha.reporters.JSON;
+import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
-import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
-import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
+import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
 /**
  * Harmlessly modify a Java file on master
@@ -29,26 +30,10 @@ import { OptionalBranchParameters } from "../support/OptionalBranchParameters";
 export const javaAffirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToJava,
     "java affirmation",
-    EmptyParameters,
+    () => new RequestedCommitParameters("Everyone needs encouragement to create Java"),
     {
-        editMode: commitToMaster(`Everyone needs encouragement to write Java`),
-    },
-);
-
-/**
- * Harmlessly modify a Java file on a branch
- * @type {HandleCommand<EditOneOrAllParameters>}
- */
-export const javaBranchAffirmationEditor: HandleCommand = editorCommand(
-    () => appendAffirmationToJava,
-    "java branch affirmation",
-    OptionalBranchParameters,
-    {
-        // Be sure to create a new instance each time to ensure unique branch names
-        editMode: obp => ({
-            message: `Everyone needs encouragement to write Java`,
-            branch: obp.branch || "ja-" + new Date().getTime(),
-        }),
+        editMode: ap => ap.editMode,
+        intent: "javakick",
     },
 );
 
@@ -70,7 +55,7 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToJava: SimpleProjectEditor = (p, ctx) => {
+export const appendAffirmationToJava: SimpleProjectEditor<RequestedCommitParameters> = (p, ctx, params) => {
     const affirmation = randomAffirmation();
     let count = 0;
     return doWithFiles(p, AllJavaFiles, f => {
@@ -78,7 +63,7 @@ export const appendAffirmationToJava: SimpleProjectEditor = (p, ctx) => {
             if (count++ >= 1) {
                 return;
             }
-            await ctx.messageClient.respond(`Prepending to \`${f.name}\`: _${affirmation}_`);
+            await ctx.messageClient.respond(`Prepending to \`${f.name}\` via \`${params.branchToUse}\`: _${affirmation}_`);
             return f.setContent(`// ${affirmation}\n\n${content}`);
         });
     });

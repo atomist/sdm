@@ -15,9 +15,9 @@
  */
 
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { affirmationEditor, branchAffirmationEditor } from "./commands/editors/demo/affirmationEditor";
+import { affirmationEditor } from "./commands/editors/demo/affirmationEditor";
 import { breakBuildEditor, unbreakBuildEditor } from "./commands/editors/demo/breakBuild";
-import { javaAffirmationEditor, javaBranchAffirmationEditor } from "./commands/editors/demo/javaAffirmationEditor";
+import { javaAffirmationEditor } from "./commands/editors/demo/javaAffirmationEditor";
 import { removeFileEditor } from "./commands/editors/helper/removeFile";
 
 /**
@@ -28,11 +28,9 @@ export function addDemoEditors(softwareDeliveryMachine: SoftwareDeliveryMachine)
     softwareDeliveryMachine
         .addEditors(
             () => affirmationEditor,
-            () => branchAffirmationEditor,
             () => breakBuildEditor,
             () => unbreakBuildEditor,
             () => javaAffirmationEditor,
-            () => javaBranchAffirmationEditor,
             () => removeFileEditor,
         );
 }
