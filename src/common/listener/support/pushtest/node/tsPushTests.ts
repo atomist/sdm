@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { AtomistK8sSpecFile } from "../../../software-delivery-machine/commands/editors/k8s/addK8sSpec";
-import { PushTest, pushTest } from "../PushTest";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { PushTest, pushTest, PushTestInvocation } from "../../../PushTest";
 
-export const HasK8Spec: PushTest = pushTest("Has K8Spec",
-        pi => pi.project.findFile(AtomistK8sSpecFile)
-        .then(() => true, () => false),
+export const IsTypeScript: PushTest = pushTest(
+    "Is TypeScript",
+    async (pi: PushTestInvocation) => await fileExists(pi.project, "**/*.ts", () => true),
 );

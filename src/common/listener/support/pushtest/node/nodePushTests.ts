@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PushTest, pushTest } from "../PushTest";
+import { PushTest, pushTest } from "../../../PushTest";
 
 export const IsNode: PushTest = pushTest("Is Node", async pi => {
     try {

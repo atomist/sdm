@@ -18,7 +18,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import "mocha";
 import * as assert from "power-assert";
 import { PushTestInvocation } from "../../../../src/common/listener/PushTest";
-import { ToPublicRepo } from "../../../../src/common/listener/support/pushTests";
+import { ToPublicRepo } from "../../../../src/common/listener/support/pushtest/commonPushTests";
 
 describe("pushToPublicRepo", () => {
 

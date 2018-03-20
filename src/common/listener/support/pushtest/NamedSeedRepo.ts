@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { PushTest, pushTest, PushTestInvocation } from "../PushTest";
+import { PushTest, pushTest } from "../../PushTest";
 
-export const IsTypeScript: PushTest = pushTest(
-    "Is TypeScript",
-    async (pi: PushTestInvocation) => await fileExists(pi.project, "**/*.ts", () => true),
-);
+/**
+ * Is this a seed repo, based on the naming convention
+ * that such repos have "-seed" in their name
+ * @param {PushTestInvocation} pi
+ * @constructor
+ */
+export const NamedSeedRepo: PushTest = pushTest(
+    "Named seed repo",
+    pi => pi.id.repo.includes("-seed"));

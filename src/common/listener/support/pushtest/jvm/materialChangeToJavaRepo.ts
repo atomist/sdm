@@ -15,8 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { filesChangedSince } from "../../../util/git/filesChangedSince";
-import { PushTest, pushTest } from "../PushTest";
+import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
+import { PushTest, pushTest } from "../../../PushTest";
 
 import * as _ from "lodash";
 

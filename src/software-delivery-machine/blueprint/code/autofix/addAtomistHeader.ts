@@ -15,7 +15,7 @@
  */
 
 import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
-import { IsTypeScript } from "../../../../common/listener/support/tsPushTests";
+import { IsTypeScript } from "../../../../common/listener/support/pushtest/node/tsPushTests";
 import { ApplyHeaderParameters, applyHeaderProjectEditor } from "../../../commands/editors/license/applyHeader";
 
 export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("**/*.java");

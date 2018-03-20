@@ -18,8 +18,8 @@ import { Goals } from "../common/delivery/goals/Goals";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
-import { AnyPush } from "../common/listener/support/pushTests";
-import { allSatisfied } from "../common/listener/support/pushTestUtils";
+import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
+import { allSatisfied } from "../common/listener/support/pushtest/pushTestUtils";
 import { Builder } from "../spi/build/Builder";
 
 export class PushRule {

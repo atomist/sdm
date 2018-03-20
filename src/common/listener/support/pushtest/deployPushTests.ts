@@ -18,7 +18,7 @@ import {
     PushTest,
     pushTest,
     PushTestInvocation,
-} from "../PushTest";
+} from "../../PushTest";
 
 const DeployEnablementQuery = `
 query DeployEnablementForRepo($owner: [String], $repo: [String]) {

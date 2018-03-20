@@ -25,19 +25,19 @@ import {
     LocalDeploymentGoals,
 } from "../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
-import { IsDeployEnabled } from "../common/listener/support/deployPushTests";
-import {
-    HasSpringBootApplicationClass,
-    IsMaven,
-} from "../common/listener/support/jvmPushTests";
-import { HasK8Spec } from "../common/listener/support/k8sSpecPushTest";
-import { MaterialChangeToJavaRepo } from "../common/listener/support/materialChangeToJavaRepo";
 import {
     FromAtomist,
     ToDefaultBranch,
     ToPublicRepo,
-} from "../common/listener/support/pushTests";
-import { not } from "../common/listener/support/pushTestUtils";
+} from "../common/listener/support/pushtest/commonPushTests";
+import { IsDeployEnabled } from "../common/listener/support/pushtest/deployPushTests";
+import {
+    HasSpringBootApplicationClass,
+    IsMaven,
+} from "../common/listener/support/pushtest/jvm/jvmPushTests";
+import { MaterialChangeToJavaRepo } from "../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
+import { HasK8Spec } from "../common/listener/support/pushtest/k8s/k8sSpecPushTest";
+import { not } from "../common/listener/support/pushtest/pushTestUtils";
 import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
 import { DefaultArtifactStore } from "./blueprint/artifactStore";

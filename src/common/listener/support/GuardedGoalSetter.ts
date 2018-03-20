@@ -17,7 +17,7 @@
 import { Goals } from "../../delivery/goals/Goals";
 import { GoalSetter } from "../GoalSetter";
 import { PushTest, PushTestInvocation } from "../PushTest";
-import { allSatisfied } from "./pushTestUtils";
+import { allSatisfied } from "./pushtest/pushTestUtils";
 
 /**
  * GoalSetter wholly driven by one or more PushTest instances.

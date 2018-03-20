@@ -18,7 +18,7 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import "mocha";
 import * as assert from "power-assert";
 import { PushTestInvocation } from "../../../../src/common/listener/PushTest";
-import { IsDeployEnabled } from "../../../../src/common/listener/support/deployPushTests";
+import { IsDeployEnabled } from "../../../../src/common/listener/support/pushtest/deployPushTests";
 
 describe("deployPushTests", () => {
 

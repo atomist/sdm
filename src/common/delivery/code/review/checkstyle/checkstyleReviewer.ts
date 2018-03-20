@@ -22,7 +22,7 @@ import { ProjectReview } from "@atomist/automation-client/operations/review/Revi
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
-import { IsJava } from "../../../../listener/support/jvmPushTests";
+import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
 import { ReviewerRegistration } from "../../codeActionRegistrations";
 import { ReviewerError } from "../ReviewerError";
 import { extract } from "./checkstyleReportExtractor";

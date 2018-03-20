@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PushTest, pushTest } from "../PushTest";
+import { PushTest, pushTest } from "../../PushTest";
 
 /**
  * Return the opposite of this push test

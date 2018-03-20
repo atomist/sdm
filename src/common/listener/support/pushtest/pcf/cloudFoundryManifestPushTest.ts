@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import { PushTest, pushTest } from "../PushTest";
+import { CloudFoundryManifestPath } from "../../../../delivery/deploy/pcf/CloudFoundryTarget";
+import { PushTest, pushTest } from "../../../PushTest";
 
-/**
- * Is this a seed repo, based on the naming convention
- * that such repos have "-seed" in their name
- * @param {PushTestInvocation} pi
- * @constructor
- */
-export const NamedSeedRepo: PushTest = pushTest(
-    "Named seed repo",
-    pi => pi.id.repo.includes("-seed"));
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+
+export const HasCloudFoundryManifest: PushTest = pushTest(
+    "Has PCF manifest",
+    async inv => fileExists(inv.project, CloudFoundryManifestPath, f => true));

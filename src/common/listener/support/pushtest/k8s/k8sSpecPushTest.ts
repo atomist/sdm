@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { CloudFoundryManifestPath } from "../../delivery/deploy/pcf/CloudFoundryTarget";
-import { PushTest, pushTest } from "../PushTest";
+import { AtomistK8sSpecFile } from "../../../../../software-delivery-machine/commands/editors/k8s/addK8sSpec";
+import { PushTest, pushTest } from "../../../PushTest";
 
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-
-export const HasCloudFoundryManifest: PushTest = pushTest(
-    "Has PCF manifest",
-    async inv => fileExists(inv.project, CloudFoundryManifestPath, f => true));
+export const HasK8Spec: PushTest = pushTest("Has K8Spec",
+        pi => pi.project.findFile(AtomistK8sSpecFile)
+        .then(() => true, () => false),
+);
