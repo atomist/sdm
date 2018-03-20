@@ -33,10 +33,19 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo> extends Log
      */
     undeploy?(id: T): Promise<any>;
 
+    /**
+     * Deploy the artifact returning a promise of deployments
+     * @param {DeployableArtifact} da
+     * @param {T} ti
+     * @param {ProgressLog} log
+     * @param {ProjectOperationCredentials} credentials
+     * @param {string} team
+     * @return {Promise<Array<Promise<Deployment>>>}
+     */
     deploy(da: DeployableArtifact,
            ti: T,
            log: ProgressLog,
            credentials: ProjectOperationCredentials,
-           team: string): Promise<Deployment>;
+           team: string): Promise<Array<Promise<Deployment>>>;
 
 }

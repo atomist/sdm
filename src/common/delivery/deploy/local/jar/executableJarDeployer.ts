@@ -59,7 +59,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
-                        atomistTeam: string): Promise<Deployment> {
+                        atomistTeam: string): Promise<Array<Promise<Deployment>>> {
         const baseUrl = this.opts.baseUrl;
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
@@ -79,7 +79,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return new Promise((resolve, reject) => {
+        return [new Promise((resolve, reject) => {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
@@ -93,7 +93,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
                 reject("We should have found Tomcat endpoint by now!!");
             });
             childProcess.addListener("error", reject);
-        });
+        })];
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {

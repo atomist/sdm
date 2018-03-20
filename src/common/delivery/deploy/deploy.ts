@@ -92,14 +92,14 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
         throw new Error("No DeployableArtifact passed in");
     }
 
-    const deployment = await params.deployer.deploy(
+    const deployments = await params.deployer.deploy(
         artifactCheckout,
         params.targeter(params.id, params.branch),
         progressLog,
         params.credentials,
         params.team);
 
-    await reactToSuccessfulDeploy(params, deployment);
+    await Promise.all(deployments.map(async deployment => reactToSuccessfulDeploy(params, await deployment)));
 }
 
 export async function reactToSuccessfulDeploy(params: {
