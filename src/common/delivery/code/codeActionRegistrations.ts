@@ -16,7 +16,7 @@
 
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { PushTest, PushTestInvocation } from "../../listener/GoalSetter";
+import { PushTest, PushTestInvocation } from "../../listener/PushTest";
 
 export interface CodeActionRegistration<A> {
 

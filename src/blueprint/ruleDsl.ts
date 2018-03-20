@@ -15,7 +15,8 @@
  */
 
 import { Goals } from "../common/delivery/goals/Goals";
-import { GoalSetter, PushTest } from "../common/listener/GoalSetter";
+import { GoalSetter } from "../common/listener/GoalSetter";
+import { PushTest } from "../common/listener/PushTest";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { AnyPush } from "../common/listener/support/pushTests";
 import { allSatisfied } from "../common/listener/support/pushTestUtils";

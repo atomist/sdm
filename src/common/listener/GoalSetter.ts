@@ -14,31 +14,8 @@
  * limitations under the License.
  */
 
-import { OnPushToAnyBranch } from "../../typings/types";
 import { Goals } from "../delivery/goals/Goals";
-import { ProjectListenerInvocation } from "./Listener";
-
-/**
- * Return true if we like this push and think a particular set of goals apply to it.
- */
-export interface PushTest {
-
-    name: string;
-
-    test(p: PushTestInvocation): boolean | Promise<boolean>;
-}
-
-export function pushTest(name: string, test: (p: PushTestInvocation) => boolean | Promise<boolean>): PushTest {
-    return {
-        name,
-        test,
-    };
-}
-
-export interface PushTestInvocation extends ProjectListenerInvocation {
-
-    readonly push: OnPushToAnyBranch.Push;
-}
+import { PushTest, PushTestInvocation } from "./PushTest";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics

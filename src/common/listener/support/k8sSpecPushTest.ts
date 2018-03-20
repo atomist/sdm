@@ -15,7 +15,7 @@
  */
 
 import { AtomistK8sSpecFile } from "../../../software-delivery-machine/commands/editors/k8s/addK8sSpec";
-import { PushTest, pushTest, PushTestInvocation } from "../GoalSetter";
+import { PushTest, pushTest } from "../PushTest";
 
 export const HasK8Spec: PushTest = pushTest("Has K8Spec",
         pi => pi.project.findFile(AtomistK8sSpecFile)

@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ConditionalBuilder } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { OnAnyPendingStatus } from "../../../typings/types";
-import { PushTestInvocation } from "../../listener/GoalSetter";
+import { PushTestInvocation } from "../../listener/PushTest";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult } from "../goals/goalExecution";
 

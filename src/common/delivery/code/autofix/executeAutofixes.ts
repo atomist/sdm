@@ -21,7 +21,7 @@ import { ProjectEditor } from "@atomist/automation-client/operations/edit/projec
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { editRepo } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { PushTestInvocation } from "../../../listener/GoalSetter";
+import { PushTestInvocation } from "../../../listener/PushTest";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import {

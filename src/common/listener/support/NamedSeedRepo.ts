@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushTest, pushTest } from "../GoalSetter";
+import { PushTest, pushTest } from "../PushTest";
 
 /**
  * Is this a seed repo, based on the naming convention

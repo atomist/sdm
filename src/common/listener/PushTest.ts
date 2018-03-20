@@ -14,10 +14,27 @@
  * limitations under the License.
  */
 
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { PushTest, pushTest, PushTestInvocation } from "../PushTest";
+import { OnPushToAnyBranch } from "../../typings/types";
+import { ProjectListenerInvocation } from "./Listener";
 
-export const IsTypeScript: PushTest = pushTest(
-    "Is TypeScript",
-    async (pi: PushTestInvocation) => await fileExists(pi.project, "**/*.ts", () => true),
-);
+/**
+ * Return true if we like this push and think a particular set of goals apply to it.
+ */
+export interface PushTest {
+
+    name: string;
+
+    test(p: PushTestInvocation): boolean | Promise<boolean>;
+}
+
+export function pushTest(name: string, test: (p: PushTestInvocation) => boolean | Promise<boolean>): PushTest {
+    return {
+        name,
+        test,
+    };
+}
+
+export interface PushTestInvocation extends ProjectListenerInvocation {
+
+    readonly push: OnPushToAnyBranch.Push;
+}

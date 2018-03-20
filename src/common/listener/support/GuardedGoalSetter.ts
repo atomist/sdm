@@ -15,7 +15,8 @@
  */
 
 import { Goals } from "../../delivery/goals/Goals";
-import { GoalSetter, PushTest, PushTestInvocation } from "../GoalSetter";
+import { GoalSetter } from "../GoalSetter";
+import { PushTest, PushTestInvocation } from "../PushTest";
 import { allSatisfied } from "./pushTestUtils";
 
 /**

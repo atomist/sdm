@@ -17,7 +17,7 @@
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { SpringBootProjectStructure } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectStructure";
-import { PushTest, pushTest, PushTestInvocation } from "../GoalSetter";
+import { PushTest, pushTest, PushTestInvocation } from "../PushTest";
 
 /**
  * Is this a Maven project

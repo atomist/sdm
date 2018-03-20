@@ -17,7 +17,7 @@
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import "mocha";
 import * as assert from "power-assert";
-import { PushTestInvocation } from "../../../../src/common/listener/GoalSetter";
+import { PushTestInvocation } from "../../../../src/common/listener/PushTest";
 import { IsJava, IsMaven } from "../../../../src/common/listener/support/jvmPushTests";
 
 describe("jvmPushTests", () => {

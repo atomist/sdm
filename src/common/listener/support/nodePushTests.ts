@@ -15,9 +15,9 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PushTest, pushTest } from "../GoalSetter";
+import { PushTest, pushTest } from "../PushTest";
 
-export const IsNode = pushTest("Is Node", async pi => {
+export const IsNode: PushTest = pushTest("Is Node", async pi => {
     try {
         const f = await pi.project.findFile("package.json");
         const contents = await f.getContent();

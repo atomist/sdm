@@ -34,10 +34,10 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
+import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import {
-    GoalSetter,
     PushTestInvocation,
-} from "../../../../common/listener/GoalSetter";
+} from "../../../../common/listener/PushTest";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import {

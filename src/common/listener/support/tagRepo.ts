@@ -16,8 +16,8 @@
 
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
-import { publishTags } from "../repo/publishTags";
-import { ProjectListener } from "./Listener";
+import { publishTags } from "../../repo/publishTags";
+import { ProjectListener } from "../Listener";
 
 /**
  * Tag the repo using the given tagger

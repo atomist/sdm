@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../../common/delivery/goals/goalExecution";
-import { PushTest } from "../../../common/listener/GoalSetter";
+import { PushTest } from "../../../common/listener/PushTest";
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";

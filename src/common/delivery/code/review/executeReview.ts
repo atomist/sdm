@@ -24,7 +24,7 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { PushTestInvocation } from "../../../listener/GoalSetter";
+import { PushTestInvocation } from "../../../listener/PushTest";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
 import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
