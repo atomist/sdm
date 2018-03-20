@@ -19,8 +19,8 @@ import "mocha";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
-import { ReviewerError } from "../../../../../../src/blueprint/ReviewerError";
 import { checkstyleReviewer } from "../../../../../../src/common/delivery/code/review/checkstyle/checkstyleReviewer";
+import { ReviewerError } from "../../../../../../src/common/delivery/code/review/ReviewerError";
 
 const checkstylePath = process.env.CHECKSTYLE_PATH;
 

@@ -15,7 +15,7 @@
  */
 
 import { OnPushToAnyBranch } from "../../typings/types";
-import { Goals } from "../delivery/goals/Goal";
+import { Goals } from "../delivery/goals/Goals";
 import { ProjectListenerInvocation } from "./Listener";
 
 /**

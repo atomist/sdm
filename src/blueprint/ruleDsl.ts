@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goals } from "../common/delivery/goals/Goal";
+import { Goals } from "../common/delivery/goals/Goals";
 import { GoalSetter, PushTest } from "../common/listener/GoalSetter";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { AnyPush } from "../common/listener/support/pushTests";

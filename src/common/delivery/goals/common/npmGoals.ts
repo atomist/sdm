@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goals } from "../Goal";
+import { Goals } from "../Goals";
 import { AutofixGoal, BuildGoal, ReviewGoal } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(

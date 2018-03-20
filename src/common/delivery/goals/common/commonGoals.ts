@@ -24,9 +24,9 @@ import {
 } from "../gitHubContext";
 import {
     Goal,
-    Goals,
     GoalWithPrecondition,
 } from "../Goal";
+import { Goals } from "../Goals";
 
 export const FingerprintGoal = new Goal({
     environment: IndependentOfEnvironment,

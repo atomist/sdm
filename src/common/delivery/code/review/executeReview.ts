@@ -24,11 +24,11 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { formatReviewerError, ReviewerError } from "../../../../blueprint/ReviewerError";
 import { PushTestInvocation } from "../../../listener/GoalSetter";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
 import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
+import { formatReviewerError, ReviewerError } from "./ReviewerError";
 
 export function executeReview(reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {

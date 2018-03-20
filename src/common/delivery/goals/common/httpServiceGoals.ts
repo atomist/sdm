@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goals } from "../Goal";
+import { Goals } from "../Goals";
 import {
     ArtifactGoal, AutofixGoal, BuildGoal, CodeReactionGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal,
     ProductionDeploymentGoal,

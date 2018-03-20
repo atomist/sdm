@@ -80,11 +80,12 @@ import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
 
 /**
- * A reference blueprint for Atomist delivery.
+ * Core entry point for constructing a Software Delivery Machine.
  * Represents a possible delivery process spanning
  * goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment.
+ * Driven by Goals
  * Uses the builder pattern.
  */
 export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDeliveryBlueprint, IssueHandling {

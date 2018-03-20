@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goals } from "../../delivery/goals/Goal";
+import { Goals } from "../../delivery/goals/Goals";
 import { GoalSetter, PushTest, PushTestInvocation } from "../GoalSetter";
 import { allSatisfied } from "./pushTestUtils";
 
