@@ -20,7 +20,6 @@ import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fing
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
 import { OnAnyPendingStatus } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
@@ -29,7 +28,7 @@ import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
  * Execute fingerprinting
  * @param {Fingerprinter} fingerprinters
  */
-export function executeFingerprints(...fingerprinters: Fingerprinter[]): GoalExecutor {
+export function executeFingerprinting(...fingerprinters: Fingerprinter[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
         const credentials = { token: params.githubToken };
@@ -44,13 +43,6 @@ export function executeFingerprints(...fingerprinters: Fingerprinter[]): GoalExe
             ).then(x2 => _.flatten(x2));
             await fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
         }
-
-        // TODO this shouldn't be here
-        createStatus(params.githubToken, id, {
-            context: params.goal.context,
-            state: "success",
-            description: params.goal.completedDescription,
-        });
         return Success;
     };
 }

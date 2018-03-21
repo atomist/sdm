@@ -51,7 +51,7 @@ import { executeBuild } from "../common/delivery/build/executeBuild";
 import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
 import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/code/codeActionRegistrations";
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
-import { executeFingerprints } from "../common/delivery/code/fingerprint/executeFingerprints";
+import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
@@ -151,7 +151,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: this.fingerprinters.length > 0 ?
                 [() => new ExecuteGoalOnPendingStatus("Fingerprinter",
                     FingerprintGoal,
-                    executeFingerprints(...this.fingerprinters))] :
+                    executeFingerprinting(...this.fingerprinters), true),
+                ] :
                 [],
             commandHandlers: [
                 () => retryGoal("Fingerprinter", FingerprintGoal),
