@@ -17,17 +17,19 @@
 import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
 import { IsTypeScript } from "../../../../common/listener/support/pushtest/node/tsPushTests";
 import { ApplyHeaderParameters, applyHeaderProjectEditor } from "../../../commands/editors/license/applyHeader";
+import { IsJava } from "../../../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { PushTest } from "../../../../common/listener/PushTest";
 
-export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java header", "**/*.java");
+export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java header", "**/*.java", IsJava);
 
-export const AddAtomistTypeScriptHeader: AutofixRegistration = addAtomistHeader("TypeScript header", "**/*.ts");
+export const AddAtomistTypeScriptHeader: AutofixRegistration = addAtomistHeader("TypeScript header", "**/*.ts", IsTypeScript);
 
-export function addAtomistHeader(name: string, glob: string): AutofixRegistration {
+export function addAtomistHeader(name: string, glob: string, pushTest: PushTest): AutofixRegistration {
     const OurParams = new ApplyHeaderParameters();
     OurParams.glob = glob;
     return {
         name,
-        pushTest: IsTypeScript,
+        pushTest,
         // Ignored any parameters passed in, which will be undefined in an autofix, and provide predefined parameters
         action: (p, context) => applyHeaderProjectEditor(p, context, OurParams),
     };

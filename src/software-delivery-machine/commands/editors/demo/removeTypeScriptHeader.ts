@@ -45,7 +45,7 @@ const HeaderRegex = /^\/\*[\s\S]*?\*\/\s*/;
  */
 const whackSomeHeader: SimpleProjectEditor = (p, ctx) => {
     let count = 0;
-    return doWithFiles(p, "src/**/*.ts", async f => {
+    return doWithFiles(p, "src/**/*", async f => {
         const fileContent = await f.getContent();
         if (!fileContent.match(HeaderRegex)) {
             return;
