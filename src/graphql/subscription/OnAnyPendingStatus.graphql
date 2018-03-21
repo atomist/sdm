@@ -15,26 +15,13 @@ subscription OnAnyPendingStatus {
         id
         branch
         after {
-          sha
-          message
-          committer {
-            person {
-              chatId {
-                screenName
-              }
-            }
-          }
+          ...CoreCommitFields
         }
         before {
-          sha
-          message
-          committer {
-            person {
-              chatId {
-                screenName
-              }
-            }
-          }
+          ...CoreCommitFields
+        }
+        commits {
+          ...CoreCommitFields
         }
       }
     }

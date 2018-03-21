@@ -34,7 +34,10 @@ import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
 import { DefaultArtifactStore } from "./blueprint/artifactStore";
-import { CloudFoundryProductionDeploy } from "./blueprint/deploy/cloudFoundryDeploy";
+import {
+    CloudFoundryProductionDeploy,
+    EnableDeployOnCloudFoundryManifestAddition,
+} from "./blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
@@ -79,6 +82,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
             () => enableDeploy(),
             () => disableDeploy(),
         )
+        .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition)
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
 
     addJavaSupport(sdm, opts);

@@ -1,6 +1,15 @@
 fragment CoreRepoFieldsAndChannels on Repo {
   owner
   name
+  org {
+    owner
+    ownerType
+    provider {
+      providerId
+      apiUrl
+      url
+    }
+  }
   channels {
     team {
       id

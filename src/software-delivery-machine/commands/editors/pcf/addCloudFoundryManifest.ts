@@ -22,6 +22,9 @@ import { CloudFoundryManifestPath } from "../../../../common/delivery/deploy/pcf
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
+export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";
+// Using this marker removes some buttons on the Pull Request
+export const AtomistGeneratedMarker = "[atomist:generated]";
 
 /**
  * Command handler wrapping addCloudFoundryManifest editor
@@ -36,8 +39,12 @@ export const addCloudFoundryManifest: HandleCommand = editorCommand(
         editMode: () => new PullRequest(
             `add-pcf-manifest-${new Date().getTime()}`,
             "Add Cloud Foundry manifest",
-            "This will trigger the Software Development Machine to deploy to your Cloud Foundry space",
-            "Add Cloud Foundry manifest\n\n[atomist]"),
+            `This will trigger the Software Development Machine to deploy to your Cloud Foundry space.
+
+${AtomistGeneratedMarker}`,
+            `Add Cloud Foundry manifest
+
+${AddCloudFoundryManifestMarker}`),
     });
 
 // We know that there's a POM if this get invoked

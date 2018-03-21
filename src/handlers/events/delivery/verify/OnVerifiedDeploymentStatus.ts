@@ -26,6 +26,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
 import Status = OnSuccessStatus.Status;
@@ -38,7 +39,6 @@ import {
     messageDestinationsFor,
 } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 /**
  * React to a verified deployment

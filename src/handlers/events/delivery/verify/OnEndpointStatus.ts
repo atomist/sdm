@@ -33,6 +33,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
@@ -54,7 +55,6 @@ import { AddressChannels, addressDestinations, messageDestinationsFor } from "..
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { forApproval } from "./approvalGate";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 

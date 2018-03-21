@@ -42,5 +42,6 @@ export const HttpServiceGoals = new Goals(
 
 export const LocalDeploymentGoals = new Goals(
     "Local Deployment",
+    CodeReactionGoal,
     LocalDeploymentGoal,
     LocalEndpointGoal);
