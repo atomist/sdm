@@ -136,6 +136,6 @@ function markStatus(id: GitHubRepoRef, goal: Goal, state: StatusState,
         state,
         target_url: requireApproval ? forApproval(targetUrl || baseUrl) : targetUrl,
         context: goal.context,
-        description: goal.completedDescription,
+        description: state === StatusState.success ? goal.completedDescription : goal.failedDescription,
     });
 }

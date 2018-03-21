@@ -25,6 +25,7 @@ import { spawn, SpawnOptions } from "child_process";
 import { ConsoleProgressLog } from "../../../common/log/progressLogs";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
+import { confirmEditedness } from "../../../util/git/confirmEditedness";
 
 /**
  * Decorate an editor factory to make editors it creates chatty, so they respond to
@@ -95,16 +96,4 @@ export function localCommandsEditor(commands: SpawnCommand[],
         const status = await p.gitStatus();
         return {edited: !status.isClean, target: p, success: !commandResult.error};
     };
-}
-
-async function confirmEditedness(editResult: EditResult): Promise<EditResult> {
-    if (editResult.edited === undefined) {
-        const gs = await (editResult.target as GitProject).gitStatus();
-        return {
-            ...editResult,
-            edited: !gs.isClean,
-        };
-    } else {
-        return editResult;
-    }
 }

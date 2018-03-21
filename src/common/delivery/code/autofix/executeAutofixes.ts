@@ -30,6 +30,11 @@ import {
     StatusForExecuteGoal,
 } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
+import { Project } from "@atomist/automation-client/project/Project";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import * as _ from "lodash";
+import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 
 /**
  * Execute autofixes against this push
@@ -44,6 +49,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
         try {
             const commit = status.commit;
             const credentials = {token: egi.githubToken};
+            const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
             if (registrations.length > 0) {
                 const push = commit.pushes[0];
                 const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
@@ -64,23 +70,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
                     success: true,
                     edited: false,
                 };
-                for (const autofix of relevantAutofixes) {
-                    if (!!autofix) {
-                        const editMode: BranchCommit = {
-                            branch: pti.push.branch,
-                            message: `Autofix: ${autofix.name}\n\n[atomist]`,
-                        };
-                        logger.info("About to edit %s with autofix %s and mode=%j", pti.id.url, autofix.name, editMode);
-                        const editResult = await editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
-                            pti.project, toEditor(autofix.action), editMode);
-                        if (!editResult.success) {
-                            logger.warn("Editing %s with autofix %s and mode=%j success=false, edited=%d",
-                                pti.id.url, autofix.name, editMode, editResult.edited);
-                        }
-                        cumulativeResult = combineEditResults(cumulativeResult, editResult);
-                    }
+                for (const autofix of _.flatten(relevantAutofixes)) {
+                    const editResult = await runOne(pti.project, smartContext, autofix);
+                    cumulativeResult = combineEditResults(cumulativeResult, editResult);
                 }
                 if (cumulativeResult.edited) {
+                    await pti.project.push();
                     // Send back an error code, because we want to stop execution after this build
                     return {code: 1, message: "Edited"};
                 }
@@ -91,6 +86,23 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
             return Success;
         }
     };
+}
+
+async function runOne(project: GitProject, ctx: HandlerContext, autofix: AutofixRegistration) {
+    logger.info("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name);
+    const tentativeEditResult = await toEditor(autofix.action)(project, ctx);
+    const editResult = await confirmEditedness(tentativeEditResult);
+
+    if (!editResult.success) {
+        // TODO: rollback on failure; remove partial changes
+        logger.warn("Edited %s with autofix %s and success=false, edited=%d",
+            (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
+    } else if (editResult.edited) {
+        await project.commit(`Autofix: ${autofix.name}\n\n[atomist]`);
+    } else {
+        logger.debug("No changes by autofix %s", autofix.name);
+    }
+    return editResult;
 }
 
 // TODO will be exported in client

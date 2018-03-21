@@ -44,15 +44,15 @@ const StagingDeploySpec = {
     }),
 };
 
-export const CloudFoundryStagingDeployOnSuccessStatus: FunctionalUnit = {
+export const CloudFoundryStagingDeploy: FunctionalUnit = {
     eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("DeployFromLocal",
+        () => new ExecuteGoalOnSuccessStatus("DeployFromLocalToStaging",
             StagingDeploymentGoal,
             deployArtifactWithLogs(StagingDeploySpec)),
-        () => new ExecuteGoalOnPendingStatus("DeployFromLocal",
+        () => new ExecuteGoalOnPendingStatus("DeployFromLocalToStaging",
             StagingDeploymentGoal,
             deployArtifactWithLogs(StagingDeploySpec))],
-    commandHandlers: [() => retryGoal("DeployFromLocal", ProductionDeploymentGoal)],
+    commandHandlers: [() => retryGoal("DeployFromLocalToStaging", ProductionDeploymentGoal)],
 };
 
 const ProductionDeploySpec = {
@@ -66,16 +66,16 @@ const ProductionDeploySpec = {
     }),
 };
 
-export const CloudFoundryProductionDeployOnSuccessStatus: FunctionalUnit = {
+export const CloudFoundryProductionDeploy: FunctionalUnit = {
 
     eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("DeployFromLocal1",
+        () => new ExecuteGoalOnSuccessStatus("DeployFromLocalToProd",
             ProductionDeploymentGoal,
             deployArtifactWithLogs(ProductionDeploySpec)),
-        () => new ExecuteGoalOnPendingStatus("DeployFromLocal1",
+        () => new ExecuteGoalOnPendingStatus("DeployFromLocalToProd",
             ProductionDeploymentGoal,
             deployArtifactWithLogs(ProductionDeploySpec)),
     ],
 
-    commandHandlers: [() => retryGoal("DeployFromLocal1", ProductionDeploymentGoal)],
+    commandHandlers: [() => retryGoal("DeployFromLocalToProd", ProductionDeploymentGoal)],
 };
