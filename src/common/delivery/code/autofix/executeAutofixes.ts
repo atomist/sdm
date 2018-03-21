@@ -17,8 +17,7 @@
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
-import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { editRepo } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { PushTestInvocation } from "../../../listener/PushTest";
@@ -57,28 +56,50 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
                     addressChannels: addressChannelsFor(commit.repo, context),
                     push,
                 };
-                const editors = await relevantCodeActions<AutofixRegistration>(registrations, pti);
+                const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions<AutofixRegistration>(registrations, pti);
                 logger.info("Will apply %d eligible autofixes of %d to %j",
-                    editors.length, registrations.length, pti.id);
-                const singleEditor: ProjectEditor = editors.length > 0 ? chainEditors(...editors.map(e => e.action)) : undefined;
-                if (!!singleEditor) {
-                    const editMode: BranchCommit = {
-                        branch: pti.push.branch,
-                        message: `Autofixes (${editors.map(e => e.name).join()})\n\n[atomist]`,
-                    };
-                    logger.info("Editing %s with mode=%j", pti.id.url, editMode);
-                    const editResult = await editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
-                            pti.project, singleEditor, editMode);
-                    if (editResult.edited) {
-                        // Send back an error code, because we want to stop execution after this build
-                        return { code: 1, message: "Edited"};
+                    relevantAutofixes.length, registrations.length, pti.id);
+                let cumulativeResult: EditResult = {
+                    target: pti.project,
+                    success: true,
+                    edited: false,
+                };
+                for (const autofix of relevantAutofixes) {
+                    if (!!autofix) {
+                        const editMode: BranchCommit = {
+                            branch: pti.push.branch,
+                            message: `Autofix: ${autofix.name}\n\n[atomist]`,
+                        };
+                        logger.info("About to edit %s with autofix %s and mode=%j", pti.id.url, autofix.name, editMode);
+                        const editResult = await editRepo(teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context)),
+                            pti.project, toEditor(autofix.action), editMode);
+                        if (!editResult.success) {
+                            logger.warn("Editing %s with autofix %s and mode=%j success=false, edited=%d",
+                                pti.id.url, autofix.name, editMode, editResult.edited);
+                        }
+                        cumulativeResult = combineEditResults(cumulativeResult, editResult);
                     }
                 }
-                return Success;
+                if (cumulativeResult.edited) {
+                    // Send back an error code, because we want to stop execution after this build
+                    return {code: 1, message: "Edited"};
+                }
             }
+            return Success;
         } catch (err) {
             logger.warn("Autofixes failed with %s: Ignoring failure", err.message);
             return Success;
         }
+    };
+}
+
+// TODO will be exported in client
+function combineEditResults(r1: EditResult, r2: EditResult): EditResult {
+    return {
+        ...r1,
+        ...r2,
+        edited: (r1.edited || r2.edited) ? true :
+            (r1.edited === false && r2.edited === false) ? false : undefined,
+        success: r1.success && r2.success,
     };
 }

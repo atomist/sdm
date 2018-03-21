@@ -38,6 +38,7 @@ export const AutofixGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "0.2-autofix",
     completedDescription: "Autofixes OK",
+    failedDescription: "Fixes made: Don't proceed",
 });
 
 export const ReviewGoal = new Goal({
