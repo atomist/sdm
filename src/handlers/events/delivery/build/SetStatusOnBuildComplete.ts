@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -26,6 +25,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
@@ -55,10 +55,7 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 /**
  * Set build status on complete build
  */
-@EventHandler("Set status on build complete", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnBuildComplete",
-    __dirname),
-)
+@EventHandler("Set status on build complete", subscription({ name: "OnBuildComplete" }))
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)

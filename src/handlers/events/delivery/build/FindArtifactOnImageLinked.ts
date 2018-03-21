@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -26,6 +25,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import {
@@ -37,10 +37,7 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
-@EventHandler("Scan when artifact is found", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnImageLinked",
-    __dirname),
-)
+@EventHandler("Scan when artifact is found", subscription({ name: "OnImageLinked" }))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
     @Secret(Secrets.OrgToken)

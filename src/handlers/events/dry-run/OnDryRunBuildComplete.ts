@@ -18,7 +18,6 @@ import {
     EventFired,
     EventHandler,
     failure,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -27,6 +26,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
@@ -36,10 +36,7 @@ import { DryRunContext } from "../../commands/editors/dry-run/dryRunEditor";
 /**
  * React to to result of a dry run build
  */
-@EventHandler("React to result of a dry run build", GraphQL.subscriptionFromFile(
-    "../../../graphql/subscription/OnBuildCompleteForDryRun",
-    __dirname),
-)
+@EventHandler("React to result of a dry run build", subscription({ name: "OnBuildCompleteForDryRun" }))
 export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryRun.Subscription> {
 
     @Secret(Secrets.OrgToken)

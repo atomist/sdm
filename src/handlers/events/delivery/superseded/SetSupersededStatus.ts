@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -25,6 +24,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnPushWithBefore } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
@@ -35,10 +35,7 @@ export const SupersededContext = "superseded";
 /**
  * Set superseded status on previous commit on a push
  */
-@EventHandler("Scan code on master", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnPushWithBefore",
-    __dirname),
-)
+@EventHandler("Scan code on master", subscription({ name: "OnPushWithBefore" }))
 export class SetSupersededStatus implements HandleEvent<OnPushWithBefore.Subscription> {
 
     @Secret(Secrets.OrgToken)

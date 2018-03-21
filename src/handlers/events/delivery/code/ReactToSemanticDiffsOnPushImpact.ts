@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -25,10 +24,12 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as _ from "lodash";
 import {
-    FingerprintDifference, FingerprintDifferenceInvocation,
+    FingerprintDifference,
+    FingerprintDifferenceInvocation,
     FingerprintDifferenceListener,
     FingerprintValue,
 } from "../../../../common/listener/FingerprintDifferenceListener";
@@ -38,10 +39,7 @@ import * as schema from "../../../../typings/types";
 /**
  * React to a PushImpact event to react to semantic diffs
  */
-@EventHandler("Find semantic diffs from a PushImpact", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnPushImpact",
-    __dirname),
-)
+@EventHandler("Find semantic diffs from a PushImpact", subscription({ name: "OnPushImpact" }))
 export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
