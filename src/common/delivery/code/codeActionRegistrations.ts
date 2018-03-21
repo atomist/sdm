@@ -48,5 +48,7 @@ export interface ReviewerRegistration extends CodeActionRegistration<ProjectRevi
  */
 export function relevantCodeActions<A extends CodeActionRegistration<any>>(registrations: A[],
                                                                            pti: PushTestInvocation): Promise<A[]> {
-    return Promise.all(registrations.filter(async t => !t.pushTest || await t.pushTest.test(pti) ? t : undefined));
+    return Promise.all(
+        registrations.map(async t => (!t.pushTest || await t.pushTest.test(pti)) ? t : undefined))
+        .then(elts => elts.filter(x => !!x));
 }

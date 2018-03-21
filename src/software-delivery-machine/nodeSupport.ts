@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-import { whenPushSatisfies } from "../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { Install } from "../common/delivery/build/local/npm/NpmBuilder";
-import { LocalCommandAutofix } from "../common/delivery/code/autofix/LocalCommandAutofix";
-import { IsNode } from "../common/listener/support/pushtest/node/nodePushTests";
-import { IsTypeScript } from "../common/listener/support/pushtest/node/tsPushTests";
-import { asSpawnCommand } from "../util/misc/spawned";
+import { tslintFix } from "../common/delivery/code/autofix/node/tslint";
 import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistHeader";
 import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
 
@@ -42,9 +37,6 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         // )
         .addAutofixes(
             AddAtomistTypeScriptHeader,
-            new LocalCommandAutofix("tslint",
-                whenPushSatisfies(IsTypeScript, IsNode).itMeans("TypeScript repo"),
-                Install,
-                asSpawnCommand("npm run lint:fix")),
+            tslintFix,
         );
 }

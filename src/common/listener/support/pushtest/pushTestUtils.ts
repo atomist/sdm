@@ -37,7 +37,7 @@ export function allSatisfied(...pushTests: PushTest[]): PushTest {
             const allResults: boolean[] = await Promise.all(
                 pushTests.map(async pt => {
                     const result = await pt.test(pci);
-                    logger.debug("Result of PushTest %s was %d", pt.name, result);
+                    logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
                     return result;
                 }),
             );
