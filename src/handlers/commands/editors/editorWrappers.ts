@@ -53,7 +53,7 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
         try {
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
             const editResult = await confirmEditedness(tentativeEditResult);
-            logger.info("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
+            logger.debug("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
             if (!editResult.edited) {
                 await context.messageClient.respond(`*${editorName}*: Nothing to do on \`${id.url}\``);
             }

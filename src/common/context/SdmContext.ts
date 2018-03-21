@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-/**
- * Common parameters to an invocation of a listener to one of the
- * SDM's specific events. These are fired by our event handlers to allow
- * multiple, domain specific, listeners to be invoked.
- */
 import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";

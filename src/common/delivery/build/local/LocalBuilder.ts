@@ -154,7 +154,8 @@ export abstract class LocalBuilder implements Builder {
     protected updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
                                      status: "started" | "failed" | "error" | "passed" | "canceled",
                                      branch: string): Promise<LocalBuildInProgress> {
-        logger.info(`Telling Atomist about a ${status} build on ${branch}, sha ${runningBuild.repoRef.sha}, url ${runningBuild.url}`);
+        logger.info("Telling Atomist about a %s build on %s, sha %s, url %s",
+            status, branch, runningBuild.repoRef.sha, runningBuild.url);
         const url = `https://webhook.atomist.com/atomist/build/teams/${runningBuild.team}`;
         const data = {
             repository: {

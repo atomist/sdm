@@ -22,7 +22,8 @@ import { PushTest } from "../../../listener/PushTest";
 import { AutofixRegistration } from "../codeActionRegistrations";
 
 /**
- * Register an autofix based on local commands
+ * Register an autofix based on spawned local shell commands.
+ * For example, could wrap a linter
  */
 export class LocalCommandAutofix implements AutofixRegistration {
 

@@ -58,12 +58,12 @@ export class OnFirstPushToRepo
         const push = event.data.Push[0];
 
         if (!!push.before) {
-            logger.info(`Done: Not a new commit on ${push.repo.name}`);
+            logger.debug(`Done: Not a new commit on ${push.repo.name}`);
             return Success;
         }
 
         if (push.branch !== push.repo.defaultBranch) {
-            logger.info(`Done: Not push to the default branch on ${push.repo.name}`);
+            logger.debug(`Done: Not push to the default branch on ${push.repo.name}`);
             return Success;
         }
 

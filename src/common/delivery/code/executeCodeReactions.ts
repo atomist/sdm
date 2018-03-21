@@ -30,9 +30,8 @@ export function executeCodeReactions(codeReactions: CodeReactionListener[]): Goa
         const credentials = {token: params.githubToken};
 
         logger.info("Will run %d code reactions on %j", codeReactions.length, id);
-
         if (status.context !== params.goal.context || status.state !== "pending") {
-            logger.warn(`I was looking for ${params.goal.context} being pending, but I heard about ${status.context} being ${status.state}`);
+            logger.debug("Looking for %s being pending, but heard about %s being %s", params.goal.context, status.context, status.state);
             return Success;
         }
 

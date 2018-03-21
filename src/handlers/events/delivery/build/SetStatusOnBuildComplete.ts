@@ -78,14 +78,14 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
             const builtStatus = commit.statuses.find(s => s.context === buildGoal.context);
             const ghStatusState = buildStatusToGitHubStatusState(build.status);
             if (!!builtStatus) {
-                logger.info(`updating build status: ${buildGoal.context}`);
+                logger.info("Updating build status: %s", buildGoal.context);
                 await setBuiltContext(buildGoal,
                     ghStatusState,
                     build.buildUrl,
                     id,
                     {token: params.githubToken});
             } else {
-                logger.info(`No build status found for ${buildGoal.context} so not setting it to complete`);
+                logger.info("No build status found for %s so not setting it to complete", buildGoal.context);
             }
             if (build.status === "failed" && build.buildUrl) {
                 const ac = addressChannelsFor(commit.repo, ctx);

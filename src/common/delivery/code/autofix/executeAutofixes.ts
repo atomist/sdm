@@ -77,8 +77,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
                 return Success;
             }
         } catch (err) {
-            logger.warn("Autofixing failed with " + err.message);
-            logger.warn("Ignoring failure");
+            logger.warn("Autofixes failed with %s: Ignoring failure", err.message);
             return Success;
         }
     };

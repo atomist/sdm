@@ -68,7 +68,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
 
         const desiredStatus = commit.statuses.find(status => status.context === params.goal.context);
         if (!desiredStatus) {
-            logger.info("FindArtifactOnImageLinked: context %s not found for %j", params.goal.context, id);
+            logger.debug("FindArtifactOnImageLinked: context %s not found for %j", params.goal.context, id);
             return Success;
         }
 

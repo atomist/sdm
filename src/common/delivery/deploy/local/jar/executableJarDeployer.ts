@@ -69,6 +69,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
             contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
         };
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        // TODO switch to watchSpawned
         const childProcess = spawn("java",
             [
                 "-jar",
@@ -98,7 +99,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
 
     public logInterpreter(log: string): InterpretedLog | undefined {
         if (!log) {
-            logger.warn("log was empty");
+            logger.warn("Log was empty");
             return undefined;
         }
 
@@ -114,7 +115,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
         // default to maven errors
         const maybeMavenErrors = mavenErrors(log);
         if (maybeMavenErrors) {
-            logger.info("recognized maven error");
+            logger.info("Recognized maven error");
             return {
                 relevantPart: maybeMavenErrors,
                 message: "Maven errors",
@@ -131,7 +132,6 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
                 includeFullLog: false,
             };
         }
-
         logger.info("Did not find anything to recognize in the log");
     }
 

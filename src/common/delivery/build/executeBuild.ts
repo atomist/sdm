@@ -21,9 +21,13 @@ import { ConditionalBuilder } from "../../../handlers/events/delivery/ExecuteGoa
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { PushTestInvocation } from "../../listener/PushTest";
 import { addressChannelsFor } from "../../slack/addressChannels";
-import { ExecuteGoalInvocation, ExecuteGoalResult } from "../goals/goalExecution";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 
-export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
+/**
+ * Execute build with the appropriate builder
+ * @param {ConditionalBuilder} conditionalBuilders
+ */
+export function executeBuild(...conditionalBuilders: ConditionalBuilder[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
@@ -51,7 +55,6 @@ export function executeBuild(...conditionalBuilders: ConditionalBuilder[]) {
             }
             const builder = conditionalBuilders[indx].builder;
             logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
-
             const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
             const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
             const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);

@@ -30,11 +30,10 @@ export function coordinates(va: VersionedArtifact): string {
  * @return {VersionedArtifact}
  */
 export function toVersionedArtifact(raw: any): VersionedArtifact {
-    const va = {
+    return {
         groupId: raw.groupId[0],
         artifactId: raw.artifactId[0],
         version: raw.version[0],
         description: !!raw.description ? raw.description[0] : undefined,
     };
-    return va;
 }

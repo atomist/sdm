@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import { PushTest, pushTest } from "../../../PushTest";
 
 export const IsNode: PushTest = pushTest("Is Node", async pi => {
@@ -22,11 +21,8 @@ export const IsNode: PushTest = pushTest("Is Node", async pi => {
         const f = await pi.project.findFile("package.json");
         const contents = await f.getContent();
         const json = JSON.parse(contents);
-        logger.info("Node PushTest on %s:%s returning TRUE", pi.project.id.owner, pi.project.id.repo);
         return true;
     } catch (err) {
-        logger.info("Node PushTest on %s:%s returning FALSE (%s)",
-            pi.project.id.owner, pi.project.id.repo, err);
         return false;
     }
 });

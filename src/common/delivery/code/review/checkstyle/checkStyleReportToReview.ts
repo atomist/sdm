@@ -38,7 +38,7 @@ export function checkstyleReportToReview(repoId: RepoRef,
 function fileComments(file: FileReport, baseDir: string): ReviewComment[] {
     // This is a bit complex but necessary as we can get some content before baseDir
     const path = file.name.substr(file.name.indexOf(baseDir) + baseDir.length);
-    logger.info("Processing file comments for [%s], baseDir=[%s], path=[%s]", file.name, baseDir, path);
+    logger.debug("Processing file comments for [%s], baseDir=[%s], path=[%s]", file.name, baseDir, path);
     return file.errors.map(e => ({
         category: "checkstyle",
         severity: e.severity,

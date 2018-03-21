@@ -60,7 +60,7 @@ export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscri
         const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
 
         if (issue.updatedAt !== issue.createdAt) {
-            logger.info("Issue updated, not created: %s on %j", issue.number, id);
+            logger.debug("Issue updated, not created: %s on %j", issue.number, id);
             return Success;
         }
 

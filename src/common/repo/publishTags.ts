@@ -40,9 +40,7 @@ export async function publishTags(tagger: Tagger,
                                   addressChannels: AddressChannels,
                                   ctx: HandlerContext): Promise<ActionResult<Tags>> {
     const p = await GitCommandGitProject.cloned(credentials, id);
-
     const tags: Tags = await tagger(p, ctx, undefined);
-
     await addressChannels(`Tagging \`${id.owner}/${id.repo}\` with tags ${format(tags.tags)}`);
     const edp: EditorOrReviewerParameters = {
         targets: {

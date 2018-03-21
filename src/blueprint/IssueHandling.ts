@@ -19,6 +19,9 @@ import { NewIssueListener } from "../common/listener/NewIssueListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { FunctionalUnit } from "./FunctionalUnit";
 
+/**
+ * Defines listener registration for handling issues.
+ */
 export interface IssueHandling extends FunctionalUnit {
 
     newIssueListeners: NewIssueListener[];

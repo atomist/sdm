@@ -63,9 +63,7 @@ class MavenSourceDeployer implements SourceDeployer {
 
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
-
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-
         const cloned = await GitCommandGitProject.cloned(creds, id);
         const branchId = ti.managedDeploymentKey;
         const startupInfo = {
@@ -73,6 +71,8 @@ class MavenSourceDeployer implements SourceDeployer {
             atomistTeam,
             contextRoot: `/${branchId.owner}/${branchId.repo}/${branchId.branch}`,
         };
+
+        // TODO switch to watchSpawned
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",

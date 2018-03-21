@@ -50,7 +50,6 @@ export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocatio
                                                  logInterpreter?: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
-
         const log = await createEphemeralProgressLog();
         const progressLog = new MultiProgressLog(ConsoleProgressLog, new InMemoryProgressLog(), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
@@ -58,9 +57,7 @@ export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocatio
         const credentials = {token: params.githubToken};
 
         const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
-
         await whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials});
-
         await progressLog.close();
         return Promise.resolve(Success as ExecuteGoalResult);
     };

@@ -65,7 +65,6 @@ export interface DeploySourceParams {
 
 export async function deploySource(params: DeploySourceParams): Promise<void> {
     logger.info("Deploying with params=%j", params);
-
     const target = ManagedDeploymentTargeter(params.id, params.branch);
 
     const deployment = await params.deployer.deployFromSource(
@@ -146,7 +145,7 @@ export function setStatus(credentials: ProjectOperationCredentials,
                           context: GitHubStatusContext,
                           targetUrl: string,
                           description?: string): Promise<any> {
-    logger.info(`Setting deploy status for ${context} to ${state} at ${targetUrl}`);
+    logger.info("Setting deploy status for %s to %s at %s", context, state, targetUrl);
     return createStatus((credentials as TokenCredentials).token, id as GitHubRepoRef, {
         state,
         target_url: targetUrl,

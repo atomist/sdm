@@ -38,6 +38,7 @@ import { checkstyleReportToReview } from "./checkStyleReportToReview";
 export const checkstyleReviewer: (checkstylePath: string) =>
     (p: LocalProject, ctx: HandlerContext) => Promise<ProjectReview | ProjectReview> =
     (checkstylePath: string) => (p: GitProject, ctx: HandlerContext) => {
+    // TODO switch to watchSpawned
         const childProcess = spawn(
             "java",
             ["-jar",

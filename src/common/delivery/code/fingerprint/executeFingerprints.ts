@@ -23,10 +23,13 @@ import { OnAnyPendingStatus } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
-import { ExecuteGoalInvocation, ExecuteGoalResult } from "../../goals/goalExecution";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 
-export function executeFingerprints(...fingerprinters: Fingerprinter[]):
-(status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => Promise<ExecuteGoalResult> {
+/**
+ * Execute fingerprinting
+ * @param {Fingerprinter} fingerprinters
+ */
+export function executeFingerprints(...fingerprinters: Fingerprinter[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
         const credentials = { token: params.githubToken };
@@ -41,6 +44,8 @@ export function executeFingerprints(...fingerprinters: Fingerprinter[]):
             ).then(x2 => _.flatten(x2));
             await fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
         }
+
+        // TODO this shouldn't be here
         createStatus(params.githubToken, id, {
             context: params.goal.context,
             state: "success",

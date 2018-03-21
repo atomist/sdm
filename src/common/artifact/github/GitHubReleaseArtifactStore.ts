@@ -32,6 +32,9 @@ import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/Artifac
 import { AppInfo } from "../../../spi/deploy/Deployment";
 import { createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
 
+/**
+ * Implement ArtifactStore to store artifacts as GitHub releases
+ */
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 
     public async storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string> {

@@ -74,7 +74,7 @@ export async function executeGoal(execute: GoalExecutor,
                                   ctx: HandlerContext,
                                   params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> {
     const commit = status.commit;
-    logger.info(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
+    logger.debug(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
     const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
     const statusAndFriends: GitHubStatusAndFriends = {
         context: status.context,
@@ -83,7 +83,7 @@ export async function executeGoal(execute: GoalExecutor,
         description: status.description,
         siblings: status.commit.statuses,
     };
-    logger.info("Checking preconditions for goal %s on %j...", params.goal.name, id);
+    logger.debug("Checking preconditions for goal %s on %j...", params.goal.name, id);
     const preconsStatus = await params.goal.preconditionsStatus({token: params.githubToken}, id, statusAndFriends);
     if (preconsStatus === "failure") {
         logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
@@ -95,7 +95,7 @@ export async function executeGoal(execute: GoalExecutor,
         return Success;
     }
     if (preconsStatus === "waiting") {
-        logger.info("Preconditions not yet met for goal %s on %j", params.goal.name, id);
+        logger.debug("Preconditions not yet met for goal %s on %j", params.goal.name, id);
         return Success;
     }
     if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
@@ -103,13 +103,12 @@ export async function executeGoal(execute: GoalExecutor,
     }
 
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-
     await createStatus(params.githubToken, id as GitHubRepoRef, {
         context: params.goal.context,
         description: params.goal.workingDescription,
         state: "pending",
     }).catch(err =>
-        logger.warn(`Failed to update ${params.goal.name} status to tell people we are working on it`));
+        logger.warn("Failed to update %s status to tell people we are working on it", params.goal.name));
 
     return execute(status, ctx, params);
 }

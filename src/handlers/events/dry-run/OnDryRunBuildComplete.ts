@@ -53,10 +53,10 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const branch = build.commit.pushes[0].branch;
 
-        logger.info("Assessing dry run for %j: Statuses=%j", id, commit.statuses);
+        logger.debug("Assessing dry run for %j: Statuses=%j", id, commit.statuses);
         const dryRunStatus = commit.statuses.find(s => s.context === DryRunContext);
         if (!dryRunStatus || dryRunStatus.state !== "pending") {
-            logger.info("Not a dry run build on %j: Statuses=%j", id, commit.statuses);
+            logger.debug("Not a dry run build on %j: Statuses=%j", id, commit.statuses);
             return Success;
         }
 

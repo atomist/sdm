@@ -32,7 +32,7 @@ export function teachToRespondInEventHandler(ctx: HandlerContext, ...destination
         try {
             return await oldRespondMethod(msg, options);
         } catch (err) {
-            logger.info("Rerouting response message to destinations: message was [%s]", msg);
+            logger.debug("Rerouting response message to destinations: message was [%s]", msg);
             return ctx.messageClient.send(msg, destinations, options);
         }
     };

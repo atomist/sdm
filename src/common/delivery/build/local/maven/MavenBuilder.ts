@@ -46,7 +46,9 @@ import { identification } from "./pomParser";
  */
 export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
-    constructor(artifactStore: ArtifactStore, logFactory: LogFactory) {
+    constructor(artifactStore: ArtifactStore,
+                logFactory: LogFactory,
+                private skipTests: boolean = true) {
         super("MavenBuilder", artifactStore, logFactory);
     }
 
@@ -61,6 +63,8 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         const content = await pom.getContent();
         const va = await identification(content);
         const appId = {...va, name: va.artifact, id};
+
+        // TODO update to take skipTests parameter
         const childProcess = spawn("mvn", [
             "package",
             "-DskipTests",
@@ -71,6 +75,8 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
             await addressChannels("Fatal error building using Maven--is `mvn` on your automation node path?\n" +
                 "Attempted to execute `mvn package`");
         }
+
+        // TODO update to use new watchSpawned support
         const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
             childProcess.stdout.on("data", data => {
                 log.write(data.toString());

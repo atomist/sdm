@@ -41,10 +41,10 @@ export const MaterialChangeToJavaRepo = pushTest("Material change to Java repo",
         changedFiles.some(f => f.endsWith(".yml")) ||
         changedFiles.some(f => f.endsWith(".xml"))
     ) {
-        logger.info("Change is material on %j: changed files=[%s]", pci.id, changedFiles.join(","));
+        logger.debug("Change is material on %j: changed files=[%s]", pci.id, changedFiles.join(","));
         return true;
     }
-    logger.info("Change is immaterial on %j: changed files=[%s]", pci.id, changedFiles.join(","));
+    logger.debug("Change is immaterial on %j: changed files=[%s]", pci.id, changedFiles.join(","));
     // await pci.addressChannels(`Sorry. I'm not going to waste electricity on changes to [${changedFiles.join(",")}]`);
     return false;
 });

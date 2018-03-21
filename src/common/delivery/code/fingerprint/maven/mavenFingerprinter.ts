@@ -19,11 +19,20 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { dependenciesFingerprintsFromParsedPom } from "./dependenciesFingerprintsFromParsedPom";
 import { extractEffectivePom } from "./effectivePomExtractor";
 
+/**
+ * Public entry point for all Maven fingerprints. Use mvn help:effective-pom
+ * to generic effective POM then parse it and turn it into fingerprints.
+ * @param {GitProject} p
+ * @return {Promise<Fingerprint[]>}
+ */
 export async function mavenFingerprinter(p: GitProject): Promise<Fingerprint[]> {
     try {
         await p.findFile("pom.xml");
         const epom = await extractEffectivePom(p);
-        return Promise.all([dependenciesFingerprintsFromParsedPom].map(fp => fp(epom)));
+        return Promise.all([
+            dependenciesFingerprintsFromParsedPom,
+            // TODO add other Maven POM fingerprints
+        ].map(fp => fp(epom)));
     } catch {
         // If we can't find a pom, just exit
         return [];

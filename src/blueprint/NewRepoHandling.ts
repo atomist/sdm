@@ -18,7 +18,7 @@ import { ProjectListener } from "../common/listener/Listener";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 
 /**
- * Encapsulate reactions to new repos
+ * Defines listener registration for reactions to repo events
  */
 export interface NewRepoHandling {
 

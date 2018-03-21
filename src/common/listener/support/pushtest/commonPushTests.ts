@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { isPublicRepo } from "../../../../util/github/ghub";
 import { PushTest, pushTest } from "../../PushTest";
 
 export const ToDefaultBranch = pushTest("Push to default branch", p => {
-    const flag = p.push.branch === p.push.repo.defaultBranch;
-    logger.info("Push to %j on branch %s: ToDefaultBranch=%d", p.id, p.push.branch, flag);
-    return flag;
+    return p.push.branch === p.push.repo.defaultBranch;
 });
 
 /**

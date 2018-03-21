@@ -41,7 +41,7 @@ export const configuration: Configuration = {
         enabled: true,
     },
     logging: {
-        level: "debug",
+        level: "info",
         file: true,
     },
 };

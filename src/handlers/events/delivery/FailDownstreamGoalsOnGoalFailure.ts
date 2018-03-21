@@ -78,9 +78,7 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
         }
 
         const currentlyPending = status.commit.statuses.filter(s => s.state === "pending");
-
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
         return gameOver(
             status.context,
             currentlyPending.map(s => s.context),

@@ -20,7 +20,7 @@ import { computeShaOf } from "../../../../../util/misc/sha";
 import {
     coordinates,
     toVersionedArtifact,
-} from "./artifact";
+} from "../../../build/local/maven/artifact";
 
 /**
  * Don't call except via mavenFingerprinter

@@ -67,12 +67,12 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
 
         // TODO: put this in a subscription parameter. It should work, in this architecture
         if (status.context !== params.goal.context) {
-            logger.info(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
+            logger.debug(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
             return Success;
         }
         // this will change when we have Goal events that don't double-up the pending bit
         if (status.description === params.goal.workingDescription) {
-            logger.info("This one is working.");
+            logger.debug("[%s] is working", status.context);
             return Success;
         }
         if (status.description !== params.goal.requestedDescription) {

@@ -60,8 +60,7 @@ function ensureValidUrl(inputStatus: Status): Status {
     if (inputStatus.target_url.startsWith("http")) {
         return inputStatus;
     }
-    logger.warn("I know you won't like this, but you can't send a non-url in target_url, so I'm appending it to the description");
-
+    logger.warn("Illegal to send a non-url in target_url, so I'm appending it to the description");
     return {
         target_url: undefined,
         description: inputStatus.description + " at " + inputStatus.target_url,

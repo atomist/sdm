@@ -109,7 +109,7 @@ export class GoalWithPrecondition extends Goal {
             return "failure";
         }
         if (reasonsToWait.length > 0) {
-            logger.info("Preconditions not yet met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
+            logger.debug("Preconditions not yet met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
                 this.name, this.dependsOn.map(g => g.name),
                 id, errors.join(","), reasonsToWait.join(","));
             return "waiting";
@@ -138,7 +138,7 @@ function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?
 export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
     const myStatus = status.siblings.find(s => s.context === currentGoal);
     if (!myStatus) {
-        logger.info("Status.context is %s but there is nothing with this context", currentGoal);
+        logger.debug("Status.context is %s but there is nothing with this context", currentGoal);
         return false;
     }
     if (myStatus.state === "pending" && myStatus.description.startsWith("Planning")) {
