@@ -16,7 +16,7 @@
 
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
-import { LocalDeployment } from "../../../common/delivery/deploy/deployOnLocal";
+import { localDeployment } from "../../../common/delivery/deploy/deployOnLocal";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
@@ -42,5 +42,5 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
         .addSupportingCommands(() => applyHttpServiceGoals);
 
     softwareDeliveryMachine
-        .addFunctionalUnits(LocalDeployment);
+        .addFunctionalUnits(localDeployment(softwareDeliveryMachine.opts.projectLoader));
 }

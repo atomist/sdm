@@ -26,6 +26,7 @@ import {
     CodeReactionInvocation,
     CodeReactionListener,
 } from "../../listener/CodeReactionListener";
+import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import {
     ExecuteGoalInvocation,
@@ -33,7 +34,7 @@ import {
     StatusForExecuteGoal,
 } from "../goals/goalExecution";
 
-export function executeCodeReactions(codeReactions: CodeReactionListener[]): GoalExecutor {
+export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions: CodeReactionListener[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 
@@ -48,7 +49,7 @@ export function executeCodeReactions(codeReactions: CodeReactionListener[]): Goa
 
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         if (codeReactions.length > 0) {
-            const project = await GitCommandGitProject.cloned(credentials, id);
+            const project = await projectLoader.load(credentials, id, ctx);
             const push = commit.pushes[0];
             const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
 

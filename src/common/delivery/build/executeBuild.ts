@@ -16,18 +16,20 @@
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ConditionalBuilder } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { PushTestInvocation } from "../../listener/PushTest";
+import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 
 /**
  * Execute build with the appropriate builder
+ * @param projectLoader used to load projects
  * @param {ConditionalBuilder} conditionalBuilders
  */
-export function executeBuild(...conditionalBuilders: ConditionalBuilder[]): GoalExecutor {
+export function executeBuild(projectLoader: ProjectLoader,
+                             ...conditionalBuilders: ConditionalBuilder[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
@@ -35,8 +37,7 @@ export function executeBuild(...conditionalBuilders: ConditionalBuilder[]): Goal
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
             const atomistTeam = context.teamId;
 
-            const project = await GitCommandGitProject.cloned(credentials, id);
-
+            const project = await projectLoader.load(credentials, id, context);
             const push = status.commit.pushes[0];
             const pti: PushTestInvocation = {
                 id,

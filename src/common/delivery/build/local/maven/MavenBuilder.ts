@@ -16,23 +16,14 @@
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import {
-    LogInterpretation,
-    LogInterpreter,
-} from "../../../../../spi/log/InterpretedLog";
-import {
-    LogFactory,
-    ProgressLog,
-} from "../../../../../spi/log/ProgressLog";
+import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../../slack/addressChannels";
-import {
-    LocalBuilder,
-    LocalBuildInProgress,
-} from "../LocalBuilder";
+import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { interpretMavenLog } from "./mavenLogInterpreter";
 import { identification } from "./pomParser";
 
@@ -48,8 +39,9 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     constructor(artifactStore: ArtifactStore,
                 logFactory: LogFactory,
+                projectLoader: ProjectLoader,
                 private skipTests: boolean = true) {
-        super("MavenBuilder", artifactStore, logFactory);
+        super("MavenBuilder", artifactStore, logFactory, projectLoader);
     }
 
     protected async startBuild(credentials: ProjectOperationCredentials,
@@ -57,7 +49,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
                                atomistTeam: string,
                                log: ProgressLog,
                                addressChannels: AddressChannels): Promise<LocalBuildInProgress> {
-        const p = await GitCommandGitProject.cloned(credentials, id);
+        const p = await this.projectLoader.load(credentials, id);
         // Find the artifact info from Maven
         const pom = await p.findFile("pom.xml");
         const content = await pom.getContent();

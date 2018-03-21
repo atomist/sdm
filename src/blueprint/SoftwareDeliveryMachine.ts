@@ -64,6 +64,7 @@ import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
+import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { retryGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
@@ -78,6 +79,12 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
+
+export interface SoftwareDeliveryMachineOptions {
+    deployers: FunctionalUnit[];
+    artifactStore: ArtifactStore;
+    projectLoader: ProjectLoader;
+}
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -149,7 +156,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: this.fingerprinters.length > 0 ?
                 [() => new ExecuteGoalOnPendingStatus("Fingerprinter",
                     FingerprintGoal,
-                    executeFingerprinting(...this.fingerprinters), true),
+                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters), true),
                 ] :
                 [],
             commandHandlers: [
@@ -180,7 +187,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus("CodeReactions",
                     CodeReactionGoal,
-                    executeCodeReactions(this.codeReactions), true),
+                    executeCodeReactions(this.opts.projectLoader, this.codeReactions), true),
             ],
             commandHandlers: [],
         };
@@ -190,7 +197,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal,
-                    executeAutofixes(this.autofixRegistrations), true),
+                    executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), true),
             ],
             commandHandlers: [],
         };
@@ -200,7 +207,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         if (this.goalSetters.length === 0) {
             throw new Error("No goal setters");
         }
-        return () => new SetGoalsOnPush(...this.goalSetters);
+        return () => new SetGoalsOnPush(this.opts.projectLoader, ...this.goalSetters);
     }
 
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
@@ -209,10 +216,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
-                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
-                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(...this.conditionalBuilders)),
-                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(...this.conditionalBuilders)),
+                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
+                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
+                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
+                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
             ],
             commandHandlers: [],
         };
@@ -423,10 +430,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    constructor(private opts: {
-                    deployers: FunctionalUnit[],
-                    artifactStore: ArtifactStore,
-                },
+    constructor(public readonly opts: SoftwareDeliveryMachineOptions,
                 ...pushRules: PushRule[]) {
         this.goalSetters = pushRules
             .filter(rule => !!rule.goalSetter)

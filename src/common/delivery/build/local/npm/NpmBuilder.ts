@@ -24,6 +24,7 @@ import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { asSpawnCommand, ChildProcessResult, SpawnCommand, watchSpawned } from "../../../../../util/misc/spawned";
+import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
 export const Install: SpawnCommand = asSpawnCommand("npm install");
@@ -43,10 +44,12 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
     private readonly buildCommands: SpawnCommand[];
 
-    constructor(artifactStore: ArtifactStore, logFactory: LogFactory,
+    constructor(artifactStore: ArtifactStore,
+                logFactory: LogFactory,
+                projectLoader: ProjectLoader,
                 buildCommand1: SpawnCommand = RunBuild,
                 ...additionalCommands: SpawnCommand[]) {
-        super("NpmBuilder", artifactStore, logFactory);
+        super("NpmBuilder", artifactStore, logFactory, projectLoader);
         this.buildCommands = [Install, buildCommand1].concat(additionalCommands);
     }
 
@@ -55,7 +58,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
                                team: string,
                                log: ProgressLog): Promise<LocalBuildInProgress> {
         logger.info("NpmBuilder.startBuild on %s, buildCommands=[%j]", id.url, this.buildCommands);
-        const p = await GitCommandGitProject.cloned(credentials, id);
+        const p = await this.projectLoader.load(credentials, id);
         // Find the artifact info from package.json
         const packageJson = await p.findFile("package.json");
         const content = await packageJson.getContent();

@@ -31,6 +31,8 @@ import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTest
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import { CloningProjectLoader } from "../../common/repo/CloningProjectLoader";
+import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import { DefaultArtifactStore } from "../blueprint/artifactStore";
@@ -44,7 +46,13 @@ import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
 
-export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
+/**
+ * Assemble a machine that supports Java, Spring and Node and deploys to Cloud Foundry
+ * @param {{projectLoader?: ProjectLoader; useCheckstyle: boolean}} opts
+ * @return {SoftwareDeliveryMachine}
+ */
+export function cloudFoundrySoftwareDeliveryMachine(opts: { projectLoader?: ProjectLoader, useCheckstyle: boolean }): SoftwareDeliveryMachine {
+    const projectLoader: ProjectLoader = opts.projectLoader || CloningProjectLoader;
     const sdm = new SoftwareDeliveryMachine(
         {
             deployers: [
@@ -52,6 +60,7 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
                 CloudFoundryProductionDeploy,
             ],
             artifactStore: DefaultArtifactStore,
+            projectLoader,
         },
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
             .itMeans("No material change to Java")
@@ -69,8 +78,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
         whenPushSatisfies(IsNode)
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals)
-            .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
-        onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog)),
+            .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog, projectLoader)),
+        onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog, projectLoader)),
     );
 
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)

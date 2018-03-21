@@ -24,8 +24,9 @@ import {
 } from "../../../common/delivery/deploy/local/appManagement";
 import {executableJarDeployer} from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
 import {StartupInfo} from "../../../common/delivery/deploy/local/LocalDeployerOptions";
-import {mavenDeployer} from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
+import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
 import {StagingDeploymentGoal, StagingEndpointGoal} from "../../../common/delivery/goals/common/commonGoals";
+import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import {retryGoal} from "../../../handlers/commands/RetryGoal";
 import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
@@ -74,12 +75,13 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export const MavenDeployer: SourceDeployer =
-    mavenDeployer({
+export function mavenSourceDeployer(projectLoader: ProjectLoader): SourceDeployer {
+    return mavenDeployer(projectLoader, {
         baseUrl: "http://localhost",
         lowerPort: 9090,
         commandLineArgumentsFor: springBootMavenArgs,
     });
+}
 
 function springBootMavenArgs(si: StartupInfo): string[] {
     return [

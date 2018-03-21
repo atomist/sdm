@@ -36,6 +36,7 @@ import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { PushTestInvocation } from "../../../../common/listener/PushTest";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import {
@@ -56,9 +57,11 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
 
     /**
      * Configure goal setting
+     * @param projectLoader use to load projects
      * @param goalSetters first GoalSetter that returns goals wins
      */
-    constructor(...goalSetters: GoalSetter[]) {
+    constructor(private projectLoader: ProjectLoader,
+                ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
     }
 
@@ -69,7 +72,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         const commit = push.commits[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
-        const project = await GitCommandGitProject.cloned(credentials, id);
+        const project = await this.projectLoader.load(credentials, id, context);
         const addressChannels = addressChannelsFor(push.repo, context);
         const pi: PushTestInvocation = {
             id,
@@ -110,7 +113,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         } catch (err) {
             logger.error("Error determining goals: %s", err);
             await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
-            return { code: 1, message: "Failed: " + err };
+            return {code: 1, message: "Failed: " + err};
         }
     }
 }

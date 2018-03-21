@@ -22,19 +22,21 @@ import * as _ from "lodash";
 import { OnAnyPendingStatus } from "../../../../typings/types";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 
 /**
  * Execute fingerprinting
+ * @param projectLoader project loader
  * @param {Fingerprinter} fingerprinters
  */
-export function executeFingerprinting(...fingerprinters: Fingerprinter[]): GoalExecutor {
+export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerprinters: Fingerprinter[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
         const credentials = { token: params.githubToken };
 
         if (fingerprinters.length >= 0) {
-            const project = await GitCommandGitProject.cloned(credentials, id);
+            const project = await projectLoader.load(credentials, id);
             const fingerprints: Fingerprint[] = await Promise.all(
                 fingerprinters.map(async fp => {
                     const f = await fp(project);

@@ -23,6 +23,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { PushTestInvocation } from "../../../listener/PushTest";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import {
@@ -36,10 +37,11 @@ import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrat
 /**
  * Execute autofixes against this push
  * Throw an error on failure
+ * @param projectLoader use to load projects
  * @param {AutofixRegistration[]} registrations
  * @return GoalExecutor
  */
-export function executeAutofixes(registrations: AutofixRegistration[]): GoalExecutor {
+export function executeAutofixes(projectLoader: ProjectLoader, registrations: AutofixRegistration[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status,
                   context: HandlerContext,
                   egi: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
@@ -50,7 +52,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
             if (registrations.length > 0) {
                 const push = commit.pushes[0];
                 const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
-                const project = await GitCommandGitProject.cloned(credentials, editableRepoRef);
+                const project = await projectLoader.load(credentials, editableRepoRef, context);
                 const pti: PushTestInvocation = {
                     id: editableRepoRef,
                     project,
