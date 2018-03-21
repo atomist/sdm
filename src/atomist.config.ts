@@ -41,7 +41,11 @@ export const configuration: Configuration = {
         enabled: true,
     },
     logging: {
-        level: "debug",
-        file: true,
+        level: "info",
+        file: {
+            enabled: true,
+            level: "debug",
+            name: "./log/github-sdm.log",
+        },
     },
 };
