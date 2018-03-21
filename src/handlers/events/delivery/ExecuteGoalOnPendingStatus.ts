@@ -74,7 +74,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 private handleGoalUpdates: boolean = false) {
         this.subscriptionName = implementationName + "OnPending";
         this.subscription =
-            subscription({ name: "OnAnyPendingStatus", operationName: this.subscriptionName, inline: true }),
+            subscription({ name: "OnAnyPendingStatus", operationName: this.subscriptionName}),
         this.name = implementationName + "OnPendingStatus";
         this.description = `Execute ${goal.name} when requested`;
     }

@@ -36,7 +36,7 @@ import { DryRunContext } from "../../commands/editors/dry-run/dryRunEditor";
 /**
  * React to to result of a dry run build
  */
-@EventHandler("React to result of a dry run build", subscription({ name: "OnBuildCompleteForDryRun" }))
+@EventHandler("React to result of a dry run build", subscription("OnBuildCompleteForDryRun"))
 export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryRun.Subscription> {
 
     @Secret(Secrets.OrgToken)

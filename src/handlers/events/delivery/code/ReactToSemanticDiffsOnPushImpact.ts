@@ -39,7 +39,7 @@ import * as schema from "../../../../typings/types";
 /**
  * React to a PushImpact event to react to semantic diffs
  */
-@EventHandler("Find semantic diffs from a PushImpact", subscription({ name: "OnPushImpact" }))
+@EventHandler("Find semantic diffs from a PushImpact", subscription("OnPushImpact"))
 export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
