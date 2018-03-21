@@ -57,6 +57,6 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends D
            ti: T,
            log: ProgressLog,
            credentials: ProjectOperationCredentials,
-           team: string): Promise<Array<Promise<U>>>;
+           team: string): Promise<Array<U>>;
 
 }

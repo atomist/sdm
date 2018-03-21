@@ -59,7 +59,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
                         creds: ProjectOperationCredentials,
-                        team: string): Promise<Array<Promise<CloudFoundryDeployment>>> {
+                        team: string): Promise<Array<CloudFoundryDeployment>> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
@@ -73,7 +73,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
         const deploymentPromises = manifest.applications.map(manifest_app => {
             return pusher.push(cfi.space, manifest_app, packageFile, log);
         });
-        return deploymentPromises;
+        return Promise.all(deploymentPromises);
     }
 
     public async findDeployments(da: DeployableArtifact,

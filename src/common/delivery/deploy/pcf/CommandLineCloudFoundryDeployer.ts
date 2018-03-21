@@ -35,7 +35,7 @@ export class CommandLineCloudFoundryDeployer implements ArtifactDeployer<CloudFo
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
-                        credentials: ProjectOperationCredentials): Promise<Array<Promise<Deployment>>> {
+                        credentials: ProjectOperationCredentials): Promise<Array<Deployment>> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
@@ -68,7 +68,7 @@ export class CommandLineCloudFoundryDeployer implements ArtifactDeployer<CloudFo
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return [new Promise((resolve, reject) => {
+        return [await new Promise((resolve, reject) => {
             childProcess.addListener("exit", (code, signal) => {
                 if (code !== 0) {
                     reject(`Error: code ${code}`);
