@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { affirmationEditor } from "./commands/editors/demo/affirmationEditor";
-import { breakBuildEditor, unbreakBuildEditor } from "./commands/editors/demo/breakBuild";
-import { javaAffirmationEditor } from "./commands/editors/demo/javaAffirmationEditor";
-import { whackHeaderEditor } from "./commands/editors/demo/removeTypeScriptHeader";
-import { removeFileEditor } from "./commands/editors/helper/removeFile";
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { affirmationEditor } from "../../commands/editors/demo/affirmationEditor";
+import { breakBuildEditor, unbreakBuildEditor } from "../../commands/editors/demo/breakBuild";
+import { javaAffirmationEditor } from "../../commands/editors/demo/javaAffirmationEditor";
+import { whackHeaderEditor } from "../../commands/editors/demo/removeTypeScriptHeader";
+import { removeFileEditor } from "../../commands/editors/helper/removeFile";
 
 /**
  * Editors for use in demos

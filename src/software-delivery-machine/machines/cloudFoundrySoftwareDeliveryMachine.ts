@@ -14,35 +14,35 @@
  * limitations under the License.
  */
 
-import { onAnyPush, whenPushSatisfies } from "../blueprint/ruleDsl";
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { MavenBuilder } from "../common/delivery/build/local/maven/MavenBuilder";
-import { NpmBuilder } from "../common/delivery/build/local/npm/NpmBuilder";
-import { NoGoals } from "../common/delivery/goals/common/commonGoals";
-import { HttpServiceGoals, LocalDeploymentGoals } from "../common/delivery/goals/common/httpServiceGoals";
-import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
-import { NpmBuildGoals } from "../common/delivery/goals/common/npmGoals";
-import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../common/listener/support/pushtest/commonPushTests";
-import { IsDeployEnabled } from "../common/listener/support/pushtest/deployPushTests";
-import { HasSpringBootApplicationClass, IsMaven } from "../common/listener/support/pushtest/jvm/jvmPushTests";
-import { MaterialChangeToJavaRepo } from "../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
-import { NamedSeedRepo } from "../common/listener/support/pushtest/NamedSeedRepo";
-import { IsNode } from "../common/listener/support/pushtest/node/nodePushTests";
-import { HasCloudFoundryManifest } from "../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
-import { not } from "../common/listener/support/pushtest/pushTestUtils";
-import { createEphemeralProgressLog } from "../common/log/EphemeralProgressLog";
-import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
-import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
-import { DefaultArtifactStore } from "./blueprint/artifactStore";
-import { CloudFoundryProductionDeploy } from "./blueprint/deploy/cloudFoundryDeploy";
-import { LocalExecutableJarDeploy } from "./blueprint/deploy/localSpringBootDeployOnSuccessStatus";
-import { suggestAddingCloudFoundryManifest } from "./blueprint/repo/suggestAddingCloudFoundryManifest";
-import { addCloudFoundryManifest } from "./commands/editors/pcf/addCloudFoundryManifest";
-import { addDemoEditors } from "./demoEditors";
-import { addJavaSupport } from "./javaSupport";
-import { addNodeSupport } from "./nodeSupport";
-import { addSpringSupport } from "./springSupport";
-import { addTeamPolicies } from "./teamPolicies";
+import { onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
+import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
+import { NpmBuilder } from "../../common/delivery/build/local/npm/NpmBuilder";
+import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
+import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
+import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
+import { NpmBuildGoals } from "../../common/delivery/goals/common/npmGoals";
+import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../../common/listener/support/pushtest/commonPushTests";
+import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
+import { HasSpringBootApplicationClass, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
+import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
+import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
+import { not } from "../../common/listener/support/pushtest/pushTestUtils";
+import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
+import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
+import { DefaultArtifactStore } from "../blueprint/artifactStore";
+import { CloudFoundryProductionDeploy } from "../blueprint/deploy/cloudFoundryDeploy";
+import { LocalExecutableJarDeploy } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
+import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
+import { addDemoEditors } from "../parts/demo/demoEditors";
+import { addJavaSupport } from "../parts/stacks/javaSupport";
+import { addNodeSupport } from "../parts/stacks/nodeSupport";
+import { addSpringSupport } from "../parts/stacks/springSupport";
+import { addTeamPolicies } from "../parts/team/teamPolicies";
 
 export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -85,7 +85,6 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { useCheckstyle: boole
     addSpringSupport(sdm, opts);
     addNodeSupport(sdm);
     addTeamPolicies(sdm);
-
     addDemoEditors(sdm);
     return sdm;
 }

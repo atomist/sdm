@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { tslintFix } from "../common/delivery/code/autofix/node/tslint";
-import { AddAtomistTypeScriptHeader } from "./blueprint/code/autofix/addAtomistHeader";
-import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
+import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
+import { applyApacheLicenseHeaderEditor } from "../../commands/editors/license/applyHeader";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy

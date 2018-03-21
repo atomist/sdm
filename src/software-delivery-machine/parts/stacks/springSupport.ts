@@ -15,12 +15,12 @@
  */
 
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { LocalDeployment } from "../common/delivery/deploy/deployOnLocal";
-import { tagRepo } from "../common/listener/support/tagRepo";
-import { applyHttpServiceGoals } from "./blueprint/goal/jvmGoalManagement";
-import { tryToUpgradeSpringBootVersion } from "./commands/editors/spring/tryToUpgradeSpringBootVersion";
-import { springBootGenerator } from "./commands/generators/spring/springBootGenerator";
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { LocalDeployment } from "../../../common/delivery/deploy/deployOnLocal";
+import { tagRepo } from "../../../common/listener/support/tagRepo";
+import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
+import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
+import { springBootGenerator } from "../../commands/generators/spring/springBootGenerator";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy

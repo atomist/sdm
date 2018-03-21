@@ -26,6 +26,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../../common/delivery/goals/Goal";
 import { OnAParticularStatus } from "../../../../../typings/types";
@@ -34,7 +35,6 @@ import {
     k8AutomationDeployContext,
     K8TargetBase,
 } from "./RequestK8sDeploys";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 // TODO parameterize once we can have multiple handlers
 

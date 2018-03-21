@@ -17,43 +17,43 @@
 import {
     onAnyPush,
     whenPushSatisfies,
-} from "../blueprint/ruleDsl";
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { K8sAutomationBuilder } from "../common/delivery/build/k8s/K8AutomationBuilder";
+} from "../../blueprint/ruleDsl";
+import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
+import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
 import {
     HttpServiceGoals,
     LocalDeploymentGoals,
-} from "../common/delivery/goals/common/httpServiceGoals";
-import { LibraryGoals } from "../common/delivery/goals/common/libraryGoals";
+} from "../../common/delivery/goals/common/httpServiceGoals";
+import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import {
     FromAtomist,
     ToDefaultBranch,
     ToPublicRepo,
-} from "../common/listener/support/pushtest/commonPushTests";
-import { IsDeployEnabled } from "../common/listener/support/pushtest/deployPushTests";
+} from "../../common/listener/support/pushtest/commonPushTests";
+import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import {
     HasSpringBootApplicationClass,
     IsMaven,
-} from "../common/listener/support/pushtest/jvm/jvmPushTests";
-import { MaterialChangeToJavaRepo } from "../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
-import { HasK8Spec } from "../common/listener/support/pushtest/k8s/k8sSpecPushTest";
-import { not } from "../common/listener/support/pushtest/pushTestUtils";
-import { lookFor200OnEndpointRootGet } from "../common/verify/lookFor200OnEndpointRootGet";
-import { disableDeploy, enableDeploy } from "../handlers/commands/SetDeployEnablement";
-import { DefaultArtifactStore } from "./blueprint/artifactStore";
+} from "../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
+import { HasK8Spec } from "../../common/listener/support/pushtest/k8s/k8sSpecPushTest";
+import { not } from "../../common/listener/support/pushtest/pushTestUtils";
+import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
+import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
+import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import {
     K8sProductionDeployOnSuccessStatus,
     K8sStagingDeployOnSuccessStatus,
     NoticeK8sProdDeployCompletion,
     NoticeK8sTestDeployCompletion,
-} from "./blueprint/deploy/k8sDeploy";
-import { suggestAddingK8sSpec } from "./blueprint/repo/suggestAddingK8sSpec";
-import { addK8sSpec } from "./commands/editors/k8s/addK8sSpec";
-import { addDemoEditors } from "./demoEditors";
-import { addJavaSupport } from "./javaSupport";
-import { addNodeSupport } from "./nodeSupport";
-import { addSpringSupport } from "./springSupport";
-import { addTeamPolicies } from "./teamPolicies";
+} from "../blueprint/deploy/k8sDeploy";
+import { suggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
+import { addK8sSpec } from "../commands/editors/k8s/addK8sSpec";
+import { addDemoEditors } from "../parts/demo/demoEditors";
+import { addJavaSupport } from "../parts/stacks/javaSupport";
+import { addNodeSupport } from "../parts/stacks/nodeSupport";
+import { addSpringSupport } from "../parts/stacks/springSupport";
+import { addTeamPolicies } from "../parts/team/teamPolicies";
 
 export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(

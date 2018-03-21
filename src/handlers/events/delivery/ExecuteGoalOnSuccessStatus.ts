@@ -29,13 +29,13 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
 import {
     currentGoalIsStillPending,
-    Goal
+    Goal,
 } from "../../../common/delivery/goals/Goal";
 import {
     ExecuteGoalInvocation,
     ExecuteGoalResult,
     GoalExecutor,
-    StatusForExecuteGoal
+    StatusForExecuteGoal,
 } from "../../../common/delivery/goals/goalExecution";
 import { OnAnySuccessStatus } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";

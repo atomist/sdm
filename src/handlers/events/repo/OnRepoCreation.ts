@@ -25,13 +25,13 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     RepoCreationInvocation,
     RepoCreationListener,
 } from "../../../common/listener/RepoCreationListener";
 import * as schema from "../../../typings/types";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 /**
  * A new repo has been created. We don't know if it has code.
