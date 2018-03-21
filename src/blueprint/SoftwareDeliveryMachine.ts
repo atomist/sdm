@@ -110,8 +110,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly deployers: FunctionalUnit[];
-
     private readonly goalSetters: GoalSetter[] = [];
 
     private readonly conditionalBuilders: ConditionalBuilder[] = [];
