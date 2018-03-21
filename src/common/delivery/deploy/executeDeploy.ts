@@ -57,7 +57,8 @@ export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocatio
         const credentials = {token: params.githubToken};
 
         const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
-        await whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials});
+        await whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials})
+            .catch(err => reportError(err));
         await progressLog.close();
         return Promise.resolve(Success as ExecuteGoalResult);
     };
