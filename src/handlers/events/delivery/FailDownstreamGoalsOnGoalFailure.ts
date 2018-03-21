@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -26,6 +25,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
@@ -51,10 +51,7 @@ import Status = OnSuccessStatus.Status;
 /**
  * Respond to a failure status by failing downstream goals
  */
-@EventHandler("Fail downstream goals on a goal failure", GraphQL.subscriptionFromFile(
-    "../../../graphql/subscription/OnFailureStatus",
-    __dirname),
-)
+@EventHandler("Fail downstream goals on a goal failure", subscription({ name: "OnFailureStatus" }))
 export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -26,6 +25,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
@@ -39,10 +39,7 @@ import * as schema from "../../../typings/types";
 /**
  * A new repo has been created, and it has some code in it.
  */
-@EventHandler("On repo creation", GraphQL.subscriptionFromFile(
-    "../../../graphql/subscription/OnFirstPushToRepo",
-    __dirname),
-)
+@EventHandler("On repo creation", subscription({ name: "OnFirstPushToRepo" }))
 export class OnFirstPushToRepo
     implements HandleEvent<schema.OnFirstPushToRepo.Subscription> {
 

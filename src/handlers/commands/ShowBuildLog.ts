@@ -70,8 +70,10 @@ function displayBuildLogForCommit(interpreter?: LogInterpretation) {
 }
 
 async function fetchBuildUrl(context: HandlerContext, id: RemoteRepoRef): Promise<{ buildUrl?: string }> {
-    const queryResult = await context.graphClient.executeQueryFromFile<BuildUrlBySha.Query, BuildUrlBySha.Variables>(
-        "../../graphql/query/BuildUrlBySha", { sha: id.sha }, {}, __dirname);
+    const queryResult = await context.graphClient.query<BuildUrlBySha.Query, BuildUrlBySha.Variables>({
+        name: "BuildUrlBySha",
+        variables: { sha: id.sha },
+    });
     const commit: BuildUrlBySha.Commit = _.get(queryResult, "Commit[0]");
     if (!commit) {
         throw new Error("No commit found for " + id.sha);
@@ -79,8 +81,7 @@ async function fetchBuildUrl(context: HandlerContext, id: RemoteRepoRef): Promis
     if (!commit.builds || commit.builds.length === 0) {
         throw new Error("No builds found for commit " + id.sha);
     }
-    // TODO: sort by timestamp
-    return queryResult.Commit[0].builds[0];
+    return queryResult.Commit[0].builds.sort((b1, b2) => b2.timestamp.localeCompare(b1.timestamp))[0];
 }
 
 export function displayBuildLogHandler(logInterpretation?: LogInterpretation): HandleCommand<DisplayBuildLogParameters> {

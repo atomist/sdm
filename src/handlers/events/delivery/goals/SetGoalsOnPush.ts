@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -30,14 +29,13 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import {
-    PushTestInvocation,
-} from "../../../../common/listener/PushTest";
+import { PushTestInvocation, } from "../../../../common/listener/PushTest";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import {
@@ -48,10 +46,7 @@ import {
 /**
  * Set up goals on a push (e.g. for delivery).
  */
-@EventHandler("Set up goals", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnPushToAnyBranch",
-    __dirname),
-)
+@EventHandler("Set up goals", subscription({ name: "OnPushToAnyBranch" }))
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)

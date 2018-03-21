@@ -54,6 +54,7 @@ import { AddressChannels, addressDestinations, messageDestinationsFor } from "..
 import { OnSuccessStatus, StatusState } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { forApproval } from "./approvalGate";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 
@@ -68,11 +69,12 @@ export type EndpointVerificationListener = SdmListener<EndpointVerificationInvoc
 /**
  * React to an endpoint reported in a GitHub status.
  */
-@EventHandler("React to an endpoint", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnSuccessStatus",
-    __dirname,
-    {
-        context: StagingEndpointContext,
+@EventHandler("React to an endpoint",
+    subscription({
+        name: "OnSuccessStatus",
+        variables: {
+            context: StagingEndpointContext,
+        },
     }),
 )
 export class OnEndpointStatus implements HandleEvent<OnSuccessStatus.Subscription> {

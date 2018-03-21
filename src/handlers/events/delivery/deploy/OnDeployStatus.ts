@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -26,6 +25,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { StagingDeploymentContext } from "../../../../common/delivery/goals/common/commonGoals";
 import {
@@ -38,11 +38,12 @@ import { OnSuccessStatus } from "../../../../typings/types";
 /**
  * React to a deployment.
  */
-@EventHandler("React to a successful deployment", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnSuccessStatus",
-    __dirname,
-    {
+@EventHandler("React to a successful deployment",
+    subscription({
+        name: "OnSuccessStatus",
+        variables: {
             context: StagingDeploymentContext,
+        },
     }),
 )
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {

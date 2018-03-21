@@ -38,15 +38,17 @@ import {
     messageDestinationsFor,
 } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 /**
  * React to a verified deployment
  */
-@EventHandler("Act on verified deployment", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnSuccessStatus",
-    __dirname,
-    {
-        context: StagingVerifiedContext,
+@EventHandler("Act on verified deployment",
+    subscription({
+        name: "OnSuccessStatus",
+        variables: {
+            context: StagingVerifiedContext,
+        },
     }),
 )
 export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.Subscription> {

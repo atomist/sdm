@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -25,6 +24,7 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     SupersededListener,
@@ -36,10 +36,7 @@ import * as schema from "../../../../typings/types";
 /**
  * Respond to a superseded push
  */
-@EventHandler("React to a superseded push", GraphQL.subscriptionFromFile(
-    "../../../../graphql/subscription/OnSupersededStatus",
-    __dirname),
-)
+@EventHandler("React to a superseded push", subscription({ name: "OnSupersededStatus" }))
 export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

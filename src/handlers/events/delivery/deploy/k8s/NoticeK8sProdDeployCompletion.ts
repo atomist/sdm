@@ -34,6 +34,7 @@ import {
     k8AutomationDeployContext,
     K8TargetBase,
 } from "./RequestK8sDeploys";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 // TODO parameterize once we can have multiple handlers
 
@@ -43,12 +44,13 @@ export const K8sProductionDomain = "production";
 /**
  * Deploy a published artifact identified in an ImageLinked event.
  */
-@EventHandler("Request k8s deploy of linked artifact", GraphQL.subscriptionFromFile(
-    "../../../../../graphql/subscription/OnAParticularStatus",
-    __dirname,
-    {
-        context: k8AutomationDeployContext(K8sProductionDomain),
-    }),
+@EventHandler("Request k8s deploy of linked artifact",
+    subscription({
+        name: "OnAParticularStatus",
+        variables: {
+            context: k8AutomationDeployContext(K8sProductionDomain),
+        }},
+    ),
 )
 export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 

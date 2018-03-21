@@ -31,13 +31,12 @@ import {
     RepoCreationListener,
 } from "../../../common/listener/RepoCreationListener";
 import * as schema from "../../../typings/types";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 
 /**
  * A new repo has been created. We don't know if it has code.
  */
-@EventHandler("On repo creation", GraphQL.subscriptionFromFile(
-    "../../../graphql/subscription/OnRepoCreation",
-    __dirname))
+@EventHandler("On repo creation", subscription({ name: "OnRepoCreation" }))
 export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
 
     @Secret(Secrets.OrgToken)

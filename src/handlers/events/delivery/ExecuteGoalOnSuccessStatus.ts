@@ -16,7 +16,6 @@
 
 import {
     EventFired,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -24,11 +23,20 @@ import {
     Secrets,
     Success,
 } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
-import { currentGoalIsStillPending, Goal } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor, StatusForExecuteGoal } from "../../../common/delivery/goals/goalExecution";
+import {
+    currentGoalIsStillPending,
+    Goal
+} from "../../../common/delivery/goals/Goal";
+import {
+    ExecuteGoalInvocation,
+    ExecuteGoalResult,
+    GoalExecutor,
+    StatusForExecuteGoal
+} from "../../../common/delivery/goals/goalExecution";
 import { OnAnySuccessStatus } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 
@@ -54,11 +62,8 @@ export class ExecuteGoalOnSuccessStatus
         this.subscriptionName = implementationName + "OnSuccessStatus";
         this.name = implementationName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
-        this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
-            GraphQL.subscriptionFromFile(
-                "../../../graphql/subscription/OnAnySuccessStatus",
-                __dirname),
-            this.subscriptionName));
+        this.subscription =
+            subscription({ name: "OnAnySuccessStatus", operationName: this.subscriptionName, inline: true });
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,

@@ -26,15 +26,15 @@ const K8TargetBase = "deploy/atomist/k8s/";
 
 export async function findLastK8sDeployment(ctx: HandlerContext, rr: RepoRef,
                                             branch: string, environment: string) {
-    const result = await ctx.graphClient.executeQueryFromFile<LastEndpoint.Query, LastEndpoint.Variables>(
-        "../graphql/query/LastEndpoint", {
-            name: rr.repo,
-            owner: rr.owner,
-            branch,
-            statusContext: K8TargetBase + environment,
-        },
-        {},
-        __dirname);
+    const result = await ctx.graphClient.query<LastEndpoint.Query, LastEndpoint.Variables>({
+       name: "LastEndpoint",
+       variables: {
+           name: rr.repo,
+           owner: rr.owner,
+           branch,
+           statusContext: K8TargetBase + environment,
+       },
+    });
     if (!result || !result.Repo[0]) {
         throw new Error(`No commit found on ${rr.owner}/${rr.repo}#${branch}`);
     }
