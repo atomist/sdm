@@ -9,20 +9,7 @@ subscription OnPendingStatus($context: String!) {
         state
       }
       repo {
-        owner
-        name
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
-        org {
-          chatTeam {
-            id
-          }
-        }
+        ... CoreRepoFieldsAndChannels
       }
       pushes {
         branch

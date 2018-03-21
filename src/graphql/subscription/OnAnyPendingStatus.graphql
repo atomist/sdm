@@ -9,21 +9,7 @@ subscription OnAnyPendingStatus {
         state
       }
       repo {
-        owner
-        name
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
-        org {
-          chatTeam {
-            id
-          }
-        }
-        defaultBranch
+        ... CoreRepoFieldsAndChannels
       }
       pushes {
         id
