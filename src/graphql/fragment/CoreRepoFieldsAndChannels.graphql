@@ -1,0 +1,12 @@
+fragment CoreRepoFieldsAndChannels on Repo {
+  owner
+  name
+  channels {
+    team {
+      id
+    }
+    name
+    id
+  }
+  defaultBranch
+}

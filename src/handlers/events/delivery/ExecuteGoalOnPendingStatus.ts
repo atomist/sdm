@@ -14,15 +14,35 @@
  * limitations under the License.
  */
 
-import { EventFired, failure, GraphQL, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    failure,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secrets,
+    Success
+} from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../../common/delivery/goals/goalExecution";
+import {
+    ExecuteGoalInvocation,
+    GoalExecutor,
+    StatusForExecuteGoal
+} from "../../../common/delivery/goals/goalExecution";
 import { PushTest } from "../../../common/listener/PushTest";
 import { Builder } from "../../../spi/build/Builder";
-import { OnAnyPendingStatus, StatusState } from "../../../typings/types";
+import {
+    OnAnyPendingStatus,
+    StatusState
+} from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
@@ -53,9 +73,8 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 private execute: GoalExecutor,
                 private handleGoalUpdates: boolean = false) {
         this.subscriptionName = implementationName + "OnPending";
-        this.subscription = GraphQL.inlineQuery(GraphQL.replaceOperationName(
-            GraphQL.subscriptionFromFile("../../../graphql/subscription/OnAnyPendingStatus", __dirname),
-            this.subscriptionName));
+        this.subscription =
+            subscription({ name: "OnAnyPendingStatus", operationName: this.subscriptionName, inline: true }),
         this.name = implementationName + "OnPendingStatus";
         this.description = `Execute ${goal.name} when requested`;
     }
