@@ -16,7 +16,7 @@
 
 import { Configuration } from "@atomist/automation-client/configuration";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
-import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/cloudFoundrySoftwareDeliveryMachine";
+import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
 
 /*
  * The provided software delivery machines include cloud foundry (which runs locally for Test environment,

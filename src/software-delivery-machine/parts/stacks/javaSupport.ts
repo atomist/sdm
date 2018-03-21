@@ -15,10 +15,10 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { mavenFingerprinter } from "../common/delivery/code/fingerprint/maven/mavenFingerprinter";
-import { CheckstyleReviewerRegistration } from "../common/delivery/code/review/checkstyle/checkstyleReviewer";
-import { AddAtomistJavaHeader } from "./blueprint/code/autofix/addAtomistHeader";
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { mavenFingerprinter } from "../../../common/delivery/code/fingerprint/maven/mavenFingerprinter";
+import { CheckstyleReviewerRegistration } from "../../../common/delivery/code/review/checkstyle/checkstyleReviewer";
+import { AddAtomistJavaHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 
 /**
  * Configuration common to Java SDMs, wherever they deploy

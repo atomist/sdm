@@ -15,15 +15,15 @@
  */
 
 import axios from "axios";
-import { SoftwareDeliveryMachine } from "../blueprint/SoftwareDeliveryMachine";
-import { OnDryRunBuildComplete } from "../handlers/events/dry-run/OnDryRunBuildComplete";
-import { disposeProjectHandler } from "./blueprint/deploy/dispose";
-import { PostToDeploymentsChannel } from "./blueprint/deploy/postToDeploymentsChannel";
-import { capitalizer } from "./blueprint/issue/capitalizer";
-import { requestDescription } from "./blueprint/issue/requestDescription";
-import { thankYouYouRock } from "./blueprint/issue/thankYouYouRock";
-import { PublishNewRepo } from "./blueprint/repo/publishNewRepo";
-import { applyApacheLicenseHeaderEditor } from "./commands/editors/license/applyHeader";
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { OnDryRunBuildComplete } from "../../../handlers/events/dry-run/OnDryRunBuildComplete";
+import { disposeProjectHandler } from "../../blueprint/deploy/dispose";
+import { PostToDeploymentsChannel } from "../../blueprint/deploy/postToDeploymentsChannel";
+import { capitalizer } from "../../blueprint/issue/capitalizer";
+import { requestDescription } from "../../blueprint/issue/requestDescription";
+import { thankYouYouRock } from "../../blueprint/issue/thankYouYouRock";
+import { PublishNewRepo } from "../../blueprint/repo/publishNewRepo";
+import { applyApacheLicenseHeaderEditor } from "../../commands/editors/license/applyHeader";
 
 /**
  * Set up team policies
