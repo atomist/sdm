@@ -1,6 +1,6 @@
+import { logger } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 
 export async function confirmEditedness(editResult: EditResult): Promise<EditResult> {

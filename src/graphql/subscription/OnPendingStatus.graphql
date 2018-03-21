@@ -9,7 +9,7 @@ subscription OnPendingStatus($context: String!) {
         state
       }
       repo {
-        ... CoreRepoFieldsAndChannels
+        ...CoreRepoFieldsAndChannels
       }
       pushes {
         branch

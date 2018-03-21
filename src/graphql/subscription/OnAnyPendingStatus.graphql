@@ -9,7 +9,7 @@ subscription OnAnyPendingStatus {
         state
       }
       repo {
-        ... CoreRepoFieldsAndChannels
+        ...CoreRepoFieldsAndChannels
       }
       pushes {
         id

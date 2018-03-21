@@ -22,26 +22,26 @@ import {
     HandlerResult,
     logger,
     Secrets,
-    Success
+    Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal } from "../../../common/delivery/goals/Goal";
 import {
     ExecuteGoalInvocation,
     GoalExecutor,
-    StatusForExecuteGoal
+    StatusForExecuteGoal,
 } from "../../../common/delivery/goals/goalExecution";
 import { PushTest } from "../../../common/listener/PushTest";
 import { Builder } from "../../../spi/build/Builder";
 import {
     OnAnyPendingStatus,
-    StatusState
+    StatusState,
 } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";

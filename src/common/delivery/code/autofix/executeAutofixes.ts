@@ -16,10 +16,12 @@
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { editRepo } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import * as _ from "lodash";
+import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { PushTestInvocation } from "../../../listener/PushTest";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
@@ -30,11 +32,6 @@ import {
     StatusForExecuteGoal,
 } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
-import { Project } from "@atomist/automation-client/project/Project";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import * as _ from "lodash";
-import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 
 /**
  * Execute autofixes against this push
