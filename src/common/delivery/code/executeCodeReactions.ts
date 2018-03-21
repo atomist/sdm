@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger, Success } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { filesChangedSince } from "../../../util/git/filesChangedSince";
-import { CodeReactionInvocation, CodeReactionListener } from "../../listener/CodeReactionListener";
+import {
+    CodeReactionInvocation,
+    CodeReactionListener,
+} from "../../listener/CodeReactionListener";
 import { addressChannelsFor } from "../../slack/addressChannels";
-import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../goals/goalExecution";
+import {
+    ExecuteGoalInvocation,
+    GoalExecutor,
+    StatusForExecuteGoal,
+} from "../goals/goalExecution";
 
 export function executeCodeReactions(codeReactions: CodeReactionListener[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
@@ -48,6 +59,7 @@ export function executeCodeReactions(codeReactions: CodeReactionListener[]): Goa
                 project,
                 credentials,
                 filesChanged,
+                commit,
             };
             const allReactions: Promise<any> =
                 Promise.all(codeReactions.map(reaction => reaction(i)));

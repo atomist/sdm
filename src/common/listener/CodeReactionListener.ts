@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-import { ProjectListenerInvocation, SdmListener } from "./Listener";
+import { StatusForExecuteGoal } from "../delivery/goals/goalExecution";
+import {
+    ProjectListenerInvocation,
+    SdmListener,
+} from "./Listener";
+import Commit = StatusForExecuteGoal.Commit;
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
     filesChanged: string[];
 
+    commit: Commit;
 }
 
 export type CodeReactionListener = SdmListener<CodeReactionInvocation>;

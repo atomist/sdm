@@ -24,9 +24,12 @@ import {
     StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
+import { CodeReactionListener } from "../../../common/listener/CodeReactionListener";
 import {retryGoal} from "../../../handlers/commands/RetryGoal";
+import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import {DefaultArtifactStore} from "../artifactStore";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
@@ -78,4 +81,18 @@ export const CloudFoundryProductionDeploy: FunctionalUnit = {
     ],
 
     commandHandlers: [() => retryGoal("DeployFromLocalToProd", ProductionDeploymentGoal)],
+};
+
+/**
+ * Enable deployment when a PCF manifest is added to the default branch.
+ */
+export const EnableDeployOnCloudFoundryManifestAddition: CodeReactionListener = async cri => {
+    const commit = cri.commit;
+    const repo = commit.repo;
+    const push = commit.pushes[0];
+
+    if (push.commits.some(c => c.message.includes(AddCloudFoundryManifestMarker))) {
+        await setDeployEnablement(true)
+            (cri.context, { repo: repo.name, owner: repo.owner, providerId: repo.org.provider.providerId });
+    }
 };

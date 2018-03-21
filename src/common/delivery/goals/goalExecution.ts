@@ -39,6 +39,15 @@ export namespace StatusForExecuteGoal {
 
     export interface Org {
         chatTeam?: ChatTeam | null;
+        owner?: string | null;
+        ownerType?: OwnerType | null;
+        provider?: Provider | null;
+    }
+
+    export interface Provider {
+        providerId?: string | null;
+        apiUrl?: string | null;
+        url?: string | null;
     }
 
     export interface ChatTeam {
@@ -48,6 +57,7 @@ export namespace StatusForExecuteGoal {
     export interface Pushes {
         before?: Commit;
         branch?: string | null;
+        commits?: Commit[] | null;
         id?: string | null;
     }
 
@@ -55,6 +65,7 @@ export namespace StatusForExecuteGoal {
         image?: string | null;
         imageName?: string | null;
     }
+
     export interface Repo extends HasChannels {
         owner?: string | null;
         name?: string | null;
@@ -84,5 +95,10 @@ export namespace StatusForExecuteGoal {
         targetUrl?: string | null;
         context?: string | null;
         description?: string | null;
+    }
+
+    export enum OwnerType {
+        user = "user",
+        organization = "organization",
     }
 }

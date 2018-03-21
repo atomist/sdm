@@ -17,6 +17,7 @@
 import {
     failure,
     HandleCommand,
+    HandlerResult,
     MappedParameter,
     MappedParameters,
     Success,
@@ -45,8 +46,8 @@ export class SetDeployEnablementParameters {
 
 }
 
-function setEnablement(enable: boolean) {
-    return (ctx: HandlerContext, params: SetDeployEnablementParameters) => {
+export function setDeployEnablement(enable: boolean) {
+    return (ctx: HandlerContext, params: SetDeployEnablementParameters): Promise<HandlerResult> => {
         const deployEnablement: DeployEnablement = {
             state: enable ? "requested" : "disabled",
             owner: params.owner,
@@ -64,7 +65,7 @@ function setEnablement(enable: boolean) {
 
 export function enableDeploy(): HandleCommand<SetDeployEnablementParameters> {
     return commandHandlerFrom(
-        setEnablement(true),
+        setDeployEnablement(true),
         SetDeployEnablementParameters,
         "EnableDeploy",
         "Enable deployment via Atomist SDM",
@@ -74,7 +75,7 @@ export function enableDeploy(): HandleCommand<SetDeployEnablementParameters> {
 
 export function disableDeploy(): HandleCommand<SetDeployEnablementParameters> {
     return commandHandlerFrom(
-        setEnablement(false),
+        setDeployEnablement(false),
         SetDeployEnablementParameters,
         "DisableDeploy",
         "Disable deployment via Atomist SDM",
