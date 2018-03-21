@@ -70,7 +70,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         const commit = push.commits[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
-        return this.projectLoader.doWithProject({credentials, id, context}, project =>
+        return this.projectLoader.doWithProject({credentials, id, context, readOnly: true}, project =>
             this.setGoalsForPushOnProject(push, id, credentials, context, params, project),
         );
     }

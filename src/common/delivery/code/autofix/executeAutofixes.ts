@@ -54,33 +54,39 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
             }
             const push = commit.pushes[0];
             const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
-            const editResult = await projectLoader.doWithProject<EditResult>({credentials, id: editableRepoRef, context}, async project => {
-                const pti: PushTestInvocation = {
-                    id: editableRepoRef,
-                    project,
+            const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
+                    id: editableRepoRef,
                     context,
-                    addressChannels: addressChannelsFor(commit.repo, context),
-                    push,
-                };
-                const relevantAutofixes: AutofixRegistration[] = await
-                relevantCodeActions<AutofixRegistration>(registrations, pti);
-                logger.info("Will apply %d eligible autofixes of %d to %j",
-                    relevantAutofixes.length, registrations.length, pti.id);
-                let cumulativeResult: EditResult = {
-                    target: pti.project,
-                    success: true,
-                    edited: false,
-                };
-                for (const autofix of _.flatten(relevantAutofixes)) {
-                    const thisEdit = await runOne(pti.project, smartContext, autofix);
-                    cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
-                }
-                if (cumulativeResult.edited) {
-                    await pti.project.push();
-                }
-                return cumulativeResult;
-            });
+                    readOnly: false,
+                },
+                async project => {
+                    const pti: PushTestInvocation = {
+                        id: editableRepoRef,
+                        project,
+                        credentials,
+                        context,
+                        addressChannels: addressChannelsFor(commit.repo, context),
+                        push,
+                    };
+                    const relevantAutofixes: AutofixRegistration[] = await
+                        relevantCodeActions<AutofixRegistration>(registrations, pti);
+                    logger.info("Will apply %d eligible autofixes of %d to %j",
+                        relevantAutofixes.length, registrations.length, pti.id);
+                    let cumulativeResult: EditResult = {
+                        target: pti.project,
+                        success: true,
+                        edited: false,
+                    };
+                    for (const autofix of _.flatten(relevantAutofixes)) {
+                        const thisEdit = await runOne(pti.project, smartContext, autofix);
+                        cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
+                    }
+                    if (cumulativeResult.edited) {
+                        await pti.project.push();
+                    }
+                    return cumulativeResult;
+                });
             if (editResult.edited) {
                 // Send back an error code, because we want to stop execution after this build
                 return {code: 1, message: "Edited"};

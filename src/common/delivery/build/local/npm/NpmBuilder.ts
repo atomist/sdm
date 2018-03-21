@@ -58,7 +58,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
                                team: string,
                                log: ProgressLog): Promise<LocalBuildInProgress> {
         logger.info("NpmBuilder.startBuild on %s, buildCommands=[%j]", id.url, this.buildCommands);
-        return this.projectLoader.doWithProject({credentials, id}, async p => {
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async p => {
             // Find the artifact info from package.json
             const packageJson = await p.findFile("package.json");
             const content = await packageJson.getContent();

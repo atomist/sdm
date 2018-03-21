@@ -40,7 +40,7 @@ export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions
             return Success;
         }
 
-        await projectLoader.doWithProject({credentials, id, context}, async project => {
+        await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const push = commit.pushes[0];
             const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
             const cri: CodeReactionInvocation = {

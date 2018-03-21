@@ -31,6 +31,7 @@ import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTest
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
 import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
@@ -48,7 +49,6 @@ import { addTeamPolicies } from "../parts/team/teamPolicies";
 
 /**
  * Assemble a machine that supports Java, Spring and Node and deploys to Cloud Foundry
- * @param {{projectLoader?: ProjectLoader; useCheckstyle: boolean}} opts
  * @return {SoftwareDeliveryMachine}
  */
 export function cloudFoundrySoftwareDeliveryMachine(opts: { projectLoader?: ProjectLoader, useCheckstyle: boolean }): SoftwareDeliveryMachine {

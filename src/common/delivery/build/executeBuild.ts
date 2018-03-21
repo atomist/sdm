@@ -37,7 +37,7 @@ export function executeBuild(projectLoader: ProjectLoader,
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
             const atomistTeam = context.teamId;
 
-            await projectLoader.doWithProject({credentials, id, context}, async project => {
+            await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
                 const push = status.commit.pushes[0];
                 const pti: PushTestInvocation = {
                     id,

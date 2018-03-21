@@ -39,7 +39,7 @@ export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerpri
             return Success;
         }
 
-        await projectLoader.doWithProject({credentials, id}, async project => {
+        await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
             const fingerprints: Fingerprint[] = await Promise.all(
                 fingerprinters.map(async fp => {
                     const f = await fp(project);

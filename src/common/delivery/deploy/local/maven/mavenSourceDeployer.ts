@@ -65,7 +65,7 @@ class MavenSourceDeployer implements SourceDeployer {
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-        return this.projectLoader.doWithProject({credentials, id}, project =>
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, project =>
             this.deployProject(ti, log, project, port, atomistTeam));
 
     }
