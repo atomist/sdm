@@ -37,33 +37,34 @@ export function executeBuild(projectLoader: ProjectLoader,
             const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
             const atomistTeam = context.teamId;
 
-            const project = await projectLoader.load(credentials, id, context);
-            const push = status.commit.pushes[0];
-            const pti: PushTestInvocation = {
-                id,
-                project,
-                credentials,
-                context,
-                addressChannels: addressChannelsFor(commit.repo, context),
-                push,
-            };
+            await projectLoader.doWithProject({credentials, id, context}, async project => {
+                const push = status.commit.pushes[0];
+                const pti: PushTestInvocation = {
+                    id,
+                    project,
+                    credentials,
+                    context,
+                    addressChannels: addressChannelsFor(commit.repo, context),
+                    push,
+                };
 
-            const builders: boolean[] = await Promise.all(conditionalBuilders
-                .map(b => b.guard.test(pti)));
-            const indx = builders.indexOf(true);
-            if (indx < 0) {
-                throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
-            }
-            const builder = conditionalBuilders[indx].builder;
-            logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
-            const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
-            const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
-            const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
-            const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
+                const builders: boolean[] = await Promise.all(conditionalBuilders
+                    .map(b => b.guard.test(pti)));
+                const indx = builders.indexOf(true);
+                if (indx < 0) {
+                    throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
+                }
+                const builder = conditionalBuilders[indx].builder;
+                logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
+                const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
+                const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
+                const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
+                const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
 
-            // the builder is expected to result in a complete Build event (which will update the build status)
-            // and an ImageLinked event (which will update the artifact status).
-            return builder.initiateBuild(credentials, id, pti.addressChannels, atomistTeam, {branch: branchToMarkTheBuildWith});
+                // the builder is expected to result in a complete Build event (which will update the build status)
+                // and an ImageLinked event (which will update the artifact status).
+                return builder.initiateBuild(credentials, id, pti.addressChannels, atomistTeam, {branch: branchToMarkTheBuildWith});
+            });
         });
         return Success;
     };

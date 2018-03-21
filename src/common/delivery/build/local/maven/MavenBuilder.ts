@@ -49,41 +49,42 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
                                atomistTeam: string,
                                log: ProgressLog,
                                addressChannels: AddressChannels): Promise<LocalBuildInProgress> {
-        const p = await this.projectLoader.load(credentials, id);
-        // Find the artifact info from Maven
-        const pom = await p.findFile("pom.xml");
-        const content = await pom.getContent();
-        const va = await identification(content);
-        const appId = {...va, name: va.artifact, id};
+        return this.projectLoader.doWithProject({credentials, id}, async p => {
+            // Find the artifact info from Maven
+            const pom = await p.findFile("pom.xml");
+            const content = await pom.getContent();
+            const va = await identification(content);
+            const appId = {...va, name: va.artifact, id};
 
-        // TODO update to take skipTests parameter
-        const childProcess = spawn("mvn", [
-            "package",
-            "-DskipTests",
-        ], {
-            cwd: p.baseDir,
-        });
-        if (!childProcess.pid) {
-            await addressChannels("Fatal error building using Maven--is `mvn` on your automation node path?\n" +
-                "Attempted to execute `mvn package`");
-        }
+            // TODO update to take skipTests parameter
+            const childProcess = spawn("mvn", [
+                "package",
+                "-DskipTests",
+            ], {
+                cwd: p.baseDir,
+            });
+            if (!childProcess.pid) {
+                await addressChannels("Fatal error building using Maven--is `mvn` on your automation node path?\n" +
+                    "Attempted to execute `mvn package`");
+            }
 
-        // TODO update to use new watchSpawned support
-        const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
-            childProcess.stdout.on("data", data => {
-                log.write(data.toString());
+            // TODO update to use new watchSpawned support
+            const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
+                childProcess.stdout.on("data", data => {
+                    log.write(data.toString());
+                });
+                childProcess.addListener("exit", (code, signal) => {
+                    resolve({error: log.log.includes("[ERROR]"), code});
+                });
+                childProcess.addListener("error", (code, signal) => {
+                    resolve({error: true, code});
+                });
             });
-            childProcess.addListener("exit", (code, signal) => {
-                resolve({error: log.log.includes("[ERROR]"), code});
-            });
-            childProcess.addListener("error", (code, signal) => {
-                resolve({error: true, code});
-            });
+            const rb = new UpdatingBuild(id, buildResult, atomistTeam, log.url);
+            rb.ai = appId;
+            rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
+            return rb;
         });
-        const rb = new UpdatingBuild(id, buildResult, atomistTeam, log.url);
-        rb.ai = appId;
-        rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;
-        return rb;
     }
 
     public logInterpreter: LogInterpreter = log => interpretMavenLog(log);

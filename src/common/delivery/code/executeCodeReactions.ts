@@ -14,28 +14,16 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    logger,
-    Success,
-} from "@atomist/automation-client";
+import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { filesChangedSince } from "../../../util/git/filesChangedSince";
-import {
-    CodeReactionInvocation,
-    CodeReactionListener,
-} from "../../listener/CodeReactionListener";
+import { CodeReactionInvocation, CodeReactionListener } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
-import {
-    ExecuteGoalInvocation,
-    GoalExecutor,
-    StatusForExecuteGoal,
-} from "../goals/goalExecution";
+import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../goals/goalExecution";
 
 export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions: CodeReactionListener[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
+    return async (status: StatusForExecuteGoal.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
@@ -47,15 +35,17 @@ export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions
             return Success;
         }
 
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
-        if (codeReactions.length > 0) {
-            const project = await projectLoader.load(credentials, id, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, context);
+        if (codeReactions.length === 0) {
+            return Success;
+        }
+
+        await projectLoader.doWithProject({credentials, id, context}, async project => {
             const push = commit.pushes[0];
             const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : [];
-
-            const i: CodeReactionInvocation = {
+            const cri: CodeReactionInvocation = {
                 id,
-                context: ctx,
+                context,
                 addressChannels,
                 project,
                 credentials,
@@ -63,9 +53,9 @@ export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions
                 commit,
             };
             const allReactions: Promise<any> =
-                Promise.all(codeReactions.map(reaction => reaction(i)));
+                Promise.all(codeReactions.map(reaction => reaction(cri)));
             await allReactions;
-        }
+        });
         return Success;
     };
 }

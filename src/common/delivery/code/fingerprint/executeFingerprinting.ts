@@ -33,10 +33,13 @@ import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerprinters: Fingerprinter[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
-        const credentials = { token: params.githubToken };
+        const credentials = {token: params.githubToken};
 
-        if (fingerprinters.length >= 0) {
-            const project = await projectLoader.load(credentials, id);
+        if (fingerprinters.length === 0) {
+            return Success;
+        }
+
+        await projectLoader.doWithProject({credentials, id}, async project => {
             const fingerprints: Fingerprint[] = await Promise.all(
                 fingerprinters.map(async fp => {
                     const f = await fp(project);
@@ -44,7 +47,7 @@ export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerpri
                 }),
             ).then(x2 => _.flatten(x2));
             await fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
-        }
+        });
         return Success;
     };
 }

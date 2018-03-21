@@ -1,8 +1,19 @@
-
 import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+
+export type ProjectAction<T = any> = (p: GitProject) => Promise<T>;
+
+export interface ProjectLoadingParameters {
+
+    credentials: ProjectOperationCredentials;
+    id: RemoteRepoRef;
+    context?: HandlerContext;
+
+    /** Return true to get optimized behavior for read only */
+    readOnly?: boolean;
+}
 
 /**
  * Common interface for project loading that allows caching etc.
@@ -10,11 +21,10 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 export interface ProjectLoader {
 
     /**
-     * Load a GitProject, regardless of source
-     * @param {ProjectOperationCredentials} credentials
-     * @param {RemoteRepoRef} r
-     * @param {HandlerContext} context
-     * @return {Promise<GitProject>}
+     * Perform an action with the given project
+     * @param {ProjectLoadingParameters} params
+     * @param {ProjectAction<T>} action
      */
-    load(credentials: ProjectOperationCredentials, r: RemoteRepoRef, context?: HandlerContext): Promise<GitProject>;
+    doWithProject<T>(params: ProjectLoadingParameters, action: ProjectAction<T>): Promise<T>;
+
 }

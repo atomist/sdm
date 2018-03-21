@@ -49,10 +49,12 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
             const commit = status.commit;
             const credentials = {token: egi.githubToken};
             const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
-            if (registrations.length > 0) {
-                const push = commit.pushes[0];
-                const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
-                const project = await projectLoader.load(credentials, editableRepoRef, context);
+            if (registrations.length === 0) {
+                return Success;
+            }
+            const push = commit.pushes[0];
+            const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
+            const editResult = await projectLoader.doWithProject<EditResult>({credentials, id: editableRepoRef, context}, async project => {
                 const pti: PushTestInvocation = {
                     id: editableRepoRef,
                     project,
@@ -61,7 +63,8 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
                     addressChannels: addressChannelsFor(commit.repo, context),
                     push,
                 };
-                const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions<AutofixRegistration>(registrations, pti);
+                const relevantAutofixes: AutofixRegistration[] = await
+                relevantCodeActions<AutofixRegistration>(registrations, pti);
                 logger.info("Will apply %d eligible autofixes of %d to %j",
                     relevantAutofixes.length, registrations.length, pti.id);
                 let cumulativeResult: EditResult = {
@@ -70,14 +73,17 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
                     edited: false,
                 };
                 for (const autofix of _.flatten(relevantAutofixes)) {
-                    const editResult = await runOne(pti.project, smartContext, autofix);
-                    cumulativeResult = combineEditResults(cumulativeResult, editResult);
+                    const thisEdit = await runOne(pti.project, smartContext, autofix);
+                    cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
                 }
                 if (cumulativeResult.edited) {
                     await pti.project.push();
-                    // Send back an error code, because we want to stop execution after this build
-                    return {code: 1, message: "Edited"};
                 }
+                return cumulativeResult;
+            });
+            if (editResult.edited) {
+                // Send back an error code, because we want to stop execution after this build
+                return {code: 1, message: "Edited"};
             }
             return Success;
         } catch (err) {

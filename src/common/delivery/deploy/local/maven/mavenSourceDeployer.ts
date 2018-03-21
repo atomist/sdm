@@ -17,6 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../../spi/deploy/SourceDeployer";
@@ -59,13 +60,21 @@ class MavenSourceDeployer implements SourceDeployer {
     public async deployFromSource(id: GitHubRepoRef,
                                   ti: ManagedDeploymentTargetInfo,
                                   log: ProgressLog,
-                                  creds: ProjectOperationCredentials,
+                                  credentials: ProjectOperationCredentials,
                                   atomistTeam: string): Promise<Deployment> {
-
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-        const cloned = await this.projectLoader.load(creds, id);
+        return this.projectLoader.doWithProject({credentials, id}, project =>
+            this.deployProject(ti, log, project, port, atomistTeam));
+
+    }
+
+    private async deployProject(ti: ManagedDeploymentTargetInfo,
+                                log: ProgressLog,
+                                project: LocalProject,
+                                port: number,
+                                atomistTeam: string): Promise<Deployment> {
         const branchId = ti.managedDeploymentKey;
         const startupInfo = {
             port,
@@ -79,7 +88,7 @@ class MavenSourceDeployer implements SourceDeployer {
                 "spring-boot:run",
             ].concat(this.opts.commandLineArgumentsFor(startupInfo)),
             {
-                cwd: cloned.baseDir,
+                cwd: project.baseDir,
             });
         if (!childProcess.pid) {
             throw new Error("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +

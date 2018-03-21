@@ -38,7 +38,7 @@ import {
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasK8Spec } from "../../common/listener/support/pushtest/k8s/k8sSpecPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import { CloningProjectLoader } from "../../common/repo/CloningProjectLoader";
+import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
 import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";

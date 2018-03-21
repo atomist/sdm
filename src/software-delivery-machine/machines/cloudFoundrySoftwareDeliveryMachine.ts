@@ -31,7 +31,7 @@ import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTest
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
-import { CloningProjectLoader } from "../../common/repo/CloningProjectLoader";
+import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
 import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
