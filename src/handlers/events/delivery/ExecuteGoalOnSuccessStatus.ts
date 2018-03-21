@@ -63,7 +63,7 @@ export class ExecuteGoalOnSuccessStatus
         this.name = implementationName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
         this.subscription =
-            subscription({ name: "OnAnySuccessStatus", operationName: this.subscriptionName, inline: true });
+            subscription({ name: "OnAnySuccessStatus", operationName: this.subscriptionName });
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,

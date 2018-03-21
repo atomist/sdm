@@ -35,7 +35,7 @@ export const SupersededContext = "superseded";
 /**
  * Set superseded status on previous commit on a push
  */
-@EventHandler("Scan code on master", subscription({ name: "OnPushWithBefore" }))
+@EventHandler("Scan code on master", subscription("OnPushWithBefore"))
 export class SetSupersededStatus implements HandleEvent<OnPushWithBefore.Subscription> {
 
     @Secret(Secrets.OrgToken)

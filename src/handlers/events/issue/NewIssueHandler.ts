@@ -37,7 +37,7 @@ import * as schema from "../../../typings/types";
 /**
  * A new issue has been created.
  */
-@EventHandler("On issue creation", subscription({ name: "OnNewIssue" }))
+@EventHandler("On issue creation", subscription("OnNewIssue"))
 export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
     @Secret(Secrets.OrgToken)

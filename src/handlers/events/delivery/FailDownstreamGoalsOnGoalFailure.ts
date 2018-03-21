@@ -51,7 +51,7 @@ import Status = OnSuccessStatus.Status;
 /**
  * Respond to a failure status by failing downstream goals
  */
-@EventHandler("Fail downstream goals on a goal failure", subscription({ name: "OnFailureStatus" }))
+@EventHandler("Fail downstream goals on a goal failure", subscription("OnFailureStatus"))
 export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

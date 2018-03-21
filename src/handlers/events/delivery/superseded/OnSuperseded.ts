@@ -36,7 +36,7 @@ import * as schema from "../../../../typings/types";
 /**
  * Respond to a superseded push
  */
-@EventHandler("React to a superseded push", subscription({ name: "OnSupersededStatus" }))
+@EventHandler("React to a superseded push", subscription("OnSupersededStatus"))
 export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)

@@ -55,7 +55,7 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 /**
  * Set build status on complete build
  */
-@EventHandler("Set status on build complete", subscription({ name: "OnBuildComplete" }))
+@EventHandler("Set status on build complete", subscription("OnBuildComplete"))
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)

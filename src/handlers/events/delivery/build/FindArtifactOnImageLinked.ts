@@ -37,7 +37,7 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 
-@EventHandler("Scan when artifact is found", subscription({ name: "OnImageLinked" }))
+@EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
     @Secret(Secrets.OrgToken)

@@ -46,7 +46,7 @@ import {
 /**
  * Set up goals on a push (e.g. for delivery).
  */
-@EventHandler("Set up goals", subscription({ name: "OnPushToAnyBranch" }))
+@EventHandler("Set up goals", subscription("OnPushToAnyBranch"))
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)

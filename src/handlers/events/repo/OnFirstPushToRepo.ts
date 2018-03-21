@@ -39,7 +39,7 @@ import * as schema from "../../../typings/types";
 /**
  * A new repo has been created, and it has some code in it.
  */
-@EventHandler("On repo creation", subscription({ name: "OnFirstPushToRepo" }))
+@EventHandler("On repo creation", subscription("OnFirstPushToRepo"))
 export class OnFirstPushToRepo
     implements HandleEvent<schema.OnFirstPushToRepo.Subscription> {
 
