@@ -41,3 +41,7 @@ export class ComposedFunctionalUnit implements FunctionalUnit {
     }
 
 }
+
+export function composeFunctionalUnits(...units: FunctionalUnit[]): FunctionalUnit {
+    return new ComposedFunctionalUnit(...units);
+}

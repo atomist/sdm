@@ -36,7 +36,7 @@ import {ManagedDeploymentTargeter} from "./local/appManagement";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
-export interface DeployArtifactParams<T extends TargetInfo> {
+export interface DeployArtifactParams<T extends TargetInfo>{
     id: GitHubRepoRef;
     credentials: ProjectOperationCredentials;
     addressChannels: AddressChannels;

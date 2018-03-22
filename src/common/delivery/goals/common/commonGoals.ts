@@ -80,7 +80,8 @@ export const ArtifactGoal = new Goal({
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
-    orderedName: "3-deploy", displayName: "deploy to Test",
+    orderedName: "3-deploy",
+    displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
 }, ArtifactGoal);
 

@@ -16,8 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
-import { ArtifactDeploySpec, deployArtifactWithLogs } from "../../../common/delivery/deploy/executeDeploy";
-import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
+import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
@@ -26,24 +25,20 @@ import {
 import { executableJarDeployer } from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../common/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import {
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-    StagingUndeploymentGoal
-} from "../../../common/delivery/goals/common/commonGoals";
-import { triggerGoal } from "../../../handlers/commands/RetryGoal";
-import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
-import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
+import { composeFunctionalUnits } from "../../../blueprint/ComposedFunctionalUnit";
+import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
 /**
  * Deploy to the automation client node
  */
 
 const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetInfo> = {
+    implementationName: "DeployFromLocalExecutableJar",
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
@@ -53,6 +48,10 @@ const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetIn
         commandLineArgumentsFor: springBootExecutableJarArgs,
     }),
     targeter: ManagedDeploymentTargeter,
+    undeploy: {
+        goal: StagingUndeploymentGoal,
+        implementationName: "UndeployFromLocalJar",
+    },
 };
 
 const UndeployOnSuperseded = new OnSupersededStatus(inv => {
@@ -60,23 +59,11 @@ const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     return LocalExecutableJarDeploySpec.deployer.undeploy(targetInfoForAllBranches(inv.id), undefined, undefined);
 });
 
-export const LocalExecutableJarDeploy: FunctionalUnit = {
-    eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("DeployFromLocalExecutableJar",
-            LocalExecutableJarDeploySpec.deployGoal,
-            deployArtifactWithLogs(LocalExecutableJarDeploySpec)),
-        () => new ExecuteGoalOnPendingStatus("DeployFromLocalExecutableJar",
-            LocalExecutableJarDeploySpec.deployGoal,
-            deployArtifactWithLogs(LocalExecutableJarDeploySpec)),
-        () => new ExecuteGoalOnPendingStatus("UndeployFromLocalJar",
-            StagingUndeploymentGoal,
-            undeployArtifactWithLogs(LocalExecutableJarDeploySpec), true),
-        () => UndeployOnSuperseded],
-    commandHandlers: [
-        () => triggerGoal("DeployFromLocalExecutableJar", LocalExecutableJarDeploySpec.deployGoal),
-        () => triggerGoal("UndeployFromLocalJar", StagingUndeploymentGoal),
-    ],
-};
+const undeployLocalOnSuperseded: FunctionalUnit = {eventHandlers: [() => UndeployOnSuperseded], commandHandlers: []};
+
+export const LocalExecutableJarDeploy: FunctionalUnit = composeFunctionalUnits(
+    undeployLocalOnSuperseded,
+    deployArtifactGoalHandlers(LocalExecutableJarDeploySpec));
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {
     return [

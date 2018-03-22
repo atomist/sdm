@@ -39,11 +39,17 @@ import {
 import { deploy, DeployArtifactParams, deploySource, DeploySourceParams, Targeter } from "./deploy";
 
 export interface ArtifactDeploySpec<T extends TargetInfo> {
+    implementationName: string;
     deployGoal: Goal;
     endpointGoal: Goal;
     artifactStore: ArtifactStore;
     deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
+    undeploy?: {
+        goal: Goal;
+        implementationName: string;
+    };
+    undeployOnSuperseded?: boolean;
 }
 
 export function runWithLog(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
@@ -91,7 +97,7 @@ export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploy
             team: rwlc.context.teamId,
             progressLog: rwlc.progressLog,
             branch: pushBranch,
-        };
+        } as DeployArtifactParams<T>;
 
         if (!image) {
             rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
