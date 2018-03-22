@@ -1,10 +1,10 @@
-import { ArtifactDeploySpec, ExecuteWithLog, runWithLog, RunWithLogContext } from "./executeDeploy";
 import { logger } from "@atomist/automation-client";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
 import * as stringify from "json-stringify-safe";
+import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { GoalExecutor } from "../goals/goalExecution";
-import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
+import { ArtifactDeploySpec, ExecuteWithLog, runWithLog, RunWithLogContext } from "./executeDeploy";
 
 export function undeployArtifactWithLogs<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): GoalExecutor {
     return runWithLog(executeUndeployArtifact(spec), spec.deployer.logInterpreter);
@@ -50,7 +50,7 @@ function writeError(progressLog: ProgressLog) {
     return (err: Error) => {
         progressLog.write("Error checking out artifact: " + err.message);
         throw err;
-    }
+    };
 }
 
 function rejectUndefined<T>(thing: T): T {

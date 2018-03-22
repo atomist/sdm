@@ -42,7 +42,7 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends D
      */
     findDeployments?(da: DeployableArtifact,
                      ti: T,
-                     creds: ProjectOperationCredentials): Promise<Array<U>>;
+                     creds: ProjectOperationCredentials): Promise<U[]>;
 
     /**
      * Deploy the artifact returning a promise of deployments
@@ -57,6 +57,6 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends D
            ti: T,
            log: ProgressLog,
            credentials: ProjectOperationCredentials,
-           team: string): Promise<Array<U>>;
+           team: string): Promise<U[]>;
 
 }

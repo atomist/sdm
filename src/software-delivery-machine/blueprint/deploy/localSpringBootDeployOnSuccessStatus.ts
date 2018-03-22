@@ -17,6 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { ArtifactDeploySpec, deployArtifactWithLogs } from "../../../common/delivery/deploy/executeDeploy";
+import { executeUndeployArtifact, undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
@@ -32,7 +33,6 @@ import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/Ex
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
-import { executeUndeployArtifact, undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 
 /**
  * Deploy to the automation client node
@@ -69,7 +69,7 @@ export const LocalExecutableJarDeploy: FunctionalUnit = {
         () => UndeployOnSuperseded],
     commandHandlers: [
         () => triggerGoal("DeployFromLocalExecutableJar", LocalExecutableJarDeploySpec.deployGoal),
-        () => triggerGoal("UndeployFromLocalJar", StagingUndeploymentGoal)
+        () => triggerGoal("UndeployFromLocalJar", StagingUndeploymentGoal),
     ],
 };
 

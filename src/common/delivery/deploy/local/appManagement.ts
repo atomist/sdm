@@ -90,7 +90,7 @@ export class ManagedDeployments {
 
     public findDeployment(id: RemoteRepoRef): DeployedApp {
         return this.deployments.find(d => d.id.sha === id.sha ||
-            (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch))
+            (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
     }
 
     /**

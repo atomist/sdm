@@ -5,18 +5,18 @@ import * as yaml from "js-yaml";
 
 import * as _ from "lodash";
 
-import * as fs from "fs";
-import archiver = require("archiver");
-import {CloudFoundryApi, initializeCloudFoundry} from "./CloudFoundryApi";
-import {CloudFoundryPusher} from "./CloudFoundryPusher";
-import {CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath} from "./CloudFoundryTarget";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {GitProject} from "@atomist/automation-client/project/git/GitProject";
 import {Project} from "@atomist/automation-client/project/Project";
-import {Manifest} from "./CloudFoundryManifest";
+import archiver = require("archiver");
+import * as fs from "fs";
+import {DeployableArtifact} from "../../../../spi/artifact/ArtifactStore";
 import {ArtifactDeployer} from "../../../../spi/deploy/ArtifactDeployer";
 import {ProgressLog} from "../../../../spi/log/ProgressLog";
-import {DeployableArtifact} from "../../../../spi/artifact/ArtifactStore";
+import {CloudFoundryApi, initializeCloudFoundry} from "./CloudFoundryApi";
+import {Manifest} from "./CloudFoundryManifest";
+import {CloudFoundryPusher} from "./CloudFoundryPusher";
+import {CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath} from "./CloudFoundryTarget";
 
 /**
  * Use the Cloud Foundry API to approximate their CLI to push.
@@ -36,19 +36,19 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
 
     protected async archiveProject(baseDir: string): Promise<any> {
         return new Promise((resolve, reject) => {
-            const packageFilePath = baseDir + '/cfpackage.zip';
+            const packageFilePath = baseDir + "/cfpackage.zip";
             const output = fs.createWriteStream(packageFilePath);
-            output.on('close', () => {
+            output.on("close", () => {
                 logger.info(`Created project archive ${packageFilePath}`);
                 const packageFile = fs.createReadStream(packageFilePath);
                 resolve(packageFile);
             });
-            const archive = archiver('zip', {
-                store: true
+            const archive = archiver("zip", {
+                store: true,
             });
             archive.pipe(output);
             archive.directory(baseDir, false);
-            archive.on('error', (err) => {
+            archive.on("error",err => {
                 reject(err);
             });
             archive.finalize();
@@ -59,7 +59,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
                         creds: ProjectOperationCredentials,
-                        team: string): Promise<Array<CloudFoundryDeployment>> {
+                        team: string): Promise<CloudFoundryDeployment[]> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
@@ -77,8 +77,8 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
     }
 
     public async findDeployments(da: DeployableArtifact,
-                          cfi: CloudFoundryInfo,
-                          creds: ProjectOperationCredentials): Promise<Array<CloudFoundryDeployment>> {
+                                 cfi: CloudFoundryInfo,
+                                 creds: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }

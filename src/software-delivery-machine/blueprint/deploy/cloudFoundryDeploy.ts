@@ -16,6 +16,7 @@
 
 import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
 import {deployArtifactWithLogs} from "../../../common/delivery/deploy/executeDeploy";
+import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 import {EnvironmentCloudFoundryTarget} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import {CommandLineCloudFoundryDeployer} from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
@@ -31,7 +32,6 @@ import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/Exec
 import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import {DefaultArtifactStore} from "../artifactStore";
-import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
@@ -81,7 +81,7 @@ export const CloudFoundryProductionDeploy: FunctionalUnit = {
             deployArtifactWithLogs(ProductionDeploySpec)),
         () => new ExecuteGoalOnPendingStatus("UndeployFromProd",
             ProductionUndeploymentGoal,
-            undeployArtifactWithLogs(ProductionDeploySpec))
+            undeployArtifactWithLogs(ProductionDeploySpec)),
     ],
 
     commandHandlers: [

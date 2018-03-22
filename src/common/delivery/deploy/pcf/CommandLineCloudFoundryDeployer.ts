@@ -35,7 +35,7 @@ export class CommandLineCloudFoundryDeployer implements ArtifactDeployer<CloudFo
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
-                        credentials: ProjectOperationCredentials): Promise<Array<Deployment>> {
+                        credentials: ProjectOperationCredentials): Promise<Deployment[]> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy

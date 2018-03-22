@@ -1,5 +1,4 @@
 
-
 export interface Manifest {
     applications: ManifestApplication[];
 }

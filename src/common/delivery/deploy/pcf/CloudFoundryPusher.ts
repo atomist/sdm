@@ -1,8 +1,8 @@
 import * as _ from "lodash";
 
-import {CloudFoundryApi} from "./CloudFoundryApi";
 import {ReadStream} from "fs";
 import {ProgressLog} from "../../../../spi/log/ProgressLog";
+import {CloudFoundryApi} from "./CloudFoundryApi";
 import {ManifestApplication} from "./CloudFoundryManifest";
 import {CloudFoundryDeployment} from "./CloudFoundryTarget";
 
@@ -55,11 +55,11 @@ export class CloudFoundryPusher {
         return {
             endpoint: this.constructEndpoint(manifest_app.name),
             appName: manifest_app.name,
-        }
+        };
     }
 
     public constructEndpoint(appName: string): string {
-        return `https://${appName}.${this.defaultDomain}`
+        return `https://${appName}.${this.defaultDomain}`;
     }
 
     public async appServiceModifications(app_guid: string, serviceNames: string[]): Promise<ServicesModifications> {

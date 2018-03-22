@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../../../spi/deploy/ArtifactDeployer";
@@ -24,7 +25,6 @@ import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Managed deployments
@@ -53,11 +53,11 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
     }
 
     public async findDeployments(da: DeployableArtifact,
-                           ti: ManagedDeploymentTargetInfo,
-                           creds: ProjectOperationCredentials) {
+                                 ti: ManagedDeploymentTargetInfo,
+                                 creds: ProjectOperationCredentials) {
         const thisDeployment = this.deploymentFor(ti);
         return thisDeployment ? [thisDeployment] : [];
-    };
+    }
 
     public async undeploy(id: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<any> {
         return managedDeployments.terminateIfRunning(id.managedDeploymentKey);
@@ -72,7 +72,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
         const baseUrl = this.opts.baseUrl;
         return {
             endpoint: `${baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
-        }
+        };
     }
 
     private contextRoot(id: RemoteRepoRef) {
@@ -83,7 +83,7 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
-                        atomistTeam: string): Promise<Array<Deployment>> {
+                        atomistTeam: string): Promise<Deployment[]> {
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {

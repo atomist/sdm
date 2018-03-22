@@ -47,7 +47,7 @@ export interface ArtifactDeploySpec<T extends TargetInfo> {
 }
 
 export function runWithLog(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
-                                                 logInterpreter?: LogInterpreter): GoalExecutor {
+                           logInterpreter?: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const log = await createEphemeralProgressLog();

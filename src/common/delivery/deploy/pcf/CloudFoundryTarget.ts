@@ -37,7 +37,7 @@ export interface CloudFoundryInfo extends TargetInfo {
 
 export interface CloudFoundryDeployment extends Deployment {
 
-    appName: string
+    appName: string;
 
 }
 
