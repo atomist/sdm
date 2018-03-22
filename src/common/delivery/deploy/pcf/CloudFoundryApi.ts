@@ -108,7 +108,7 @@ export class CloudFoundryApi {
         const existingApp = await this.getApp(spaceGuid, appName);
         return existingApp ? Promise.resolve(existingApp) : this.cf.apps.add({
             name: appName,
-            spaceGuid,
+            space_guid: spaceGuid,
         });
     }
 
@@ -233,11 +233,11 @@ export class CloudFoundryApi {
         const defaultDomain = domains.resources.find(d => d.entity.name === domainName);
         const domainGuid = defaultDomain.metadata.guid;
         const routesWithName = await this.cf.spaces.getSpaceRoutes(spaceGuid, {q: `host:${hostName}`});
-        let route = routesWithName.resources.find(r => r.entity.domainGuid === domainGuid);
+        let route = routesWithName.resources.find(r => r.entity.domain_guid === domainGuid);
         if (!route) {
             route = await this.cf.routes.add({
-                domainGuid,
-                spaceGuid,
+                domain_guid: domainGuid,
+                space_guid: spaceGuid,
                 host: hostName,
             });
         }
