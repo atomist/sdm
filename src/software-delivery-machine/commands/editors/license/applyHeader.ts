@@ -78,7 +78,7 @@ export async function applyHeaderProjectEditor(p: Project,
     const sha: string = !!(p as GitProject).gitStatus ? (await (p as GitProject).gitStatus()).sha : p.id.sha;
     logger.info("%d files matched [%s]. %s headers added. %d files skipped", matchingFiles, params.glob, headersAdded, matchingFiles - headersAdded);
     if (headersAdded > 0) {
-        await ctx.messageClient.respond(`*License header editor* on \`${sha}\`: ${matchingFiles} files matched \`${params.glob}\`. ` +
+        await ctx.messageClient.respond(`*License header editor* on \`${sha.substring(0, 5)}\`: ${matchingFiles} files matched \`${params.glob}\`. ` +
             `${headersAdded} headers added. ${matchingFiles - headersAdded} files skipped ${params.successEmoji}`);
     }
     return p;
