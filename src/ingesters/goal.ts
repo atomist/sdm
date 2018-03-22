@@ -66,15 +66,15 @@ export interface GoalKey {
 }
 
 export const GoalIngester: IngesterBuilder = ingester(GoalRootType)
-    .withType(type("SDMRepository")
+    .withType(type("SdmRepository")
         .withStringField("name")
         .withStringField("owner")
         .withStringField("providerId"))
-    .withType(type("SDMCondition")
+    .withType(type("SdmCondition")
         .withStringField("goalSet")
         .withStringField("environment")
         .withStringField("name"))
-    .withType(type("SDMProvenance")
+    .withType(type("SdmProvenance")
         .withStringField("correlationId")
         .withStringField("registration")
         .withStringField("name")
@@ -105,7 +105,7 @@ export const GoalIngester: IngesterBuilder = ingester(GoalRootType)
             ["compositeId"])
         .withObjectField(
             "repo",
-            "SDMRepository",
+            "SdmRepository",
             "Repository the commit was observed from",
             ["name", "owner", "providerId"])
         .withStringField(
@@ -131,13 +131,13 @@ export const GoalIngester: IngesterBuilder = ingester(GoalRootType)
             "Goal can be retried")
         .withListObjectField(
             "preConditions",
-            "SDMCondition",
+            "SdmCondition",
             "Preconditions of goal")
         .withObjectField(
             "approval",
-            "SDMProvenance",
+            "SdmProvenance",
             "Where and how the goal was approved")
         .withListObjectField(
             "provenance",
-            "SDMProvenance",
+            "SdmProvenance",
             "Changes to goal"));
