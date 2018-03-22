@@ -29,7 +29,7 @@ import { addDemoEditors } from "../parts/demo/demoEditors";
 export type ArtifactVerifyingMachineOptions = SoftwareDeliveryMachineOptions;
 
 /**
- * Assemble a machine that performs only autofixes.
+ * Assemble a machine that only builds and verifies Java artifacts.
  * @return {SoftwareDeliveryMachine}
  */
 export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactVerifyingMachineOptions> = {}): SoftwareDeliveryMachine {
