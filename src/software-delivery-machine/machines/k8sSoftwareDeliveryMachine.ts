@@ -25,8 +25,6 @@ import { HasSpringBootApplicationClass, IsMaven } from "../../common/listener/su
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasK8Spec } from "../../common/listener/support/pushtest/k8s/k8sSpecPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
-import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
@@ -46,7 +44,6 @@ import { addTeamPolicies } from "../parts/team/teamPolicies";
 export type K8sSoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
 export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOptions): SoftwareDeliveryMachine {
-    const projectLoader: ProjectLoader = CloningProjectLoader;
     const sdm = new SoftwareDeliveryMachine(opts,
         whenPushSatisfies(
             ToDefaultBranch,

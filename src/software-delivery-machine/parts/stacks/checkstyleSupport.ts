@@ -14,21 +14,26 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
-import { MavenFingerprinter } from "../../../common/delivery/code/fingerprint/maven/MavenFingerprinter";
-import { AddAtomistJavaHeader } from "../../blueprint/code/autofix/addAtomistHeader";
-import { addCheckstyleSupport, CheckstyleSupportOptions } from "./checkstyleSupport";
+import { CheckstyleReviewerRegistration } from "../../../common/delivery/code/review/checkstyle/checkstyleReviewer";
 
-export type JavaSupportOptions = CheckstyleSupportOptions;
+export interface CheckstyleSupportOptions {
+   useCheckstyle: boolean;
+}
 
 /**
  * Configuration common to Java SDMs, wherever they deploy
  * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
  * @param {{useCheckstyle: boolean}} opts
  */
-export function addJavaSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: JavaSupportOptions) {
-    addCheckstyleSupport(softwareDeliveryMachine, opts);
-    softwareDeliveryMachine
-        .addFingerprinters(new MavenFingerprinter())
-        .addAutofixes(AddAtomistJavaHeader);
+export function addCheckstyleSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: CheckstyleSupportOptions) {
+    if (opts.useCheckstyle) {
+        const checkStylePath = process.env.CHECKSTYLE_PATH;
+        if (!!checkStylePath) {
+            softwareDeliveryMachine.addReviewerRegistrations(CheckstyleReviewerRegistration);
+        } else {
+            logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
+        }
+    }
 }

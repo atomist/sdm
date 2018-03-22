@@ -34,10 +34,9 @@ export const whackHeaderEditor: HandleCommand = editorCommand(
     },
 );
 
-const HeaderRegex = /^\/\*[\s\S]*?\*\/\s*/
+const HeaderRegex = /^\/\*[\s\S]*?\*\/\s*/;
 
-const CFamilySuffix = /\.(ts|java)$/
-
+const CFamilySuffix = /\.(ts|java)$/;
 
 /**
  * Whack the first TypeScript header we get hold off.

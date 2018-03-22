@@ -31,8 +31,6 @@ import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTest
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
-import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
-import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import { DefaultArtifactStore } from "../blueprint/artifactStore";
@@ -53,7 +51,6 @@ export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineO
  * @return {SoftwareDeliveryMachine}
  */
 export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwareDeliverMachineOptions): SoftwareDeliveryMachine {
-    const projectLoader: ProjectLoader = options.projectLoader || CloningProjectLoader;
     const sdm = new SoftwareDeliveryMachine(options,
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
             .itMeans("No material change to Java")
@@ -71,8 +68,8 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         whenPushSatisfies(IsNode)
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals)
-            .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog, projectLoader)),
-        onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog, projectLoader)),
+            .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog, options.projectLoader)),
+        onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog, options.projectLoader)),
     );
 
     sdm.addDeployers(

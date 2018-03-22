@@ -15,10 +15,10 @@
  */
 
 import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
+import { PushTest } from "../../../../common/listener/PushTest";
+import { IsJava } from "../../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { IsTypeScript } from "../../../../common/listener/support/pushtest/node/tsPushTests";
 import { ApplyHeaderParameters, applyHeaderProjectEditor } from "../../../commands/editors/license/applyHeader";
-import { IsJava } from "../../../../common/listener/support/pushtest/jvm/jvmPushTests";
-import { PushTest } from "../../../../common/listener/PushTest";
 
 export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java header", "**/*.java", IsJava);
 

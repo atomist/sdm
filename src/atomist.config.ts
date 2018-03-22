@@ -19,6 +19,7 @@ import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLo
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
+import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
 
 const SdmOptions = {
     artifactStore: new EphemeralLocalArtifactStore(),
@@ -31,7 +32,10 @@ const SdmOptions = {
  * by default, and your PCF for Prod) and kubernetes (which deploys Spring-boot services to an Atomist-provided
  * cluster for Test and Prod). Take your pick.
  */
+
 const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+
+// const machine = staticAnalysisSoftwareDeliveryMachine(SdmOptions);
 
 // const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 
