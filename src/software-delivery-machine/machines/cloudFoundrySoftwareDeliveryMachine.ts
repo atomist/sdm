@@ -75,7 +75,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     );
 
     sdm.addDeployers(
-        CloudFoundryStagingDeploy,
+        LocalExecutableJarDeploy,
         CloudFoundryProductionDeploy,
     )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)

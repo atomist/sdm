@@ -39,7 +39,7 @@ const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: new CloudFoundryPushDeployer(),
+    deployer: new CommandLineCloudFoundryDeployer(),
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-staging",
@@ -54,7 +54,7 @@ const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: new CloudFoundryPushDeployer(),
+    deployer: new CommandLineCloudFoundryDeployer(),
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-production",
