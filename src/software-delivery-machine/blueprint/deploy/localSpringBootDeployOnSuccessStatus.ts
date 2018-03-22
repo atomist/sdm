@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-import {logger} from "@atomist/automation-client";
-import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
-import {ArtifactDeploySpec, deployArtifactWithLogs} from "../../../common/delivery/deploy/executeDeploy";
+import { logger } from "@atomist/automation-client";
+import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
+import { ArtifactDeploySpec, deployArtifactWithLogs } from "../../../common/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
     targetInfoForAllBranches,
 } from "../../../common/delivery/deploy/local/appManagement";
-import {executableJarDeployer} from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
-import {StartupInfo} from "../../../common/delivery/deploy/local/LocalDeployerOptions";
-import {mavenDeployer} from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import {StagingDeploymentGoal, StagingEndpointGoal} from "../../../common/delivery/goals/common/commonGoals";
-import {retryGoal} from "../../../handlers/commands/RetryGoal";
-import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
-import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
-import {OnSupersededStatus} from "../../../handlers/events/delivery/superseded/OnSuperseded";
-import {SourceDeployer} from "../../../spi/deploy/SourceDeployer";
-import {DefaultArtifactStore} from "../artifactStore";
+import { executableJarDeployer } from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
+import { StartupInfo } from "../../../common/delivery/deploy/local/LocalDeployerOptions";
+import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
+import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
+import { triggerGoal } from "../../../handlers/commands/RetryGoal";
+import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
+import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
+import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
+import { DefaultArtifactStore } from "../artifactStore";
+import { executeUndeployArtifact, undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 
 /**
  * Deploy to the automation client node
@@ -62,9 +63,14 @@ export const LocalExecutableJarDeploy: FunctionalUnit = {
         () => new ExecuteGoalOnPendingStatus("DeployFromLocalExecutableJar",
             LocalExecutableJarDeploySpec.deployGoal,
             deployArtifactWithLogs(LocalExecutableJarDeploySpec)),
+        () => new ExecuteGoalOnPendingStatus("UndeployFromLocalJar",
+            StagingUndeploymentGoal,
+            undeployArtifactWithLogs(LocalExecutableJarDeploySpec), true),
         () => UndeployOnSuperseded],
-    commandHandlers: [() => retryGoal("DeployFromLocalExecutableJar",
-        LocalExecutableJarDeploySpec.deployGoal)],
+    commandHandlers: [
+        () => triggerGoal("DeployFromLocalExecutableJar", LocalExecutableJarDeploySpec.deployGoal),
+        () => triggerGoal("UndeployFromLocalJar", StagingUndeploymentGoal)
+    ],
 };
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {

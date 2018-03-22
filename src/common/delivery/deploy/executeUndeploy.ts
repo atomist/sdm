@@ -1,11 +1,12 @@
-import { ArtifactDeploySpec, executeDeployArtifact, ExecuteWithLog, runWithLog, RunWithLogContext } from "./executeDeploy";
+import { ArtifactDeploySpec, ExecuteWithLog, runWithLog, RunWithLogContext } from "./executeDeploy";
 import { logger } from "@atomist/automation-client";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import * as stringify from "json-stringify-safe";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { GoalExecutor } from "../goals/goalExecution";
+import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 
-export function undeployWithLogs<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): GoalExecutor {
+export function undeployArtifactWithLogs<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): GoalExecutor {
     return runWithLog(executeUndeployArtifact(spec), spec.deployer.logInterpreter);
 }
 
@@ -19,17 +20,15 @@ export function executeUndeployArtifact<T extends TargetInfo>(spec: ArtifactDepl
         if (!spec.deployer.findDeployments || !spec.deployer.undeploy) {
             throw new Error("Deployer does not implement findDeployments and undeploy");
         }
-
-        // sad: i don't want to need an image for something to undeploy it. Do we have to?
-        if (!image) {
-            throw new Error(`No image found on commit ${commit.sha}; can't undeploy`);
-        }
-        const targetUrl = image.imageName;
-
         const progressLog = rwlc.progressLog;
 
-        const artifactCheckout = await spec.artifactStore.checkout(targetUrl, rwlc.id,
-            rwlc.credentials).then(rejectUndefined).catch(writeError(progressLog));
+        // some undeploy processes do not really need the artifact, so don't fail
+        let artifactCheckout: DeployableArtifact;
+        if (image) {
+            const targetUrl = image.imageName;
+            artifactCheckout = await spec.artifactStore.checkout(targetUrl, rwlc.id,
+                rwlc.credentials).then(rejectUndefined).catch(writeError(progressLog));
+        }
 
         const targetInfo = spec.targeter(rwlc.id, pushBranch);
         const deployments = await spec.deployer.findDeployments(artifactCheckout, targetInfo, rwlc.credentials);
@@ -43,7 +42,7 @@ export function executeUndeployArtifact<T extends TargetInfo>(spec: ArtifactDepl
                 progressLog,
             ));
 
-        return { code: 0 };
+        return {code: 0};
     };
 }
 

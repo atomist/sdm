@@ -88,14 +88,18 @@ export class ManagedDeployments {
         this.deployments.push(da);
     }
 
+    public findDeployment(id: RemoteRepoRef): DeployedApp {
+        return this.deployments.find(d => d.id.sha === id.sha ||
+            (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch))
+    }
+
     /**
      * Terminate any process we're managing on behalf of this id
      * @param {BranchRepoRef} id
      * @return {Promise<any>}
      */
     public async terminateIfRunning(id: RemoteRepoRef): Promise<any> {
-        const victim = this.deployments.find(d => d.id.sha === id.sha ||
-            (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
+        const victim = this.findDeployment(id);
         if (!!victim && !!victim.childProcess) {
             victim.childProcess.kill();
             // Keep the port but deallocate the process

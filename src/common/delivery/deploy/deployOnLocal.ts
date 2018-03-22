@@ -15,7 +15,7 @@
  */
 
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
-import { retryGoal } from "../../../handlers/commands/RetryGoal";
+import { triggerGoal } from "../../../handlers/commands/RetryGoal";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { MavenDeployer } from "../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/common/commonGoals";
@@ -33,5 +33,5 @@ export const LocalDeployment: FunctionalUnit = {
             LocalDeploymentGoal,
             runWithLog(executeDeploySource(LocalDeployFromCloneSpec), LocalDeployFromCloneSpec.deployer.logInterpreter)),
     ],
-    commandHandlers: [() => retryGoal("LocalDeployFromClone", LocalDeploymentGoal)],
+    commandHandlers: [() => triggerGoal("LocalDeployFromClone", LocalDeploymentGoal)],
 };

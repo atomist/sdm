@@ -25,13 +25,13 @@ import {
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
 import { CodeReactionListener } from "../../../common/listener/CodeReactionListener";
-import {retryGoal} from "../../../handlers/commands/RetryGoal";
+import {triggerGoal} from "../../../handlers/commands/RetryGoal";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import {DefaultArtifactStore} from "../artifactStore";
-import { undeployWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
+import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
@@ -56,7 +56,7 @@ export const CloudFoundryStagingDeploy: FunctionalUnit = {
         () => new ExecuteGoalOnPendingStatus("DeployFromLocalToStaging",
             StagingDeploymentGoal,
             deployArtifactWithLogs(StagingDeploySpec))],
-    commandHandlers: [() => retryGoal("DeployFromLocalToStaging", ProductionDeploymentGoal)],
+    commandHandlers: [() => triggerGoal("DeployFromLocalToStaging", ProductionDeploymentGoal)],
 };
 
 const ProductionDeploySpec = {
@@ -81,12 +81,12 @@ export const CloudFoundryProductionDeploy: FunctionalUnit = {
             deployArtifactWithLogs(ProductionDeploySpec)),
         () => new ExecuteGoalOnPendingStatus("UndeployFromProd",
             ProductionUndeploymentGoal,
-            undeployWithLogs(ProductionDeploySpec))
+            undeployArtifactWithLogs(ProductionDeploySpec))
     ],
 
     commandHandlers: [
-        () => retryGoal("DeployFromLocalToProd", ProductionDeploymentGoal),
-        () => retryGoal("UndeployFromProd", ProductionUndeploymentGoal),
+        () => triggerGoal("DeployFromLocalToProd", ProductionDeploymentGoal),
+        () => triggerGoal("UndeployFromProd", ProductionUndeploymentGoal),
     ],
 };
 

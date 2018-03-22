@@ -84,6 +84,13 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
     completedDescription: "Deployed to Test",
 }, ArtifactGoal);
 
+export const StagingUndeploymentGoal = new Goal({
+    environment: StagingEnvironment,
+    orderedName: "8-staging-undeploy",
+    displayName: "undeploy from test",
+    completedDescription: "not deployed in test",
+});
+
 export const StagingEndpointGoal = new Goal({
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
@@ -108,7 +115,7 @@ ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionUndeploymentGoal = new Goal({
     environment: ProductionEnvironment,
-    orderedName: "10-prod-undeploy",
+    orderedName: "8-prod-undeploy",
     displayName: "undeploy from Prod",
     completedDescription: "not deployed in Prod",
 });
