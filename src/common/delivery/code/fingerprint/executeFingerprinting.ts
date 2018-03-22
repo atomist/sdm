@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { HandlerContext, Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
@@ -39,10 +40,12 @@ export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerpri
             return Success;
         }
 
+        logger.debug("About to fingerprint %j using %d fingerprinters", id, fingerprinters.length);
         await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
             const fingerprints: Fingerprint[] = await Promise.all(
                 fingerprinters.map(async fp => {
-                    const f = await fp(project);
+                    logger.info("Using fingerprinter %s to fingerprint %j", fp.name, id);
+                    const f = await fp.fingerprint(project);
                     return isFingerprint(f) ? [f] : f;
                 }),
             ).then(x2 => _.flatten(x2));

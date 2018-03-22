@@ -109,7 +109,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
             }
             return Success;
         } catch (err) {
-            logger.info("Error executing %s on %s", params.implementationName, repoRef(status).url, err);
+            logger.warn("Error executing %s on %s: %s", params.implementationName, repoRef(status).url, err.message);
             if (params.handleGoalUpdates) {
                 await markStatus(repoRef(status), params.goal, StatusState.error, credentials);
             }

@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
-import { mavenFingerprinter } from "../../../common/delivery/code/fingerprint/maven/mavenFingerprinter";
+import { MavenFingerprinter } from "../../../common/delivery/code/fingerprint/maven/MavenFingerprinter";
 import { CheckstyleReviewerRegistration } from "../../../common/delivery/code/review/checkstyle/checkstyleReviewer";
 import { AddAtomistJavaHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 
@@ -40,6 +40,6 @@ export function addJavaSupport(softwareDeliveryMachine: SoftwareDeliveryMachine,
     }
 
     softwareDeliveryMachine
-        .addFingerprinters(mavenFingerprinter)
+        .addFingerprinters(new MavenFingerprinter())
         .addAutofixes(AddAtomistJavaHeader);
 }

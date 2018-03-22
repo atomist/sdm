@@ -40,13 +40,15 @@ export class CachingProjectLoader implements ProjectLoader {
             const p = await GitCommandGitProject.cloned(params.credentials, params.id);
             return action(p);
         }
+        logger.debug("CachingProjectLoader: Hoping to reuse clone for readonly use of %j", params.id);
 
         const key = cacheKey(params.id);
         let project = this.cache[key];
         if (!!project) {
             // Validate it, as the directory may have been cleaned up
-            const exists = await promisify(fs.exists)(project.baseDir);
-            if (!exists) {
+            try {
+                await promisify(fs.access)(project.baseDir);
+            } catch {
                 this.cache[key] = undefined;
                 logger.warn("CachingProjectLoader: Invalid cache entry %s", key);
                 project = undefined;
@@ -60,7 +62,7 @@ export class CachingProjectLoader implements ProjectLoader {
             this.cache[key] = project;
         }
 
-        logger.info("CachingProjectLoader: %d gets, %d project loads, %d cache hits",
+        logger.info("CachingProjectLoader: %d gets, %d project loads, %d cache hits: About to invoke action",
             this.requested, this.loaded, this.requested - this.loaded);
         return action(project);
     }
