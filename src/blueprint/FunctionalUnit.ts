@@ -26,3 +26,8 @@ export interface FunctionalUnit {
 
     commandHandlers: Array<Maker<HandleCommand>>;
 }
+
+export const EmptyFunctionalUnit: FunctionalUnit = {
+    eventHandlers: [],
+    commandHandlers: [],
+};

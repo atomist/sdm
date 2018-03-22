@@ -31,6 +31,7 @@ describe("the local deploy", () => {
     it("does not go when artifact is not done", () => {
         const deployHandler = new ExecuteGoalOnSuccessStatus("retryMe", ProductionDeploymentGoal,
             runWithLog(executeDeployArtifact({
+                implementationName: "hi",
                 deployGoal: ProductionDeploymentGoal,
                 endpointGoal: ProductionEndpointGoal,
                 artifactStore: null,

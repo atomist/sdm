@@ -1,0 +1,35 @@
+fragment StatusForExecuteGoal on Status {
+  commit {
+    sha
+    message
+    statuses {
+      context
+      description
+      state
+      targetUrl
+    }
+    repo {
+      ...CoreRepoFieldsAndChannels
+    }
+    pushes {
+      before {
+        sha
+        message
+      }
+      commits {
+        sha
+        message
+      }
+      branch
+      id
+    }
+    image {
+      image
+      imageName
+    }
+  }
+  state
+  targetUrl
+  context
+  description
+}

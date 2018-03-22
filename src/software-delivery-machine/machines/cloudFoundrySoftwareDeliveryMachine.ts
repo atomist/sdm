@@ -33,7 +33,10 @@ import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import { CloudFoundryProductionDeploy } from "../blueprint/deploy/cloudFoundryDeploy";
+import {
+    CloudFoundryProductionDeploy, CloudFoundryStagingDeploy,
+    EnableDeployOnCloudFoundryManifestAddition,
+} from "../blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
@@ -81,6 +84,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             () => enableDeploy(),
             () => disableDeploy(),
         )
+        .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition)
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
 
     addJavaSupport(sdm, options);

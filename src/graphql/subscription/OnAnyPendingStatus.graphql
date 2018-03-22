@@ -1,33 +1,5 @@
 subscription OnAnyPendingStatus {
   Status(state: pending) {
-    commit {
-      sha
-      message
-      statuses {
-        context
-        description
-        state
-      }
-      repo {
-        ...CoreRepoFieldsAndChannels
-      }
-      pushes {
-        id
-        branch
-        after {
-          ...CoreCommitFields
-        }
-        before {
-          ...CoreCommitFields
-        }
-        commits {
-          ...CoreCommitFields
-        }
-      }
-    }
-    state
-    targetUrl
-    context
-    description
+    ...StatusForExecuteGoal
   }
 }

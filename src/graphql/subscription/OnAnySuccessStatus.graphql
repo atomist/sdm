@@ -1,43 +1,5 @@
 subscription OnAnySuccessStatus {
   Status(state: success) {
-    commit {
-      sha
-      message
-      statuses {
-        context
-        description
-        state
-        targetUrl
-      }
-      repo {
-        owner
-        name
-        defaultBranch
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
-        org {
-          chatTeam {
-            id
-          }
-        }
-      }
-      pushes {
-        branch
-        id
-      }
-      image {
-        image
-        imageName
-      }
-    }
-    state
-    targetUrl
-    context
-    description
+    ...StatusForExecuteGoal
   }
 }

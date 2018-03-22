@@ -46,7 +46,7 @@ export class RetryGoalParameters {
     public sha: string;
 }
 
-export function retryGoal(implementationName: string, goal: Goal): HandleCommand {
+export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
     return commandHandlerFrom(async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
         const sha = commandParams.sha || await tipOfDefaultBranch(commandParams.githubToken,
             new GitHubRepoRef(commandParams.owner,

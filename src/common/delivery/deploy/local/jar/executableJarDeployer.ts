@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../../../spi/deploy/ArtifactDeployer";
@@ -46,27 +47,49 @@ export function executableJarDeployer(opts: LocalDeployerOptions): ArtifactDeplo
     });
 }
 
-class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo> {
+class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo, Deployment> {
 
     constructor(public opts: LocalDeployerOptions) {
     }
 
-    public async undeploy(id: ManagedDeploymentTargetInfo): Promise<any> {
+    public async findDeployments(da: DeployableArtifact,
+                                 ti: ManagedDeploymentTargetInfo,
+                                 creds: ProjectOperationCredentials) {
+        const thisDeployment = this.deploymentFor(ti);
+        return thisDeployment ? [thisDeployment] : [];
+    }
+
+    public async undeploy(id: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<any> {
         return managedDeployments.terminateIfRunning(id.managedDeploymentKey);
+    }
+
+    private deploymentFor(ti: ManagedDeploymentTargetInfo): Deployment {
+        const managed = managedDeployments.findDeployment(ti.managedDeploymentKey);
+        if (!managed) {
+            return undefined;
+        }
+        const port = managed.port;
+        const baseUrl = this.opts.baseUrl;
+        return {
+            endpoint: `${baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
+        };
+    }
+
+    private contextRoot(id: RemoteRepoRef) {
+        return `/${id.owner}/${id.repo}/staging`;
     }
 
     public async deploy(da: DeployableArtifact,
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
-                        atomistTeam: string): Promise<Array<Promise<Deployment>>> {
-        const baseUrl = this.opts.baseUrl;
+                        atomistTeam: string): Promise<Deployment[]> {
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {
             port,
             atomistTeam,
-            contextRoot: `/${da.id.owner}/${da.id.repo}/staging`,
+            contextRoot: this.contextRoot(da.id),
         };
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
         // TODO switch to watchSpawned
@@ -80,14 +103,12 @@ class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetI
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return [new Promise((resolve, reject) => {
-            childProcess.stdout.addListener("data", what => {
+        return [await new Promise( (resolve, reject) => {
+            childProcess.stdout.addListener("data", async what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    managedDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess});
-                    resolve({
-                        endpoint: `${baseUrl}:${port}/${startupInfo.contextRoot}`,
-                    });
+                    await managedDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess});
+                    resolve(this.deploymentFor(ti));
                 }
             });
             childProcess.addListener("exit", () => {

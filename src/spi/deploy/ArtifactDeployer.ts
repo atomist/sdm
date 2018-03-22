@@ -24,14 +24,25 @@ import { Deployment, TargetInfo } from "./Deployment";
  * Implemented by classes that can deploy from a published artifact that was build
  * by execution of a previous Build goal.
  */
-export interface ArtifactDeployer<T extends TargetInfo = TargetInfo> extends LogInterpretation {
+export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends Deployment = Deployment> extends LogInterpretation {
 
     /**
      * Implemented by deployers that don't sit on an infrastructure like Cloud Foundry
      * or Kubernetes that handles rolling update
      * @return {Promise<any>}
      */
-    undeploy?(id: T): Promise<any>;
+    undeploy?(ti: T, deployment: U, log: ProgressLog): Promise<any>;
+
+    /**
+     * Find all deployments of the artifact
+     * @param {DeployableArtifact} da
+     * @param {T} ti
+     * @param {ProjectOperationCredentials} credentials
+     * @return {Promise<Array<Promise<Deployment>>>}
+     */
+    findDeployments?(da: DeployableArtifact,
+                     ti: T,
+                     creds: ProjectOperationCredentials): Promise<U[]>;
 
     /**
      * Deploy the artifact returning a promise of deployments
@@ -46,6 +57,6 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo> extends Log
            ti: T,
            log: ProgressLog,
            credentials: ProjectOperationCredentials,
-           team: string): Promise<Array<Promise<Deployment>>>;
+           team: string): Promise<U[]>;
 
 }

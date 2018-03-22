@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import {
     PushTest,
     pushTest,
     PushTestInvocation,
 } from "../../PushTest";
-import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 
 // TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `

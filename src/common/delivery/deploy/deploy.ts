@@ -98,7 +98,7 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
         params.credentials,
         params.team);
 
-    await Promise.all(deployments.map(async deployment => reactToSuccessfulDeploy(params, await deployment)));
+    await Promise.all(deployments.map( deployment => reactToSuccessfulDeploy(params, deployment)));
 }
 
 export async function reactToSuccessfulDeploy(params: {

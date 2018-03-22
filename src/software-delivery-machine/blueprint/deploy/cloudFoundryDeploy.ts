@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
-import {deployArtifactWithLogs} from "../../../common/delivery/deploy/executeDeploy";
-import {EnvironmentCloudFoundryTarget} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
-import {CommandLineCloudFoundryDeployer} from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
+import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import { CloudFoundryPushDeployer } from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
+import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -25,63 +26,43 @@ import {
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
 import { CodeReactionListener } from "../../../common/listener/CodeReactionListener";
-import {retryGoal} from "../../../handlers/commands/RetryGoal";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
-import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
-import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
-import {DefaultArtifactStore} from "../artifactStore";
-
-export const Deployer = new CommandLineCloudFoundryDeployer();
+import { DefaultArtifactStore } from "../artifactStore";
+import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  */
-const StagingDeploySpec = {
-    deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal,
+const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+    implementationName: "DeployFromLocalToStaging",
+    deployGoal: StagingDeploymentGoal,
+    endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: Deployer,
+    deployer: new CommandLineCloudFoundryDeployer(),
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-staging",
     }),
 };
 
-export const CloudFoundryStagingDeploy: FunctionalUnit = {
-    eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("DeployFromLocalToStaging",
-            StagingDeploymentGoal,
-            deployArtifactWithLogs(StagingDeploySpec)),
-        () => new ExecuteGoalOnPendingStatus("DeployFromLocalToStaging",
-            StagingDeploymentGoal,
-            deployArtifactWithLogs(StagingDeploySpec))],
-    commandHandlers: [() => retryGoal("DeployFromLocalToStaging", ProductionDeploymentGoal)],
-};
+export const CloudFoundryStagingDeploy: FunctionalUnit =
+    deployArtifactGoalHandlers(StagingDeploySpec);
 
-const ProductionDeploySpec = {
+const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+    implementationName: "DeployFromLocalToProd",
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: Deployer,
+    deployer: new CommandLineCloudFoundryDeployer(),
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-production",
     }),
 };
 
-export const CloudFoundryProductionDeploy: FunctionalUnit = {
-
-    eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("DeployFromLocalToProd",
-            ProductionDeploymentGoal,
-            deployArtifactWithLogs(ProductionDeploySpec)),
-        () => new ExecuteGoalOnPendingStatus("DeployFromLocalToProd",
-            ProductionDeploymentGoal,
-            deployArtifactWithLogs(ProductionDeploySpec)),
-    ],
-
-    commandHandlers: [() => retryGoal("DeployFromLocalToProd", ProductionDeploymentGoal)],
-};
+export const CloudFoundryProductionDeploy: FunctionalUnit =
+    deployArtifactGoalHandlers(ProductionDeploySpec);
 
 /**
  * Enable deployment when a PCF manifest is added to the default branch.

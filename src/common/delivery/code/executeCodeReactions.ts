@@ -16,14 +16,15 @@
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { StatusForExecuteGoal } from "../../../typings/types";
 import { filesChangedSince } from "../../../util/git/filesChangedSince";
 import { CodeReactionInvocation, CodeReactionListener } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
-import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../goals/goalExecution";
+import { ExecuteGoalInvocation, GoalExecutor } from "../goals/goalExecution";
 
 export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions: CodeReactionListener[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
+    return async (status: StatusForExecuteGoal.Fragment, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);

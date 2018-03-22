@@ -35,12 +35,11 @@ import { Goal } from "../../../common/delivery/goals/Goal";
 import {
     ExecuteGoalInvocation,
     GoalExecutor,
-    StatusForExecuteGoal,
 } from "../../../common/delivery/goals/goalExecution";
 import { PushTest } from "../../../common/listener/PushTest";
 import { Builder } from "../../../spi/build/Builder";
 import {
-    OnAnyPendingStatus,
+    OnAnyPendingStatus, StatusForExecuteGoal,
     StatusState,
 } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
@@ -82,7 +81,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
     public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
-        const status: StatusForExecuteGoal.Status = event.data.Status[0];
+        const status: StatusForExecuteGoal.Fragment = event.data.Status[0];
 
         // TODO: put this in a subscription parameter. It should work, in this architecture
         if (status.context !== params.goal.context) {
@@ -118,7 +117,7 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
     }
 }
 
-function repoRef(status: StatusForExecuteGoal.Status) {
+function repoRef(status: StatusForExecuteGoal.Fragment) {
     const commit = status.commit;
     return new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 }

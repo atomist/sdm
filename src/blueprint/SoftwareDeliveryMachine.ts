@@ -65,7 +65,7 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
-import { retryGoal } from "../handlers/commands/RetryGoal";
+import { triggerGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
@@ -165,7 +165,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 ] :
                 [],
             commandHandlers: [
-                () => retryGoal("Fingerprinter", FingerprintGoal),
+                () => triggerGoal("Fingerprinter", FingerprintGoal),
             ],
         };
     }
@@ -204,7 +204,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal,
                     executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), true),
             ],
-            commandHandlers: [() => retryGoal("Autofix", AutofixGoal)],
+            commandHandlers: [() => triggerGoal("Autofix", AutofixGoal)],
         };
     }
 

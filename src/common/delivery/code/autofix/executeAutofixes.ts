@@ -21,6 +21,7 @@ import { EditResult, toEditor } from "@atomist/automation-client/operations/edit
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
+import { StatusForExecuteGoal } from "../../../../typings/types";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { PushTestInvocation } from "../../../listener/PushTest";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
@@ -30,7 +31,6 @@ import {
     ExecuteGoalInvocation,
     ExecuteGoalResult,
     GoalExecutor,
-    StatusForExecuteGoal,
 } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
 
@@ -42,7 +42,7 @@ import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrat
  * @return GoalExecutor
  */
 export function executeAutofixes(projectLoader: ProjectLoader, registrations: AutofixRegistration[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Status,
+    return async (status: StatusForExecuteGoal.Fragment,
                   context: HandlerContext,
                   egi: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         try {
