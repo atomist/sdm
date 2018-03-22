@@ -18,12 +18,14 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLocalArtifactStore";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
+import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
+import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingSoftwareDeliveryMachine";
 import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixSoftwareDeliveryMachine";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
 
 const SdmOptions = {
-    artifactStore: new EphemeralLocalArtifactStore(),
+    artifactStore: DefaultArtifactStore,
     projectLoader: new CachingProjectLoader(),
     useCheckstyle: process.env.USE_CHECKSTYLE === "true",
 };
@@ -41,6 +43,8 @@ const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 // const machine = staticAnalysisSoftwareDeliveryMachine({ useCheckstyle: true});
 
 // const machine = autofixSoftwareDeliveryMachine();
+
+// const machine = artifactVerifyingSoftwareDeliveryMachine();
 
 // const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 

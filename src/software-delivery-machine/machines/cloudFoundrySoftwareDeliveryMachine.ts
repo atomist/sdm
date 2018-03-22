@@ -33,7 +33,6 @@ import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import { CloudFoundryProductionDeploy } from "../blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
@@ -68,8 +67,8 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         whenPushSatisfies(IsNode)
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals)
-            .buildWith(new NpmBuilder(DefaultArtifactStore, createEphemeralProgressLog, options.projectLoader)),
-        onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog, options.projectLoader)),
+            .buildWith(new NpmBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)),
+        onAnyPush.buildWith(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)),
     );
 
     sdm.addDeployers(
