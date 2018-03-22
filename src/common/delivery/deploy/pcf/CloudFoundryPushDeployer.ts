@@ -48,7 +48,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
             });
             archive.pipe(output);
             archive.directory(baseDir, false);
-            archive.on("error",err => {
+            archive.on("error", err => {
                 reject(err);
             });
             archive.finalize();
@@ -70,8 +70,8 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
         const cfClient = await initializeCloudFoundry(cfi);
         const cfApi = new CloudFoundryApi(cfClient);
         const pusher = new CloudFoundryPusher(cfApi);
-        const deploymentPromises = manifest.applications.map(manifest_app => {
-            return pusher.push(cfi.space, manifest_app, packageFile, log);
+        const deploymentPromises = manifest.applications.map(manifestApp => {
+            return pusher.push(cfi.space, manifestApp, packageFile, log);
         });
         return Promise.all(deploymentPromises);
     }
@@ -88,11 +88,11 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
         const cfApi = new CloudFoundryApi(cfClient);
         const pusher = new CloudFoundryPusher(cfApi);
         const space = await cfApi.getSpaceByName(cfi.space);
-        const space_guid = space.metadata.guid;
-        const apps = manifest.applications.map(async manifest_app => {
-            const app = await cfApi.getApp(space_guid, manifest_app.name);
+        const spaceGuid = space.metadata.guid;
+        const apps = manifest.applications.map(async manifestApp => {
+            const app = await cfApi.getApp(spaceGuid, manifestApp.name);
             if (app) {
-                return manifest_app.name;
+                return manifestApp.name;
             } else {
                 return undefined;
             }
@@ -116,8 +116,8 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
         const cfClient = await initializeCloudFoundry(cfi);
         const cfApi = new CloudFoundryApi(cfClient);
         const space = await cfApi.getSpaceByName(cfi.space);
-        const space_guid = space.metadata.guid;
-        const app = await cfApi.getApp(space_guid, deployment.appName);
+        const spaceGuid = space.metadata.guid;
+        const app = await cfApi.getApp(spaceGuid, deployment.appName);
         if (app) {
             return cfApi.deleteApp(app.metadata.guid);
         }

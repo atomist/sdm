@@ -27,7 +27,7 @@ export interface CloudFoundryClientV2 {
 export async function initializeCloudFoundry(cfi: CloudFoundryInfo): Promise<CloudFoundryClientV2> {
     const cloudController = new cfClient.CloudController(cfi.api);
     const endpoint = await cloudController.getInfo();
-    const usersUaa = new cfClient.UsersUAA;
+    const usersUaa = new cfClient.UsersUAA();
     usersUaa.setEndPoint(endpoint.authorization_endpoint);
     const token = await usersUaa.login(cfi.username, cfi.password);
     const cf = {
@@ -77,67 +77,67 @@ export class CloudFoundryApi {
         return this.retryUntilCondition(action, condition);
     }
 
-    public stopApp(app_guid: string): Promise<AxiosResponse<any>> {
+    public stopApp(appGuid: string): Promise<AxiosResponse<any>> {
         return doWithRetry(() => axios.post(
-            `${this.cf.api_url}/v3/apps/${app_guid}/actions/stop`,
+            `${this.cf.api_url}/v3/apps/${appGuid}/actions/stop`,
             undefined,
             { headers: this.authHeader},
-        ), `stop app ${app_guid}`);
+        ), `stop app ${appGuid}`);
     }
 
-    public async startApp(app_guid: string): Promise<AxiosResponse<any>> {
+    public async startApp(appGuid: string): Promise<AxiosResponse<any>> {
         await doWithRetry(() => axios.post(
-            `${this.cf.api_url}/v3/apps/${app_guid}/actions/start`,
+            `${this.cf.api_url}/v3/apps/${appGuid}/actions/start`,
             undefined,
             { headers: this.authHeader},
-        ), `start app ${app_guid}`);
+        ), `start app ${appGuid}`);
         return this.retryUntilCondition(
-            () => this.getProcessStats(app_guid),
+            () => this.getProcessStats(appGuid),
             r => _.every(r.data.resources, (p: any) => p.state === "RUNNING"),
         );
     }
 
-    public async getApp(space_guid: string, app_name: string): Promise<any> {
-        const apps = await this.cf.spaces.getSpaceApps(space_guid, {
-            q: `name:${app_name}`,
+    public async getApp(spaceGuid: string, appName: string): Promise<any> {
+        const apps = await this.cf.spaces.getSpaceApps(spaceGuid, {
+            q: `name:${appName}`,
         });
         return _.head(apps.resources);
     }
 
-    public async createApp(space_guid: string, app_name: string): Promise<any> {
-        const existing_app = await this.getApp(space_guid, app_name);
-        return existing_app ? Promise.resolve(existing_app) : this.cf.apps.add({
-            name: app_name,
-            space_guid,
+    public async createApp(spaceGuid: string, appName: string): Promise<any> {
+        const existingApp = await this.getApp(spaceGuid, appName);
+        return existingApp ? Promise.resolve(existingApp) : this.cf.apps.add({
+            name: appName,
+            spaceGuid,
         });
     }
 
-    public deleteApp(app_guid: string): Promise<AxiosResponse<any>> {
+    public deleteApp(appGuid: string): Promise<AxiosResponse<any>> {
         return doWithRetry(() => axios.delete(
-            `${this.cf.api_url}/v3/apps/${app_guid}`,
+            `${this.cf.api_url}/v3/apps/${appGuid}`,
             { headers: this.authHeader},
-        ), `delete app ${app_guid}`);
+        ), `delete app ${appGuid}`);
     }
 
-    public getProcessStats(app_guid: string): Promise<AxiosResponse<any>> {
+    public getProcessStats(appGuid: string): Promise<AxiosResponse<any>> {
         return doWithRetry(() => axios.get(
-            `${this.cf.api_url}/v3/processes/${app_guid}/stats`,
+            `${this.cf.api_url}/v3/processes/${appGuid}/stats`,
             { headers: this.authHeader},
-        ), `get process stats ${app_guid}`);
+        ), `get process stats ${appGuid}`);
     }
 
-    public async uploadPackage(app_guid: string, packageFile: ReadStream): Promise<AxiosResponse<any>> {
+    public async uploadPackage(appGuid: string, packageFile: ReadStream): Promise<AxiosResponse<any>> {
         const packageCreateResult = await doWithRetry(() => axios.post(`${this.cf.api_url}/v3/packages`, {
             type: "bits",
             relationships: {
                 app: {
                     data: {
-                        guid: app_guid,
+                        guid: appGuid,
                     },
                 },
             },
         }, {headers: _.assign({}, this.authHeader, this.jsonContentHeader)}),
-            `create package ${app_guid}`);
+            `create package ${appGuid}`);
         const formData = FormData();
         formData.append("bits", packageFile);
         const uploadHeaders = _.assign({}, this.authHeader, formData.getHeaders());
@@ -150,64 +150,64 @@ export class CloudFoundryApi {
                     bits: packageFile,
                 },
         };
-        request(options, function(error, response, body) {
+        request(options, (error, response, body) => {
             if (error) { throw new Error(error); }
         });
         return this.retryUntilCondition(
             () => doWithRetry(() =>
                 axios.get(packageCreateResult.data.links.self.href, { headers: this.authHeader}),
-                `get package ${app_guid}`,
+                `get package ${appGuid}`,
             ),
             r => r.data.state === "READY",
         );
     }
 
-    public async buildDroplet(package_guid: string): Promise<AxiosResponse<any>> {
+    public async buildDroplet(packageGuid: string): Promise<AxiosResponse<any>> {
         const buildResult = await doWithRetry(() => axios.post(`${this.cf.api_url}/v3/builds`, {
                 package: {
-                    guid: package_guid,
+                    guid: packageGuid,
                 },
             },
             {headers: _.assign({}, this.authHeader, this.jsonContentHeader)}),
-            `build droplet ${package_guid}`);
+            `build droplet ${packageGuid}`);
         return this.retryUntilCondition(
             () => doWithRetry(() =>
                 axios.get(buildResult.data.links.self.href, {headers: this.authHeader}),
-                `get build for package ${package_guid}`,
+                `get build for package ${packageGuid}`,
                 ),
             r => r.data.state === "STAGED",
         );
     }
 
-    public setCurrentDropletForApp(app_guid: string, droplet_guid: string): Promise<AxiosResponse<any>> {
+    public setCurrentDropletForApp(appGuid: string, dropletGuid: string): Promise<AxiosResponse<any>> {
         return doWithRetry(() => axios.patch(
-            `${this.cf.api_url}/v3/apps/${app_guid}/relationships/current_droplet`,
-            { data: { guid: droplet_guid } },
+            `${this.cf.api_url}/v3/apps/${appGuid}/relationships/current_droplet`,
+            { data: { guid: dropletGuid } },
             { headers: _.assign({}, this.authHeader, this.jsonContentHeader)},
-        ), `set current droplet for app ${app_guid}`);
+        ), `set current droplet for app ${appGuid}`);
     }
 
-    public updateAppWithManifest(app_guid: string, manifest_app: ManifestApplication): Promise<any> {
+    public updateAppWithManifest(appGuid: string, manifestApp: ManifestApplication): Promise<any> {
         let memory: number;
-        if (manifest_app.memory.endsWith("M")) {
-            memory = +manifest_app.memory.replace("M", "");
-        } else if (manifest_app.memory.endsWith("G")) {
-            memory = +manifest_app.memory.replace("G", "") * 1000;
+        if (manifestApp.memory.endsWith("M")) {
+            memory = +manifestApp.memory.replace("M", "");
+        } else if (manifestApp.memory.endsWith("G")) {
+            memory = +manifestApp.memory.replace("G", "") * 1000;
         }
-        return this.cf.apps.update(app_guid, {
+        return this.cf.apps.update(appGuid, {
             memory,
-            "instances": manifest_app.instances,
-            "disk_quota": manifest_app.disk_quota,
-            "command": manifest_app.command,
-            "buildpack": manifest_app.buildpack,
-            "health-check-type": manifest_app["health-check-type"],
-            "health_check_timeout": manifest_app.timeout,
-            "environment_json": manifest_app.env,
+            "instances": manifestApp.instances,
+            "disk_quota": manifestApp.disk_quota,
+            "command": manifestApp.command,
+            "buildpack": manifestApp.buildpack,
+            "health-check-type": manifestApp["health-check-type"],
+            "health_check_timeout": manifestApp.timeout,
+            "environment_json": manifestApp.env,
         });
     }
 
-    public async getAppServiceBindings(app_guid: string): Promise<any[]> {
-        const bindings = await this.cf.apps.getServiceBindings(app_guid);
+    public async getAppServiceBindings(appGuid: string): Promise<any[]> {
+        const bindings = await this.cf.apps.getServiceBindings(appGuid);
         return bindings.resources;
     }
 
@@ -216,36 +216,36 @@ export class CloudFoundryApi {
         return services.resources;
     }
 
-    public async addServices(app_guid: string, servicesToAdd: any[]): Promise<any> {
+    public async addServices(appGuid: string, servicesToAdd: any[]): Promise<any> {
         return servicesToAdd.map(service => {
-            this.cf.serviceBindings.associateServiceWithApp(service.metadata.guid, app_guid);
+            this.cf.serviceBindings.associateServiceWithApp(service.metadata.guid, appGuid);
         });
     }
 
-    public async removeServices(app_guid: string, serviceToRemove: any[]): Promise<any> {
+    public async removeServices(appGuid: string, serviceToRemove: any[]): Promise<any> {
         return serviceToRemove.forEach(service => {
-            this.cf.apps.removeServiceBindings(app_guid, service.metadata.guid);
+            this.cf.apps.removeServiceBindings(appGuid, service.metadata.guid);
         });
     }
 
-    public async addRouteToApp(space_guid: string, app_guid: string, hostName: string, domainName: string): Promise<any> {
+    public async addRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
         const domains = await this.cf.domains.getSharedDomains();
         const defaultDomain = domains.resources.find(d => d.entity.name === domainName);
-        const domain_guid = defaultDomain.metadata.guid;
-        const routesWithName = await this.cf.spaces.getSpaceRoutes(space_guid, {q: `host:${hostName}`});
-        let route = routesWithName.resources.find(r => r.entity.domain_guid === domain_guid);
+        const domainGuid = defaultDomain.metadata.guid;
+        const routesWithName = await this.cf.spaces.getSpaceRoutes(spaceGuid, {q: `host:${hostName}`});
+        let route = routesWithName.resources.find(r => r.entity.domainGuid === domainGuid);
         if (!route) {
             route = await this.cf.routes.add({
-                domain_guid,
-                space_guid,
+                domainGuid,
+                spaceGuid,
                 host: hostName,
             });
         }
-        return this.cf.apps.associateRoute(app_guid, route.metadata.guid);
+        return this.cf.apps.associateRoute(appGuid, route.metadata.guid);
     }
 
-    public async getSpaceByName(space_name: string): Promise<any> {
-        const spaces = await this.cf.spaces.getSpaces({q: `name:${space_name}`});
+    public async getSpaceByName(spaceName: string): Promise<any> {
+        const spaces = await this.cf.spaces.getSpaces({q: `name:${spaceName}`});
         return _.head(spaces.resources);
     }
 
