@@ -105,7 +105,7 @@ async function runOne(project: GitProject, ctx: HandlerContext, autofix: Autofix
     const editResult = await confirmEditedness(tentativeEditResult);
 
     if (!editResult.success) {
-        // TODO: rollback on failure; remove partial changes
+        await project.revert();
         logger.warn("Edited %s with autofix %s and success=false, edited=%d",
             (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
     } else if (editResult.edited) {

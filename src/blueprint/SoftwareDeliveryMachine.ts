@@ -204,7 +204,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal,
                     executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), true),
             ],
-            commandHandlers: [],
+            commandHandlers: [() => retryGoal("Autofix", AutofixGoal)],
         };
     }
 
