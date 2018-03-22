@@ -51,6 +51,10 @@ export async function initializeCloudFoundry(cfi: CloudFoundryInfo): Promise<Clo
     return cf;
 }
 
+/**
+ * This abstracts away the details of common CF API operations.
+ * The implementations use a mix of API versions and HTTP libs and will likely change.
+ */
 export class CloudFoundryApi {
 
     private authHeader;

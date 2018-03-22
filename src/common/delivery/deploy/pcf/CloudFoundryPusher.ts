@@ -11,6 +11,12 @@ export interface ServicesModifications {
     servicesToRemove: any[];
 }
 
+/**
+ * Uses the Cloud Foundry API to (mostly) reimplement their CLI push.
+ * It supports using the manifest, but not all attributes.
+ * It currently attaches a default route rather than the routes specified in the manifest.
+ * This is separate from the deployer so that the API could easily be mocked for testing.
+ */
 export class CloudFoundryPusher {
 
     constructor(private api: CloudFoundryApi, private defaultDomain: string = "cfapps.io") {}

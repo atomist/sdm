@@ -19,8 +19,8 @@ import {ProgressLog} from "../../../../spi/log/ProgressLog";
 import {DeployableArtifact} from "../../../../spi/artifact/ArtifactStore";
 
 /**
- * Spawn a new process to use the Cloud Foundry CLI to push.
- * Note that this isn't thread safe concerning multiple logins or spaces.
+ * Use the Cloud Foundry API to approximate their CLI to push.
+ * Note that this is indeed thread safe concerning multiple logins and spaces.
  */
 export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryInfo, CloudFoundryDeployment> {
 
