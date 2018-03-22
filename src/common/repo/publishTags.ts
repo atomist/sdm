@@ -18,11 +18,15 @@ import { HandlerContext } from "@atomist/automation-client";
 import { ActionResult } from "@atomist/automation-client/action/ActionResult";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Tagger, Tags } from "@atomist/automation-client/operations/tagger/Tagger";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import { GitHubTagRouter } from "@atomist/spring-automation/commands/tag/gitHubTagRouter";
+import { listTopics } from "../../util/github/ghub";
 import { AddressChannels } from "../slack/addressChannels";
 
 /**
@@ -41,6 +45,9 @@ export async function publishTags(tagger: Tagger,
                                   ctx: HandlerContext): Promise<ActionResult<Tags>> {
     const p = await GitCommandGitProject.cloned(credentials, id);
     const tags: Tags = await tagger(p, ctx, undefined);
+    // Add existing tags so they're not lost
+    tags.tags = tags.tags.concat(await listTopics((credentials as TokenCredentials).token, id));
+
     await addressChannels(`Tagging \`${id.owner}/${id.repo}\` with tags ${format(tags.tags)}`);
     const edp: EditorOrReviewerParameters = {
         targets: {

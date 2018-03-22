@@ -16,10 +16,10 @@
 
 import { onAnyPush } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
-import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
 import { AutofixGoal } from "../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
-import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
+import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
+import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import { AddAtomistJavaHeader, AddAtomistTypeScriptHeader } from "../blueprint/code/autofix/addAtomistHeader";
 import { AddLicenseFile } from "../blueprint/code/autofix/addLicenseFile";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -32,8 +32,8 @@ export type AutofixSoftwareDeliveryMachineOptions = SoftwareDeliveryMachineOptio
  */
 export function autofixSoftwareDeliveryMachine(opts: Partial<AutofixSoftwareDeliveryMachineOptions> = {}): SoftwareDeliveryMachine {
     const options = {
-        artifactStore: new EphemeralLocalArtifactStore(),
-        projectLoader: new CachingProjectLoader(),
+        artifactStore: DefaultArtifactStore,
+        projectLoader: CloningProjectLoader,
         ...opts,
     };
     const sdm = new SoftwareDeliveryMachine(options,

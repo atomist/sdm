@@ -17,13 +17,13 @@
 import * as fs from "fs";
 import { whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
-import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { ArtifactGoal, JustBuildGoal } from "../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
 import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
+import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 
 export type ArtifactVerifyingMachineOptions = SoftwareDeliveryMachineOptions;
@@ -34,7 +34,7 @@ export type ArtifactVerifyingMachineOptions = SoftwareDeliveryMachineOptions;
  */
 export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactVerifyingMachineOptions> = {}): SoftwareDeliveryMachine {
     const options = {
-        artifactStore: new EphemeralLocalArtifactStore(),
+        artifactStore: DefaultArtifactStore,
         projectLoader: new CachingProjectLoader(),
         ...opts,
     };
