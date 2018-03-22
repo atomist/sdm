@@ -23,6 +23,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { PushTestInvocation } from "../../../listener/PushTest";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import {
@@ -36,10 +37,11 @@ import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrat
 /**
  * Execute autofixes against this push
  * Throw an error on failure
+ * @param projectLoader use to load projects
  * @param {AutofixRegistration[]} registrations
  * @return GoalExecutor
  */
-export function executeAutofixes(registrations: AutofixRegistration[]): GoalExecutor {
+export function executeAutofixes(projectLoader: ProjectLoader, registrations: AutofixRegistration[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Status,
                   context: HandlerContext,
                   egi: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
@@ -47,35 +49,47 @@ export function executeAutofixes(registrations: AutofixRegistration[]): GoalExec
             const commit = status.commit;
             const credentials = {token: egi.githubToken};
             const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
-            if (registrations.length > 0) {
-                const push = commit.pushes[0];
-                const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
-                const project = await GitCommandGitProject.cloned(credentials, editableRepoRef);
-                const pti: PushTestInvocation = {
-                    id: editableRepoRef,
-                    project,
+            if (registrations.length === 0) {
+                return Success;
+            }
+            const push = commit.pushes[0];
+            const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
+            const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
+                    id: editableRepoRef,
                     context,
-                    addressChannels: addressChannelsFor(commit.repo, context),
-                    push,
-                };
-                const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions<AutofixRegistration>(registrations, pti);
-                logger.info("Will apply %d eligible autofixes of %d to %j",
-                    relevantAutofixes.length, registrations.length, pti.id);
-                let cumulativeResult: EditResult = {
-                    target: pti.project,
-                    success: true,
-                    edited: false,
-                };
-                for (const autofix of _.flatten(relevantAutofixes)) {
-                    const editResult = await runOne(pti.project, smartContext, autofix);
-                    cumulativeResult = combineEditResults(cumulativeResult, editResult);
-                }
-                if (cumulativeResult.edited) {
-                    await pti.project.push();
-                    // Send back an error code, because we want to stop execution after this build
-                    return {code: 1, message: "Edited"};
-                }
+                    readOnly: false,
+                },
+                async project => {
+                    const pti: PushTestInvocation = {
+                        id: editableRepoRef,
+                        project,
+                        credentials,
+                        context,
+                        addressChannels: addressChannelsFor(commit.repo, context),
+                        push,
+                    };
+                    const relevantAutofixes: AutofixRegistration[] = await
+                        relevantCodeActions<AutofixRegistration>(registrations, pti);
+                    logger.info("Will apply %d eligible autofixes of %d to %j",
+                        relevantAutofixes.length, registrations.length, pti.id);
+                    let cumulativeResult: EditResult = {
+                        target: pti.project,
+                        success: true,
+                        edited: false,
+                    };
+                    for (const autofix of _.flatten(relevantAutofixes)) {
+                        const thisEdit = await runOne(pti.project, smartContext, autofix);
+                        cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
+                    }
+                    if (cumulativeResult.edited) {
+                        await pti.project.push();
+                    }
+                    return cumulativeResult;
+                });
+            if (editResult.edited) {
+                // Send back an error code, because we want to stop execution after this build
+                return {code: 1, message: "Edited"};
             }
             return Success;
         } catch (err) {
@@ -91,7 +105,7 @@ async function runOne(project: GitProject, ctx: HandlerContext, autofix: Autofix
     const editResult = await confirmEditedness(tentativeEditResult);
 
     if (!editResult.success) {
-        // TODO: rollback on failure; remove partial changes
+        await project.revert();
         logger.warn("Edited %s with autofix %s and success=false, edited=%d",
             (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
     } else if (editResult.edited) {

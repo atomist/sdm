@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { HandlerContext, Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
@@ -22,27 +23,34 @@ import * as _ from "lodash";
 import { OnAnyPendingStatus } from "../../../../typings/types";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 
 /**
  * Execute fingerprinting
+ * @param projectLoader project loader
  * @param {Fingerprinter} fingerprinters
  */
-export function executeFingerprinting(...fingerprinters: Fingerprinter[]): GoalExecutor {
+export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerprinters: Fingerprinter[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
-        const credentials = { token: params.githubToken };
+        const credentials = {token: params.githubToken};
 
-        if (fingerprinters.length >= 0) {
-            const project = await GitCommandGitProject.cloned(credentials, id);
+        if (fingerprinters.length === 0) {
+            return Success;
+        }
+
+        logger.debug("About to fingerprint %j using %d fingerprinters", id, fingerprinters.length);
+        await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
             const fingerprints: Fingerprint[] = await Promise.all(
                 fingerprinters.map(async fp => {
-                    const f = await fp(project);
+                    logger.info("Using fingerprinter %s to fingerprint %j", fp.name, id);
+                    const f = await fp.fingerprint(project);
                     return isFingerprint(f) ? [f] : f;
                 }),
             ).then(x2 => _.flatten(x2));
             await fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
-        }
+        });
         return Success;
     };
 }

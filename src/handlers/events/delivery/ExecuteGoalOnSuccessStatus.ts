@@ -114,7 +114,6 @@ export async function executeGoal(execute: GoalExecutor,
         state: "pending",
     }).catch(err =>
         logger.warn("Failed to update %s status to tell people we are working on it", params.goal.name));
-
     return execute(status, ctx, params);
 }
 

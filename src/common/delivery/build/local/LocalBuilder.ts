@@ -41,6 +41,7 @@ import {
 } from "../../../../spi/log/ProgressLog";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 
 export interface LocalBuildInProgress {
@@ -67,7 +68,8 @@ export abstract class LocalBuilder implements Builder {
 
     constructor(public name: string,
                 private artifactStore: ArtifactStore,
-                private logFactory: LogFactory) {
+                private logFactory: LogFactory,
+                protected projectLoader: ProjectLoader) {
     }
 
     public async initiateBuild(creds: ProjectOperationCredentials,

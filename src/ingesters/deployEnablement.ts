@@ -20,7 +20,7 @@ import {
     type,
 } from "@atomist/automation-client";
 
-export const DeployEnablementRootType = "SDMDeployEnablement";
+export const DeployEnablementRootType = "SdmDeployEnablement";
 
 export interface DeployEnablement {
     state: "requested" | "disabled";

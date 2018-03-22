@@ -31,17 +31,16 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { PushTestInvocation } from "../../../../common/listener/PushTest";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
-import {
-    createStatus,
-    tipOfDefaultBranch,
-} from "../../../../util/github/ghub";
+import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 
 /**
  * Set up goals on a push (e.g. for delivery).
@@ -56,9 +55,11 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
 
     /**
      * Configure goal setting
+     * @param projectLoader use to load projects
      * @param goalSetters first GoalSetter that returns goals wins
      */
-    constructor(...goalSetters: GoalSetter[]) {
+    constructor(private projectLoader: ProjectLoader,
+                ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
     }
 
@@ -69,7 +70,17 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         const commit = push.commits[0];
         const id = new GitHubRepoRef(push.repo.owner, push.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
-        const project = await GitCommandGitProject.cloned(credentials, id);
+        return this.projectLoader.doWithProject({credentials, id, context, readOnly: true}, project =>
+            this.setGoalsForPushOnProject(push, id, credentials, context, params, project),
+        );
+    }
+
+    private async setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
+                                           id: GitHubRepoRef,
+                                           credentials: ProjectOperationCredentials,
+                                           context: HandlerContext,
+                                           params: this,
+                                           project: GitProject): Promise<HandlerResult> {
         const addressChannels = addressChannelsFor(push.repo, context);
         const pi: PushTestInvocation = {
             id,
@@ -110,7 +121,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         } catch (err) {
             logger.error("Error determining goals: %s", err);
             await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
-            return { code: 1, message: "Failed: " + err };
+            return {code: 1, message: "Failed: " + err};
         }
     }
 }

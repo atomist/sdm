@@ -188,3 +188,16 @@ export function updateIssue(token: string, rr: RemoteRepoRef,
     logger.debug(`Request to '${url}' to update issue`);
     return axios.patch(url, issue, authHeaders(token));
 }
+
+export async function listTopics(token: string, rr: RemoteRepoRef): Promise<string[]> {
+    const headers = {
+        headers: {
+            ...authHeaders(token).headers,
+            Accept: "application/vnd.github.mercy-preview+json",
+        },
+    };
+    const grr = isGitHubRepoRef(rr) ? rr : new GitHubRepoRef(rr.owner, rr.repo, rr.sha);
+    const url = `${grr.apiBase}/repos/${grr.owner}/${grr.repo}/topics`;
+    const topics = await axios.get(url, headers);
+    return topics.data.names;
+}

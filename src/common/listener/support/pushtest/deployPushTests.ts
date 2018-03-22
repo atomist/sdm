@@ -19,10 +19,12 @@ import {
     pushTest,
     PushTestInvocation,
 } from "../../PushTest";
+import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 
+// TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `
 query DeployEnablementForRepo($owner: [String], $repo: [String]) {
-  SDMDeployEnablement(state: ["requested"], owner: $owner, repo: $repo) {
+  SdmDeployEnablement(state: ["requested"], owner: $owner, repo: $repo) {
     id
     state
     owner
@@ -37,15 +39,16 @@ query DeployEnablementForRepo($owner: [String], $repo: [String]) {
  * @constructor
  */
 export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", async (pi: PushTestInvocation) => {
-      const enablement = await pi.context.graphClient.executeQuery<any, any>(
-          DeployEnablementQuery,
-          {
+      const enablement = await pi.context.graphClient.query<any, any>({
+          query: DeployEnablementQuery,
+          variables: {
               owner: [ pi.push.repo.owner ],
               repo: [ pi.push.repo.name ],
           },
-          { fetchPolicy: "network-only" });
+          options: NoCacheOptions,
+      });
       return enablement
-          && enablement.SDMDeployEnablement
-          && enablement.SDMDeployEnablement.length === 1
-          && enablement.SDMDeployEnablement[0].state === "requested";
+          && enablement.SdmDeployEnablement
+          && enablement.SdmDeployEnablement.length === 1
+          && enablement.SdmDeployEnablement[0].state === "requested";
 });

@@ -24,6 +24,7 @@ import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { asSpawnCommand, ChildProcessResult, SpawnCommand, watchSpawned } from "../../../../../util/misc/spawned";
+import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
 export const Install: SpawnCommand = asSpawnCommand("npm install");
@@ -43,10 +44,12 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
     private readonly buildCommands: SpawnCommand[];
 
-    constructor(artifactStore: ArtifactStore, logFactory: LogFactory,
+    constructor(artifactStore: ArtifactStore,
+                logFactory: LogFactory,
+                projectLoader: ProjectLoader,
                 buildCommand1: SpawnCommand = RunBuild,
                 ...additionalCommands: SpawnCommand[]) {
-        super("NpmBuilder", artifactStore, logFactory);
+        super("NpmBuilder", artifactStore, logFactory, projectLoader);
         this.buildCommands = [Install, buildCommand1].concat(additionalCommands);
     }
 
@@ -55,39 +58,40 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
                                team: string,
                                log: ProgressLog): Promise<LocalBuildInProgress> {
         logger.info("NpmBuilder.startBuild on %s, buildCommands=[%j]", id.url, this.buildCommands);
-        const p = await GitCommandGitProject.cloned(credentials, id);
-        // Find the artifact info from package.json
-        const packageJson = await p.findFile("package.json");
-        const content = await packageJson.getContent();
-        const pkg = JSON.parse(content);
-        const appId: AppInfo = {id, name: pkg.name, version: pkg.version};
-        const opts = {
-            cwd: p.baseDir,
-        };
-
-        try {
-            const errorFinder = (code, signal, l) => {
-                return l.log.startsWith("[error]") || l.log.includes("ERR!");
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async p => {
+            // Find the artifact info from package.json
+            const packageJson = await p.findFile("package.json");
+            const content = await packageJson.getContent();
+            const pkg = JSON.parse(content);
+            const appId: AppInfo = {id, name: pkg.name, version: pkg.version};
+            const opts = {
+                cwd: p.baseDir,
             };
-            let buildResult: ChildProcessResult;
-            for (const buildCommand of this.buildCommands) {
-                buildResult = await watchSpawned(spawn(buildCommand.command, buildCommand.args, opts), log,
-                    {
-                        errorFinder,
-                        stripAnsi: true,
-                    });
-                if (buildResult.error) {
-                    break;
+
+            try {
+                const errorFinder = (code, signal, l) => {
+                    return l.log.startsWith("[error]") || l.log.includes("ERR!");
+                };
+                let buildResult: ChildProcessResult;
+                for (const buildCommand of this.buildCommands) {
+                    buildResult = await watchSpawned(spawn(buildCommand.command, buildCommand.args, opts), log,
+                        {
+                            errorFinder,
+                            stripAnsi: true,
+                        });
+                    if (buildResult.error) {
+                        break;
+                    }
                 }
+                const b = new NpmBuild(appId, id, buildResult, team, log.url);
+                logger.info("Build SUCCESS: %j", b.buildResultAchieved);
+                return b;
+            } catch {
+                const b = new NpmBuild(appId, id, ({error: true, code: 1}), team, log.url);
+                logger.info("Build FAILURE: %j", b.buildResultAchieved);
+                return b;
             }
-            const b = new NpmBuild(appId, id, buildResult, team, log.url);
-            logger.info("Build SUCCESS: %j", b.buildResultAchieved);
-            return b;
-        } catch {
-            const b = new NpmBuild(appId, id, ({error: true, code: 1}), team, log.url);
-            logger.info("Build FAILURE: %j", b.buildResultAchieved);
-            return b;
-        }
+        });
     }
 
     public logInterpreter: LogInterpreter = log => {

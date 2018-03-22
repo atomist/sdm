@@ -17,6 +17,7 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ManagedDeploymentTargetInfo } from "../../common/delivery/deploy/local/appManagement";
+import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { LogInterpreter } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment } from "./Deployment";
@@ -27,6 +28,8 @@ import { Deployment } from "./Deployment";
  * execution of a previous Build goal.
  */
 export interface SourceDeployer {
+
+    projectLoader: ProjectLoader;
 
     /**
      * Undeploy a branch

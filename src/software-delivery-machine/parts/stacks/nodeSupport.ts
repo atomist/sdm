@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
 import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
+import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 import { applyApacheLicenseHeaderEditor } from "../../commands/editors/license/applyHeader";
 
@@ -32,9 +34,9 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         //     seedOwner: "spring-team",
         //     seedRepo: "spring-rest-seed",
         // }, []))
-        // .addNewRepoWithCodeActions(
-        //     tagRepo(nodeTagger),
-        // )
+        .addNewRepoWithCodeActions(
+            tagRepo(nodeTagger),
+        )
         .addAutofixes(
             AddAtomistTypeScriptHeader,
             tslintFix,

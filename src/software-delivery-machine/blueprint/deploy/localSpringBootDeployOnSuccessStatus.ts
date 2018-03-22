@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { ArtifactDeploySpec, deployArtifactWithLogs } from "../../../common/delivery/deploy/executeDeploy";
-import { executeUndeployArtifact, undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
+import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
@@ -26,13 +26,18 @@ import {
 import { executableJarDeployer } from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../common/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
+import {
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
+    StagingUndeploymentGoal
+} from "../../../common/delivery/goals/common/commonGoals";
 import { triggerGoal } from "../../../handlers/commands/RetryGoal";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
+import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 
 /**
  * Deploy to the automation client node
@@ -80,12 +85,13 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export const MavenDeployer: SourceDeployer =
-    mavenDeployer({
+export function mavenSourceDeployer(projectLoader: ProjectLoader): SourceDeployer {
+    return mavenDeployer(projectLoader, {
         baseUrl: "http://localhost",
         lowerPort: 9090,
         commandLineArgumentsFor: springBootMavenArgs,
     });
+}
 
 function springBootMavenArgs(si: StartupInfo): string[] {
     return [

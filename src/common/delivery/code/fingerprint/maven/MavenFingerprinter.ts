@@ -16,6 +16,7 @@
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Fingerprinter } from "../../../../listener/Fingerprinter";
 import { dependenciesFingerprintsFromParsedPom } from "./dependenciesFingerprintsFromParsedPom";
 import { extractEffectivePom } from "./effectivePomExtractor";
 
@@ -25,16 +26,23 @@ import { extractEffectivePom } from "./effectivePomExtractor";
  * @param {GitProject} p
  * @return {Promise<Fingerprint[]>}
  */
-export async function mavenFingerprinter(p: GitProject): Promise<Fingerprint[]> {
-    try {
-        await p.findFile("pom.xml");
-        const epom = await extractEffectivePom(p);
-        return Promise.all([
-            dependenciesFingerprintsFromParsedPom,
-            // TODO add other Maven POM fingerprints
-        ].map(fp => fp(epom)));
-    } catch {
-        // If we can't find a pom, just exit
-        return [];
+export class MavenFingerprinter implements Fingerprinter {
+
+    public readonly name: "MavenFingerprinter";
+
+    public async fingerprint(p: GitProject): Promise<Fingerprint[]> {
+        try {
+            await
+            p.findFile("pom.xml");
+            const epom = await
+            extractEffectivePom(p);
+            return Promise.all([
+                dependenciesFingerprintsFromParsedPom,
+                // TODO add other Maven POM fingerprints
+            ].map(fp => fp(epom)));
+        } catch {
+            // If we can't find a pom, just exit
+            return [];
+        }
     }
 }

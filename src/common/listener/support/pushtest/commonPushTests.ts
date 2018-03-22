@@ -50,3 +50,15 @@ export const ToPublicRepo = pushTest("To public repo", async p =>
     // Ask GitHub if the repo is public as we do not have this information in our model
     isGitHubRepoRef(p.id) && (await isPublicRepo(process.env.GITHUB_TOKEN, p.id)),
 );
+
+/**
+ * Return a PushTest testing for the existence of the given file
+ * @param {string} path
+ * @return {PushTest}
+ */
+export function hasFile(path: string): PushTest {
+    return {
+        name: `HasFile(${path}})`,
+        test: async p => !!(await p.project.getFile(path)),
+    };
+}

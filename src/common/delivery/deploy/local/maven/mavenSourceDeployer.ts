@@ -17,12 +17,13 @@
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../../../spi/deploy/SourceDeployer";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 
@@ -33,14 +34,15 @@ let managedDeployments: ManagedDeployments;
 
 /**
  * Use Maven to deploy
+ * @param projectLoader use to load projects
  * @param opts options
  */
-export function mavenDeployer(opts: LocalDeployerOptions): SourceDeployer {
+export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): SourceDeployer {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
     }
-    return new MavenSourceDeployer({
+    return new MavenSourceDeployer(projectLoader, {
         ...DefaultLocalDeployerOptions,
         ...opts,
     });
@@ -48,7 +50,7 @@ export function mavenDeployer(opts: LocalDeployerOptions): SourceDeployer {
 
 class MavenSourceDeployer implements SourceDeployer {
 
-    constructor(public opts: LocalDeployerOptions) {
+    constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }
 
     public async undeploy(ti: ManagedDeploymentTargetInfo): Promise<any> {
@@ -58,13 +60,21 @@ class MavenSourceDeployer implements SourceDeployer {
     public async deployFromSource(id: GitHubRepoRef,
                                   ti: ManagedDeploymentTargetInfo,
                                   log: ProgressLog,
-                                  creds: ProjectOperationCredentials,
+                                  credentials: ProjectOperationCredentials,
                                   atomistTeam: string): Promise<Deployment> {
-
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-        const cloned = await GitCommandGitProject.cloned(creds, id);
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, project =>
+            this.deployProject(ti, log, project, port, atomistTeam));
+
+    }
+
+    private async deployProject(ti: ManagedDeploymentTargetInfo,
+                                log: ProgressLog,
+                                project: LocalProject,
+                                port: number,
+                                atomistTeam: string): Promise<Deployment> {
         const branchId = ti.managedDeploymentKey;
         const startupInfo = {
             port,
@@ -78,7 +88,7 @@ class MavenSourceDeployer implements SourceDeployer {
                 "spring-boot:run",
             ].concat(this.opts.commandLineArgumentsFor(startupInfo)),
             {
-                cwd: cloned.baseDir,
+                cwd: project.baseDir,
             });
         if (!childProcess.pid) {
             throw new Error("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +

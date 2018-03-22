@@ -28,11 +28,11 @@ describe("deployPushTests", () => {
              const pi = {
                  context: {
                      graphClient: {
-                         executeQuery(query: string, parameters: any, options: any) {
-                             assert.equal(parameters.owner, "atomist");
-                             assert.equal(parameters.repo, "github-sdm");
+                         query(options: { query: string, variables: any, options: any } ) {
+                             assert.equal(options.variables.owner, "atomist");
+                             assert.equal(options.variables.repo, "github-sdm");
                              return {
-                                 SDMDeployEnablement: [],
+                                 SdmDeployEnablement: [],
                              };
                          },
                      },
@@ -52,9 +52,9 @@ describe("deployPushTests", () => {
             const pi = {
                 context: {
                     graphClient: {
-                        executeQuery(query: string, parameters: any, options: any) {
+                        query(options: { query: string, variables: any, options: any } ) {
                             return {
-                                SDMDeployEnablement: [ {
+                                SdmDeployEnablement: [ {
                                     id: guid(),
                                     state: "requested",
                                     owner: "atomist",
@@ -80,9 +80,9 @@ describe("deployPushTests", () => {
             const pi = {
                 context: {
                     graphClient: {
-                        executeQuery(query: string, parameters: any, options: any) {
+                        query(options: { query: string, variables: any, options: any } ) {
                             return {
-                                SDMDeployEnablement: [ {
+                                SdmDeployEnablement: [ {
                                     id: guid(),
                                     state: "disabled",
                                     owner: "atomist",
