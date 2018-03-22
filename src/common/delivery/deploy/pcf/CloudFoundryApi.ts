@@ -9,6 +9,10 @@ import request = require("request");
 import {ReadStream} from "fs";
 import {ManifestApplication} from "./CloudFoundryManifest";
 
+
+import cfClient = require("cf-client");
+import {doWithRetry} from "@atomist/automation-client/util/retry";
+
 export interface CloudFoundryClientV2 {
     api_url: string;
     token_type: string;
@@ -22,21 +26,21 @@ export interface CloudFoundryClientV2 {
 }
 
 export async function initializeCloudFoundry(cfi: CloudFoundryInfo): Promise<CloudFoundryClientV2> {
-    const cloudController = new (require("cf-client")).CloudController(cfi.api);
+    const cloudController = new cfClient.CloudController(cfi.api);
     const endpoint = await cloudController.getInfo();
-    const usersUaa = new (require("cf-client")).UsersUAA;
+    const usersUaa = new cfClient.UsersUAA;
     usersUaa.setEndPoint(endpoint.authorization_endpoint);
     const token = await usersUaa.login(cfi.username, cfi.password);
     const cf = {
         api_url: cfi.api,
         token_type: token.token_type,
         token: token.access_token,
-        apps: new (require("cf-client")).Apps(cfi.api),
-        domains: new (require("cf-client")).Domains(cfi.api),
-        spaces: new (require("cf-client")).Spaces(cfi.api),
-        serviceBindings: new (require("cf-client")).ServiceBindings(cfi.api),
-        userProvidedServices: new (require("cf-client")).UserProvidedServices(cfi.api),
-        routes: new (require("cf-client")).Routes(cfi.api),
+        apps: new cfClient.Apps(cfi.api),
+        domains: new cfClient.Domains(cfi.api),
+        spaces: new cfClient.Spaces(cfi.api),
+        serviceBindings: new cfClient.ServiceBindings(cfi.api),
+        userProvidedServices: new cfClient.UserProvidedServices(cfi.api),
+        routes: new cfClient.Routes(cfi.api),
     };
     cf.apps.setToken(token);
     cf.domains.setToken(token);
@@ -61,7 +65,7 @@ export class CloudFoundryApi {
         };
     }
 
-    private async retryUntilCondition<T>(action: () => T, condition: (T) => boolean): Promise<T> {
+    private async retryUntilCondition<T>(action: () => Promise<T>, condition: (t: T) => boolean): Promise<T> {
         let result = await action();
         if (condition(result)) {
             return result
@@ -71,18 +75,22 @@ export class CloudFoundryApi {
     }
 
     public stopApp(app_guid: string): Promise<AxiosResponse<any>> {
-        return axios.post(
+        return doWithRetry(() => axios.post(
             `${this.cf.api_url}/v3/apps/${app_guid}/actions/stop`,
             undefined,
             { headers: this.authHeader}
-        );
+        ), `stop app ${app_guid}`);
     }
 
-    public startApp(app_guid: string): Promise<AxiosResponse<any>> {
-        return axios.post(
+    public async startApp(app_guid: string): Promise<AxiosResponse<any>> {
+        await doWithRetry(() => axios.post(
             `${this.cf.api_url}/v3/apps/${app_guid}/actions/start`,
             undefined,
             { headers: this.authHeader}
+        ), `start app ${app_guid}`);
+        return this.retryUntilCondition(
+            () => this.getProcessStats(app_guid),
+            r => _.every(r.data.resources, (p: any) => p.state === "RUNNING")
         );
     }
 
@@ -101,15 +109,22 @@ export class CloudFoundryApi {
         });
     }
 
-    public deleteApp(app_guid: string): Promise<any> {
-        return axios.delete(
+    public deleteApp(app_guid: string): Promise<AxiosResponse<any>> {
+        return doWithRetry(() => axios.delete(
             `${this.cf.api_url}/v3/apps/${app_guid}`,
             { headers: this.authHeader}
-        );
+        ), `delete app ${app_guid}`);
+    }
+
+    public getProcessStats(app_guid: string): Promise<AxiosResponse<any>> {
+        return doWithRetry(() => axios.get(
+            `${this.cf.api_url}/v3/processes/${app_guid}/stats`,
+            { headers: this.authHeader}
+        ), `get process stats ${app_guid}`);
     }
 
     public async uploadPackage(app_guid: string, packageFile: ReadStream): Promise<AxiosResponse<any>> {
-        const packageCreateResult = await axios.post(`${this.cf.api_url}/v3/packages`, {
+        const packageCreateResult = await doWithRetry(() => axios.post(`${this.cf.api_url}/v3/packages`, {
             type: "bits",
             relationships: {
                 app: {
@@ -118,7 +133,8 @@ export class CloudFoundryApi {
                     }
                 }
             }
-        }, {headers: _.assign({}, this.authHeader, this.jsonContentHeader)});
+        }, {headers: _.assign({}, this.authHeader, this.jsonContentHeader)}),
+            `create package ${app_guid}`);
         const formData = FormData();
         formData.append('bits', packageFile);
         const uploadHeaders = _.assign({}, this.authHeader, formData.getHeaders());
@@ -135,33 +151,40 @@ export class CloudFoundryApi {
             if (error) throw new Error(error);
         });
         return this.retryUntilCondition(
-            () => axios.get(packageCreateResult.data.links.self.href,{ headers: this.authHeader}),
+            () => doWithRetry(() =>
+                axios.get(packageCreateResult.data.links.self.href,{ headers: this.authHeader}),
+                `get package ${app_guid}`
+            ),
             r => r.data.state === "READY"
         );
     }
 
     public async buildDroplet(package_guid: string): Promise<AxiosResponse<any>> {
-        const buildResult = await axios.post(`${this.cf.api_url}/v3/builds`, {
+        const buildResult = await doWithRetry(() => axios.post(`${this.cf.api_url}/v3/builds`, {
                 package: {
                     guid: package_guid
                 }
             },
-            {headers: _.assign({}, this.authHeader, this.jsonContentHeader)});
+            {headers: _.assign({}, this.authHeader, this.jsonContentHeader)}),
+            `build droplet ${package_guid}`);
         return this.retryUntilCondition(
-            () => axios.get(buildResult.data.links.self.href, {headers: this.authHeader}),
+            () => doWithRetry(() =>
+                axios.get(buildResult.data.links.self.href, {headers: this.authHeader}),
+                `get build for package ${package_guid}`
+                ),
             r => r.data.state === "STAGED"
         );
     }
 
     public setCurrentDropletForApp(app_guid: string, droplet_guid: string): Promise<AxiosResponse<any>> {
-        return axios.patch(
+        return doWithRetry(() => axios.patch(
             `${this.cf.api_url}/v3/apps/${app_guid}/relationships/current_droplet`,
             { data: { guid: droplet_guid } },
             { headers: _.assign({}, this.authHeader, this.jsonContentHeader)}
-        );
+        ), `set current droplet for app ${app_guid}`);
     }
 
-    public updateAppWithManifest(app_guid: string, manifest_app: ManifestApplication): Promise<AxiosResponse<any>> {
+    public updateAppWithManifest(app_guid: string, manifest_app: ManifestApplication): Promise<any> {
         let memory: number;
         if (manifest_app.memory.endsWith("M")) {
             memory = +manifest_app.memory.replace("M", "")

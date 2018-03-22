@@ -109,7 +109,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
     public async undeploy(cfi: CloudFoundryInfo,
                           deployment: CloudFoundryDeployment,
                           log: ProgressLog): Promise<any> {
-        logger.info(`Undeploying app ${deployment} from Cloud Foundry ${cfi.description}`);
+        logger.info(`Undeploying app ${cfi.space}:${deployment.appName} from Cloud Foundry ${cfi.description}`);
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
