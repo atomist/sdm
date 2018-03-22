@@ -26,7 +26,7 @@ export interface Goal extends GoalKey {
     sha: string;
     branch: string;
 
-    repository: {
+    repo: {
         name: string;
         owner: string;
         providerId: string;
@@ -46,6 +46,8 @@ export interface Goal extends GoalKey {
     provenance: Provenance[];
 
     preConditions: GoalKey[];
+
+    externalKey?: string;
 }
 
 export interface Provenance {

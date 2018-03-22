@@ -57,6 +57,10 @@ function storePlannedGoal(goalSet: string, goal: Goal, id: GitHubRepoRef, ctx: H
 
     const preConditions: SDMGoalKey[] = [];
 
+    const description = goal.requestedDescription;
+
+    const environment = goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
+
     if (goal.hasOwnProperty("dependsOn")) {
         const goalWithPrecondition = goal as GoalWithPrecondition;
         preConditions.push(...goalWithPrecondition.dependsOn.map(d => ({
@@ -69,20 +73,20 @@ function storePlannedGoal(goalSet: string, goal: Goal, id: GitHubRepoRef, ctx: H
     const sdmGoal: SDMGoal = {
         goalSet,
         name: goal.name, // TODO is this the correct name???
-        environment: goal.definition.environment, // TODO we probably want to rename them
+        environment,
+        externalKey: goal.context,
 
         state: "planned",
 
         sha: id.sha,
         branch: id.branch, // TODO looks like branch is empty in repoRef
-        repository: {
+        repo: {
             name: id.repo,
             owner: id.owner,
             providerId: "<TODO>", // TODO add providerId to repoRef
         },
 
-        // TODO do we need all four descriptions???
-        description: goal.requestedDescription,
+        description,
 
         ts: Date.now(),
 
