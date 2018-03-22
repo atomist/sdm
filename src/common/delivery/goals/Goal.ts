@@ -39,7 +39,7 @@ export class Goal {
 
     public readonly context: GitHubStatusContext;
     public readonly name: string;
-    private readonly definition: GoalDefinition;
+    public readonly definition: GoalDefinition;
 
     get completedDescription() {
         return this.definition.completedDescription || ("Complete: " + this.name);

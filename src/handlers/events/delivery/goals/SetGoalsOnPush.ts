@@ -115,7 +115,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
             } else if (!determinedGoals) {
                 logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
             } else {
-                await determinedGoals.setAllToPending(id, credentials);
+                await determinedGoals.setAllToPending(id, credentials, context);
             }
             return Success;
         } catch (err) {
@@ -149,7 +149,7 @@ export function applyGoalsToCommit(goals: Goals) {
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
         const creds = {token: params.githubToken};
 
-        await goals.setAllToPending(id, creds);
+        await goals.setAllToPending(id, creds, ctx);
         await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
         return Success;
     };
