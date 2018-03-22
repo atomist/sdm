@@ -33,7 +33,7 @@ import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
  */
 export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerprinters: Fingerprinter[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
-        const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.pushes[0].after.sha);
+        const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.sha);
         const credentials = {token: params.githubToken};
 
         if (fingerprinters.length === 0) {

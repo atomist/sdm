@@ -16,6 +16,7 @@
 
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import { CloudFoundryPushDeployer } from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
 import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
@@ -30,27 +31,30 @@ import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addClo
 import { DefaultArtifactStore } from "../artifactStore";
 import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
-
 /**
  * Deploy everything to the same Cloud Foundry space
  */
 const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToStaging",
-    deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal,
+    deployGoal: StagingDeploymentGoal,
+    endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: new CommandLineCloudFoundryDeployer(),
+    deployer: new CloudFoundryPushDeployer(),
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-staging",
     }),
 };
 
+export const CloudFoundryStagingDeploy: FunctionalUnit =
+    deployArtifactGoalHandlers(StagingDeploySpec);
+
 const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToProd",
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: new CommandLineCloudFoundryDeployer(),
+    deployer: new CloudFoundryPushDeployer(),
     targeter: () => ({
         ...new EnvironmentCloudFoundryTarget(),
         space: "ri-production",

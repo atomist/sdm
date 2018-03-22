@@ -5,18 +5,19 @@ import * as yaml from "js-yaml";
 
 import * as _ from "lodash";
 
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {GitProject} from "@atomist/automation-client/project/git/GitProject";
-import {Project} from "@atomist/automation-client/project/Project";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Project } from "@atomist/automation-client/project/Project";
 import archiver = require("archiver");
 import * as fs from "fs";
-import {DeployableArtifact} from "../../../../spi/artifact/ArtifactStore";
-import {ArtifactDeployer} from "../../../../spi/deploy/ArtifactDeployer";
-import {ProgressLog} from "../../../../spi/log/ProgressLog";
-import {CloudFoundryApi, initializeCloudFoundry} from "./CloudFoundryApi";
-import {Manifest} from "./CloudFoundryManifest";
-import {CloudFoundryPusher} from "./CloudFoundryPusher";
-import {CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath} from "./CloudFoundryTarget";
+import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
+import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
+import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
+import { Manifest } from "./CloudFoundryManifest";
+import { CloudFoundryPusher } from "./CloudFoundryPusher";
+import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 
 /**
  * Use the Cloud Foundry API to approximate their CLI to push.
@@ -60,7 +61,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
                         log: ProgressLog,
                         creds: ProjectOperationCredentials,
                         team: string): Promise<CloudFoundryDeployment[]> {
-        logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
+        logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, {...cfi, password: "REDACTED"});
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
@@ -123,4 +124,11 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
         }
     }
 
+   public logInterpreter(log: string): InterpretedLog {
+        return {
+            relevantPart: log.split("\n").slice(-10).join("\n"),
+            message: "Oh no!",
+            includeFullLog: true,
+        };
+   }
 }

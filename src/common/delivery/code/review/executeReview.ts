@@ -24,14 +24,15 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import { StatusForExecuteGoal } from "../../../../typings/types";
 import { PushTestInvocation } from "../../../listener/PushTest";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
-import { ExecuteGoalInvocation, GoalExecutor, StatusForExecuteGoal } from "../../goals/goalExecution";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 
 export function executeReview(reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
+    return async (status: StatusForExecuteGoal.Fragment, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};

@@ -24,7 +24,7 @@ import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { OnAnySuccessStatus } from "../../../typings/types";
+import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../util/slack/reportFailureInterpretation";
 import { SdmContext } from "../../context/SdmContext";
@@ -34,7 +34,7 @@ import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels
 import { Goal } from "../goals/Goal";
 import {
     ExecuteGoalInvocation, ExecuteGoalResult,
-    GoalExecutor, StatusForExecuteGoal,
+    GoalExecutor,
 } from "../goals/goalExecution";
 import { deploy, DeployArtifactParams, deploySource, DeploySourceParams, Targeter } from "./deploy";
 
@@ -71,7 +71,7 @@ export function runWithLog(whatToRun: (RunWithLogInvocation) => Promise<ExecuteG
 }
 
 export interface RunWithLogContext extends SdmContext {
-    status: StatusForExecuteGoal.Status;
+    status: StatusForExecuteGoal.Fragment;
     progressLog: ProgressLog;
     reportError: (Error) => Promise<ExecuteGoalResult>;
 }
@@ -87,6 +87,9 @@ export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploy
         const commit = rwlc.status.commit;
         const image = rwlc.status.commit.image;
         const pushBranch = commit.pushes[0].branch;
+        if (!image || !image.imageName) {
+            throw new Error("No image name on " + commit.sha);
+        }
         rwlc.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
         const deployParams: DeployArtifactParams<T> = {
             ...spec,
@@ -151,6 +154,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
         logger.error(err.stack);
         progressLog.write("ERROR: " + err.message);
         progressLog.write(err.stack);
+        progressLog.write("full error object: [%j]" + err);
 
         const retryButton = buttonForCommand({text: "Retry"},
             retryCommandNameFor(executeGoalInvocation.implementationName), {

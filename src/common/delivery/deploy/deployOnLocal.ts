@@ -30,7 +30,6 @@ function localDeployFromCloneSpec(projectLoader: ProjectLoader): SourceDeploySpe
     };
 }
 
-
 export function localDeployment(projectLoader: ProjectLoader): FunctionalUnit {
     const ld = localDeployFromCloneSpec(projectLoader);
     return {eventHandlers: [

@@ -1,26 +1,5 @@
 subscription OnPendingStatus($context: String!) {
-    Status(state: pending, context: $context) {
-        commit {
-            sha
-            message
-            statuses {
-                context
-                description
-                state
-            }
-            image {
-                imageName
-            }
-            repo {
-                ...CoreRepoFieldsAndChannels
-            }
-            pushes {
-                branch
-            }
-        }
-        state
-        targetUrl
-        context
-        description
-    }
+  Status(state: pending, context: $context) {
+    ...StatusForExecuteGoal
+  }
 }

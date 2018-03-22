@@ -35,9 +35,8 @@ import {
     ExecuteGoalInvocation,
     ExecuteGoalResult,
     GoalExecutor,
-    StatusForExecuteGoal,
 } from "../../../common/delivery/goals/goalExecution";
-import { OnAnySuccessStatus } from "../../../typings/types";
+import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 
 /**
@@ -75,7 +74,7 @@ export class ExecuteGoalOnSuccessStatus
 }
 
 export async function executeGoal(execute: GoalExecutor,
-                                  status: StatusForExecuteGoal.Status,
+                                  status: StatusForExecuteGoal.Fragment,
                                   ctx: HandlerContext,
                                   params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> {
     const commit = status.commit;
