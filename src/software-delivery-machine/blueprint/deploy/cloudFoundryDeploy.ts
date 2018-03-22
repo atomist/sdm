@@ -20,7 +20,7 @@ import {EnvironmentCloudFoundryTarget} from "../../../common/delivery/deploy/pcf
 import {CommandLineCloudFoundryDeployer} from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ProductionDeploymentGoal,
-    ProductionEndpointGoal,
+    ProductionEndpointGoal, ProductionUndeploymentGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
@@ -31,6 +31,7 @@ import {ExecuteGoalOnPendingStatus} from "../../../handlers/events/delivery/Exec
 import {ExecuteGoalOnSuccessStatus} from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import {DefaultArtifactStore} from "../artifactStore";
+import { undeployWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
 
 export const Deployer = new CommandLineCloudFoundryDeployer();
 
@@ -78,9 +79,15 @@ export const CloudFoundryProductionDeploy: FunctionalUnit = {
         () => new ExecuteGoalOnPendingStatus("DeployFromLocalToProd",
             ProductionDeploymentGoal,
             deployArtifactWithLogs(ProductionDeploySpec)),
+        () => new ExecuteGoalOnPendingStatus("UndeployFromProd",
+            ProductionUndeploymentGoal,
+            undeployWithLogs(ProductionDeploySpec))
     ],
 
-    commandHandlers: [() => retryGoal("DeployFromLocalToProd", ProductionDeploymentGoal)],
+    commandHandlers: [
+        () => retryGoal("DeployFromLocalToProd", ProductionDeploymentGoal),
+        () => retryGoal("UndeployFromProd", ProductionUndeploymentGoal),
+    ],
 };
 
 /**

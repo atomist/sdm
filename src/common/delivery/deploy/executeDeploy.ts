@@ -46,7 +46,7 @@ export interface ArtifactDeploySpec<T extends TargetInfo> {
     targeter: Targeter<T>;
 }
 
-export function runWithLog<T extends TargetInfo>(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
+export function runWithLog(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
                                                  logInterpreter?: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
@@ -93,7 +93,7 @@ export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploy
             branch: pushBranch,
         };
 
-        if (!image && !spec.artifactStore.imageUrlIsOptional) {
+        if (!image) {
             rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
             return rwlc.reportError(new Error("No image linked"));
         } else {
@@ -143,6 +143,8 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
     return async (err: Error) => {
         logger.error(err.message);
         logger.error(err.stack);
+        progressLog.write("ERROR: " + err.message);
+        progressLog.write(err.stack);
 
         const retryButton = buttonForCommand({text: "Retry"},
             retryCommandNameFor(executeGoalInvocation.implementationName), {

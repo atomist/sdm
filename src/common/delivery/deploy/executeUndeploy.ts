@@ -1,8 +1,13 @@
-import { ArtifactDeploySpec, ExecuteWithLog, RunWithLogContext } from "./executeDeploy";
-import { logger, success } from "@atomist/automation-client";
-import { deploy, DeployArtifactParams, reactToSuccessfulDeploy } from "./deploy";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ArtifactDeploySpec, executeDeployArtifact, ExecuteWithLog, runWithLog, RunWithLogContext } from "./executeDeploy";
+import { logger } from "@atomist/automation-client";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
+import * as stringify from "json-stringify-safe";
+import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { GoalExecutor } from "../goals/goalExecution";
+
+export function undeployWithLogs<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): GoalExecutor {
+    return runWithLog(executeUndeployArtifact(spec), spec.deployer.logInterpreter);
+}
 
 export function executeUndeployArtifact<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): ExecuteWithLog {
     return async (rwlc: RunWithLogContext) => {
@@ -10,43 +15,48 @@ export function executeUndeployArtifact<T extends TargetInfo>(spec: ArtifactDepl
         const image = rwlc.status.commit.image;
         const pushBranch = commit.pushes[0].branch;
         rwlc.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
-        const params: DeployArtifactParams<T> = {
-            ...spec,
-            credentials: rwlc.credentials,
-            addressChannels: rwlc.addressChannels,
-            id: rwlc.id as GitHubRepoRef,
-            targetUrl: image.imageName,
-            team: rwlc.context.teamId,
-            progressLog: rwlc.progressLog,
-            branch: pushBranch,
-        };
 
-        if (!image && !spec.artifactStore.imageUrlIsOptional) {
-            rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
-            throw new Error("No image linked");
-        }
-        const progressLog = params.progressLog;
-
-        const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
-            params.credentials)
-            .catch(err => {
-                progressLog.write("Error checking out artifact: " + err.message);
-                throw err;
-            });
-        if (!artifactCheckout) {
-            throw new Error("No DeployableArtifact passed in");
+        if (!spec.deployer.findDeployments || !spec.deployer.undeploy) {
+            throw new Error("Deployer does not implement findDeployments and undeploy");
         }
 
-        const targetInfo = params.targeter(params.id, params.branch)
-        const deployments = await params.deployer.findDeployments(artifactCheckout, targetInfo, rwlc.credentials);
+        // sad: i don't want to need an image for something to undeploy it. Do we have to?
+        if (!image) {
+            throw new Error(`No image found on commit ${commit.sha}; can't undeploy`);
+        }
+        const targetUrl = image.imageName;
 
-        await deployments.forEach(async d => await params.deployer.undeploy(
-            targetInfo,
-            d,
-            progressLog,
-        ));
+        const progressLog = rwlc.progressLog;
 
-        await Promise.all(deployments.map( deployment => reactToSuccessfulDeploy(params, deployment)));
+        const artifactCheckout = await spec.artifactStore.checkout(targetUrl, rwlc.id,
+            rwlc.credentials).then(rejectUndefined).catch(writeError(progressLog));
+
+        const targetInfo = spec.targeter(rwlc.id, pushBranch);
+        const deployments = await spec.deployer.findDeployments(artifactCheckout, targetInfo, rwlc.credentials);
+
+        logger.info("Detected deployments: %s", deployments.map(d => stringify(d)).join(", "));
+
+        await deployments.forEach(async d =>
+            await spec.deployer.undeploy(
+                targetInfo,
+                d,
+                progressLog,
+            ));
+
         return { code: 0 };
     };
+}
+
+function writeError(progressLog: ProgressLog) {
+    return (err: Error) => {
+        progressLog.write("Error checking out artifact: " + err.message);
+        throw err;
+    }
+}
+
+function rejectUndefined<T>(thing: T): T {
+    if (!thing) {
+        throw new Error("No DeployableArtifact found");
+    }
+    return thing;
 }
