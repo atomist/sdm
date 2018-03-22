@@ -14,27 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    onAnyPush,
-    whenPushSatisfies,
-} from "../../blueprint/ruleDsl";
-import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
+import { onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
-import {
-    HttpServiceGoals,
-    LocalDeploymentGoals,
-} from "../../common/delivery/goals/common/httpServiceGoals";
+import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
-import {
-    FromAtomist,
-    ToDefaultBranch,
-    ToPublicRepo,
-} from "../../common/listener/support/pushtest/commonPushTests";
+import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
-import {
-    HasSpringBootApplicationClass,
-    IsMaven,
-} from "../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { HasSpringBootApplicationClass, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasK8Spec } from "../../common/listener/support/pushtest/k8s/k8sSpecPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
@@ -42,7 +29,6 @@ import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
 import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import {
     K8sProductionDeployOnSuccessStatus,
     K8sStagingDeployOnSuccessStatus,
@@ -52,23 +38,16 @@ import {
 import { suggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "../commands/editors/k8s/addK8sSpec";
 import { addDemoEditors } from "../parts/demo/demoEditors";
-import { addJavaSupport } from "../parts/stacks/javaSupport";
+import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport";
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
 
-export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): SoftwareDeliveryMachine {
-    const projectLoader: ProjectLoader = CloningProjectLoader;
-    const sdm = new SoftwareDeliveryMachine(
-        {
-            deployers: [
-                K8sStagingDeployOnSuccessStatus,
-                K8sProductionDeployOnSuccessStatus,
-            ],
-            artifactStore: DefaultArtifactStore,
-            projectLoader,
-        },
+export type K8sSoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
+export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOptions): SoftwareDeliveryMachine {
+    const projectLoader: ProjectLoader = CloningProjectLoader;
+    const sdm = new SoftwareDeliveryMachine(opts,
         whenPushSatisfies(
             ToDefaultBranch,
             IsMaven,
@@ -86,7 +65,10 @@ export function k8sSoftwareDeliveryMachine(opts: { useCheckstyle: boolean }): So
             .setGoals(LibraryGoals),
         onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
-    sdm.addNewRepoWithCodeActions(suggestAddingK8sSpec)
+    sdm.addDeployers(
+        K8sStagingDeployOnSuccessStatus,
+        K8sProductionDeployOnSuccessStatus)
+        .addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(
             () => addK8sSpec,
             () => enableDeploy(),

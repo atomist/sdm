@@ -80,8 +80,11 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
 
+/**
+ * Infrastructure options for a SoftwareDeliveryMachine
+ */
 export interface SoftwareDeliveryMachineOptions {
-    deployers: FunctionalUnit[];
+
     artifactStore: ArtifactStore;
     projectLoader: ProjectLoader;
 }
@@ -140,6 +143,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
+
+    private deployers: FunctionalUnit[] = [];
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
@@ -277,7 +282,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return this.functionalUnits
-            .concat(this.opts.deployers)
+            .concat(this.deployers)
             .concat([
                 this.builder,
                 this.fingerprinter,
@@ -427,6 +432,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addFunctionalUnits(...fus: FunctionalUnit[]): this {
         this.functionalUnits = this.functionalUnits.concat(fus);
+        return this;
+    }
+
+    public addDeployers(...deployers: FunctionalUnit[]): this {
+        this.deployers = this.deployers.concat(deployers);
         return this;
     }
 

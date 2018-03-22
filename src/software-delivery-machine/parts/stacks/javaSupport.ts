@@ -20,12 +20,16 @@ import { mavenFingerprinter } from "../../../common/delivery/code/fingerprint/ma
 import { CheckstyleReviewerRegistration } from "../../../common/delivery/code/review/checkstyle/checkstyleReviewer";
 import { AddAtomistJavaHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 
+export interface JavaSupportOptions {
+   useCheckstyle: boolean;
+}
+
 /**
  * Configuration common to Java SDMs, wherever they deploy
  * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
  * @param {{useCheckstyle: boolean}} opts
  */
-export function addJavaSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
+export function addJavaSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: JavaSupportOptions) {
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
         if (!!checkStylePath) {

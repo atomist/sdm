@@ -15,21 +15,29 @@
  */
 
 import { Configuration } from "@atomist/automation-client/configuration";
+import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLocalArtifactStore";
+import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
+
+const SdmOptions = {
+    artifactStore: new EphemeralLocalArtifactStore(),
+    projectLoader: new CachingProjectLoader(),
+    useCheckstyle: process.env.USE_CHECKSTYLE === "true",
+};
 
 /*
  * The provided software delivery machines include cloud foundry (which runs locally for Test environment,
  * by default, and your PCF for Prod) and kubernetes (which deploys Spring-boot services to an Atomist-provided
  * cluster for Test and Prod). Take your pick.
  */
-const assembled =
-    cloudFoundrySoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true" });
-// k8sSoftwareDeliveryMachine({ useCheckstyle: process.env.USE_CHECKSTYLE === "true"})
+const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+
+// const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 
 export const configuration: Configuration = {
-    commands: assembled.commandHandlers.concat([]),
-    events: assembled.eventHandlers.concat([]),
+    commands: machine.commandHandlers.concat([]),
+    events: machine.eventHandlers.concat([]),
     // TODO CD move ingesters to different global automation
     ingesters: [
         DeployEnablementIngester,

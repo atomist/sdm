@@ -15,7 +15,7 @@
  */
 
 import { onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
-import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { NpmBuilder } from "../../common/delivery/build/local/npm/NpmBuilder";
 import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
@@ -31,7 +31,6 @@ import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTest
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
-import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { CloningProjectLoader } from "../../common/repo/cloningProjectLoader";
 import { ProjectLoader } from "../../common/repo/ProjectLoader";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
@@ -42,26 +41,20 @@ import { LocalExecutableJarDeploy } from "../blueprint/deploy/localSpringBootDep
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
-import { addJavaSupport } from "../parts/stacks/javaSupport";
+import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport";
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+
+export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
 /**
  * Assemble a machine that supports Java, Spring and Node and deploys to Cloud Foundry
  * @return {SoftwareDeliveryMachine}
  */
-export function cloudFoundrySoftwareDeliveryMachine(opts: { projectLoader?: ProjectLoader, useCheckstyle: boolean }): SoftwareDeliveryMachine {
-    const projectLoader: ProjectLoader = opts.projectLoader || CloningProjectLoader;
-    const sdm = new SoftwareDeliveryMachine(
-        {
-            deployers: [
-                LocalExecutableJarDeploy,
-                CloudFoundryProductionDeploy,
-            ],
-            artifactStore: DefaultArtifactStore,
-            projectLoader,
-        },
+export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwareDeliverMachineOptions): SoftwareDeliveryMachine {
+    const projectLoader: ProjectLoader = options.projectLoader || CloningProjectLoader;
+    const sdm = new SoftwareDeliveryMachine(options,
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
             .itMeans("No material change to Java")
             .setGoals(NoGoals),
@@ -82,7 +75,11 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { projectLoader?: Proj
         onAnyPush.buildWith(new MavenBuilder(DefaultArtifactStore, createEphemeralProgressLog, projectLoader)),
     );
 
-    sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
+    sdm.addDeployers(
+        LocalExecutableJarDeploy,
+        CloudFoundryProductionDeploy,
+    )
+        .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
             () => addCloudFoundryManifest,
             () => enableDeploy(),
@@ -90,8 +87,8 @@ export function cloudFoundrySoftwareDeliveryMachine(opts: { projectLoader?: Proj
         )
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
 
-    addJavaSupport(sdm, opts);
-    addSpringSupport(sdm, opts);
+    addJavaSupport(sdm, options);
+    addSpringSupport(sdm, options);
     addNodeSupport(sdm);
     addTeamPolicies(sdm);
     addDemoEditors(sdm);

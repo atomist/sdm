@@ -5,44 +5,64 @@ import { logger } from "@atomist/automation-client";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs";
-import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { promisify } from "util";
 
+/**
+ * Simple caching implementation of ProjectLoader
+ */
 export class CachingProjectLoader implements ProjectLoader {
 
-    private cache: Array<{ key: string, project: GitProject }> = [];
+    private cache: { [key: string]: GitProject } = {};
 
     private gets = 0;
     private loads = 0;
 
+    /**
+     * @return {number} the number of projects requested
+     */
+    get requested() {
+        return this.gets;
+    }
+
+    /**
+     * @return {number} the number of projects loaded
+     */
+    get loaded() {
+        return this.loads;
+    }
+
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         ++this.gets;
+
+        if (!params.readOnly) {
+            logger.warn("CachingProjectLoader: Forcing fresh clone for non readonly use of %j", params.id);
+            const p = await GitCommandGitProject.cloned(params.credentials, params.id);
+            return action(p);
+        }
+
         const key = cacheKey(params.id);
-        let entry = this.cache.find(e => e.key === key);
-        if (!!entry) {
-            // Validate it
-            const exists = await promisify(fs.exists)(entry.project.baseDir);
+        let project = this.cache[key];
+        if (!!project) {
+            // Validate it, as the directory may have been cleaned up
+            const exists = await promisify(fs.exists)(project.baseDir);
             if (!exists) {
-                _.remove(this.cache, entry);
+                this.cache[key] = undefined;
                 logger.warn("CachingProjectLoader: Invalid cache entry %s", key);
-                entry = undefined;
+                project = undefined;
             }
         }
 
-        if (!entry || params.readOnly) {
-            const project = await GitCommandGitProject.cloned(params.credentials, params.id);
+        if (!project) {
+            project = await GitCommandGitProject.cloned(params.credentials, params.id);
             ++this.loads;
-            entry = {key, project};
-            if (params.readOnly) {
-                logger.info("Caching project %j", project.id);
-                this.cache.push(entry);
-            }
+            logger.info("Caching project %j", project.id);
+            this.cache[key] = project;
         }
 
         logger.info("CachingProjectLoader: %d gets, %d project loads, %d cache hits",
-            this.gets, this.loads, this.gets - this.loads);
-        return action(entry.project);
+            this.requested, this.loaded, this.requested - this.loaded);
+        return action(project);
     }
 
 }
