@@ -35,7 +35,7 @@ const SdmOptions = {
 
 const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 
-// const machine = staticAnalysisSoftwareDeliveryMachine(SdmOptions);
+// const machine = staticAnalysisSoftwareDeliveryMachine({ useCheckstyle: true});
 
 // const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 

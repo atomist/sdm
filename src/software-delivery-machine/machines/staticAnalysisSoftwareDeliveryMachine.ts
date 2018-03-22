@@ -19,9 +19,11 @@ import { DefaultReviewComment } from "@atomist/automation-client/operations/revi
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
+import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
 import { ReviewGoal } from "../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
+import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 import { addCheckstyleSupport, CheckstyleSupportOptions } from "../parts/stacks/checkstyleSupport";
 
@@ -31,7 +33,13 @@ export type StaticAnalysisSoftwareDeliveryMachineOptions = SoftwareDeliveryMachi
  * Assemble a machine that performs only static analysis.
  * @return {SoftwareDeliveryMachine}
  */
-export function staticAnalysisSoftwareDeliveryMachine(options: StaticAnalysisSoftwareDeliveryMachineOptions): SoftwareDeliveryMachine {
+export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalysisSoftwareDeliveryMachineOptions> = {}): SoftwareDeliveryMachine {
+    const options = {
+        artifactStore: new EphemeralLocalArtifactStore(),
+        projectLoader: new CachingProjectLoader(),
+        useCheckstyle: true,
+        ...opts,
+    };
     const sdm = new SoftwareDeliveryMachine(options,
         whenPushSatisfies(MaterialChangeToJavaRepo)
             .itMeans("Change to Java")
