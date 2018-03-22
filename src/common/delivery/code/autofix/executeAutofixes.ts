@@ -18,7 +18,6 @@ import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
 import { StatusForExecuteGoal } from "../../../../typings/types";
@@ -27,11 +26,7 @@ import { PushTestInvocation } from "../../../listener/PushTest";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
-import {
-    ExecuteGoalInvocation,
-    ExecuteGoalResult,
-    GoalExecutor,
-} from "../../goals/goalExecution";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
 
 /**
