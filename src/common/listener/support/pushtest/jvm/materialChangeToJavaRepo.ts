@@ -23,7 +23,7 @@ import * as _ from "lodash";
 /**
  * Veto if change to deployment unit doesn't seem important enough to
  * build and deploy
- * @param {PushTestInvocation} pci
+ * @param {ProjectListenerInvocation} pci
  * @return {Promise<void>}
  * @constructor
  */

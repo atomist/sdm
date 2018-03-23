@@ -19,7 +19,7 @@ import { PushTest, pushTest } from "../../PushTest";
 /**
  * Is this a seed repo, based on the naming convention
  * that such repos have "-seed" in their name
- * @param {PushTestInvocation} pi
+ * @param {ProjectListenerInvocation} pi
  * @constructor
  */
 export const NamedSeedRepo: PushTest = pushTest(

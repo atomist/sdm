@@ -35,7 +35,7 @@ query DeployEnablementForRepo($owner: [String], $repo: [String]) {
 
 /**
  * Is repo enabled for deployment
- * @param {PushTestInvocation} pi
+ * @param {ProjectListenerInvocation} pi
  * @constructor
  */
 export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", async (pi: ProjectListenerInvocation) => {

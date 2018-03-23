@@ -44,7 +44,7 @@ export interface ReviewerRegistration extends CodeActionRegistration<ProjectRevi
 /**
  * Compute the relevant actions for this push
  * @param {Array<CodeActionRegistration<A>>} registrations
- * @param {PushTestInvocation} pti
+ * @param {ProjectListenerInvocation} pti
  * @return {Promise<A[]>}
  */
 export function relevantCodeActions<A extends CodeActionRegistration<any>>(registrations: A[],

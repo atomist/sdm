@@ -32,7 +32,7 @@ export interface PushTest {
 /**
  * Convenient factory function for PushTest instances
  * @param {string} name
- * @param {(p: PushTestInvocation) => (boolean | Promise<boolean>)} test
+ * @param test test function
  * @return {PushTest}
  */
 export function pushTest(name: string, test: (p: ProjectListenerInvocation) => boolean | Promise<boolean>): PushTest {
