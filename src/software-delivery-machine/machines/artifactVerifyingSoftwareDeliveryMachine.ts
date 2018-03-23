@@ -48,7 +48,7 @@ export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactV
         // Could invoke a security scanning tool etc.
         const stat = fs.statSync(`${ai.deployableArtifact.cwd}/${ai.deployableArtifact.filename}`);
         if (stat.size > 1000) {
-            return ai.addressChannels(`Artifact $${ai.deployableArtifact.filename} is very big at ${stat.size} :weight_lifter:`);
+            return ai.addressChannels(`Artifact \`${ai.deployableArtifact.filename}\` is very big at ${stat.size} :weight_lifter:`);
         }
     });
 
