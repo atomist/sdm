@@ -59,6 +59,7 @@ export function sdmGoalStateToGitHubStatusState(goalState: GoalState): StatusSta
         case "failure":
         case "skipped":
             return "failure" as StatusState;
+        default:
+            throw new Error("Unknown goal state " + goalState);
     }
-    throw new Error("What is this state " + goalState);
 }

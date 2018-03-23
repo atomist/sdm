@@ -1,8 +1,9 @@
 import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
+import sprintf from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { SdmGoal,SdmGoalKey, GoalRootType, GoalState } from "../../../ingesters/goal";
+import { GoalRootType, GoalState, SdmGoal, SdmGoalKey } from "../../../ingesters/goal";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function storeGoal(ctx: HandlerContext, parameters: {
@@ -16,10 +17,10 @@ export function storeGoal(ctx: HandlerContext, parameters: {
     const {goalSet, goal, state, id, providerId, url} = parameters;
 
     if (id.branch === null) {
-        throw new Error("Please provide a branch in the GitHubRepoRef");
+        throw new Error(sprintf("Please provide a branch in the GitHubRepoRef %j", parameters));
     }
     if (id.sha === null) {
-        throw new Error("Please provide a sha in the GitHubRepoRef");
+        throw new Error(sprintf("Please provide a sha in the GitHubRepoRef %j", parameters));
     }
 
     const preConditions: SdmGoalKey[] = [];
