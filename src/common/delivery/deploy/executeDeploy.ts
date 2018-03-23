@@ -176,7 +176,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
             state: "failure",
             target_url: progressLog.url,
             context: executeGoalInvocation.goal.context,
-            description: executeGoalInvocation.goal.failedDescription,
+            description: executeGoalInvocation.goal.failureDescription,
         }).then(no => ({code: 0, message: err.message}));
     };
 }

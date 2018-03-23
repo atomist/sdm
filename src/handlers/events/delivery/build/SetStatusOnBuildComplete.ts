@@ -142,7 +142,7 @@ async function setBuiltContext(goal: Goal,
                                url: string,
                                id: GitHubRepoRef,
                                creds: ProjectOperationCredentials): Promise<any> {
-    const description = state === "pending" /* in_process */ ? goal.workingDescription : goal.completedDescription;
+    const description = state === "pending" /* in_process */ ? goal.inProcessDescription : goal.successDescription;
     return createStatus((creds as TokenCredentials).token, id, {
         state,
         target_url: (url === NotARealUrl ? undefined : url),

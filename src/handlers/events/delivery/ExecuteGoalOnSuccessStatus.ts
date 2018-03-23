@@ -69,6 +69,13 @@ export class ExecuteGoalOnSuccessStatus
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
+
+        if (!currentGoalIsStillPending(params.goal.context, {
+                siblings: status.commit.statuses,
+            })) {
+            return Success;
+        }
+
         return executeGoal(this.execute, status, ctx, params).then(handleExecuteResult);
     }
 }
@@ -93,7 +100,7 @@ export async function executeGoal(execute: GoalExecutor,
         logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
         createStatus(params.githubToken, id as GitHubRepoRef, {
             context: params.goal.context,
-            description: params.goal.workingDescription,
+            description: params.goal.inProcessDescription,
             state: "failure",
         });
         return Success;
@@ -102,14 +109,11 @@ export async function executeGoal(execute: GoalExecutor,
         logger.debug("Preconditions not yet met for goal %s on %j", params.goal.name, id);
         return Success;
     }
-    if (!currentGoalIsStillPending(params.goal.context, statusAndFriends)) {
-        return Success;
-    }
 
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
     await createStatus(params.githubToken, id as GitHubRepoRef, {
         context: params.goal.context,
-        description: params.goal.workingDescription,
+        description: params.goal.inProcessDescription,
         state: "pending", // in_process
     }).catch(err =>
         logger.warn("Failed to update %s status to tell people we are working on it", params.goal.name));

@@ -42,17 +42,16 @@ export interface SdmGoal extends SdmGoalKey {
     error?: string;
     retryFeasible?: boolean;
 
-    requiresApproval: boolean;
-    approval?: Provenance;
+    approval?: SdmProvenance;
 
-    provenance: Provenance[];
+    provenance: SdmProvenance[];
 
     preConditions: SdmGoalKey[];
 
     externalKey?: string;
 }
 
-export interface Provenance {
+export interface SdmProvenance {
     correlationId: string;
     registration: string;
     version: string;
@@ -130,9 +129,6 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withStringField(
             "error",
             "Error occurred during goal execution")
-        .withBooleanField(
-            "requiresApproval",
-            "Goal requires approval")
         .withBooleanField(
             "retryFeasible",
             "Goal can be retried")

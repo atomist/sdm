@@ -28,6 +28,7 @@ export interface GoalDefinition {
     completedDescription?: string;
     workingDescription?: string;
     failedDescription?: string;
+    waitingForApprovalDescription?: string;
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";
@@ -41,20 +42,24 @@ export class Goal {
     public readonly name: string;
     public readonly definition: GoalDefinition;
 
-    get completedDescription() {
+    get successDescription() {
         return this.definition.completedDescription || ("Complete: " + this.name);
     }
 
-    get workingDescription() {
+    get inProcessDescription() {
         return this.definition.workingDescription || ("Working: " + this.name);
     }
 
-    get failedDescription() {
+    get failureDescription() {
         return this.definition.failedDescription || ("Failed: " + this.name);
     }
 
     get requestedDescription() {
         return "Planning to " + this.name;
+    }
+
+    get waitingForApprovalDescription() {
+        return this.definition.waitingForApprovalDescription || (this.successDescription + "(but needs approval)");
     }
 
     get retryIntent() {
