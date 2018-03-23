@@ -34,6 +34,8 @@ export const whackHeaderEditor: HandleCommand = editorCommand(
     },
 );
 
+// TODO switch to CFamily constant from GlobPatterns
+
 const HeaderRegex = /^\/\*[\s\S]*?\*\/\s*/;
 
 const CFamilySuffix = /\.(ts|java)$/;

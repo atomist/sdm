@@ -23,7 +23,7 @@ import { capitalizer } from "../../blueprint/issue/capitalizer";
 import { requestDescription } from "../../blueprint/issue/requestDescription";
 import { thankYouYouRock } from "../../blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "../../blueprint/repo/publishNewRepo";
-import { applyApacheLicenseHeaderEditor } from "../../commands/editors/license/applyHeader";
+import { addApacheLicenseHeaderEditor } from "../../commands/editors/license/addHeader";
 
 /**
  * Set up team policies
@@ -34,7 +34,7 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         .addNewIssueListeners(requestDescription, capitalizer)
         .addClosedIssueListeners(thankYouYouRock)
         .addEditors(
-            () => applyApacheLicenseHeaderEditor,
+            () => addApacheLicenseHeaderEditor,
         )
         .addNewRepoWithCodeActions(
             PublishNewRepo)

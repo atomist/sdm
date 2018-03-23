@@ -19,7 +19,6 @@ import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMach
 import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
-import { applyApacheLicenseHeaderEditor } from "../../commands/editors/license/applyHeader";
 import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
 
 /**
@@ -28,9 +27,6 @@ import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
  */
 export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine) {
     softwareDeliveryMachine
-        .addEditors(
-            () => applyApacheLicenseHeaderEditor,
-        )
         .addGenerators(() => nodeGenerator({
             seedOwner: "spring-team",
             seedRepo: "typescript-express-seed",

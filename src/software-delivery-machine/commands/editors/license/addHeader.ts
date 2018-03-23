@@ -2,15 +2,18 @@ import { HandleCommand, HandlerContext, logger, Parameter, Parameters } from "@a
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { CFamilyLanguageSourceFiles } from "../GlobPatterns";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
+/**
+ * Default glob pattern matches all C family languages
+ */
 @Parameters()
-export class ApplyHeaderParameters extends RequestedCommitParameters {
+export class AddHeaderParameters extends RequestedCommitParameters {
 
     @Parameter({required: false})
-    public glob: string = AllJavaFiles;
+    public glob: string = CFamilyLanguageSourceFiles;
 
     @Parameter({required: false})
     public license: "apache" = "apache";
@@ -49,17 +52,17 @@ export const ApacheHeader = `/*
  * limitations under the License.
  */`;
 
-export const applyApacheLicenseHeaderEditor: HandleCommand = editorCommand(
-    () => applyHeaderProjectEditor,
+export const addApacheLicenseHeaderEditor: HandleCommand = editorCommand(
+    () => addHeaderProjectEditor,
     "addHeader",
-    ApplyHeaderParameters,
+    AddHeaderParameters,
     {
         editMode: ahp => ahp.editMode
     });
 
-export async function applyHeaderProjectEditor(p: Project,
-                                               ctx: HandlerContext,
-                                               params: ApplyHeaderParameters): Promise<Project> {
+export async function addHeaderProjectEditor(p: Project,
+                                             ctx: HandlerContext,
+                                             params: AddHeaderParameters): Promise<Project> {
     let headersAdded = 0;
     let matchingFiles = 0;
     await doWithFiles(p, params.glob, async f => {
