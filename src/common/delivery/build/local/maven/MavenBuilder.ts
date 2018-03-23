@@ -20,7 +20,7 @@ import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
-import { asSpawnCommand, spawnAndWatch } from "../../../../../util/misc/spawned";
+import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../../slack/addressChannels";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
@@ -56,7 +56,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
             const va = await identification(content);
             const appId = {...va, name: va.artifact, id};
 
-            const cmd = "mvn package " + (this.skipTests ? "-DskipTests" : "");
+            const cmd = "mvn package" + (this.skipTests ? " -DskipTests" : "");
             const buildResult = spawnAndWatch(
                 asSpawnCommand(cmd),
                 {
@@ -79,7 +79,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 class UpdatingBuild implements LocalBuildInProgress {
 
     constructor(public repoRef: RemoteRepoRef,
-                public buildResult: Promise<{ error: boolean, code: number }>,
+                public buildResult: Promise<ChildProcessResult>,
                 public team: string,
                 public url: string) {
     }

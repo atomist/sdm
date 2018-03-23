@@ -21,7 +21,10 @@ import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
-import { asSpawnCommand, ChildProcessResult, spawnAndWatch, SpawnCommand } from "../../../../../util/misc/spawned";
+import {
+    asSpawnCommand, ChildProcessResult, spawnAndWatch, SpawnCommand,
+    stringifySpawnCommand,
+} from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
@@ -78,11 +81,12 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
                             stripAnsi: true,
                         });
                     if (buildResult.error) {
+                        logger.info("Stopping build commands due to error on %s", stringifySpawnCommand(buildCommand));
                         break;
                     }
                 }
                 const b = new NpmBuild(appId, id, buildResult, team, log.url);
-                logger.info("Build SUCCESS: %j", b.buildResultAchieved);
+                logger.info("Build RETURN: %j", b.buildResultAchieved);
                 return b;
             } catch {
                 const b = new NpmBuild(appId, id, ({error: true, code: 1}), team, log.url);
@@ -107,11 +111,11 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
 
 class NpmBuild implements LocalBuildInProgress {
 
-    public readonly buildResult: Promise<{ error: boolean, code: number }>;
+    public readonly buildResult: Promise<ChildProcessResult>;
 
     constructor(public appInfo: AppInfo,
                 public repoRef: RemoteRepoRef,
-                public buildResultAchieved: { error: boolean, code: number },
+                public buildResultAchieved: ChildProcessResult,
                 public team: string,
                 public url: string) {
         this.buildResult = Promise.resolve(buildResultAchieved);

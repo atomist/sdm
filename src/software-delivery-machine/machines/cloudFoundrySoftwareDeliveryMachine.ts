@@ -30,7 +30,10 @@ import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedR
 import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import {
+    createEphemeralProgressLog,
+    createEphemeralProgressLogWithConsole,
+} from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
@@ -70,8 +73,10 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         whenPushSatisfies(IsNode)
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals)
-            .buildWith(new NpmBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)),
-        onAnyPush.buildWith(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)),
+            .buildWith(new NpmBuilder(options.artifactStore,
+                createEphemeralProgressLogWithConsole, options.projectLoader)),
+        onAnyPush.buildWith(new MavenBuilder(options.artifactStore,
+            createEphemeralProgressLog, options.projectLoader)),
     );
 
     sdm.addDeployers(

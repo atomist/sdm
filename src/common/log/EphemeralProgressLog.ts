@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { LogFactory, ProgressLog } from "../../spi/log/ProgressLog";
+import { ConsoleProgressLog, MultiProgressLog } from "./progressLogs";
 
 /**
  * Implementation of LinkableProgressLog log that returns
@@ -45,5 +46,7 @@ class EphemeralProgressLog implements ProgressLog {
 
 }
 
-export const createEphemeralProgressLog: LogFactory = () =>
-    Promise.resolve(new EphemeralProgressLog());
+export const createEphemeralProgressLog: LogFactory = async () => new EphemeralProgressLog();
+
+export const createEphemeralProgressLogWithConsole: LogFactory =
+    async () => new MultiProgressLog(ConsoleProgressLog, new EphemeralProgressLog());

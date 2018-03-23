@@ -39,6 +39,7 @@ import {
     LogFactory,
     ProgressLog,
 } from "../../../../spi/log/ProgressLog";
+import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
@@ -46,7 +47,7 @@ import { AddressChannels } from "../../../slack/addressChannels";
 
 export interface LocalBuildInProgress {
 
-    readonly buildResult: Promise<{ error: boolean, code: number }>;
+    readonly buildResult: Promise<ChildProcessResult>;
 
     readonly repoRef: RemoteRepoRef;
 
