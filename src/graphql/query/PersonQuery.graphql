@@ -1,0 +1,16 @@
+query PersonByChatId($screenName: String!) {
+  ChatId(screenName: $screenName) {
+    userId
+    screenName
+    person @required {
+      forename
+      surname
+      emails {
+        address
+      }
+      gitHubId {
+        login
+      }
+    }
+  }
+}

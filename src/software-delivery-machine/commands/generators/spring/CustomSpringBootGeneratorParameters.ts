@@ -67,6 +67,7 @@ export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorPara
         super();
         this.source.owner = params.seedOwner;
         this.seed = params.seedRepo;
+        this.groupId = params.groupId;
     }
 
     public bindAndValidate() {

@@ -35,7 +35,9 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
         .addGenerators(() => springBootGenerator({
             seedOwner: "spring-team",
             seedRepo: "spring-rest-seed",
-        }, []))
+            groupId: "atomist",
+            intent: "create spring",
+        }))
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
         )

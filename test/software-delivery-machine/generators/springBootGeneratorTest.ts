@@ -18,9 +18,7 @@ import "mocha";
 
 import { HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitHubTargetsParams } from "@atomist/automation-client/operations/common/params/GitHubTargetsParams";
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { Project } from "@atomist/automation-client/project/Project";
@@ -29,7 +27,8 @@ import {
     CustomSpringBootGeneratorParameters,
 } from "../../../src/software-delivery-machine/commands/generators/spring/CustomSpringBootGeneratorParameters";
 import {
-    setAtomistTeamInApplicationYml, springBootGenerator,
+    setAtomistTeamInApplicationYml,
+    springBootGenerator,
     updateReadme,
 } from "../../../src/software-delivery-machine/commands/generators/spring/springBootGenerator";
 
@@ -65,6 +64,8 @@ describe("custom Spring Boot generator", () => {
             const params = new CustomSpringBootGeneratorParameters({
                 seedOwner: "foo",
                 seedRepo: "bar",
+                intent: "whatever",
+                groupId: "atomist",
             });
             params.target.repo = "repoName";
             params.serviceClassName = "foo";
@@ -91,10 +92,15 @@ describe("custom Spring Boot generator", () => {
     describe("run end to end", () => {
 
         it("should put in Atomist team id", async () => {
-            const config = {seedOwner: "spring-team", seedRepo: "spring-rest-seed"};
+            const config = {
+                seedOwner: "spring-team",
+                seedRepo: "spring-rest-seed",
+                intent: "whatever",
+                groupId: "atomist",
+            };
             let result: Project;
-            const gen = springBootGenerator(config, [], {
-                repoLoader: () => () => GitCommandGitProject.cloned({ token: null}, new GitHubRepoRef(config.seedOwner, config.seedRepo)),
+            const gen = springBootGenerator(config, {
+                repoLoader: () => () => GitCommandGitProject.cloned({token: null}, new GitHubRepoRef(config.seedOwner, config.seedRepo)),
                 projectPersister: async p => {
                     result = p;
                     console.log("Persisting: result=" + result);
@@ -105,7 +111,9 @@ describe("custom Spring Boot generator", () => {
             const ctx = {
                 teamId: "T1000",
                 messageClient: {
-                    respond() { return Promise.resolve(); },
+                    respond() {
+                        return Promise.resolve();
+                    },
                 } as any,
             } as HandlerContext;
             const params = new CustomSpringBootGeneratorParameters(config);

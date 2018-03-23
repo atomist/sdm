@@ -31,26 +31,23 @@ import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
  * Function to create a Spring Boot generator.
  * Relies on generic Atomist Java & Spring functionality in spring-automations
  * @param config config for a Java generator, including location of seed
- * @param additionalActions zero or more additional editor actions
  * @param details allow customization
  * @return {HandleCommand<SpringBootGeneratorParameters>}
  */
 export function springBootGenerator(config: JavaGeneratorConfig,
-                                    additionalActions: Array<EditorFactory<CustomSpringBootGeneratorParameters>>,
                                     details: Partial<GeneratorCommandDetails<CustomSpringBootGeneratorParameters>> = {}) {
     return generatorHandler<CustomSpringBootGeneratorParameters>(
         (params, ctx) => chainEditors(
             updateReadme(params),
             setAtomistTeamInApplicationYml(params, ctx),
             springBootProjectEditor(params),
-            ...additionalActions.map(f => f(params, ctx)),
         ),
         () => new CustomSpringBootGeneratorParameters(config),
         "customSpringBootGenerator",
         {
-            ...details,
-            intent: "create spring",
             tags: ["spring", "boot", "java"],
+            ...details,
+            intent: config.intent,
         });
 }
 

@@ -20,6 +20,7 @@ import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 import { applyApacheLicenseHeaderEditor } from "../../commands/editors/license/applyHeader";
+import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
@@ -30,10 +31,11 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         .addEditors(
             () => applyApacheLicenseHeaderEditor,
         )
-        // .addGenerators(() => springBootGenerator({
-        //     seedOwner: "spring-team",
-        //     seedRepo: "spring-rest-seed",
-        // }, []))
+        .addGenerators(() => nodeGenerator({
+            seedOwner: "spring-team",
+            seedRepo: "typescript-express-seed",
+            intent: "create node",
+        }))
         .addNewRepoWithCodeActions(
             tagRepo(nodeTagger),
         )

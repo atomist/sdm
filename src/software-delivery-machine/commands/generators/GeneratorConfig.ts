@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -14,9 +15,10 @@
  * limitations under the License.
  */
 
-import { GeneratorConfig } from "../GeneratorConfig";
+export interface GeneratorConfig {
 
-export interface JavaGeneratorConfig extends GeneratorConfig {
+    seedOwner: string;
+    seedRepo: string;
 
-    groupId: string;
+    intent: string;
 }
