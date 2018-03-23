@@ -28,6 +28,7 @@ import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGo
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
+import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -46,7 +47,8 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
                 private handleGoalUpdates: boolean = false) {
         this.subscriptionName = implementationName + "OnRequested";
         this.subscription =
-            subscription({name: "OnRequestedSdmGoal", operationName: this.subscriptionName, variables: {goalName: goal.name}});
+            subscription({name: "OnRequestedSdmGoal", operationName: this.subscriptionName,
+                variables: {goalName: goal.name, environment: environmentFromGoal(goal)}});
         this.name = implementationName + "OnRequestedSdmGoal";
         this.description = `Execute ${goal.name} when requested`;
     }
