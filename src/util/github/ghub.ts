@@ -147,7 +147,7 @@ export function listCommitsBetween(token: string, rr: GitHubRepoRef, startSha: s
         .then(ap => ap.data);
 }
 
-function authHeaders(token: string): AxiosRequestConfig {
+export function authHeaders(token: string): AxiosRequestConfig {
     return token ? {
             headers: {
                 Authorization: `token ${token}`,

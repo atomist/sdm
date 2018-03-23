@@ -30,7 +30,8 @@ import * as tmp from "tmp-promise";
 import * as URL from "url";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../spi/deploy/Deployment";
-import { createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
+import { authHeaders, createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
+import { promisify } from "util";
 
 /**
  * Implement ArtifactStore to store artifacts as GitHub releases
@@ -64,7 +65,7 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         return asset.browser_download_url;
     }
 
-    // Note that this Maven specific
+    // TODO this is Maven specific
     // Name is of format fintan-0.1.0-SNAPSHOT.jar
     public async checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact> {
         logger.info("Attempting to download artifact [%s] for %j", url, id);
@@ -83,8 +84,9 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         // const github = api(token);
         // return github.repos.getAsset({owner: id.owner, repo: id.repo, id: url});
 
-        await saveFileAs((creds as TokenCredentials).token, url, outputPath);
-        logger.info("Saved url %s to %s", url, outputPath);
+        logger.info("Attempting to download url %s to %s", url, outputPath);
+        await downloadFileAs((creds as TokenCredentials).token, url, outputPath);
+        logger.info("Successfully download url %s to %s", url, outputPath);
         return {
             cwd,
             filename,
@@ -96,22 +98,25 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
 }
 
 /**
- * Save the file to local disk
+ * Download the file to local disk
  * @param {string} token
  * @param {string} url
  * @param {string} outputFilename
  * @return {Promise<any>}
  */
-function saveFileAs(token: string, url: string, outputFilename: string): Promise<any> {
+function downloadFileAs(token: string, url: string, outputFilename: string): Promise<any> {
     return doWithRetry(() => axios.get(url, {
+        ...authHeaders(token),
         headers: {
-            // TODO why doesn't auth work?
-            // "Authorization": `token ${token}`,
             "Accept": "application/octet-stream",
             "Content-Type": "application/zip",
         },
         responseType: "arraybuffer",
-    }), `Download ${url} to ${outputFilename}`, {})
+    }), `Download ${url} to ${outputFilename}`, {
+        minTimeout: 10000,
+        maxTimeout: 10100,
+        retries: 10,
+    })
         .then(result => {
             return fs.writeFileSync(outputFilename, result.data);
         });
@@ -135,12 +140,14 @@ export function uploadAsset(token: string,
         repo,
         tag,
     })
-        .then(result => {
+        .then(async result => {
+            const file = (await promisify(fs.readFile)(path)).buffer;
+            const contentLength = (await promisify(fs.stat)(path)).size;
             return github.repos.uploadAsset({
                 url: result.data.upload_url,
-                file: fs.readFileSync(path).buffer,
+                file,
                 contentType,
-                contentLength: fs.statSync(path).size,
+                contentLength,
                 name: p.basename(path),
             });
         })

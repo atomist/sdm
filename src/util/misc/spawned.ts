@@ -46,8 +46,8 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
                                     options: SpawnOptions,
                                     log: ProgressLog,
                                     spOpts: Partial<SpawnWatchOptions> = {}): Promise<ChildProcessResult> {
-    logger.info("%s > %s (spawn)", options.cwd, stringifySpawnCommand(spawnCommand));
     const childProcess = spawn(spawnCommand.command, spawnCommand.args, options);
+    logger.info("%s > %s (spawn with pid=%d)", options.cwd, stringifySpawnCommand(spawnCommand), childProcess.pid);
     return watchSpawned(childProcess, log, spOpts);
 }
 

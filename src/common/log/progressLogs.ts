@@ -26,7 +26,9 @@ export const DevNullProgressLog: ProgressLog = {
 };
 
 export const ConsoleProgressLog: ProgressLog = {
+    log: "",
     write(what) {
+        this.log += what;
         console.log(what);
     },
     flush() { return Promise.resolve(); },
@@ -58,7 +60,7 @@ export class MultiProgressLog implements ProgressLog {
     }
 
     get log(): string {
-        const hasLog = this.logs.find(l => !!l.log);
+        const hasLog = this.logs.find(l => l.log !== undefined);
         return !!hasLog ? hasLog.log : undefined;
     }
 

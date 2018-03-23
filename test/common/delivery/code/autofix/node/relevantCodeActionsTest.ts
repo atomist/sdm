@@ -40,6 +40,9 @@ describe("relevantCodeActions", () => {
     it("should ignore irrelevant", async () => {
         const pti: ProjectListenerInvocation = {
             project: new InMemoryProject(),
+            push: {
+                id: "x",
+            },
         } as any as ProjectListenerInvocation;
         const relevant = await relevantCodeActions([tslintFix], pti);
         assert.equal(relevant.length, 0);
