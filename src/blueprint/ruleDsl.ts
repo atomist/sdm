@@ -19,7 +19,7 @@ import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
 import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
-import { allSatisfied } from "../common/listener/support/pushtest/pushTestUtils";
+import { allSatisfied, memoize } from "../common/listener/support/pushtest/pushTestUtils";
 import { Builder } from "../spi/build/Builder";
 
 export class PushRule {
@@ -31,7 +31,7 @@ export class PushRule {
     public readonly pushTest: PushTest;
 
     constructor(private guard1: PushTest, private guards: PushTest[], public reason?: string) {
-        this.pushTest = allSatisfied(guard1, ...guards);
+        this.pushTest = allSatisfied(memoize(guard1), ...guards.map(memoize));
     }
 
     public setGoals(goals: Goals): this {

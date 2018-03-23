@@ -1,4 +1,3 @@
-
 import { SimpleCache } from "./SimpleCache";
 
 /**
@@ -7,28 +6,24 @@ import { SimpleCache } from "./SimpleCache";
  */
 export class LruCache<T> implements SimpleCache<T> {
 
-    private requests = 0;
-    private cacheHits = 0;
+    private gets = 0;
+    private hits = 0;
 
     private values: Map<string, T> = new Map<string, T>();
 
     constructor(private maxEntries: number = 200) {
     }
 
-    get hits() {
-        return this.cacheHits;
-    }
-
-    get gets() {
-        return this.requests;
+    get stats() {
+        return {hits: this.hits, gets: this.gets};
     }
 
     public get(key: string): T {
-        ++this.requests;
+        ++this.gets;
         const hasKey = this.values.has(key);
         let entry: T;
         if (hasKey) {
-            ++this.cacheHits;
+            ++this.hits;
             // Peek the entry, re-insert for LRU strategy
             entry = this.values.get(key);
             this.values.delete(key);

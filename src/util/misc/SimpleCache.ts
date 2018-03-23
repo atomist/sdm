@@ -1,3 +1,9 @@
+
+export interface CacheStats {
+    gets: number;
+    hits: number;
+}
+
 /**
  * Simple interface for a string-keyed cache
  */
@@ -9,8 +15,6 @@ export interface SimpleCache<T> {
 
     evict(key: string): void;
 
-    gets: number;
-
-    hits: number;
+    stats: CacheStats;
 
 }

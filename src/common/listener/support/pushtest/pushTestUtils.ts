@@ -15,7 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PushTest, pushTest } from "../../PushTest";
+import { LruCache } from "../../../../util/misc/LruCache";
+import { PushTest, pushTest, PushTestInvocation } from "../../PushTest";
 
 /**
  * Return the opposite of this push test
@@ -43,4 +44,31 @@ export function allSatisfied(...pushTests: PushTest[]): PushTest {
             );
             return !allResults.includes(false);
         });
+}
+
+const pushTestResultMemory = new LruCache<boolean>(1000);
+
+/**
+ * Cache the PushTest results for this push
+ * @param {PushTest} pt
+ * @return {PushTest}
+ */
+export function memoize(pt: PushTest): PushTest {
+    return {
+        name: pt.name,
+        test: async pti => {
+            const key = ptCacheKey(pt, pti);
+            let result = pushTestResultMemory.get(key);
+            if (result === undefined) {
+                result = await pt.test(pti);
+                logger.info(`Evaluated push test [%s] to ${result}: cache stats=%j`, pt.name, pushTestResultMemory.stats);
+                pushTestResultMemory.put(key, result);
+            }
+            return result;
+        },
+    };
+}
+
+function ptCacheKey(pt: PushTest, pti: PushTestInvocation): string {
+    return pti.push.id + "_" + pt.name;
 }
