@@ -19,9 +19,15 @@ export class Goals {
                            creds: ProjectOperationCredentials,
                            context: HandlerContext,
                            providerId: string): Promise<any> {
-
         return Promise.all([
-            ...this.goals.map(goal => storeGoal(context, {goalSet: this.name, goal, state: hasPreconditions(goal) ? "planned": "requested", id, providerId})),
+            ...this.goals.map(goal =>
+                storeGoal(context, {
+                    goalSet: this.name,
+                    goal,
+                    state: hasPreconditions(goal) ? "planned" : "requested",
+                    id,
+                    providerId
+                })),
         ]);
     }
 }

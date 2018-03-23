@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets } from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
@@ -50,10 +50,12 @@ export class RetryGoalParameters {
 
 export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
     return commandHandlerFrom(async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
+        // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
 
+        // figure out which goalSet
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
         const goals = await fetchGoalsForCommit(ctx, id, commandParams.providerId);
         const thisGoal = goals.find(g => g.name === goal.name);
@@ -63,7 +65,9 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
             return { code: 0 };
         }
 
-        await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "planned", goal, goalSet: thisGoal.goalSet});
+        // do the thing
+        await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet: thisGoal.goalSet});
+        return Success;
     }, RetryGoalParameters, retryCommandNameFor(implementationName), "Retry an execution of " + goal.name, goal.retryIntent);
 }
 
