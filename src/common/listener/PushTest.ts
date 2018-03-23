@@ -18,15 +18,24 @@ import { OnPushToAnyBranch } from "../../typings/types";
 import { ProjectListenerInvocation } from "./Listener";
 
 /**
- * Return true if we like this push and think a particular set of goals apply to it.
+ * Return true if we like this push. Used in goal setting etc.
  */
 export interface PushTest {
 
+    /**
+     * Name of the PushTest. Must be unique
+     */
     name: string;
 
     test(p: PushTestInvocation): boolean | Promise<boolean>;
 }
 
+/**
+ * Convenient factory function for PushTest instances
+ * @param {string} name
+ * @param {(p: PushTestInvocation) => (boolean | Promise<boolean>)} test
+ * @return {PushTest}
+ */
 export function pushTest(name: string, test: (p: PushTestInvocation) => boolean | Promise<boolean>): PushTest {
     return {
         name,
