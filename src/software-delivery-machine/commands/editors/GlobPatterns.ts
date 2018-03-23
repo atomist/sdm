@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-
 export const CFamilyLanguageSourceFiles = "**/{*.ts,*.java,*.js,*.scala,*.c,*.cpp,*.kt}";

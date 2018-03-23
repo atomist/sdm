@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 import { sprintf } from "sprintf-js";
