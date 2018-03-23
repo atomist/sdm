@@ -6,6 +6,10 @@ import { disregardApproval, requiresApproval } from "../../../handlers/events/de
 import { GoalRootType, GoalState, SdmGoal, SdmGoalKey } from "../../../ingesters/goal";
 import { Goal, hasPreconditions } from "./Goal";
 
+export function environmentFromGoal(goal: Goal) {
+    return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
+}
+
 export function storeGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
@@ -27,7 +31,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
 
     const description = goal.requestedDescription;
 
-    const environment = goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
+    const environment = environmentFromGoal(goal);
 
     if (hasPreconditions(goal)) {
         preConditions.push(...goal.dependsOn.map(d => ({
