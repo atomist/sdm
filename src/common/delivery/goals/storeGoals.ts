@@ -3,7 +3,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import sprintf from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, GoalState, SdmProvenance, SdmGoal, SdmGoalKey } from "../../../ingesters/goal";
+import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/goal";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function environmentFromGoal(goal: Goal) {
@@ -99,7 +99,7 @@ function constructProvenance(ctx: HandlerContext): SdmProvenance {
         name: (ctx as any as AutomationContextAware).context.operation,
         correlationId: ctx.correlationId,
         ts: Date.now(),
-    }
+    };
 }
 
 export function descriptionFromState(goal: Goal, state: GoalState): string {

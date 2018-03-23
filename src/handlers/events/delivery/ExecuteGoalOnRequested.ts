@@ -49,7 +49,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
         this.subscription =
             subscription({
                 name: "OnRequestedSdmGoal", operationName: this.subscriptionName,
-                variables: {goalName: goal.name, environment: environmentFromGoal(goal)}
+                variables: {goalName: goal.name, environment: environmentFromGoal(goal)},
             });
         this.name = implementationName + "OnRequestedSdmGoal";
         this.description = `Execute ${goal.name} when requested`;
@@ -100,7 +100,7 @@ function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: E
         {
             goal,
             url: result.targetUrl,
-            state: newState
+            state: newState,
         });
 }
 

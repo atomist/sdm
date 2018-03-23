@@ -59,13 +59,12 @@ export class Goal {
     }
 
     get waitingForApprovalDescription() {
-        return this.definition.waitingForApprovalDescription || (this.successDescription + "(but needs approval)")
+        return this.definition.waitingForApprovalDescription || (this.successDescription + "(but needs approval)");
     }
 
     get retryIntent() {
         return "trigger " + this.name;
     }
-
 
     constructor(definition: GoalDefinition) {
         this.definition = definition;

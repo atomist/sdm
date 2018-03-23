@@ -45,7 +45,7 @@ export const ReviewGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "1-review",
     completedDescription: "Code review passed",
-    waitingForApprovalDescription: "Manual approval needed"
+    waitingForApprovalDescription: "Manual approval needed",
 });
 
 export const CodeReactionGoal = new Goal({
@@ -105,7 +105,7 @@ export const StagingVerifiedGoal = new Goal({
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
-    waitingForApprovalDescription: "Ready for your approval"
+    waitingForApprovalDescription: "Ready for your approval",
 });
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({

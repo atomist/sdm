@@ -65,7 +65,6 @@ export class ExecuteGoalOnSuccessStatus
             subscription({ name: "OnAnySuccessStatus", operationName: this.subscriptionName });
     }
 
-
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
@@ -110,7 +109,6 @@ export async function executeGoal(execute: GoalExecutor,
         logger.debug("Preconditions not yet met for goal %s on %j", params.goal.name, id);
         return Success;
     }
-
 
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
     await createStatus(params.githubToken, id as GitHubRepoRef, {
