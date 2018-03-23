@@ -79,6 +79,7 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
+import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -448,6 +449,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.conditionalBuilders = pushRules
             .filter(rule => !!rule.builder)
             .map(rule => ({guard: rule.pushTest, builder: rule.builder}));
+
+        addGitHubSupport(this);
     }
 
+}
+
+function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
+    sdm.addSupportingEvents(CopyGoalToGitHubStatus)
 }

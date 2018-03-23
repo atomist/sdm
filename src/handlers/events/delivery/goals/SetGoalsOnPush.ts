@@ -115,7 +115,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
             } else if (!determinedGoals) {
                 logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
             } else {
-                await determinedGoals.setAllToPending(id, credentials, context);
+                await determinedGoals.setAllToPending(id, credentials, context, push.repo.org.provider.providerId);
             }
             return Success;
         } catch (err) {
@@ -137,19 +137,22 @@ export class ApplyGoalsParameters {
     @MappedParameter(MappedParameters.GitHubRepository)
     public repo: string;
 
+    @MappedParameter(MappedParameters.GitHubRepositoryProvider)
+    public providerId: string;
+
     @Parameter({required: false})
     public sha?: string;
 }
 
 export function applyGoalsToCommit(goals: Goals) {
     return async (ctx: HandlerContext,
-                  params: { githubToken: string, owner: string, repo: string, sha?: string }) => {
+                  params: { githubToken: string, owner: string, repo: string, sha?: string, providerId: string }) => {
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
         const creds = {token: params.githubToken};
 
-        await goals.setAllToPending(id, creds, ctx);
+        await goals.setAllToPending(id, creds, ctx, params.providerId);
         await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
         return Success;
     };

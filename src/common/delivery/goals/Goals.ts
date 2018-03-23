@@ -33,11 +33,11 @@ export class Goals {
 
     public setAllToPending(id: GitHubRepoRef,
                            creds: ProjectOperationCredentials,
-                           context: HandlerContext): Promise<any> {
+                           context: HandlerContext,
+                           providerId: string): Promise<any> {
 
         return Promise.all([
-            ...this.goals.map(goal => setPendingStatus(id, goal.context, creds, goal.requestedDescription)),
-            ...this.goals.map(goal => storePlannedGoal(this.name, goal, id, context)),
+            ...this.goals.map(goal => storePlannedGoal(this.name, goal, id, context, providerId)),
         ]);
     }
 }
@@ -53,7 +53,7 @@ function setPendingStatus(id: GitHubRepoRef,
     });
 }
 
-function storePlannedGoal(goalSet: string, goal: Goal, id: GitHubRepoRef, ctx: HandlerContext): Promise<any> {
+function storePlannedGoal(goalSet: string, goal: Goal, id: GitHubRepoRef, ctx: HandlerContext, providerId: string): Promise<any> {
 
     const preConditions: SDMGoalKey[] = [];
 
@@ -83,7 +83,7 @@ function storePlannedGoal(goalSet: string, goal: Goal, id: GitHubRepoRef, ctx: H
         repo: {
             name: id.repo,
             owner: id.owner,
-            providerId: "<TODO>", // TODO add providerId to repoRef
+            providerId
         },
 
         description,

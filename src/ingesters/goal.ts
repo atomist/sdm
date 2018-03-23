@@ -22,6 +22,8 @@ import {
 
 export const GoalRootType = "SdmGoal";
 
+export type GoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
+
 export interface Goal extends GoalKey {
     sha: string;
     branch: string;
@@ -34,7 +36,7 @@ export interface Goal extends GoalKey {
 
     description: string;
     url?: string;
-    state: "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
+    state: GoalState;
     ts: number;
 
     error?: string;
@@ -119,6 +121,9 @@ export const GoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withStringField(
             "state",
             "State of goal")
+        .withStringField(
+            "externalKey",
+            "key to a corresponding commit status in GitHub/BitBucket (optional)")
         .withIntField(
             "ts",
             "Timestamp of goal")

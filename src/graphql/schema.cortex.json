@@ -8581,6 +8581,18 @@
                   }
                 },
                 {
+                  "name": "externalKey",
+                  "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
                   "name": "ts",
                   "description": "Timestamp of goal",
                   "type": {
@@ -47378,6 +47390,15 @@
               "args": []
             },
             {
+              "name": "externalKey",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
+              "args": []
+            },
+            {
               "name": "ts",
               "type": {
                 "kind": "SCALAR",
@@ -57099,6 +57120,18 @@
                   }
                 },
                 {
+                  "name": "externalKey",
+                  "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
                   "name": "ts",
                   "description": "Timestamp of goal",
                   "type": {
@@ -57763,6 +57796,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "4dab14c1-41a8-4683-b8bd-a61b6feca103"
+    "correlation_id": "266ecea4-3ed8-4881-ad58-53301ece2f89"
   }
 }
