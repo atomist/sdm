@@ -13,6 +13,7 @@ export function environmentFromGoal(goal: Goal) {
 export interface UpdateSdmGoalParams {
     goal: Goal;
     state: GoalState;
+    // tslint:disable-next-line:ban-types
     description?: String;
     url?: string;
     approved?: boolean;
