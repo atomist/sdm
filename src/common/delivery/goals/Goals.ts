@@ -1,11 +1,8 @@
+import { HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { createStatus } from "../../../util/github/ghub";
-import { GitHubStatusContext } from "./gitHubContext";
-import { Goal } from "./Goal";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { Goal, hasPreconditions } from "./Goal";
+import { storeGoal } from "./storeGoals";
 
 /**
  * Represents goals set in response to a push
@@ -18,20 +15,19 @@ export class Goals {
         this.goals = goals;
     }
 
-    public setAllToPending(id: GitHubRepoRef, creds: ProjectOperationCredentials): Promise<any> {
-        return Promise.all(this.goals.map(goal => {
-            return setPendingStatus(id, goal.context, creds, goal.requestedDescription);
-        }));
+    public setAllToPending(id: GitHubRepoRef,
+                           creds: ProjectOperationCredentials,
+                           context: HandlerContext,
+                           providerId: string): Promise<any> {
+        return Promise.all([
+            ...this.goals.map(goal =>
+                storeGoal(context, {
+                    goalSet: this.name,
+                    goal,
+                    state: hasPreconditions(goal) ? "planned" : "requested",
+                    id,
+                    providerId,
+                })),
+        ]);
     }
-
-}
-
-function setPendingStatus(id: GitHubRepoRef, context: GitHubStatusContext,
-                          creds: ProjectOperationCredentials,
-                          description: string = context): Promise<any> {
-    return createStatus((creds as TokenCredentials).token, id, {
-        state: "pending",
-        context,
-        description,
-    });
 }

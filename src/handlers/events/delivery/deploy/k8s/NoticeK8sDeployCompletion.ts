@@ -69,7 +69,7 @@ export class NoticeK8sTestDeployCompletionOnStatus implements HandleEvent<OnAPar
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.state === "pending") {
+        if (status.state === "pending") { // in_process
             // not interesting
             return Success;
         }

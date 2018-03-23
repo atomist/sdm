@@ -2,8 +2,8 @@ import { composeFunctionalUnits } from "../../../blueprint/ComposedFunctionalUni
 import { EmptyFunctionalUnit, FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { ArtifactDeploySpec, deployArtifactWithLogs } from "../../../common/delivery/deploy/executeDeploy";
 import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
-import { triggerGoal } from "../../../handlers/commands/RetryGoal";
-import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
+import { triggerGoal } from "../../../handlers/commands/triggerGoal";
+import { ExecuteGoalOnRequested } from "../../../handlers/events/delivery/ExecuteGoalOnRequested";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 
@@ -13,7 +13,7 @@ export function deployArtifactGoalHandlers<T extends TargetInfo>(spec: ArtifactD
             () => new ExecuteGoalOnSuccessStatus(spec.implementationName,
                 spec.deployGoal,
                 deployArtifactWithLogs(spec)),
-            () => new ExecuteGoalOnPendingStatus(spec.implementationName,
+            () => new ExecuteGoalOnRequested(spec.implementationName,
                 spec.deployGoal,
                 deployArtifactWithLogs(spec)),
         ],
@@ -24,7 +24,7 @@ export function deployArtifactGoalHandlers<T extends TargetInfo>(spec: ArtifactD
 
     const undeployHandlers = spec.undeploy ? {
         eventHandlers: [
-            () => new ExecuteGoalOnPendingStatus(spec.undeploy.implementationName,
+            () => new ExecuteGoalOnRequested(spec.undeploy.implementationName,
                 spec.undeploy.goal,
                 undeployArtifactWithLogs(spec), true),
         ],

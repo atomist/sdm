@@ -17,7 +17,7 @@
 import { failure, HandlerContext, logger, success, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { retryCommandNameFor } from "../../../handlers/commands/RetryGoal";
+import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";

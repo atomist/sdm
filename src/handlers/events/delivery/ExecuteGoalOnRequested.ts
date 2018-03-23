@@ -14,49 +14,22 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    failure,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, failure, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import * as stringify from "json-stringify-safe";
+import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
-import {
-    ExecuteGoalInvocation,
-    GoalExecutor,
-} from "../../../common/delivery/goals/goalExecution";
-import { PushTest } from "../../../common/listener/PushTest";
-import { Builder } from "../../../spi/build/Builder";
-import {
-    OnAnyPendingStatus, StatusForExecuteGoal,
-    StatusState,
-} from "../../../typings/types";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { GoalState } from "../../../ingesters/goal";
+import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
 
-/**
- * Implemented by classes that can choose a builder based on project content etc.
- */
-export interface ConditionalBuilder {
-
-    guard: PushTest;
-
-    builder: Builder;
-}
-
-export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatus.Subscription>,
+export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
 
     public subscriptionName: string;
@@ -71,32 +44,30 @@ export class ExecuteGoalOnPendingStatus implements HandleEvent<OnAnyPendingStatu
                 public goal: Goal,
                 private execute: GoalExecutor,
                 private handleGoalUpdates: boolean = false) {
-        this.subscriptionName = implementationName + "OnPending";
+        this.subscriptionName = implementationName + "OnRequested";
         this.subscription =
-            subscription({ name: "OnAnyPendingStatus", operationName: this.subscriptionName}),
-        this.name = implementationName + "OnPendingStatus";
+            subscription({name: "OnRequestedSdmGoal", operationName: this.subscriptionName});
+        this.name = implementationName + "OnRequestedSdmGoal";
         this.description = `Execute ${goal.name} when requested`;
     }
 
-    public async handle(event: EventFired<OnAnyPendingStatus.Subscription>,
+    public async handle(event: EventFired<OnRequestedSdmGoal.Subscription>,
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
-        const status: StatusForExecuteGoal.Fragment = event.data.Status[0];
+
+        const goal = event.data.SdmGoal[0];
+        const commit = await fetchCommitForSdmGoal(ctx, goal);
+
+        const status: StatusForExecuteGoal.Fragment = convertForNow(goal, commit);
 
         // TODO: put this in a subscription parameter. It should work, in this architecture
         if (status.context !== params.goal.context) {
             logger.debug(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
             return Success;
         }
-        // this will change when we have Goal events that don't double-up the pending bit
-        if (status.description === params.goal.workingDescription) {
-            logger.debug("[%s] is working", status.context);
-            return Success;
-        }
-        if (status.description !== params.goal.requestedDescription) {
-            logger.warn("This pending status doesn't look right: " + status.context + " expected: " + params.goal.requestedDescription);
-        }
 
+        // TODO: this has to be a bug. it isn't getting the secret once I changed the subscription to be the SdmGoal
+        params.githubToken = process.env.GITHUB_TOKEN;
         try {
             const result = await executeGoal(this.execute, status, ctx, params);
             if (params.handleGoalUpdates) {
@@ -123,7 +94,7 @@ function repoRef(status: StatusForExecuteGoal.Fragment) {
 }
 
 function credentials(inv: ExecuteGoalInvocation) {
-    return { token: inv.githubToken };
+    return {token: inv.githubToken};
 }
 
 const ScanBase = "https://scan.atomist.com";
@@ -137,4 +108,24 @@ function markStatus(id: GitHubRepoRef, goal: Goal, state: StatusState,
         context: goal.context,
         description: state === StatusState.success ? goal.completedDescription : goal.failedDescription,
     });
+}
+
+function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal.Commit): StatusForExecuteGoal.Fragment {
+    return {
+        commit,
+        state: sdmGoalStateToGitHubStatusState(sdmGoal.state as GoalState),
+        targetUrl: sdmGoal.url, // not handling approval weirdness
+        context: sdmGoal.externalKey,
+        description: sdmGoal.description,
+    };
+}
+
+async function fetchCommitForSdmGoal(ctx: HandlerContext, goal: SdmGoalFields.Fragment): Promise<CommitForSdmGoal.Commit> {
+    const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
+    const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
+        {name: "CommitForSdmGoal", variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch}});
+    if (!result || !result.Commit || result.Commit.length === 0) {
+        throw new Error("No commit found for goal " + stringify(variables));
+    }
+    return result.Commit[0];
 }

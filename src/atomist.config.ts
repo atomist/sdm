@@ -18,6 +18,7 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLocalArtifactStore";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
+import { SdmGoalIngester } from "./ingesters/goal";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
 import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingSoftwareDeliveryMachine";
 import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixSoftwareDeliveryMachine";
@@ -53,6 +54,7 @@ export const configuration: Configuration = {
     events: machine.eventHandlers.concat([]),
     // TODO CD move ingesters to different global automation
     ingesters: [
+        SdmGoalIngester,
         DeployEnablementIngester,
     ],
     http: {

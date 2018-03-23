@@ -1,0 +1,16 @@
+fragment SdmGoalFields on SdmGoal {
+  goalSet
+  environment
+  name
+  sha
+  branch
+  state
+  description
+  url
+  externalKey
+  repo {
+    name
+    owner
+    providerId
+  }
+}

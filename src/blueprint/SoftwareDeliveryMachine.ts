@@ -53,6 +53,7 @@ import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/co
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
+import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -65,9 +66,9 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
-import { triggerGoal } from "../handlers/commands/RetryGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
+import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
@@ -76,6 +77,7 @@ import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler"
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
+import { ConditionalBuilder } from "../spi/build/Builder";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
@@ -159,7 +161,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get fingerprinter(): FunctionalUnit {
         return {
             eventHandlers: this.fingerprinters.length > 0 ?
-                [() => new ExecuteGoalOnPendingStatus("Fingerprinter",
+                [() => new ExecuteGoalOnRequested("Fingerprinter",
                     FingerprintGoal,
                     executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters), true),
                 ] :
@@ -179,7 +181,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get reviewHandling(): FunctionalUnit {
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus("Reviews",
+                () => new ExecuteGoalOnRequested("Reviews",
                     ReviewGoal,
                     executeReview(this.reviewerRegistrations),
                     true)],
@@ -190,7 +192,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get codeReactionHandling(): FunctionalUnit {
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus("CodeReactions",
+                () => new ExecuteGoalOnRequested("CodeReactions",
                     CodeReactionGoal,
                     executeCodeReactions(this.opts.projectLoader, this.codeReactions), true),
             ],
@@ -201,7 +203,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get autofix(): FunctionalUnit {
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus("Autofix", AutofixGoal,
+                () => new ExecuteGoalOnRequested("Autofix", AutofixGoal,
                     executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), true),
             ],
             commandHandlers: [() => triggerGoal("Autofix", AutofixGoal)],
@@ -221,8 +223,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnPendingStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
-                () => new ExecuteGoalOnPendingStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
+                () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
+                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
                 () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
                 () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
             ],
@@ -448,6 +450,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.conditionalBuilders = pushRules
             .filter(rule => !!rule.builder)
             .map(rule => ({guard: rule.pushTest, builder: rule.builder}));
+
+        addGitHubSupport(this);
     }
 
+}
+
+function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
+    sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }

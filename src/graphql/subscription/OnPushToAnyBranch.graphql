@@ -25,16 +25,7 @@ subscription OnPushToAnyBranch {
       }
     }
     repo {
-      owner
-      name
-      channels {
-        team {
-          id
-        }
-        name
-        id
-      }
-      defaultBranch
+      ...CoreRepoFieldsAndChannels
     }
     commits {
       sha

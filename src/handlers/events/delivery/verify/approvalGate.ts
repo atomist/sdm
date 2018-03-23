@@ -36,3 +36,10 @@ export function forApproval(url: string): string {
 export function requiresApproval(ghs: GitHubStatus) {
     return ghs.targetUrl && ghs.targetUrl.endsWith(ApprovalGateParam);
 }
+
+export function disregardApproval(url: string): string {
+    if (!url) {
+        return url;
+    }
+    return url.replace( new RegExp("[\?&]?" + ApprovalGateParam + "$"), "");
+}

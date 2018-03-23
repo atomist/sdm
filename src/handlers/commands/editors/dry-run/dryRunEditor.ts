@@ -51,7 +51,7 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
         context: DryRunContext,
         target_url: "https://www.atomist.com",
         description,
-        state: "pending",
+        state: "pending", // I'm not sure how this one works
     };
     const detailsToUse: EditorCommandDetails = {
         description,

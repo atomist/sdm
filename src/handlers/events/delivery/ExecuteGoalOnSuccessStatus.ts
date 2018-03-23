@@ -110,7 +110,7 @@ export async function executeGoal(execute: GoalExecutor,
     await createStatus(params.githubToken, id as GitHubRepoRef, {
         context: params.goal.context,
         description: params.goal.workingDescription,
-        state: "pending",
+        state: "pending", // in_process
     }).catch(err =>
         logger.warn("Failed to update %s status to tell people we are working on it", params.goal.name));
     return execute(status, ctx, params);
