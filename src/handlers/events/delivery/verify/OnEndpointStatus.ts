@@ -223,7 +223,7 @@ function setVerificationStatus(creds: ProjectOperationCredentials,
         state,
         target_url: requestApproval ? forApproval(targetUrl) : targetUrl,
         context: verifyGoal.context,
-        description: state === "success" ? verifyGoal.completedDescription : ("Failed to " + verifyGoal.name),
+        description: state === "success" ? verifyGoal.successDescription : ("Failed to " + verifyGoal.name),
     });
 }
 

@@ -115,13 +115,13 @@ export async function reactToSuccessfulDeploy(params: {
         StatusState.success,
         params.deployGoal.context,
         params.progressLog.url,
-        params.deployGoal.completedDescription);
+        params.deployGoal.successDescription);
     if (deployment.endpoint) {
         await setStatus(params.credentials, params.id,
             StatusState.success,
             params.endpointGoal.context,
             deployment.endpoint,
-            params.endpointGoal.completedDescription)
+            params.endpointGoal.successDescription)
             .catch(endpointStatus => {
                 logger.error("Could not set Endpoint status: " + endpointStatus.message);
                 // do not fail this whole handler

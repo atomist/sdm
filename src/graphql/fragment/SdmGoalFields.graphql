@@ -13,4 +13,17 @@ fragment SdmGoalFields on SdmGoal {
     owner
     providerId
   }
+  ts
+  preConditions {
+    goalSet
+    environment
+    name
+  }
+  provenance {
+    registration
+    version
+    name
+    correlationId
+    ts
+  }
 }

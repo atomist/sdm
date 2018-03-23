@@ -40,6 +40,7 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
     return async (status: StatusForExecuteGoal.Fragment,
                   context: HandlerContext,
                   egi: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
+        logger.info("Executing %d autofixes", registrations.length);
         try {
             const commit = status.commit;
             const credentials = {token: egi.githubToken};
@@ -83,7 +84,7 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
                     return cumulativeResult;
                 });
             if (editResult.edited) {
-                // Send back an error code, because we want to stop execution after this build
+                // Send back an error code, because we want to stop execution of goals after this
                 return {code: 1, message: "Edited"};
             }
             return Success;

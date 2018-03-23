@@ -3,11 +3,34 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import sprintf from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, GoalState, SdmGoal, SdmGoalKey } from "../../../ingesters/goal";
+import { GoalRootType, GoalState, SdmProvenance, SdmGoal, SdmGoalKey } from "../../../ingesters/goal";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
+}
+
+export interface UpdateSdmGoalParams {
+    goal: Goal;
+    state: GoalState;
+    description?: String;
+    url?: string;
+    approved?: boolean;
+}
+
+export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
+    const description = params.description || descriptionFromState(params.goal, params.state);
+    const approval = params.approved ? constructProvenance(ctx) : before.approval;
+    const sdmGoal = {
+        ...before,
+        state: params.state,
+        description,
+        url: params.url,
+        approval,
+        ts: Date.now(),
+        provenance: [constructProvenance(ctx)].concat(before.provenance),
+    };
+    return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
 export function storeGoal(ctx: HandlerContext, parameters: {
@@ -29,7 +52,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
 
     const preConditions: SdmGoalKey[] = [];
 
-    const description = goal.requestedDescription;
+    const description = descriptionFromState(goal, state);
 
     const environment = environmentFromGoal(goal);
 
@@ -61,18 +84,40 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         externalKey: goal.context,
         ts: Date.now(),
 
-        requiresApproval: requiresApproval({targetUrl: url}), // this may be able to go away, being dynamic instead. but graphing...
-
-        provenance: [{
-            registration: (ctx as any as AutomationContextAware).context.name,
-            version: (ctx as any as AutomationContextAware).context.version,
-            name: (ctx as any as AutomationContextAware).context.operation,
-            correlationId: ctx.correlationId,
-            ts: Date.now(),
-        }],
+        provenance: [constructProvenance(ctx)],
 
         preConditions,
     };
 
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
+}
+
+function constructProvenance(ctx: HandlerContext): SdmProvenance {
+    return {
+        registration: (ctx as any as AutomationContextAware).context.name,
+        version: (ctx as any as AutomationContextAware).context.version,
+        name: (ctx as any as AutomationContextAware).context.operation,
+        correlationId: ctx.correlationId,
+        ts: Date.now(),
+    }
+}
+
+export function descriptionFromState(goal: Goal, state: GoalState): string {
+    switch (state) {
+        case  "planned" :
+        case "requested" :
+            return goal.requestedDescription;
+        case "in_process" :
+            return goal.inProcessDescription;
+        case "waiting_for_approval" :
+            return goal.waitingForApprovalDescription;
+        case "success" :
+            return goal.successDescription;
+        case "failure" :
+            return goal.failureDescription;
+        case "skipped":
+            return "Skipped"; // you probably want to use something that describes the reason instead. but don't error.
+        default:
+            throw new Error("Unknown goal state " + state);
+    }
 }
