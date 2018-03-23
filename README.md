@@ -1,6 +1,6 @@
-# GitHub SDM
+# GitHub Software Delivery Machine
 
-GitHub **Software Delivery Machine**: An Atomist reference implementation.
+Atomist framework enabling you to control your delivery and development process in code.
 
 ## What is a Software Delivery Machine?
 >A **software delivery machine** is a development process in a box. 
