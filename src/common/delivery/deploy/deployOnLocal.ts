@@ -15,7 +15,7 @@
  */
 
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
-import { triggerGoal } from "../../../handlers/commands/RetryGoal";
+import { triggerGoal } from "../../../handlers/commands/triggerGoal";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { mavenSourceDeployer } from "../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { ProjectLoader } from "../../repo/ProjectLoader";

@@ -2,7 +2,7 @@ import { composeFunctionalUnits } from "../../../blueprint/ComposedFunctionalUni
 import { EmptyFunctionalUnit, FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { ArtifactDeploySpec, deployArtifactWithLogs } from "../../../common/delivery/deploy/executeDeploy";
 import { undeployArtifactWithLogs } from "../../../common/delivery/deploy/executeUndeploy";
-import { triggerGoal } from "../../../handlers/commands/RetryGoal";
+import { triggerGoal } from "../../../handlers/commands/triggerGoal";
 import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { TargetInfo } from "../../../spi/deploy/Deployment";

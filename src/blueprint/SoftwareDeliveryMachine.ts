@@ -65,7 +65,7 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
-import { triggerGoal } from "../handlers/commands/RetryGoal";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
