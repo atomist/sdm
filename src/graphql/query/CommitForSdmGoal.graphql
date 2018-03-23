@@ -1,0 +1,31 @@
+query CommitForSdmGoal($sha: String!, $repo: String!, $owner: String!, $branch: String! ) {
+    Commit(sha: $sha) {
+        sha
+        message
+        statuses {
+            context
+            description
+            state
+            targetUrl
+        }
+        repo(name: $repo, owner: $owner) @required {
+           ...CoreRepoFieldsAndChannels
+        }
+        pushes(branch: $branch) {
+            before {
+                sha
+                message
+            }
+            commits {
+                sha
+                message
+            }
+            branch
+            id
+        }
+        image {
+            image
+            imageName
+        }
+    }
+}

@@ -3,9 +3,10 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import * as GoalEvent from "../../../ingesters/goal";
-import { OnAnyGoal, ScmProvider } from "../../../typings/types";
+import { OnAnyGoal, ScmProvider, StatusState } from "../../../typings/types";
 import { createStatus, State } from "../../../util/github/ghub";
 import { fetchProvider } from "../../../util/github/gitHubProvider";
+import { GoalState } from "../../../ingesters/goal";
 
 @EventHandler("yes", subscription({name: "OnAnyGoal"}))
 export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscription> {
@@ -29,23 +30,8 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
             branch: goal.branch,
         });
 
-        let githubState: State;
         const goalState = goal.state as GoalEvent.GoalState;
-        switch (goalState) {
-            case "planned":
-            case "requested":
-            case "in_process":
-                githubState = "pending";
-                break;
-            case "waiting_for_approval":
-            case "success":
-                githubState = "success";
-                break;
-            case "failure":
-            case "skipped":
-                githubState = "failure";
-                break;
-        }
+
         const url = goalState === "waiting_for_approval" ? forApproval(goal.url || "https://pretend.atomist.com") : goal.url;
 
         // TODO this is not what I want to be doing
@@ -53,9 +39,25 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
             context: goal.externalKey,
             description: goal.description,
             target_url: url,
-            state: githubState,
+            state: sdmGoalStateToGitHubStatusState(goalState),
         });
         return Success;
     }
 
+}
+
+export function sdmGoalStateToGitHubStatusState(goalState: GoalState): StatusState {
+    switch (goalState) {
+        case "planned":
+        case "requested":
+        case "in_process":
+            return "pending" as StatusState;
+        case "waiting_for_approval":
+        case "success":
+            return "success" as StatusState;
+        case "failure":
+        case "skipped":
+            return "failure" as StatusState;
+    }
+    throw new Error("What is this state " + goalState);
 }

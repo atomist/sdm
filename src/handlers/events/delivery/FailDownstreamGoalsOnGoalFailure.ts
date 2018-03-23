@@ -74,7 +74,8 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
             return Promise.resolve(Success);
         }
 
-        const currentlyPending = status.commit.statuses.filter(s => s.state === "pending");
+        // really we should follow the graph ... only ones dependent on -this- commit should be changed.
+        const currentlyPending = status.commit.statuses.filter(s => s.state === "pending" /* planned */);
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         return gameOver(
             status.context,

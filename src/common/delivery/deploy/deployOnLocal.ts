@@ -16,7 +16,7 @@
 
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { triggerGoal } from "../../../handlers/commands/triggerGoal";
-import { ExecuteGoalOnPendingStatus } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
+import { ExecuteGoalOnRequested } from "../../../handlers/events/delivery/ExecuteGoalOnRequested";
 import { mavenSourceDeployer } from "../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/common/commonGoals";
@@ -33,7 +33,7 @@ function localDeployFromCloneSpec(projectLoader: ProjectLoader): SourceDeploySpe
 export function localDeployment(projectLoader: ProjectLoader): FunctionalUnit {
     const ld = localDeployFromCloneSpec(projectLoader);
     return {eventHandlers: [
-            () => new ExecuteGoalOnPendingStatus("LocalDeployFromClone",
+            () => new ExecuteGoalOnRequested("LocalDeployFromClone",
                 LocalDeploymentGoal,
                 runWithLog(executeDeploySource(ld), ld.deployer.logInterpreter)),
         ],

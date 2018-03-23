@@ -17,6 +17,7 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AddressChannels } from "../../common/slack/addressChannels";
+import { PushTest } from "../../common/listener/PushTest";
 
 export interface PushThatTriggersBuild {
     branch: string;
@@ -36,4 +37,15 @@ export interface Builder {
                   team: string,
                   push: PushThatTriggersBuild): Promise<any>;
 
+}
+
+
+/**
+ * Implemented by classes that can choose a builder based on project content etc.
+ */
+export interface ConditionalBuilder {
+
+    guard: PushTest;
+
+    builder: Builder;
 }

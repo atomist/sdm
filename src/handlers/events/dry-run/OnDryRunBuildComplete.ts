@@ -52,7 +52,7 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
 
         logger.debug("Assessing dry run for %j: Statuses=%j", id, commit.statuses);
         const dryRunStatus = commit.statuses.find(s => s.context === DryRunContext);
-        if (!dryRunStatus || dryRunStatus.state !== "pending") {
+        if (!dryRunStatus || dryRunStatus.state !== "pending") { // this could be any kind of pending, dunno
             logger.debug("Not a dry run build on %j: Statuses=%j", id, commit.statuses);
             return Success;
         }
