@@ -23,12 +23,12 @@ import * as stringify from "json-stringify-safe";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { GoalState } from "../../../ingesters/goal";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
-import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {

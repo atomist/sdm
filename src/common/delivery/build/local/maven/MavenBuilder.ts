@@ -16,11 +16,11 @@
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { spawn } from "child_process";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { asSpawnCommand, spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../../slack/addressChannels";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
@@ -56,30 +56,15 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
             const va = await identification(content);
             const appId = {...va, name: va.artifact, id};
 
-            // TODO update to take skipTests parameter
-            const childProcess = spawn("mvn", [
-                "package",
-                "-DskipTests",
-            ], {
-                cwd: p.baseDir,
-            });
-            if (!childProcess.pid) {
-                await addressChannels("Fatal error building using Maven--is `mvn` on your automation node path?\n" +
-                    "Attempted to execute `mvn package`");
-            }
-
-            // TODO update to use new watchSpawned support
-            const buildResult = new Promise<{ error: boolean, code: number }>((resolve, reject) => {
-                childProcess.stdout.on("data", data => {
-                    log.write(data.toString());
+            const cmd = "mvn package " + (this.skipTests ? "-DskipTests" : "");
+            const buildResult = spawnAndWatch(
+                asSpawnCommand(cmd),
+                {
+                    cwd: p.baseDir,
+                },
+                log, {
+                    errorFinder: (code, signal, l) => l.log.includes("[ERROR]"),
                 });
-                childProcess.addListener("exit", (code, signal) => {
-                    resolve({error: log.log.includes("[ERROR]"), code});
-                });
-                childProcess.addListener("error", (code, signal) => {
-                    resolve({error: true, code});
-                });
-            });
             const rb = new UpdatingBuild(id, buildResult, atomistTeam, log.url);
             rb.ai = appId;
             rb.deploymentUnitFile = `${p.baseDir}/target/${appId.name}-${appId.version}.jar`;

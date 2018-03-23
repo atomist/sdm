@@ -1,5 +1,9 @@
 subscription OnRequestedSdmGoal($goalName: String!, $environment: String!) {
-  SdmGoal(state: ["requested"], name: [$goalName], environment: [$environment]) {
+  SdmGoal(
+    state: ["requested"]
+    name: [$goalName]
+    environment: [$environment]
+  ) {
     ...SdmGoalFields
   }
 }

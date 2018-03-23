@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ChildProcess } from "child_process";
+import { ChildProcess, spawn, SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
 import { sprintf } from "sprintf-js";
@@ -32,6 +32,22 @@ export interface ChildProcessResult {
 export interface SpawnWatchOptions {
     errorFinder: ErrorFinder;
     stripAnsi: boolean;
+}
+
+/**
+ * Spawn a process and watch
+ * @param {SpawnCommand} spawnCommand
+ * @param {"child_process".SpawnOptions} options
+ * @param {ProgressLog} log
+ * @param {Partial<SpawnWatchOptions>} spOpts
+ * @return {Promise<ChildProcessResult>}
+ */
+export async function spawnAndWatch(spawnCommand: SpawnCommand,
+                                    options: SpawnOptions,
+                                    log: ProgressLog,
+                                    spOpts: Partial<SpawnWatchOptions> = {}): Promise<ChildProcessResult> {
+    const childProcess = spawn(spawnCommand.command, spawnCommand.args, options);
+    return watchSpawned(childProcess, log, spOpts);
 }
 
 /**

@@ -17,13 +17,11 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { spawn } from "child_process";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
-import { asSpawnCommand, ChildProcessResult, SpawnCommand, watchSpawned } from "../../../../../util/misc/spawned";
+import { asSpawnCommand, ChildProcessResult, spawnAndWatch, SpawnCommand } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 
@@ -74,7 +72,7 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
                 };
                 let buildResult: ChildProcessResult;
                 for (const buildCommand of this.buildCommands) {
-                    buildResult = await watchSpawned(spawn(buildCommand.command, buildCommand.args, opts), log,
+                    buildResult = await spawnAndWatch(buildCommand, opts, log,
                         {
                             errorFinder,
                             stripAnsi: true,
