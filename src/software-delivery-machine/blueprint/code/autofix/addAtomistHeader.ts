@@ -25,12 +25,12 @@ export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java 
 export const AddAtomistTypeScriptHeader: AutofixRegistration = addAtomistHeader("TypeScript header", "**/*.ts", IsTypeScript);
 
 export function addAtomistHeader(name: string, glob: string, pushTest: PushTest): AutofixRegistration {
-    const OurParams = new AddHeaderParameters();
-    OurParams.glob = glob;
+    const ourParams = new AddHeaderParameters();
+    ourParams.glob = glob;
     return {
         name,
         pushTest,
         // Ignored any parameters passed in, which will be undefined in an autofix, and provide predefined parameters
-        action: (p, context) => addHeaderProjectEditor(p, context, OurParams),
+        action: (p, context) => addHeaderProjectEditor(p, context, ourParams),
     };
 }
