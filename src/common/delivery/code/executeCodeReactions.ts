@@ -52,6 +52,7 @@ export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions
                 credentials,
                 filesChanged,
                 commit,
+                push,
             };
             const allReactions: Promise<any> =
                 Promise.all(codeReactions.map(reaction => reaction(cri)));

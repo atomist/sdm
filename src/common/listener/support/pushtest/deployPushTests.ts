@@ -15,10 +15,10 @@
  */
 
 import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
+import { ProjectListenerInvocation } from "../../Listener";
 import {
     PushTest,
     pushTest,
-    PushTestInvocation,
 } from "../../PushTest";
 
 // TODO once the ingester is defined elsewhere move this into a file and generate types
@@ -38,7 +38,7 @@ query DeployEnablementForRepo($owner: [String], $repo: [String]) {
  * @param {PushTestInvocation} pi
  * @constructor
  */
-export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", async (pi: PushTestInvocation) => {
+export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", async (pi: ProjectListenerInvocation) => {
       const enablement = await pi.context.graphClient.query<any, any>({
           query: DeployEnablementQuery,
           variables: {

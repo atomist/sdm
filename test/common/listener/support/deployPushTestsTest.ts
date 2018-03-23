@@ -17,7 +17,7 @@
 import { guid } from "@atomist/automation-client/internal/util/string";
 import "mocha";
 import * as assert from "power-assert";
-import { PushTestInvocation } from "../../../../src/common/listener/PushTest";
+import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
 import { IsDeployEnabled } from "../../../../src/common/listener/support/pushtest/deployPushTests";
 
 describe("deployPushTests", () => {
@@ -44,7 +44,7 @@ describe("deployPushTests", () => {
                      },
                  },
              };
-             const result = await IsDeployEnabled.test(pi as any as PushTestInvocation);
+             const result = await IsDeployEnabled.test(pi as any as ProjectListenerInvocation);
              assert(!result);
         });
 
@@ -72,7 +72,7 @@ describe("deployPushTests", () => {
                     },
                 },
             };
-            const result = await IsDeployEnabled.test(pi as any as PushTestInvocation);
+            const result = await IsDeployEnabled.test(pi as any as ProjectListenerInvocation);
             assert(result);
         });
 
@@ -100,7 +100,7 @@ describe("deployPushTests", () => {
                     },
                 },
             };
-            const result = await IsDeployEnabled.test(pi as any as PushTestInvocation);
+            const result = await IsDeployEnabled.test(pi as any as ProjectListenerInvocation);
             assert(!result);
         });
     });

@@ -4,12 +4,12 @@ import "mocha";
 import * as assert from "power-assert";
 import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
 import { AutofixRegistration, relevantCodeActions } from "../../../../../../src/common/delivery/code/codeActionRegistrations";
-import { PushTestInvocation } from "../../../../../../src/common/listener/PushTest";
+import { ProjectListenerInvocation } from "../../../../../../src/common/listener/Listener";
 
 describe("relevantCodeActions", () => {
 
     it("should match action without push test", async () => {
-        const pti: PushTestInvocation = null;
+        const pti: ProjectListenerInvocation = null;
         const autofixes: AutofixRegistration = {
             name: "License Fix",
             action: async p => {
@@ -22,9 +22,9 @@ describe("relevantCodeActions", () => {
     });
 
     it("should ignore irrelevant", async () => {
-        const pti: PushTestInvocation = {
+        const pti: ProjectListenerInvocation = {
             project: new InMemoryProject(),
-        } as any as PushTestInvocation;
+        } as any as ProjectListenerInvocation;
         const relevant = await relevantCodeActions([tslintFix], pti);
         assert.equal(relevant.length, 0);
     });

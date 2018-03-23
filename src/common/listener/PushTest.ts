@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { OnPushToAnyBranch } from "../../typings/types";
 import { ProjectListenerInvocation } from "./Listener";
 
 /**
@@ -27,7 +26,7 @@ export interface PushTest {
      */
     name: string;
 
-    test(p: PushTestInvocation): boolean | Promise<boolean>;
+    test(p: ProjectListenerInvocation): boolean | Promise<boolean>;
 }
 
 /**
@@ -36,14 +35,9 @@ export interface PushTest {
  * @param {(p: PushTestInvocation) => (boolean | Promise<boolean>)} test
  * @return {PushTest}
  */
-export function pushTest(name: string, test: (p: PushTestInvocation) => boolean | Promise<boolean>): PushTest {
+export function pushTest(name: string, test: (p: ProjectListenerInvocation) => boolean | Promise<boolean>): PushTest {
     return {
         name,
         test,
     };
-}
-
-export interface PushTestInvocation extends ProjectListenerInvocation {
-
-    readonly push: OnPushToAnyBranch.Push;
 }

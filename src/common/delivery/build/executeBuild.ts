@@ -18,7 +18,7 @@ import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ConditionalBuilder } from "../../../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { OnAnyPendingStatus } from "../../../typings/types";
-import { PushTestInvocation } from "../../listener/PushTest";
+import { ProjectListenerInvocation } from "../../listener/Listener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
@@ -39,7 +39,7 @@ export function executeBuild(projectLoader: ProjectLoader,
 
             await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
                 const push = status.commit.pushes[0];
-                const pti: PushTestInvocation = {
+                const pti: ProjectListenerInvocation = {
                     id,
                     project,
                     credentials,

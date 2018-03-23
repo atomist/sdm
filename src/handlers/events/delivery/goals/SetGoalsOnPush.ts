@@ -36,7 +36,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { PushTestInvocation } from "../../../../common/listener/PushTest";
+import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
@@ -82,7 +82,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                                            params: this,
                                            project: GitProject): Promise<HandlerResult> {
         const addressChannels = addressChannelsFor(push.repo, context);
-        const pi: PushTestInvocation = {
+        const pi: ProjectListenerInvocation = {
             id,
             project,
             credentials,

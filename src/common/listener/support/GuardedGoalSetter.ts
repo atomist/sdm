@@ -16,7 +16,8 @@
 
 import { Goals } from "../../delivery/goals/Goals";
 import { GoalSetter } from "../GoalSetter";
-import { PushTest, PushTestInvocation } from "../PushTest";
+import { ProjectListenerInvocation } from "../Listener";
+import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
 
 /**
@@ -38,7 +39,7 @@ export class GuardedGoalSetter implements GoalSetter {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async chooseGoals(pi: PushTestInvocation): Promise<Goals | undefined> {
+    public async chooseGoals(pi: ProjectListenerInvocation): Promise<Goals | undefined> {
         return this.goals;
     }
 }

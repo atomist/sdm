@@ -16,7 +16,8 @@
 
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { PushTest, PushTestInvocation } from "../../listener/PushTest";
+import { ProjectListenerInvocation } from "../../listener/Listener";
+import { PushTest } from "../../listener/PushTest";
 
 export interface CodeActionRegistration<A> {
 
@@ -47,7 +48,7 @@ export interface ReviewerRegistration extends CodeActionRegistration<ProjectRevi
  * @return {Promise<A[]>}
  */
 export function relevantCodeActions<A extends CodeActionRegistration<any>>(registrations: A[],
-                                                                           pti: PushTestInvocation): Promise<A[]> {
+                                                                           pti: ProjectListenerInvocation): Promise<A[]> {
     return Promise.all(
         registrations.map(async t => (!t.pushTest || await t.pushTest.test(pti)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));

@@ -22,7 +22,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
 import { StatusForExecuteGoal } from "../../../../typings/types";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
-import { PushTestInvocation } from "../../../listener/PushTest";
+import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
@@ -56,7 +56,7 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
                     readOnly: false,
                 },
                 async project => {
-                    const pti: PushTestInvocation = {
+                    const pti: ProjectListenerInvocation = {
                         id: editableRepoRef,
                         project,
                         credentials,

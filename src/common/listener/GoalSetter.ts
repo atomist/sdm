@@ -15,7 +15,8 @@
  */
 
 import { Goals } from "../delivery/goals/Goals";
-import { PushTest, PushTestInvocation } from "./PushTest";
+import { ProjectListenerInvocation } from "./Listener";
+import { PushTest } from "./PushTest";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics
@@ -38,9 +39,8 @@ export interface GoalSetter {
      * Determine the goals that apply to this commit if the PushTest passes,
      * or return undefined if this GoalSetter doesn't know what to do with it.
      * The latter is not an error.
-     * @param {PushTestInvocation} pci
      * @return {Promise<Goals>}
      */
-    chooseGoals(pci: PushTestInvocation): Promise<Goals | undefined>;
+    chooseGoals(pci: ProjectListenerInvocation): Promise<Goals | undefined>;
 
 }

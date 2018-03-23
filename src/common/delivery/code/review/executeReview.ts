@@ -25,7 +25,7 @@ import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { StatusForExecuteGoal } from "../../../../typings/types";
-import { PushTestInvocation } from "../../../listener/PushTest";
+import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
@@ -41,7 +41,7 @@ export function executeReview(reviewerRegistrations: ReviewerRegistration[]): Go
         try {
             if (reviewerRegistrations.length > 0) {
                 const project = await GitCommandGitProject.cloned(credentials, id);
-                const pti: PushTestInvocation = {
+                const pti: ProjectListenerInvocation = {
                     id,
                     project,
                     credentials,

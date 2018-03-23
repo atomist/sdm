@@ -16,7 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
-import { PushTest, pushTest, PushTestInvocation } from "../../PushTest";
+import { ProjectListenerInvocation } from "../../Listener";
+import { PushTest, pushTest } from "../../PushTest";
 
 /**
  * Return the opposite of this push test
@@ -69,6 +70,6 @@ export function memoize(pt: PushTest): PushTest {
     };
 }
 
-function ptCacheKey(pt: PushTest, pti: PushTestInvocation): string {
+function ptCacheKey(pt: PushTest, pti: ProjectListenerInvocation): string {
     return pti.push.id + "_" + pt.name;
 }

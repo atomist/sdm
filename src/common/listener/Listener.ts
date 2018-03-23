@@ -16,6 +16,7 @@
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Function1 } from "lodash";
+import { OnPushToAnyBranch } from "../../typings/types";
 import { SdmContext } from "../context/SdmContext";
 
 /**
@@ -46,6 +47,8 @@ export interface ProjectListenerInvocation extends ListenerInvocation {
      * We can also easily run shell commands against the project using its baseDir.
      */
     project: GitProject;
+
+    readonly push: OnPushToAnyBranch.Push;
 
 }
 

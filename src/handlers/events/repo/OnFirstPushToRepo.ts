@@ -83,6 +83,7 @@ export class OnFirstPushToRepo
             addressChannels,
             credentials,
             project,
+            push,
         };
         await Promise.all(params.actions
             .map(l => l(invocation)),
