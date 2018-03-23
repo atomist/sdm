@@ -24,7 +24,7 @@ export const GoalRootType = "SdmGoal";
 
 export type GoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
 
-export interface Goal extends GoalKey {
+export interface SdmGoal extends SdmGoalKey {
     sha: string;
     branch: string;
 
@@ -47,7 +47,7 @@ export interface Goal extends GoalKey {
 
     provenance: Provenance[];
 
-    preConditions: GoalKey[];
+    preConditions: SdmGoalKey[];
 
     externalKey?: string;
 }
@@ -63,13 +63,13 @@ export interface Provenance {
     channelId?: string;
 }
 
-export interface GoalKey {
+export interface SdmGoalKey {
     goalSet: string;
     environment: string;
     name: string;
 }
 
-export const GoalIngester: IngesterBuilder = ingester(GoalRootType)
+export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
     .withType(type("SdmRepository")
         .withStringField("name")
         .withStringField("owner")

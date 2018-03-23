@@ -2,7 +2,7 @@ import { AutomationContextAware, HandlerContext } from "@atomist/automation-clie
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { Goal as SDMGoal, GoalKey as SDMGoalKey, GoalRootType, GoalState } from "../../../ingesters/goal";
+import { SdmGoal,SdmGoalKey, GoalRootType, GoalState } from "../../../ingesters/goal";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function storeGoal(ctx: HandlerContext, parameters: {
@@ -22,7 +22,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         throw new Error("Please provide a sha in the GitHubRepoRef");
     }
 
-    const preConditions: SDMGoalKey[] = [];
+    const preConditions: SdmGoalKey[] = [];
 
     const description = goal.requestedDescription;
 
@@ -36,7 +36,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         })));
     }
 
-    const sdmGoal: SDMGoal = {
+    const sdmGoal: SdmGoal = {
         goalSet,
         name: goal.name,
         environment,

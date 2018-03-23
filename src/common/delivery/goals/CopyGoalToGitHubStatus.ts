@@ -8,7 +8,8 @@ import { OnAnyGoal, ScmProvider, StatusState } from "../../../typings/types";
 import { createStatus, State } from "../../../util/github/ghub";
 import { fetchProvider } from "../../../util/github/gitHubProvider";
 
-@EventHandler("yes", subscription({name: "OnAnyGoal"}))
+// when
+@EventHandler("Copy every SdmGoal to a GitHub Status", subscription({name: "OnAnyGoal"}))
 export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscription> {
 
     // TODO: @cd why doesn't this work, it doesn't register for the secret
