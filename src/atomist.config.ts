@@ -1,5 +1,4 @@
 
-
 import { Configuration } from "@atomist/automation-client/configuration";
 import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLocalArtifactStore";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
