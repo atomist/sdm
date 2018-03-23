@@ -77,10 +77,10 @@ import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler"
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
+import { ConditionalBuilder } from "../spi/build/Builder";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { ConditionalBuilder } from "../spi/build/Builder";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

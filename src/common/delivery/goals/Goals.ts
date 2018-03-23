@@ -26,7 +26,7 @@ export class Goals {
                     goal,
                     state: hasPreconditions(goal) ? "planned" : "requested",
                     id,
-                    providerId
+                    providerId,
                 })),
         ]);
     }

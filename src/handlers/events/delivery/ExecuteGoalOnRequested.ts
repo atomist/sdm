@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-import { EventFired, failure, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success, } from "@atomist/automation-client";
+import { EventFired, failure, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import * as stringify from "json-stringify-safe";
+import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, GoalExecutor, } from "../../../common/delivery/goals/goalExecution";
-import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState, } from "../../../typings/types";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { GoalState } from "../../../ingesters/goal";
+import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
-import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
-import { GoalState } from "../../../ingesters/goal";
-import * as stringify from "json-stringify-safe";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -117,7 +117,7 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
         targetUrl: sdmGoal.url, // not handling approval weirdness
         context: sdmGoal.externalKey,
         description: sdmGoal.description,
-    }
+    };
 }
 
 async function fetchCommitForSdmGoal(ctx: HandlerContext, goal: SdmGoalFields.Fragment): Promise<CommitForSdmGoal.Commit> {

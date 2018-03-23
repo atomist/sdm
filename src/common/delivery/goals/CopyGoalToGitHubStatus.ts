@@ -3,10 +3,10 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import * as GoalEvent from "../../../ingesters/goal";
+import { GoalState } from "../../../ingesters/goal";
 import { OnAnyGoal, ScmProvider, StatusState } from "../../../typings/types";
 import { createStatus, State } from "../../../util/github/ghub";
 import { fetchProvider } from "../../../util/github/gitHubProvider";
-import { GoalState } from "../../../ingesters/goal";
 
 @EventHandler("yes", subscription({name: "OnAnyGoal"}))
 export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscription> {
