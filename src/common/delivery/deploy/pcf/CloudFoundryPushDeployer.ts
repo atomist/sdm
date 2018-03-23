@@ -62,7 +62,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
                         creds: ProjectOperationCredentials,
                         team: string): Promise<CloudFoundryDeployment[]> {
         logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, {...cfi, password: "REDACTED"});
-        if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
+        if (!cfi.api || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
         const sources = await this.getProject(creds, da.id);
@@ -80,7 +80,7 @@ export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryIn
     public async findDeployments(da: DeployableArtifact,
                                  cfi: CloudFoundryInfo,
                                  creds: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
-        if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
+        if (!cfi.api || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
         const sources = await this.getProject(creds, da.id);

@@ -27,7 +27,8 @@ export class CloudFoundryPusher {
                       log: ProgressLog): Promise<CloudFoundryDeployment> {
         const space = await this.api.getSpaceByName(spaceName);
         const spaceGuid = space.metadata.guid;
-        const app = await this.api.createApp(spaceGuid, manifestApp.name);
+        const existingApp = await this.api.getApp(spaceGuid, manifestApp.name);
+        const app = existingApp ? existingApp : await this.api.createApp(spaceGuid, manifestApp);
         const appGuid = app.metadata.guid;
         const appNameForLog = `${spaceName}:${manifestApp.name}`;
         log.write(`Uploading package for ${appNameForLog}...`);
