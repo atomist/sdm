@@ -41,5 +41,5 @@ export function disregardApproval(url: string): string {
     if (!url) {
         return url;
     }
-    return url.replace( new RegExp("[\?&]?" + ApprovalGateParam + "$"), "")
+    return url.replace( new RegExp("[\?&]?" + ApprovalGateParam + "$"), "");
 }

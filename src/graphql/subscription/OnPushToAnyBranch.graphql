@@ -25,7 +25,7 @@ subscription OnPushToAnyBranch {
       }
     }
     repo {
-     ...CoreRepoFieldsAndChannels
+      ...CoreRepoFieldsAndChannels
     }
     commits {
       sha

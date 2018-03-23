@@ -1,9 +1,7 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { ScmProvider } from "../../typings/types";
 
-
 export const GitHubDotComProviderId = "zjlmxjzwhurspem";
-
 
 export async function fetchProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
 

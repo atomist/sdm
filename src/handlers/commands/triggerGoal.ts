@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, } from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Goal } from "../../common/delivery/goals/Goal";
-import { RepoBranchTips } from "../../typings/types";
 import { fetchGoalsForCommit } from "../../common/delivery/goals/fetchGoalsOnCommit";
+import { Goal } from "../../common/delivery/goals/Goal";
 import { storeGoal } from "../../common/delivery/goals/storeGoals";
+import { RepoBranchTips } from "../../typings/types";
 
 @Parameters()
 export class RetryGoalParameters {
@@ -45,7 +45,7 @@ export class RetryGoalParameters {
     public branch: string;
 
     @Parameter({required: false})
-    public goalSet: string
+    public goalSet: string;
 }
 
 export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
@@ -59,7 +59,7 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
         const thisGoal = goals.find(g => g.name === goal.name);
         if (!thisGoal) {
             ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
-                sha.substr(0,6)}. To create it anyway, pass goalSet=<name of goal set> to the trigger command`);
+                sha.substr(0, 6)}. To create it anyway, pass goalSet=<name of goal set> to the trigger command`);
             return { code: 0 };
         }
 
@@ -70,7 +70,6 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
 export function retryCommandNameFor(deployName: string) {
     return "Retry" + deployName;
 }
-
 
 async function fetchDefaultBranchTip(ctx: HandlerContext, id: GitHubRepoRef, providerId: string) {
     const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(

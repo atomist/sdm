@@ -53,6 +53,7 @@ import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/co
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
+import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -65,8 +66,8 @@ import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
-import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { ConditionalBuilder, ExecuteGoalOnPendingStatus } from "../handlers/events/delivery/ExecuteGoalOnPendingStatus";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -79,7 +80,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { PushRule } from "./ruleDsl";
-import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -456,5 +456,5 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 }
 
 function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
-    sdm.addSupportingEvents(CopyGoalToGitHubStatus)
+    sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }

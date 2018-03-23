@@ -1,12 +1,11 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
+import * as GoalEvent from "../../../ingesters/goal";
 import { OnAnyGoal, ScmProvider } from "../../../typings/types";
 import { createStatus, State } from "../../../util/github/ghub";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import * as GoalEvent from "../../../ingesters/goal";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { fetchProvider } from "../../../util/github/gitHubProvider";
-
 
 @EventHandler("yes", subscription({name: "OnAnyGoal"}))
 export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscription> {
@@ -27,7 +26,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
             repo: goal.repo.name,
             sha: goal.sha,
             rawApiBase: provider.apiUrl,
-            branch: goal.branch
+            branch: goal.branch,
         });
 
         let githubState: State;
@@ -54,7 +53,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
             context: goal.externalKey,
             description: goal.description,
             target_url: url,
-            state: githubState
+            state: githubState,
         });
         return Success;
     }

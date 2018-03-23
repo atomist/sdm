@@ -18,10 +18,10 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLocalArtifactStore";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
+import { GoalIngester } from "./ingesters/goal";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
 import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingSoftwareDeliveryMachine";
 import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixSoftwareDeliveryMachine";
-import { GoalIngester } from "./ingesters/goal";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
 

@@ -1,9 +1,9 @@
-import { Goal as SDMGoal, GoalKey as SDMGoalKey, GoalRootType, GoalState } from "../../../ingesters/goal";
-import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
-import { Goal, hasPreconditions, } from "./Goal";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
+import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
+import { Goal as SDMGoal, GoalKey as SDMGoalKey, GoalRootType, GoalState } from "../../../ingesters/goal";
+import { Goal, hasPreconditions } from "./Goal";
 
 export function storeGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
@@ -13,12 +13,12 @@ export function storeGoal(ctx: HandlerContext, parameters: {
     providerId: string
     url?: string,
 }): Promise<any> {
-    let {goalSet, goal, state, id, providerId, url} = parameters;
+    const {goalSet, goal, state, id, providerId, url} = parameters;
 
-    if(id.branch === null) {
+    if (id.branch === null) {
         throw new Error("Please provide a branch in the GitHubRepoRef");
     }
-    if(id.sha === null) {
+    if (id.sha === null) {
         throw new Error("Please provide a sha in the GitHubRepoRef");
     }
 
@@ -47,7 +47,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         repo: {
             name: id.repo,
             owner: id.owner,
-            providerId
+            providerId,
         },
 
         state,

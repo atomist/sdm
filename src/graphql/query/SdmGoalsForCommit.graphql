@@ -1,18 +1,24 @@
-query SdmGoalsForCommit($sha: String!, $branch: String, $repo: String!, $owner: String!, $providerId: String!) {
-    SdmGoal(sha: [$sha], branch: [$branch]) {
-        goalSet
-        environment
-        name
-        sha
-        branch
-        state
-        description
-        url
-        externalKey
-        repo(name: [$repo], owner: [$owner], providerId: [$providerId]) @required {
-            name
-            owner
-            providerId
-        }
+query SdmGoalsForCommit(
+  $sha: String!
+  $branch: String
+  $repo: String!
+  $owner: String!
+  $providerId: String!
+) {
+  SdmGoal(sha: [$sha], branch: [$branch]) {
+    goalSet
+    environment
+    name
+    sha
+    branch
+    state
+    description
+    url
+    externalKey
+    repo(name: [$repo], owner: [$owner], providerId: [$providerId]) @required {
+      name
+      owner
+      providerId
     }
+  }
 }

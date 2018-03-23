@@ -119,7 +119,7 @@ export class GoalWithPrecondition extends Goal {
 }
 
 export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {
-    return !!(goal as GoalWithPrecondition).dependsOn
+    return !!(goal as GoalWithPrecondition).dependsOn;
 }
 
 function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {

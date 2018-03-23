@@ -1,16 +1,16 @@
 fragment SdmGoalFields on SdmGoal {
-    goalSet
-    environment
+  goalSet
+  environment
+  name
+  sha
+  branch
+  state
+  description
+  url
+  externalKey
+  repo {
     name
-    sha
-    branch
-    state
-    description
-    url
-    externalKey
-    repo {
-        name
-        owner
-        providerId
-    }
+    owner
+    providerId
+  }
 }

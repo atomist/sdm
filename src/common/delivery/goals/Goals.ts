@@ -1,7 +1,7 @@
-import { HandlerContext, } from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { Goal, } from "./Goal";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { Goal, hasPreconditions } from "./Goal";
 import { storeGoal } from "./storeGoals";
 
 /**
@@ -21,7 +21,7 @@ export class Goals {
                            providerId: string): Promise<any> {
 
         return Promise.all([
-            ...this.goals.map(goal => storeGoal(context, {goalSet: this.name, goal, state: "planned", id, providerId})),
+            ...this.goals.map(goal => storeGoal(context, {goalSet: this.name, goal, state: hasPreconditions(goal) ? "planned": "requested", id, providerId})),
         ]);
     }
 }
