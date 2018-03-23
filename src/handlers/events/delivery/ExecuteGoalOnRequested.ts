@@ -46,7 +46,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
                 private handleGoalUpdates: boolean = false) {
         this.subscriptionName = implementationName + "OnRequested";
         this.subscription =
-            subscription({name: "OnRequestedSdmGoal", operationName: this.subscriptionName});
+            subscription({name: "OnRequestedSdmGoal", operationName: this.subscriptionName, variables: {goalName: goal.name}});
         this.name = implementationName + "OnRequestedSdmGoal";
         this.description = `Execute ${goal.name} when requested`;
     }
@@ -60,9 +60,9 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
         const status: StatusForExecuteGoal.Fragment = convertForNow(goal, commit);
 
-        // TODO: put this in a subscription parameter. It should work, in this architecture
+        // this should not happen but it could
         if (status.context !== params.goal.context) {
-            logger.debug(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
+            logger.error(`Received pending: ${status.context}. Not triggering ${params.goal.context}`);
             return Success;
         }
 

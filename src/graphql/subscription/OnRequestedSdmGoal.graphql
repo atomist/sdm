@@ -1,5 +1,5 @@
-subscription OnRequestedSdmGoal {
-  SdmGoal(state: ["requested"]) {
+subscription OnRequestedSdmGoal($goalName: String!) {
+  SdmGoal(state: ["requested"], name: [$goalName]) {
     ...SdmGoalFields
   }
 }
