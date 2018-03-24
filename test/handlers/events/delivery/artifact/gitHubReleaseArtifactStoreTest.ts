@@ -46,7 +46,7 @@ describe("GitHubReleaseArtifactStore", () => {
                     runCommand(`unzip ${filename}`, { cwd })
                         .then(done());
                 });
-        }).timeout(55000);
+        }).timeout(56000);
 
         it("should checkout existing file and parse AppInfo", done => {
             const ghras = new GitHubReleaseArtifactStore();
