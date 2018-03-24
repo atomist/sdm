@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
-import {
-    asSpawnCommand, ChildProcessResult, spawnAndWatch, SpawnCommand,
-    stringifySpawnCommand,
-} from "../../../../../util/misc/spawned";
+import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { LogFactory } from "../../../../../spi/log/ProgressLog";
+import { asSpawnCommand, SpawnCommand, } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
+import { SpawnBuilder } from "../SpawnBuilder";
+import { Project } from "@atomist/automation-client/project/Project";
 
 export const Install: SpawnCommand = asSpawnCommand("npm install");
 
@@ -41,59 +37,25 @@ export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile");
  * vulnerability in builds of unrelated tenants getting at each others
  * artifacts.
  */
-export class NpmBuilder extends LocalBuilder implements LogInterpretation {
-
-    private readonly buildCommands: SpawnCommand[];
+export class NpmBuilder extends SpawnBuilder {
 
     constructor(artifactStore: ArtifactStore,
                 logFactory: LogFactory,
                 projectLoader: ProjectLoader,
                 buildCommand1: SpawnCommand = RunBuild,
                 ...additionalCommands: SpawnCommand[]) {
-        super("NpmBuilder", artifactStore, logFactory, projectLoader);
-        this.buildCommands = [Install, buildCommand1].concat(additionalCommands);
+        super("NpmBuilder", artifactStore, logFactory, projectLoader,
+            (code, signal, l) => {
+                return l.log.startsWith("[error]") || l.log.includes("ERR!");
+            },
+            [Install, buildCommand1].concat(additionalCommands));
     }
 
-    protected async startBuild(credentials: ProjectOperationCredentials,
-                               id: RemoteRepoRef,
-                               team: string,
-                               log: ProgressLog): Promise<LocalBuildInProgress> {
-        logger.info("NpmBuilder.startBuild on %s, buildCommands=[%j]", id.url, this.buildCommands);
-        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async p => {
-            // Find the artifact info from package.json
-            const packageJson = await p.findFile("package.json");
-            const content = await packageJson.getContent();
-            const pkg = JSON.parse(content);
-            const appId: AppInfo = {id, name: pkg.name, version: pkg.version};
-            const opts = {
-                cwd: p.baseDir,
-            };
-
-            try {
-                const errorFinder = (code, signal, l) => {
-                    return l.log.startsWith("[error]") || l.log.includes("ERR!");
-                };
-                let buildResult: ChildProcessResult;
-                for (const buildCommand of this.buildCommands) {
-                    buildResult = await spawnAndWatch(buildCommand, opts, log,
-                        {
-                            errorFinder,
-                            stripAnsi: true,
-                        });
-                    if (buildResult.error) {
-                        logger.info("Stopping build commands due to error on %s", stringifySpawnCommand(buildCommand));
-                        break;
-                    }
-                }
-                const b = new NpmBuild(appId, id, buildResult, team, log.url);
-                logger.info("Build RETURN: %j", b.buildResultAchieved);
-                return b;
-            } catch {
-                const b = new NpmBuild(appId, id, ({error: true, code: 1}), team, log.url);
-                logger.info("Build FAILURE: %j", b.buildResultAchieved);
-                return b;
-            }
-        });
+    protected async projectToAppInfo(p: Project): Promise<AppInfo> {
+        const packageJson = await p.findFile("package.json");
+        const content = await packageJson.getContent();
+        const pkg = JSON.parse(content);
+        return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
     }
 
     public logInterpreter: LogInterpreter = log => {
@@ -106,21 +68,5 @@ export class NpmBuilder extends LocalBuilder implements LogInterpretation {
             includeFullLog: true,
         };
     }
-
-}
-
-class NpmBuild implements LocalBuildInProgress {
-
-    public readonly buildResult: Promise<ChildProcessResult>;
-
-    constructor(public appInfo: AppInfo,
-                public repoRef: RemoteRepoRef,
-                public buildResultAchieved: ChildProcessResult,
-                public team: string,
-                public url: string) {
-        this.buildResult = Promise.resolve(buildResultAchieved);
-    }
-
-    public deploymentUnitFile: string;
 
 }
