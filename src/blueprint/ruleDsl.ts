@@ -17,30 +17,29 @@
 import { Goals } from "../common/delivery/goals/Goals";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
-import { GuardedGoalSetter } from "../common/listener/support/GuardedGoalSetter";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
-import { allSatisfied, memoize } from "../common/listener/support/pushtest/pushTestUtils";
 import { Builder } from "../spi/build/Builder";
+import { PushRule } from "./support/PushRule";
 
-export class PushRule {
-
-    public goalSetter: GoalSetter;
+export class GoalSetterPushRule extends PushRule<Goals> {
 
     public builder: Builder;
 
     public readonly pushTest: PushTest;
 
-    constructor(private guard1: PushTest, private guards: PushTest[], public reason?: string) {
-        this.pushTest = allSatisfied(memoize(guard1), ...guards.map(memoize));
+    constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
+        super(guard1, guards, reason);
+    }
+
+    get goalSetter(): GoalSetter {
+        return this.value;
     }
 
     public setGoals(goals: Goals): this {
-        this.verify();
-        this.goalSetter = new GuardedGoalSetter(goals, this.guard1, ...this.guards);
-        return this;
+        return this.set(goals);
     }
 
-    public buildWith(builder: Builder): PushRule {
+    public buildWith(builder: Builder): GoalSetterPushRule {
         this.verify();
         this.builder = builder;
         return this;
@@ -55,19 +54,14 @@ export class PushRule {
 
 }
 
-export function isPushRule(a: any): a is PushRule {
-    const maybePushRule = a as PushRule;
-    return !!maybePushRule.pushTest && !!maybePushRule.verify;
-}
-
 /**
  * Interim DSL stage
  */
 export class PushRuleExplanation {
 
-    constructor(private pushRule: PushRule) {}
+    constructor(private pushRule: GoalSetterPushRule) {}
 
-    public itMeans(reason: string): PushRule {
+    public itMeans(reason: string): GoalSetterPushRule {
         this.pushRule.reason = reason;
         return this.pushRule.verify();
     }
@@ -79,7 +73,7 @@ export class PushRuleExplanation {
  * @param {PushTest} guards
  */
 export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation {
-    return new PushRuleExplanation(new PushRule(guard1, guards));
+    return new PushRuleExplanation(new GoalSetterPushRule(guard1, guards));
 }
 
-export const onAnyPush: PushRule = new PushRule(AnyPush, [], "On any push");
+export const onAnyPush: GoalSetterPushRule = new GoalSetterPushRule(AnyPush, [], "On any push");

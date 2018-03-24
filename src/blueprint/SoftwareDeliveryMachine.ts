@@ -80,7 +80,7 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { ConditionalBuilder } from "../spi/build/Builder";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { PushRule } from "./ruleDsl";
+import { GoalSetterPushRule } from "./ruleDsl";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -443,7 +443,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     constructor(public readonly opts: SoftwareDeliveryMachineOptions,
-                ...pushRules: PushRule[]) {
+                ...pushRules: GoalSetterPushRule[]) {
         this.goalSetters = pushRules
             .filter(rule => !!rule.goalSetter)
             .map(rule => rule.goalSetter);

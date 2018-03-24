@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-import { Goals } from "../../delivery/goals/Goals";
-import { GoalSetter } from "../GoalSetter";
 import { ProjectListenerInvocation } from "../Listener";
+import { PushChoice } from "../PushChoice";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
 
 /**
- * GoalSetter wholly driven by one or more PushTest instances.
- * Always returns the same goals
+ * PushChoice implementation wholly driven by one or more PushTest instances.
+ * Always returns the same value
  */
-export class GuardedGoalSetter implements GoalSetter {
+export class GuardedPushChoice<V> implements PushChoice<V> {
 
     public guard: PushTest;
 
     /**
-     * Create a GoalSetter that will always return the same goals if the guards
+     * Create a PushChoice that will always return the same goals if the guards
      * match
-     * @param {Goals} goals to return if the guards return OK
      * @param {PushTest} guard1
      * @param {PushTest} guards
      */
-    constructor(private goals: Goals, guard1: PushTest, ...guards: PushTest[]) {
+    constructor(private v: V, guard1: PushTest, ...guards: PushTest[]) {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async chooseGoals(pi: ProjectListenerInvocation): Promise<Goals | undefined> {
-        return this.goals;
+    public async choose(pi: ProjectListenerInvocation): Promise<V | undefined> {
+        return this.v;
     }
 }

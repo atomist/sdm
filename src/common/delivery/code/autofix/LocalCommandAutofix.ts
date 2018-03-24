@@ -15,7 +15,8 @@
  */
 
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { isPushRule, PushRule } from "../../../../blueprint/ruleDsl";
+import { GoalSetterPushRule } from "../../../../blueprint/ruleDsl";
+import { isPushRule } from "../../../../blueprint/support/PushRule";
 import { localCommandsEditor } from "../../../../handlers/commands/editors/editorWrappers";
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../listener/PushTest";
@@ -34,7 +35,7 @@ export class LocalCommandAutofix implements AutofixRegistration {
     public readonly pushTest: PushTest;
 
     constructor(public name: string,
-                pushSpecifier: PushTest | PushRule,
+                pushSpecifier: PushTest | GoalSetterPushRule,
                 command1: SpawnCommand,
                 ...additionalCommands: SpawnCommand[]) {
         this.pushTest = isPushRule(pushSpecifier) ? pushSpecifier.pushTest : pushSpecifier;

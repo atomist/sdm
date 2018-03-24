@@ -15,8 +15,7 @@
  */
 
 import { Goals } from "../delivery/goals/Goals";
-import { ProjectListenerInvocation } from "./Listener";
-import { PushTest } from "./PushTest";
+import { PushChoice } from "./PushChoice";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics
@@ -26,21 +25,4 @@ import { PushTest } from "./PushTest";
  * @returns Goals or undefined if it doesn't like the push or
  * understand the repo
  */
-export interface GoalSetter {
-
-    /**
-     * Test the push as to whether we should even think about creating goals for it.
-     * If we return false here, our chooseGoals method will never be
-     * called for this push
-     */
-    readonly guard?: PushTest;
-
-    /**
-     * Determine the goals that apply to this commit if the PushTest passes,
-     * or return undefined if this GoalSetter doesn't know what to do with it.
-     * The latter is not an error.
-     * @return {Promise<Goals>}
-     */
-    chooseGoals(pci: ProjectListenerInvocation): Promise<Goals | undefined>;
-
-}
+export type GoalSetter = PushChoice<Goals>;
