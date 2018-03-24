@@ -18,6 +18,7 @@ import { buildThis, defaultBuilder, onAnyPush, whenPushSatisfies } from "../../b
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/NpmBuilder";
+import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
@@ -48,7 +49,6 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 

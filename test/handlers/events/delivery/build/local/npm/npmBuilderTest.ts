@@ -22,12 +22,12 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { LocalBuildInProgress } from "../../../../../../../src/common/delivery/build/local/LocalBuilder";
 import {
     Install, npmBuilderOptions, RunBuild,
-    RunCompile
+    RunCompile,
 } from "../../../../../../../src/common/delivery/build/local/npm/NpmBuilder";
+import { SpawnBuilder } from "../../../../../../../src/common/delivery/build/local/SpawnBuilder";
 import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
 import { CloningProjectLoader } from "../../../../../../../src/common/repo/cloningProjectLoader";
 import { SpawnCommand } from "../../../../../../../src/util/misc/spawned";
-import { SpawnBuilder } from "../../../../../../../src/common/delivery/build/local/SpawnBuilder";
 
 class TestableNpmBuilder extends SpawnBuilder {
 

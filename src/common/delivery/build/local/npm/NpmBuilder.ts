@@ -53,5 +53,4 @@ export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions
             return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
         },
     };
-};
-
+}
