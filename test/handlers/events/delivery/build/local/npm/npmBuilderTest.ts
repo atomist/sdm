@@ -46,13 +46,14 @@ class TestableNpmBuilder extends NpmBuilder {
 
 describe("NpmBuilder", () => {
 
-    it("should compile", async () => {
+    // Not necessary when we're dog fooding...just slows down the test suite
+    it.skip("should compile", async () => {
         const b = new TestableNpmBuilder(RunCompile,
             success => assert(success, "Build should have succeeded"));
         await b.initiateBuild({token: process.env.GITHUB_TOKEN},
             new GitHubRepoRef("spring-team", "github-sdm"),
             async () => true, "T123", {branch: "master"});
-    }).timeout(300000);
+    }); // .timeout(300000);
 
     // This is slow and unnecessary, as dog fooding usage tests this
     it.skip("should test", async () => {
