@@ -27,6 +27,7 @@ export type ErrorFinder = (code: number, signal: string, log: ProgressLog) => bo
 export interface ChildProcessResult {
     error: boolean;
     code: number;
+    message?: string;
 }
 
 export interface SpawnWatchOptions {

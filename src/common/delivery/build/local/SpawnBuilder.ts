@@ -81,24 +81,38 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
             };
 
             try {
-                let buildResult: ChildProcessResult;
+                let buildResult: Promise<ChildProcessResult> = Promise.resolve({error: false, code: 0});
                 for (const buildCommand of this.buildCommands) {
-                    buildResult = await spawnAndWatch(buildCommand, opts, log,
+                    const latest: Promise<ChildProcessResult> = spawnAndWatch(buildCommand, opts, log,
                         {
                             errorFinder,
                             stripAnsi: true,
+                        })
+                        .then(br => {
+                            if (br.error) {
+                                const message = "Stopping build commands due to error on " + stringifySpawnCommand(buildCommand);
+                                logger.info(message);
+                                return { error: true, code: br.code, message};
+                            }
+                            return br;
                         });
-                    if (buildResult.error) {
-                        logger.info("Stopping build commands due to error on %s", stringifySpawnCommand(buildCommand));
-                        break;
-                    }
+                    buildResult = buildResult
+                        .then(br => {
+                            if (br.error) {
+                                return br;
+                            }
+                            return latest;
+                        });
                 }
                 const b = new SpawnedBuild(appId, id, buildResult, team, log.url, await this.deploymentUnitFor(p, appId));
-                logger.info("Build RETURN: %j", b.buildResultAchieved);
+                logger.info("Build RETURN: %j", b.buildResult);
                 return b;
             } catch {
-                const b = new SpawnedBuild(appId, id, ({error: true, code: 1}), team, log.url, undefined);
-                logger.info("Build FAILURE: %j", b.buildResultAchieved);
+                const b = new SpawnedBuild(appId, id, Promise.resolve({
+                    error: true,
+                    code: 1
+                }), team, log.url, undefined);
+                logger.info("Build FAILURE: %j", b.buildResult);
                 return b;
             }
         });
@@ -110,15 +124,12 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
 
 class SpawnedBuild implements LocalBuildInProgress {
 
-    public readonly buildResult: Promise<ChildProcessResult>;
-
     constructor(public appInfo: AppInfo,
                 public repoRef: RemoteRepoRef,
-                public buildResultAchieved: ChildProcessResult,
+                public buildResult: Promise<ChildProcessResult>,
                 public team: string,
                 public url: string,
                 public deploymentUnitFile: string) {
-        this.buildResult = Promise.resolve(buildResultAchieved);
     }
 
 }
