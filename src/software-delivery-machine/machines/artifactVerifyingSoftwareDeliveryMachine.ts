@@ -15,7 +15,7 @@
  */
 
 import * as fs from "fs";
-import { whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { buildThis, whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { ArtifactGoal, JustBuildGoal } from "../../common/delivery/goals/common/commonGoals";
@@ -41,16 +41,19 @@ export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactV
     const sdm = new SoftwareDeliveryMachine(options,
         whenPushSatisfies(IsMaven)
             .itMeans("Push to Maven repo")
-            .setGoals(new Goals("Verify artifact", JustBuildGoal, ArtifactGoal))
-            .buildWith(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)),
-    );
-    sdm.addArtifactListeners(async ai => {
-        // Could invoke a security scanning tool etc.
-        const stat = fs.statSync(`${ai.deployableArtifact.cwd}/${ai.deployableArtifact.filename}`);
-        if (stat.size > 1000) {
-            return ai.addressChannels(`Artifact \`${ai.deployableArtifact.filename}\` is very big at ${stat.size} :weight_lifter:`);
-        }
-    });
+            .setGoals(new Goals("Verify artifact", JustBuildGoal, ArtifactGoal)),
+            );
+    sdm.addBuilders(
+        buildThis(IsMaven)
+            .itMeans("Maven")
+            .set(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)))
+        .addArtifactListeners(async ai => {
+            // Could invoke a security scanning tool etc.
+            const stat = fs.statSync(`${ai.deployableArtifact.cwd}/${ai.deployableArtifact.filename}`);
+            if (stat.size > 1000) {
+                return ai.addressChannels(`Artifact \`${ai.deployableArtifact.filename}\` is very big at ${stat.size} :weight_lifter:`);
+            }
+        });
 
     addDemoEditors(sdm);
     return sdm;

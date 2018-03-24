@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { buildThis, defaultBuilder, onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { NpmBuilder } from "../../common/delivery/build/local/npm/NpmBuilder";
@@ -72,17 +72,21 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode)
             .itMeans("Build with npm")
-            .setGoals(NpmBuildGoals)
-            .buildWith(new NpmBuilder(options.artifactStore,
-                createEphemeralProgressLogWithConsole, options.projectLoader)),
-        onAnyPush.buildWith(new MavenBuilder(options.artifactStore,
-            createEphemeralProgressLog, options.projectLoader)),
+            .setGoals(NpmBuildGoals),
     );
 
-    sdm.addDeployers(
-        LocalExecutableJarDeploy,
-        CloudFoundryProductionDeploy,
-    )
+    sdm.addBuilders(
+        buildThis(IsNode)
+            .itMeans("Build with npm")
+            .set(new NpmBuilder(options.artifactStore,
+                createEphemeralProgressLogWithConsole, options.projectLoader)),
+        defaultBuilder
+            .set(new MavenBuilder(options.artifactStore,
+                createEphemeralProgressLog, options.projectLoader)))
+        .addDeployers(
+            LocalExecutableJarDeploy,
+            CloudFoundryProductionDeploy,
+        )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
             () => addCloudFoundryManifest,

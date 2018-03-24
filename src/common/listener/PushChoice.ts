@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { Goals } from "../delivery/goals/Goals";
-import { ProjectListenerInvocation } from "./Listener";
 import { PushTest } from "./PushTest";
 
 /**
@@ -33,11 +31,8 @@ export interface PushChoice<V> {
     readonly guard?: PushTest;
 
     /**
-     * Determine the value that applies to this commit if the PushTest passes,
-     * or return undefined if this GoalSetter doesn't know what to do with it.
-     * The latter is not an error.
-     * @return {Promise<Goals>}
+     * Determine the value that applies to this commit if the PushTest passes
      */
-    choose(pci: ProjectListenerInvocation): Promise<V | undefined>;
+    readonly value: V;
 
 }

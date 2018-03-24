@@ -15,56 +15,21 @@
  */
 
 import { Goals } from "../common/delivery/goals/Goals";
-import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
+import { PushRule, PushRuleExplanation } from "./support/PushRule";
 import { Builder } from "../spi/build/Builder";
-import { PushRule } from "./support/PushRule";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 
-    public builder: Builder;
-
-    public readonly pushTest: PushTest;
-
     constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
         super(guard1, guards, reason);
-    }
-
-    get goalSetter(): GoalSetter {
-        return this.value;
     }
 
     public setGoals(goals: Goals): this {
         return this.set(goals);
     }
 
-    public buildWith(builder: Builder): GoalSetterPushRule {
-        this.verify();
-        this.builder = builder;
-        return this;
-    }
-
-    public verify(): this {
-        if (!this.reason) {
-            throw new Error("Incomplete PushTest: Required reason");
-        }
-        return this;
-    }
-
-}
-
-/**
- * Interim DSL stage
- */
-export class PushRuleExplanation {
-
-    constructor(private pushRule: GoalSetterPushRule) {}
-
-    public itMeans(reason: string): GoalSetterPushRule {
-        this.pushRule.reason = reason;
-        return this.pushRule.verify();
-    }
 }
 
 /**
@@ -72,8 +37,14 @@ export class PushRuleExplanation {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation {
+export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<GoalSetterPushRule> {
     return new PushRuleExplanation(new GoalSetterPushRule(guard1, guards));
 }
 
-export const onAnyPush: GoalSetterPushRule = new GoalSetterPushRule(AnyPush, [], "On any push");
+export function buildThis(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<PushRule<Builder>> {
+    return new PushRuleExplanation(new PushRule(guard1, guards));
+}
+
+export const onAnyPush = new GoalSetterPushRule(AnyPush, [], "On any push");
+
+export const defaultBuilder = new PushRule<Builder>(AnyPush, [], "On any push");

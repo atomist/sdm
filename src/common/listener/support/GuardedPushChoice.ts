@@ -33,11 +33,8 @@ export class GuardedPushChoice<V> implements PushChoice<V> {
      * @param {PushTest} guard1
      * @param {PushTest} guards
      */
-    constructor(private v: V, guard1: PushTest, ...guards: PushTest[]) {
+    constructor(public readonly value: V, guard1: PushTest, ...guards: PushTest[]) {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async choose(pi: ProjectListenerInvocation): Promise<V | undefined> {
-        return this.v;
-    }
 }

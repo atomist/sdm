@@ -77,10 +77,12 @@ import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler"
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
-import { ConditionalBuilder } from "../spi/build/Builder";
+import { Builder } from "../spi/build/Builder";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { GoalSetterPushRule } from "./ruleDsl";
+import { PushRule } from "./support/PushRule";
+import { PushChoice } from "../common/listener/PushChoice";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -124,7 +126,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly goalSetters: GoalSetter[] = [];
 
-    private readonly conditionalBuilders: ConditionalBuilder[] = [];
+    private conditionalBuilders: PushChoice<Builder>[] = [];
 
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
@@ -220,7 +222,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     private get builder(): FunctionalUnit {
-        const name = this.conditionalBuilders.map(b => b.builder.name).join("And");
+        const name = this.conditionalBuilders.map(b => b.value.name).join("And");
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
@@ -437,6 +439,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
+    public addBuilders(...builders: Array<PushRule<Builder>>): this {
+        this.conditionalBuilders = this.conditionalBuilders.concat(...builders.map(b => b.value));
+        return this;
+    }
+
     public addDeployers(...deployers: FunctionalUnit[]): this {
         this.deployers = this.deployers.concat(deployers);
         return this;
@@ -445,12 +452,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     constructor(public readonly opts: SoftwareDeliveryMachineOptions,
                 ...pushRules: GoalSetterPushRule[]) {
         this.goalSetters = pushRules
-            .filter(rule => !!rule.goalSetter)
-            .map(rule => rule.goalSetter);
-        this.conditionalBuilders = pushRules
-            .filter(rule => !!rule.builder)
-            .map(rule => ({guard: rule.pushTest, builder: rule.builder}));
-
+            .filter(rule => !!rule.value)
+            .map(rule => rule.value);
         addGitHubSupport(this);
     }
 

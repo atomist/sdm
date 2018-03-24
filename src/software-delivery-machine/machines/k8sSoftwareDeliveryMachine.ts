@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { defaultBuilder, onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
@@ -60,11 +60,11 @@ export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOption
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
-        onAnyPush.buildWith(new K8sAutomationBuilder()),
     );
-    sdm.addDeployers(
-        K8sStagingDeployOnSuccessStatus,
-        K8sProductionDeployOnSuccessStatus)
+    sdm.addBuilders(defaultBuilder.set(new K8sAutomationBuilder()))
+        .addDeployers(
+            K8sStagingDeployOnSuccessStatus,
+            K8sProductionDeployOnSuccessStatus)
         .addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(
             () => addK8sSpec,

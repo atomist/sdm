@@ -38,13 +38,3 @@ export interface Builder {
                   push: PushThatTriggersBuild): Promise<any>;
 
 }
-
-/**
- * Implemented by classes that can choose a builder based on project content etc.
- */
-export interface ConditionalBuilder {
-
-    guard: PushTest;
-
-    builder: Builder;
-}

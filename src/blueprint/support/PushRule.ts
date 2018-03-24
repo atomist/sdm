@@ -51,3 +51,16 @@ export function isPushRule(a: any): a is PushRule {
     const maybePushRule = a as PushRule;
     return !!maybePushRule.pushTest && !!maybePushRule.verify;
 }
+
+/**
+ * Interim DSL stage
+ */
+export class PushRuleExplanation<N extends PushRule<any>> {
+
+    constructor(private pushRule: N) {}
+
+    public itMeans(reason: string): N {
+        this.pushRule.reason = reason;
+        return this.pushRule.verify();
+    }
+}

@@ -16,20 +16,21 @@
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ConditionalBuilder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
+import { Builder } from "../../../spi/build/Builder";
+import { PushChoice } from "../../listener/PushChoice";
 
 /**
  * Execute build with the appropriate builder
  * @param projectLoader used to load projects
- * @param {ConditionalBuilder} conditionalBuilders
+ * @param conditionalBuilders Guarded builders
  */
 export function executeBuild(projectLoader: ProjectLoader,
-                             ...conditionalBuilders: ConditionalBuilder[]): GoalExecutor {
+                             ...conditionalBuilders: PushChoice<Builder>[]): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
@@ -54,7 +55,7 @@ export function executeBuild(projectLoader: ProjectLoader,
                 if (indx < 0) {
                     throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
                 }
-                const builder = conditionalBuilders[indx].builder;
+                const builder = conditionalBuilders[indx].value;
                 logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
                 const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
                 const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
