@@ -44,6 +44,7 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 export interface LocalBuildInProgress {
 
@@ -149,6 +150,8 @@ export abstract class LocalBuilder implements Builder {
                         {url: log.url, log: log.log}, runningBuild.appInfo.id, ac);
                 }
             }
+        } catch (err) {
+            logger.warn("Unexpected build exit error: %s", err);
         } finally {
             await log.close();
         }
@@ -173,7 +176,9 @@ export abstract class LocalBuilder implements Builder {
             branch,
             provider: "github-sdm-local",
         };
-        return axios.post(url, data)
+        return doWithRetry(
+            () => axios.post(url, data),
+            `Update build to ${JSON.stringify(status)}`)
             .then(() => runningBuild);
     }
 
