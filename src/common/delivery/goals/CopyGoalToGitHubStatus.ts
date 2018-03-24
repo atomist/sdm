@@ -18,8 +18,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import * as GoalEvent from "../../../ingesters/goal";
-import { GoalState } from "../../../ingesters/goal";
+import * as GoalEvent from "../../../ingesters/sdmGoalIngester";
+import { GoalState } from "../../../ingesters/sdmGoalIngester";
 import { OnAnyGoal, ScmProvider, StatusState } from "../../../typings/types";
 import { createStatus, State } from "../../../util/github/ghub";
 import { fetchProvider } from "../../../util/github/gitHubProvider";

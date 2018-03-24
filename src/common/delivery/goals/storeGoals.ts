@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import sprintf from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/goal";
+import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function environmentFromGoal(goal: Goal) {

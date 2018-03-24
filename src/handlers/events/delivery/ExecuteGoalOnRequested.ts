@@ -24,7 +24,7 @@ import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
 import { environmentFromGoal, storeGoal, updateGoal } from "../../../common/delivery/goals/storeGoals";
-import { GoalState, SdmGoal } from "../../../ingesters/goal";
+import { GoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
