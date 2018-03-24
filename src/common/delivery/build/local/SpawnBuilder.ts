@@ -110,7 +110,7 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
             } catch {
                 const b = new SpawnedBuild(appId, id, Promise.resolve({
                     error: true,
-                    code: 1
+                    code: 1,
                 }), team, log.url, undefined);
                 logger.info("Build FAILURE: %j", b.buildResult);
                 return b;
