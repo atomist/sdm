@@ -80,28 +80,32 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
                 cwd: p.baseDir,
             };
 
+            function executeOne(buildCommand: SpawnCommand): Promise<ChildProcessResult> {
+                return spawnAndWatch(buildCommand, opts, log,
+                    {
+                        errorFinder,
+                        stripAnsi: true,
+                    })
+                    .then(br => {
+                        if (br.error) {
+                            const message = "Stopping build commands due to error on " + stringifySpawnCommand(buildCommand);
+                            logger.info(message);
+                            return { error: true, code: br.code, message};
+                        }
+                        return br;
+                    });
+            }
+
             try {
-                let buildResult: Promise<ChildProcessResult> = Promise.resolve({error: false, code: 0});
-                for (const buildCommand of this.buildCommands) {
-                    const latest: Promise<ChildProcessResult> = spawnAndWatch(buildCommand, opts, log,
-                        {
-                            errorFinder,
-                            stripAnsi: true,
-                        })
-                        .then(br => {
-                            if (br.error) {
-                                const message = "Stopping build commands due to error on " + stringifySpawnCommand(buildCommand);
-                                logger.info(message);
-                                return { error: true, code: br.code, message};
-                            }
-                            return br;
-                        });
+                let buildResult: Promise<ChildProcessResult> = executeOne(this.buildCommands[0]);
+                for (const buildCommand of this.buildCommands.slice(1)) {
                     buildResult = buildResult
                         .then(br => {
                             if (br.error) {
                                 return br;
                             }
-                            return latest;
+                            logger.info("Next after %j is...%s", br, stringifySpawnCommand(buildCommand));
+                            return executeOne(buildCommand);
                         });
                 }
                 const b = new SpawnedBuild(appId, id, buildResult, team, log.url, await this.deploymentUnitFor(p, appId));
