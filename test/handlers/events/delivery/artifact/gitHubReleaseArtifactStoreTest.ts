@@ -46,7 +46,7 @@ describe("GitHubReleaseArtifactStore", () => {
                     runCommand(`unzip ${filename}`, { cwd })
                         .then(done());
                 });
-        }).timeout(35000);
+        }).timeout(55000);
 
         it("should checkout existing file and parse AppInfo", done => {
             const ghras = new GitHubReleaseArtifactStore();
@@ -62,7 +62,7 @@ describe("GitHubReleaseArtifactStore", () => {
                     assert(da.version === "0.1.0-SNAPSHOT", "version should be '0.1.0-SNAPSHOT', not " + da.version);
                     done();
                 });
-        }).timeout(45000);
+        }).timeout(55000);
     });
 
 });
