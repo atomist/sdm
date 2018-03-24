@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-import { ProjectListenerInvocation } from "../Listener";
 import { PushChoice } from "../PushChoice";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
+import { ProjectListenerInvocation } from "../Listener";
+import { PushMapping } from "../PushMapping";
 
 /**
  * PushChoice implementation wholly driven by one or more PushTest instances.
  * Always returns the same value
  */
-export class GuardedPushChoice<V> implements PushChoice<V> {
+export class GuardedPushChoice<V> implements PushChoice<V>, PushMapping<V> {
 
     public guard: PushTest;
+
+    get name() {
+        return `GuardedPushChoice: ${this.guard.name}->${this.value}`;
+    }
 
     /**
      * Create a PushChoice that will always return the same goals if the guards
      * match
+     * @param value value we are guarding
      * @param {PushTest} guard1
      * @param {PushTest} guards
      */
@@ -37,4 +43,7 @@ export class GuardedPushChoice<V> implements PushChoice<V> {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
+    public test(p: ProjectListenerInvocation): Promise<V> | V {
+        return this.value;
+    }
 }

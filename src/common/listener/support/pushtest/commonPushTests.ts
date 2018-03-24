@@ -18,7 +18,7 @@ import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/Gi
 import { isPublicRepo } from "../../../../util/github/ghub";
 import { PushTest, pushTest } from "../../PushTest";
 
-export const ToDefaultBranch = pushTest("Push to default branch", p => {
+export const ToDefaultBranch: PushTest = pushTest("Push to default branch", p => {
     return p.push.branch === p.push.repo.defaultBranch;
 });
 

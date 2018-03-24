@@ -41,6 +41,8 @@ import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import { PushRules } from "../../../../blueprint/support/PushRules";
+import { PushMapping } from "../../../../common/listener/PushMapping";
 
 /**
  * Set up goals on a push (e.g. for delivery).
@@ -51,7 +53,9 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private goalSetters: GoalSetter[];
+    private readonly goalSetters: GoalSetter[];
+
+    private readonly rules: PushMapping<Goals>;
 
     /**
      * Configure goal setting
@@ -61,6 +65,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     constructor(private projectLoader: ProjectLoader,
                 ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
+        this.rules = new PushRules("", goalSetters);
     }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>,
@@ -98,19 +103,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         };
 
         try {
-            const goalSetterResults: Goals[] = await Promise.all(params.goalSetters
-                .map(async pc => {
-                    const relevant = !!pc.guard ? await pc.guard.test(pi) : true;
-                    if (relevant) {
-                        const goals = await pc.value;
-                        logger.debug("Eligible GoalSetter with guard [%s] returned goal named %j", pc.guard.name, goals.name);
-                        return goals;
-                    } else {
-                        logger.debug("Ineligible GoalSetter with guard [%s] will not be invoked", pc.guard.name);
-                        return undefined;
-                    }
-                }));
-            const determinedGoals = goalSetterResults.find(p => !!p);
+            const determinedGoals: Goals = await this.rules.test(pi);
             logger.info("Goals for push on %j are %s", id, determinedGoals.name);
             if (determinedGoals === NoGoals) {
                 await createStatus(params.githubToken, id, {

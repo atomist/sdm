@@ -15,24 +15,16 @@
  */
 
 import { ProjectListenerInvocation } from "./Listener";
-import { PushMapping } from "./PushMapping";
 
 /**
- * Return true if we like this push. Used in goal setting etc.
+ * Mapping from push to value
  */
-export interface PushTest extends PushMapping<boolean> {
+export interface PushMapping<V> {
 
-}
+    /**
+     * Name of the PushMapping. Must be unique
+     */
+    name: string;
 
-/**
- * Convenient factory function for PushTest instances
- * @param {string} name
- * @param test test function
- * @return {PushTest}
- */
-export function pushTest(name: string, test: (p: ProjectListenerInvocation) => boolean | Promise<boolean>): PushTest {
-    return {
-        name,
-        test,
-    };
+    test(p: ProjectListenerInvocation): V | Promise<V>;
 }
