@@ -556,3 +556,4 @@ This project is under active development, and still in flux. Some goals:
 
 - Breaking the repo into two, to separate the runnable instance from a library module exposing listener interfaces and other public types and common functionality.
 - Support for BitBucket, as well as GitHub. This will likely take the form of a parallel `bitbucket-sdm` project depending on a common `sdm-core` module.
+Deep at the center of my being is an infinite well of love.
