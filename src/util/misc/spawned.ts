@@ -76,24 +76,16 @@ export function watchSpawned(childProcess: ChildProcess,
 
         childProcess.stdout.on("data", data => sendToLog(data));
         childProcess.stderr.on("data", data => sendToLog(data));
-        childProcess.addListener("close", (code, signal) => {
-            resolve({
-                error: opts.errorFinder(code, signal, log),
-                code,
-            });
-        });
         childProcess.addListener("exit", (code, signal) => {
+            logger.info("Spawn exit (pid=%d): code=%d, signal=%s", childProcess.pid, code, signal);
             resolve({
                 error: opts.errorFinder(code, signal, log),
                 code,
             });
         });
         childProcess.addListener("error", err => {
-            logger.warn("Spawn failure for %d: %s", childProcess.pid, err);
-            reject(err);
-        });
-        childProcess.addListener("disconnect", err => {
-            logger.warn("Spawn disconnect for %d: %s", childProcess.pid, err);
+            // Process could not be spawned or killed
+            logger.warn("Spawn failure: %s", err);
             reject(err);
         });
     });
