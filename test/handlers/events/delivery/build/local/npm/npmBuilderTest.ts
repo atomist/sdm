@@ -54,12 +54,12 @@ describe("NpmBuilder", () => {
             async () => true, "T123", {branch: "master"});
     }).timeout(300000);
 
-    it("should test", async () => {
+    it.skip("should test", async () => {
         const b = new TestableNpmBuilder(RunBuild,
             success => assert(success, "Build should have succeeded"));
         await b.initiateBuild({token: process.env.GITHUB_TOKEN},
             new GitHubRepoRef("spring-team", "github-sdm"),
             async () => true, "T123", {branch: "master"});
-    }).timeout(300000);
+    }); // .timeout(300000);
 
 });
