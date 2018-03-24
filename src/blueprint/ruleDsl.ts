@@ -17,8 +17,8 @@
 import { Goals } from "../common/delivery/goals/Goals";
 import { PushTest } from "../common/listener/PushTest";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
-import { PushRule, PushRuleExplanation } from "./support/PushRule";
 import { Builder } from "../spi/build/Builder";
+import { PushRule, PushRuleExplanation } from "./support/PushRule";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 

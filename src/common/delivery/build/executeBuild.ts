@@ -16,13 +16,13 @@
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
+import { PushChoice } from "../../listener/PushChoice";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
-import { Builder } from "../../../spi/build/Builder";
-import { PushChoice } from "../../listener/PushChoice";
 
 /**
  * Execute build with the appropriate builder
@@ -30,7 +30,7 @@ import { PushChoice } from "../../listener/PushChoice";
  * @param conditionalBuilders Guarded builders
  */
 export function executeBuild(projectLoader: ProjectLoader,
-                             ...conditionalBuilders: PushChoice<Builder>[]): GoalExecutor {
+                             ...conditionalBuilders: Array<PushChoice<Builder>>): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {

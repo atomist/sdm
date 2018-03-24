@@ -61,6 +61,7 @@ import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
+import { PushChoice } from "../common/listener/PushChoice";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
@@ -82,7 +83,6 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { GoalSetterPushRule } from "./ruleDsl";
 import { PushRule } from "./support/PushRule";
-import { PushChoice } from "../common/listener/PushChoice";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -126,7 +126,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly goalSetters: GoalSetter[] = [];
 
-    private conditionalBuilders: PushChoice<Builder>[] = [];
+    private conditionalBuilders: Array<PushChoice<Builder>> = [];
 
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
