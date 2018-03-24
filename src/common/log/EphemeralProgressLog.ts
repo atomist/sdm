@@ -49,4 +49,4 @@ class EphemeralProgressLog implements ProgressLog {
 export const createEphemeralProgressLog: LogFactory = async () => new EphemeralProgressLog();
 
 export const createEphemeralProgressLogWithConsole: LogFactory =
-    async () => new MultiProgressLog(ConsoleProgressLog, new EphemeralProgressLog());
+    async () => new MultiProgressLog(new ConsoleProgressLog(), new EphemeralProgressLog());

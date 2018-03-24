@@ -75,7 +75,7 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
  * @return {ProjectEditor}
  */
 export function localCommandsEditor(commands: SpawnCommand[],
-                                    log: ProgressLog = ConsoleProgressLog): ProjectEditor {
+                                    log: ProgressLog = new ConsoleProgressLog()): ProjectEditor {
     return async (p: GitProject) => {
         const opts: SpawnOptions = {cwd: p.baseDir};
         let commandResult: ChildProcessResult;

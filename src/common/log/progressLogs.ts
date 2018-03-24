@@ -25,15 +25,19 @@ export const DevNullProgressLog: ProgressLog = {
     close() { return Promise.resolve(); },
 };
 
-export const ConsoleProgressLog: ProgressLog = {
-    log: "",
-    write(what) {
+export class ConsoleProgressLog implements ProgressLog {
+
+    public log = "";
+
+    public write(what) {
         this.log += what;
         console.log(what);
-    },
-    flush() { return Promise.resolve(); },
-    close() { return Promise.resolve(); },
-};
+    }
+
+    public flush() { return Promise.resolve(); }
+
+    public close() { return Promise.resolve(); }
+}
 
 export class MultiProgressLog implements ProgressLog {
 
