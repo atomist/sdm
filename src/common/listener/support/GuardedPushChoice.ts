@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { ProjectListenerInvocation } from "../Listener";
 import { PushChoice } from "../PushChoice";
+import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
-import { ProjectListenerInvocation } from "../Listener";
-import { PushMapping } from "../PushMapping";
 
 /**
  * PushChoice implementation wholly driven by one or more PushTest instances.

@@ -33,16 +33,16 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { PushRules } from "../../../../blueprint/support/PushRules";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
+import { PushMapping } from "../../../../common/listener/PushMapping";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { PushRules } from "../../../../blueprint/support/PushRules";
-import { PushMapping } from "../../../../common/listener/PushMapping";
 
 /**
  * Set up goals on a push (e.g. for delivery).

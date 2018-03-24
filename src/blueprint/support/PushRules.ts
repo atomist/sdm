@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { PushMapping } from "../../common/listener/PushMapping";
-import { ProjectListenerInvocation } from "../../common/listener/Listener";
-import { PushRule } from "./PushRule";
-import * as _ from "lodash";
 import { logger } from "@atomist/automation-client";
+import * as _ from "lodash";
+import { ProjectListenerInvocation } from "../../common/listener/Listener";
 import { PushChoice } from "../../common/listener/PushChoice";
+import { PushMapping } from "../../common/listener/PushMapping";
+import { PushRule } from "./PushRule";
 
 /**
  * Use to execute a rule set for any push to resolve to an object.
