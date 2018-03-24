@@ -28,10 +28,10 @@ import * as fs from "fs";
 import * as p from "path";
 import * as tmp from "tmp-promise";
 import * as URL from "url";
+import { promisify } from "util";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../spi/deploy/Deployment";
 import { authHeaders, createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
-import { promisify } from "util";
 
 /**
  * Implement ArtifactStore to store artifacts as GitHub releases
