@@ -24,6 +24,7 @@ import {
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import {
@@ -44,7 +45,6 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
-import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 export interface LocalBuildInProgress {
 
