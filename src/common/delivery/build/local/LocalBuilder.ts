@@ -84,27 +84,25 @@ export abstract class LocalBuilder implements Builder {
         const logInterpreter = this.logInterpreter;
 
         const rb = await this.startBuild(creds, id, atomistTeam, log, addressChannels);
-        const buildComplete: Promise<HandlerResult> = rb.buildResult.then(br => {
-            if (!br.error) {
-                return this.onExit(
-                    token,
-                    true,
-                    rb, atomistTeam, push.branch, as,
-                    log,
-                    addressChannels, logInterpreter)
-                    .then(() => Success);
-            } else {
-                return this.onExit(
-                    token,
-                    false,
-                    rb, atomistTeam, push.branch, as,
-                    log,
-                    addressChannels, logInterpreter)
-                    .then(() => ({code: 1}));
-            }
-        });
         await this.onStarted(rb, push.branch);
-        return buildComplete;
+        try {
+            const br = await rb.buildResult;
+            await this.onExit(
+                token,
+                !br.error,
+                rb, atomistTeam, push.branch, as,
+                log,
+                addressChannels, logInterpreter);
+            return Success;
+        } catch (err) {
+            await this.onExit(
+                token,
+                false,
+                rb, atomistTeam, push.branch, as,
+                log,
+                addressChannels, logInterpreter);
+            return ({code: 1});
+        }
     }
 
     /**
