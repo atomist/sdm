@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { PushChoice } from "../../common/listener/PushChoice";
 import { PushTest } from "../../common/listener/PushTest";
 import { GuardedPushChoice } from "../../common/listener/support/GuardedPushChoice";

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { SpawnCommand } from "../../../../../util/misc/spawned";
 import { ProjectListenerInvocation } from "../../../../listener/Listener";
 

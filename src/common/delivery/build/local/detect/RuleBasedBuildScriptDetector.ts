@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { PushRule } from "../../../../../blueprint/support/PushRule";
 import { SpawnCommand } from "../../../../../util/misc/spawned";
 import { ProjectListenerInvocation } from "../../../../listener/Listener";
