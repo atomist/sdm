@@ -15,14 +15,14 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { Project } from "@atomist/automation-client/project/Project";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { LogFactory } from "../../../../../spi/log/ProgressLog";
-import { asSpawnCommand, SpawnCommand, } from "../../../../../util/misc/spawned";
+import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder } from "../SpawnBuilder";
-import { Project } from "@atomist/automation-client/project/Project";
 
 export const Install: SpawnCommand = asSpawnCommand("npm install");
 

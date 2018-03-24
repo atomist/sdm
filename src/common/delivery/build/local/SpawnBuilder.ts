@@ -17,21 +17,21 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Project } from "@atomist/automation-client/project/Project";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { LogFactory, ProgressLog } from "../../../../spi/log/ProgressLog";
 import {
     ChildProcessResult,
     ErrorFinder,
     spawnAndWatch,
     SpawnCommand,
-    stringifySpawnCommand
+    stringifySpawnCommand,
 } from "../../../../util/misc/spawned";
-import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { LogFactory, ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { Project } from "@atomist/automation-client/project/Project";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
 
 /**
  * Build using spawn on the automation client node.
