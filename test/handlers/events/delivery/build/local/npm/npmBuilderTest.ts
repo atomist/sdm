@@ -20,17 +20,21 @@ import * as assert from "power-assert";
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { LocalBuildInProgress } from "../../../../../../../src/common/delivery/build/local/LocalBuilder";
-import { NpmBuilder, RunBuild, RunCompile } from "../../../../../../../src/common/delivery/build/local/npm/NpmBuilder";
+import {
+    Install, npmBuilderOptions, RunBuild,
+    RunCompile
+} from "../../../../../../../src/common/delivery/build/local/npm/NpmBuilder";
 import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
 import { CloningProjectLoader } from "../../../../../../../src/common/repo/cloningProjectLoader";
 import { SpawnCommand } from "../../../../../../../src/util/misc/spawned";
+import { SpawnBuilder } from "../../../../../../../src/common/delivery/build/local/SpawnBuilder";
 
-class TestableNpmBuilder extends NpmBuilder {
+class TestableNpmBuilder extends SpawnBuilder {
 
     public runningBuild: LocalBuildInProgress;
 
     constructor(buildCommand: SpawnCommand, private handleResult: (success: boolean) => any) {
-        super(undefined, async () => ConsoleProgressLog, CloningProjectLoader, buildCommand);
+        super(undefined, async () => ConsoleProgressLog, CloningProjectLoader, npmBuilderOptions([Install, buildCommand]));
     }
 
     protected async onStarted(runningBuild: LocalBuildInProgress, branch: string): Promise<LocalBuildInProgress> {

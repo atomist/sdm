@@ -17,7 +17,7 @@
 import { buildThis, defaultBuilder, onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { NpmBuilder } from "../../common/delivery/build/local/npm/NpmBuilder";
+import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/NpmBuilder";
 import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
@@ -48,6 +48,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -78,8 +79,9 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     sdm.addBuilders(
         buildThis(IsNode)
             .itMeans("Build with npm")
-            .set(new NpmBuilder(options.artifactStore,
-                createEphemeralProgressLogWithConsole, options.projectLoader)),
+            .set(new SpawnBuilder(options.artifactStore,
+                createEphemeralProgressLogWithConsole,
+                options.projectLoader, npmBuilderOptions([Install, RunBuild]))),
         defaultBuilder
             .set(new MavenBuilder(options.artifactStore,
                 createEphemeralProgressLog, options.projectLoader)))

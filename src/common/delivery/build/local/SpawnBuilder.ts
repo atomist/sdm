@@ -33,30 +33,22 @@ import {
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
 
-/**
- * Build using spawn on the automation client node.
- * Note it is NOT intended for use for multiple organizations. It's OK
- * for one organization to use inside its firewall, but there is potential
- * vulnerability in builds of unrelated tenants getting at each others
- * artifacts.
- */
-export abstract class SpawnBuilder extends LocalBuilder implements LogInterpretation {
+export interface SpawnBuilderOptions {
 
-    constructor(name: string,
-                artifactStore: ArtifactStore,
-                logFactory: LogFactory,
-                projectLoader: ProjectLoader,
-                private errorFinder: ErrorFinder,
-                public buildCommands: SpawnCommand[]) {
-        super(name, artifactStore, logFactory, projectLoader);
-    }
+    name: string;
+
+    commands: SpawnCommand[];
+
+    errorFinder: ErrorFinder;
+
+    logInterpreter: LogInterpreter;
 
     /**
      * Find artifact info
      * @param {Project} p
      * @return {Promise<AppInfo>}
      */
-    protected abstract projectToAppInfo(p: Project): Promise<AppInfo>;
+    projectToAppInfo(p: Project): Promise<AppInfo>;
 
     /**
      * Find the deploymentUnit after a successful build
@@ -64,18 +56,36 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
      * @param {AppInfo} appId
      * @return {Promise<string>}
      */
-    protected deploymentUnitFor(p: GitProject, appId: AppInfo): Promise<string> {
-        return undefined;
+    deploymentUnitFor?(p: GitProject, appId: AppInfo): Promise<string>;
+
+}
+
+/**
+ * Build using spawn on the automation client node.
+ * Note it is NOT intended for use for multiple organizations. It's OK
+ * for one organization to use inside its firewall, but there is potential
+ * vulnerability in builds of unrelated tenants getting at each others
+ * artifacts.
+ */
+export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
+
+    constructor(artifactStore: ArtifactStore,
+                logFactory: LogFactory,
+                projectLoader: ProjectLoader,
+                private options: SpawnBuilderOptions) {
+        super(options.name, artifactStore, logFactory, projectLoader);
     }
+
+    public logInterpreter: LogInterpreter = this.options.logInterpreter;
 
     protected async startBuild(credentials: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                team: string,
                                log: ProgressLog): Promise<LocalBuildInProgress> {
-        const errorFinder = this.errorFinder;
-        logger.info("%s.startBuild on %s, buildCommands=[%j]", this.name, id.url, this.buildCommands);
+        const errorFinder = this.options.errorFinder;
+        logger.info("%s.startBuild on %s, buildCommands=[%j]", this.name, id.url, this.options.commands);
         return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async p => {
-            const appId: AppInfo = await this.projectToAppInfo(p);
+            const appId: AppInfo = await this.options.projectToAppInfo(p);
             const opts = {
                 cwd: p.baseDir,
             };
@@ -96,8 +106,8 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
                     });
             }
 
-            let buildResult: Promise<ChildProcessResult> = executeOne(this.buildCommands[0]);
-            for (const buildCommand of this.buildCommands.slice(1)) {
+            let buildResult: Promise<ChildProcessResult> = executeOne(this.options.commands[0]);
+            for (const buildCommand of this.options.commands.slice(1)) {
                 buildResult = buildResult
                     .then(br => {
                         if (br.error) {
@@ -107,13 +117,12 @@ export abstract class SpawnBuilder extends LocalBuilder implements LogInterpreta
                         return executeOne(buildCommand);
                     });
             }
-            const b = new SpawnedBuild(appId, id, buildResult, team, log.url, await this.deploymentUnitFor(p, appId));
+            const b = new SpawnedBuild(appId, id, buildResult, team, log.url,
+                !!this.options.deploymentUnitFor ? await this.options.deploymentUnitFor(p, appId) : undefined);
             logger.info("Build RETURN: %j", b.buildResult);
             return b;
         });
     }
-
-    public abstract logInterpreter: LogInterpreter;
 
 }
 

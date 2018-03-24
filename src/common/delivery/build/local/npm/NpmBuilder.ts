@@ -16,13 +16,10 @@
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
-import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
-import { LogFactory } from "../../../../../spi/log/ProgressLog";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import { SpawnBuilder } from "../SpawnBuilder";
+import { SpawnBuilderOptions } from "../SpawnBuilder";
 
 export const Install: SpawnCommand = asSpawnCommand("npm install");
 
@@ -30,43 +27,31 @@ export const RunBuild: SpawnCommand = asSpawnCommand("npm run build");
 
 export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile");
 
-/**
- * Build with npm in the local automation client.
- * Note it is NOT intended for use for multiple organizations. It's OK
- * for one organization to use inside its firewall, but there is potential
- * vulnerability in builds of unrelated tenants getting at each others
- * artifacts.
- */
-export class NpmBuilder extends SpawnBuilder {
+export const npmLogInterpreter: LogInterpreter = log => {
+    const relevantPart = log.split("\n")
+        .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))
+        .join("\n");
+    return {
+        relevantPart,
+        message: "npm errors",
+        includeFullLog: true,
+    };
+};
 
-    constructor(artifactStore: ArtifactStore,
-                logFactory: LogFactory,
-                projectLoader: ProjectLoader,
-                buildCommand1: SpawnCommand = RunBuild,
-                ...additionalCommands: SpawnCommand[]) {
-        super("NpmBuilder", artifactStore, logFactory, projectLoader,
-            (code, signal, l) => {
-                return l.log.startsWith("[error]") || l.log.includes("ERR!");
-            },
-            [Install, buildCommand1].concat(additionalCommands));
-    }
+export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions {
+    return {
+        name: "NpmBuilder",
+        commands,
+        errorFinder: (code, signal, l) => {
+            return l.log.startsWith("[error]") || l.log.includes("ERR!");
+        },
+        logInterpreter: npmLogInterpreter,
+        async projectToAppInfo(p: Project): Promise<AppInfo> {
+            const packageJson = await p.findFile("package.json");
+            const content = await packageJson.getContent();
+            const pkg = JSON.parse(content);
+            return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
+        },
+    };
+};
 
-    protected async projectToAppInfo(p: Project): Promise<AppInfo> {
-        const packageJson = await p.findFile("package.json");
-        const content = await packageJson.getContent();
-        const pkg = JSON.parse(content);
-        return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
-    }
-
-    public logInterpreter: LogInterpreter = log => {
-        const relevantPart = log.split("\n")
-            .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))
-            .join("\n");
-        return {
-            relevantPart,
-            message: "npm errors",
-            includeFullLog: true,
-        };
-    }
-
-}
