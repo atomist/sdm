@@ -54,7 +54,7 @@ describe("NpmBuilder", () => {
             async () => true, "T123", {branch: "master"});
     }).timeout(300000);
 
-    // This is slow and unnecessary, as dog fooding tests this
+    // This is slow and unnecessary, as dog fooding usage tests this
     it.skip("should test", async () => {
         const b = new TestableNpmBuilder(RunBuild,
             success => assert(success, "Build should have succeeded"));
