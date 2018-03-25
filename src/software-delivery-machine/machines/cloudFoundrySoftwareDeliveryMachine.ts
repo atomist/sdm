@@ -24,7 +24,10 @@ import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/buil
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
-import { NoGoals, StagingDeploymentGoal, StagingEndpointGoal } from "../../common/delivery/goals/common/commonGoals";
+import {
+    NoGoals, ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
+    StagingEndpointGoal
+} from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
@@ -43,7 +46,7 @@ import {
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-    CloudFoundryProductionDeploy, CloudFoundryProductionDeploySpec,
+    CloudFoundryProductionDeploy, CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
@@ -94,14 +97,25 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         build.setDefault(new MavenBuilder(options.artifactStore,
             createEphemeralProgressLog, options.projectLoader)),
     )
-    // LocalExecutableJarDeploy,
-    // CloudFoundryProductionDeploy,
         .addDeployRules(
-            deploy.stagingDeploy({
-                deployer: LocalExecutableJarDeployer,
-                targeter: ManagedDeploymentTargeter,
-            }),
-            deploy.productionDeploy(CloudFoundryProductionDeploySpec),
+            deploy.when(IsMaven)
+                .itMeans("Maven")
+                .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
+                .using(
+                    {
+                        deployer: LocalExecutableJarDeployer,
+                        targeter:
+                        ManagedDeploymentTargeter,
+                    },
+                ),
+            deploy.when(IsMaven)
+                .itMeans("Maven")
+                .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal)
+                .using(CloudFoundryProductionDeploySpec),
+            deploy.when(IsNode)
+                .itMeans("Node")
+                .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
+                .using(CloudFoundryStagingDeploySpec),
         )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(

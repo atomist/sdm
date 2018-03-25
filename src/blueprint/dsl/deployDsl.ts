@@ -15,34 +15,33 @@
  */
 
 import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
-import {
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-} from "../../common/delivery/goals/common/commonGoals";
-import { PushMapping } from "../../common/listener/PushMapping";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
-import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
-import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
+import { Goal } from "../../common/delivery/goals/Goal";
+import { StaticPushMapping} from "../../common/listener/support/StaticPushMapping";
 
-export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<PushRule<Target<any>>> {
-    return new PushRuleExplanation(new PushRule(guard1, guards));
+export class DeployPushRule extends PushRule<Target<any>> {
+
+    constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
+        super(guard1, guards, reason);
+    }
+
+    public deployTo(deployGoal: Goal, endpointGoal: Goal) {
+        const outer = this;
+        return {
+            using(t: DeployerInfo<any>) {
+                outer.set({
+                    ...t,
+                    deployGoal,
+                    endpointGoal,
+                });
+                return outer.choice;
+            }
+        };
+
+    }
 }
 
-export function stagingDeploy(t: DeployerInfo<any>): StaticPushMapping<Target<any>> {
-    return new StaticPushMapping({
-        ...t,
-        deployGoal: StagingDeploymentGoal,
-        endpointGoal: StagingEndpointGoal,
-    }, AnyPush);
-}
-
-export function productionDeploy(t: DeployerInfo<any>): StaticPushMapping<Target<any>> {
-    return new StaticPushMapping({
-        ...t,
-        deployGoal: ProductionDeploymentGoal,
-        endpointGoal: ProductionEndpointGoal,
-    }, AnyPush);
+export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<DeployPushRule> {
+    return new PushRuleExplanation(new DeployPushRule(guard1, guards));
 }

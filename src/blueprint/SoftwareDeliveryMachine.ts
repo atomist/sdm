@@ -22,8 +22,11 @@ import {
     BuildGoal,
     CodeReactionGoal,
     FingerprintGoal,
-    JustBuildGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
-    ReviewGoal, StagingDeploymentGoal,
+    JustBuildGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
+    ReviewGoal,
+    StagingDeploymentGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
@@ -68,7 +71,6 @@ import { PushMapping } from "../common/listener/PushMapping";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { PushRules } from "../common/listener/support/PushRules";
-import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
@@ -87,6 +89,8 @@ import { Builder } from "../spi/build/Builder";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
+import { PushRule } from "../common/listener/support/PushRule";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

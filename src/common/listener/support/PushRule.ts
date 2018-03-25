@@ -25,7 +25,7 @@ import { StaticPushMapping } from "./StaticPushMapping";
  */
 export class PushRule<V = any> implements PushMapping<V> {
 
-    public choice: PushMapping<V>;
+    public choice: StaticPushMapping<V>;
 
     public get name(): string {
         return this.choice.name;

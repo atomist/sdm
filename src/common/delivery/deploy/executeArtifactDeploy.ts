@@ -40,10 +40,6 @@ export function executeArtifactDeploy(artifactStore: ArtifactStore,
                                       endpointGoal: Goal,
                                       targetMapping: PushMapping<Target<any>>): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
-        // if (status.context !== deployGoal.context) {
-        //     return Success;
-        // }
-
         const commit = status.commit;
         await dedup(commit.sha, async () => {
             const credentials = {token: params.githubToken};
