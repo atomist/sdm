@@ -35,6 +35,15 @@ export class PushRules<V> implements PushMapping<V> {
         this.add(choices);
     }
 
+    /**
+     * Return a PushRules with a subset of the rules of this one
+     * @param {(p: PushMapping<V>) => boolean} predicate
+     * @return {PushRules<V>}
+     */
+    public filter(predicate: (p: PushMapping<V>) => boolean): PushRules<V> {
+        return new PushRules("name-", this.choices.filter(predicate));
+    }
+
     public add(rules: Array<PushMapping<V>>) {
         this.choices = this.choices.concat(rules);
     }

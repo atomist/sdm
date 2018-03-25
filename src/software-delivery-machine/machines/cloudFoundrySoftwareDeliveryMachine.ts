@@ -101,8 +101,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
                 deployer: LocalExecutableJarDeployer,
                 targeter: ManagedDeploymentTargeter,
             }),
-           // TODO enabling this breaks other deploy
-           // deploy.productionDeploy(CloudFoundryProductionDeploySpec),
+            deploy.productionDeploy(CloudFoundryProductionDeploySpec),
         )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(

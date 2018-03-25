@@ -86,6 +86,7 @@ import { Builder } from "../spi/build/Builder";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -244,7 +245,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         function executor(deploymentGoal: Goal, endpointGoal: Goal) {
             return executeArtifactDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
                 deploymentGoal, endpointGoal,
-                outer.deployTargetMapping);
+                outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
         }
 
         return {
@@ -473,7 +474,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addDeployRules(...rules: Array<PushMapping<Target<any>>>): this {
+    public addDeployRules(...rules: Array<StaticPushMapping<Target<any>>>): this {
         this.deployTargetMapping.add(rules);
         return this;
     }
