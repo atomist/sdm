@@ -89,7 +89,7 @@ export function localCommandsEditor(commands: SpawnCommand[],
                     stripAnsi: true,
                 });
             if (commandResult.error) {
-                logger.warn("Error in autofix: %s", commandResult.error);
+                logger.warn("Error in command %s: %s", stringifySpawnCommand(cmd), commandResult.error);
                 break;
             }
         }

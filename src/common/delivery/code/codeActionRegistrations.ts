@@ -25,6 +25,11 @@ export interface CodeActionRegistration<A> {
     action: A;
 }
 
+export interface AutofixRegistrationOptions {
+    ignoreFailure: boolean;
+
+}
+
 /**
  * Register an editor for autofix. An editor for autofix
  * should not rely on parameters being passed in. An existing editor can be wrapped
@@ -34,10 +39,18 @@ export interface CodeActionRegistration<A> {
  * do not support respond.
  */
 export interface AutofixRegistration extends CodeActionRegistration<AnyProjectEditor> {
+
     name: string;
+
+    /**
+     * Ignore failure of this editor. If this is true, revert and keep going
+     */
+    options?: AutofixRegistrationOptions;
+
 }
 
 export interface ReviewerRegistration extends CodeActionRegistration<ProjectReviewer> {
+
     name: string;
 }
 

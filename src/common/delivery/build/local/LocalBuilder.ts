@@ -15,6 +15,7 @@
  */
 
 import {
+    Failure,
     HandlerResult,
     logger,
     Success,
@@ -83,25 +84,34 @@ export abstract class LocalBuilder implements Builder {
         const log = await this.logFactory();
         const logInterpreter = this.logInterpreter;
 
-        const rb = await this.startBuild(creds, id, atomistTeam, log, addressChannels);
-        await this.onStarted(rb, push.branch);
         try {
-            const br = await rb.buildResult;
-            await this.onExit(
-                token,
-                !br.error,
-                rb, atomistTeam, push.branch, as,
-                log,
-                addressChannels, logInterpreter);
-            return Success;
+            const rb = await this.startBuild(creds, id, atomistTeam, log, addressChannels);
+            await this.onStarted(rb, push.branch);
+            try {
+                const br = await rb.buildResult;
+                await this.onExit(
+                    token,
+                    !br.error,
+                    rb, atomistTeam, push.branch, as,
+                    log,
+                    addressChannels, logInterpreter);
+                return Success;
+            } catch (err) {
+                await this.onExit(
+                    token,
+                    false,
+                    rb, atomistTeam, push.branch, as,
+                    log,
+                    addressChannels, logInterpreter);
+                return Failure;
+            }
         } catch (err) {
-            await this.onExit(
-                token,
-                false,
-                rb, atomistTeam, push.branch, as,
-                log,
-                addressChannels, logInterpreter);
-            return ({code: 1});
+            // If we get here, the build failed before even starting
+            logger.warn("Build on branch %s failed on start: %j - %s", push.branch, id, err.message);
+            await this.updateAtomistLifecycle({repoRef: id, team: atomistTeam, url: undefined},
+                "failed",
+                push.branch);
+            return Failure;
         }
     }
 
@@ -155,9 +165,9 @@ export abstract class LocalBuilder implements Builder {
         }
     }
 
-    protected updateAtomistLifecycle(runningBuild: LocalBuildInProgress,
+    protected updateAtomistLifecycle(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string},
                                      status: "started" | "failed" | "error" | "passed" | "canceled",
-                                     branch: string): Promise<LocalBuildInProgress> {
+                                     branch: string): Promise<any> {
         logger.info("Telling Atomist about a %s build on %s, sha %s, url %s",
             status, branch, runningBuild.repoRef.sha, runningBuild.url);
         const url = `https://webhook.atomist.com/atomist/build/teams/${runningBuild.team}`;

@@ -95,21 +95,35 @@ export function executeAutofixes(projectLoader: ProjectLoader, registrations: Au
     };
 }
 
-async function runOne(project: GitProject, ctx: HandlerContext, autofix: AutofixRegistration) {
+async function runOne(project: GitProject, ctx: HandlerContext, autofix: AutofixRegistration): Promise<EditResult> {
     logger.info("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name);
-    const tentativeEditResult = await toEditor(autofix.action)(project, ctx);
-    const editResult = await confirmEditedness(tentativeEditResult);
+    try {
+        const tentativeEditResult = await toEditor(autofix.action)(project, ctx);
+        const editResult = await confirmEditedness(tentativeEditResult);
 
-    if (!editResult.success) {
+        if (!editResult.success) {
+            await project.revert();
+            logger.warn("Edited %s with autofix %s and success=false, edited=%d",
+                (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
+            if (!!autofix.options && autofix.options.ignoreFailure) {
+                // Say we didn't edit and can keep going
+                return { target: project, edited: false, success: false };
+            }
+        } else if (editResult.edited) {
+            await project.commit(`Autofix: ${autofix.name}\n\n[atomist]`);
+        } else {
+            logger.debug("No changes by autofix %s", autofix.name);
+        }
+        return editResult;
+    } catch (err) {
+        if (!autofix.options || !autofix.options.ignoreFailure) {
+            throw err;
+        }
         await project.revert();
-        logger.warn("Edited %s with autofix %s and success=false, edited=%d",
-            (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
-    } else if (editResult.edited) {
-        await project.commit(`Autofix: ${autofix.name}\n\n[atomist]`);
-    } else {
-        logger.debug("No changes by autofix %s", autofix.name);
+        logger.warn("Ignoring editor failure %s on %s with autofix %s",
+            err.message, (project.id as RemoteRepoRef).url, autofix.name);
+        return {target: project, success: false, edited: false};
     }
-    return editResult;
 }
 
 // TODO will be exported in client

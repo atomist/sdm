@@ -23,5 +23,6 @@ import { LocalCommandAutofix } from "../LocalCommandAutofix";
 
 export const tslintFix = new LocalCommandAutofix("tslint",
     allSatisfied(IsTypeScript, IsNode),
+    {ignoreFailure: true },
     Install,
     asSpawnCommand("npm run lint:fix"));

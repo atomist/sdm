@@ -18,7 +18,7 @@ import { ProjectEditor } from "@atomist/automation-client/operations/edit/projec
 import { localCommandsEditor } from "../../../../handlers/commands/editors/editorWrappers";
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../listener/PushTest";
-import { AutofixRegistration } from "../codeActionRegistrations";
+import { AutofixRegistration, AutofixRegistrationOptions } from "../codeActionRegistrations";
 
 /**
  * Register an autofix based on spawned local shell commands.
@@ -32,6 +32,7 @@ export class LocalCommandAutofix implements AutofixRegistration {
 
     constructor(public readonly name: string,
                 public readonly pushTest: PushTest,
+                public options: AutofixRegistrationOptions,
                 command1: SpawnCommand,
                 ...additionalCommands: SpawnCommand[]) {
         this.commands = [command1].concat(additionalCommands);
