@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
-import { CloudFoundryPushDeployer } from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
-import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import {
+    CloudFoundryInfo,
+    EnvironmentCloudFoundryTarget
+} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
     ProductionDeploymentGoal,
@@ -29,7 +30,6 @@ import { CodeReactionListener } from "../../../common/listener/CodeReactionListe
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { DefaultArtifactStore } from "../artifactStore";
-import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
 /**
  * Deploy everything to the same Cloud Foundry space
@@ -46,9 +46,6 @@ export const CloudFoundryStagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo>
     }),
 };
 
-export const CloudFoundryStagingDeploy: FunctionalUnit =
-    deployArtifactGoalHandlers(CloudFoundryStagingDeploySpec);
-
 export const CloudFoundryProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToProd",
     deployGoal: ProductionDeploymentGoal,
@@ -60,9 +57,6 @@ export const CloudFoundryProductionDeploySpec: ArtifactDeploySpec<CloudFoundryIn
         space: "ri-production",
     }),
 };
-
-export const CloudFoundryProductionDeploy: FunctionalUnit =
-    deployArtifactGoalHandlers(CloudFoundryProductionDeploySpec);
 
 /**
  * Enable deployment when a PCF manifest is added to the default branch.

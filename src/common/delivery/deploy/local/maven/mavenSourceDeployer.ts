@@ -59,7 +59,9 @@ class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInf
 
     }
 
-    public async deploy(da: DeployableArtifact, ti: ManagedDeploymentTargetInfo, log: ProgressLog,
+    public async deploy(da: DeployableArtifact,
+                        ti: ManagedDeploymentTargetInfo,
+                        log: ProgressLog,
                         credentials: ProjectOperationCredentials,
                         team: string): Promise<Deployment[]> {
         const id = da.id;

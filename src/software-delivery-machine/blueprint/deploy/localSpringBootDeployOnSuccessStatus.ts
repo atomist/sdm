@@ -31,7 +31,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
-import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
 export const LocalExecutableJarDeployer: ArtifactDeployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
     baseUrl: "http://localhost",
@@ -62,10 +61,6 @@ const UndeployOnSuperseded = new OnSupersededStatus(inv => {
 });
 
 const undeployLocalOnSuperseded: FunctionalUnit = {eventHandlers: [() => UndeployOnSuperseded], commandHandlers: []};
-
-export const LocalExecutableJarDeploy: FunctionalUnit = composeFunctionalUnits(
-    undeployLocalOnSuperseded,
-    deployArtifactGoalHandlers(LocalExecutableJarDeploySpec));
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {
     return [

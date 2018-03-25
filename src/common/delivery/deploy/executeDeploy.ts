@@ -36,6 +36,7 @@ import {
     GoalExecutor,
 } from "../goals/goalExecution";
 import { deploy, DeployArtifactParams, Targeter } from "./deploy";
+import * as _ from "lodash";
 
 export interface ArtifactDeploySpec<T extends TargetInfo> {
     implementationName: string;
@@ -75,42 +76,33 @@ export interface RunWithLogContext extends SdmContext {
     reportError: (Error) => Promise<ExecuteGoalResult>;
 }
 
-export function deployArtifactWithLogs<T extends TargetInfo>(spec: ArtifactDeploySpec<T>) {
-    return runWithLog(executeDeployArtifact(spec), spec.deployer.logInterpreter);
-}
-
 export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
 export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): ExecuteWithLog {
     return async (rwlc: RunWithLogContext) => {
         const commit = rwlc.status.commit;
-        const image = rwlc.status.commit.image;
         const pushBranch = commit.pushes[0].branch;
-        if (!image || !image.imageName) {
-            throw new Error("No image name on " + commit.sha);
-        }
         rwlc.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
         const deployParams: DeployArtifactParams<T> = {
             ...spec,
             credentials: rwlc.credentials,
             addressChannels: rwlc.addressChannels,
             id: rwlc.id as GitHubRepoRef,
-            targetUrl: image.imageName,
+            targetUrl: _.get(commit, "image.imageName"),
             team: rwlc.context.teamId,
             progressLog: rwlc.progressLog,
             branch: pushBranch,
         } as DeployArtifactParams<T>;
 
-        if (!image) {
-            rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
-            return rwlc.reportError(new Error("No image linked"));
-        } else {
-            logger.info(`Running deploy. Triggered by ${rwlc.status.state} status: ${rwlc.status.context}: ${rwlc.status.description}`);
-            return dedup(commit.sha, () =>
-                deploy(deployParams)
-                    .catch(err => rwlc.reportError(err)))
-                .then(success);
-        }
+        // if (!image) {
+        //     rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
+        //     return rwlc.reportError(new Error("No image linked"));
+        // }
+        logger.info(`Running deploy. Triggered by ${rwlc.status.state} status: ${rwlc.status.context}: ${rwlc.status.description}`);
+        return dedup(commit.sha, () =>
+            deploy(deployParams)
+                .catch(err => rwlc.reportError(err)))
+            .then(success);
     };
 }
 

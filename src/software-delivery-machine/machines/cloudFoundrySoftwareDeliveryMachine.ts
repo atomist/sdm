@@ -46,7 +46,7 @@ import {
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-    CloudFoundryProductionDeploy, CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
+     CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";

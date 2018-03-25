@@ -39,7 +39,7 @@ export interface DeployStage {
     endpointGoal: Goal;
 }
 
-export interface DeployerInfo<T extends TargetInfo>  {
+export interface DeployerInfo<T extends TargetInfo> {
     deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
 }
@@ -62,11 +62,17 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
     logger.info("Deploying with params=%j", params);
     const progressLog = params.progressLog;
 
-    const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
-        params.credentials)
-        .catch(err => {
-            progressLog.write("Error checking out artifact: " + err.message);
-            throw err;
+    const artifactCheckout = params.targetUrl ?
+        await params.artifactStore.checkout(params.targetUrl, params.id,
+            params.credentials)
+            .catch(err => {
+                progressLog.write("Error checking out artifact: " + err.message);
+                throw err;
+            }) : ({
+            // TODO need to do something about this: Use general identifier as in PCF editor?
+            name: params.id.repo,
+            version: "0.1.0",
+            id: params.id,
         });
     if (!artifactCheckout) {
         throw new Error("No DeployableArtifact passed in");
@@ -79,7 +85,7 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
         params.credentials,
         params.team);
 
-    await Promise.all(deployments.map( deployment => reactToSuccessfulDeploy(params, deployment)));
+    await Promise.all(deployments.map(deployment => reactToSuccessfulDeploy(params, deployment)));
 }
 
 export async function reactToSuccessfulDeploy(params: {
