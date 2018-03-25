@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
+import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
+import {
+    ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
+    StagingEndpointGoal,
+} from "../../common/delivery/goals/common/commonGoals";
+import { Goal } from "../../common/delivery/goals/Goal";
 import { PushMapping } from "../../common/listener/PushMapping";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
-import { Builder } from "../../spi/build/Builder";
-import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
-import { Goal } from "../../common/delivery/goals/Goal";
-import {
-    ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
-    StagingEndpointGoal
-} from "../../common/delivery/goals/common/commonGoals";
 import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
+import { Builder } from "../../spi/build/Builder";
 
 export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<PushRule<Target<any>>> {
     return new PushRuleExplanation(new PushRule(guard1, guards));

@@ -53,7 +53,10 @@ import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/co
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
+import { Target } from "../common/delivery/deploy/deploy";
+import { executeArtifactDeploy } from "../common/delivery/deploy/executeArtifactDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
+import { Goal } from "../common/delivery/goals/Goal";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -83,9 +86,6 @@ import { Builder } from "../spi/build/Builder";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { Target } from "../common/delivery/deploy/deploy";
-import { executeArtifactDeploy } from "../common/delivery/deploy/executeArtifactDeploy";
-import { Goal } from "../common/delivery/goals/Goal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -256,7 +256,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 () => new ExecuteGoalOnSuccessStatus(name, StagingDeploymentGoal,
                     executor(StagingDeploymentGoal, StagingEndpointGoal)),
                 () => new ExecuteGoalOnSuccessStatus(name + "_jb", ProductionDeploymentGoal,
-                    executor(ProductionDeploymentGoal, ProductionEndpointGoal)
+                    executor(ProductionDeploymentGoal, ProductionEndpointGoal),
                 ),
             ],
             commandHandlers: [],

@@ -16,16 +16,16 @@
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushMapping } from "../../listener/PushMapping";
+import { ConsoleProgressLog } from "../../log/progressLogs";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
+import { Goal } from "../goals/Goal";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 import { deploy, DeployArtifactParams, Target } from "./deploy";
-import { Goal } from "../goals/Goal";
-import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { ConsoleProgressLog } from "../../log/progressLogs";
 
 import * as _ from "lodash";
 

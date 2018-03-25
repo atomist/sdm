@@ -29,10 +29,10 @@ import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/maven
 import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
+import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
 import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
-import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
 
 export const LocalExecutableJarDeployer: ArtifactDeployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
     baseUrl: "http://localhost",
