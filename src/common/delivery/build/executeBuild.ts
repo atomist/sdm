@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
-import { PushChoice } from "../../listener/PushChoice";
+import { PushMapping } from "../../listener/PushMapping";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
@@ -27,10 +27,10 @@ import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals
 /**
  * Execute build with the appropriate builder
  * @param projectLoader used to load projects
- * @param conditionalBuilders Guarded builders
+ * @param builderMapping mapping to a builder
  */
 export function executeBuild(projectLoader: ProjectLoader,
-                             ...conditionalBuilders: Array<PushChoice<Builder>>): GoalExecutor {
+                             builderMapping: PushMapping<Builder>): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
@@ -39,7 +39,7 @@ export function executeBuild(projectLoader: ProjectLoader,
             const atomistTeam = context.teamId;
 
             await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-                const push = status.commit.pushes[0];
+                const push = commit.pushes[0];
                 const pti: ProjectListenerInvocation = {
                     id,
                     project,
@@ -49,13 +49,10 @@ export function executeBuild(projectLoader: ProjectLoader,
                     push,
                 };
 
-                const builders: boolean[] = await Promise.all(conditionalBuilders
-                    .map(b => b.guard.test(pti)));
-                const indx = builders.indexOf(true);
-                if (indx < 0) {
+                const builder = await builderMapping.test(pti);
+                if (!builder) {
                     throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
                 }
-                const builder = conditionalBuilders[indx].value;
                 logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
                 const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
                 const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);

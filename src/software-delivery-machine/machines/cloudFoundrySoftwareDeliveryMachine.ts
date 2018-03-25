@@ -17,7 +17,7 @@
 import { buildThis, defaultBuilder, onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/NpmBuilder";
+import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/npmBuilder";
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
@@ -76,7 +76,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             .setGoals(NpmBuildGoals),
     );
 
-    sdm.addBuilders(
+    sdm.addBuildRules(
         buildThis(IsNode)
             .itMeans("Build with npm")
             .set(new SpawnBuilder(options.artifactStore,

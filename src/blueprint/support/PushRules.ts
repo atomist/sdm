@@ -15,9 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import * as _ from "lodash";
 import { ProjectListenerInvocation } from "../../common/listener/Listener";
-import { PushChoice } from "../../common/listener/PushChoice";
 import { PushMapping } from "../../common/listener/PushMapping";
 import { PushRule } from "./PushRule";
 
@@ -26,32 +24,30 @@ import { PushRule } from "./PushRule";
  */
 export class PushRules<V> implements PushMapping<V> {
 
+    public choices: Array<PushMapping<V>> = [];
+
     /**
      * Return all possible values
      * @param {string} name
      * @param {Array<PushRule<V>>} choices
      */
-    constructor(public name: string, private choices: Array<PushChoice<V>>) {}
+    constructor(public readonly name: string, choices: Array<PushMapping<V>> = []) {
+        this.add(choices);
+    }
 
-    public get values(): V[] {
-        return _.uniq(this.choices.map(rule => rule.value));
+    public add(rules: Array<PushMapping<V>>) {
+        this.choices = this.choices.concat(rules);
     }
 
     public async test(pi: ProjectListenerInvocation): Promise<V> {
-        const goalSetterResults: V[] = await Promise.all(this.choices
+        const results: V[] = await Promise.all(this.choices
             .map(async pc => {
-                const relevant = !!pc.guard ? await pc.guard.test(pi) : true;
-                if (relevant) {
-                    const found = await pc.value;
-                    logger.debug("Eligible PushRule with guard [%s] returned goal named %s", pc.guard.name, found);
-                    return found;
-                } else {
-                    logger.debug("Ineligible PushRule with guard [%s] will not be invoked", pc.guard.name);
-                    return undefined;
-                }
+                const found = await pc.test(pi);
+                logger.debug("Eligible PushRule named %s returned choice %j", pc.name, found);
+                return found;
             }));
-        const value = goalSetterResults.find(p => !!p);
-        logger.info("%s: Value for push on %j is %s", this.name, pi.id, value);
+        const value = results.find(p => !!p);
+        logger.info("PushRules [%s]: Value for push on %j is %j", this.name, pi.id, value);
         return value;
     }
 }

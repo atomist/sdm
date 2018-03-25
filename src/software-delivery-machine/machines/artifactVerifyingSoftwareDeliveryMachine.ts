@@ -43,7 +43,7 @@ export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactV
             .itMeans("Push to Maven repo")
             .setGoals(new Goals("Verify artifact", JustBuildGoal, ArtifactGoal)),
             );
-    sdm.addBuilders(
+    sdm.addBuildRules(
         buildThis(IsMaven)
             .itMeans("Maven")
             .set(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)))

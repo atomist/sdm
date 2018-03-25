@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-import { PushChoice } from "../../common/listener/PushChoice";
+import { ProjectListenerInvocation } from "../../common/listener/Listener";
+import { PushMapping } from "../../common/listener/PushMapping";
 import { PushTest } from "../../common/listener/PushTest";
-import { GuardedPushChoice } from "../../common/listener/support/GuardedPushChoice";
 import { allSatisfied, memoize } from "../../common/listener/support/pushtest/pushTestUtils";
+import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
 
 /**
  * Generic DSL for returning an object on a push
  */
-export class PushRule<V = any> {
+export class PushRule<V = any> implements PushMapping<V> {
 
-    public value: PushChoice<V>;
+    public choice: PushMapping<V>;
+
+    public get name(): string {
+        return this.choice.name;
+    }
 
     public readonly pushTest: PushTest;
 
@@ -34,8 +39,12 @@ export class PushRule<V = any> {
 
     public set(value: V): this {
         this.verify();
-        this.value = new GuardedPushChoice<V>(value, this.guard1, ...this.guards);
+        this.choice = new StaticPushMapping<V>(value, this.guard1, ...this.guards);
         return this;
+    }
+
+    public test(p: ProjectListenerInvocation): Promise<V> | V {
+        return this.choice.test(p);
     }
 
     public verify(): this {
@@ -45,11 +54,6 @@ export class PushRule<V = any> {
         return this;
     }
 
-}
-
-export function isPushRule(a: any): a is PushRule {
-    const maybePushRule = a as PushRule;
-    return !!maybePushRule.pushTest && !!maybePushRule.verify;
 }
 
 /**

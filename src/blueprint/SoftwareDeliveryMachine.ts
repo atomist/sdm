@@ -61,7 +61,7 @@ import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
-import { PushChoice } from "../common/listener/PushChoice";
+import { PushMapping } from "../common/listener/PushMapping";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
@@ -82,7 +82,7 @@ import { Builder } from "../spi/build/Builder";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { GoalSetterPushRule } from "./ruleDsl";
-import { PushRule } from "./support/PushRule";
+import { PushRules } from "./support/PushRules";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -126,7 +126,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly goalSetters: GoalSetter[] = [];
 
-    private conditionalBuilders: Array<PushChoice<Builder>> = [];
+    private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
@@ -222,13 +222,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     private get builder(): FunctionalUnit {
-        const name = this.conditionalBuilders.map(b => b.value.name).join("And");
+        const name = this.builderMapping.name.replace(" ", "_");
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
-                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
-                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
-                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, ...this.conditionalBuilders)),
+                () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
+                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
+                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
+                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
             ],
             commandHandlers: [],
         };
@@ -439,8 +439,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addBuilders(...builders: Array<PushRule<Builder>>): this {
-        this.conditionalBuilders = this.conditionalBuilders.concat(...builders.map(b => b.value));
+    public addBuildRules(...rules: Array<PushMapping<Builder>>): this {
+        this.builderMapping.add(rules);
         return this;
     }
 
@@ -452,8 +452,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     constructor(public readonly opts: SoftwareDeliveryMachineOptions,
                 ...pushRules: GoalSetterPushRule[]) {
         this.goalSetters = pushRules
-            .filter(rule => !!rule.value)
-            .map(rule => rule.value);
+            .filter(rule => !!rule.choice)
+            .map(rule => rule.choice);
         addGitHubSupport(this);
     }
 

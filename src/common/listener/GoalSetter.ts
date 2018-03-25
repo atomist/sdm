@@ -15,7 +15,7 @@
  */
 
 import { Goals } from "../delivery/goals/Goals";
-import { PushChoice } from "./PushChoice";
+import { PushMapping } from "./PushMapping";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics
@@ -25,4 +25,4 @@ import { PushChoice } from "./PushChoice";
  * @returns Goals or undefined if it doesn't like the push or
  * understand the repo
  */
-export type GoalSetter = PushChoice<Goals>;
+export type GoalSetter = PushMapping<Goals>;

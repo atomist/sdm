@@ -61,7 +61,7 @@ export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOption
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
     );
-    sdm.addBuilders(defaultBuilder.set(new K8sAutomationBuilder()))
+    sdm.addBuildRules(defaultBuilder.set(new K8sAutomationBuilder()))
         .addDeployers(
             K8sStagingDeployOnSuccessStatus,
             K8sProductionDeployOnSuccessStatus)

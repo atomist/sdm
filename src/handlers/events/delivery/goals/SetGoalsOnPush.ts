@@ -65,7 +65,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     constructor(private projectLoader: ProjectLoader,
                 ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
-        this.rules = new PushRules("", goalSetters);
+        this.rules = new PushRules("Goal setter", goalSetters);
     }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>,
