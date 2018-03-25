@@ -61,6 +61,7 @@ import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
+import { PushMapping } from "../common/listener/PushMapping";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
@@ -82,7 +83,6 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { GoalSetterPushRule } from "./ruleDsl";
 import { PushRules } from "./support/PushRules";
-import { PushMapping } from "../common/listener/PushMapping";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

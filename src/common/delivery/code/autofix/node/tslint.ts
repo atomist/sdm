@@ -17,9 +17,9 @@
 import { asSpawnCommand } from "../../../../../util/misc/spawned";
 import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushTests";
+import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
 import { Install } from "../../../build/local/npm/npmBuilder";
 import { LocalCommandAutofix } from "../LocalCommandAutofix";
-import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
 
 export const tslintFix = new LocalCommandAutofix("tslint",
     allSatisfied(IsTypeScript, IsNode),

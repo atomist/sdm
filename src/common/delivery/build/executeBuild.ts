@@ -19,10 +19,10 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Builder } from "../../../spi/build/Builder";
 import { OnAnyPendingStatus } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
+import { PushMapping } from "../../listener/PushMapping";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
-import { PushMapping } from "../../listener/PushMapping";
 
 /**
  * Execute build with the appropriate builder
