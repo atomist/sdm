@@ -60,21 +60,23 @@ export interface DeployArtifactParams<T extends TargetInfo> extends Target<T> {
     branch: string;
 }
 
-export interface DeploySourceParams {
+// TODO common with artifact
+export interface DeploySourceParams<T extends TargetInfo> {
     id: GitHubRepoRef;
     credentials: ProjectOperationCredentials;
     addressChannels: AddressChannels;
     team: string;
     deployGoal: Goal;
     endpointGoal: Goal;
-    deployer: SourceDeployer;
+    deployer: SourceDeployer<T>;
+    targeter: Targeter<T>
     progressLog: ProgressLog;
     branch: string;
 }
 
-export async function deploySource(params: DeploySourceParams): Promise<void> {
+export async function deploySource<T extends TargetInfo>(params: DeploySourceParams<T>): Promise<void> {
     logger.info("Deploying with params=%j", params);
-    const target = ManagedDeploymentTargeter(params.id, params.branch);
+    const target = params.targeter(params.id, params.branch);
 
     const deployment = await params.deployer.deployFromSource(
         params.id,

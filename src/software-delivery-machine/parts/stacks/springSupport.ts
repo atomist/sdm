@@ -21,6 +21,7 @@ import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../../commands/generators/spring/springBootGenerator";
+import { ManagedDeploymentTargeter } from "../../../common/delivery/deploy/local/appManagement";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
@@ -44,5 +45,5 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
         .addSupportingCommands(() => applyHttpServiceGoals);
 
     softwareDeliveryMachine
-        .addFunctionalUnits(localDeployment(softwareDeliveryMachine.opts.projectLoader));
+        .addFunctionalUnits(localDeployment(softwareDeliveryMachine.opts.projectLoader, ManagedDeploymentTargeter));
 }

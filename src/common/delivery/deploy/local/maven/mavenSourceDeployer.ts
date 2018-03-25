@@ -37,7 +37,7 @@ let managedDeployments: ManagedDeployments;
  * @param projectLoader use to load projects
  * @param opts options
  */
-export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): SourceDeployer {
+export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): SourceDeployer<ManagedDeploymentTargetInfo> {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -48,7 +48,7 @@ export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerO
     });
 }
 
-class MavenSourceDeployer implements SourceDeployer {
+class MavenSourceDeployer implements SourceDeployer<ManagedDeploymentTargetInfo> {
 
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }

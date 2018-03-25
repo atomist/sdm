@@ -21,17 +21,21 @@ import { mavenSourceDeployer } from "../../../software-delivery-machine/blueprin
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/common/commonGoals";
 import { executeDeploySource, runWithLog, SourceDeploySpec } from "./executeDeploy";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
+import { Targeter } from "./deploy";
+import { ManagedDeploymentTargetInfo } from "./local/appManagement";
 
-function localDeployFromCloneSpec(projectLoader: ProjectLoader): SourceDeploySpec {
+function localDeployFromCloneSpec(projectLoader: ProjectLoader, targeter: Targeter<ManagedDeploymentTargetInfo>): SourceDeploySpec<ManagedDeploymentTargetInfo> {
     return {
         deployGoal: LocalDeploymentGoal,
         endpointGoal: LocalEndpointGoal,
         deployer: mavenSourceDeployer(projectLoader),
+        targeter,
     };
 }
 
-export function localDeployment(projectLoader: ProjectLoader): FunctionalUnit {
-    const ld = localDeployFromCloneSpec(projectLoader);
+export function localDeployment<T extends TargetInfo>(projectLoader: ProjectLoader, targeter: Targeter<ManagedDeploymentTargetInfo>): FunctionalUnit {
+    const ld = localDeployFromCloneSpec(projectLoader, targeter);
     return {eventHandlers: [
             () => new ExecuteGoalOnRequested("LocalDeployFromClone",
                 LocalDeploymentGoal,

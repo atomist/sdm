@@ -75,7 +75,7 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export function mavenSourceDeployer(projectLoader: ProjectLoader): SourceDeployer {
+export function mavenSourceDeployer(projectLoader: ProjectLoader): SourceDeployer<ManagedDeploymentTargetInfo> {
     return mavenDeployer(projectLoader, {
         baseUrl: "http://localhost",
         lowerPort: 9090,

@@ -115,18 +115,20 @@ export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploy
     };
 }
 
-export interface SourceDeploySpec {
+// TODO share it with artifact
+export interface SourceDeploySpec<T extends TargetInfo> {
     deployGoal: Goal;
     endpointGoal: Goal;
-    deployer: SourceDeployer;
+    deployer: SourceDeployer<T>;
+    targeter: Targeter<T>,
 }
 
-export function executeDeploySource(spec: SourceDeploySpec): ((rwli: RunWithLogContext) => Promise<ExecuteGoalResult>) {
+export function executeDeploySource<T extends TargetInfo>(spec: SourceDeploySpec<T>): ((rwli: RunWithLogContext) => Promise<ExecuteGoalResult>) {
     return async (rwli: RunWithLogContext) => {
         const commit = rwli.status.commit;
         const pushBranch = commit.pushes[0].branch;
         rwli.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
-        const deployParams: DeploySourceParams = {
+        const deployParams: DeploySourceParams<T> = {
             ...spec,
             credentials: rwli.credentials,
             addressChannels: rwli.addressChannels,
@@ -134,6 +136,7 @@ export function executeDeploySource(spec: SourceDeploySpec): ((rwli: RunWithLogC
             team: rwli.context.teamId,
             progressLog: rwli.progressLog,
             branch: pushBranch,
+            targeter: spec.targeter,
         };
 
         logger.info(`Running deploy. Triggered by ${rwli.status.state} status: ${rwli.status.context}: ${rwli.status.description}`);
