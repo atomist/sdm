@@ -17,7 +17,7 @@
 import { ProjectListenerInvocation } from "./Listener";
 
 /**
- * Mapping from push to value
+ * Mapping from push to value, it it can be resolved.
  */
 export interface PushMapping<V> {
 
@@ -27,10 +27,12 @@ export interface PushMapping<V> {
     readonly name: string;
 
     /**
-     * Compute a value for the given push. The value may be static
+     * Compute a value for the given push. Return undefined
+     * if we don't find a mapped value.
+     * The value may be static
      * or computed on demand, depending on the implementation.
      * @param {ProjectListenerInvocation} p
-     * @return {Promise<V> | V}
+     * @return {Promise<V | undefined>}
      */
-    valueForPush(p: ProjectListenerInvocation): V | Promise<V>;
+    valueForPush(p: ProjectListenerInvocation): Promise<V | undefined>;
 }

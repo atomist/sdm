@@ -18,9 +18,8 @@ import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/Gi
 import { isPublicRepo } from "../../../../util/github/ghub";
 import { PushTest, pushTest } from "../../PushTest";
 
-export const ToDefaultBranch: PushTest = pushTest("Push to default branch", p => {
-    return p.push.branch === p.push.repo.defaultBranch;
-});
+export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
+    p.push.branch === p.push.repo.defaultBranch);
 
 /**
  * Is this a push originated by Atomist? Note that we can't look at the committer,
@@ -29,9 +28,8 @@ export const ToDefaultBranch: PushTest = pushTest("Push to default branch", p =>
  * @return {boolean}
  * @constructor
  */
-export const FromAtomist = pushTest("Push from Atomist", p => {
-    return p.push.after.message.includes("[atomist]");
-});
+export const FromAtomist = pushTest("Push from Atomist", async p =>
+    p.push.after.message.includes("[atomist]"));
 
 /**
  * Match on any push

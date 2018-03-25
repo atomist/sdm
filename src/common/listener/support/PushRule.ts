@@ -43,7 +43,7 @@ export class PushRule<V = any> implements PushMapping<V> {
         return this;
     }
 
-    public valueForPush(p: ProjectListenerInvocation): Promise<V> | V {
+    public valueForPush(p: ProjectListenerInvocation): Promise<V | undefined> {
         return this.choice.valueForPush(p);
     }
 

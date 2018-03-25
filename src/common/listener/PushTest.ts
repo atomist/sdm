@@ -30,7 +30,7 @@ export interface PushTest extends PushMapping<boolean> {
  * @param valueForPush test function
  * @return {PushTest}
  */
-export function pushTest(name: string, valueForPush: (p: ProjectListenerInvocation) => boolean | Promise<boolean>): PushTest {
+export function pushTest(name: string, valueForPush: (p: ProjectListenerInvocation) => Promise<boolean>): PushTest {
     return {
         name,
         valueForPush,

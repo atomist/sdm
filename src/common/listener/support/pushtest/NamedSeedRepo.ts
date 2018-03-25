@@ -24,4 +24,4 @@ import { PushTest, pushTest } from "../../PushTest";
  */
 export const NamedSeedRepo: PushTest = pushTest(
     "Named seed repo",
-    pi => pi.id.repo.includes("-seed"));
+    async pi => pi.id.repo.includes("-seed"));
