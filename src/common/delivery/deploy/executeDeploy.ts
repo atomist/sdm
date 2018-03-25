@@ -21,7 +21,6 @@ import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
@@ -36,13 +35,13 @@ import {
     ExecuteGoalInvocation, ExecuteGoalResult,
     GoalExecutor,
 } from "../goals/goalExecution";
-import { deploy, DeployArtifactParams, deploySource, DeploySourceParams, Targeter } from "./deploy";
+import { deploy, DeployArtifactParams, Targeter } from "./deploy";
 
 export interface ArtifactDeploySpec<T extends TargetInfo> {
     implementationName: string;
     deployGoal: Goal;
     endpointGoal: Goal;
-    artifactStore: ArtifactStore;
+    artifactStore?: ArtifactStore;
     deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
     undeploy?: {
@@ -112,38 +111,6 @@ export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploy
                     .catch(err => rwlc.reportError(err)))
                 .then(success);
         }
-    };
-}
-
-// TODO share it with artifact
-export interface SourceDeploySpec<T extends TargetInfo> {
-    deployGoal: Goal;
-    endpointGoal: Goal;
-    deployer: SourceDeployer<T>;
-    targeter: Targeter<T>,
-}
-
-export function executeDeploySource<T extends TargetInfo>(spec: SourceDeploySpec<T>): ((rwli: RunWithLogContext) => Promise<ExecuteGoalResult>) {
-    return async (rwli: RunWithLogContext) => {
-        const commit = rwli.status.commit;
-        const pushBranch = commit.pushes[0].branch;
-        rwli.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
-        const deployParams: DeploySourceParams<T> = {
-            ...spec,
-            credentials: rwli.credentials,
-            addressChannels: rwli.addressChannels,
-            id: rwli.id as GitHubRepoRef,
-            team: rwli.context.teamId,
-            progressLog: rwli.progressLog,
-            branch: pushBranch,
-            targeter: spec.targeter,
-        };
-
-        logger.info(`Running deploy. Triggered by ${rwli.status.state} status: ${rwli.status.context}: ${rwli.status.description}`);
-        return dedup(commit.sha, () =>
-            deploySource(deployParams)
-                .catch(err => rwli.reportError(err)))
-            .then(success);
     };
 }
 

@@ -30,7 +30,6 @@ import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } f
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
-import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
 import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
@@ -75,7 +74,7 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export function mavenSourceDeployer(projectLoader: ProjectLoader): SourceDeployer<ManagedDeploymentTargetInfo> {
+export function mavenSourceDeployer(projectLoader: ProjectLoader): ArtifactDeployer<ManagedDeploymentTargetInfo> {
     return mavenDeployer(projectLoader, {
         baseUrl: "http://localhost",
         lowerPort: 9090,

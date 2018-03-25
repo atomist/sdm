@@ -20,12 +20,13 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
-import { SourceDeployer } from "../../../../../spi/deploy/SourceDeployer";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import { ArtifactDeployer } from "../../../../../spi/deploy/ArtifactDeployer";
+import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 
 /**
  * Managed deployments
@@ -37,7 +38,7 @@ let managedDeployments: ManagedDeployments;
  * @param projectLoader use to load projects
  * @param opts options
  */
-export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): SourceDeployer<ManagedDeploymentTargetInfo> {
+export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): ArtifactDeployer<ManagedDeploymentTargetInfo> {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -48,25 +49,27 @@ export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerO
     });
 }
 
-class MavenSourceDeployer implements SourceDeployer<ManagedDeploymentTargetInfo> {
+class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo> {
 
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }
 
-    public async undeploy(ti: ManagedDeploymentTargetInfo): Promise<any> {
+    public findDeployments(da: DeployableArtifact, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
         return managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+
     }
 
-    public async deployFromSource(id: GitHubRepoRef,
-                                  ti: ManagedDeploymentTargetInfo,
-                                  log: ProgressLog,
-                                  credentials: ProjectOperationCredentials,
-                                  atomistTeam: string): Promise<Deployment> {
+    public async deploy(da: DeployableArtifact, ti: ManagedDeploymentTargetInfo, log: ProgressLog,
+                        credentials: ProjectOperationCredentials,
+                        team: string): Promise<Deployment[]> {
+        const id = da.id;
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
-        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, atomistTeam);
+        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, team);
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, project =>
-            this.deployProject(ti, log, project, port, atomistTeam));
+        return Promise.all([
+            this.projectLoader.doWithProject({credentials, id, readOnly: true}, project =>
+                this.deployProject(ti, log, project, port, team))]
+        );
 
     }
 
