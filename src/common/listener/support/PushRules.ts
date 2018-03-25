@@ -15,8 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProjectListenerInvocation } from "../../common/listener/Listener";
-import { PushMapping } from "../../common/listener/PushMapping";
+import { ProjectListenerInvocation } from "../Listener";
+import { PushMapping } from "../PushMapping";
 import { PushRule } from "./PushRule";
 
 /**

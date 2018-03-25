@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { buildThis, defaultBuilder, onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/npmBuilder";
@@ -38,7 +38,7 @@ import {
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-    CloudFoundryProductionDeploy, CloudFoundryStagingDeploy,
+    CloudFoundryProductionDeploy,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeploy } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
@@ -49,6 +49,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import * as build from "../../blueprint/dsl/buildDsl";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -77,14 +78,14 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     );
 
     sdm.addBuildRules(
-        buildThis(IsNode)
+        build.when(IsNode)
             .itMeans("Build with npm")
             .set(new SpawnBuilder(options.artifactStore,
                 createEphemeralProgressLogWithConsole,
                 options.projectLoader, npmBuilderOptions([Install, RunBuild]))),
-        defaultBuilder
-            .set(new MavenBuilder(options.artifactStore,
-                createEphemeralProgressLog, options.projectLoader)))
+        build.setDefault(new MavenBuilder(options.artifactStore,
+            createEphemeralProgressLog, options.projectLoader)),
+    )
         .addDeployers(
             LocalExecutableJarDeploy,
             CloudFoundryProductionDeploy,

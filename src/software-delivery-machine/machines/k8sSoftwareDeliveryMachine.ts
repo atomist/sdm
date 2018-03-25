@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { defaultBuilder, onAnyPush, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
@@ -40,6 +40,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import * as build from "../../blueprint/dsl/buildDsl";
 
 export type K8sSoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -61,7 +62,8 @@ export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOption
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
     );
-    sdm.addBuildRules(defaultBuilder.set(new K8sAutomationBuilder()))
+    sdm.addBuildRules(
+        build.setDefault(new K8sAutomationBuilder()))
         .addDeployers(
             K8sStagingDeployOnSuccessStatus,
             K8sProductionDeployOnSuccessStatus)

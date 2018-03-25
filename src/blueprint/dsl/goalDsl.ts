@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import { Goals } from "../common/delivery/goals/Goals";
-import { PushTest } from "../common/listener/PushTest";
-import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
-import { Builder } from "../spi/build/Builder";
-import { PushRule, PushRuleExplanation } from "./support/PushRule";
+import { Goals } from "../../common/delivery/goals/Goals";
+import { PushTest } from "../../common/listener/PushTest";
+import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
+import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 
@@ -41,10 +40,4 @@ export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): Push
     return new PushRuleExplanation(new GoalSetterPushRule(guard1, guards));
 }
 
-export function buildThis(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<PushRule<Builder>> {
-    return new PushRuleExplanation(new PushRule(guard1, guards));
-}
-
 export const onAnyPush = new GoalSetterPushRule(AnyPush, [], "On any push");
-
-export const defaultBuilder = new PushRule<Builder>(AnyPush, [], "On any push");

@@ -81,8 +81,8 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { GoalSetterPushRule } from "./ruleDsl";
-import { PushRules } from "./support/PushRules";
+import { GoalSetterPushRule } from "./dsl/goalDsl";
+import { PushRules } from "../common/listener/support/PushRules";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

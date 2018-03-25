@@ -15,7 +15,7 @@
  */
 
 import * as fs from "fs";
-import { buildThis, whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { ArtifactGoal, JustBuildGoal } from "../../common/delivery/goals/common/commonGoals";
@@ -25,6 +25,7 @@ import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLo
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import { addDemoEditors } from "../parts/demo/demoEditors";
+import * as build from "../../blueprint/dsl/buildDsl";
 
 export type ArtifactVerifyingMachineOptions = SoftwareDeliveryMachineOptions;
 
@@ -44,7 +45,7 @@ export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactV
             .setGoals(new Goals("Verify artifact", JustBuildGoal, ArtifactGoal)),
             );
     sdm.addBuildRules(
-        buildThis(IsMaven)
+        build.when(IsMaven)
             .itMeans("Maven")
             .set(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)))
         .addArtifactListeners(async ai => {

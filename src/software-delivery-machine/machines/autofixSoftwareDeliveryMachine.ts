@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { onAnyPush } from "../../blueprint/ruleDsl";
+import { onAnyPush } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { AutofixGoal } from "../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../common/delivery/goals/Goals";

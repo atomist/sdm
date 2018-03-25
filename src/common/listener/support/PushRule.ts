@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { ProjectListenerInvocation } from "../../common/listener/Listener";
-import { PushMapping } from "../../common/listener/PushMapping";
-import { PushTest } from "../../common/listener/PushTest";
-import { allSatisfied, memoize } from "../../common/listener/support/pushtest/pushTestUtils";
-import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
+import { ProjectListenerInvocation } from "../Listener";
+import { PushMapping } from "../PushMapping";
+import { PushTest } from "../PushTest";
+import { allSatisfied, memoize } from "./pushtest/pushTestUtils";
+import { StaticPushMapping } from "./StaticPushMapping";
 
 /**
  * Generic DSL for returning an object on a push

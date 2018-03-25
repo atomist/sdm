@@ -17,7 +17,7 @@
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { whenPushSatisfies } from "../../blueprint/ruleDsl";
+import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
 import { ReviewGoal } from "../../common/delivery/goals/common/commonGoals";

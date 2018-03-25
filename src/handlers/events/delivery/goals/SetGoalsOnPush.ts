@@ -33,7 +33,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { PushRules } from "../../../../blueprint/support/PushRules";
+import { PushRules } from "../../../../common/listener/support/PushRules";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
