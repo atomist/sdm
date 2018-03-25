@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { ProjectListenerInvocation } from "../../../common/listener/Listener";
-import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { PushTest } from "../../../common/listener/PushTest";
-import { allSatisfied, anySatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
 import { HasSpringBootApplicationClass, IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { IsNode } from "../../../common/listener/support/pushtest/node/nodePushTests";
-import { logger } from "@atomist/automation-client";
+import { allSatisfied, anySatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
+import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
 
 /**
  * PushTest to determine whether we know how to deploy a project

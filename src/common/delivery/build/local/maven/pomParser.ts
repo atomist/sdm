@@ -16,8 +16,8 @@
 
 import { promisify } from "util";
 import * as xml2js from "xml2js";
-import { VersionedArtifact } from "./VersionedArtifact";
 import { ProjectIdentifier } from "../projectIdentifier";
+import { VersionedArtifact } from "./VersionedArtifact";
 
 export const MavenProjectIdentifier: ProjectIdentifier = async p => {
     const pom = await p.getFile("pom.xml");
