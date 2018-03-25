@@ -27,7 +27,10 @@ export class NpmDetectBuildMapping implements PushMapping<Builder> {
             return undefined;
         }
         const content = await buildFile.getContent();
-        const commands = content.split("\n").map(asSpawnCommand);
+        const commands = content.split("\n")
+            .filter(l => !!l)
+            .filter(l => !l.startsWith("#"))
+            .map(asSpawnCommand);
         logger.info("Found Atomist build file in project %j: Commands are %j", p.id,
             commands);
 

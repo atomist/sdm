@@ -63,6 +63,7 @@ export const JustBuildGoal = new Goal({
     orderedName: "2-build ",
     workingDescription: "Building...",
     completedDescription: "Build successful",
+    failedDescription: "Build failure",
 });
 
 export const BuildGoal = new GoalWithPrecondition({
@@ -70,6 +71,7 @@ export const BuildGoal = new GoalWithPrecondition({
     orderedName: "2-build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
+    failedDescription: "Build failure",
 }, AutofixGoal);
 
 export const ArtifactGoal = new Goal({
@@ -84,6 +86,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
     orderedName: "3-deploy",
     displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
+    failedDescription: "Test deployment failure",
 }, ArtifactGoal);
 
 export const StagingUndeploymentGoal = new Goal({
@@ -98,6 +101,7 @@ export const StagingEndpointGoal = new Goal({
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
+    failedDescription: "Couldn't locate service endpoint in Test",
 });
 
 export const StagingVerifiedGoal = new Goal({
