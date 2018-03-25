@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { PushMapping } from "../../common/listener/PushMapping";
 import { PushTest } from "../../common/listener/PushTest";
+import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
 import { Builder } from "../../spi/build/Builder";
-import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
-import { PushMapping } from "../../common/listener/PushMapping";
 
 export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<PushRule<Builder>> {
     return new PushRuleExplanation(new PushRule(guard1, guards));

@@ -15,6 +15,7 @@
  */
 
 import * as fs from "fs";
+import * as build from "../../blueprint/dsl/buildDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
@@ -25,7 +26,6 @@ import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLo
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { DefaultArtifactStore } from "../blueprint/artifactStore";
 import { addDemoEditors } from "../parts/demo/demoEditors";
-import * as build from "../../blueprint/dsl/buildDsl";
 
 export type ArtifactVerifyingMachineOptions = SoftwareDeliveryMachineOptions;
 
