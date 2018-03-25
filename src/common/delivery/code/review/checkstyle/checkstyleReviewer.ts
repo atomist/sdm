@@ -69,7 +69,7 @@ export const checkstyleReviewer: (checkstylePath: string) =>
                 return extract(stdout)
                     .then(cr => resolve(checkstyleReportToReview(p.id, cr, p.baseDir)),
                         err => reject(new ReviewerError("CheckStyle", err.msg, stderr)));
-            })
+            });
         });
     };
 
