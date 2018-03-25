@@ -25,7 +25,7 @@ import { PushTest, pushTest } from "../../PushTest";
  * @return {PushTest}
  */
 export function not(t: PushTest): PushTest {
-    return pushTest(`not (${t.name})`, async pi => !(await t.test(pi)));
+    return pushTest(`not (${t.name})`, async pi => !(await t.valueForPush(pi)));
 }
 
 /**
@@ -38,7 +38,7 @@ export function allSatisfied(...pushTests: PushTest[]): PushTest {
         async pci => {
             const allResults: boolean[] = await Promise.all(
                 pushTests.map(async pt => {
-                    const result = await pt.test(pci);
+                    const result = await pt.valueForPush(pci);
                     logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
                     return result;
                 }),
@@ -57,11 +57,11 @@ const pushTestResultMemory = new LruCache<boolean>(1000);
 export function memoize(pt: PushTest): PushTest {
     return {
         name: pt.name,
-        test: async pti => {
+        valueForPush: async pti => {
             const key = ptCacheKey(pt, pti);
             let result = pushTestResultMemory.get(key);
             if (result === undefined) {
-                result = await pt.test(pti);
+                result = await pt.valueForPush(pti);
                 logger.info(`Evaluated push test [%s] to ${result}: cache stats=%j`, pt.name, pushTestResultMemory.stats);
                 pushTestResultMemory.put(key, result);
             }

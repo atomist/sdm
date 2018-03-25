@@ -49,7 +49,7 @@ export function executeBuild(projectLoader: ProjectLoader,
                     push,
                 };
 
-                const builder = await builderMapping.test(pti);
+                const builder = await builderMapping.valueForPush(pti);
                 if (!builder) {
                     throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
                 }

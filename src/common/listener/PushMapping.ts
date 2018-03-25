@@ -26,5 +26,11 @@ export interface PushMapping<V> {
      */
     readonly name: string;
 
-    test(p: ProjectListenerInvocation): V | Promise<V>;
+    /**
+     * Compute a value for the given push. The value may be static
+     * or computed on demand, depending on the implementation.
+     * @param {ProjectListenerInvocation} p
+     * @return {Promise<V> | V}
+     */
+    valueForPush(p: ProjectListenerInvocation): V | Promise<V>;
 }

@@ -103,7 +103,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         };
 
         try {
-            const determinedGoals: Goals = await this.rules.test(pi);
+            const determinedGoals: Goals = await this.rules.valueForPush(pi);
             logger.info("Goals for push on %j are %s", id, determinedGoals.name);
             if (determinedGoals === NoGoals) {
                 await createStatus(params.githubToken, id, {

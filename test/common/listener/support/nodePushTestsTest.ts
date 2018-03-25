@@ -28,19 +28,19 @@ describe("nodePushTests", () => {
 
         it("should not find ts in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await IsTypeScript.test({project} as any as ProjectListenerInvocation);
+            const r = await IsTypeScript.valueForPush({project} as any as ProjectListenerInvocation);
             assert(!r);
         });
 
         it("should find ts in repo with ts file", async () => {
             const project = InMemoryProject.of({ path: "src/Thing.ts", content: "export class Thing {}"});
-            const r = await IsTypeScript.test({project} as any as ProjectListenerInvocation);
+            const r = await IsTypeScript.valueForPush({project} as any as ProjectListenerInvocation);
             assert(r);
         });
 
         it("should not find ts in repo with no ts file", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
-            const r = await IsTypeScript.test({project} as any as ProjectListenerInvocation);
+            const r = await IsTypeScript.valueForPush({project} as any as ProjectListenerInvocation);
             assert(!r);
         });
     });

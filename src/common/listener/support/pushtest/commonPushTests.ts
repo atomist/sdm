@@ -59,6 +59,6 @@ export const ToPublicRepo = pushTest("To public repo", async p =>
 export function hasFile(path: string): PushTest {
     return {
         name: `HasFile(${path}})`,
-        test: async p => !!(await p.project.getFile(path)),
+        valueForPush: async p => !!(await p.project.getFile(path)),
     };
 }

@@ -24,13 +24,13 @@ describe("pushToPublicRepo", () => {
 
     it("should work against public repo", async () => {
         const id = new GitHubRepoRef("atomist", "github-sdm");
-        const r = await ToPublicRepo.test({id} as any as ProjectListenerInvocation);
+        const r = await ToPublicRepo.valueForPush({id} as any as ProjectListenerInvocation);
         assert(r);
     });
 
     it("should work against private repo", async () => {
         const id = new GitHubRepoRef("atomisthq", "internal-automation");
-        const r = await ToPublicRepo.test({id} as any as ProjectListenerInvocation);
+        const r = await ToPublicRepo.valueForPush({id} as any as ProjectListenerInvocation);
         assert(!r);
     });
 

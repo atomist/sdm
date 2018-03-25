@@ -27,12 +27,12 @@ export interface PushTest extends PushMapping<boolean> {
 /**
  * Convenient factory function for PushTest instances
  * @param {string} name
- * @param test test function
+ * @param valueForPush test function
  * @return {PushTest}
  */
-export function pushTest(name: string, test: (p: ProjectListenerInvocation) => boolean | Promise<boolean>): PushTest {
+export function pushTest(name: string, valueForPush: (p: ProjectListenerInvocation) => boolean | Promise<boolean>): PushTest {
     return {
         name,
-        test,
+        valueForPush,
     };
 }

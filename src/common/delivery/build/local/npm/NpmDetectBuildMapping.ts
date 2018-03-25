@@ -37,7 +37,7 @@ export class NpmDetectBuildMapping implements PushMapping<Builder> {
     constructor(private artifactStore: ArtifactStore, private projectLoader: ProjectLoader) {
     }
 
-    public async test(p: ProjectListenerInvocation): Promise<Builder> {
+    public async valueForPush(p: ProjectListenerInvocation): Promise<Builder> {
         const buildFile = await p.project.getFile(AtomistBuildFile);
         if (!buildFile) {
             return undefined;

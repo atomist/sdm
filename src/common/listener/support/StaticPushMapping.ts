@@ -42,7 +42,7 @@ export class StaticPushMapping<V> implements PushMapping<V> {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async test(pi: ProjectListenerInvocation): Promise<V> {
-        return (await this.guard.test(pi)) ? this.value : undefined;
+    public async valueForPush(pi: ProjectListenerInvocation): Promise<V> {
+        return (await this.guard.valueForPush(pi)) ? this.value : undefined;
     }
 }

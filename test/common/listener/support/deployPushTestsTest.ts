@@ -44,7 +44,7 @@ describe("deployPushTests", () => {
                      },
                  },
              };
-             const result = await IsDeployEnabled.test(pi as any as ProjectListenerInvocation);
+             const result = await IsDeployEnabled.valueForPush(pi as any as ProjectListenerInvocation);
              assert(!result);
         });
 
@@ -72,7 +72,7 @@ describe("deployPushTests", () => {
                     },
                 },
             };
-            const result = await IsDeployEnabled.test(pi as any as ProjectListenerInvocation);
+            const result = await IsDeployEnabled.valueForPush(pi as any as ProjectListenerInvocation);
             assert(result);
         });
 
@@ -100,7 +100,7 @@ describe("deployPushTests", () => {
                     },
                 },
             };
-            const result = await IsDeployEnabled.test(pi as any as ProjectListenerInvocation);
+            const result = await IsDeployEnabled.valueForPush(pi as any as ProjectListenerInvocation);
             assert(!result);
         });
     });
