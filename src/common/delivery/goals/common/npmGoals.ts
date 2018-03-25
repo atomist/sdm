@@ -15,11 +15,20 @@
  */
 
 import { Goals } from "../Goals";
-import { AutofixGoal, BuildGoal, ReviewGoal } from "./commonGoals";
+import { AutofixGoal, BuildGoal, ProductionDeploymentGoal, ProductionEndpointGoal, ReviewGoal } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
     "npm build",
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
+);
+
+export const NpmDeployGoals = new Goals(
+    "npm deploy",
+    ReviewGoal,
+    AutofixGoal,
+    BuildGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
 );

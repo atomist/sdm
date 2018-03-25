@@ -17,6 +17,17 @@
 import { promisify } from "util";
 import * as xml2js from "xml2js";
 import { VersionedArtifact } from "./VersionedArtifact";
+import { ProjectIdentifier } from "../projectIdentifier";
+
+export const MavenProjectIdentifier: ProjectIdentifier = async p => {
+    const pom = await p.getFile("pom.xml");
+    if (!pom) {
+        return undefined;
+    }
+    const content = await pom.getContent();
+    const ident = await identification(content);
+    return {name: ident.artifact};
+};
 
 /**
  * Return version info from the POM using xml2j XML parser

@@ -19,39 +19,38 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { ProjectListenerInvocation } from "../../../common/listener/Listener";
 import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { PushTest } from "../../../common/listener/PushTest";
-import { allSatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
-import {
-    HasSpringBootApplicationClass, IsJava,
-    IsMaven
-} from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { allSatisfied, anySatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
+import { HasSpringBootApplicationClass, IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { IsNode } from "../../../common/listener/support/pushtest/node/nodePushTests";
+import { logger } from "@atomist/automation-client";
 
+/**
+ * PushTest to determine whether we know how to deploy a project
+ * @type {PushTest}
+ */
 const CloudFoundryDeployableProject: PushTest =
-    allSatisfied(IsMaven, HasSpringBootApplicationClass)
+    anySatisfied(
+        allSatisfied(IsMaven, HasSpringBootApplicationClass),
+        IsNode);
 
 export async function suggestAddingCloudFoundryManifest(inv: ProjectListenerInvocation) {
-    try {
-        const f = await inv.project.findFile("pom.xml");
-        const content = await f.getContent();
-        const isSpringBoot = content.includes("spring-boot");
-
-        if (isSpringBoot) {
-            const attachment: slack.Attachment = {
-                    text: "Add a Cloud Foundry manifest to your new repo?",
-                    fallback: "add PCF manifest",
-                    actions: [buttonForCommand({text: "Add Cloud Foundry Manifest"},
-                        AddCloudFoundryManifestCommandName,
-                        {"targets.owner": inv.id.owner, "targets.repo": inv.id.repo},
-                    ),
-                    ],
-                }
-            ;
-            const message: slack.SlackMessage = {
-                attachments: [attachment],
-            };
-            return inv.addressChannels(message);
-        }
-    } catch {
-        // It's not a Spring Boot Maven project.
-        // Do nothing as we don't know how to deploy it
+    const eligible = (await CloudFoundryDeployableProject.valueForPush(inv)) === true;
+    if (!eligible) {
+        logger.info("Not suggesting Cloud Foundry manifest for %j as we don't know how to deploy yet", inv.id);
+        return;
     }
+
+    const attachment: slack.Attachment = {
+            text: "Add a Cloud Foundry manifest to your new repo?",
+            fallback: "add PCF manifest",
+            actions: [buttonForCommand({text: "Add Cloud Foundry Manifest"},
+                AddCloudFoundryManifestCommandName,
+                {"targets.owner": inv.id.owner, "targets.repo": inv.id.repo},
+            ),
+            ],
+        };
+    const message: slack.SlackMessage = {
+        attachments: [attachment],
+    };
+    return inv.addressChannels(message);
 }

@@ -24,7 +24,7 @@ import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
-import { NpmBuildGoals } from "../../common/delivery/goals/common/npmGoals";
+import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
 import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import { HasSpringBootApplicationClass, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
@@ -73,6 +73,9 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
+        whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled)
+            .itMeans("Build and deploy node")
+            .setGoals(NpmDeployGoals),
         whenPushSatisfies(IsNode)
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals),

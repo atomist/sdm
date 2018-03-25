@@ -17,12 +17,14 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { identification } from "../../../../common/delivery/build/local/maven/pomParser";
+import { identification, MavenProjectIdentifier } from "../../../../common/delivery/build/local/maven/pomParser";
 import { CloudFoundryManifestPath } from "../../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
+import { NodeProjectIdentifier } from "../../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";
+
 // Using this marker removes some buttons on the Pull Request
 export const AtomistGeneratedMarker = "[atomist:generated]";
 
@@ -47,12 +49,18 @@ ${AtomistGeneratedMarker}`,
 ${AddCloudFoundryManifestMarker}`),
     });
 
-// We know that there's a POM if this get invoked
+// This should not have been invoked
 export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx) => {
-    const pom = await p.findFile("pom.xml");
-    const content = await pom.getContent();
-    const ident = await identification(content);
-    return p.addFile(CloudFoundryManifestPath, javaManifestFor(ident.artifact, ctx.teamId));
+    const javaId = await MavenProjectIdentifier(p);
+    if (javaId) {
+        return p.addFile(CloudFoundryManifestPath, javaManifestFor(javaId.name, ctx.teamId));
+    }
+    const nodeId = await NodeProjectIdentifier(p);
+    if (nodeId) {
+        return p.addFile(CloudFoundryManifestPath, nodeManifestFor(nodeId.name, ctx.teamId));
+    }
+    return ctx.messageClient.respond(
+        `Unable to add Cloud Foundry manifest to project \`${p.id.owner}:${p.id.repo}\`: Neither Maven nor Node`);
 };
 
 // Simple template for Cloud Foundry manifest
@@ -64,3 +72,12 @@ applications:
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
   env:
     ATOMIST_TEAM: ${teamId}`;
+
+const nodeManifestFor = (name, teamId) => `---
+applications:
+- name: ${name}
+  memory: 512M
+  instances: 1
+  buildpack: https://github.com/cloudfoundry/nodejs-buildpack
+  env:
+    ATOMIST_TEAMS: ${teamId}`;
