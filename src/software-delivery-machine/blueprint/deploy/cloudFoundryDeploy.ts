@@ -34,7 +34,7 @@ import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 /**
  * Deploy everything to the same Cloud Foundry space
  */
-const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+export const CloudFoundryStagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToStaging",
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
@@ -47,9 +47,9 @@ const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
 };
 
 export const CloudFoundryStagingDeploy: FunctionalUnit =
-    deployArtifactGoalHandlers(StagingDeploySpec);
+    deployArtifactGoalHandlers(CloudFoundryStagingDeploySpec);
 
-const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+export const CloudFoundryProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToProd",
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,
@@ -62,7 +62,7 @@ const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
 };
 
 export const CloudFoundryProductionDeploy: FunctionalUnit =
-    deployArtifactGoalHandlers(ProductionDeploySpec);
+    deployArtifactGoalHandlers(CloudFoundryProductionDeploySpec);
 
 /**
  * Enable deployment when a PCF manifest is added to the default branch.

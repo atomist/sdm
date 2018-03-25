@@ -19,13 +19,30 @@ import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
 import { Builder } from "../../spi/build/Builder";
-import { Target } from "../../common/delivery/deploy/deploy";
+import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
 import { Goal } from "../../common/delivery/goals/Goal";
+import {
+    ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
+    StagingEndpointGoal
+} from "../../common/delivery/goals/common/commonGoals";
+import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
 
 export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<PushRule<Target<any>>> {
     return new PushRuleExplanation(new PushRule(guard1, guards));
 }
 
-export function setDefault(t: Target<any>): PushMapping<Target<any>> {
-    return new PushRule<Target<any>>(AnyPush, [], "On any push").set(t);
+export function stagingDeploy(t: DeployerInfo<any>): PushMapping<Target<any>> {
+    return new StaticPushMapping({
+        ...t,
+        deployGoal: StagingDeploymentGoal,
+        endpointGoal: StagingEndpointGoal,
+    }, AnyPush);
+}
+
+export function productionDeploy(t: DeployerInfo<any>): PushMapping<Target<any>> {
+    return new StaticPushMapping({
+        ...t,
+        deployGoal: ProductionDeploymentGoal,
+        endpointGoal: ProductionEndpointGoal,
+    }, AnyPush);
 }

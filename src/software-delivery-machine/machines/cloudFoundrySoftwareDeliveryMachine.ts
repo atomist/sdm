@@ -41,7 +41,10 @@ import {
 } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import { EnableDeployOnCloudFoundryManifestAddition, } from "../blueprint/deploy/cloudFoundryDeploy";
+import {
+    CloudFoundryProductionDeploy, CloudFoundryProductionDeploySpec,
+    EnableDeployOnCloudFoundryManifestAddition,
+} from "../blueprint/deploy/cloudFoundryDeploy";
 import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
@@ -94,12 +97,12 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     // LocalExecutableJarDeploy,
     // CloudFoundryProductionDeploy,
         .addDeployRules(
-            deploy.setDefault({
+            deploy.stagingDeploy({
                 deployer: LocalExecutableJarDeployer,
-                deployGoal: StagingDeploymentGoal,
-                endpointGoal: StagingEndpointGoal,
                 targeter: ManagedDeploymentTargeter,
             }),
+           // TODO enabling this breaks other deploy
+           // deploy.productionDeploy(CloudFoundryProductionDeploySpec),
         )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
