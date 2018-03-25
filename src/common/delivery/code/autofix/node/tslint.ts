@@ -15,12 +15,12 @@
  */
 
 import { asSpawnCommand } from "../../../../../util/misc/spawned";
+import { hasFile } from "../../../../listener/support/pushtest/commonPushTests";
 import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushTests";
 import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
 import { Install } from "../../../build/local/npm/npmBuilder";
 import { LocalCommandAutofix } from "../LocalCommandAutofix";
-import { hasFile } from "../../../../listener/support/pushtest/commonPushTests";
 
 export const tslintFix = new LocalCommandAutofix("tslint",
     allSatisfied(IsTypeScript, IsNode, hasFile("tslint.json")),

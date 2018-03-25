@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { PushMapping } from "../../../../listener/PushMapping";
-import { ProjectListenerInvocation } from "../../../../listener/Listener";
-import { Builder } from "../../../../../spi/build/Builder";
-import { npmBuilderOptions } from "./npmBuilder";
-import { SpawnBuilder } from "../SpawnBuilder";
-import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
-import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
-import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { logger } from "@atomist/automation-client";
+import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
+import { Builder } from "../../../../../spi/build/Builder";
 import { asSpawnCommand } from "../../../../../util/misc/spawned";
+import { ProjectListenerInvocation } from "../../../../listener/Listener";
+import { PushMapping } from "../../../../listener/PushMapping";
+import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
+import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { SpawnBuilder } from "../SpawnBuilder";
+import { npmBuilderOptions } from "./npmBuilder";
 
 export const AtomistBuildFile = ".atomist/build.sh";
 
