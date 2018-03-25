@@ -22,8 +22,8 @@ import {
     BuildGoal,
     CodeReactionGoal,
     FingerprintGoal,
-    JustBuildGoal,
-    ReviewGoal,
+    JustBuildGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
+    ReviewGoal, StagingDeploymentGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
@@ -83,6 +83,9 @@ import { Builder } from "../spi/build/Builder";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { Target } from "../common/delivery/deploy/deploy";
+import { executeArtifactDeploy } from "../common/delivery/deploy/executeArtifactDeploy";
+import { Goal } from "../common/delivery/goals/Goal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -128,6 +131,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
+    private readonly deployTargetMapping = new PushRules<Target<any>>("Deploy targets");
+
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
     private codeReactions: CodeReactionListener[] = [];
@@ -147,8 +152,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
-
-    private deployers: FunctionalUnit[] = [];
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
@@ -223,12 +226,38 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get builder(): FunctionalUnit {
         const name = this.builderMapping.name.replace(" ", "_");
+        const executor = executeBuild(this.opts.projectLoader, this.builderMapping);
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
-                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
-                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
-                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
+                () => new ExecuteGoalOnRequested(name, BuildGoal, executor),
+                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executor),
+                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executor),
+                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executor),
+            ],
+            commandHandlers: [],
+        };
+    }
+
+    private get deployer(): FunctionalUnit {
+        const name = this.deployTargetMapping.name.replace(" ", "_");
+        const outer = this;
+        function executor(deploymentGoal: Goal, endpointGoal: Goal) {
+            return executeArtifactDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
+                deploymentGoal, endpointGoal,
+                outer.deployTargetMapping);
+        }
+
+        return {
+            eventHandlers: [
+                () => new ExecuteGoalOnRequested(name, StagingDeploymentGoal,
+                    executor(StagingDeploymentGoal, StagingEndpointGoal)),
+                () => new ExecuteGoalOnRequested(name + "_jb", ProductionDeploymentGoal,
+                    executor(ProductionDeploymentGoal, ProductionEndpointGoal)),
+                () => new ExecuteGoalOnSuccessStatus(name, StagingDeploymentGoal,
+                    executor(StagingDeploymentGoal, StagingEndpointGoal)),
+                () => new ExecuteGoalOnSuccessStatus(name + "_jb", ProductionDeploymentGoal,
+                    executor(ProductionDeploymentGoal, ProductionEndpointGoal)
+                ),
             ],
             commandHandlers: [],
         };
@@ -286,7 +315,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return this.functionalUnits
-            .concat(this.deployers)
             .concat([
                 this.builder,
                 this.fingerprinter,
@@ -294,6 +322,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.autofix,
                 this.codeReactionHandling,
                 this.reviewHandling,
+                this.deployer,
             ]);
     }
 
@@ -444,8 +473,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addDeployers(...deployers: FunctionalUnit[]): this {
-        this.deployers = this.deployers.concat(deployers);
+    public addDeployRules(...rules: Array<PushMapping<Target<any>>>): this {
+        this.deployTargetMapping.add(rules);
         return this;
     }
 

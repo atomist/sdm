@@ -32,6 +32,13 @@ import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded
 import { SourceDeployer } from "../../../spi/deploy/SourceDeployer";
 import { DefaultArtifactStore } from "../artifactStore";
 import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
+import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
+
+export const LocalExecutableJarDeployer: ArtifactDeployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
+    baseUrl: "http://localhost",
+    lowerPort: 8082,
+    commandLineArgumentsFor: springBootExecutableJarArgs,
+});
 
 /**
  * Deploy to the automation client node
@@ -42,11 +49,7 @@ const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetIn
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
-    deployer: executableJarDeployer({
-        baseUrl: "http://localhost",
-        lowerPort: 8082,
-        commandLineArgumentsFor: springBootExecutableJarArgs,
-    }),
+    deployer: LocalExecutableJarDeployer,
     targeter: ManagedDeploymentTargeter,
     undeploy: {
         goal: StagingUndeploymentGoal,

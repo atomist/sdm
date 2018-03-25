@@ -37,6 +37,8 @@ import {ManagedDeploymentTargeter} from "./local/appManagement";
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
 export interface Target<T extends TargetInfo>  {
+    deployGoal: Goal;
+    endpointGoal: Goal;
     deployer: ArtifactDeployer<T>;
     targeter: Targeter<T>;
 }
@@ -46,8 +48,6 @@ export interface DeployArtifactParams<T extends TargetInfo> extends Target<T> {
     credentials: ProjectOperationCredentials;
     addressChannels: AddressChannels;
     team: string;
-    deployGoal: Goal;
-    endpointGoal: Goal;
     artifactStore: ArtifactStore;
     targetUrl: string;
     progressLog: ProgressLog;

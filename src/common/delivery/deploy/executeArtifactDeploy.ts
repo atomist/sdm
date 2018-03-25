@@ -27,16 +27,18 @@ import { Goal } from "../goals/Goal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { ConsoleProgressLog } from "../../log/progressLogs";
 
+import * as _ from "lodash";
+
 /**
- * Execute deploy with the appropriate deployer and target
+ * Execute deploy with the appropriate deployer and target from the underlying push
  * @param projectLoader used to load projects
  * @param deployMapping mapping to a builder
  */
-export function executeDeploy(artifactStore: ArtifactStore,
-                              projectLoader: ProjectLoader,
-                              deployGoal: Goal,
-                              endpointGoal: Goal,
-                              targetMapping: PushMapping<Target<any>>): GoalExecutor {
+export function executeArtifactDeploy(artifactStore: ArtifactStore,
+                                      projectLoader: ProjectLoader,
+                                      deployGoal: Goal,
+                                      endpointGoal: Goal,
+                                      targetMapping: PushMapping<Target<any>>): GoalExecutor {
     return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
         await dedup(commit.sha, async () => {
@@ -70,7 +72,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
                     endpointGoal,
                     artifactStore,
                     ...target,
-                    targetUrl: "what does this mean",
+                    targetUrl: _.get(commit, "image.imageName"),
                     // Fix this
                     progressLog: new ConsoleProgressLog(),
                     branch: push.branch,

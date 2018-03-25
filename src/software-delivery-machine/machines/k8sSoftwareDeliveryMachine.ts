@@ -64,7 +64,7 @@ export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOption
     );
     sdm.addBuildRules(
         build.setDefault(new K8sAutomationBuilder()))
-        .addDeployers(
+        .addFunctionalUnits(
             K8sStagingDeployOnSuccessStatus,
             K8sProductionDeployOnSuccessStatus)
         .addNewRepoWithCodeActions(suggestAddingK8sSpec)

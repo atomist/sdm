@@ -15,13 +15,15 @@
  */
 
 import * as build from "../../blueprint/dsl/buildDsl";
+import * as deploy from "../../blueprint/dsl/deployDsl";
+
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
-import { NoGoals } from "../../common/delivery/goals/common/commonGoals";
+import { NoGoals, StagingDeploymentGoal, StagingEndpointGoal } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
@@ -39,11 +41,8 @@ import {
 } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import {
-    CloudFoundryProductionDeploy,
-    EnableDeployOnCloudFoundryManifestAddition,
-} from "../blueprint/deploy/cloudFoundryDeploy";
-import { LocalExecutableJarDeploy } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { EnableDeployOnCloudFoundryManifestAddition, } from "../blueprint/deploy/cloudFoundryDeploy";
+import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -51,6 +50,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -91,9 +91,15 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         build.setDefault(new MavenBuilder(options.artifactStore,
             createEphemeralProgressLog, options.projectLoader)),
     )
-        .addDeployers(
-            LocalExecutableJarDeploy,
-            CloudFoundryProductionDeploy,
+    // LocalExecutableJarDeploy,
+    // CloudFoundryProductionDeploy,
+        .addDeployRules(
+            deploy.setDefault({
+                deployer: LocalExecutableJarDeployer,
+                deployGoal: StagingDeploymentGoal,
+                endpointGoal: StagingEndpointGoal,
+                targeter: ManagedDeploymentTargeter,
+            }),
         )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
