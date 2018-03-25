@@ -47,6 +47,20 @@ export function allSatisfied(...pushTests: PushTest[]): PushTest {
         });
 }
 
+export function anySatisfied(...pushTests: PushTest[]): PushTest {
+    return pushTest(pushTests.map(g => g.name).join(" || "),
+        async pci => {
+            const allResults: boolean[] = await Promise.all(
+                pushTests.map(async pt => {
+                    const result = await pt.valueForPush(pci);
+                    logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
+                    return result;
+                }),
+            );
+            return allResults.includes(true);
+        });
+}
+
 const pushTestResultMemory = new LruCache<boolean>(1000);
 
 /**

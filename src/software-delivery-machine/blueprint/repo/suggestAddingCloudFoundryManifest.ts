@@ -18,6 +18,15 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { ProjectListenerInvocation } from "../../../common/listener/Listener";
 import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
+import { PushTest } from "../../../common/listener/PushTest";
+import { allSatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
+import {
+    HasSpringBootApplicationClass, IsJava,
+    IsMaven
+} from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
+
+const CloudFoundryDeployableProject: PushTest =
+    allSatisfied(IsMaven, HasSpringBootApplicationClass)
 
 export async function suggestAddingCloudFoundryManifest(inv: ProjectListenerInvocation) {
     try {
