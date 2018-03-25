@@ -15,8 +15,6 @@
  */
 
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { GoalSetterPushRule } from "../../../../blueprint/ruleDsl";
-import { isPushRule } from "../../../../blueprint/support/PushRule";
 import { localCommandsEditor } from "../../../../handlers/commands/editors/editorWrappers";
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../listener/PushTest";
@@ -32,13 +30,10 @@ export class LocalCommandAutofix implements AutofixRegistration {
 
     private readonly commands: SpawnCommand[];
 
-    public readonly pushTest: PushTest;
-
-    constructor(public name: string,
-                pushSpecifier: PushTest | GoalSetterPushRule,
+    constructor(public readonly name: string,
+                public readonly pushTest: PushTest,
                 command1: SpawnCommand,
                 ...additionalCommands: SpawnCommand[]) {
-        this.pushTest = isPushRule(pushSpecifier) ? pushSpecifier.pushTest : pushSpecifier;
         this.commands = [command1].concat(additionalCommands);
         this.action = localCommandsEditor(this.commands);
     }

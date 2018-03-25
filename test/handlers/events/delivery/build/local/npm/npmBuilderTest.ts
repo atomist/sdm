@@ -23,7 +23,7 @@ import { LocalBuildInProgress } from "../../../../../../../src/common/delivery/b
 import {
     Install, npmBuilderOptions, RunBuild,
     RunCompile,
-} from "../../../../../../../src/common/delivery/build/local/npm/NpmBuilder";
+} from "../../../../../../../src/common/delivery/build/local/npm/npmBuilder";
 import { SpawnBuilder } from "../../../../../../../src/common/delivery/build/local/SpawnBuilder";
 import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
 import { CloningProjectLoader } from "../../../../../../../src/common/repo/cloningProjectLoader";

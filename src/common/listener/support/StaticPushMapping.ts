@@ -15,18 +15,17 @@
  */
 
 import { ProjectListenerInvocation } from "../Listener";
-import { PushChoice } from "../PushChoice";
 import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
 
 /**
- * PushChoice implementation wholly driven by one or more PushTest instances.
+ * PushMapping implementation wholly driven by a PushTest instance.
  * Always returns the same value
  */
-export class GuardedPushChoice<V> implements PushChoice<V>, PushMapping<V> {
+export class StaticPushMapping<V> implements PushMapping<V> {
 
-    public guard: PushTest;
+    public readonly guard: PushTest;
 
     get name() {
         return `GuardedPushChoice: ${this.guard.name}->${this.value}`;
@@ -43,7 +42,7 @@ export class GuardedPushChoice<V> implements PushChoice<V>, PushMapping<V> {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public test(p: ProjectListenerInvocation): Promise<V> | V {
-        return this.value;
+    public async test(pi: ProjectListenerInvocation): Promise<V> {
+        return (await this.guard.test(pi)) ? this.value : undefined;
     }
 }
