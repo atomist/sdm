@@ -26,7 +26,7 @@ import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     NoGoals, ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
-    StagingEndpointGoal
+    StagingEndpointGoal,
 } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";

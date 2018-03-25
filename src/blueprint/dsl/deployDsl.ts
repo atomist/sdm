@@ -15,9 +15,9 @@
  */
 
 import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
+import { Goal } from "../../common/delivery/goals/Goal";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
-import { Goal } from "../../common/delivery/goals/Goal";
 import { StaticPushMapping} from "../../common/listener/support/StaticPushMapping";
 
 export class DeployPushRule extends PushRule<Target<any>> {
@@ -36,7 +36,7 @@ export class DeployPushRule extends PushRule<Target<any>> {
                     endpointGoal,
                 });
                 return outer.choice;
-            }
+            },
         };
 
     }
