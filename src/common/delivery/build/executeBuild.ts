@@ -39,7 +39,7 @@ export function executeBuild(projectLoader: ProjectLoader,
             const atomistTeam = context.teamId;
 
             await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-                const push = status.commit.pushes[0];
+                const push = commit.pushes[0];
                 const pti: ProjectListenerInvocation = {
                     id,
                     project,

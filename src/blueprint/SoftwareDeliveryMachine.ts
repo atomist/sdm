@@ -222,7 +222,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     private get builder(): FunctionalUnit {
-        const name = this.builderMapping.name;
+        const name = this.builderMapping.name.replace(" ", "_");
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),

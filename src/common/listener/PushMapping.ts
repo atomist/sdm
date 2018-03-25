@@ -24,7 +24,7 @@ export interface PushMapping<V> {
     /**
      * Name of the PushMapping. Must be unique
      */
-    name: string;
+    readonly name: string;
 
     test(p: ProjectListenerInvocation): V | Promise<V>;
 }

@@ -31,7 +31,7 @@ export class PushRules<V> implements PushMapping<V> {
      * @param {string} name
      * @param {Array<PushRule<V>>} choices
      */
-    constructor(public name: string, choices: Array<PushMapping<V>> = []) {
+    constructor(public readonly name: string, choices: Array<PushMapping<V>> = []) {
         this.add(choices);
     }
 
