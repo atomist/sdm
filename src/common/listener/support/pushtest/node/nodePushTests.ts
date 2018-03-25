@@ -15,6 +15,7 @@
  */
 
 import { PushTest, pushTest } from "../../../PushTest";
+import { hasFile } from "../commonPushTests";
 
 export const IsNode: PushTest = pushTest("Is Node", async pi => {
     try {
@@ -27,5 +28,4 @@ export const IsNode: PushTest = pushTest("Is Node", async pi => {
     }
 });
 
-export const IsAtomistAutomationClient = pushTest("Is Atomist Automation client", async pi =>
-    !!(await pi.project.getFile("src/atomist.config.ts")));
+export const IsAtomistAutomationClient = hasFile("src/atomist.config.ts");

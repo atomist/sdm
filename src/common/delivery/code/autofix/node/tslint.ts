@@ -20,9 +20,10 @@ import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushT
 import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
 import { Install } from "../../../build/local/npm/npmBuilder";
 import { LocalCommandAutofix } from "../LocalCommandAutofix";
+import { hasFile } from "../../../../listener/support/pushtest/commonPushTests";
 
 export const tslintFix = new LocalCommandAutofix("tslint",
-    allSatisfied(IsTypeScript, IsNode),
+    allSatisfied(IsTypeScript, IsNode, hasFile("tslint.json")),
     {ignoreFailure: true },
     Install,
     asSpawnCommand("npm run lint:fix"));
