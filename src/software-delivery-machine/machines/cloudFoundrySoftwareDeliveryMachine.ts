@@ -29,7 +29,7 @@ import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPu
 import { HasSpringBootApplicationClass, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
-import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import { IsAtomistAutomationClient, IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import {
@@ -50,6 +50,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -78,11 +79,12 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     );
 
     sdm.addBuildRules(
-        build.when(IsNode)
-            .itMeans("Build with npm")
+        build.when(IsAtomistAutomationClient, IsNode)
+            .itMeans("Build Atomist automation client")
             .set(new SpawnBuilder(options.artifactStore,
                 createEphemeralProgressLogWithConsole,
                 options.projectLoader, npmBuilderOptions([Install, RunBuild]))),
+        new NpmDetectBuildMapping(options.artifactStore, options.projectLoader),
         build.setDefault(new MavenBuilder(options.artifactStore,
             createEphemeralProgressLog, options.projectLoader)),
     )

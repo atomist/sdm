@@ -26,3 +26,6 @@ export const IsNode: PushTest = pushTest("Is Node", async pi => {
         return false;
     }
 });
+
+export const IsAtomistAutomationClient = pushTest("Is Atomist Automation client", async pi =>
+    !!(await pi.project.getFile("src/atomist.config.ts")));
