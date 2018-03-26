@@ -77,6 +77,8 @@ export class ExecuteGoalOnSuccessStatus
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
 
+        logger.debug(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
+
         if (!currentGoalIsStillPending(params.goal.context, {
                 siblings: status.commit.statuses,
             })) {
@@ -85,6 +87,10 @@ export class ExecuteGoalOnSuccessStatus
 
         const commit = status.commit;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
+        if (!(await preconditionsAreAllMet(params.goal, status, id))) {
+            return Success;
+        }
 
         const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
         const thisSdmGoal = sdmGoals.find(g => g.name === params.goal.name && g.environment === params.goal.environment);
@@ -98,13 +104,6 @@ export async function executeGoal(execute: GoalExecutor,
                                   ctx: HandlerContext,
                                   params: ExecuteGoalInvocation,
                                   thisSdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
-    const commit = status.commit;
-    logger.debug(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
-    const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-
-    if (!(await shouldRunGoal(params.goal, status, id))) {
-        return Success;
-    }
 
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
     await updateGoal(ctx, thisSdmGoal, {
@@ -116,7 +115,7 @@ export async function executeGoal(execute: GoalExecutor,
     return execute(status, ctx, params);
 }
 
-async function shouldRunGoal(goal: Goal, status: StatusForExecuteGoal.Fragment, idForLogging: RepoRef) {
+async function preconditionsAreAllMet(goal: Goal, status: StatusForExecuteGoal.Fragment, idForLogging: RepoRef) {
     const statusAndFriends: GitHubStatusAndFriends = {
         context: status.context,
         state: status.state,
