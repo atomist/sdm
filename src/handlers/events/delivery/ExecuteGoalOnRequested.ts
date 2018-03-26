@@ -29,6 +29,7 @@ import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGo
 import { createStatus } from "../../../util/github/ghub";
 import { executeGoal, validSubscriptionName } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
+import { execute } from "graphql";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -75,17 +76,19 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
+
+        if (!params.handleGoalUpdates) {
+            // do this simplest thing. Not recommended. in progress: #264
+            return params.execute(status, ctx, params)
+        }
+
         try {
             const result = await executeGoal(this.execute, status, ctx, params, sdmGoal);
-            if (params.handleGoalUpdates) {
-                markStatus(ctx, sdmGoal, params.goal, result);
-            }
+            markStatus(ctx, sdmGoal, params.goal, result);
             return Success;
         } catch (err) {
             logger.warn("Error executing %s on %s: %s", params.implementationName, repoRef(status).url, err.message);
-            if (params.handleGoalUpdates) {
-                await markStatus(ctx, sdmGoal, params.goal, { code: 1 });
-            }
+            await markStatus(ctx, sdmGoal, params.goal, {code: 1});
             return failure(err);
         }
     }
