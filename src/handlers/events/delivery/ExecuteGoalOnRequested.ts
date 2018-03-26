@@ -67,13 +67,13 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
         const status: StatusForExecuteGoal.Fragment = convertForNow(sdmGoal, commit);
 
-        // this should not happen but it could
+        // this should not happen but it does: automation-api#395
         if (status.context !== params.goal.context || sdmGoal.state !== "requested") {
             logger.warn(`Received '${sdmGoal.state}' on ${status.context}, while looking for 'requested' on ${params.goal.context}`);
             return Success;
         }
 
-        // TODO: this has to be a bug. it isn't getting the secret once I changed the subscription to be the SdmGoal
+        // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
         try {
             const result = await executeGoal(this.execute, status, ctx, params);
