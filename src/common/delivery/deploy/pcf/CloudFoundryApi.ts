@@ -201,6 +201,7 @@ export class CloudFoundryApi {
         }, {headers: _.assign({}, this.authHeader, this.jsonContentHeader)}),
             `create package ${appGuid}`);
         const formData = FormData();
+        formData.maxDataSize = Infinity;
         formData.append("bits", packageFile);
         const uploadHeaders = _.assign({}, this.authHeader, formData.getHeaders());
         const options = {
@@ -220,7 +221,7 @@ export class CloudFoundryApi {
                 await this.refreshToken();
                 return doWithRetry(() =>
                         axios.get(packageCreateResult.data.links.self.href, { headers: this.authHeader}),
-                    `get package ${appGuid}`);
+                    `get package ${packageCreateResult.data.guid}`);
             },
             r => r.data.state === "READY",
         );
@@ -239,7 +240,7 @@ export class CloudFoundryApi {
             async () => {
                 await this.refreshToken();
                 return doWithRetry(() => axios.get(buildResult.data.links.self.href, {headers: this.authHeader}),
-                    `get build for package ${packageGuid}`);
+                    `get build for package ${buildResult.data.guid}`);
                 },
                 r => r.data.state === "STAGED",
         );

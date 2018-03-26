@@ -51,7 +51,8 @@ export class CloudFoundryPusher {
         const packageUploadResult = await this.api.uploadPackage(appGuid, packageFile);
         log.write(`Building package for ${appNameForLog}...`);
         const buildResult = await this.api.buildDroplet(packageUploadResult.data.guid);
-        const serviceModifications = await this.appServiceModifications(appGuid, manifestApp.services);
+        const serviceNames = !manifestApp.services ? [] : manifestApp.services;
+        const serviceModifications = await this.appServiceModifications(appGuid, serviceNames);
         await this.api.stopApp(appGuid);
         log.write(`Stopped app for updates to ${appNameForLog}.`);
         await this.api.setCurrentDropletForApp(appGuid, buildResult.data.droplet.guid);
