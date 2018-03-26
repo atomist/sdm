@@ -27,7 +27,7 @@ import { environmentFromGoal, storeGoal, updateGoal } from "../../../common/deli
 import { GoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
-import { executeGoal } from "./ExecuteGoalOnSuccessStatus";
+import { executeGoal, validSubscriptionName } from "./ExecuteGoalOnSuccessStatus";
 import { forApproval } from "./verify/approvalGate";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
@@ -41,11 +41,14 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
     public githubToken: string;
 
-    constructor(public implementationName: string,
+    public implementationName: string
+
+    constructor(implementationName: string,
                 public goal: Goal,
                 private execute: GoalExecutor,
                 private handleGoalUpdates: boolean = false) {
-        this.subscriptionName = implementationName + "OnRequested";
+        this.implementationName = validSubscriptionName(implementationName);
+        this.subscriptionName = this.implementationName + "OnRequested";
         this.subscription =
             subscription({
                 name: "OnRequestedSdmGoal", operationName: this.subscriptionName,
