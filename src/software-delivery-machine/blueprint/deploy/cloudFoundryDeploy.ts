@@ -30,27 +30,32 @@ import { CodeReactionListener } from "../../../common/listener/CodeReactionListe
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { DefaultArtifactStore } from "../artifactStore";
+import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  */
-export const CloudFoundryStagingDeploySpec: DeploySpec<CloudFoundryInfo> = {
-    implementationName: "DeployFromLocalToStaging",
-    deployGoal: StagingDeploymentGoal,
-    endpointGoal: StagingEndpointGoal,
-    artifactStore: DefaultArtifactStore,
-    deployer: new CommandLineCloudFoundryDeployer(),
-    targeter: () => new EnvironmentCloudFoundryTarget("ri-staging"),
-};
+export function cloudFoundryStagingDeploySpec(projectLoader: ProjectLoader): DeploySpec<CloudFoundryInfo> {
+    return {
+        implementationName: "DeployFromLocalToStaging",
+        deployGoal: StagingDeploymentGoal,
+        endpointGoal: StagingEndpointGoal,
+        artifactStore: undefined,
+        deployer: new CommandLineCloudFoundryDeployer(projectLoader),
+        targeter: () => new EnvironmentCloudFoundryTarget("ri-staging"),
+    };
+}
 
-export const CloudFoundryProductionDeploySpec: DeploySpec<CloudFoundryInfo> = {
-    implementationName: "DeployFromLocalToProd",
-    deployGoal: ProductionDeploymentGoal,
-    endpointGoal: ProductionEndpointGoal,
-    artifactStore: DefaultArtifactStore,
-    deployer: new CommandLineCloudFoundryDeployer(),
-    targeter:  () => new EnvironmentCloudFoundryTarget("ri-production"),
-};
+export function cloudFoundryProductionDeploySpec(projectLoader: ProjectLoader): DeploySpec<CloudFoundryInfo> {
+    return {
+        implementationName: "DeployFromLocalToProd",
+        deployGoal: ProductionDeploymentGoal,
+        endpointGoal: ProductionEndpointGoal,
+        artifactStore: undefined,
+        deployer: new CommandLineCloudFoundryDeployer(projectLoader),
+        targeter: () => new EnvironmentCloudFoundryTarget("ri-production"),
+    };
+}
 
 /**
  * Enable deployment when a PCF manifest is added to the default branch.

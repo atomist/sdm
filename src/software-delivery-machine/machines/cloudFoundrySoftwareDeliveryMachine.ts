@@ -20,16 +20,16 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import {
-    Install, nodeRunBuildBuilder, npmBuilderOptions,
-    RunBuild,
-} from "../../common/delivery/build/local/npm/npmBuilder";
+import { nodeRunBuildBuilder, } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
-import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
-    LocalDeploymentGoal, LocalEndpointGoal,
-    NoGoals, ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
+    LocalDeploymentGoal,
+    LocalEndpointGoal,
+    NoGoals,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
+    StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
@@ -40,17 +40,14 @@ import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPu
 import { HasSpringBootApplicationClass, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
-import { IsAtomistAutomationClient, IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import {
-    createEphemeralProgressLog,
-    createEphemeralProgressLogWithConsole,
-} from "../../common/log/EphemeralProgressLog";
+import { createEphemeralProgressLog, } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-    CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
+    cloudFoundryProductionDeploySpec, cloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
 import {
@@ -126,11 +123,11 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             deploy.when(IsMaven)
                 .itMeans("Maven")
                 .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal)
-                .using(CloudFoundryProductionDeploySpec),
+                .using(cloudFoundryProductionDeploySpec(options.projectLoader)),
             deploy.when(IsNode)
                 .itMeans("Node")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
-                .using(CloudFoundryStagingDeploySpec),
+                .using(cloudFoundryStagingDeploySpec(options.projectLoader)),
         )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
