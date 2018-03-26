@@ -59,7 +59,7 @@ export class ExecuteGoalOnSuccessStatus
     constructor(implementationName: string,
                 public goal: Goal,
                 private execute: GoalExecutor) {
-        this.implementationName = validSubscriptionName(implementationName)
+        this.implementationName = validSubscriptionName(implementationName);
         this.subscriptionName = this.implementationName + "OnSuccessStatus";
         this.name = this.subscriptionName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
@@ -126,7 +126,6 @@ async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<Ha
     // Return the minimal fields for HandlerResult, because they get printed to the log.
     return {code: executeResult.code, message: executeResult.message};
 }
-
 
 export function validSubscriptionName(input: string): string {
     return input.replace(/[-\s]/, "_")

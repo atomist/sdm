@@ -41,7 +41,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
     public githubToken: string;
 
-    public implementationName: string
+    public implementationName: string;
 
     constructor(implementationName: string,
                 public goal: Goal,
