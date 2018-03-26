@@ -14,43 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success, } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { contextToGoal } from "../../../common/delivery/goals/common/commonGoals";
-import {
-    contextIsAfter,
-    GitHubStatusContext,
-    splitContext,
-} from "../../../common/delivery/goals/gitHubContext";
-import { Goal } from "../../../common/delivery/goals/Goal";
-import {
-    OnFailureStatus,
-    OnSuccessStatus, StatusForExecuteGoal,
-} from "../../../typings/types";
-import {
-    createStatus,
-    State,
-} from "../../../util/github/ghub";
-import Status = OnSuccessStatus.Status;
+import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal, } from "../../../typings/types";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
-import { providerIdFromStatusForExecuteGoal, repoRefFromStatusForExecuteGoal } from "./ExecuteGoalOnSuccessStatus";
 import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
+import Status = OnSuccessStatus.Status;
+import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals
@@ -78,8 +49,8 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
             return Promise.resolve(Success);
         }
 
-        const id = repoRefFromStatusForExecuteGoal(status);
-        const goals = await fetchGoalsForCommit(ctx, id, providerIdFromStatusForExecuteGoal(status));
+        const id = repoRefFromStatus(status);
+        const goals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
         const failedGoal = goals.find(g => g.externalKey === status.context) as SdmGoal;
         const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals as SdmGoal[])))
             .filter(g => stillWaitingForPreconditions(status, g as SdmGoal));
