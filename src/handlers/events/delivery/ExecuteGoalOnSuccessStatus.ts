@@ -97,7 +97,7 @@ export async function executeGoal(execute: GoalExecutor,
         siblings: status.commit.statuses,
     };
     logger.debug("Checking preconditions for goal %s on %j...", params.goal.name, id);
-    const preconsStatus = await params.goal.preconditionsStatus({token: params.githubToken}, id, statusAndFriends);
+    const preconsStatus = await params.goal.preconditionsStatus(id, statusAndFriends);
     if (preconsStatus === "failure") {
         logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
         createStatus(params.githubToken, id as GitHubRepoRef, {

@@ -81,8 +81,7 @@ export class Goal {
     }
 
     // TODO decouple from github statuses
-    public async preconditionsStatus(creds: ProjectOperationCredentials,
-                                     id: RemoteRepoRef,
+    public async preconditionsStatus(id: RemoteRepoRef,
                                      sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
         return "success";
     }
@@ -97,8 +96,7 @@ export class GoalWithPrecondition extends Goal {
         this.dependsOn = dependsOn;
     }
 
-    public async preconditionsStatus(creds: ProjectOperationCredentials,
-                                     id: RemoteRepoRef,
+    public async preconditionsStatus(id: RemoteRepoRef,
                                      sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
         const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
         const errors: string[] = checks.filter(r => r.error !== undefined)
