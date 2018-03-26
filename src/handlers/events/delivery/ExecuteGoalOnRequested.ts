@@ -18,18 +18,14 @@ import { EventFired, failure, HandleEvent, HandlerContext, HandlerResult, logger
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as stringify from "json-stringify-safe";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
-import { environmentFromGoal, storeGoal, updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { GoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
-import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
-import { createStatus } from "../../../util/github/ghub";
-import { executeGoal, validSubscriptionName } from "./ExecuteGoalOnSuccessStatus";
-import { forApproval } from "./verify/approvalGate";
-import { execute } from "graphql";
+import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
+import { executeGoal, markStatus, validSubscriptionName } from "./verify/executeGoal";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -97,17 +93,6 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 function repoRef(status: StatusForExecuteGoal.Fragment) {
     const commit = status.commit;
     return new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-}
-
-function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult) {
-    const newState = result.code !== 0 ? "failure" :
-        result.requireApproval ? "waiting_for_approval" : "success";
-    return updateGoal(ctx, sdmGoal as SdmGoal,
-        {
-            goal,
-            url: result.targetUrl,
-            state: newState,
-        });
 }
 
 function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal.Commit): StatusForExecuteGoal.Fragment {

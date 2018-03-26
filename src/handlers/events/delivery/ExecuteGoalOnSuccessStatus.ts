@@ -43,6 +43,7 @@ import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 
 /**
  * Execute a goal on a success status
@@ -63,13 +64,14 @@ export class ExecuteGoalOnSuccessStatus
 
     constructor(implementationName: string,
                 public goal: Goal,
-                private execute: GoalExecutor) {
+                private execute: GoalExecutor,
+                private handleGoalUpdates: boolean = false) {
         this.implementationName = validSubscriptionName(implementationName);
         this.subscriptionName = this.implementationName + "OnSuccessStatus";
         this.name = this.subscriptionName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
         this.subscription =
-            subscription({ name: "OnAnySuccessStatus", operationName: this.subscriptionName });
+            subscription({name: "OnAnySuccessStatus", operationName: this.subscriptionName});
     }
 
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
@@ -92,27 +94,16 @@ export class ExecuteGoalOnSuccessStatus
             return Success;
         }
 
+        if (!params.handleGoalUpdates) {
+            // do this simplest thing. Not recommended. in progress: #264
+            return params.execute(status, ctx, params)
+        }
+
         const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
         const thisSdmGoal = sdmGoals.find(g => g.name === params.goal.name && g.environment === params.goal.environment);
 
         return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);
     }
-}
-
-export async function executeGoal(execute: GoalExecutor,
-                                  status: StatusForExecuteGoal.Fragment,
-                                  ctx: HandlerContext,
-                                  params: ExecuteGoalInvocation,
-                                  thisSdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
-
-    logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-    await updateGoal(ctx, thisSdmGoal, {
-        goal:params.goal,
-        description: params.goal.inProcessDescription,
-        state: "in_process",
-    }).catch(err =>
-        logger.warn("Failed to update %s goal to tell people we are working on it", params.goal.name));
-    return execute(status, ctx, params);
 }
 
 async function preconditionsAreAllMet(goal: Goal, status: StatusForExecuteGoal.Fragment, idForLogging: RepoRef) {
@@ -140,9 +131,4 @@ async function preconditionsAreAllMet(goal: Goal, status: StatusForExecuteGoal.F
 async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<HandlerResult> {
     // Return the minimal fields for HandlerResult, because they get printed to the log.
     return {code: executeResult.code, message: executeResult.message};
-}
-
-export function validSubscriptionName(input: string): string {
-    return input.replace(/[-\s]/, "_")
-        .replace(/^(\d)/, "number$1");
 }
