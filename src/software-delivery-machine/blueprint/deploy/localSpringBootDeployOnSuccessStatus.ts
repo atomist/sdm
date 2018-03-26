@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { composeFunctionalUnits } from "../../../blueprint/ComposedFunctionalUnit";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
-import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
@@ -29,10 +29,10 @@ import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/maven
 import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
-import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../spi/deploy/Deployer";
 import { DefaultArtifactStore } from "../artifactStore";
 
-export const LocalExecutableJarDeployer: ArtifactDeployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
+export const LocalExecutableJarDeployer: Deployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
     baseUrl: "http://localhost",
     lowerPort: 8082,
     commandLineArgumentsFor: springBootExecutableJarArgs,
@@ -42,7 +42,7 @@ export const LocalExecutableJarDeployer: ArtifactDeployer<ManagedDeploymentTarge
  * Deploy to the automation client node
  */
 
-const LocalExecutableJarDeploySpec: ArtifactDeploySpec<ManagedDeploymentTargetInfo> = {
+const LocalExecutableJarDeploySpec: DeploySpec<ManagedDeploymentTargetInfo> = {
     implementationName: "DeployFromLocalExecutableJar",
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
@@ -69,7 +69,7 @@ function springBootExecutableJarArgs(si: StartupInfo): string[] {
     ];
 }
 
-export function mavenSourceDeployer(projectLoader: ProjectLoader): ArtifactDeployer<ManagedDeploymentTargetInfo> {
+export function mavenSourceDeployer(projectLoader: ProjectLoader): Deployer<ManagedDeploymentTargetInfo> {
     return mavenDeployer(projectLoader, {
         baseUrl: "http://localhost",
         lowerPort: 9090,

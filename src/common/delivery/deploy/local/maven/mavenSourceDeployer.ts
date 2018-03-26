@@ -15,7 +15,6 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
@@ -25,7 +24,7 @@ import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
-import { ArtifactDeployer } from "../../../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 
 /**
@@ -38,7 +37,7 @@ let managedDeployments: ManagedDeployments;
  * @param projectLoader use to load projects
  * @param opts options
  */
-export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): ArtifactDeployer<ManagedDeploymentTargetInfo> {
+export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -49,7 +48,7 @@ export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerO
     });
 }
 
-class MavenSourceDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo> {
+class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
 
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }

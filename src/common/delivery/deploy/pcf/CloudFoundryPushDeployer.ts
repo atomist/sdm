@@ -27,7 +27,7 @@ import { Project } from "@atomist/automation-client/project/Project";
 import archiver = require("archiver");
 import * as fs from "fs";
 import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../../spi/deploy/Deployer";
 import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
@@ -39,7 +39,7 @@ import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } fr
  * Use the Cloud Foundry API to approximate their CLI to push.
  * Note that this is indeed thread safe concerning multiple logins and spaces.
  */
-export class CloudFoundryPushDeployer implements ArtifactDeployer<CloudFoundryInfo, CloudFoundryDeployment> {
+export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
 
     protected getProject(creds: ProjectOperationCredentials, repoRef: RemoteRepoRef): Promise<GitProject> {
         return GitCommandGitProject.cloned(creds, repoRef);

@@ -20,12 +20,12 @@ import { ExecuteGoalOnRequested } from "../../../handlers/events/delivery/Execut
 import { mavenSourceDeployer } from "../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/common/commonGoals";
-import { ArtifactDeploySpec, executeDeployArtifact, runWithLog } from "./executeDeploy";
+import { DeploySpec, executeDeployArtifact, runWithLog } from "./executeDeploy";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { Targeter } from "./deploy";
 import { ManagedDeploymentTargetInfo } from "./local/appManagement";
 
-function localDeployFromCloneSpec(projectLoader: ProjectLoader, targeter: Targeter<ManagedDeploymentTargetInfo>): ArtifactDeploySpec<ManagedDeploymentTargetInfo> {
+function localDeployFromCloneSpec(projectLoader: ProjectLoader, targeter: Targeter<ManagedDeploymentTargetInfo>): DeploySpec<ManagedDeploymentTargetInfo> {
     return {
         implementationName: "localDeploy",
         deployGoal: LocalDeploymentGoal,

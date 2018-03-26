@@ -20,7 +20,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
@@ -30,7 +30,7 @@ import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget
  * Spawn a new process to use the Cloud Foundry CLI to push.
  * Note that this isn't thread safe concerning multiple logins or spaces.
  */
-export class CommandLineCloudFoundryDeployer implements ArtifactDeployer<CloudFoundryInfo> {
+export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,

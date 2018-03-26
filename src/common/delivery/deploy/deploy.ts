@@ -22,7 +22,7 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { StatusState } from "../../../typings/types";
@@ -40,7 +40,7 @@ export interface DeployStage {
 }
 
 export interface DeployerInfo<T extends TargetInfo> {
-    deployer: ArtifactDeployer<T>;
+    deployer: Deployer<T>;
     targeter: Targeter<T>;
 }
 

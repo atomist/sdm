@@ -24,7 +24,7 @@ import { Deployment, TargetInfo } from "./Deployment";
  * Implemented by classes that can deploy from a published artifact that was build
  * by execution of a previous Build goal.
  */
-export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends Deployment = Deployment> extends LogInterpretation {
+export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deployment = Deployment> extends LogInterpretation {
 
     /**
      * Implemented by deployers that don't sit on an infrastructure like Cloud Foundry
@@ -34,7 +34,7 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends D
     undeploy?(ti: T, deployment: U, log: ProgressLog): Promise<any>;
 
     /**
-     * Find all deployments of the artifact
+     * Find all deployments of the artifact or app
      * @param {DeployableArtifact} da
      * @param {T} ti
      * @param {ProjectOperationCredentials} credentials
@@ -45,7 +45,7 @@ export interface ArtifactDeployer<T extends TargetInfo = TargetInfo, U extends D
                      creds: ProjectOperationCredentials): Promise<U[]>;
 
     /**
-     * Deploy the artifact returning a promise of deployments
+     * Deploy the app returning a promise of deployments
      * @param {DeployableArtifact} da
      * @param {T} ti
      * @param {ProgressLog} log

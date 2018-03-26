@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget
@@ -34,7 +34,7 @@ import { DefaultArtifactStore } from "../artifactStore";
 /**
  * Deploy everything to the same Cloud Foundry space
  */
-export const CloudFoundryStagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+export const CloudFoundryStagingDeploySpec: DeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToStaging",
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
@@ -46,7 +46,7 @@ export const CloudFoundryStagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo>
     }),
 };
 
-export const CloudFoundryProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+export const CloudFoundryProductionDeploySpec: DeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToProd",
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,

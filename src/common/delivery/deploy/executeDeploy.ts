@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
@@ -38,12 +38,12 @@ import {
 import { deploy, DeployArtifactParams, Targeter } from "./deploy";
 import * as _ from "lodash";
 
-export interface ArtifactDeploySpec<T extends TargetInfo> {
+export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;
     deployGoal: Goal;
     endpointGoal: Goal;
     artifactStore?: ArtifactStore;
-    deployer: ArtifactDeployer<T>;
+    deployer: Deployer<T>;
     targeter: Targeter<T>;
     undeploy?: {
         goal: Goal;
@@ -78,7 +78,7 @@ export interface RunWithLogContext extends SdmContext {
 
 export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-export function executeDeployArtifact<T extends TargetInfo>(spec: ArtifactDeploySpec<T>): ExecuteWithLog {
+export function executeDeployArtifact<T extends TargetInfo>(spec: DeploySpec<T>): ExecuteWithLog {
     return async (rwlc: RunWithLogContext) => {
         const commit = rwlc.status.commit;
         const pushBranch = commit.pushes[0].branch;
