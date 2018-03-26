@@ -78,6 +78,8 @@ export class ExecuteGoalOnSuccessStatus
             return Success;
         }
 
+        logger.info("Really executing " + this.implementationName);
+
         if (!params.handleGoalUpdates) {
             // do this simplest thing. Not recommended. in progress: #264
             return params.execute(status, ctx, params)

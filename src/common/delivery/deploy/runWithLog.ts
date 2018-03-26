@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
+import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { InterpretedLog, LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
-import { createStatus } from "../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../util/slack/reportFailureInterpretation";
 import { SdmContext } from "../../context/SdmContext";
 import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
@@ -41,10 +40,9 @@ export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteG
         const credentials = {token: params.githubToken};
 
         const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
-        await whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials})
-            .catch(err => reportError(err));
-        await progressLog.close();
-        return Promise.resolve(Success as ExecuteGoalResult);
+        return whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials})
+            .then(yay => progressLog.close().then(() => Success as ExecuteGoalResult),
+                err => reportError(err).then(() => progressLog.close()).then(() => Promise.reject(err)));
     };
 }
 
@@ -84,12 +82,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
         } else {
             await addressChannels(":x: Failure deploying: " + err.message);
         }
-        return createStatus(executeGoalInvocation.githubToken, id, {
-            state: "failure",
-            target_url: progressLog.url,
-            context: executeGoalInvocation.goal.context,
-            description: executeGoalInvocation.goal.failureDescription,
-        }).then(no => ({code: 0, message: err.message}));
+        throw err;
     };
 }
 
