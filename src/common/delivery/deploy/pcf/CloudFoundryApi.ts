@@ -284,6 +284,10 @@ export class CloudFoundryApi {
 
     public async addRandomRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
         await this.refreshToken();
+        const appRoutes = await this.cf.apps.getAppRoutes(appGuid);
+        if (appRoutes.resources.length > 0) {
+            return appRoutes.resources[0].entity.host;
+        }
         const domains = await this.cf.domains.getSharedDomains();
         const defaultDomain = domains.resources.find(d => d.entity.name === domainName);
         const domainGuid = defaultDomain.metadata.guid;
