@@ -89,10 +89,12 @@ applications:
     ATOMIST_TEAMS: ${teamId}`;
 
 /* tslint:disable:max-line-length */
+// dd: The poorly names "max_old_space_size" seems to map roughly to heap,
+// so you want your container limit to be 15-25% higher than whatever you set the max_old_space_size to.
 const automationClientManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
-  command: "node --trace-warnings --expose_gc --optimize_for_size --always_compact --max_old_space_size=256 node_modules/@atomist/automation-client/start.client.js"
+  command: "node --trace-warnings --expose_gc --optimize_for_size --always_compact --max_old_space_size=384 node_modules/@atomist/automation-client/start.client.js"
   memory: 512M
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
   env:
