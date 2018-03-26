@@ -78,7 +78,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
         const interpretation = logInterpreter && !!progressLog.log && logInterpreter(progressLog.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
-            await reportFailureInterpretation("deploy", interpretation,
+            await reportFailureInterpretation(executeGoalInvocation.implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},
                 id, addressChannels, retryButton);
         } else {

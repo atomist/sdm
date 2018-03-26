@@ -24,7 +24,7 @@ import { ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 import { checkOutArtifact, setEndpointStatusOnSuccessfulDeploy, Target, Targeter } from "./deploy";
 
 import * as _ from "lodash";
-import { runWithLog, RunWithLogContext } from "./runWithLog";
+import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "./runWithLog";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 

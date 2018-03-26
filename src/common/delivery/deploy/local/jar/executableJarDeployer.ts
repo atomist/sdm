@@ -112,7 +112,7 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
                 }
             });
             childProcess.addListener("exit", () => {
-                reject("We should have found Tomcat endpoint by now!!");
+                reject(new Error("ExecutableJarDeployer: We should have found Tomcat endpoint by now!!"));
             });
             childProcess.addListener("error", reject);
         })];
