@@ -17,6 +17,7 @@
 import { failure, HandlerContext, logger, success, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import * as _ from "lodash";
 import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
@@ -36,7 +37,6 @@ import {
     GoalExecutor,
 } from "../goals/goalExecution";
 import { deploy, DeployArtifactParams, Targeter } from "./deploy";
-import * as _ from "lodash";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;

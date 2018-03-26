@@ -17,7 +17,7 @@
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     CloudFoundryInfo,
-    EnvironmentCloudFoundryTarget
+    EnvironmentCloudFoundryTarget,
 } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {

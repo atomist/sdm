@@ -18,14 +18,14 @@ import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
+import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
-import { Deployer } from "../../../../../spi/deploy/Deployer";
-import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 
 /**
  * Managed deployments
@@ -69,7 +69,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
         return Promise.all([
             this.projectLoader.doWithProject({credentials, id, readOnly: true}, project =>
-                this.deployProject(ti, log, project, port, team))]
+                this.deployProject(ti, log, project, port, team))],
         );
 
     }

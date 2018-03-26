@@ -18,14 +18,15 @@ import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { triggerGoal } from "../../../handlers/commands/triggerGoal";
 import { ExecuteGoalOnRequested } from "../../../handlers/events/delivery/ExecuteGoalOnRequested";
 import { mavenSourceDeployer } from "../../../software-delivery-machine/blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../goals/common/commonGoals";
-import { DeploySpec, executeDeployArtifact, runWithLog } from "./executeDeploy";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { Targeter } from "./deploy";
+import { DeploySpec, executeDeployArtifact, runWithLog } from "./executeDeploy";
 import { ManagedDeploymentTargetInfo } from "./local/appManagement";
 
-function localDeployFromCloneSpec(projectLoader: ProjectLoader, targeter: Targeter<ManagedDeploymentTargetInfo>): DeploySpec<ManagedDeploymentTargetInfo> {
+function localDeployFromCloneSpec(projectLoader: ProjectLoader,
+                                  targeter: Targeter<ManagedDeploymentTargetInfo>): DeploySpec<ManagedDeploymentTargetInfo> {
     return {
         implementationName: "localDeploy",
         deployGoal: LocalDeploymentGoal,
@@ -37,7 +38,8 @@ function localDeployFromCloneSpec(projectLoader: ProjectLoader, targeter: Target
 
 export function localDeployment<T extends TargetInfo>(projectLoader: ProjectLoader, targeter: Targeter<ManagedDeploymentTargetInfo>): FunctionalUnit {
     const ld = localDeployFromCloneSpec(projectLoader, targeter);
-    return {eventHandlers: [
+    return {
+        eventHandlers: [
             () => new ExecuteGoalOnRequested("LocalDeployFromClone",
                 LocalDeploymentGoal,
                 runWithLog(executeDeployArtifact(ld), ld.deployer.logInterpreter)),
