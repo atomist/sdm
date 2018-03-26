@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
+import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import sprintf from "sprintf-js";
@@ -45,6 +45,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(before.provenance),
     };
+    logger.debug(`Updating SdmGoal ${sdmGoal.externalKey} to ${sdmGoal.state}`);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
@@ -108,6 +109,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         preConditions,
     };
 
+    logger.debug("Storing goal: %j", sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
