@@ -23,7 +23,12 @@ import {
     CodeReactionGoal,
     FingerprintGoal,
     JustBuildGoal,
+    LocalDeploymentGoal,
+    LocalEndpointGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal,
     ReviewGoal,
+    StagingDeploymentGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
@@ -53,7 +58,10 @@ import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/co
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
+import { Target } from "../common/delivery/deploy/deploy";
+import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
+import { Goal } from "../common/delivery/goals/Goal";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -65,6 +73,7 @@ import { PushMapping } from "../common/listener/PushMapping";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { PushRules } from "../common/listener/support/PushRules";
+import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
@@ -128,6 +137,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
+    private readonly deployTargetMapping = new PushRules<Target<any>>("Deploy targets");
+
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
     private codeReactions: CodeReactionListener[] = [];
@@ -147,8 +158,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
-
-    private deployers: FunctionalUnit[] = [];
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
@@ -223,13 +232,44 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get builder(): FunctionalUnit {
         const name = this.builderMapping.name.replace(" ", "_");
+        const executor = executeBuild(this.opts.projectLoader, this.builderMapping);
         return {
             eventHandlers: [
-                () => new ExecuteGoalOnRequested(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
-                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
-                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
-                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executeBuild(this.opts.projectLoader, this.builderMapping)),
+                () => new ExecuteGoalOnRequested(name, BuildGoal, executor),
+                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executor),
+                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executor),
+                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executor),
             ],
+            commandHandlers: [],
+        };
+    }
+
+    private get deployer(): FunctionalUnit {
+        const outer = this;
+
+        function executor(deploymentGoal: Goal, endpointGoal: Goal) {
+            return executeDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
+                deploymentGoal, endpointGoal,
+                outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
+        }
+
+        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal }> = [
+            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal},
+            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal},
+            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal},
+        ];
+
+        let count = 0;
+        return {
+            eventHandlers: _.flatten(deployGoalPairs.map(dep => [
+                () => new ExecuteGoalOnRequested(`deploy${count++}`,
+                    dep.deployGoal,
+                    executor(dep.deployGoal, dep.endpointGoal)),
+                () => new ExecuteGoalOnSuccessStatus(`deploy${count++}`,
+                    dep.deployGoal,
+                    executor(dep.deployGoal, dep.endpointGoal),
+                ),
+            ])),
             commandHandlers: [],
         };
     }
@@ -286,7 +326,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return this.functionalUnits
-            .concat(this.deployers)
             .concat([
                 this.builder,
                 this.fingerprinter,
@@ -294,6 +333,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.autofix,
                 this.codeReactionHandling,
                 this.reviewHandling,
+                this.deployer,
             ]);
     }
 
@@ -444,8 +484,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addDeployers(...deployers: FunctionalUnit[]): this {
-        this.deployers = this.deployers.concat(deployers);
+    public addDeployRules(...rules: Array<StaticPushMapping<Target<any>>>): this {
+        this.deployTargetMapping.add(rules);
         return this;
     }
 

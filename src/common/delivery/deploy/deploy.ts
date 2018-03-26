@@ -14,78 +14,65 @@
  * limitations under the License.
  */
 
-import {logger} from "@atomist/automation-client";
-import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { logger } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {ArtifactStore} from "../../../spi/artifact/ArtifactStore";
-import {ArtifactDeployer} from "../../../spi/deploy/ArtifactDeployer";
-import {Deployment, TargetInfo} from "../../../spi/deploy/Deployment";
-import {SourceDeployer} from "../../../spi/deploy/SourceDeployer";
-import {ProgressLog} from "../../../spi/log/ProgressLog";
-import {StatusState} from "../../../typings/types";
-import {AddressChannels} from "../../slack/addressChannels";
-import {GitHubStatusContext} from "../goals/gitHubContext";
-import {Goal} from "../goals/Goal";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
+import { Deployer } from "../../../spi/deploy/Deployer";
+import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
+import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { StatusState } from "../../../typings/types";
+import { AddressChannels } from "../../slack/addressChannels";
+import { GitHubStatusContext } from "../goals/gitHubContext";
+import { Goal } from "../goals/Goal";
 
-import {createStatus} from "../../../util/github/ghub";
-import {ManagedDeploymentTargeter} from "./local/appManagement";
+import { createStatus } from "../../../util/github/ghub";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
-export interface DeployArtifactParams<T extends TargetInfo> {
+export interface DeployStage {
+    deployGoal: Goal;
+    endpointGoal: Goal;
+}
+
+export interface DeployerInfo<T extends TargetInfo> {
+    deployer: Deployer<T>;
+    targeter: Targeter<T>;
+}
+
+export interface Target<T extends TargetInfo> extends DeployerInfo<T>, DeployStage {
+}
+
+export interface DeployArtifactParams<T extends TargetInfo> extends Target<T> {
     id: GitHubRepoRef;
     credentials: ProjectOperationCredentials;
     addressChannels: AddressChannels;
     team: string;
-    deployGoal: Goal;
-    endpointGoal: Goal;
     artifactStore: ArtifactStore;
-    deployer: ArtifactDeployer<T>;
-    targeter: Targeter<T>;
     targetUrl: string;
     progressLog: ProgressLog;
     branch: string;
-}
-
-export interface DeploySourceParams {
-    id: GitHubRepoRef;
-    credentials: ProjectOperationCredentials;
-    addressChannels: AddressChannels;
-    team: string;
-    deployGoal: Goal;
-    endpointGoal: Goal;
-    deployer: SourceDeployer;
-    progressLog: ProgressLog;
-    branch: string;
-}
-
-export async function deploySource(params: DeploySourceParams): Promise<void> {
-    logger.info("Deploying with params=%j", params);
-    const target = ManagedDeploymentTargeter(params.id, params.branch);
-
-    const deployment = await params.deployer.deployFromSource(
-        params.id,
-        target,
-        params.progressLog,
-        params.credentials,
-        params.team);
-
-    await reactToSuccessfulDeploy(params, deployment);
 }
 
 export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<T>): Promise<void> {
     logger.info("Deploying with params=%j", params);
     const progressLog = params.progressLog;
 
-    const artifactCheckout = await params.artifactStore.checkout(params.targetUrl, params.id,
-        params.credentials)
-        .catch(err => {
-            progressLog.write("Error checking out artifact: " + err.message);
-            throw err;
+    const artifactCheckout = params.targetUrl ?
+        await params.artifactStore.checkout(params.targetUrl, params.id,
+            params.credentials)
+            .catch(err => {
+                progressLog.write("Error checking out artifact: " + err.message);
+                throw err;
+            }) : ({
+            // TODO need to do something about this: Use general identifier as in PCF editor?
+            name: params.id.repo,
+            version: "0.1.0",
+            id: params.id,
         });
     if (!artifactCheckout) {
         throw new Error("No DeployableArtifact passed in");
@@ -98,7 +85,7 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
         params.credentials,
         params.team);
 
-    await Promise.all(deployments.map( deployment => reactToSuccessfulDeploy(params, deployment)));
+    await Promise.all(deployments.map(deployment => reactToSuccessfulDeploy(params, deployment)));
 }
 
 export async function reactToSuccessfulDeploy(params: {

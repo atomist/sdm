@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
-import { ArtifactDeploySpec } from "../../../common/delivery/deploy/executeDeploy";
-import { CloudFoundryPushDeployer } from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
-import { CloudFoundryInfo, EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import {
+    CloudFoundryInfo,
+    EnvironmentCloudFoundryTarget,
+} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -29,12 +30,11 @@ import { CodeReactionListener } from "../../../common/listener/CodeReactionListe
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { DefaultArtifactStore } from "../artifactStore";
-import { deployArtifactGoalHandlers } from "../goal/deployArtifactGoalHandlers";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  */
-const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+export const CloudFoundryStagingDeploySpec: DeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToStaging",
     deployGoal: StagingDeploymentGoal,
     endpointGoal: StagingEndpointGoal,
@@ -46,10 +46,7 @@ const StagingDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
     }),
 };
 
-export const CloudFoundryStagingDeploy: FunctionalUnit =
-    deployArtifactGoalHandlers(StagingDeploySpec);
-
-const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
+export const CloudFoundryProductionDeploySpec: DeploySpec<CloudFoundryInfo> = {
     implementationName: "DeployFromLocalToProd",
     deployGoal: ProductionDeploymentGoal,
     endpointGoal: ProductionEndpointGoal,
@@ -60,9 +57,6 @@ const ProductionDeploySpec: ArtifactDeploySpec<CloudFoundryInfo> = {
         space: "ri-production",
     }),
 };
-
-export const CloudFoundryProductionDeploy: FunctionalUnit =
-    deployArtifactGoalHandlers(ProductionDeploySpec);
 
 /**
  * Enable deployment when a PCF manifest is added to the default branch.

@@ -15,7 +15,7 @@
  */
 
 import { Goals } from "../Goals";
-import { AutofixGoal, BuildGoal, ProductionDeploymentGoal, ProductionEndpointGoal, ReviewGoal } from "./commonGoals";
+import { AutofixGoal, BuildGoal, ReviewGoal, StagingDeploymentGoal, StagingEndpointGoal } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
     "npm build",
@@ -29,6 +29,6 @@ export const NpmDeployGoals = new Goals(
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
 );

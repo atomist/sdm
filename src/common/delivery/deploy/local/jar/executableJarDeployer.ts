@@ -19,7 +19,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
-import { ArtifactDeployer } from "../../../../../spi/deploy/ArtifactDeployer";
+import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
@@ -36,7 +36,7 @@ let managedDeployments: ManagedDeployments;
  * Not intended as a Paas, but for use during demos and development.
  * @param opts options
  */
-export function executableJarDeployer(opts: LocalDeployerOptions): ArtifactDeployer<ManagedDeploymentTargetInfo> {
+export function executableJarDeployer(opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
     if (!managedDeployments) {
         logger.info("Created new deployments record");
         managedDeployments = new ManagedDeployments(opts.lowerPort);
@@ -47,7 +47,7 @@ export function executableJarDeployer(opts: LocalDeployerOptions): ArtifactDeplo
     });
 }
 
-class ExecutableJarDeployer implements ArtifactDeployer<ManagedDeploymentTargetInfo, Deployment> {
+class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Deployment> {
 
     constructor(public opts: LocalDeployerOptions) {
     }

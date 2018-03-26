@@ -55,7 +55,7 @@ export interface StoredArtifact {
  */
 export interface DeployableArtifact extends AppInfo {
 
-    cwd: string;
+    cwd?: string;
 
-    filename: string;
+    filename?: string;
 }
