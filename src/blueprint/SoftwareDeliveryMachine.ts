@@ -304,7 +304,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return {
             eventHandlers: [() => new ExecuteGoalOnSuccessStatus("VerifyInStaging",
                 StagingVerifiedGoal,
-                executeVerifyEndpoint(stagingVerification))],
+                executeVerifyEndpoint(stagingVerification),
+                true)],
             commandHandlers: [() => triggerGoal("VerifyInStaging", StagingVerifiedGoal)],
         };
     }
