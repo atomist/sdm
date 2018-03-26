@@ -5,6 +5,7 @@ import { splitContext } from "../../../../common/delivery/goals/gitHubContext";
 import { Goal, GoalWithPrecondition } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
+import * as slack from "@atomist/slack-messages/SlackMessages";
 
 export async function showGraph(ctx: HandlerContext, addressChannels: AddressChannels, goals: Goals) {
     // This is an easter egg
@@ -28,7 +29,14 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
             return;
         }
 
-        return addressChannels("Goal dependency graph for " + graphvizServiceUrl + "/" + graphImageRelativePath);
+        const showGraphMessage: slack.SlackMessage = {
+            attachments: [{
+                fallback: "dependency goal graph goes here",
+                text: "Graph of planned goals",
+                image_url: graphvizServiceUrl + "/" + graphImageRelativePath,
+            }],
+        };
+        return addressChannels(showGraphMessage);
     } catch (err) {
         // do not fail anything
         logger.error("Unable to generate a cool graph of the goals: " + err.message);
