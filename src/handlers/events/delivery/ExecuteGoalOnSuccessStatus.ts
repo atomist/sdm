@@ -101,6 +101,9 @@ function dontRunTheSameGoalTwiceSimultaneously(sha: string, goal: Goal) {
     return `${goal.environment}/${goal.name} for ${sha}`
 }
 
+// whenever a success status comes in after all preconditions are met,
+// stuff gets really excited about going. Don't run two at once.
+// consider doing: ignore any status update that wasn't a precondition.
 async function dedup(key: string, f: () => Promise<HandlerResult>): Promise<HandlerResult> {
     if (running[key]) {
         logger.warn("Dedup: skipping second simultaneous execution of " + key);
