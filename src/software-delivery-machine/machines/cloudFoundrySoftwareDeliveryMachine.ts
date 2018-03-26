@@ -52,7 +52,7 @@ import {
 } from "../blueprint/deploy/cloudFoundryDeploy";
 import {
     LocalExecutableJarDeployer,
-    mavenSourceDeployer
+    mavenSourceDeployer,
 } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";

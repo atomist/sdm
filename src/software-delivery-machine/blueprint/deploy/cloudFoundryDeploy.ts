@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
 } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
