@@ -17,11 +17,11 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { identification, MavenProjectIdentifier } from "../../../../common/delivery/build/local/maven/pomParser";
+import { MavenProjectIdentifier } from "../../../../common/delivery/build/local/maven/pomParser";
 import { NodeProjectIdentifier } from "../../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 import { CloudFoundryManifestPath } from "../../../../common/delivery/deploy/pcf/CloudFoundryTarget";
-import { IsAtomistAutomationClient } from "../../../../common/listener/support/pushtest/node/nodePushTests";
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
+import { HasSpringBootPom } from "../../../../common/listener/support/pushtest/jvm/springPushTests";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";
@@ -50,10 +50,10 @@ ${AtomistGeneratedMarker}`,
 ${AddCloudFoundryManifestMarker}`),
     });
 
-// This should not have been invoked
+// This should not have been invoked unless it's a Spring or Node project
 export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx) => {
     const javaId = await MavenProjectIdentifier(p);
-    if (javaId) {
+    if (javaId && await HasSpringBootPom.predicate(p)) {
         return p.addFile(CloudFoundryManifestPath, javaManifestFor(javaId.name, ctx.teamId));
     }
     const nodeId = await NodeProjectIdentifier(p);

@@ -16,7 +16,7 @@
 
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { isPublicRepo } from "../../../../util/github/ghub";
-import { PushTest, pushTest } from "../../PushTest";
+import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../PushTest";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
     p.push.branch === p.push.repo.defaultBranch);
@@ -54,9 +54,7 @@ export const ToPublicRepo = pushTest("To public repo", async p =>
  * @param {string} path
  * @return {PushTest}
  */
-export function hasFile(path: string): PushTest {
-    return {
-        name: `HasFile(${path}})`,
-        valueForPush: async p => !!(await p.project.getFile(path)),
-    };
+export function hasFile(path: string): PredicatePushTest {
+    return predicatePushTest(`HasFile(${path}})`,
+        async p => !!(await p.getFile(path)));
 }

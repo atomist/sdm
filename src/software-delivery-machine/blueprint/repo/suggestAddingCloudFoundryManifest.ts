@@ -19,10 +19,11 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { ProjectListenerInvocation } from "../../../common/listener/Listener";
 import { PushTest } from "../../../common/listener/PushTest";
-import { HasSpringBootApplicationClass, IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { IsNode } from "../../../common/listener/support/pushtest/node/nodePushTests";
 import { allSatisfied, anySatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
 import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
+import { HasSpringBootApplicationClass } from "../../../common/listener/support/pushtest/jvm/springPushTests";
 
 /**
  * PushTest to determine whether we know how to deploy a project

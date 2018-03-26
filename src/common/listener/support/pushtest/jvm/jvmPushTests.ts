@@ -16,26 +16,17 @@
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
-import { SpringBootProjectStructure } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectStructure";
-import { ProjectListenerInvocation } from "../../../Listener";
-import { PushTest, pushTest } from "../../../PushTest";
+import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
 
 /**
  * Is this a Maven project
  * @constructor
  */
-export const IsMaven: PushTest = pushTest("Is Maven", async (pi: ProjectListenerInvocation) =>
-    !!(await pi.project.getFile("pom.xml")));
+export const IsMaven: PredicatePushTest = predicatePushTest(
+    "Is Maven",
+    async p => !!(await p.getFile("pom.xml")));
 
-export const IsJava: PushTest = pushTest("Is Java", async (pi: ProjectListenerInvocation) =>
-    await fileExists(pi.project, AllJavaFiles, () => true));
-
-/**
- * Does this project have a Spring Boot application class?
- * This is a robust but expensive test as it needs
- * to scan all Java sources
- * @constructor
- */
-export const HasSpringBootApplicationClass = pushTest(
-    "Has Spring Boot @Application class",
-    async pi => !!(await SpringBootProjectStructure.inferFromJavaSource(pi.project)));
+export const IsJava = predicatePushTest(
+    "Is Java",
+    async p =>
+        await fileExists(p, AllJavaFiles, () => true));

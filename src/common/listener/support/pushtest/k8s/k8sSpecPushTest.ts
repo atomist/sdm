@@ -15,9 +15,9 @@
  */
 
 import { AtomistK8sSpecFile } from "../../../../../software-delivery-machine/commands/editors/k8s/addK8sSpec";
-import { PushTest, pushTest } from "../../../PushTest";
+import { PredicatePushTest, predicatePushTest } from "../../../PushTest";
 
-export const HasK8Spec: PushTest = pushTest("Has K8Spec",
-        pi => pi.project.findFile(AtomistK8sSpecFile)
-        .then(() => true, () => false),
+export const HasK8Spec: PredicatePushTest = predicatePushTest(
+    "Has K8Spec",
+        async p => !!(await p.getFile(AtomistK8sSpecFile)),
 );

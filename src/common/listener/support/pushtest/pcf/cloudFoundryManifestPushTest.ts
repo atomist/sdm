@@ -15,10 +15,10 @@
  */
 
 import { CloudFoundryManifestPath } from "../../../../delivery/deploy/pcf/CloudFoundryTarget";
-import { PushTest, pushTest } from "../../../PushTest";
+import { PredicatePushTest, predicatePushTest } from "../../../PushTest";
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 
-export const HasCloudFoundryManifest: PushTest = pushTest(
+export const HasCloudFoundryManifest: PredicatePushTest = predicatePushTest(
     "Has PCF manifest",
-    async inv => fileExists(inv.project, CloudFoundryManifestPath, f => true));
+    async p => fileExists(p, CloudFoundryManifestPath, f => true));

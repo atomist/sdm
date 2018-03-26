@@ -24,19 +24,11 @@ import {
     ApacheHeader,
 } from "../../../../src/software-delivery-machine/commands/editors/license/addHeader";
 
-const Context = {
-    teamId: "anything",
-    messageClient: {
-        respond() {
-            return undefined;
-        },
-    },
-} as any;
-
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import * as fs from "fs";
 import * as tmp from "tmp-promise";
+import { fakeContext } from "../../FakeContext";
 
 describe("addHeaderEditor", () => {
 
@@ -45,7 +37,7 @@ describe("addHeaderEditor", () => {
             {path: "src/main/java/Thing.java", content: JavaWithApacheHeader},
             {path: "src/main/java/Thing1.java", content: "public class Thing1 {}"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/main/java/Thing1.java"));
         const content = p.findFileSync("src/main/java/Thing1.java").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -56,7 +48,7 @@ describe("addHeaderEditor", () => {
             {path: "src/Thing.ts", content: TsWithApacheHeader},
             {path: "src/Thing1.ts", content: "export class Thing1 {}"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/Thing1.ts"));
         const content = p.findFileSync("src/Thing1.ts").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -67,7 +59,7 @@ describe("addHeaderEditor", () => {
             {path: "src/Thing.js", content: TsWithApacheHeader},
             {path: "src/Thing1.js", content: "export class Thing1 {}"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/Thing1.js"));
         const content = p.findFileSync("src/Thing1.js").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -77,7 +69,7 @@ describe("addHeaderEditor", () => {
         const p = InMemoryProject.from(new GitHubRepoRef("owner", "repoName", "abcd"),
             {path: "src/Thing1.scala", content: "public class Thing1 {}"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/Thing1.scala"));
         const content = p.findFileSync("src/Thing1.scala").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -87,7 +79,7 @@ describe("addHeaderEditor", () => {
         const p = InMemoryProject.from(new GitHubRepoRef("owner", "repoName", "abcd"),
             {path: "src/Thing1.c", content: "#include <stdio.h>"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/Thing1.c"));
         const content = p.findFileSync("src/Thing1.c").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -97,7 +89,7 @@ describe("addHeaderEditor", () => {
         const p = InMemoryProject.from(new GitHubRepoRef("owner", "repoName", "abcd"),
             {path: "src/Thing1.cpp", content: "#include <stdio.h>"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/Thing1.cpp"));
         const content = p.findFileSync("src/Thing1.cpp").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -107,7 +99,7 @@ describe("addHeaderEditor", () => {
         const p = InMemoryProject.from(new GitHubRepoRef("owner", "repoName", "abcd"),
             {path: "src/Thing1.kt", content: "public class Thing1 {}"});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/Thing1.kt"));
         const content = p.findFileSync("src/Thing1.kt").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -122,7 +114,7 @@ describe("addHeaderEditor", () => {
         assert(!c1.toString().startsWith(ApacheHeader), "Header should not yet be there");
         assert(!!c1);
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/main/java/Thing1.java"));
         const content = p.findFileSync("src/main/java/Thing1.java").getContentSync();
         assert(content.startsWith(ApacheHeader));
@@ -135,7 +127,7 @@ describe("addHeaderEditor", () => {
             {path: "src/main/java/Thing.java", content: JavaWithApacheHeader},
             {path: "src/main/java/Thing1.java", content: JavaWithApacheHeader});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/main/java/Thing1.java"));
         const content = p.findFileSync("src/main/java/Thing1.java").getContentSync();
         assert(content === JavaWithApacheHeader);
@@ -146,7 +138,7 @@ describe("addHeaderEditor", () => {
             {path: "src/main/java/Thing.java", content: JavaWithApacheHeader},
             {path: "src/main/java/Thing1.java", content: JavaWithGplHeader});
         const params = new AddHeaderParameters();
-        await addHeaderProjectEditor(p, Context, params);
+        await addHeaderProjectEditor(p, fakeContext(), params);
         assert(p.fileExistsSync("src/main/java/Thing1.java"));
         const content = p.findFileSync("src/main/java/Thing1.java").getContentSync();
         assert(content === JavaWithGplHeader);

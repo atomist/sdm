@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { PushTest, pushTest } from "../../../PushTest";
+import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../../PushTest";
 import { hasFile } from "../commonPushTests";
 
-export const IsNode: PushTest = pushTest("Is Node", async pi => {
+export const IsNode: PredicatePushTest = predicatePushTest("Is Node", async p => {
     try {
-        const f = await pi.project.findFile("package.json");
+        const f = await p.findFile("package.json");
         const contents = await f.getContent();
         const json = JSON.parse(contents);
         return true;

@@ -16,6 +16,7 @@
 
 import { ProjectListenerInvocation } from "./Listener";
 import { PushMapping } from "./PushMapping";
+import { Project } from "@atomist/automation-client/project/Project";
 
 /**
  * Return true if we like this push. Used in goal setting etc.
@@ -23,6 +24,8 @@ import { PushMapping } from "./PushMapping";
 export interface PushTest extends PushMapping<boolean> {
 
 }
+
+export type ProjectPredicate = (p: Project) => Promise<boolean>;
 
 /**
  * Convenient factory function for PushTest instances
@@ -34,5 +37,28 @@ export function pushTest(name: string, valueForPush: (p: ProjectListenerInvocati
     return {
         name,
         valueForPush,
+    };
+}
+
+/**
+ * PushTest that also exposes the ProjectPredicate it is
+ * based on
+ */
+export interface PredicatePushTest extends PushTest {
+    predicate: ProjectPredicate;
+}
+
+/**
+ * Convenient factory function for PushTest instances based on project predicates.
+ * Also exposes project predicate
+ * @param {string} name
+ * @param predicate test function for projects
+ * @return {PushTest}
+ */
+export function predicatePushTest(name: string, predicate: ProjectPredicate): PredicatePushTest {
+    return {
+        name,
+        valueForPush: pli => predicate(pli.project),
+        predicate,
     };
 }
