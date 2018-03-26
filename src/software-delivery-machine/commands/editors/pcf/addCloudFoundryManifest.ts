@@ -91,10 +91,8 @@ applications:
 const automationClientManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
-  command: "node node_modules/@atomist/automation-client/start.client.js"
+  command: "npm start"
   memory: 512M
-  routes:
-  - route: lifecycle.atomist.io
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
   env:
     SUPPRESS_NO_CONFIG_WARNING: true
