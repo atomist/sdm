@@ -74,12 +74,14 @@ export const BuildGoal = new GoalWithPrecondition({
     failedDescription: "Build failure",
 }, AutofixGoal);
 
-export const ArtifactGoal = new Goal({
+// This one is actually satisfied in an ImageLinked event,
+// which happens to be a result of the build.
+export const ArtifactGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "store artifact",
     completedDescription: "Stored artifact",
-});
+}, BuildGoal);
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,

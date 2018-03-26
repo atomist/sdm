@@ -45,6 +45,7 @@ export function executeVerifyEndpoint(sdm: SdmVerification): GoalExecutor {
         const endpointStatus = r.status.commit.statuses.find(s => s.context === sdm.endpointGoal.context);
         if (!endpointStatus) {
             r.progressLog.write(sprintf("Did not find endpoint goal. Looking for context %s", sdm.endpointGoal.context));
+            throw new Error("Endpoint status unfound");
         }
         const inv: EndpointVerificationInvocation = {
             id: r.id,

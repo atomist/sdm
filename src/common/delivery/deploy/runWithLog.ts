@@ -27,6 +27,7 @@ import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
+import sprintf from "sprintf-js";
 
 
 export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteGoalResult>,
@@ -64,7 +65,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
         logger.error(err.stack);
         progressLog.write("ERROR: " + err.message);
         progressLog.write(err.stack);
-        progressLog.write("full error object: [%j]" + err);
+        progressLog.write(sprintf("full error object: [%j]", err));
 
         const retryButton = buttonForCommand({text: "Retry"},
             retryCommandNameFor(executeGoalInvocation.implementationName), {

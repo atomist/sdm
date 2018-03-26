@@ -78,22 +78,43 @@ export class ExecuteGoalOnSuccessStatus
             return Success;
         }
 
-        logger.info("Really executing " + this.implementationName);
+        return dedup(dontRunTheSameGoalTwiceSimultaneously(commit.sha, params.goal),async () => {
+            logger.info("Really executing " + this.implementationName);
 
-        if (!params.handleGoalUpdates) {
-            // do this simplest thing. Not recommended. in progress: #264
-            return params.execute(status, ctx, params)
-        }
+            if (!params.handleGoalUpdates) {
+                // do this simplest thing. Not recommended. in progress: #264
+                return params.execute(status, ctx, params)
+            }
 
-        const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
-        const thisSdmGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(params.goal, g as SdmGoal));
-        if (!thisSdmGoal) {
-            throw new Error("Unable to identify SdmGoal for " + params.goal.name)
-        }
+            const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
+            const thisSdmGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(params.goal, g as SdmGoal));
+            if (!thisSdmGoal) {
+                throw new Error("Unable to identify SdmGoal for " + params.goal.name)
+            }
 
-        return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);
+            return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);
+        });
     }
 }
+
+function dontRunTheSameGoalTwiceSimultaneously(sha: string, goal: Goal) {
+    return `${goal.environment}/${goal.name} for ${sha}`
+}
+
+async function dedup(key: string, f: () => Promise<HandlerResult>): Promise<HandlerResult> {
+    if (running[key]) {
+        logger.warn("Dedup: skipping second simultaneous execution of " + key);
+        return Promise.resolve(Success);
+    }
+    running[key] = true;
+    const promise = f().then(t => {
+        running[key] = undefined;
+        return t;
+    });
+    return promise;
+}
+
+const running = {};
 
 async function preconditionsAreAllMet(goal: Goal, status: StatusForExecuteGoal.Fragment, idForLogging: RepoRef) {
     const statusAndFriends: GitHubStatusAndFriends = {

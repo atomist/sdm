@@ -103,6 +103,7 @@ export class GoalWithPrecondition extends Goal {
     public async preconditionsStatus(idForLogging: RepoRef,
                                      sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
         const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
+        logger.debug("Preconditions: %j", checks);
         const errors: string[] = checks.filter(r => r.error !== undefined)
             .map(r => r.error);
         const reasonsToWait: string[] = checks.filter(r => r.wait !== undefined).map(r => r.wait);

@@ -57,7 +57,6 @@ export function executeDeploy(artifactStore: ArtifactStore,
         const commit = rwlc.status.commit;
         const { addressChannels, credentials, id, context, progressLog}  = rwlc;
         const atomistTeam = context.teamId;
-        await dedup(commit.sha, async () => {
 
             await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
                 const push = commit.pushes[0];
@@ -90,22 +89,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
                     {endpointGoal, credentials, id}, deployment)));
 
             });
-        });
         return Success;
     }, lastTenLinesLogInterpreter("deploy failed"));
 }
 
-async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
-    if (running[key]) {
-        logger.warn("This op was called twice for " + key);
-        return Promise.resolve();
-    }
-    running[key] = true;
-    const promise = f().then(t => {
-        running[key] = undefined;
-        return t;
-    });
-    return promise;
-}
-
-const running = {};
