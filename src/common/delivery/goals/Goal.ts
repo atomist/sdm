@@ -42,6 +42,10 @@ export class Goal {
     public readonly name: string;
     public readonly definition: GoalDefinition;
 
+    get environment() {
+        return this.definition.environment;
+    }
+
     get successDescription() {
         return this.definition.completedDescription || ("Complete: " + this.name);
     }
