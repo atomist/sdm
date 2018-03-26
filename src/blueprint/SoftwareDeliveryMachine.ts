@@ -251,24 +251,23 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
         }
 
-        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal }> = [
-            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal},
-            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal},
-            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal},
+        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal, name: string }> = [
+            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal, name: "LocalDeploy"},
+            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal, name: "StagingDeploy"},
+            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal, name: "ProductionDeploy"},
         ];
 
-        let count = 0;
         return {
             eventHandlers: _.flatten(deployGoalPairs.map(dep => [
-                () => new ExecuteGoalOnRequested(`deploy${count++}`,
+                () => new ExecuteGoalOnRequested(dep.name,
                     dep.deployGoal,
                     executor(dep.deployGoal, dep.endpointGoal)),
-                () => new ExecuteGoalOnSuccessStatus(`deploy${count++}`,
+                () => new ExecuteGoalOnSuccessStatus(dep.name,
                     dep.deployGoal,
                     executor(dep.deployGoal, dep.endpointGoal),
                 ),
             ])),
-            commandHandlers: [],
+            commandHandlers: deployGoalPairs.map(dep => () => triggerGoal(dep.name, dep.deployGoal)),
         };
     }
 
