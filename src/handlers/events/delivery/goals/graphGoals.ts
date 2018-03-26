@@ -16,6 +16,7 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
 
     try {
         const graphDefinition = goalsToDot(goals);
+        logger.debug("generated .dot: " + graphDefinition);
 
         const generateGraphUrl = graphvizServiceUrl + "/dot/png";
         const generateGraphResponse = await axios.post(generateGraphUrl,
