@@ -88,6 +88,7 @@ applications:
   env:
     ATOMIST_TEAMS: ${teamId}`;
 
+/* tslint:disable:max-line-length */
 const automationClientManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
