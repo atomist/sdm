@@ -96,13 +96,17 @@ export const StagingUndeploymentGoal = new Goal({
     completedDescription: "not deployed in test",
 });
 
-export const StagingEndpointGoal = new Goal({
+// this one won't be set up to trigger on its precondition;
+// rather, the deploy goal also sets this one, currently.
+// Setting the precondition lets FailDownstream know that this
+// one is never gonna succeed if the deploy failed.
+export const StagingEndpointGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
     failedDescription: "Couldn't locate service endpoint in Test",
-});
+}, StagingDeploymentGoal);
 
 export const StagingVerifiedGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
