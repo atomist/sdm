@@ -38,6 +38,16 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
             logger.debug("No external key on goal %s. Skipping", goal.name);
             return Success;
         }
+
+        // Too many updates close together get mixed up.
+        // For now, skip in_process updates. Someday we may change this,
+        // when it's SdmGoals that are displayed in lifecycle and only some
+        // of them are copied to statuses. #98
+        if ((goal.state as GoalState) === "in_process") {
+            logger.debug("Skipping update to %s because in_process updates aren't important enough", goal.externalKey);
+            return Success;
+        }
+
         const provider = await fetchProvider(context, goal.repo.providerId);
         const id = GitHubRepoRef.from({
             owner: goal.repo.owner,
