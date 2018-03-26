@@ -66,7 +66,7 @@ export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx)
 // Simple template for Cloud Foundry manifest
 const javaManifestFor = (name, teamId) => `---
 applications:
-- name: ${name}
+- name: "${name}"
   memory: 1024M
   instances: 1
   buildpack: https://github.com/cloudfoundry/java-buildpack.git
@@ -75,7 +75,7 @@ applications:
 
 const nodeManifestFor = (name, teamId) => `---
 applications:
-- name: ${name}
+- name: "${name}"
   memory: 512M
   instances: 1
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
