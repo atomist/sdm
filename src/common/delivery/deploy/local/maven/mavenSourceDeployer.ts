@@ -112,7 +112,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                 }
             });
             childProcess.addListener("exit", () => {
-                reject("We should have found Tomcat endpoint by now!!");
+                reject(new Error("We should have found Tomcat endpoint by now!!"));
             });
             childProcess.addListener("error", reject);
         });

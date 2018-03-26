@@ -131,13 +131,16 @@ export const ProductionUndeploymentGoal = new Goal({
     completedDescription: "not deployed in Prod",
 });
 
-export const ProductionEndpointGoal = new Goal({
+// this one won't be set up to trigger on its precondition;
+// rather, the deploy goal also sets this one, currently.
+// Setting the precondition lets FailDownstream know that this
+// one is never gonna succeed if the deploy failed.
+export const ProductionEndpointGoal = new GoalWithPrecondition({
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
     completedDescription: "Here is the service endpoint in Prod",
-
-});
+}, ProductionDeploymentGoal);
 
 export const LocalDeploymentGoal = new Goal({
     environment: IndependentOfEnvironment,

@@ -92,7 +92,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
             });
         });
         return Success;
-    });
+    }, lastTenLinesLogInterpreter("deploy failed"));
 }
 
 async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {

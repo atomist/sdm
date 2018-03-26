@@ -58,7 +58,7 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
 
         await Promise.all(goalsToSkip.map(g => updateGoal(ctx, g as SdmGoal, {
             state: "skipped",
-            description: `Skipped because ${failedGoal.name} failed`,
+            description: `Skipped ${g.name} because ${failedGoal.name} failed`,
         })));
 
         return Success;

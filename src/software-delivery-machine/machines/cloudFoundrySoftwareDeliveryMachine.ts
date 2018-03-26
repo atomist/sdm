@@ -63,6 +63,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -110,7 +111,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     )
         .addDeployRules(
             deploy.when(IsMaven)
-                .itMeans("Maven")
+                .itMeans("Maven local")
                 .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
                 .using(
                     {
@@ -119,7 +120,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
                     },
                 ),
             deploy.when(IsMaven)
-                .itMeans("Maven")
+                .itMeans("Maven test")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
                 .using(
                     {
@@ -128,11 +129,11 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
                     },
                 ),
             deploy.when(IsMaven)
-                .itMeans("Maven")
+                .itMeans("Maven production")
                 .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal)
                 .using(cloudFoundryProductionDeploySpec(options)),
             deploy.when(IsNode)
-                .itMeans("Node")
+                .itMeans("Node test")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
                 .using(cloudFoundryStagingDeploySpec(options)),
         )

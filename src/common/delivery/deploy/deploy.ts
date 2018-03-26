@@ -47,17 +47,6 @@ export interface DeployerInfo<T extends TargetInfo> {
 export interface Target<T extends TargetInfo> extends DeployerInfo<T>, DeployStage {
 }
 
-export interface DeployArtifactParams<T extends TargetInfo> extends Target<T> {
-    id: GitHubRepoRef;
-    credentials: ProjectOperationCredentials;
-    addressChannels: AddressChannels;
-    team: string;
-    artifactStore: ArtifactStore;
-    targetUrl: string;
-    progressLog: ProgressLog;
-    branch: string;
-}
-
 export async function checkOutArtifact(targetUrl: string,
                                        artifactStore: ArtifactStore,
                                        id: RemoteRepoRef,

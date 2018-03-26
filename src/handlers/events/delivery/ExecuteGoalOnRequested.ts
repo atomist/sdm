@@ -68,6 +68,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
             logger.warn(`Received '${sdmGoal.state}' on ${status.context}, while looking for 'requested' on ${params.goal.context}`);
             return Success;
         }
+        logger.info("Really executing " + this.implementationName); // take this out when automation-api#395 is fixed
 
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;

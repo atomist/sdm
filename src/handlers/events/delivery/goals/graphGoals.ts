@@ -16,7 +16,7 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
 
     try {
         const graphDefinition = goalsToDot(goals);
-        logger.debug("generated .dot: " + graphDefinition);
+        logger.debug("ShowGraph: generated .dot: " + graphDefinition);
 
         const generateGraphUrl = graphvizServiceUrl + "/dot/png";
         const generateGraphResponse = await axios.post(generateGraphUrl,
@@ -40,8 +40,8 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
         return addressChannels(showGraphMessage);
     } catch (err) {
         // do not fail anything
-        logger.error("Unable to generate a cool graph of the goals: " + err.message);
-        logger.error("stack trace: " + err.stack);
+        logger.error("ShowGraph: Unable to generate a cool graph of the goals: " + err.message);
+        logger.error("ShowGraph: stack trace: " + err.stack);
     }
 
 }
