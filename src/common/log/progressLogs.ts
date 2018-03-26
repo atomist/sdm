@@ -27,10 +27,7 @@ export const DevNullProgressLog: ProgressLog = {
 
 export class ConsoleProgressLog implements ProgressLog {
 
-    public log = "";
-
     public write(what) {
-        this.log += what;
         console.log(what);
     }
 
