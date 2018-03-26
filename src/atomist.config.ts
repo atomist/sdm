@@ -25,6 +25,8 @@ import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/mach
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
 
+const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
+
 const SdmOptions = {
     artifactStore: DefaultArtifactStore,
     projectLoader: new CachingProjectLoader(),
@@ -63,10 +65,14 @@ export const configuration: Configuration = {
     applicationEvents: {
         enabled: true,
     },
+    cluster: {
+        enabled: notLocal,
+        // worker: 2,
+    },
     logging: {
         level: "info",
         file: {
-            enabled: true,
+            enabled: notLocal,
             level: "debug",
             name: "./log/github-sdm.log",
         },

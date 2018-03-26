@@ -40,12 +40,11 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials): Promise<Deployment[]> {
-        const readOnly = !da.filename;
-        logger.info(`Deploying app [%j] to Cloud Foundry [%s]: Readonly clone status=${readOnly}`, da, cfi.description);
+        logger.info("Deploying app [%j] to Cloud Foundry [%s]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
-        // Try to get the already built version if we don't have an artifact
-        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly}, async project => {
+        // We want a fresh version
+        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: false}, async project => {
             const manifestFile = await project.findFile(CloudFoundryManifestPath);
 
             if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
