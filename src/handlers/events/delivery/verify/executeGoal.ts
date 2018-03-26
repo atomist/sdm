@@ -12,13 +12,9 @@ export async function executeGoal(execute: GoalExecutor,
                                   thisSdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
 
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-    await updateGoal(ctx, thisSdmGoal, {
-        goal: params.goal,
-        description: params.goal.inProcessDescription,
-        state: "in_process",
-    }).catch(err =>
-        logger.warn("Failed to update %s goal to tell people we are working on it", params.goal.name));
-    return execute(status, ctx, params);
+    await markGoalInProcess(ctx, thisSdmGoal, params.goal);
+    const result = await execute(status, ctx, params);
+    return result;
 }
 
 export function validSubscriptionName(input: string): string {
@@ -35,4 +31,14 @@ export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, re
             url: result.targetUrl,
             state: newState,
         });
+}
+
+function markGoalInProcess(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal) {
+    return updateGoal(ctx, sdmGoal, {
+        goal,
+        description: goal.inProcessDescription,
+        state: "in_process",
+    }).catch(err =>
+        logger.warn("Failed to update %s goal to tell people we are working on it", goal.name));
+
 }
