@@ -59,7 +59,7 @@ import { executeCodeReactions } from "../common/delivery/code/executeCodeReactio
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
-import { executeArtifactDeploy } from "../common/delivery/deploy/executeArtifactDeploy";
+import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
@@ -248,7 +248,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         const outer = this;
 
         function executor(deploymentGoal: Goal, endpointGoal: Goal) {
-            return executeArtifactDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
+            return executeDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
                 deploymentGoal, endpointGoal,
                 outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
         }

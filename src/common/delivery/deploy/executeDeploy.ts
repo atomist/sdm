@@ -14,112 +14,79 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, logger, success, Success } from "@atomist/automation-client";
+import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import * as _ from "lodash";
-import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../spi/deploy/Deployer";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { LogInterpreter } from "../../../spi/log/InterpretedLog";
-import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
-import { createStatus } from "../../../util/github/ghub";
-import { reportFailureInterpretation } from "../../../util/slack/reportFailureInterpretation";
-import { SdmContext } from "../../context/SdmContext";
-import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
-import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
-import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
+import { OnAnyPendingStatus } from "../../../typings/types";
+import { ProjectListenerInvocation } from "../../listener/Listener";
+import { PushMapping } from "../../listener/PushMapping";
+import { ConsoleProgressLog } from "../../log/progressLogs";
+import { ProjectLoader } from "../../repo/ProjectLoader";
+import { addressChannelsFor } from "../../slack/addressChannels";
 import { Goal } from "../goals/Goal";
-import {
-    ExecuteGoalInvocation, ExecuteGoalResult,
-    GoalExecutor,
-} from "../goals/goalExecution";
-import { deploy, DeployArtifactParams, Targeter } from "./deploy";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
+import { deploy, DeployArtifactParams, Target } from "./deploy";
 
-export interface DeploySpec<T extends TargetInfo> {
-    implementationName: string;
-    deployGoal: Goal;
-    endpointGoal: Goal;
-    artifactStore?: ArtifactStore;
-    deployer: Deployer<T>;
-    targeter: Targeter<T>;
-    undeploy?: {
-        goal: Goal;
-        implementationName: string;
-    };
-    undeployOnSuperseded?: boolean;
-}
+import * as _ from "lodash";
 
-export function runWithLog(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
-                           logInterpreter?: LogInterpreter): GoalExecutor {
-    return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
+/**
+ * Execute deploy with the appropriate deployer and target from the underlying push
+ * @param projectLoader used to load projects
+ * @param targetMapping mapping to a target
+ */
+export function executeDeploy(artifactStore: ArtifactStore,
+                              projectLoader: ProjectLoader,
+                              deployGoal: Goal,
+                              endpointGoal: Goal,
+                              targetMapping: PushMapping<Target<any>>): GoalExecutor {
+    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
         const commit = status.commit;
-        const log = await createEphemeralProgressLog();
-        const progressLog = new MultiProgressLog(new ConsoleProgressLog(), new InMemoryProgressLog(), log);
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const credentials = {token: params.githubToken};
+        await dedup(commit.sha, async () => {
+            const credentials = {token: params.githubToken};
+            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+            const atomistTeam = context.teamId;
+            const addressChannels = addressChannelsFor(commit.repo, context);
 
-        const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
-        await whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials})
-            .catch(err => reportError(err));
-        await progressLog.close();
-        return Promise.resolve(Success as ExecuteGoalResult);
-    };
-}
+            await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
+                const push = commit.pushes[0];
+                const pti: ProjectListenerInvocation = {
+                    id,
+                    project,
+                    credentials,
+                    context,
+                    addressChannels,
+                    push,
+                };
 
-export interface RunWithLogContext extends SdmContext {
-    status: StatusForExecuteGoal.Fragment;
-    progressLog: ProgressLog;
-    reportError: (Error) => Promise<ExecuteGoalResult>;
-}
-
-export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
-
-function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
-                          addressChannels: AddressChannels,
-                          progressLog: ProgressLog,
-                          id: GitHubRepoRef,
-                          logInterpreter?: LogInterpreter) {
-    return async (err: Error) => {
-        logger.error(err.message);
-        logger.error(err.stack);
-        progressLog.write("ERROR: " + err.message);
-        progressLog.write(err.stack);
-        progressLog.write("full error object: [%j]" + err);
-
-        const retryButton = buttonForCommand({text: "Retry"},
-            retryCommandNameFor(executeGoalInvocation.implementationName), {
-                repo: id.repo,
-                owner: id.owner,
-                sha: id.sha,
+                const target = await targetMapping.valueForPush(pti);
+                if (!target) {
+                    throw new Error(`Don't know how to deploy project ${id.owner}:${id.repo}`);
+                }
+                logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
+                const dap: DeployArtifactParams<any> = {
+                    id,
+                    credentials,
+                    addressChannels,
+                    team: atomistTeam,
+                    deployGoal,
+                    endpointGoal,
+                    artifactStore,
+                    ...target,
+                    targetUrl: _.get(commit, "image.imageName"),
+                    // Fix this
+                    progressLog: new ConsoleProgressLog(),
+                    branch: push.branch,
+                };
+                return deploy(dap);
             });
-
-        const interpretation = logInterpreter && !!progressLog.log && logInterpreter(progressLog.log);
-        // The deployer might have information about the failure; report it in the channels
-        if (interpretation) {
-            await reportFailureInterpretation("deploy", interpretation,
-                {url: progressLog.url, log: progressLog.log},
-                id, addressChannels, retryButton);
-        } else {
-            await addressChannels(":x: Failure deploying: " + err.message);
-        }
-        return createStatus(executeGoalInvocation.githubToken, id, {
-            state: "failure",
-            target_url: progressLog.url,
-            context: executeGoalInvocation.goal.context,
-            description: executeGoalInvocation.goal.failureDescription,
-        }).then(no => ({code: 0, message: err.message}));
+        });
+        return Success;
     };
 }
-
-const running = {};
 
 async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
     if (running[key]) {
-        logger.warn("deploy was called twice for " + key);
+        logger.warn("This op was called twice for " + key);
         return Promise.resolve();
     }
     running[key] = true;
@@ -129,3 +96,5 @@ async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
     });
     return promise;
 }
+
+const running = {};

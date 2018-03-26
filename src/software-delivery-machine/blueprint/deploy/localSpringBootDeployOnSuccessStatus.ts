@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
-import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,

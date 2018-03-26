@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,

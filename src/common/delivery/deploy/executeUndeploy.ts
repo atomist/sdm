@@ -20,7 +20,7 @@ import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { GoalExecutor } from "../goals/goalExecution";
-import { DeploySpec, ExecuteWithLog, runWithLog, RunWithLogContext } from "./executeDeploy";
+import { DeploySpec, ExecuteWithLog, runWithLog, RunWithLogContext } from "./runWithLog";
 
 export function undeployArtifactWithLogs<T extends TargetInfo>(spec: DeploySpec<T>): GoalExecutor {
     return runWithLog(executeUndeployArtifact(spec), spec.deployer.logInterpreter);
