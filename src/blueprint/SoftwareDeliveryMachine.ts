@@ -59,7 +59,7 @@ import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
-import { Goal } from "../common/delivery/goals/Goal";
+import { Goal, hasPreconditions } from "../common/delivery/goals/Goal";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -90,6 +90,8 @@ import { Builder } from "../spi/build/Builder";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { GoalExecutor } from "../common/delivery/goals/goalExecution";
+import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -168,17 +170,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get fingerprinter(): FunctionalUnit {
-        return {
-            eventHandlers: this.fingerprinters.length > 0 ?
-                [() => new ExecuteGoalOnRequested("Fingerprinter",
+        return functionalUnitForGoal("Fingerprinter",
                     FingerprintGoal,
-                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters), true),
-                ] :
-                [],
-            commandHandlers: [
-                () => triggerGoal("Fingerprinter", FingerprintGoal),
-            ],
-        };
+                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -188,35 +182,20 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get reviewHandling(): FunctionalUnit {
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested("Reviews",
+        return functionalUnitForGoal("Reviews",
                     ReviewGoal,
-                    executeReview(this.reviewerRegistrations),
-                    true)],
-            commandHandlers: [],
-        };
+                    executeReview(this.reviewerRegistrations));
     }
 
     private get codeReactionHandling(): FunctionalUnit {
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested("CodeReactions",
+        return functionalUnitForGoal("CodeReactions",
                     CodeReactionGoal,
-                    executeCodeReactions(this.opts.projectLoader, this.codeReactions), true),
-            ],
-            commandHandlers: [],
-        };
+                    executeCodeReactions(this.opts.projectLoader, this.codeReactions));
     }
 
     private get autofix(): FunctionalUnit {
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested("Autofix", AutofixGoal,
-                    executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), true),
-            ],
-            commandHandlers: [() => triggerGoal("Autofix", AutofixGoal)],
-        };
+        return functionalUnitForGoal("Autofix", AutofixGoal,
+                    executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
     private get goalSetting(): Maker<SetGoalsOnPush> {
@@ -231,6 +210,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get builder(): FunctionalUnit {
         const name = this.builderMapping.name.replace(" ", "_");
         const executor = executeBuild(this.opts.projectLoader, this.builderMapping);
+        // currently these handle their own statuses. Need not to. #264 in progress
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnRequested(name, BuildGoal, executor),
@@ -257,18 +237,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal, name: "ProductionDeploy"},
         ];
 
-        return {
-            eventHandlers: _.flatten(deployGoalPairs.map(dep => [
-                () => new ExecuteGoalOnRequested(dep.name,
-                    dep.deployGoal,
-                    executor(dep.deployGoal, dep.endpointGoal)),
-                () => new ExecuteGoalOnSuccessStatus(dep.name,
-                    dep.deployGoal,
-                    executor(dep.deployGoal, dep.endpointGoal),
-                ),
-            ])),
-            commandHandlers: deployGoalPairs.map(dep => () => triggerGoal(dep.name, dep.deployGoal)),
-        };
+        return composeFunctionalUnits(...deployGoalPairs.map(dep =>
+            functionalUnitForGoal(dep.name, dep.deployGoal, executor(dep.deployGoal, dep.endpointGoal))))
     }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
@@ -300,13 +270,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
-        return {
-            eventHandlers: [() => new ExecuteGoalOnSuccessStatus("VerifyInStaging",
+        return functionalUnitForGoal("VerifyInStaging",
                 StagingVerifiedGoal,
-                executeVerifyEndpoint(stagingVerification),
-                true)],
-            commandHandlers: [() => triggerGoal("VerifyInStaging", StagingVerifiedGoal)],
-        };
+                executeVerifyEndpoint(stagingVerification));
     }
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
@@ -502,4 +468,17 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
 function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
+}
+
+function functionalUnitForGoal(implementationName: string, goal: Goal, executor: GoalExecutor) {
+    const eventHandlers: Array<Maker<HandleEvent<any>>> = [
+        () => new ExecuteGoalOnRequested(implementationName, goal, executor, true)
+    ];
+    if (hasPreconditions(goal)) {
+        eventHandlers.push(() => new ExecuteGoalOnSuccessStatus(implementationName, goal, executor, true));
+    }
+    return {
+        eventHandlers,
+        commandHandlers: [() => triggerGoal(implementationName, goal)]
+    }
 }
