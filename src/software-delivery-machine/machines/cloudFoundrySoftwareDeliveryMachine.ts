@@ -85,7 +85,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
-        whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled)
+        whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled, ToDefaultBranch)
             .itMeans("Build and deploy node")
             .setGoals(NpmDeployGoals),
         whenPushSatisfies(IsNode)

@@ -21,6 +21,7 @@ import { identification, MavenProjectIdentifier } from "../../../../common/deliv
 import { NodeProjectIdentifier } from "../../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 import { CloudFoundryManifestPath } from "../../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
+import { IsAtomistAutomationClient } from "../../../../common/listener/support/pushtest/node/nodePushTests";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";
@@ -57,7 +58,12 @@ export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx)
     }
     const nodeId = await NodeProjectIdentifier(p);
     if (nodeId) {
-        return p.addFile(CloudFoundryManifestPath, nodeManifestFor(nodeId.name, ctx.teamId));
+        const isAutomationClient = await !!(p.getFile("src/atomist.config.ts"));
+        return p.addFile(CloudFoundryManifestPath,
+            isAutomationClient ?
+                automationClientManifestFor(nodeId.name, ctx.teamId) :
+                nodeManifestFor(nodeId.name, ctx.teamId))
+            .then(() => p.addFile(".cfignore", "node_modules/"));
     }
     return ctx.messageClient.respond(
         `Unable to add Cloud Foundry manifest to project \`${p.id.owner}:${p.id.repo}\`: Neither Maven nor Node`);
@@ -80,4 +86,16 @@ applications:
   instances: 1
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
   env:
+    ATOMIST_TEAMS: ${teamId}`;
+
+const automationClientManifestFor = (name, teamId) => `---
+applications:
+- name: ${name}
+  command: "node node_modules/@atomist/automation-client/start.client.js"
+  memory: 512M
+  routes:
+  - route: lifecycle.atomist.io
+  buildpack: https://github.com/cloudfoundry/nodejs-buildpack
+  env:
+    SUPPRESS_NO_CONFIG_WARNING: true
     ATOMIST_TEAMS: ${teamId}`;

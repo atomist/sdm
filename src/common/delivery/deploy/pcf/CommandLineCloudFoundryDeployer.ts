@@ -22,10 +22,11 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
+import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
@@ -43,8 +44,8 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         logger.info("Deploying app [%j] to Cloud Foundry [%s]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
-        // We want a fresh version
-        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: false}, async project => {
+        // We want a fresh version unless we need it build
+        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: !da.cwd}, async project => {
             const manifestFile = await project.findFile(CloudFoundryManifestPath);
 
             if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
@@ -58,7 +59,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                 `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`,
                 opts);
             logger.debug("Successfully selected space [%s]", cfi.space);
-            // Turn off color so we don't have unpleasant escape codes in web stream
+            // Turn off color so we don't have unpleasant escape codes in stream
             await runCommand("cf config --color false", {cwd: da.cwd});
             const spawnCommand: SpawnCommand = {
                 command: "cf",
