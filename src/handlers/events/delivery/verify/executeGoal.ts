@@ -1,20 +1,27 @@
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
-import { HandlerContext, logger } from "@atomist/automation-client";
+import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { StatusForExecuteGoal } from "../../../../typings/types";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { Goal } from "../../../../common/delivery/goals/Goal";
+import { repoRefFromStatus } from "../../../../util/git/repoRef";
 
 export async function executeGoal(execute: GoalExecutor,
                                   status: StatusForExecuteGoal.Fragment,
                                   ctx: HandlerContext,
                                   params: ExecuteGoalInvocation,
-                                  thisSdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
-
+                                  sdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-    await markGoalInProcess(ctx, thisSdmGoal, params.goal);
-    const result = await execute(status, ctx, params);
-    return result;
+    await markGoalInProcess(ctx, sdmGoal, params.goal);
+    try {
+        const result = await execute(status, ctx, params);
+        await markStatus(ctx, sdmGoal, params.goal, result);
+        return Success;
+    } catch (err) {
+        logger.warn("Error executing %s on %s: %s", params.implementationName, repoRefFromStatus(status).url, err.message);
+        await markStatus(ctx, sdmGoal, params.goal, {code: 1});
+        return failure(err);
+    }
 }
 
 export function validSubscriptionName(input: string): string {

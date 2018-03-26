@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { EventFired, failure, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as stringify from "json-stringify-safe";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
@@ -25,7 +24,7 @@ import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/go
 import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { GoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
-import { executeGoal, markStatus, validSubscriptionName } from "./verify/executeGoal";
+import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -78,21 +77,8 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
             return params.execute(status, ctx, params)
         }
 
-        try {
-            const result = await executeGoal(this.execute, status, ctx, params, sdmGoal);
-            markStatus(ctx, sdmGoal, params.goal, result);
-            return Success;
-        } catch (err) {
-            logger.warn("Error executing %s on %s: %s", params.implementationName, repoRef(status).url, err.message);
-            await markStatus(ctx, sdmGoal, params.goal, {code: 1});
-            return failure(err);
-        }
+        return executeGoal(this.execute, status, ctx, params, sdmGoal);
     }
-}
-
-function repoRef(status: StatusForExecuteGoal.Fragment) {
-    const commit = status.commit;
-    return new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 }
 
 function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal.Commit): StatusForExecuteGoal.Fragment {
