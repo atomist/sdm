@@ -40,10 +40,7 @@ export const CloudFoundryStagingDeploySpec: DeploySpec<CloudFoundryInfo> = {
     endpointGoal: StagingEndpointGoal,
     artifactStore: DefaultArtifactStore,
     deployer: new CommandLineCloudFoundryDeployer(),
-    targeter: () => ({
-        ...new EnvironmentCloudFoundryTarget(),
-        space: "ri-staging",
-    }),
+    targeter: () => new EnvironmentCloudFoundryTarget("ri-staging"),
 };
 
 export const CloudFoundryProductionDeploySpec: DeploySpec<CloudFoundryInfo> = {
@@ -52,10 +49,7 @@ export const CloudFoundryProductionDeploySpec: DeploySpec<CloudFoundryInfo> = {
     endpointGoal: ProductionEndpointGoal,
     artifactStore: DefaultArtifactStore,
     deployer: new CommandLineCloudFoundryDeployer(),
-    targeter: () => ({
-        ...new EnvironmentCloudFoundryTarget(),
-        space: "ri-production",
-    }),
+    targeter:  () => new EnvironmentCloudFoundryTarget("ri-production"),
 };
 
 /**
@@ -68,6 +62,6 @@ export const EnableDeployOnCloudFoundryManifestAddition: CodeReactionListener = 
 
     if (push.commits.some(c => c.message.includes(AddCloudFoundryManifestMarker))) {
         await setDeployEnablement(true)
-            (cri.context, { repo: repo.name, owner: repo.owner, providerId: repo.org.provider.providerId });
+        (cri.context, {repo: repo.name, owner: repo.owner, providerId: repo.org.provider.providerId});
     }
 };

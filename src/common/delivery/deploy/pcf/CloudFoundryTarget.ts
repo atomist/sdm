@@ -58,6 +58,12 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
 
     public org = process.env.PCF_ORG;
 
+    constructor(space?: string) {
+        if (!!space) {
+            this.space = space;
+        }
+    }
+
     get name() {
         return `PCF`;
     }
