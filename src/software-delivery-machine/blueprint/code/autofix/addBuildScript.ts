@@ -1,9 +1,9 @@
+import { HandlerContext } from "@atomist/automation-client";
+import { Project } from "@atomist/automation-client/project/Project";
+import { doWithJson } from "@atomist/automation-client/project/util/jsonUtils";
+import * as _ from "lodash";
 import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
 import { IsNode } from "../../../../common/listener/support/pushtest/node/nodePushTests";
-import { Project } from "@atomist/automation-client/project/Project";
-import { HandlerContext } from "@atomist/automation-client";
-import { doWithJson } from "@atomist/automation-client/project/util/jsonUtils";
-import * as _ from "lodash"
 
 export const AddBuildScript: AutofixRegistration = {
     name: "Make sure there is a build script",

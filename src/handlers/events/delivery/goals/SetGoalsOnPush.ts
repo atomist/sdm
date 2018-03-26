@@ -32,6 +32,7 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
@@ -42,9 +43,8 @@ import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
-import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { showGraph } from "./graphGoals";
 
 /**
@@ -118,7 +118,6 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         }
     }
 }
-
 
 async function saveGoals(ctx: HandlerContext,
                          credentials: ProjectOperationCredentials,

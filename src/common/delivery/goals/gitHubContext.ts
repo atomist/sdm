@@ -72,7 +72,7 @@ export function splitContext(context: GitHubStatusContext) {
             goalOrder,
             envPart: matchWhole[1],
             goalPart,
-            goalName: name
+            goalName: name,
         };
     }
 }

@@ -1,12 +1,12 @@
-import "mocha";
-import * as assert from "power-assert";
-import * as _ from "lodash";
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
-import { Goals } from "../src/common/delivery/goals/Goals";
-import { Goal, GoalWithPrecondition } from "../src/common/delivery/goals/Goal";
-import { splitContext } from "../src/common/delivery/goals/gitHubContext";
+import * as _ from "lodash";
+import "mocha";
+import * as assert from "power-assert";
 import { HttpServiceGoals } from "../src/common/delivery/goals/common/httpServiceGoals";
+import { splitContext } from "../src/common/delivery/goals/gitHubContext";
+import { Goal, GoalWithPrecondition } from "../src/common/delivery/goals/Goal";
+import { Goals } from "../src/common/delivery/goals/Goals";
 import { goalsToDot } from "../src/handlers/events/delivery/goals/graphGoals";
 
 const DesiredDot = `digraph HTTP_Service {
@@ -42,5 +42,5 @@ describe("Rendering a goal graph", () => {
         const dot = goalsToDot(goals);
         console.log(dot);
         assert.equal(dot, DesiredDot);
-    })
+    });
 });

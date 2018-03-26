@@ -1,9 +1,9 @@
-import { Goals } from "../../../../common/delivery/goals/Goals";
 import { HandlerContext, logger } from "@atomist/automation-client";
-import { Goal, GoalWithPrecondition } from "../../../../common/delivery/goals/Goal";
-import { splitContext } from "../../../../common/delivery/goals/gitHubContext";
-import * as _ from "lodash";
 import axios from "axios";
+import * as _ from "lodash";
+import { splitContext } from "../../../../common/delivery/goals/gitHubContext";
+import { Goal, GoalWithPrecondition } from "../../../../common/delivery/goals/Goal";
+import { Goals } from "../../../../common/delivery/goals/Goals";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
 
 export async function showGraph(ctx: HandlerContext, addressChannels: AddressChannels, goals: Goals) {
@@ -44,7 +44,7 @@ export function goalsToDot(goals: Goals) {
 
     const edges: string[][] = goals.goals.map(g => {
         const precursors = (g as GoalWithPrecondition).dependsOn || [];
-        return precursors.map(p => `${validDotName(p)} -> ${validDotName(g)}`)
+        return precursors.map(p => `${validDotName(p)} -> ${validDotName(g)}`);
     });
 
     const edgeAttributes = _.flatten(edges);
@@ -60,7 +60,7 @@ export function goalsToDot(goals: Goals) {
 
     ${edgeAttributes.join("\n    ")}
 }
-`
+`;
 }
 
 function validDotName(g: Goal) {

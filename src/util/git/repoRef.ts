@@ -1,7 +1,6 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { OnPushToAnyBranch } from "../../typings/types";
 
-
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     return GitHubRepoRef.from({
         owner: push.repo.owner,
