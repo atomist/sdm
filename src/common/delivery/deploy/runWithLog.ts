@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, logger, success, Success } from "@atomist/automation-client";
+import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import * as _ from "lodash";
 import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
@@ -32,11 +31,8 @@ import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
 import { Goal } from "../goals/Goal";
-import {
-    ExecuteGoalInvocation, ExecuteGoalResult,
-    GoalExecutor,
-} from "../goals/goalExecution";
-import { deploy, DeployArtifactParams, Targeter } from "./deploy";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor, } from "../goals/goalExecution";
+import { deploy, Targeter } from "./deploy";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;
@@ -113,19 +109,4 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
             description: executeGoalInvocation.goal.failureDescription,
         }).then(no => ({code: 0, message: err.message}));
     };
-}
-
-const running = {};
-
-async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
-    if (running[key]) {
-        logger.warn("deploy was called twice for " + key);
-        return Promise.resolve();
-    }
-    running[key] = true;
-    const promise = f().then(t => {
-        running[key] = undefined;
-        return t;
-    });
-    return promise;
 }
