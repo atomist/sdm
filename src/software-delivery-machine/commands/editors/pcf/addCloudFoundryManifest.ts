@@ -58,7 +58,7 @@ export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx)
     }
     const nodeId = await NodeProjectIdentifier(p);
     if (nodeId) {
-        const isAutomationClient = await !!(p.getFile("src/atomist.config.ts"));
+        const isAutomationClient = !!(await p.getFile("src/atomist.config.ts"));
         return p.addFile(CloudFoundryManifestPath,
             isAutomationClient ?
                 automationClientManifestFor(nodeId.name, ctx.teamId) :
