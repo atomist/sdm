@@ -20,8 +20,8 @@ import {
     ProjectOperationCredentials,
     TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
+import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
@@ -62,21 +62,7 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
     logger.info("Deploying with params=%j", params);
     const progressLog = params.progressLog;
 
-    const artifactCheckout = !!params.targetUrl ?
-        await params.artifactStore.checkout(params.targetUrl, params.id,
-            params.credentials)
-            .catch(err => {
-                progressLog.write("Error checking out artifact: " + err.message);
-                throw err;
-            }) : ({
-            // TODO need to do something about this: Use general identifier as in PCF editor?
-            name: params.id.repo,
-            version: "0.1.0",
-            id: params.id,
-        });
-    if (!artifactCheckout) {
-        throw new Error("No DeployableArtifact passed in");
-    }
+    const artifactCheckout = await checkOutArtifact(params.targetUrl, params.artifactStore, params.id, params.credentials, params.progressLog)
 
     const deployments = await params.deployer.deploy(
         artifactCheckout,
@@ -86,6 +72,35 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
         params.team);
 
     await Promise.all(deployments.map(deployment => reactToSuccessfulDeploy(params, deployment)));
+}
+
+async function checkOutArtifact(targetUrl: string,
+                                artifactStore: ArtifactStore,
+                                id: RemoteRepoRef,
+                                credentials: ProjectOperationCredentials,
+                                progressLog: ProgressLog): Promise<DeployableArtifact> {
+    if (!targetUrl) {
+        return sourceArtifact(id);
+    }
+    const artifactCheckout = await artifactStore.checkout(targetUrl, id, credentials)
+        .catch(err => {
+            progressLog.write("Error checking out artifact: " + err.message);
+            throw err;
+        });
+
+    if (!artifactCheckout) {
+        throw new Error("No DeployableArtifact passed in");
+    }
+    return artifactCheckout;
+}
+
+function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
+    return {
+        // TODO need to do something about this: Use general identifier as in PCF editor?
+        name: id.repo,
+        version: "0.1.0",
+        id: id,
+    }
 }
 
 export async function reactToSuccessfulDeploy(params: {
