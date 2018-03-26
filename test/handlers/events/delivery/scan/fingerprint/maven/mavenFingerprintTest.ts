@@ -29,6 +29,6 @@ describe("MavenFingerprinter", () => {
         const f1 = JSON.parse(fp[0].data);
         assert(f1.length > 0);
         f1.forEach(f => assert(f.groupId === "org.springframework.boot"));
-    }).timeout(10000);
+    }).timeout(40000);
 
 });
