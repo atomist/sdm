@@ -21,7 +21,7 @@ import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { LogInterpreter } from "../../../spi/log/InterpretedLog";
+import { InterpretedLog, LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
@@ -48,7 +48,7 @@ export interface DeploySpec<T extends TargetInfo> {
     undeployOnSuperseded?: boolean;
 }
 
-export function runWithLog(whatToRun: (RunWithLogInvocation) => Promise<ExecuteGoalResult>,
+export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteGoalResult>,
                            logInterpreter?: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
@@ -109,4 +109,15 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
             description: executeGoalInvocation.goal.failureDescription,
         }).then(no => ({code: 0, message: err.message}));
     };
+}
+
+
+export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
+    return (log: string): InterpretedLog => {
+        return {
+            relevantPart: log.split("\n").slice(-10).join("\n"),
+            message,
+            includeFullLog: true,
+        };
+    }
 }

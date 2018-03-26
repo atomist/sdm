@@ -40,11 +40,9 @@ import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/co
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
-    EndpointVerificationListener,
-    OnEndpointStatus,
-    retryVerifyCommand,
+    EndpointVerificationListener, executeVerifyEndpoint,
     SdmVerification,
-} from "../handlers/events/delivery/verify/OnEndpointStatus";
+} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
@@ -300,12 +298,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         }
         const stagingVerification: SdmVerification = {
             verifiers: this.endpointVerificationListeners,
-            verifyGoal: StagingVerifiedGoal,
+            endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
         return {
-            eventHandlers: [() => new OnEndpointStatus(StagingEndpointGoal, stagingVerification)],
-            commandHandlers: [() => retryVerifyCommand(stagingVerification)],
+            eventHandlers: [() => new ExecuteGoalOnSuccessStatus("VerifyInStaging",
+                StagingVerifiedGoal,
+                executeVerifyEndpoint(stagingVerification))],
+            commandHandlers: [() => triggerGoal("VerifyInStaging", StagingVerifiedGoal)],
         };
     }
 

@@ -20,7 +20,7 @@ import * as https from "https";
 import {
     EndpointVerificationInvocation,
     EndpointVerificationListener,
-    OnEndpointStatus } from "../../handlers/events/delivery/verify/OnEndpointStatus";
+} from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
 
 /**
  * Make an HTTP request to the reported endpoint to check

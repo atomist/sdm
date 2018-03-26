@@ -104,13 +104,13 @@ export const StagingEndpointGoal = new Goal({
     failedDescription: "Couldn't locate service endpoint in Test",
 });
 
-export const StagingVerifiedGoal = new Goal({
+export const StagingVerifiedGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
     waitingForApprovalDescription: "Ready for your approval",
-});
+}, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
     environment: ProductionEnvironment,
