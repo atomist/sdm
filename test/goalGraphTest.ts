@@ -1,12 +1,12 @@
 import "mocha";
 import * as assert from "power-assert";
-import { Goals } from "../src";
-import { HttpServiceGoals } from "../src/handlers/events/delivery/goals/httpServiceGoals";
-import { Goal, GoalWithPrecondition } from "../src/common/goals/Goal";
-import { splitContext } from "../src/common/goals/gitHubContext";
 import * as _ from "lodash";
 import { logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
+import { Goals } from "../src/common/delivery/goals/Goals";
+import { Goal, GoalWithPrecondition } from "../src/common/delivery/goals/Goal";
+import { splitContext } from "../src/common/delivery/goals/gitHubContext";
+import { HttpServiceGoals } from "../src/common/delivery/goals/common/httpServiceGoals";
 
 function goalsToDot(goals: Goals, name: string) {
 
@@ -18,7 +18,7 @@ function goalsToDot(goals: Goals, name: string) {
         return precursors.map(p => `${validDotName(p)} -> ${validDotName(g)}`)
     });
 
-    const edgeAttributes = _.flatten(edges)
+    const edgeAttributes = _.flatten(edges);
 
 
     return `digraph ${name} {
