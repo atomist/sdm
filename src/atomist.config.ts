@@ -72,7 +72,7 @@ export const configuration: Configuration = {
     logging: {
         level: "info",
         file: {
-            enabled: notLocal,
+            enabled: !notLocal,
             level: "debug",
             name: "./log/github-sdm.log",
         },
