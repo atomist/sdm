@@ -39,7 +39,7 @@ export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactV
         projectLoader: new CachingProjectLoader(),
         ...opts,
     };
-    const sdm = new SoftwareDeliveryMachine(options,
+    const sdm = new SoftwareDeliveryMachine("Artifact verifying machine", options,
         whenPushSatisfies(IsMaven)
             .itMeans("Push to Maven repo")
             .setGoals(new Goals("Verify artifact", JustBuildGoal, ArtifactGoal)),

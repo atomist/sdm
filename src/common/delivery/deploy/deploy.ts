@@ -62,7 +62,7 @@ export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<
     logger.info("Deploying with params=%j", params);
     const progressLog = params.progressLog;
 
-    const artifactCheckout = params.targetUrl ?
+    const artifactCheckout = !!params.targetUrl ?
         await params.artifactStore.checkout(params.targetUrl, params.id,
             params.credentials)
             .catch(err => {

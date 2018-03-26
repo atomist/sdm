@@ -489,7 +489,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    constructor(public readonly opts: SoftwareDeliveryMachineOptions,
+    constructor(public readonly name: string,
+                public readonly opts: SoftwareDeliveryMachineOptions,
                 ...pushRules: GoalSetterPushRule[]) {
         this.goalSetters = pushRules
             .filter(rule => !!rule.choice)

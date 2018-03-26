@@ -69,7 +69,9 @@ export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineO
  * @return {SoftwareDeliveryMachine}
  */
 export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwareDeliverMachineOptions): SoftwareDeliveryMachine {
-    const sdm = new SoftwareDeliveryMachine(options,
+    const sdm = new SoftwareDeliveryMachine(
+        "CloudFoundry software delivery machine",
+        options,
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
             .itMeans("No material change to Java")
             .setGoals(NoGoals),
@@ -123,11 +125,11 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             deploy.when(IsMaven)
                 .itMeans("Maven")
                 .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal)
-                .using(cloudFoundryProductionDeploySpec(options.projectLoader)),
+                .using(cloudFoundryProductionDeploySpec(options)),
             deploy.when(IsNode)
                 .itMeans("Node")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
-                .using(cloudFoundryStagingDeploySpec(options.projectLoader)),
+                .using(cloudFoundryStagingDeploySpec(options)),
         )
         .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(

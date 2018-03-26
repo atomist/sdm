@@ -36,7 +36,7 @@ export function autofixSoftwareDeliveryMachine(opts: Partial<AutofixSoftwareDeli
         projectLoader: CloningProjectLoader,
         ...opts,
     };
-    const sdm = new SoftwareDeliveryMachine(options,
+    const sdm = new SoftwareDeliveryMachine("Autofix machine", options,
         onAnyPush
             .setGoals(new Goals("Autofix", AutofixGoal)));
     sdm.addAutofixes(

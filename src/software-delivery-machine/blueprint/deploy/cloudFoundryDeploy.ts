@@ -31,28 +31,29 @@ import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablem
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { DefaultArtifactStore } from "../artifactStore";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
+import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 
 /**
  * Deploy everything to the same Cloud Foundry space
  */
-export function cloudFoundryStagingDeploySpec(projectLoader: ProjectLoader): DeploySpec<CloudFoundryInfo> {
+export function cloudFoundryStagingDeploySpec(opts: {artifactStore: ArtifactStore, projectLoader: ProjectLoader}): DeploySpec<CloudFoundryInfo> {
     return {
         implementationName: "DeployFromLocalToStaging",
         deployGoal: StagingDeploymentGoal,
         endpointGoal: StagingEndpointGoal,
-        artifactStore: undefined,
-        deployer: new CommandLineCloudFoundryDeployer(projectLoader),
+        artifactStore: opts.artifactStore,
+        deployer: new CommandLineCloudFoundryDeployer(opts.projectLoader),
         targeter: () => new EnvironmentCloudFoundryTarget("ri-staging"),
     };
 }
 
-export function cloudFoundryProductionDeploySpec(projectLoader: ProjectLoader): DeploySpec<CloudFoundryInfo> {
+export function cloudFoundryProductionDeploySpec(opts: {artifactStore: ArtifactStore, projectLoader: ProjectLoader}): DeploySpec<CloudFoundryInfo> {
     return {
         implementationName: "DeployFromLocalToProd",
         deployGoal: ProductionDeploymentGoal,
         endpointGoal: ProductionEndpointGoal,
-        artifactStore: undefined,
-        deployer: new CommandLineCloudFoundryDeployer(projectLoader),
+        artifactStore: opts.artifactStore,
+        deployer: new CommandLineCloudFoundryDeployer(opts.projectLoader),
         targeter: () => new EnvironmentCloudFoundryTarget("ri-production"),
     };
 }

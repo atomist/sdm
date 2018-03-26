@@ -25,6 +25,7 @@ import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
@@ -39,14 +40,16 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials): Promise<Deployment[]> {
-        logger.info("Deploying app [%j] to Cloud Foundry [%s]", da, cfi.description);
+        const readOnly = !da.filename;
+        logger.info(`Deploying app [%j] to Cloud Foundry [%s]: Readonly clone status=${readOnly}`, da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
-        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: true}, async project => {
+        // Try to get the already built version if we don't have an artifact
+        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly}, async project => {
             const manifestFile = await project.findFile(CloudFoundryManifestPath);
 
             if (!cfi.api || !cfi.org || !cfi.username || !cfi.password) {
-                throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
+                throw new Error("Cloud foundry authentication information missing. See CloudFoundryTarget.ts");
             }
 
             const opts = {cwd: !!da.cwd ? da.cwd : project.baseDir};
@@ -55,11 +58,12 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             await runCommand(
                 `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`,
                 opts);
-            console.log("Successfully selected space [%s]", cfi.space);
+            logger.debug("Successfully selected space [%s]", cfi.space);
             // Turn off color so we don't have unpleasant escape codes in web stream
             await runCommand("cf config --color false", {cwd: da.cwd});
-            const childProcess = spawn("cf",
-                [
+            const spawnCommand: SpawnCommand = {
+                command: "cf",
+                args: [
                     "push",
                     da.name,
                     "-f",
@@ -70,7 +74,10 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                             ["-p",
                                 da.filename] :
                             []),
-                opts);
+            };
+
+            logger.info("About to issue Cloud Foundry command %s: options=%j", stringifySpawnCommand(spawnCommand), opts);
+            const childProcess = spawn(spawnCommand.command, spawnCommand.args, opts);
             childProcess.stdout.on("data", what => log.write(what.toString()));
             childProcess.stderr.on("data", what => log.write(what.toString()));
             return [await new Promise((resolve, reject) => {

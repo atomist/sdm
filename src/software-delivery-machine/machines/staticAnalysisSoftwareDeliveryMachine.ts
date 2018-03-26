@@ -40,7 +40,9 @@ export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalys
         useCheckstyle: true,
         ...opts,
     };
-    const sdm = new SoftwareDeliveryMachine(options,
+    const sdm = new SoftwareDeliveryMachine(
+        "Static analysis SDM",
+        options,
         whenPushSatisfies(MaterialChangeToJavaRepo)
             .itMeans("Change to Java")
             .setGoals(new Goals("Review only", ReviewGoal)));
