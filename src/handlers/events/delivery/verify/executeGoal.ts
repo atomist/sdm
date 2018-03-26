@@ -1,5 +1,5 @@
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
-import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { StatusForExecuteGoal } from "../../../../typings/types";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
@@ -34,15 +34,14 @@ export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, re
         result.requireApproval ? "waiting_for_approval" : "success";
     return updateGoal(ctx, sdmGoal as SdmGoal,
         {
-            goal,
             url: result.targetUrl,
             state: newState,
+            description: descriptionFromState(goal, newState),
         });
 }
 
 function markGoalInProcess(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal) {
     return updateGoal(ctx, sdmGoal, {
-        goal,
         description: goal.inProcessDescription,
         state: "in_process",
     }).catch(err =>

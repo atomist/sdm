@@ -14,32 +14,16 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success, } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
-import {
-    currentGoalIsStillPending,
-    Goal,
-} from "../../../common/delivery/goals/Goal";
-import {
-    ExecuteGoalInvocation,
-    ExecuteGoalResult,
-    GoalExecutor,
-} from "../../../common/delivery/goals/goalExecution";
-import { OnAnySuccessStatus, SdmGoalsForCommit, StatusForExecuteGoal } from "../../../typings/types";
-import { createStatus } from "../../../util/github/ghub";
+import { currentGoalIsStillPending, Goal, } from "../../../common/delivery/goals/Goal";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor, } from "../../../common/delivery/goals/goalExecution";
+import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { goalCorrespondsToSdmGoal } from "../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
@@ -100,7 +84,10 @@ export class ExecuteGoalOnSuccessStatus
         }
 
         const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
-        const thisSdmGoal = sdmGoals.find(g => g.name === params.goal.name && g.environment === params.goal.environment);
+        const thisSdmGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(params.goal, g as SdmGoal));
+        if (!thisSdmGoal) {
+            throw new Error("Unable to identify SdmGoal for " + params.goal.name)
+        }
 
         return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);
     }

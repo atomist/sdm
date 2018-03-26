@@ -48,6 +48,10 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
+export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean {
+    return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
+}
+
 export function storeGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
@@ -75,7 +79,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         preConditions.push(...goal.dependsOn.map(d => ({
             goalSet,
             name: d.name,
-            environment: d.definition.environment,
+            environment: environmentFromGoal(d),
         })));
     }
 
