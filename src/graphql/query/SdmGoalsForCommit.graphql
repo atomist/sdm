@@ -20,5 +20,18 @@ query SdmGoalsForCommit(
       owner
       providerId
     }
+    ts
+    preConditions {
+      goalSet
+      environment
+      name
+    }
+    provenance {
+      registration
+      version
+      name
+      correlationId
+      ts
+    }
   }
 }

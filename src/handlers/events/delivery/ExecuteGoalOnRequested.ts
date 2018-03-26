@@ -76,7 +76,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
         try {
-            const result = await executeGoal(this.execute, status, ctx, params);
+            const result = await executeGoal(this.execute, status, ctx, params, sdmGoal);
             if (params.handleGoalUpdates) {
                 markStatus(ctx, sdmGoal, params.goal, result);
             }

@@ -1,5 +1,5 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnPushToAnyBranch } from "../../typings/types";
+import { OnPushToAnyBranch, StatusForExecuteGoal } from "../../typings/types";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     return GitHubRepoRef.from({
@@ -13,4 +13,8 @@ export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
 
 export function providerIdFromPush(push: OnPushToAnyBranch.Push) {
     return push.repo.org.provider.providerId;
+}
+
+export function providerIdFromStatus(status: StatusForExecuteGoal.Fragment) {
+    return status.commit.repo.org.provider.providerId;
 }

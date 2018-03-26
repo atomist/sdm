@@ -36,9 +36,13 @@ import {
     ExecuteGoalResult,
     GoalExecutor,
 } from "../../../common/delivery/goals/goalExecution";
-import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
+import { OnAnySuccessStatus, SdmGoalsForCommit, StatusForExecuteGoal } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
+import { providerIdFromStatus } from "../../../util/git/repoRef";
+import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 
 /**
  * Execute a goal on a success status
@@ -79,14 +83,21 @@ export class ExecuteGoalOnSuccessStatus
             return Success;
         }
 
-        return executeGoal(this.execute, status, ctx, params).then(handleExecuteResult);
+        const commit = status.commit;
+        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
+        const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
+        const thisSdmGoal = sdmGoals.find(g => g.name === params.goal.name && g.environment === params.goal.environment);
+
+        return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);
     }
 }
 
 export async function executeGoal(execute: GoalExecutor,
                                   status: StatusForExecuteGoal.Fragment,
                                   ctx: HandlerContext,
-                                  params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> {
+                                  params: ExecuteGoalInvocation,
+                                  thisSdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
     const commit = status.commit;
     logger.debug(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
     const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
@@ -96,12 +107,12 @@ export async function executeGoal(execute: GoalExecutor,
     }
 
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-    await createStatus(params.githubToken, id as GitHubRepoRef, {
-        context: params.goal.context,
+    await updateGoal(ctx, thisSdmGoal, {
+        goal:params.goal,
         description: params.goal.inProcessDescription,
-        state: "pending", // in_process
+        state: "in_process",
     }).catch(err =>
-        logger.warn("Failed to update %s status to tell people we are working on it", params.goal.name));
+        logger.warn("Failed to update %s goal to tell people we are working on it", params.goal.name));
     return execute(status, ctx, params);
 }
 
