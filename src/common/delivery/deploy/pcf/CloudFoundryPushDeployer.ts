@@ -30,11 +30,11 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { InterpretedLog, LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import {ProjectLoader} from "../../../repo/ProjectLoader";
 import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
 import { Manifest } from "./CloudFoundryManifest";
 import { CloudFoundryPusher } from "./CloudFoundryPusher";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
-import {ProjectLoader} from "../../../repo/ProjectLoader";
 
 /**
  * Use the Cloud Foundry API to approximate their CLI to push.
@@ -53,7 +53,7 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
 
     protected async archiveProject(p: GitProject, da: DeployableArtifact, log: ProgressLog): Promise<any> {
         if (!!da.filename) {
-            const archiveFile = `${p.baseDir}/target/${da.filename}`
+            const archiveFile = `${p.baseDir}/target/${da.filename}`;
             log.write(`Using archive ${archiveFile}`);
             // const packageFile = await p.findFile(archiveFile);
             return fs.createReadStream(`${p.baseDir}/target/${da.filename}`);
