@@ -27,11 +27,11 @@ import {
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
 import { CodeReactionListener } from "../../../common/listener/CodeReactionListener";
+import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
+import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
 import { DefaultArtifactStore } from "../artifactStore";
-import { ProjectLoader } from "../../../common/repo/ProjectLoader";
-import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 
 /**
  * Deploy everything to the same Cloud Foundry space
