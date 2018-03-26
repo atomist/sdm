@@ -22,7 +22,7 @@ import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../b
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import {
     Install, nodeRunBuildBuilder, npmBuilderOptions,
-    RunBuild
+    RunBuild,
 } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
@@ -102,7 +102,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             .itMeans("Try standard node build")
             .set(runBuildBuilder),
         build.setDefault(new MavenBuilder(options.artifactStore,
-            createEphemeralProgressLog, options.projectLoader))
+            createEphemeralProgressLog, options.projectLoader)),
     )
         .addDeployRules(
             deploy.when(IsMaven)

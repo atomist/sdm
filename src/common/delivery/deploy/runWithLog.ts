@@ -31,7 +31,7 @@ import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
 import { Goal } from "../goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor, } from "../goals/goalExecution";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 import { deploy, Targeter } from "./deploy";
 
 export interface DeploySpec<T extends TargetInfo> {
