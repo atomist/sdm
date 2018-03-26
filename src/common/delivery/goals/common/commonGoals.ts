@@ -89,7 +89,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
     displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
     failedDescription: "Test deployment failure",
-}, BuildGoal);
+}, ArtifactGoal);
 
 export const StagingUndeploymentGoal = new Goal({
     environment: StagingEnvironment,
