@@ -22,11 +22,11 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
-import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
