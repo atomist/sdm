@@ -78,34 +78,6 @@ export interface RunWithLogContext extends SdmContext {
 
 export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-export function executeDeployArtifact<T extends TargetInfo>(spec: DeploySpec<T>): ExecuteWithLog {
-    return async (rwlc: RunWithLogContext) => {
-        const commit = rwlc.status.commit;
-        const pushBranch = commit.pushes[0].branch;
-        rwlc.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
-        const deployParams: DeployArtifactParams<T> = {
-            ...spec,
-            credentials: rwlc.credentials,
-            addressChannels: rwlc.addressChannels,
-            id: rwlc.id as GitHubRepoRef,
-            targetUrl: _.get(commit, "image.imageName"),
-            team: rwlc.context.teamId,
-            progressLog: rwlc.progressLog,
-            branch: pushBranch,
-        } as DeployArtifactParams<T>;
-
-        // if (!image) {
-        //     rwlc.progressLog.write(`No image found on commit ${commit.sha}; can't deploy`);
-        //     return rwlc.reportError(new Error("No image linked"));
-        // }
-        logger.info(`Running deploy. Triggered by ${rwlc.status.state} status: ${rwlc.status.context}: ${rwlc.status.description}`);
-        return dedup(commit.sha, () =>
-            deploy(deployParams)
-                .catch(err => rwlc.reportError(err)))
-            .then(success);
-    };
-}
-
 function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
                           addressChannels: AddressChannels,
                           progressLog: ProgressLog,

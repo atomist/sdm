@@ -25,6 +25,7 @@ import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/Npm
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
+    LocalDeploymentGoal, LocalEndpointGoal,
     NoGoals, ProductionDeploymentGoal, ProductionEndpointGoal, StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../common/delivery/goals/common/commonGoals";
@@ -49,7 +50,10 @@ import {
      CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
-import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import {
+    LocalExecutableJarDeployer,
+    mavenSourceDeployer
+} from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -100,12 +104,20 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         .addDeployRules(
             deploy.when(IsMaven)
                 .itMeans("Maven")
+                .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
+                .using(
+                    {
+                        deployer: mavenSourceDeployer(options.projectLoader),
+                        targeter: ManagedDeploymentTargeter,
+                    },
+                ),
+            deploy.when(IsMaven)
+                .itMeans("Maven")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
                 .using(
                     {
                         deployer: LocalExecutableJarDeployer,
-                        targeter:
-                        ManagedDeploymentTargeter,
+                        targeter: ManagedDeploymentTargeter,
                     },
                 ),
             deploy.when(IsMaven)

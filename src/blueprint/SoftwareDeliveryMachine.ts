@@ -23,6 +23,8 @@ import {
     CodeReactionGoal,
     FingerprintGoal,
     JustBuildGoal,
+    LocalDeploymentGoal,
+    LocalEndpointGoal,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
     ReviewGoal,
@@ -70,7 +72,6 @@ import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushMapping } from "../common/listener/PushMapping";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
-import { PushRule } from "../common/listener/support/PushRule";
 import { PushRules } from "../common/listener/support/PushRules";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
@@ -244,26 +245,31 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get deployer(): FunctionalUnit {
-        const name = this.deployTargetMapping.name.replace(" ", "_");
         const outer = this;
+
         function executor(deploymentGoal: Goal, endpointGoal: Goal) {
             return executeArtifactDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
                 deploymentGoal, endpointGoal,
                 outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
         }
 
+        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal }> = [
+            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal},
+            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal},
+            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal},
+        ];
+
+        let count = 0;
         return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested(name, StagingDeploymentGoal,
-                    executor(StagingDeploymentGoal, StagingEndpointGoal)),
-                () => new ExecuteGoalOnRequested(name + "_jb", ProductionDeploymentGoal,
-                    executor(ProductionDeploymentGoal, ProductionEndpointGoal)),
-                () => new ExecuteGoalOnSuccessStatus(name, StagingDeploymentGoal,
-                    executor(StagingDeploymentGoal, StagingEndpointGoal)),
-                () => new ExecuteGoalOnSuccessStatus(name + "_jb", ProductionDeploymentGoal,
-                    executor(ProductionDeploymentGoal, ProductionEndpointGoal),
+            eventHandlers: _.flatten(deployGoalPairs.map(dep => [
+                () => new ExecuteGoalOnRequested(`deploy${count++}`,
+                    dep.deployGoal,
+                    executor(dep.deployGoal, dep.endpointGoal)),
+                () => new ExecuteGoalOnSuccessStatus(`deploy${count++}`,
+                    dep.deployGoal,
+                    executor(dep.deployGoal, dep.endpointGoal),
                 ),
-            ],
+            ])),
             commandHandlers: [],
         };
     }

@@ -15,7 +15,6 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { composeFunctionalUnits } from "../../../blueprint/ComposedFunctionalUnit";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
@@ -26,7 +25,11 @@ import {
 import { executableJarDeployer } from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../common/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import { StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
+import {
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
+    StagingUndeploymentGoal
+} from "../../../common/delivery/goals/common/commonGoals";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { Deployer } from "../../../spi/deploy/Deployer";
