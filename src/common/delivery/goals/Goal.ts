@@ -17,7 +17,7 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 
@@ -81,7 +81,7 @@ export class Goal {
     }
 
     // TODO decouple from github statuses
-    public async preconditionsStatus(id: RemoteRepoRef,
+    public async preconditionsStatus(id: RepoRef,
                                      sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
         return "success";
     }
@@ -96,7 +96,7 @@ export class GoalWithPrecondition extends Goal {
         this.dependsOn = dependsOn;
     }
 
-    public async preconditionsStatus(id: RemoteRepoRef,
+    public async preconditionsStatus(idForLogging: RepoRef,
                                      sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
         const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
         const errors: string[] = checks.filter(r => r.error !== undefined)
@@ -108,13 +108,13 @@ export class GoalWithPrecondition extends Goal {
         if (errors.length > 0) {
             logger.info("Preconditions failed on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
                 this.name, this.dependsOn.map(g => g.name),
-                id, errors.join(","), reasonsToWait.join(","));
+                idForLogging, errors.join(","), reasonsToWait.join(","));
             return "failure";
         }
         if (reasonsToWait.length > 0) {
             logger.debug("Preconditions not yet met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
                 this.name, this.dependsOn.map(g => g.name),
-                id, errors.join(","), reasonsToWait.join(","));
+                idForLogging, errors.join(","), reasonsToWait.join(","));
             return "waiting";
         }
         return "success";

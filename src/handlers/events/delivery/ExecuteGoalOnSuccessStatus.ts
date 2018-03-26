@@ -38,6 +38,7 @@ import {
 } from "../../../common/delivery/goals/goalExecution";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Execute a goal on a success status
@@ -89,22 +90,8 @@ export async function executeGoal(execute: GoalExecutor,
     const commit = status.commit;
     logger.debug(`Might execute ${params.goal.name} on ${params.implementationName} after receiving ${status.state} status ${status.context}`);
     const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-    const statusAndFriends: GitHubStatusAndFriends = {
-        context: status.context,
-        state: status.state,
-        targetUrl: status.targetUrl,
-        description: status.description,
-        siblings: status.commit.statuses,
-    };
-    logger.debug("Checking preconditions for goal %s on %j...", params.goal.name, id);
-    const preconsStatus = await params.goal.preconditionsStatus(id, statusAndFriends);
-    if (preconsStatus === "failure") {
-        logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
-        logger.warn("Cannot run %s because some precondition failed", params.goal.name);
-        return Success;
-    }
-    if (preconsStatus === "waiting") {
-        logger.debug("Preconditions not yet met for goal %s on %j", params.goal.name, id);
+
+    if (!(await shouldRunGoal(params.goal, status, id))) {
         return Success;
     }
 
@@ -116,6 +103,28 @@ export async function executeGoal(execute: GoalExecutor,
     }).catch(err =>
         logger.warn("Failed to update %s status to tell people we are working on it", params.goal.name));
     return execute(status, ctx, params);
+}
+
+async function shouldRunGoal(goal: Goal, status: StatusForExecuteGoal.Fragment, idForLogging: RepoRef) {
+    const statusAndFriends: GitHubStatusAndFriends = {
+        context: status.context,
+        state: status.state,
+        targetUrl: status.targetUrl,
+        description: status.description,
+        siblings: status.commit.statuses,
+    };
+    logger.debug("Checking preconditions for goal %s on %j...", goal.name, idForLogging);
+    const preconsStatus = await goal.preconditionsStatus(idForLogging, statusAndFriends);
+    if (preconsStatus === "failure") {
+        logger.info("Preconditions failed for goal %s on %j", goal.name, idForLogging);
+        logger.warn("Cannot run %s because some precondition failed", goal.name);
+        return false;
+    }
+    if (preconsStatus === "waiting") {
+        logger.debug("Preconditions not yet met for goal %s on %j", goal.name, idForLogging);
+        return false;
+    }
+    return true;
 }
 
 async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<HandlerResult> {
