@@ -77,10 +77,12 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         const id = repoRefFromPush(push);
         const credentials = {token: params.githubToken};
 
-        const goals = await this.projectLoader.doWithProject({credentials, id, context, readOnly: true},
-                project => this.setGoalsForPushOnProject(push, id, credentials, context, params, project));
+        const determinedGoals = await this.projectLoader.doWithProject({credentials, id, context, readOnly: true},
+                project => this.setGoalsForPushOnProject(push, id, credentials, context, project));
 
-        await saveGoals(context, credentials, id, providerIdFromPush(push), goals);
+        await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
+
+        await showGraph(context, determinedGoals);
 
         return Success;
     }
@@ -89,7 +91,6 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                                            id: GitHubRepoRef,
                                            credentials: ProjectOperationCredentials,
                                            context: HandlerContext,
-                                           params: this,
                                            project: GitProject): Promise<Goals> {
         const addressChannels = addressChannelsFor(push.repo, context);
         const pi: ProjectListenerInvocation = {
@@ -116,6 +117,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         }
     }
 }
+
 
 async function saveGoals(ctx: HandlerContext,
                          credentials: ProjectOperationCredentials,
