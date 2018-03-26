@@ -20,6 +20,7 @@ import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
+import { AddBuildScript } from "../../blueprint/code/autofix/addBuildScript";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
@@ -43,5 +44,6 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
         .addAutofixes(
             AddAtomistTypeScriptHeader,
             tslintFix,
+            AddBuildScript,
         );
 }
