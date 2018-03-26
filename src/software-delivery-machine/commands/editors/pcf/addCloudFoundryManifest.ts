@@ -91,7 +91,7 @@ applications:
 const automationClientManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
-  command: "npm start"
+  command: "node --trace-warnings --expose_gc --optimize_for_size --always_compact --max_old_space_size=256 node_modules/@atomist/automation-client/start.client.js"
   memory: 512M
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
   env:
