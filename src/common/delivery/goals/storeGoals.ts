@@ -27,15 +27,14 @@ export function environmentFromGoal(goal: Goal) {
 }
 
 export interface UpdateSdmGoalParams {
-    goal: Goal;
     state: GoalState;
-    description?: string;
+    description: string;
     url?: string;
     approved?: boolean;
 }
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
-    const description = params.description || descriptionFromState(params.goal, params.state);
+    const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
     const sdmGoal = {
         ...before,
