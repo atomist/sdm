@@ -54,12 +54,14 @@ export class ExecuteGoalOnSuccessStatus
     public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
     public githubToken: string;
+    public readonly implementationName: string;
 
-    constructor(public implementationName: string,
+    constructor(implementationName: string,
                 public goal: Goal,
                 private execute: GoalExecutor) {
-        this.subscriptionName = implementationName + "OnSuccessStatus";
-        this.name = implementationName + "OnSuccessStatus";
+        this.implementationName = validSubscriptionName(implementationName);
+        this.subscriptionName = this.implementationName + "OnSuccessStatus";
+        this.name = this.subscriptionName + "OnSuccessStatus";
         this.description = `Execute ${goal.name} on prior goal success`;
         this.subscription =
             subscription({ name: "OnAnySuccessStatus", operationName: this.subscriptionName });
@@ -123,4 +125,9 @@ export async function executeGoal(execute: GoalExecutor,
 async function handleExecuteResult(executeResult: ExecuteGoalResult): Promise<HandlerResult> {
     // Return the minimal fields for HandlerResult, because they get printed to the log.
     return {code: executeResult.code, message: executeResult.message};
+}
+
+export function validSubscriptionName(input: string): string {
+    return input.replace(/[-\s]/, "_")
+        .replace(/^(\d)/, "number$1");
 }
