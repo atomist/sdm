@@ -24,7 +24,6 @@ import {
 import { executableJarDeployer } from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../common/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     StagingDeploymentGoal,
     StagingEndpointGoal,
@@ -34,6 +33,7 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { DefaultArtifactStore } from "../artifactStore";
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 
 export const LocalExecutableJarDeployer: Deployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
     baseUrl: "http://localhost",

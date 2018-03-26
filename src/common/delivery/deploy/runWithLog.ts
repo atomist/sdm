@@ -18,9 +18,6 @@ import { failure, HandlerContext, logger, Success } from "@atomist/automation-cl
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
-import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { Deployer } from "../../../spi/deploy/Deployer";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
@@ -30,23 +27,8 @@ import { SdmContext } from "../../context/SdmContext";
 import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
 import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
-import { Goal } from "../goals/Goal";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
-import { deploy, Targeter } from "./deploy";
 
-export interface DeploySpec<T extends TargetInfo> {
-    implementationName: string;
-    deployGoal: Goal;
-    endpointGoal: Goal;
-    artifactStore?: ArtifactStore;
-    deployer: Deployer<T>;
-    targeter: Targeter<T>;
-    undeploy?: {
-        goal: Goal;
-        implementationName: string;
-    };
-    undeployOnSuperseded?: boolean;
-}
 
 export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteGoalResult>,
                            logInterpreter?: LogInterpreter): GoalExecutor {

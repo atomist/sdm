@@ -58,27 +58,11 @@ export interface DeployArtifactParams<T extends TargetInfo> extends Target<T> {
     branch: string;
 }
 
-export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<T>): Promise<void> {
-    logger.info("Deploying with params=%j", params);
-    const progressLog = params.progressLog;
-
-    const artifactCheckout = await checkOutArtifact(params.targetUrl, params.artifactStore, params.id, params.credentials, params.progressLog)
-
-    const deployments = await params.deployer.deploy(
-        artifactCheckout,
-        params.targeter(params.id, params.branch),
-        progressLog,
-        params.credentials,
-        params.team);
-
-    await Promise.all(deployments.map(deployment => reactToSuccessfulDeploy(params, deployment)));
-}
-
-async function checkOutArtifact(targetUrl: string,
-                                artifactStore: ArtifactStore,
-                                id: RemoteRepoRef,
-                                credentials: ProjectOperationCredentials,
-                                progressLog: ProgressLog): Promise<DeployableArtifact> {
+export async function checkOutArtifact(targetUrl: string,
+                                       artifactStore: ArtifactStore,
+                                       id: RemoteRepoRef,
+                                       credentials: ProjectOperationCredentials,
+                                       progressLog: ProgressLog): Promise<DeployableArtifact> {
     if (!targetUrl) {
         return sourceArtifact(id);
     }
@@ -103,21 +87,13 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
     }
 }
 
-export async function reactToSuccessfulDeploy(params: {
-                                                  deployGoal: Goal,
-                                                  endpointGoal: Goal,
-                                                  credentials: ProjectOperationCredentials,
-                                                  id: RemoteRepoRef,
-                                                  addressChannels: AddressChannels
-                                                  progressLog: ProgressLog,
-                                              },
-                                              deployment: Deployment) {
+export async function setEndpointStatusOnSuccessfulDeploy(params: {
+                                                              endpointGoal: Goal,
+                                                              credentials: ProjectOperationCredentials,
+                                                              id: RemoteRepoRef,
+                                                          },
+                                                          deployment: Deployment) {
 
-    await setStatus(params.credentials, params.id,
-        StatusState.success,
-        params.deployGoal.context,
-        params.progressLog.url,
-        params.deployGoal.successDescription);
     if (deployment.endpoint) {
         await setStatus(params.credentials, params.id,
             StatusState.success,
@@ -129,15 +105,7 @@ export async function reactToSuccessfulDeploy(params: {
                 // do not fail this whole handler
             });
     } else {
-        await
-            params.addressChannels("Deploy succeeded, but the endpoint didn't appear in the log.");
-        await
-            params.addressChannels({
-                content: params.progressLog.log,
-                fileType: "text",
-                fileName: `deploy-success-${params.id.sha}.log`,
-            } as any);
-        logger.warn("No endpoint returned by deployment");
+        throw new Error("Deploy finished with success, but the endpoint was not found in the logs")
     }
 }
 

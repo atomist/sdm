@@ -14,20 +14,33 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger, Success } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { logger, Success } from "@atomist/automation-client";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { OnAnyPendingStatus } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushMapping } from "../../listener/PushMapping";
-import { ConsoleProgressLog } from "../../log/progressLogs";
 import { ProjectLoader } from "../../repo/ProjectLoader";
-import { addressChannelsFor } from "../../slack/addressChannels";
 import { Goal } from "../goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
-import { deploy, DeployArtifactParams, Target } from "./deploy";
+import { ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
+import { checkOutArtifact, setEndpointStatusOnSuccessfulDeploy, Target, Targeter } from "./deploy";
 
 import * as _ from "lodash";
+import { runWithLog, RunWithLogContext } from "./runWithLog";
+import { Deployer } from "../../../spi/deploy/Deployer";
+import { TargetInfo } from "../../../spi/deploy/Deployment";
+
+export interface DeploySpec<T extends TargetInfo> {
+    implementationName: string;
+    deployGoal: Goal;
+    endpointGoal: Goal;
+    artifactStore?: ArtifactStore;
+    deployer: Deployer<T>;
+    targeter: Targeter<T>;
+    undeploy?: {
+        goal: Goal;
+        implementationName: string;
+    };
+    undeployOnSuperseded?: boolean;
+}
 
 /**
  * Execute deploy with the appropriate deployer and target from the underlying push
@@ -39,13 +52,12 @@ export function executeDeploy(artifactStore: ArtifactStore,
                               deployGoal: Goal,
                               endpointGoal: Goal,
                               targetMapping: PushMapping<Target<any>>): GoalExecutor {
-    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
-        const commit = status.commit;
+
+    return runWithLog(async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+        const commit = rwlc.status.commit;
+        const { addressChannels, credentials, id, context, progressLog}  = rwlc;
+        const atomistTeam = context.teamId;
         await dedup(commit.sha, async () => {
-            const credentials = {token: params.githubToken};
-            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-            const atomistTeam = context.teamId;
-            const addressChannels = addressChannelsFor(commit.repo, context);
 
             await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
                 const push = commit.pushes[0];
@@ -63,25 +75,24 @@ export function executeDeploy(artifactStore: ArtifactStore,
                     throw new Error(`Don't know how to deploy project ${id.owner}:${id.repo}`);
                 }
                 logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
-                const dap: DeployArtifactParams<any> = {
-                    id,
+
+                const artifactCheckout = await checkOutArtifact(_.get(commit, "image.imageName"),
+                    artifactStore, id, credentials, progressLog);
+
+                const deployments = await target.deployer.deploy(
+                    artifactCheckout,
+                    target.targeter(id, id.branch),
+                    progressLog,
                     credentials,
-                    addressChannels,
-                    team: atomistTeam,
-                    deployGoal,
-                    endpointGoal,
-                    artifactStore,
-                    ...target,
-                    targetUrl: _.get(commit, "image.imageName"),
-                    // Fix this
-                    progressLog: new ConsoleProgressLog(),
-                    branch: push.branch,
-                };
-                return deploy(dap);
+                    atomistTeam);
+
+                return Promise.all(deployments.map(deployment => setEndpointStatusOnSuccessfulDeploy(
+                    {endpointGoal, credentials, id}, deployment)));
+
             });
         });
         return Success;
-    };
+    });
 }
 
 async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
