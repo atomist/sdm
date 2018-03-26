@@ -67,20 +67,20 @@ export class CloudFoundryPusher {
             await this.api.removeServices(appGuid, serviceModifications.servicesToRemove);
         }
         log.write(`Adding default route to ${appNameForLog}.`);
-        await this.api.addRouteToApp(spaceGuid, appGuid, manifestApp.name, this.defaultDomain);
+        const hostName = await this.api.addRandomRouteToApp(spaceGuid, appGuid, manifestApp.name, this.defaultDomain);
         log.write(`Updating app with manifest ${appNameForLog}.`);
         await this.api.updateAppWithManifest(appGuid, manifestApp);
         log.write(`Starting ${appNameForLog}...`);
         await this.api.startApp(appGuid);
         log.write(`Push complete for ${appNameForLog}.`);
         return {
-            endpoint: this.constructEndpoint(manifestApp.name),
+            endpoint: this.constructEndpoint(hostName),
             appName: manifestApp.name,
         };
     }
 
-    public constructEndpoint(appName: string): string {
-        return `https://${appName}.${this.defaultDomain}`;
+    public constructEndpoint(hostName: string): string {
+        return `https://${hostName}.${this.defaultDomain}`;
     }
 
     public async appServiceModifications(appGuid: string, serviceNames: string[]): Promise<ServicesModifications> {
