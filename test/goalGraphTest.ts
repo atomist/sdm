@@ -7,62 +7,19 @@ import { Goals } from "../src/common/delivery/goals/Goals";
 import { Goal, GoalWithPrecondition } from "../src/common/delivery/goals/Goal";
 import { splitContext } from "../src/common/delivery/goals/gitHubContext";
 import { HttpServiceGoals } from "../src/common/delivery/goals/common/httpServiceGoals";
+import { goalsToDot } from "../src/handlers/events/delivery/goals/graphGoals";
 
-function goalsToDot(goals: Goals, name: string) {
-
-    const nodeAttributes = goals.goals.map(g =>
-    `${validDotName(g)} [label="${g.name}"]`);
-
-    const edges: string[][] = goals.goals.map(g => {
-        const precursors = (g as GoalWithPrecondition).dependsOn || [] // guessPreviousGoals(goals, g);
-        return precursors.map(p => `${validDotName(p)} -> ${validDotName(g)}`)
-    });
-
-    const edgeAttributes = _.flatten(edges);
-
-
-    return `digraph ${name} {
+const DesiredDot = `digraph HTTP_Service {
     fontname="Arial";
     splines="polyline";
     rankdir="LR";
     edge [arrowhead="vee"];
     node [shape=box, fontname="Arial", style="rounded"];
 
-    ${nodeAttributes.join("\n    ")}
-
-    ${edgeAttributes.join("\n    ")}
-}
-`
-}
-
-function guessPreviousGoals(expectedGoals: Goals, currentGoal: Goal) {
-    const whereAmI = expectedGoals.goals.indexOf(currentGoal);
-    if (whereAmI < 0) {
-        logger.warn(`Inconsistency! Goal ${currentGoal} is known but is not part of Goals ${stringify(expectedGoals)}`);
-        return [];
-    }
-    if (whereAmI === 0) {
-        logger.info(`${currentGoal} is the first step.`);
-        return [];
-    }
-    return [expectedGoals.goals[whereAmI - 1]];
-
-}
-
-function validDotName(g: Goal) {
-    const parts = splitContext(g.context);
-    const startAtName = parts.env + "_" + parts.goalName;
-    return startAtName.replace(/[-\s.]/g, "_");
-}
-
-const DesiredDot = `digraph HttpServiceGoals {
-    fontname="Arial";
-    splines="polyline";
-    rankdir="LR";
-    edge [arrowhead="vee"];
-    node [shape=box, fontname="Arial", style="rounded"];
-
-    code_scan [label="scan"]
+    code_fingerprint [label="fingerprint"]
+    code_autofix [label="autofix"]
+    code_review [label="review"]
+    code_react [label="react"]
     code_build [label="build"]
     code_artifact [label="store artifact"]
     staging_deploy [label="deploy to Test"]
@@ -71,13 +28,10 @@ const DesiredDot = `digraph HttpServiceGoals {
     prod_prod_deploy [label="deploy to Prod"]
     prod_endpoint [label="locate service endpoint in Prod"]
 
-    code_scan -> code_build
-    code_build -> code_artifact
-    code_artifact -> staging_deploy
-    staging_deploy -> staging_endpoint
-    staging_endpoint -> staging_verifyEndpoint
+    code_autofix -> code_build
+    code_build -> staging_deploy
+    code_artifact -> prod_prod_deploy
     staging_verifyEndpoint -> prod_prod_deploy
-    prod_prod_deploy -> prod_endpoint
 }
 `;
 
@@ -85,8 +39,8 @@ describe("Rendering a goal graph", () => {
     it("renders the HTTP Service Goals", () => {
         const goals = HttpServiceGoals;
 
-        const dot = goalsToDot(goals, "HttpServiceGoals");
+        const dot = goalsToDot(goals);
         console.log(dot);
-        assert.equal(DesiredDot, dot);
+        assert.equal(dot, DesiredDot);
     })
 });

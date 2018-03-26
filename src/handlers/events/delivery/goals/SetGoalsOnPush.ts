@@ -45,6 +45,7 @@ import { OnPushToAnyBranch } from "../../../../typings/types";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { showGraph } from "./graphGoals";
 
 /**
  * Set up goals on a push (e.g. for delivery).
@@ -82,7 +83,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
 
         await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
 
-        await showGraph(context, determinedGoals);
+        await showGraph(context, addressChannelsFor(push.repo, context), determinedGoals);
 
         return Success;
     }
