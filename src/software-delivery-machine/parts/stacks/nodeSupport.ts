@@ -32,6 +32,11 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
             seedRepo: "typescript-express-seed",
             intent: "create node",
         }))
+        .addGenerators(() => nodeGenerator({
+            seedOwner: "spring-team",
+            seedRepo: "minimal-node-seed",
+            intent: "create minimal node",
+        }))
         .addNewRepoWithCodeActions(
             tagRepo(nodeTagger),
         )

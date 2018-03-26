@@ -20,7 +20,10 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { Install, npmBuilderOptions, RunBuild } from "../../common/delivery/build/local/npm/npmBuilder";
+import {
+    Install, nodeRunBuildBuilder, npmBuilderOptions,
+    RunBuild
+} from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
@@ -47,7 +50,7 @@ import {
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-     CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
+    CloudFoundryProductionDeploySpec, CloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
 import {
@@ -91,15 +94,15 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
             .setGoals(NpmBuildGoals),
     );
 
+    const runBuildBuilder = nodeRunBuildBuilder(options.projectLoader);
+
     sdm.addBuildRules(
-        build.when(IsAtomistAutomationClient, IsNode)
-            .itMeans("Build Atomist automation client")
-            .set(new SpawnBuilder(options.artifactStore,
-                createEphemeralProgressLogWithConsole,
-                options.projectLoader, npmBuilderOptions([Install, RunBuild]))),
         new NpmDetectBuildMapping(options.artifactStore, options.projectLoader),
+        build.when(IsNode)
+            .itMeans("Try standard node build")
+            .set(runBuildBuilder),
         build.setDefault(new MavenBuilder(options.artifactStore,
-            createEphemeralProgressLog, options.projectLoader)),
+            createEphemeralProgressLog, options.projectLoader))
     )
         .addDeployRules(
             deploy.when(IsMaven)

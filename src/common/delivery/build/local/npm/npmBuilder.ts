@@ -19,13 +19,21 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
-import { SpawnBuilderOptions } from "../SpawnBuilder";
+import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
+import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
+import { ProjectLoader } from "../../../../repo/ProjectLoader";
 
 export const Install: SpawnCommand = asSpawnCommand("npm install");
 
 export const RunBuild: SpawnCommand = asSpawnCommand("npm run build");
 
 export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile");
+
+export function nodeRunBuildBuilder(projectLoader: ProjectLoader) {
+    return new SpawnBuilder(undefined,
+        createEphemeralProgressLogWithConsole,
+        projectLoader, npmBuilderOptions([Install, RunBuild]));
+}
 
 export const npmLogInterpreter: LogInterpreter = log => {
     const relevantPart = log.split("\n")

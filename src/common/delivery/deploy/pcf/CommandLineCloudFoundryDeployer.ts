@@ -36,7 +36,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials): Promise<Deployment[]> {
-        logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, cfi.description);
+        logger.info("Deploying app [%j] to Cloud Foundry [%s]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
         const sources = await GitCommandGitProject.cloned(credentials, da.id);
@@ -46,10 +46,12 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
 
-        // TODO: if the password is wrong, things hangs forever waiting for input.
+        const opts = {cwd: !!da.cwd ? da.cwd : sources.baseDir};
+
+        // Note: if the password is wrong, things hangs forever waiting for input.
         await runCommand(
             `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`,
-            {cwd: da.cwd});
+            opts);
         console.log("Successfully selected space [%s]", cfi.space);
         // Turn off color so we don't have unpleasant escape codes in web stream
         await runCommand("cf config --color false", {cwd: da.cwd});
@@ -59,13 +61,13 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                 da.name,
                 "-f",
                 sources.baseDir + "/" + manifestFile.path,
-                "-p",
-                da.filename,
-                "--random-route",
-            ],
-            {
-                cwd: da.cwd,
-            });
+            "--random-route"]
+                .concat(
+                    !!da.filename ?
+                        ["-p",
+                            da.filename] :
+                        []),
+            opts);
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
         return [await new Promise((resolve, reject) => {
