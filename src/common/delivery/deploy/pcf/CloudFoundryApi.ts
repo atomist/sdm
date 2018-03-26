@@ -27,6 +27,7 @@ import {ManifestApplication} from "./CloudFoundryManifest";
 
 import {doWithRetry} from "@atomist/automation-client/util/retry";
 import cfClient = require("cf-client");
+import randomWord = require("random-word");
 
 export interface CloudFoundryClientV2 {
     api_url: string;
@@ -281,21 +282,19 @@ export class CloudFoundryApi {
         });
     }
 
-    public async addRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
+    public async addRandomRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
         await this.refreshToken();
         const domains = await this.cf.domains.getSharedDomains();
         const defaultDomain = domains.resources.find(d => d.entity.name === domainName);
         const domainGuid = defaultDomain.metadata.guid;
-        const routesWithName = await this.cf.spaces.getSpaceRoutes(spaceGuid, {q: `host:${hostName}`});
-        let route = routesWithName.resources.find(r => r.entity.domain_guid === domainGuid);
-        if (!route) {
-            route = await this.cf.routes.add({
+        const randomHostName = `${hostName}-${randomWord()}-${randomWord()}`;
+        const route = await this.cf.routes.add({
                 domain_guid: domainGuid,
                 space_guid: spaceGuid,
-                host: hostName,
+                host: randomHostName,
             });
-        }
-        return this.cf.apps.associateRoute(appGuid, route.metadata.guid);
+        await this.cf.apps.associateRoute(appGuid, route.metadata.guid);
+        return randomHostName;
     }
 
     public async getSpaceByName(spaceName: string): Promise<any> {

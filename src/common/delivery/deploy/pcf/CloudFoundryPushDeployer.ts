@@ -53,10 +53,9 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
 
     protected async archiveProject(p: GitProject, da: DeployableArtifact, log: ProgressLog): Promise<any> {
         if (!!da.filename) {
-            const archiveFile = `${p.baseDir}/target/${da.filename}`;
+            const archiveFile = `${da.cwd}/${da.filename}`;
             log.write(`Using archive ${archiveFile}`);
-            // const packageFile = await p.findFile(archiveFile);
-            return fs.createReadStream(`${p.baseDir}/target/${da.filename}`);
+            return fs.createReadStream(archiveFile);
         } else {
             return new Promise((resolve, reject) => {
                 log.write(`creating archive for directory ${p.baseDir}`);
@@ -89,7 +88,7 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
         if (!cfi.api || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
-        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: false}, async project => {
+        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: !da.cwd}, async project => {
             const packageFile = await this.archiveProject(project, da, log);
             const manifest = await this.getManifest(project);
             const cfClient = await initializeCloudFoundry(cfi);
