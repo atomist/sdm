@@ -100,11 +100,7 @@ export async function executeGoal(execute: GoalExecutor,
     const preconsStatus = await params.goal.preconditionsStatus(id, statusAndFriends);
     if (preconsStatus === "failure") {
         logger.info("Preconditions failed for goal %s on %j", params.goal.name, id);
-        createStatus(params.githubToken, id as GitHubRepoRef, {
-            context: params.goal.context,
-            description: params.goal.inProcessDescription,
-            state: "failure",
-        });
+        logger.warn("Cannot run %s because some precondition failed", params.goal.name);
         return Success;
     }
     if (preconsStatus === "waiting") {
