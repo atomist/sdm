@@ -18,10 +18,10 @@ import { logger } from "@atomist/automation-client";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as _ from "lodash";
+import { GoalsSetListener } from "../../../listener/GoalsSetListener";
 import { splitContext } from "../gitHubContext";
 import { Goal, GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
-import { GoalsSetListener } from "../../../listener/GoalsSetListener";
 
 export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     // This is an easter egg

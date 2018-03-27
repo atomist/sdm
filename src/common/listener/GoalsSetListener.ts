@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ListenerInvocation, SdmListener } from "./Listener";
 import { Goals } from "../delivery/goals/Goals";
+import { ListenerInvocation, SdmListener } from "./Listener";
 
 export interface GoalsSetInvocation extends ListenerInvocation {
 

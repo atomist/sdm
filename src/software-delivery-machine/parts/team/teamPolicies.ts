@@ -16,6 +16,7 @@
 
 import axios from "axios";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { GraphGoalsToSlack } from "../../../common/delivery/goals/graph/graphGoalsToSlack";
 import { OnDryRunBuildComplete } from "../../../handlers/events/dry-run/OnDryRunBuildComplete";
 import { disposeProjectHandler } from "../../blueprint/deploy/dispose";
 import { PostToDeploymentsChannel } from "../../blueprint/deploy/postToDeploymentsChannel";
@@ -24,7 +25,6 @@ import { requestDescription } from "../../blueprint/issue/requestDescription";
 import { thankYouYouRock } from "../../blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "../../blueprint/repo/publishNewRepo";
 import { addApacheLicenseHeaderEditor } from "../../commands/editors/license/addHeader";
-import { GraphGoalsToSlack } from "../../../common/delivery/goals/graph/graphGoalsToSlack";
 
 /**
  * Set up team policies
