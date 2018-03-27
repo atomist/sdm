@@ -18,12 +18,16 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import "mocha";
 import * as assert from "power-assert";
 import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
-import { PushTest, pushTest } from "../../../../src/common/listener/PushTest";
+import { ProjectPredicate, PushTest, pushTest } from "../../../../src/common/listener/PushTest";
 import { allSatisfied, anySatisfied } from "../../../../src/common/listener/support/pushtest/pushTestUtils";
 
 export const TruePushTest: PushTest = pushTest("true", async () => true);
 
 export const FalsePushTest: PushTest = pushTest("false", async () => false);
+
+export const TrueProjectPredicate: ProjectPredicate = async () => true;
+
+export const FalseProjectPredicate: ProjectPredicate = async () => false;
 
 const id = new GitHubRepoRef("atomist", "github-sdm");
 
@@ -31,43 +35,92 @@ describe("pushTestUtilsTest", () => {
 
     describe("allSatisfied", () => {
 
-        it("should handle one true", async () => {
-            const r = await allSatisfied(TruePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === true);
+        describe("with PushTest", () => {
+
+            it("should handle one true", async () => {
+                const r = await allSatisfied(TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle two true", async () => {
+                const r = await allSatisfied(TruePushTest, TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle one true and one false", async () => {
+                const r = await allSatisfied(TruePushTest, FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === false);
+            });
         });
 
-        it("should handle two true", async () => {
-            const r = await allSatisfied(TruePushTest, TruePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === true);
-        });
+        describe("with ProjectPredicate", () => {
 
-        it("should handle one true and one false", async () => {
-            const r = await allSatisfied(TruePushTest, FalsePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === false);
+            it("should handle one true", async () => {
+                const r = await allSatisfied(TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle two true", async () => {
+                const r = await allSatisfied(TrueProjectPredicate, TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle one true and one false", async () => {
+                const r = await allSatisfied(TrueProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === false);
+            });
         });
 
     });
 
     describe("anySatisfied", () => {
 
-        it("should handle one true", async () => {
-            const r = await anySatisfied(TruePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === true);
+        describe("with PushTest", () => {
+
+            it("should handle one true", async () => {
+                const r = await anySatisfied(TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle two true", async () => {
+                const r = await anySatisfied(TruePushTest, TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle one true and one false", async () => {
+                const r = await anySatisfied(TruePushTest, FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle two false", async () => {
+                const r = await anySatisfied(FalsePushTest, FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === false);
+            });
+
         });
 
-        it("should handle two true", async () => {
-            const r = await anySatisfied(TruePushTest, TruePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === true);
-        });
+        describe("with ProjectPredicate", () => {
 
-        it("should handle one true and one false", async () => {
-            const r = await anySatisfied(TruePushTest, FalsePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === true);
-        });
+            it("should handle one true", async () => {
+                const r = await anySatisfied(TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
 
-        it("should handle two false", async () => {
-            const r = await anySatisfied(FalsePushTest, FalsePushTest).valueForPush({id } as any as ProjectListenerInvocation);
-            assert(r === false);
+            it("should handle two true", async () => {
+                const r = await anySatisfied(TrueProjectPredicate, TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle one true and one false", async () => {
+                const r = await anySatisfied(TrueProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === true);
+            });
+
+            it("should handle two false", async () => {
+                const r = await anySatisfied(FalseProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
+                assert(r === false);
+            });
+
         });
 
     });

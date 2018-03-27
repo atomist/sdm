@@ -48,3 +48,8 @@ export interface PushMapping<V> {
      */
     valueForPush(p: ProjectListenerInvocation): Promise<V | undefined | NeverMatch>;
 }
+
+export function isPushMapping(a: any): a is PushMapping<any> {
+    const maybe = a as PushMapping<any>;
+    return !!maybe.name && !!maybe.valueForPush;
+}

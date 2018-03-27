@@ -19,12 +19,15 @@ import { ProjectListenerInvocation } from "./Listener";
 import { PushMapping } from "./PushMapping";
 
 /**
- * Return true if we like this push. Used in goal setting etc.
+ * Special PushTest. Return true if we like this push. Used in goal setting etc.
  */
 export interface PushTest extends PushMapping<boolean> {
 
 }
 
+/**
+ * Test against a project
+ */
 export type ProjectPredicate = (p: Project) => Promise<boolean>;
 
 /**

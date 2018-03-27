@@ -17,7 +17,8 @@
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
 import { ProjectListenerInvocation } from "../../Listener";
-import { PushTest, pushTest } from "../../PushTest";
+import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
+import { isPushMapping } from "../../PushMapping";
 
 /**
  * Return the opposite of this push test
@@ -28,17 +29,20 @@ export function not(t: PushTest): PushTest {
     return pushTest(`not (${t.name})`, async pi => !(await t.valueForPush(pi)));
 }
 
+export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
+
 /**
- * Return true if all are satisfied
+ * Wrap all these PushTests or ProjectPredicates in a single PushTest
+ * AND: Return true if all are satisfied
  * @param {PushTest} pushTests
  * @return {PushTest}
  */
-export function allSatisfied(...pushTests: PushTest[]): PushTest {
+export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
     return pushTest(pushTests.map(g => g.name).join(" && "),
         async pci => {
             const allResults: boolean[] = await Promise.all(
                 pushTests.map(async pt => {
-                    const result = await pt.valueForPush(pci);
+                    const result = isPushMapping(pt) ? await pt.valueForPush(pci) : await pt(pci.project);
                     logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
                     return result;
                 }),
@@ -47,12 +51,18 @@ export function allSatisfied(...pushTests: PushTest[]): PushTest {
         });
 }
 
-export function anySatisfied(...pushTests: PushTest[]): PushTest {
+/**
+ * Wrap all these PushTests or ProjectPredicates in a single PushTest
+ * OR: Return true if any is satisfied
+ * @param {PushTest} pushTests
+ * @return {PushTest}
+ */
+export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
     return pushTest(pushTests.map(g => g.name).join(" || "),
         async pci => {
             const allResults: boolean[] = await Promise.all(
                 pushTests.map(async pt => {
-                    const result = await pt.valueForPush(pci);
+                    const result = isPushMapping(pt) ? await pt.valueForPush(pci) : await pt(pci.project);
                     logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
                     return result;
                 }),

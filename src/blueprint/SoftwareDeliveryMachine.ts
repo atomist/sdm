@@ -468,7 +468,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     constructor(public readonly name: string,
                 public readonly opts: SoftwareDeliveryMachineOptions,
-                ...goalSetters: Array<PushMapping<Goals>>) {
+                ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
     }
