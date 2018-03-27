@@ -46,7 +46,7 @@ import {
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { FunctionalUnit } from "./FunctionalUnit";
+import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
@@ -171,9 +171,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get fingerprinter(): FunctionalUnit {
-        return functionalUnitForGoal("Fingerprinter",
-                    FingerprintGoal,
-                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
+        return this.fingerprinters.length === 0 ? EmptyFunctionalUnit :
+            functionalUnitForGoal("Fingerprinter",
+                FingerprintGoal,
+                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -183,20 +184,22 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get reviewHandling(): FunctionalUnit {
-        return functionalUnitForGoal("Reviews",
-                    ReviewGoal,
-                    executeReview(this.reviewerRegistrations));
+        return this.reviewerRegistrations.length === 0 ? EmptyFunctionalUnit :
+            functionalUnitForGoal("Reviews",
+            ReviewGoal,
+            executeReview(this.reviewerRegistrations));
     }
 
     private get codeReactionHandling(): FunctionalUnit {
         return functionalUnitForGoal("CodeReactions",
-                    CodeReactionGoal,
-                    executeCodeReactions(this.opts.projectLoader, this.codeReactions));
+            CodeReactionGoal,
+            executeCodeReactions(this.opts.projectLoader, this.codeReactions));
     }
 
     private get autofix(): FunctionalUnit {
-        return functionalUnitForGoal("Autofix", AutofixGoal,
-                    executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
+        return this.autofixRegistrations.length === 0 ? EmptyFunctionalUnit :
+            functionalUnitForGoal("Autofix", AutofixGoal,
+            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
     private get goalSetting(): Maker<SetGoalsOnPush> {
@@ -272,8 +275,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             requestApproval: true,
         };
         return functionalUnitForGoal("VerifyInStaging",
-                StagingVerifiedGoal,
-                executeVerifyEndpoint(stagingVerification));
+            StagingVerifiedGoal,
+            executeVerifyEndpoint(stagingVerification));
     }
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
