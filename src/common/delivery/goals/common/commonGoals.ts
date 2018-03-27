@@ -74,12 +74,14 @@ export const BuildGoal = new GoalWithPrecondition({
     failedDescription: "Build failure",
 }, AutofixGoal);
 
-export const ArtifactGoal = new Goal({
+// This one is actually satisfied in an ImageLinked event,
+// which happens to be a result of the build.
+export const ArtifactGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "store artifact",
     completedDescription: "Stored artifact",
-});
+}, BuildGoal);
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
@@ -87,7 +89,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
     displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
     failedDescription: "Test deployment failure",
-}, BuildGoal);
+}, ArtifactGoal);
 
 export const StagingUndeploymentGoal = new Goal({
     environment: StagingEnvironment,
@@ -96,21 +98,25 @@ export const StagingUndeploymentGoal = new Goal({
     completedDescription: "not deployed in test",
 });
 
-export const StagingEndpointGoal = new Goal({
+// this one won't be set up to trigger on its precondition;
+// rather, the deploy goal also sets this one, currently.
+// Setting the precondition lets FailDownstream know that this
+// one is never gonna succeed if the deploy failed.
+export const StagingEndpointGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
     failedDescription: "Couldn't locate service endpoint in Test",
-});
+}, StagingDeploymentGoal);
 
-export const StagingVerifiedGoal = new Goal({
+export const StagingVerifiedGoal = new GoalWithPrecondition({
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
     waitingForApprovalDescription: "Ready for your approval",
-});
+}, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
     environment: ProductionEnvironment,
@@ -127,27 +133,31 @@ export const ProductionUndeploymentGoal = new Goal({
     completedDescription: "not deployed in Prod",
 });
 
-export const ProductionEndpointGoal = new Goal({
+// this one won't be set up to trigger on its precondition;
+// rather, the deploy goal also sets this one, currently.
+// Setting the precondition lets FailDownstream know that this
+// one is never gonna succeed if the deploy failed.
+export const ProductionEndpointGoal = new GoalWithPrecondition({
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
     completedDescription: "Here is the service endpoint in Prod",
-
-});
+}, ProductionDeploymentGoal);
 
 export const LocalDeploymentGoal = new Goal({
     environment: IndependentOfEnvironment,
-    orderedName: "1-deploy locally",
+    orderedName: "1-deploy-locally",
     completedDescription: "Deployed locally",
 });
 
-export const LocalEndpointGoal = new Goal({
+// not an enforced precondition, but it's real enough to graph
+export const LocalEndpointGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2-endpoint",
     displayName: "locate local service endpoint",
     completedDescription: "Here is the local service endpoint",
 
-});
+}, LocalDeploymentGoal);
 
 export const NoGoal = new Goal({
     environment: IndependentOfEnvironment,
@@ -156,22 +166,6 @@ export const NoGoal = new Goal({
     completedDescription: "No material changes",
 
 });
-
-const AllKnownGoals = [
-    AutofixGoal,
-    ReviewGoal,
-    BuildGoal,
-    ArtifactGoal,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
-    LocalDeploymentGoal,
-    LocalEndpointGoal,
-    NoGoal,
-    ProductionUndeploymentGoal,
-];
 
 export const StagingDeploymentContext = StagingDeploymentGoal.context;
 export const StagingEndpointContext = StagingEndpointGoal.context;
@@ -182,26 +176,6 @@ export const ReviewContext = ReviewGoal.context;
 export const BuildContext = BuildGoal.context;
 
 export const ProductionMauve = "#cf5097";
-
-export const ContextToPlannedGoal: { [key: string]: Goal } = {};
-AllKnownGoals.forEach(p => ContextToPlannedGoal[p.context] = p);
-
-export function contextToGoal(ghsc: GitHubStatusContext): Goal {
-    return contextToKnownGoal(ghsc) ||
-        defaultGoal(ghsc);
-}
-
-export function contextToKnownGoal(ghsc: GitHubStatusContext): Goal {
-    return ContextToPlannedGoal[ghsc];
-}
-
-function defaultGoal(ghsc: GitHubStatusContext): Goal {
-    const interpreted = splitContext(ghsc);
-    return new Goal({
-        environment: interpreted.envPart + "/" as GoalEnvironment,
-        orderedName: interpreted.goalPart,
-    });
-}
 
 /**
  * Special Goals object to be returned if changes are immaterial.

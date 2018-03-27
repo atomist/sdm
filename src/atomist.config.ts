@@ -23,6 +23,7 @@ import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/arti
 import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingSoftwareDeliveryMachine";
 import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixSoftwareDeliveryMachine";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
+import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sSoftwareDeliveryMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
@@ -72,7 +73,7 @@ export const configuration: Configuration = {
     logging: {
         level: "info",
         file: {
-            enabled: notLocal,
+            enabled: !notLocal,
             level: "debug",
             name: "./log/github-sdm.log",
         },

@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-import { EventFired, failure, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as stringify from "json-stringify-safe";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
-import { environmentFromGoal, storeGoal, updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { GoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
-import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, StatusState } from "../../../typings/types";
-import { createStatus } from "../../../util/github/ghub";
-import { executeGoal, validSubscriptionName } from "./ExecuteGoalOnSuccessStatus";
-import { forApproval } from "./verify/approvalGate";
+import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
+import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -67,44 +63,23 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
         const status: StatusForExecuteGoal.Fragment = convertForNow(sdmGoal, commit);
 
-        // this should not happen but it could
+        // this should not happen but it does: automation-api#395
         if (status.context !== params.goal.context || sdmGoal.state !== "requested") {
             logger.warn(`Received '${sdmGoal.state}' on ${status.context}, while looking for 'requested' on ${params.goal.context}`);
             return Success;
         }
+        logger.info("Really executing " + this.implementationName); // take this out when automation-api#395 is fixed
 
-        // TODO: this has to be a bug. it isn't getting the secret once I changed the subscription to be the SdmGoal
+        // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
-        try {
-            const result = await executeGoal(this.execute, status, ctx, params);
-            if (params.handleGoalUpdates) {
-                markStatus(ctx, sdmGoal, params.goal, result);
-            }
-            return Success;
-        } catch (err) {
-            logger.warn("Error executing %s on %s: %s", params.implementationName, repoRef(status).url, err.message);
-            if (params.handleGoalUpdates) {
-                await markStatus(ctx, sdmGoal, params.goal, { code: 1 });
-            }
-            return failure(err);
+
+        if (!params.handleGoalUpdates) {
+            // do this simplest thing. Not recommended. in progress: #264
+            return params.execute(status, ctx, params);
         }
+
+        return executeGoal(this.execute, status, ctx, params, sdmGoal);
     }
-}
-
-function repoRef(status: StatusForExecuteGoal.Fragment) {
-    const commit = status.commit;
-    return new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-}
-
-function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult) {
-    const newState = result.code !== 0 ? "failure" :
-        result.requireApproval ? "waiting_for_approval" : "success";
-    return updateGoal(ctx, sdmGoal as SdmGoal,
-        {
-            goal,
-            url: result.targetUrl,
-            state: newState,
-        });
 }
 
 function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal.Commit): StatusForExecuteGoal.Fragment {

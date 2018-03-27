@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
 } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
-import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -31,7 +31,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
-import { DefaultArtifactStore } from "../artifactStore";
 
 /**
  * Deploy everything to the same Cloud Foundry space

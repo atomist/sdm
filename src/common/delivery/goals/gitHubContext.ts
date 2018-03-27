@@ -66,10 +66,13 @@ export function splitContext(context: GitHubStatusContext) {
         const goalOrder = +matchGoal[1];
 
         return {
-            base: BaseContext, env: matchEnv[2], envOrder: +matchEnv[1], name,
+            base: BaseContext,
+            env: matchEnv[2],
+            envOrder: +matchEnv[1], name,
             goalOrder,
             envPart: matchWhole[1],
             goalPart,
+            goalName: name,
         };
     }
 }

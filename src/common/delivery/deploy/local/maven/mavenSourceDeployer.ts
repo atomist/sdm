@@ -65,12 +65,10 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                         team: string): Promise<Deployment[]> {
         const id = da.id;
         const port = managedDeployments.findPort(ti.managedDeploymentKey);
-        logger.info("Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, team);
+        logger.info("MavenSourceDeployer: Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, team);
         await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-        return Promise.all([
-            this.projectLoader.doWithProject({credentials, id, readOnly: true}, project =>
-                this.deployProject(ti, log, project, port, team))],
-        );
+        return [await this.projectLoader.doWithProject({credentials, id, readOnly: true},
+                project => this.deployProject(ti, log, project, port, team))];
 
     }
 
@@ -114,7 +112,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                 }
             });
             childProcess.addListener("exit", () => {
-                reject("We should have found Tomcat endpoint by now!!");
+                reject(new Error("We should have found Tomcat endpoint by now!!"));
             });
             childProcess.addListener("error", reject);
         });

@@ -32,7 +32,6 @@ export class Goals {
     }
 
     public setAllToPending(id: GitHubRepoRef,
-                           creds: ProjectOperationCredentials,
                            context: HandlerContext,
                            providerId: string): Promise<any> {
         return Promise.all([

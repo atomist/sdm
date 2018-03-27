@@ -68,6 +68,12 @@ export interface SdmGoalKey {
     name: string;
 }
 
+export function goalKeyEquals(a: SdmGoalKey, b: SdmGoal): boolean {
+    return a.goalSet === b.goalSet &&
+        a.environment === b.environment &&
+        a.name === b.name;
+}
+
 export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
     .withType(type("SdmRepository")
         .withStringField("name")

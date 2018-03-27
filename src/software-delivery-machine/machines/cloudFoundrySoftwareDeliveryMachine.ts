@@ -20,6 +20,7 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
+import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
 import { nodeRunBuildBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
@@ -110,16 +111,7 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     )
         .addDeployRules(
             deploy.when(IsMaven)
-                .itMeans("Maven")
-                .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
-                .using(
-                    {
-                        deployer: mavenSourceDeployer(options.projectLoader),
-                        targeter: ManagedDeploymentTargeter,
-                    },
-                ),
-            deploy.when(IsMaven)
-                .itMeans("Maven")
+                .itMeans("Maven test")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
                 .using(
                     {
@@ -128,11 +120,11 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
                     },
                 ),
             deploy.when(IsMaven)
-                .itMeans("Maven")
+                .itMeans("Maven production")
                 .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal)
                 .using(cloudFoundryProductionDeploySpec(options)),
             deploy.when(IsNode)
-                .itMeans("Node")
+                .itMeans("Node test")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
                 .using(cloudFoundryStagingDeploySpec(options)),
         )

@@ -40,15 +40,13 @@ import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/co
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
-    EndpointVerificationListener,
-    OnEndpointStatus,
-    retryVerifyCommand,
+    EndpointVerificationListener, executeVerifyEndpoint,
     SdmVerification,
-} from "../handlers/events/delivery/verify/OnEndpointStatus";
+} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { FunctionalUnit } from "./FunctionalUnit";
+import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
@@ -61,7 +59,8 @@ import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
-import { Goal } from "../common/delivery/goals/Goal";
+import { Goal, hasPreconditions } from "../common/delivery/goals/Goal";
+import { GoalExecutor } from "../common/delivery/goals/goalExecution";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -89,6 +88,8 @@ import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
+import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
+import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
@@ -170,17 +171,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get fingerprinter(): FunctionalUnit {
-        return {
-            eventHandlers: this.fingerprinters.length > 0 ?
-                [() => new ExecuteGoalOnRequested("Fingerprinter",
-                    FingerprintGoal,
-                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters), true),
-                ] :
-                [],
-            commandHandlers: [
-                () => triggerGoal("Fingerprinter", FingerprintGoal),
-            ],
-        };
+        return this.fingerprinters.length === 0 ? EmptyFunctionalUnit :
+            functionalUnitForGoal("Fingerprinter",
+                FingerprintGoal,
+                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -190,35 +184,22 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get reviewHandling(): FunctionalUnit {
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested("Reviews",
-                    ReviewGoal,
-                    executeReview(this.reviewerRegistrations),
-                    true)],
-            commandHandlers: [],
-        };
+        return this.reviewerRegistrations.length === 0 ? EmptyFunctionalUnit :
+            functionalUnitForGoal("Reviews",
+            ReviewGoal,
+            executeReview(this.reviewerRegistrations));
     }
 
     private get codeReactionHandling(): FunctionalUnit {
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested("CodeReactions",
-                    CodeReactionGoal,
-                    executeCodeReactions(this.opts.projectLoader, this.codeReactions), true),
-            ],
-            commandHandlers: [],
-        };
+        return functionalUnitForGoal("CodeReactions",
+            CodeReactionGoal,
+            executeCodeReactions(this.opts.projectLoader, this.codeReactions));
     }
 
     private get autofix(): FunctionalUnit {
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested("Autofix", AutofixGoal,
-                    executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), true),
-            ],
-            commandHandlers: [() => triggerGoal("Autofix", AutofixGoal)],
-        };
+        return this.autofixRegistrations.length === 0 ? EmptyFunctionalUnit :
+            functionalUnitForGoal("Autofix", AutofixGoal,
+            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
     private get goalSetting(): Maker<SetGoalsOnPush> {
@@ -233,6 +214,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get builder(): FunctionalUnit {
         const name = this.builderMapping.name.replace(" ", "_");
         const executor = executeBuild(this.opts.projectLoader, this.builderMapping);
+        // currently these handle their own statuses. Need not to. #264 in progress
         return {
             eventHandlers: [
                 () => new ExecuteGoalOnRequested(name, BuildGoal, executor),
@@ -253,25 +235,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
         }
 
-        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal }> = [
-            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal},
-            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal},
-            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal},
+        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal, name: string }> = [
+            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal, name: "LocalDeploy"},
+            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal, name: "StagingDeploy"},
+            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal, name: "ProductionDeploy"},
         ];
 
-        let count = 0;
-        return {
-            eventHandlers: _.flatten(deployGoalPairs.map(dep => [
-                () => new ExecuteGoalOnRequested(`deploy${count++}`,
-                    dep.deployGoal,
-                    executor(dep.deployGoal, dep.endpointGoal)),
-                () => new ExecuteGoalOnSuccessStatus(`deploy${count++}`,
-                    dep.deployGoal,
-                    executor(dep.deployGoal, dep.endpointGoal),
-                ),
-            ])),
-            commandHandlers: [],
-        };
+        return composeFunctionalUnits(...deployGoalPairs.map(dep =>
+            functionalUnitForGoal(dep.name, dep.deployGoal, executor(dep.deployGoal, dep.endpointGoal))));
     }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
@@ -300,13 +271,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         }
         const stagingVerification: SdmVerification = {
             verifiers: this.endpointVerificationListeners,
-            verifyGoal: StagingVerifiedGoal,
+            endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
-        return {
-            eventHandlers: [() => new OnEndpointStatus(StagingEndpointGoal, stagingVerification)],
-            commandHandlers: [() => retryVerifyCommand(stagingVerification)],
-        };
+        return functionalUnitForGoal("VerifyInStaging",
+            StagingVerifiedGoal,
+            executeVerifyEndpoint(stagingVerification));
     }
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {

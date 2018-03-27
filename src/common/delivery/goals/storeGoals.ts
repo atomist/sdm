@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
+import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import sprintf from "sprintf-js";
@@ -27,15 +27,14 @@ export function environmentFromGoal(goal: Goal) {
 }
 
 export interface UpdateSdmGoalParams {
-    goal: Goal;
     state: GoalState;
-    description?: string;
+    description: string;
     url?: string;
     approved?: boolean;
 }
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
-    const description = params.description || descriptionFromState(params.goal, params.state);
+    const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
     const sdmGoal = {
         ...before,
@@ -46,7 +45,12 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(before.provenance),
     };
+    logger.debug(`Updating SdmGoal ${sdmGoal.externalKey} to ${sdmGoal.state}`);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
+}
+
+export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean {
+    return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
 export function storeGoal(ctx: HandlerContext, parameters: {
@@ -76,7 +80,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         preConditions.push(...goal.dependsOn.map(d => ({
             goalSet,
             name: d.name,
-            environment: d.definition.environment,
+            environment: environmentFromGoal(d),
         })));
     }
 
@@ -105,6 +109,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         preConditions,
     };
 
+    logger.debug("Storing goal: %j", sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 

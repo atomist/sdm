@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
@@ -24,7 +25,6 @@ import {
 import { executableJarDeployer } from "../../../common/delivery/deploy/local/jar/executableJarDeployer";
 import { StartupInfo } from "../../../common/delivery/deploy/local/LocalDeployerOptions";
 import { mavenDeployer } from "../../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import { DeploySpec } from "../../../common/delivery/deploy/runWithLog";
 import {
     StagingDeploymentGoal,
     StagingEndpointGoal,

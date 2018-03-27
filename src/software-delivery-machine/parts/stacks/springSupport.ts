@@ -15,8 +15,13 @@
  */
 
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import * as deploy from "../../../blueprint/dsl/deployDsl";
+import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../../blueprint/SoftwareDeliveryMachine";
+import { ManagedDeploymentTargeter } from "../../../common/delivery/deploy/local/appManagement";
+import { LocalDeploymentGoal, LocalEndpointGoal } from "../../../common/delivery/goals/common/commonGoals";
+import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
+import { mavenSourceDeployer } from "../../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../../commands/generators/spring/springBootGenerator";
@@ -26,8 +31,18 @@ import { springBootGenerator } from "../../commands/generators/spring/springBoot
  * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
  * @param {{useCheckstyle: boolean}} opts
  */
-export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: { useCheckstyle: boolean }) {
+export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, options: SoftwareDeliveryMachineOptions) {
     softwareDeliveryMachine
+        .addDeployRules(
+            deploy.when(IsMaven)
+                .itMeans("Maven local")
+                .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
+                .using(
+                    {
+                        deployer: mavenSourceDeployer(options.projectLoader),
+                        targeter: ManagedDeploymentTargeter,
+                    },
+                ))
         .addEditors(
             () => tryToUpgradeSpringBootVersion,
         )

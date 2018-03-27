@@ -16,17 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
+import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { StatusState } from "../../../typings/types";
-import { AddressChannels } from "../../slack/addressChannels";
 import { GitHubStatusContext } from "../goals/gitHubContext";
 import { Goal } from "../goals/Goal";
 
@@ -47,62 +43,42 @@ export interface DeployerInfo<T extends TargetInfo> {
 export interface Target<T extends TargetInfo> extends DeployerInfo<T>, DeployStage {
 }
 
-export interface DeployArtifactParams<T extends TargetInfo> extends Target<T> {
-    id: GitHubRepoRef;
-    credentials: ProjectOperationCredentials;
-    addressChannels: AddressChannels;
-    team: string;
-    artifactStore: ArtifactStore;
-    targetUrl: string;
-    progressLog: ProgressLog;
-    branch: string;
-}
-
-export async function deploy<T extends TargetInfo>(params: DeployArtifactParams<T>): Promise<void> {
-    logger.info("Deploying with params=%j", params);
-    const progressLog = params.progressLog;
-
-    const artifactCheckout = !!params.targetUrl ?
-        await params.artifactStore.checkout(params.targetUrl, params.id,
-            params.credentials)
-            .catch(err => {
-                progressLog.write("Error checking out artifact: " + err.message);
-                throw err;
-            }) : ({
-            // TODO need to do something about this: Use general identifier as in PCF editor?
-            name: params.id.repo,
-            version: "0.1.0",
-            id: params.id,
-        });
-    if (!artifactCheckout) {
-        throw new Error("No DeployableArtifact passed in");
+export async function checkOutArtifact(targetUrl: string,
+                                       artifactStore: ArtifactStore,
+                                       id: RemoteRepoRef,
+                                       credentials: ProjectOperationCredentials,
+                                       progressLog: ProgressLog): Promise<DeployableArtifact> {
+    if (!targetUrl) {
+        return sourceArtifact(id);
     }
+    const artifactCheckout = await artifactStore.checkout(targetUrl, id, credentials)
+        .catch(err => {
+            progressLog.write("Error checking out artifact: " + err.message);
+            throw err;
+        });
 
-    const deployments = await params.deployer.deploy(
-        artifactCheckout,
-        params.targeter(params.id, params.branch),
-        progressLog,
-        params.credentials,
-        params.team);
-
-    await Promise.all(deployments.map(deployment => reactToSuccessfulDeploy(params, deployment)));
+    if (!artifactCheckout) {
+        throw new Error("Error checking out artifact: none found");
+    }
+    return artifactCheckout;
 }
 
-export async function reactToSuccessfulDeploy(params: {
-                                                  deployGoal: Goal,
-                                                  endpointGoal: Goal,
-                                                  credentials: ProjectOperationCredentials,
-                                                  id: RemoteRepoRef,
-                                                  addressChannels: AddressChannels
-                                                  progressLog: ProgressLog,
-                                              },
-                                              deployment: Deployment) {
+function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
+    return {
+        // TODO need to do something about this: Use general identifier as in PCF editor?
+        name: id.repo,
+        version: "0.1.0",
+        id,
+    };
+}
 
-    await setStatus(params.credentials, params.id,
-        StatusState.success,
-        params.deployGoal.context,
-        params.progressLog.url,
-        params.deployGoal.successDescription);
+export async function setEndpointStatusOnSuccessfulDeploy(params: {
+                                                              endpointGoal: Goal,
+                                                              credentials: ProjectOperationCredentials,
+                                                              id: RemoteRepoRef,
+                                                          },
+                                                          deployment: Deployment) {
+
     if (deployment.endpoint) {
         await setStatus(params.credentials, params.id,
             StatusState.success,
@@ -114,15 +90,7 @@ export async function reactToSuccessfulDeploy(params: {
                 // do not fail this whole handler
             });
     } else {
-        await
-            params.addressChannels("Deploy succeeded, but the endpoint didn't appear in the log.");
-        await
-            params.addressChannels({
-                content: params.progressLog.log,
-                fileType: "text",
-                fileName: `deploy-success-${params.id.sha}.log`,
-            } as any);
-        logger.warn("No endpoint returned by deployment");
+        throw new Error("Deploy finished with success, but the endpoint was not found in the logs");
     }
 }
 

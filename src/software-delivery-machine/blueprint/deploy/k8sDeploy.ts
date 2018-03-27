@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { functionalUnitForGoal } from "../../../blueprint/dsl/functionalUnitForGoal";
 import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
 import {
     ProductionDeploymentGoal,
@@ -29,23 +30,15 @@ import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/Ex
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";
 
-export const K8sStagingDeployOnSuccessStatus: FunctionalUnit = {
-    eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("K8TestDeploy",
+export const K8sStagingDeployOnSuccessStatus: FunctionalUnit =
+    functionalUnitForGoal("K8TestDeploy",
             StagingDeploymentGoal,
-            requestDeployToK8s(K8sTestingDomain)),
-    ],
-    commandHandlers: [],
-};
+            requestDeployToK8s(K8sTestingDomain));
 
-export const K8sProductionDeployOnSuccessStatus: FunctionalUnit = {
-    eventHandlers: [
-        () => new ExecuteGoalOnSuccessStatus("K8ProductionDeploy",
+export const K8sProductionDeployOnSuccessStatus: FunctionalUnit =
+        functionalUnitForGoal("K8ProductionDeploy",
             ProductionDeploymentGoal,
-            requestDeployToK8s(K8sProductionDomain)),
-    ],
-    commandHandlers: [],
-};
+            requestDeployToK8s(K8sProductionDomain));
 
 export const NoticeK8sTestDeployCompletion = new NoticeK8sTestDeployCompletionOnStatus(
     StagingDeploymentGoal,

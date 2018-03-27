@@ -14,39 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { contextToGoal } from "../../../common/delivery/goals/common/commonGoals";
-import {
-    contextIsAfter,
-    GitHubStatusContext,
-    splitContext,
-} from "../../../common/delivery/goals/gitHubContext";
-import { Goal } from "../../../common/delivery/goals/Goal";
-import {
-    OnFailureStatus,
-    OnSuccessStatus,
-} from "../../../typings/types";
-import {
-    createStatus,
-    State,
-} from "../../../util/github/ghub";
+import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
+import { updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
+import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import Status = OnSuccessStatus.Status;
+import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals
@@ -54,72 +29,63 @@ import Status = OnSuccessStatus.Status;
 @EventHandler("Fail downstream goals on a goal failure", subscription("OnFailureStatus"))
 export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureStatus.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private githubToken: string;
-
-    public handle(event: EventFired<OnFailureStatus.Subscription>,
-                  ctx: HandlerContext,
-                  params: this): Promise<HandlerResult> {
+    // #98: GitHub Status->SdmGoal: We still have to respond to failure on status,
+    // until we change all the failure updates to happen on SdmGoal.
+    // but we can update the SdmGoals, and let that propagate to the statuses.
+    // we can count on all of the statuses we need to update to exist as SdmGoals.
+    // however, we can't count on the SdmGoal to have the latest state, so check the Status for that.
+    public async handle(event: EventFired<OnFailureStatus.Subscription>,
+                        ctx: HandlerContext): Promise<HandlerResult> {
         const status: Status = event.data.Status[0];
-        const commit = status.commit;
 
-        if (status.state !== "failure") {
+        if (status.state !== "failure") { // atomisthq/automation-api#395 (probably not an issue for Status but will be again for SdmGoal)
             logger.debug(`********* failure reported when the state was=[${status.state}]`);
             return Promise.resolve(Success);
         }
 
-        if (status.description.startsWith("Skipping ")) {
+        if (status.description.startsWith("Skip")) {
             logger.debug("not relevant, because I set this status to failure in an earlier invocation of myself.");
             logger.debug(`context: ${status.context} description: ${status.description}`);
             return Promise.resolve(Success);
         }
 
-        // really we should follow the graph ... only ones dependent on -this- commit should be changed.
-        const currentlyPending = status.commit.statuses.filter(s => s.state === "pending" /* planned */);
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        return gameOver(
-            status.context,
-            currentlyPending.map(s => s.context),
-            id,
-            {token: params.githubToken})
-            .then(() => Success);
+        const id = repoRefFromStatus(status);
+        const goals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
+        const failedGoal = goals.find(g => g.externalKey === status.context) as SdmGoal;
+        const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals as SdmGoal[])))
+            .filter(g => stillWaitingForPreconditions(status, g as SdmGoal));
+
+        await Promise.all(goalsToSkip.map(g => updateGoal(ctx, g as SdmGoal, {
+            state: "skipped",
+            description: `Skipped ${g.name} because ${failedGoal.name} failed`,
+        })));
+
+        return Success;
     }
 }
 
-/**
- * Set all downstream go to failure status given a specific failed goal.
- * The goals are associated by the atomist-sdm/${env}/ prefix in their context.
- */
-function gameOver(failedContext: GitHubStatusContext,
-                  currentlyPending: GitHubStatusContext[],
-                  id: GitHubRepoRef,
-                  creds: ProjectOperationCredentials): Promise<any> {
-
-    const interpretedContext = splitContext(failedContext);
-    if (!interpretedContext) {
-        // this is not our status
-        logger.info("not relevant: " + failedContext);
-        return Promise.resolve();
-    }
-
-    const failedGoal: Goal = contextToGoal(failedContext);
-
-    const goalsToReset = currentlyPending
-        .filter(pendingContext => contextIsAfter(failedContext, pendingContext))
-        .map(p => contextToGoal(p));
-    return Promise.all(goalsToReset.map(
-        p => setStatus(id, p.context, "failure", creds,
-            `Skipping ${p.name} because ${failedGoal.name} failed`)));
+// in the future this will be trivial but right now we need to look at GH Statuses
+function stillWaitingForPreconditions(status: StatusForExecuteGoal.Fragment, sdmGoal: SdmGoal): boolean {
+   const correspondingStatus = status.commit.statuses.find(s => s.context === sdmGoal.externalKey);
+   return correspondingStatus.state === "pending";
 }
 
-function setStatus(id: GitHubRepoRef, context: GitHubStatusContext,
-                   state: State,
-                   creds: ProjectOperationCredentials,
-                   description: string = context): Promise<any> {
-    logger.debug("Setting pending status " + context + " to failure");
-    return createStatus((creds as TokenCredentials).token, id, {
-        state,
-        context,
-        description,
-    });
+function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
+    return (keyToFind: SdmGoalKey) =>
+        goals.find(g => g.goalSet === keyToFind.goalSet &&
+            g.environment === keyToFind.environment &&
+            g.name === keyToFind.name);
+}
+
+function isDependentOn(failedGoal: SdmGoalKey, goal: SdmGoal, preconditionToGoal: (SdmGoalKey) => SdmGoal): boolean {
+    if (!goal.preConditions || goal.preConditions.length === 0) {
+        return false; // no preconditions? not dependent
+    }
+    if (mapKeyToGoal(goal.preConditions)(failedGoal)) {
+        return true; // the failed goal is one of my preconditions? dependent
+    }
+    // otherwise, recurse on my preconditions
+    return !!goal.preConditions
+        .map(precondition => isDependentOn(failedGoal, preconditionToGoal(precondition), preconditionToGoal))
+        .find(a => a); // if one is true, return true
 }

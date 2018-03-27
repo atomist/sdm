@@ -20,7 +20,8 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { fetchGoalsForCommit } from "../../common/delivery/goals/fetchGoalsOnCommit";
 import { Goal } from "../../common/delivery/goals/Goal";
-import { storeGoal } from "../../common/delivery/goals/storeGoals";
+import { goalCorrespondsToSdmGoal, storeGoal } from "../../common/delivery/goals/storeGoals";
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
 
 @Parameters()
@@ -57,16 +58,20 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
 
         // figure out which goalSet
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
-        const goals = await fetchGoalsForCommit(ctx, id, commandParams.providerId);
-        const thisGoal = goals.find(g => g.name === goal.name);
-        if (!thisGoal) {
-            ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
-                sha.substr(0, 6)}. To create it anyway, pass goalSet=<name of goal set> to the trigger command`);
-            return { code: 0 };
+        let goalSet = commandParams.goalSet;
+        if (!goalSet) {
+            const sdmGoals = await fetchGoalsForCommit(ctx, id, commandParams.providerId);
+            const thisGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(goal, g as SdmGoal));
+            if (!thisGoal) {
+                ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
+                    sha.substr(0, 6)}. To create it anyway, pass goalSet=<name of goal set> to the trigger command`);
+                return {code: 0};
+            }
+            goalSet = thisGoal.goalSet;
         }
 
         // do the thing
-        await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet: thisGoal.goalSet});
+        await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet});
         return Success;
     }, RetryGoalParameters, retryCommandNameFor(implementationName), "Retry an execution of " + goal.name, goal.retryIntent);
 }

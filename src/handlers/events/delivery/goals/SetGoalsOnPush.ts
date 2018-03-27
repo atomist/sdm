@@ -31,7 +31,8 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
@@ -42,7 +43,9 @@ import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
+import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import { showGraph } from "./graphGoals";
 
 /**
  * Set up goals on a push (e.g. for delivery).
@@ -72,26 +75,24 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
-        const commit = push.commits[0];
-        const id = GitHubRepoRef.from({
-            owner: push.repo.owner,
-            repo: push.repo.name,
-            sha: commit.sha,
-            rawApiBase: push.repo.org.provider.apiUrl,
-            branch: push.branch,
-        });
+        const id = repoRefFromPush(push);
         const credentials = {token: params.githubToken};
-        return this.projectLoader.doWithProject({credentials, id, context, readOnly: true}, project =>
-            this.setGoalsForPushOnProject(push, id, credentials, context, params, project),
-        );
+
+        const determinedGoals = await this.projectLoader.doWithProject({credentials, id, context, readOnly: true},
+                project => this.setGoalsForPushOnProject(push, id, credentials, context, project));
+
+        await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
+
+        await showGraph(context, addressChannelsFor(push.repo, context), determinedGoals);
+
+        return Success;
     }
 
     private async setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
                                            id: GitHubRepoRef,
                                            credentials: ProjectOperationCredentials,
                                            context: HandlerContext,
-                                           params: this,
-                                           project: GitProject): Promise<HandlerResult> {
+                                           project: GitProject): Promise<Goals> {
         const addressChannels = addressChannelsFor(push.repo, context);
         const pi: ProjectListenerInvocation = {
             id,
@@ -104,24 +105,34 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
 
         try {
             const determinedGoals: Goals = await this.rules.valueForPush(pi);
-            logger.info("Goals for push on %j are %s", id, determinedGoals.name);
-            if (determinedGoals === NoGoals) {
-                await createStatus(params.githubToken, id, {
-                    context: "Immaterial",
-                    state: "success",
-                    description: "No significant change",
-                });
-            } else if (!determinedGoals) {
+            if (!determinedGoals) {
                 logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
             } else {
-                await determinedGoals.setAllToPending(id, credentials, context, push.repo.org.provider.providerId);
+                logger.info("Goals for push on %j are %s", id, determinedGoals.name);
             }
-            return Success;
+            return determinedGoals;
         } catch (err) {
             logger.error("Error determining goals: %s", err);
             await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
-            return {code: 1, message: "Failed: " + err};
+            throw err;
         }
+    }
+}
+
+async function saveGoals(ctx: HandlerContext,
+                         credentials: ProjectOperationCredentials,
+                         id: GitHubRepoRef,
+                         providerId: string,
+                         determinedGoals: Goals) {
+    if (determinedGoals === NoGoals) {
+        // TODO: let "Immaterial" be a goal instead of this special-case handling
+        await createStatus((credentials as TokenCredentials).token, id, {
+            context: "Immaterial",
+            state: "success",
+            description: "No significant change",
+        });
+    } else {
+        await determinedGoals.setAllToPending(id, ctx, providerId);
     }
 }
 
@@ -149,9 +160,8 @@ export function applyGoalsToCommit(goals: Goals) {
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
-        const creds = {token: params.githubToken};
 
-        await goals.setAllToPending(id, creds, ctx, params.providerId);
+        await goals.setAllToPending(id, ctx, params.providerId);
         await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
         return Success;
     };
