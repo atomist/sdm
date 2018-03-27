@@ -4,8 +4,9 @@ query SdmGoalsForCommit(
   $repo: String!
   $owner: String!
   $providerId: String!
+  $qty: Int!
 ) {
-  SdmGoal(sha: [$sha], branch: [$branch]) {
+  SdmGoal(sha: [$sha], branch: [$branch], _first: $qty) {
     goalSet
     environment
     name
