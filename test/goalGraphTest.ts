@@ -1,12 +1,6 @@
-import { logger } from "@atomist/automation-client";
-import * as stringify from "json-stringify-safe";
-import * as _ from "lodash";
 import "mocha";
 import * as assert from "power-assert";
 import { HttpServiceGoals } from "../src/common/delivery/goals/common/httpServiceGoals";
-import { splitContext } from "../src/common/delivery/goals/gitHubContext";
-import { Goal, GoalWithPrecondition } from "../src/common/delivery/goals/Goal";
-import { Goals } from "../src/common/delivery/goals/Goals";
 import { goalsToDot } from "../src/handlers/events/delivery/goals/graphGoals";
 
 const DesiredDot = `digraph HTTP_Service {
@@ -29,9 +23,13 @@ const DesiredDot = `digraph HTTP_Service {
     prod_endpoint [label="locate service endpoint in Prod"]
 
     code_autofix -> code_build
-    code_build -> staging_deploy
+    code_build -> code_artifact
+    code_artifact -> staging_deploy
+    staging_deploy -> staging_endpoint
+    staging_endpoint -> staging_verifyEndpoint
     code_artifact -> prod_prod_deploy
     staging_verifyEndpoint -> prod_prod_deploy
+    prod_prod_deploy -> prod_endpoint
 }
 `;
 

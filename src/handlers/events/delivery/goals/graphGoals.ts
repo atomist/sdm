@@ -41,6 +41,7 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
     } catch (err) {
         // do not fail anything
         logger.error("ShowGraph: Unable to generate a cool graph of the goals: " + err.message);
+        logger.error("ShowGraph: URL: " + graphvizServiceUrl);
         logger.error("ShowGraph: stack trace: " + err.stack);
     }
 
