@@ -90,9 +90,9 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
-import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { Goals } from "../common/delivery/goals/Goals";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -468,10 +468,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     constructor(public readonly name: string,
                 public readonly opts: SoftwareDeliveryMachineOptions,
-                ...pushRules: GoalSetterPushRule[]) {
-        this.goalSetters = pushRules
-            .filter(rule => !!rule.choice)
-            .map(rule => rule.choice);
+                ...goalSetters: Array<PushMapping<Goals>>) {
+        this.goalSetters = goalSetters;
         addGitHubSupport(this);
     }
 
