@@ -55,7 +55,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
     return runWithLog(async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const commit = rwlc.status.commit;
-        const { addressChannels, credentials, id, context, progressLog}  = rwlc;
+        const { addressChannels, credentials, id, context, progressLog }  = rwlc;
         const atomistTeam = context.teamId;
 
         await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {

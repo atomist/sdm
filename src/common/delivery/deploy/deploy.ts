@@ -62,7 +62,7 @@ export async function checkOutArtifact(targetUrl: string,
         });
 
     if (!artifactCheckout) {
-        throw new Error("No DeployableArtifact passed in");
+        throw new Error("No DeployableArtifact located");
     }
     return artifactCheckout;
 }

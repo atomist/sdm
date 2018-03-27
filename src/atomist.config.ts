@@ -42,7 +42,7 @@ const SdmOptions = {
  * Take your pick.
  */
 
-// const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 
 // const machine = staticAnalysisSoftwareDeliveryMachine({ useCheckstyle: true});
 
@@ -50,7 +50,7 @@ const SdmOptions = {
 
 // const machine = artifactVerifyingSoftwareDeliveryMachine();
 
-const machine = k8sSoftwareDeliveryMachine(SdmOptions);
+// const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),

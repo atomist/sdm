@@ -30,7 +30,7 @@ import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 
 export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteGoalResult>,
-                           logInterpreter?: LogInterpreter): GoalExecutor {
+                           logInterpreter: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const log = await createEphemeralProgressLog();
@@ -40,7 +40,7 @@ export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteG
         const credentials = {token: params.githubToken};
 
         const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
-        return whatToRun({status, progressLog, reportError, context: ctx, addressChannels, id, credentials})
+        return whatToRun({status, progressLog, context: ctx, addressChannels, id, credentials})
             .then(yay => progressLog.close().then(() => Success as ExecuteGoalResult),
                 err => reportError(err).then(() => progressLog.close()).then(() => Promise.reject(err)));
     };
@@ -49,7 +49,6 @@ export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteG
 export interface RunWithLogContext extends SdmContext {
     status: StatusForExecuteGoal.Fragment;
     progressLog: ProgressLog;
-    reportError: (Error) => Promise<ExecuteGoalResult>;
 }
 
 export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
