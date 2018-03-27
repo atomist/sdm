@@ -40,7 +40,7 @@ export const MaterialChangeToNodeRepo: PushTest = pushTest("Material change to N
         changedFiles.some(f => f.endsWith(".json")) ||
         changedFiles.some(f => f.endsWith(".yml")) ||
         changedFiles.some(f => f.endsWith(".xml")) ||
-        changedFiles.some(f => f.endsWith(".xml"))
+        changedFiles.some(f => f.endsWith(".html"))
     ) {
         logger.debug("Change is material on %j: changed files=[%s]", pci.id, changedFiles.join(","));
         return true;
