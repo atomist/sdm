@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
@@ -66,18 +74,28 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
 
 // in the future this will be trivial but right now we need to look at GH Statuses
 function stillWaitingForPreconditions(status: StatusForExecuteGoal.Fragment, sdmGoal: SdmGoal): boolean {
-   const correspondingStatus = status.commit.statuses.find(s => s.context === sdmGoal.externalKey);
-   return correspondingStatus.state === "pending";
+    const correspondingStatus = status.commit.statuses.find(s => s.context === sdmGoal.externalKey);
+    return correspondingStatus.state === "pending";
 }
 
 function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
-    return (keyToFind: SdmGoalKey) =>
-        goals.find(g => g.goalSet === keyToFind.goalSet &&
+    return (keyToFind: SdmGoalKey) => {
+        const found = goals.find(g => g.goalSet === keyToFind.goalSet &&
             g.environment === keyToFind.environment &&
             g.name === keyToFind.name);
+        if (!found) {
+            logger.warn("mapKeyToGoal: Unable to resolve %j", keyToFind);
+        }
+        return found;
+    };
 }
 
-function isDependentOn(failedGoal: SdmGoalKey, goal: SdmGoal, preconditionToGoal: (SdmGoalKey) => SdmGoal): boolean {
+function isDependentOn(failedGoal: SdmGoalKey, goal: SdmGoal, preconditionToGoal: (g: SdmGoalKey) => SdmGoal): boolean {
+    if (!goal) {
+        // TODO we think this is caused by automation-api#396
+        logger.warn("Internal error: Trying to work out if %j is dependent on null or undefined goal", failedGoal);
+        return false;
+    }
     if (!goal.preConditions || goal.preConditions.length === 0) {
         return false; // no preconditions? not dependent
     }

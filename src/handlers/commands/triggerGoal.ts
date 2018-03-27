@@ -63,7 +63,7 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
             const sdmGoals = await fetchGoalsForCommit(ctx, id, commandParams.providerId);
             const thisGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(goal, g as SdmGoal));
             if (!thisGoal) {
-                ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
+                await ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
                     sha.substr(0, 6)}. To create it anyway, pass goalSet=<name of goal set> to the trigger command`);
                 return {code: 0};
             }
