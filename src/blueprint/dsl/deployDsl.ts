@@ -18,7 +18,7 @@ import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
-import { StaticPushMapping} from "../../common/listener/support/StaticPushMapping";
+import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
 
 export class DeployPushRule extends PushRule<Target> {
 
@@ -29,7 +29,7 @@ export class DeployPushRule extends PushRule<Target> {
     public deployTo(deployGoal: Goal, endpointGoal: Goal) {
         const outer = this;
         return {
-            using(t: DeployerInfo<any>) {
+            using(t: DeployerInfo<any>): StaticPushMapping<Target<any>> {
                 outer.set({
                     ...t,
                     deployGoal,
