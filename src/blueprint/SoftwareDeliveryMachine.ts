@@ -60,6 +60,7 @@ import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal, hasPreconditions } from "../common/delivery/goals/Goal";
+import { GoalExecutor } from "../common/delivery/goals/goalExecution";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -87,11 +88,10 @@ import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
+import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { GoalExecutor } from "../common/delivery/goals/goalExecution";
-import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -172,7 +172,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get fingerprinter(): FunctionalUnit {
         return functionalUnitForGoal("Fingerprinter",
                     FingerprintGoal,
-                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
+                    executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
@@ -238,7 +238,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         ];
 
         return composeFunctionalUnits(...deployGoalPairs.map(dep =>
-            functionalUnitForGoal(dep.name, dep.deployGoal, executor(dep.deployGoal, dep.endpointGoal))))
+            functionalUnitForGoal(dep.name, dep.deployGoal, executor(dep.deployGoal, dep.endpointGoal))));
     }
 
     get onSuperseded(): Maker<OnSupersededStatus> {
@@ -472,13 +472,13 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
 
 function functionalUnitForGoal(implementationName: string, goal: Goal, executor: GoalExecutor) {
     const eventHandlers: Array<Maker<HandleEvent<any>>> = [
-        () => new ExecuteGoalOnRequested(implementationName, goal, executor, true)
+        () => new ExecuteGoalOnRequested(implementationName, goal, executor, true),
     ];
     if (hasPreconditions(goal)) {
         eventHandlers.push(() => new ExecuteGoalOnSuccessStatus(implementationName, goal, executor, true));
     }
     return {
         eventHandlers,
-        commandHandlers: [() => triggerGoal(implementationName, goal)]
-    }
+        commandHandlers: [() => triggerGoal(implementationName, goal)],
+    };
 }

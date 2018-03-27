@@ -34,7 +34,6 @@ export function interpretMavenLog(log: string): InterpretedLog | undefined {
     logger.info("Did not find anything to recognize in the log");
 }
 
-
 function appFailedToStart(log: string) {
     const lines = log.split("\n");
     const failedToStartLine = lines.indexOf("APPLICATION FAILED TO START");
@@ -45,9 +44,9 @@ function appFailedToStart(log: string) {
     return likelyLines.join("\n");
 }
 
+import { logger } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { Float } from "@atomist/microgrammar/primitives";
-import { logger } from "@atomist/automation-client";
 
 // TODO base on common build info
 export interface MavenInfo {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     CloudFoundryInfo,
     EnvironmentCloudFoundryTarget,
@@ -30,7 +31,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
-import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 
 /**
  * Deploy everything to the same Cloud Foundry space

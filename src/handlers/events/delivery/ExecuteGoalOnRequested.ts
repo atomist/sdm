@@ -75,7 +75,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
         if (!params.handleGoalUpdates) {
             // do this simplest thing. Not recommended. in progress: #264
-            return params.execute(status, ctx, params)
+            return params.execute(status, ctx, params);
         }
 
         return executeGoal(this.execute, status, ctx, params, sdmGoal);

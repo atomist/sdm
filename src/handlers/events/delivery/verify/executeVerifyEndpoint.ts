@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
-import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/deploy/runWithLog";
 import sprintf from "sprintf-js";
+import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/deploy/runWithLog";
+import { Goal } from "../../../../common/delivery/goals/Goal";
+import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
+import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 

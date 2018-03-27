@@ -24,9 +24,9 @@ import { ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 import { checkOutArtifact, setEndpointStatusOnSuccessfulDeploy, Target, Targeter } from "./deploy";
 
 import * as _ from "lodash";
-import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "./runWithLog";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
+import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "./runWithLog";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;
@@ -58,7 +58,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
         const { addressChannels, credentials, id, context, progressLog}  = rwlc;
         const atomistTeam = context.teamId;
 
-            await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
+        await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
                 const push = commit.pushes[0];
                 const pti: ProjectListenerInvocation = {
                     id,
@@ -92,4 +92,3 @@ export function executeDeploy(artifactStore: ArtifactStore,
         return Success;
     }, lastTenLinesLogInterpreter("deploy failed"));
 }
-

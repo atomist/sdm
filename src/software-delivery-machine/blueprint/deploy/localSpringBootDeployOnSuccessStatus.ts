@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
+import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     ManagedDeploymentTargeter,
     ManagedDeploymentTargetInfo,
@@ -33,7 +34,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { OnSupersededStatus } from "../../../handlers/events/delivery/superseded/OnSuperseded";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { DefaultArtifactStore } from "../artifactStore";
-import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 
 export const LocalExecutableJarDeployer: Deployer<ManagedDeploymentTargetInfo> = executableJarDeployer({
     baseUrl: "http://localhost",

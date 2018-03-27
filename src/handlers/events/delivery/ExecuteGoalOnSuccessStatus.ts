@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success, } from "@atomist/automation-client";
+import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
-import { currentGoalIsStillPending, Goal, } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor, } from "../../../common/delivery/goals/goalExecution";
-import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { goalCorrespondsToSdmGoal } from "../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
-import { providerIdFromStatus } from "../../../util/git/repoRef";
+import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
+import { currentGoalIsStillPending, Goal } from "../../../common/delivery/goals/Goal";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { goalCorrespondsToSdmGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
+import { providerIdFromStatus } from "../../../util/git/repoRef";
 import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 
 /**
@@ -78,18 +78,18 @@ export class ExecuteGoalOnSuccessStatus
             return Success;
         }
 
-        return dedup(dontRunTheSameGoalTwiceSimultaneously(commit.sha, params.goal),async () => {
+        return dedup(dontRunTheSameGoalTwiceSimultaneously(commit.sha, params.goal), async () => {
             logger.info("Really executing " + this.implementationName);
 
             if (!params.handleGoalUpdates) {
                 // do this simplest thing. Not recommended. in progress: #264
-                return params.execute(status, ctx, params)
+                return params.execute(status, ctx, params);
             }
 
             const sdmGoals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
             const thisSdmGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(params.goal, g as SdmGoal));
             if (!thisSdmGoal) {
-                throw new Error("Unable to identify SdmGoal for " + params.goal.name)
+                throw new Error("Unable to identify SdmGoal for " + params.goal.name);
             }
 
             return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);
@@ -98,7 +98,7 @@ export class ExecuteGoalOnSuccessStatus
 }
 
 function dontRunTheSameGoalTwiceSimultaneously(sha: string, goal: Goal) {
-    return `${goal.environment}/${goal.name} for ${sha}`
+    return `${goal.environment}/${goal.name} for ${sha}`;
 }
 
 // whenever a success status comes in after all preconditions are met,

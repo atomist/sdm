@@ -21,8 +21,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { fetchGoalsForCommit } from "../../common/delivery/goals/fetchGoalsOnCommit";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { goalCorrespondsToSdmGoal, storeGoal } from "../../common/delivery/goals/storeGoals";
-import { RepoBranchTips } from "../../typings/types";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { RepoBranchTips } from "../../typings/types";
 
 @Parameters()
 export class RetryGoalParameters {
@@ -58,7 +58,7 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
 
         // figure out which goalSet
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
-        var goalSet = commandParams.goalSet;
+        let goalSet = commandParams.goalSet;
         if (!goalSet) {
             const sdmGoals = await fetchGoalsForCommit(ctx, id, commandParams.providerId);
             const thisGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(goal, g as SdmGoal));

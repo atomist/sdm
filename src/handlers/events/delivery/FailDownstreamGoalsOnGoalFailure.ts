@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success, } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal, } from "../../../typings/types";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
-import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
+import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import Status = OnSuccessStatus.Status;
 import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
 
@@ -55,7 +55,6 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
         const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals as SdmGoal[])))
             .filter(g => stillWaitingForPreconditions(status, g as SdmGoal));
 
-
         await Promise.all(goalsToSkip.map(g => updateGoal(ctx, g as SdmGoal, {
             state: "skipped",
             description: `Skipped ${g.name} because ${failedGoal.name} failed`,
@@ -75,7 +74,7 @@ function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
     return (keyToFind: SdmGoalKey) =>
         goals.find(g => g.goalSet === keyToFind.goalSet &&
             g.environment === keyToFind.environment &&
-            g.name === keyToFind.name)
+            g.name === keyToFind.name);
 }
 
 function isDependentOn(failedGoal: SdmGoalKey, goal: SdmGoal, preconditionToGoal: (SdmGoalKey) => SdmGoal): boolean {
@@ -88,5 +87,5 @@ function isDependentOn(failedGoal: SdmGoalKey, goal: SdmGoal, preconditionToGoal
     // otherwise, recurse on my preconditions
     return !!goal.preConditions
         .map(precondition => isDependentOn(failedGoal, preconditionToGoal(precondition), preconditionToGoal))
-        .find(a => a) // if one is true, return true
+        .find(a => a); // if one is true, return true
 }

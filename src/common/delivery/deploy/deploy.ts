@@ -72,8 +72,8 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
         // TODO need to do something about this: Use general identifier as in PCF editor?
         name: id.repo,
         version: "0.1.0",
-        id: id,
-    }
+        id,
+    };
 }
 
 export async function setEndpointStatusOnSuccessfulDeploy(params: {
@@ -94,7 +94,7 @@ export async function setEndpointStatusOnSuccessfulDeploy(params: {
                 // do not fail this whole handler
             });
     } else {
-        throw new Error("Deploy finished with success, but the endpoint was not found in the logs")
+        throw new Error("Deploy finished with success, but the endpoint was not found in the logs");
     }
 }
 

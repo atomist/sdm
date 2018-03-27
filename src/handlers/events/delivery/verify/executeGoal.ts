@@ -1,9 +1,9 @@
+import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
+import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
-import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
-import { StatusForExecuteGoal } from "../../../../typings/types";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { Goal } from "../../../../common/delivery/goals/Goal";
+import { StatusForExecuteGoal } from "../../../../typings/types";
 import { repoRefFromStatus } from "../../../../util/git/repoRef";
 
 export async function executeGoal(execute: GoalExecutor,

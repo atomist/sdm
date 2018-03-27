@@ -1,11 +1,11 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
+import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as _ from "lodash";
 import { splitContext } from "../../../../common/delivery/goals/gitHubContext";
 import { Goal, GoalWithPrecondition } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { AddressChannels } from "../../../../common/slack/addressChannels";
-import * as slack from "@atomist/slack-messages/SlackMessages";
 
 export async function showGraph(ctx: HandlerContext, addressChannels: AddressChannels, goals: Goals) {
     // This is an easter egg

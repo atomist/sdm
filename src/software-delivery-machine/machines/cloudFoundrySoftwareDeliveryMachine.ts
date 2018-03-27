@@ -20,6 +20,7 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
+import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
 import { nodeRunBuildBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
@@ -63,7 +64,6 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
