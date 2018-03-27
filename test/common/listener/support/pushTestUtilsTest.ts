@@ -19,7 +19,7 @@ import "mocha";
 import * as assert from "power-assert";
 import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
 import { ProjectPredicate, PushTest, pushTest } from "../../../../src/common/listener/PushTest";
-import { allSatisfied, anySatisfied } from "../../../../src/common/listener/support/pushtest/pushTestUtils";
+import { allSatisfied, anySatisfied, not } from "../../../../src/common/listener/support/pushtest/pushTestUtils";
 
 export const TruePushTest: PushTest = pushTest("true", async () => true);
 
@@ -33,7 +33,21 @@ const id = new GitHubRepoRef("atomist", "github-sdm");
 
 describe("pushTestUtilsTest", () => {
 
-    describe("allSatisfied", () => {
+    describe("not", () => {
+
+        it("should handle one true", async () => {
+            const r = await not(TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+            assert(r === false);
+        });
+
+        it("should handle one false", async () => {
+            const r = await not(FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
+            assert(r === true);
+        });
+
+    });
+
+    describe("allPredicatesSatisfied", () => {
 
         describe("with PushTest", () => {
 
@@ -73,7 +87,7 @@ describe("pushTestUtilsTest", () => {
 
     });
 
-    describe("anySatisfied", () => {
+    describe("anyPredicateSatisfied", () => {
 
         describe("with PushTest", () => {
 
