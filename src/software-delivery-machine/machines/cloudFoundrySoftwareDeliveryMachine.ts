@@ -64,6 +64,8 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { HasTravisFile } from "../../common/listener/support/pushtest/ci/ciPushTests";
+import { DoNotSetAnyGoals } from "../../common/listener/PushMapping";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -75,6 +77,9 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     const sdm = new SoftwareDeliveryMachine(
         "CloudFoundry software delivery machine",
         options,
+        whenPushSatisfies(HasTravisFile)
+            .itMeans("Already builds with Travis")
+            .setGoals(DoNotSetAnyGoals),
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
             .itMeans("No material change to Java")
             .setGoals(NoGoals),

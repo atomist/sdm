@@ -19,6 +19,12 @@ import { ProjectListenerInvocation } from "./Listener";
 export type NeverMatch = null;
 
 /**
+ * Constant to indicate we should never match
+ * @type {any}
+ */
+export const DoNotSetAnyGoals: NeverMatch = null;
+
+/**
  * Mapping from push to value, it it can be resolved.
  */
 export interface PushMapping<V> {
@@ -31,7 +37,7 @@ export interface PushMapping<V> {
     /**
      * Compute a value for the given push. Return undefined
      * if we don't find a mapped value.
-     * Return NeverMatch (null) to shortcut evaluation of the present set of rules
+     * Return DoNotSetAnyGoals (null) to shortcut evaluation of the present set of rules
      * and guarantee the return of undefined.
      * This is a rude thing to do: Only do so if you are sure
      * that this evaluation must be shortcircuited.
