@@ -17,8 +17,8 @@
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
 import { ProjectListenerInvocation } from "../../Listener";
-import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
 import { isPushMapping } from "../../PushMapping";
+import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
 
 /**
  * Return the opposite of this push test

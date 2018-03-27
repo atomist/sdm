@@ -15,14 +15,14 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Project } from "@atomist/automation-client/project/Project";
 import "mocha";
 import * as assert from "power-assert";
 import {
     allPredicatesSatisfied,
-    anyPredicateSatisfied, notPredicate
+    anyPredicateSatisfied, notPredicate,
 } from "../../../../src/common/listener/support/pushtest/projectPredicateUtils";
 import { FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtilsTest";
-import { Project } from "@atomist/automation-client/project/Project";
 
 const id = new GitHubRepoRef("atomist", "github-sdm");
 
