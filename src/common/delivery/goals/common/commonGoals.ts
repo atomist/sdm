@@ -167,22 +167,6 @@ export const NoGoal = new Goal({
 
 });
 
-const AllKnownGoals = [
-    AutofixGoal,
-    ReviewGoal,
-    BuildGoal,
-    ArtifactGoal,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
-    LocalDeploymentGoal,
-    LocalEndpointGoal,
-    NoGoal,
-    ProductionUndeploymentGoal,
-];
-
 export const StagingDeploymentContext = StagingDeploymentGoal.context;
 export const StagingEndpointContext = StagingEndpointGoal.context;
 export const StagingVerifiedContext = StagingVerifiedGoal.context;
@@ -192,26 +176,6 @@ export const ReviewContext = ReviewGoal.context;
 export const BuildContext = BuildGoal.context;
 
 export const ProductionMauve = "#cf5097";
-
-export const ContextToPlannedGoal: { [key: string]: Goal } = {};
-AllKnownGoals.forEach(p => ContextToPlannedGoal[p.context] = p);
-
-export function contextToGoal(ghsc: GitHubStatusContext): Goal {
-    return contextToKnownGoal(ghsc) ||
-        defaultGoal(ghsc);
-}
-
-export function contextToKnownGoal(ghsc: GitHubStatusContext): Goal {
-    return ContextToPlannedGoal[ghsc];
-}
-
-function defaultGoal(ghsc: GitHubStatusContext): Goal {
-    const interpreted = splitContext(ghsc);
-    return new Goal({
-        environment: interpreted.envPart + "/" as GoalEnvironment,
-        orderedName: interpreted.goalPart,
-    });
-}
 
 /**
  * Special Goals object to be returned if changes are immaterial.
