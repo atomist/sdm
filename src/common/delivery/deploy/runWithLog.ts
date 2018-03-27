@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger, Success } from "@atomist/automation-client";
+import { HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import sprintf from "sprintf-js";
@@ -25,7 +25,7 @@ import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types
 import { reportFailureInterpretation } from "../../../util/slack/reportFailureInterpretation";
 import { SdmContext } from "../../context/SdmContext";
 import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
-import { ConsoleProgressLog, InMemoryProgressLog, MultiProgressLog } from "../../log/progressLogs";
+import { ConsoleProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 
@@ -34,7 +34,7 @@ export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteG
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const log = await createEphemeralProgressLog();
-        const progressLog = new MultiProgressLog(new ConsoleProgressLog(), new InMemoryProgressLog(), log);
+        const progressLog = new MultiProgressLog(new ConsoleProgressLog(), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
