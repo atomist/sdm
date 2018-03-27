@@ -41,6 +41,7 @@ import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
+import { MaterialChangeToNodeRepo } from "../../common/listener/support/pushtest/node/materialChangeToNodeRepo";
 import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
@@ -86,6 +87,9 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
+        whenPushSatisfies(IsNode, not(MaterialChangeToNodeRepo))
+            .itMeans("No material change to Node")
+            .setGoals(NoGoals),
         whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled, ToDefaultBranch)
             .itMeans("Build and deploy node")
             .setGoals(NpmDeployGoals),
