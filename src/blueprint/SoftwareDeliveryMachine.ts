@@ -92,6 +92,7 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -470,15 +471,3 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
-function functionalUnitForGoal(implementationName: string, goal: Goal, executor: GoalExecutor) {
-    const eventHandlers: Array<Maker<HandleEvent<any>>> = [
-        () => new ExecuteGoalOnRequested(implementationName, goal, executor, true),
-    ];
-    if (hasPreconditions(goal)) {
-        eventHandlers.push(() => new ExecuteGoalOnSuccessStatus(implementationName, goal, executor, true));
-    }
-    return {
-        eventHandlers,
-        commandHandlers: [() => triggerGoal(implementationName, goal)],
-    };
-}

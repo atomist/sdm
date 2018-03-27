@@ -24,6 +24,7 @@ import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-ma
 import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixSoftwareDeliveryMachine";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
+import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sSoftwareDeliveryMachine";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
@@ -41,7 +42,7 @@ const SdmOptions = {
  * Take your pick.
  */
 
-const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+// const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 
 // const machine = staticAnalysisSoftwareDeliveryMachine({ useCheckstyle: true});
 
@@ -49,7 +50,7 @@ const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 
 // const machine = artifactVerifyingSoftwareDeliveryMachine();
 
-// const machine = k8sSoftwareDeliveryMachine(SdmOptions);
+const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),

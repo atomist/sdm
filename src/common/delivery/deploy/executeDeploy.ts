@@ -71,6 +71,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
                 const target = await targetMapping.valueForPush(pti);
                 if (!target) {
+                    progressLog.write("SDM configuration error: no deploy rule applies to this code");
                     throw new Error(`Don't know how to deploy project ${id.owner}:${id.repo}`);
                 }
                 logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
