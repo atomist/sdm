@@ -16,6 +16,8 @@
 
 import { ProjectListenerInvocation } from "./Listener";
 
+export type NeverMatch = null;
+
 /**
  * Mapping from push to value, it it can be resolved.
  */
@@ -29,10 +31,14 @@ export interface PushMapping<V> {
     /**
      * Compute a value for the given push. Return undefined
      * if we don't find a mapped value.
+     * Return NeverMatch (null) to shortcut evaluation of the present set of rules
+     * and guarantee the return of undefined.
+     * This is a rude thing to do: Only do so if you are sure
+     * that this evaluation must be shortcircuited.
      * The value may be static
      * or computed on demand, depending on the implementation.
      * @param {ProjectListenerInvocation} p
-     * @return {Promise<V | undefined>}
+     * @return {Promise<V | undefined | NeverMatch>}
      */
-    valueForPush(p: ProjectListenerInvocation): Promise<V | undefined>;
+    valueForPush(p: ProjectListenerInvocation): Promise<V | undefined | NeverMatch>;
 }

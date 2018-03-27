@@ -55,7 +55,9 @@ export class PushRules<V> implements PushMapping<V> {
                 logger.debug("Eligible PushRule named %s returned choice %j", pc.name, found);
                 return found;
             }));
-        const value = results.find(p => !!p);
+        const value = results.some(p => p === null) ?
+            undefined :
+            results.find(p => !!p);
         logger.info("PushRules [%s]: Value for push on %j is %j", this.name, pi.id, value);
         return value;
     }
