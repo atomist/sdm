@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import "mocha";
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import "mocha";
 import * as assert from "power-assert";
 import { CloudFoundryManifestPath } from "../../../../src/common/delivery/deploy/pcf/CloudFoundryTarget";
 import { addCloudFoundryManifestEditor } from "../../../../src/software-delivery-machine/commands/editors/pcf/addCloudFoundryManifest";
-import { NonSpringPom, springBootPom } from "../TestPoms";
 import { fakeContext } from "../../FakeContext";
+import { NonSpringPom, springBootPom } from "../TestPoms";
 
 describe("addCloudFoundryManifest", () => {
 
@@ -47,7 +47,7 @@ describe("addCloudFoundryManifest", () => {
     it("should add a manifest to Node project when none exists", async () => {
         const p = InMemoryProject.from(new SimpleRepoId("owner", "repoName"),
             {
-                path: "package.json", content: JSON.stringify({name: "node-seed"})
+                path: "package.json", content: JSON.stringify({name: "node-seed"}),
             });
         const teamId = "T123";
         await addCloudFoundryManifestEditor(p, fakeContext(teamId));
