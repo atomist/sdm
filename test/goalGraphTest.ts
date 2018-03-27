@@ -52,9 +52,7 @@ const DesiredDot = `digraph HTTP_Service {
 describe("Rendering a goal graph", () => {
     it("renders the HTTP Service Goals", () => {
         const goals = HttpServiceGoals;
-
         const dot = goalsToDot(goals);
-        console.log(dot);
         assert.equal(dot, DesiredDot);
     });
 });

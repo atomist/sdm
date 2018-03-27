@@ -17,20 +17,13 @@
 import { logger } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
-export const DevNullProgressLog: ProgressLog = {
-    write() {
-        // Do nothing
-    },
-    flush() { return Promise.resolve(); },
-    close() { return Promise.resolve(); },
-};
-
 export class ConsoleProgressLog implements ProgressLog {
 
     public log: string = "";
 
     public write(what) {
         this.log += what;
+        // tslint:disable-next-line:no-console
         console.log(what);
     }
 
@@ -39,6 +32,9 @@ export class ConsoleProgressLog implements ProgressLog {
     public close() { return Promise.resolve(); }
 }
 
+/**
+ * Write to multiple progress logs, exposing them as one
+ */
 export class MultiProgressLog implements ProgressLog {
 
     private readonly logs: ProgressLog[];
@@ -71,30 +67,5 @@ export class MultiProgressLog implements ProgressLog {
     get url(): string {
         const hasUrl = this.logs.find(l => !!l.url);
         return !!hasUrl ? hasUrl.url : undefined;
-    }
-}
-
-/**
- * Saves log to a string
- */
-export class InMemoryProgressLog implements ProgressLog {
-
-    private logged: string = "";
-
-    public write(what: string) {
-        this.logged += what;
-        return Promise.resolve();
-    }
-
-    public flush() {
-        return Promise.resolve();
-    }
-
-    public close() {
-        return Promise.resolve();
-    }
-
-    get log() {
-        return this.logged;
     }
 }

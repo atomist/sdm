@@ -29,15 +29,18 @@ class EphemeralProgressLog implements ProgressLog {
 
     public url = undefined;
 
+    constructor(private writeToLog: boolean = true) {}
+
     public flush() {
         return Promise.resolve();
     }
 
-    public close(): Promise<any> {
-        logger.info("vvvvvv CLOSED NON-PERSISTENT LOG ------------------------------");
-        logger.info(this.log);
-        logger.info("^^^^^^ NON-PERSISTENT LOG -------------------------------------");
-        return Promise.resolve();
+    public async close(): Promise<any> {
+        if (this.writeToLog) {
+            logger.info("vvvvvv CLOSED NON-PERSISTENT LOG ------------------------------");
+            logger.info(this.log);
+            logger.info("^^^^^^ NON-PERSISTENT LOG -------------------------------------");
+        }
     }
 
     public write(what: string) {

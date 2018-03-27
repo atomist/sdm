@@ -34,7 +34,7 @@ export const MaterialChangeToJavaRepo = pushTest("Material change to Java repo",
         return true;
     }
     const changedFiles = await filesChangedSince(pci.project, pci.push.before.sha);
-    console.log(`Changed files are [${changedFiles.join(",")}]`);
+    logger.debug(`MaterialChangeToJavaRepo: Changed files are [${changedFiles.join(",")}]`);
     if (changedFiles.some(f => f.endsWith(".java")) ||
         changedFiles.some(f => f.endsWith(".html")) ||
         changedFiles.some(f => f.endsWith(".json")) ||

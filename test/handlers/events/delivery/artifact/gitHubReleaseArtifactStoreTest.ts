@@ -55,7 +55,6 @@ describe("GitHubReleaseArtifactStore", () => {
                 id,
                 {token: process.env.GITHUB_TOKEN})
                 .then(da => {
-                    console.log(JSON.stringify(da));
                     assert(da.id.owner === id.owner);
                     assert(da.id.repo === id.repo);
                     assert(da.name === "fintan", "name should be 'fintan', not " + da.name);

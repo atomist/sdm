@@ -34,7 +34,7 @@ export const MaterialChangeToNodeRepo: PushTest = pushTest("Material change to N
         return true;
     }
     const changedFiles = await filesChangedSince(pci.project, pci.push.before.sha);
-    console.log(`Changed files are [${changedFiles.join(",")}]`);
+    logger.debug(`MaterialChangeToNodeRepo: Changed files are [${changedFiles.join(",")}]`);
     if (changedFiles.some(f => f.endsWith(".js")) ||
         changedFiles.some(f => f.endsWith(".ts")) ||
         changedFiles.some(f => f.endsWith(".json")) ||

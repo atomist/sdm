@@ -103,7 +103,6 @@ describe("custom Spring Boot generator", () => {
                 repoLoader: () => () => GitCommandGitProject.cloned({token: null}, new GitHubRepoRef(config.seedOwner, config.seedRepo)),
                 projectPersister: async p => {
                     result = p;
-                    console.log("Persisting: result=" + result);
                     return {target: p, success: true};
                 },
             });

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { doWithRetry, RetryOptions } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import * as https from "https";
@@ -34,7 +35,7 @@ export function lookFor200OnEndpointRootGet(retryOpts: Partial<RetryOptions> = {
         return doWithRetry(
             () => axios.get(inv.url, {httpsAgent: agent})
                 .then(resp => {
-                    console.log(resp.status);
+                    logger.debug(`lookFor200OnEndpointRootGet: Response for ${inv.url} was ${resp.status}`);
                     if (resp.status !== 200) {
                         return Promise.reject(`Unexpected response: ${resp.status}`);
                     }

@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
+/**
+ * Use git to list the files changed since the given sha
+ * @param {GitProject} project
+ * @param {string} sha
+ * @return {Promise<string[]>}
+ */
 export async function filesChangedSince(project: GitProject, sha: string): Promise<string[]> {
     const command = `git diff --name-only ${sha}`;
     const cr = await runCommand(command, {cwd: project.baseDir});
     // stdout is nothing but a list of files, one per line
-    console.log(cr.stdout);
+    logger.debug(`$Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
     return cr.stdout.split("\n")
         .filter(n => !!n);
 }

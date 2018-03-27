@@ -101,9 +101,9 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
     if (buildUrl) {
         logger.info("Retrieving failed build log from " + buildUrl);
         const buildLog = (await axios.get(buildUrl)).data;
-        console.log("Do we have a log interpretation? " + !!logInterpretation);
+        logger.debug("Do we have a log interpretation? " + !!logInterpretation);
         const interpretation = logInterpretation && logInterpretation.logInterpreter(buildLog);
-        console.log("What did it say? " + stringify(interpretation));
+        logger.debug("What did it say? " + stringify(interpretation));
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
             await reportFailureInterpretation("build", interpretation,
