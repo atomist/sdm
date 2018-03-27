@@ -20,12 +20,15 @@ import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../b
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
+import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
 import { FromAtomist, ToDefaultBranch, ToPublicRepo } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { HasK8Spec } from "../../common/listener/support/pushtest/k8s/k8sSpecPushTest";
+import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
@@ -64,6 +67,12 @@ export function k8sSoftwareDeliveryMachine(opts: K8sSoftwareDeliverMachineOption
         whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
+        whenPushSatisfies(IsNode, IsDeployEnabled, ToDefaultBranch)
+            .itMeans("Build and deploy node")
+            .setGoals(NpmDeployGoals),
+        whenPushSatisfies(IsNode)
+            .itMeans("Build with npm")
+            .setGoals(NpmBuildGoals),
     );
     sdm.addBuildRules(
         build.setDefault(new K8sAutomationBuilder()))

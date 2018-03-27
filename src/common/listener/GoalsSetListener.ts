@@ -19,7 +19,7 @@ import { ListenerInvocation, SdmListener } from "./Listener";
 
 export interface GoalsSetInvocation extends ListenerInvocation {
 
-    goals: Goals;
+    goalSet: Goals | null;
 }
 
 export type GoalsSetListener = SdmListener<GoalsSetInvocation>;

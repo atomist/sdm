@@ -29,9 +29,12 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     if (!graphvizServiceUrl) {
         return;
     }
+    if (!gsi.goalSet) {
+        return;
+    }
 
     try {
-        const graphDefinition = goalsToDot(gsi.goals);
+        const graphDefinition = goalsToDot(gsi.goalSet);
         logger.debug("ShowGraph: generated .dot: " + graphDefinition);
 
         const generateGraphUrl = graphvizServiceUrl + "/dot/png";
@@ -49,14 +52,14 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
         const showGraphMessage: slack.SlackMessage = {
             attachments: [{
                 fallback: "dependency goal graph goes here",
-                text: "Graph of planned goals",
+                text: "Graph of planned goal set: " + gsi.goalSet.name,
                 image_url: graphvizServiceUrl + "/" + graphImageRelativePath,
             }],
         };
         return gsi.addressChannels(showGraphMessage);
     } catch (err) {
         // do not fail anything
-        logger.error("ShowGraph: Unable to generate a cool graph of the goals: " + err.message);
+        logger.error("ShowGraph: Unable to generate a cool graph of the goalSet: " + err.message);
         logger.error("ShowGraph: URL: " + graphvizServiceUrl);
         logger.error("ShowGraph: stack trace: " + err.stack);
     }

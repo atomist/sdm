@@ -50,9 +50,9 @@ import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRe
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 
 /**
- * Set up goals on a push (e.g. for delivery).
+ * Set up goalSet on a push (e.g. for delivery).
  */
-@EventHandler("Set up goals", subscription("OnPushToAnyBranch"))
+@EventHandler("Set up goalSet", subscription("OnPushToAnyBranch"))
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -63,7 +63,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     /**
      * Configure goal setting
      * @param projectLoader use to load projects
-     * @param goalSetters first GoalSetter that returns goals wins
+     * @param goalSetters first GoalSetter that returns goalSet wins
      */
     constructor(private projectLoader: ProjectLoader,
                 goalSetters: GoalSetter[],
@@ -85,13 +85,13 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
             await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
         }
 
-        // Let GoalSetListeners know even if we determined no goals.
+        // Let GoalSetListeners know even if we determined no goalSet.
         // This is not an error
         const gsi: GoalsSetInvocation = {
             id,
             context,
             credentials,
-            goals: determinedGoals,
+            goalSet: determinedGoals || null,
             addressChannels: addressChannelsFor(push.repo, context),
         };
         await Promise.all(this.goalsListeners.map(l => l(gsi)));
@@ -116,13 +116,13 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         try {
             const determinedGoals: Goals = await this.rules.valueForPush(pi);
             if (!determinedGoals) {
-                logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
+                logger.info("No goalSet set by push to %s:%s on %s", id.owner, id.repo, push.branch);
             } else {
                 logger.info("Goals for push on %j are %s", id, determinedGoals.name);
             }
             return determinedGoals;
         } catch (err) {
-            logger.error("Error determining goals: %s", err);
+            logger.error("Error determining goalSet: %s", err);
             await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
             throw err;
         }

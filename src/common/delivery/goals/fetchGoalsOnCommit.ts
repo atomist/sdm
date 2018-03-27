@@ -41,7 +41,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: GitHubRepoRef
         logger.warn("Internal error: Null or undefined goal found for commit %j, provider %s", id, providerId);
     }
     if (result.SdmGoal.length === 20) {
-        logger.warn("Watch out! There may be more goals than this. We only retrieve 20.")
+        logger.warn("Watch out! There may be more goals than this. We only retrieve 20.");
         // automation-api#399 paging is not well-supported yet
     }
 
