@@ -16,7 +16,7 @@
 
 import * as _ from "lodash";
 
-import { failure, HandlerContext, Success } from "@atomist/automation-client";
+import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
@@ -45,6 +45,7 @@ export function executeReview(projectLoader: ProjectLoader,
 
         try {
             if (reviewerRegistrations.length > 0) {
+                logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
                 await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
                     const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : undefined;
                     const pti: CodeReactionInvocation = {
@@ -58,7 +59,11 @@ export function executeReview(projectLoader: ProjectLoader,
                         push,
                     };
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, pti);
-                    const filteredCopy: Project = await filtered(project, filesChanged);
+                    logger.info("Executing review of %j with %d relevant reviewers", id, relevantCodeActions.length);
+
+                    // TODO should filter to support reviewOnlyChangedFiles
+                    // see https://github.com/atomist/github-sdm/issues/273
+                    const filteredCopy: Project = project; // await filtered(project, filesChanged);
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                         await Promise.all(relevantReviewers
                             .map(reviewer =>
@@ -82,10 +87,8 @@ export function executeReview(projectLoader: ProjectLoader,
                     } else {
                         // TODO might want to raise issue
                         // Fail it??
-                        await
-                            sendReviewToSlack("Review comments", review, context, addressChannels);
-                        await
-                            sendErrorsToSlack(reviewerErrors, addressChannels);
+                        await sendReviewToSlack("Review comments", review, context, addressChannels);
+                        await sendErrorsToSlack(reviewerErrors, addressChannels);
                         return {code: 0, requireApproval: true};
                     }
                 });
@@ -94,6 +97,8 @@ export function executeReview(projectLoader: ProjectLoader,
                 return {code: 0, requireApproval: false};
             }
         } catch (err) {
+            logger.error("Error executing review of %j with %d reviewers: $s",
+                id, reviewerRegistrations.length, err.message);
             return failure(err);
         }
     };

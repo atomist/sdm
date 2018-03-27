@@ -186,8 +186,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get reviewHandling(): FunctionalUnit {
-        return this.reviewerRegistrations.length === 0 ? EmptyFunctionalUnit :
-            functionalUnitForGoal("Reviews",
+        // Can't short circuit this if review goal is set or goal will never be satisfied
+        return functionalUnitForGoal("Reviews",
             ReviewGoal,
             executeReview(this.opts.projectLoader, this.reviewerRegistrations));
     }
@@ -201,7 +201,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get autofix(): FunctionalUnit {
         return this.autofixRegistrations.length === 0 ? EmptyFunctionalUnit :
             functionalUnitForGoal("Autofix", AutofixGoal,
-            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
+                executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
     private get goalSetting(): Maker<SetGoalsOnPush> {

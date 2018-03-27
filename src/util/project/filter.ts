@@ -19,7 +19,7 @@ export async function filtered(p: LocalProject, globs: string[]): Promise<LocalP
         return p;
     }
     const tmpDir = tmp.dirSync({unsafeCleanup: true}).name;
-    logger.debug("Filtered project %j to %s", p.id, tmpDir);
+    logger.info("Filtered project %j at %d to %s", p.id, p.baseDir, tmpDir);
     await Promise.all(globs.map(glob =>
         doWithFiles(p, glob, async f => {
             await promisify(fs.copyFile)(
