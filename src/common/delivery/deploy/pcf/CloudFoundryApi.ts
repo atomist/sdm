@@ -92,13 +92,21 @@ export class CloudFoundryApi {
         this.cf.routes.setToken(newToken);
     }
 
-    private async retryUntilCondition<T>(action: () => Promise<T>, condition: (t: T) => boolean): Promise<T> {
+    private async retryUntilCondition(action: () => Promise<AxiosResponse>,
+                                      successCondition: (r: AxiosResponse) => boolean,
+                                      failureCondition: (r: AxiosResponse) => boolean): Promise<AxiosResponse> {
         const result = await action();
-        if (condition(result)) {
+        if (successCondition(result)) {
             return result;
         }
+        if (failureCondition(result)) {
+            throw {
+                name: "RetryUntilConditionFailure",
+                message: JSON.stringify(result.data),
+            } as Error;
+        }
         await new Promise( res => setTimeout(res, this.retryInterval));
-        return this.retryUntilCondition(action, condition);
+        return this.retryUntilCondition(action, successCondition, failureCondition);
     }
 
     public async stopApp(appGuid: string): Promise<AxiosResponse<any>> {
@@ -123,6 +131,7 @@ export class CloudFoundryApi {
                 return this.getProcessStats(appGuid);
             },
             r => _.every(r.data.resources, (p: any) => p.state === "RUNNING"),
+            r => _.every(r.data.resources, (p: any) => p.state === "CRASHED"),
         );
     }
 
@@ -225,6 +234,7 @@ export class CloudFoundryApi {
                     `get package ${packageCreateResult.data.guid}`);
             },
             r => r.data.state === "READY",
+            r => r.data.state === "FAILED",
         );
     }
 
@@ -244,6 +254,7 @@ export class CloudFoundryApi {
                     `get build for package ${buildResult.data.guid}`);
                 },
                 r => r.data.state === "STAGED",
+            r => r.data.state === "FAILED" || r.data.state === "EXPIRED",
         );
     }
 
