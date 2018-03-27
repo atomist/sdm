@@ -21,7 +21,7 @@ import * as assert from "power-assert";
 import { CloudFoundryManifestPath } from "../../../../src/common/delivery/deploy/pcf/CloudFoundryTarget";
 import {
     addCloudFoundryManifestEditor, AtomistConfigTsPath,
-    StartAutomationClientCommand
+    StartAutomationClientCommand,
 } from "../../../../src/software-delivery-machine/commands/editors/pcf/addCloudFoundryManifest";
 import { fakeContext } from "../../FakeContext";
 import { NonSpringPom, springBootPom } from "../TestPoms";
@@ -64,7 +64,7 @@ describe("addCloudFoundryManifest", () => {
     it("should add an automation client manifest to Node project when none exists", async () => {
         const p = InMemoryProject.from(new SimpleRepoId("owner", "repoName"),
             {
-                path: "package.json", content: JSON.stringify({name: "node-seed"})
+                path: "package.json", content: JSON.stringify({name: "node-seed"}),
             },
             {
                 path: AtomistConfigTsPath, content: "// automation client",
