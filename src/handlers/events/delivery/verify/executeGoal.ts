@@ -31,7 +31,7 @@ export async function executeGoal(execute: GoalExecutor,
     await markGoalInProcess(ctx, sdmGoal, params.goal);
     try {
         const result = await execute(status, ctx, params);
-        logger.info("Result of %s: %j", params.implementationName, result);
+        logger.info("ExecuteGoal: result of %s: %j", params.implementationName, result);
         await markStatus(ctx, sdmGoal, params.goal, result);
         return Success;
     } catch (err) {

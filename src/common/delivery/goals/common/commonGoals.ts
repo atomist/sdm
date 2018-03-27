@@ -150,13 +150,14 @@ export const LocalDeploymentGoal = new Goal({
     completedDescription: "Deployed locally",
 });
 
-export const LocalEndpointGoal = new Goal({
+// not an enforced precondition, but it's real enough to graph
+export const LocalEndpointGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2-endpoint",
     displayName: "locate local service endpoint",
     completedDescription: "Here is the local service endpoint",
 
-});
+}, LocalDeploymentGoal);
 
 export const NoGoal = new Goal({
     environment: IndependentOfEnvironment,

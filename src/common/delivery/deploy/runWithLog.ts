@@ -39,10 +39,12 @@ export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteG
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
-        const reportError = howToReportError(params, addressChannels, progressLog, id, logInterpreter);
         return whatToRun({status, progressLog, context: ctx, addressChannels, id, credentials})
-            .then(yay => progressLog.close().then(() => Success as ExecuteGoalResult),
-                err => reportError(err).then(() => progressLog.close()).then(() => Promise.reject(err)));
+            .then(yay => progressLog.close()
+                    .then(() => yay),
+                err => howToReportError(params, addressChannels, progressLog, id, logInterpreter)(err)
+                    .then(() => progressLog.close())
+                    .then(() => Promise.reject(err)));
     };
 }
 
