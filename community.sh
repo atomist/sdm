@@ -1,1 +1,0 @@
-ATOMIST_TEAMS=T29E48P34 atomist start
