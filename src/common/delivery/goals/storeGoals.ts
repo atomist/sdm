@@ -60,7 +60,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
     id: GitHubRepoRef,
     providerId: string
     url?: string,
-}): Promise<any> {
+}): Promise<SdmGoal> {
     const {goalSet, goal, state, id, providerId, url} = parameters;
 
     if (id.branch === null) {
@@ -110,7 +110,8 @@ export function storeGoal(ctx: HandlerContext, parameters: {
     };
 
     logger.debug("Storing goal: %j", sdmGoal);
-    return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
+    return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
+        .then(() => sdmGoal);
 }
 
 function constructProvenance(ctx: HandlerContext): SdmProvenance {
