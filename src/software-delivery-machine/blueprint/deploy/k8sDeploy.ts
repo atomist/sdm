@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { functionalUnitForGoal } from "../../../blueprint/dsl/functionalUnitForGoal";
 import {FunctionalUnit} from "../../../blueprint/FunctionalUnit";
 import {
     ProductionDeploymentGoal,
@@ -25,7 +26,6 @@ import { NoticeK8sTestDeployCompletionOnStatus } from "../../../handlers/events/
 import { NoticeK8sProdDeployCompletionOnStatus } from "../../../handlers/events/delivery/deploy/k8s/NoticeK8sProdDeployCompletion";
 import { requestDeployToK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 import { ExecuteGoalOnSuccessStatus } from "../../../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
-import { functionalUnitForGoal } from "../../../blueprint/dsl/functionalUnitForGoal";
 
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";

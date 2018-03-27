@@ -89,10 +89,10 @@ import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandle
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
+import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -470,4 +470,3 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
-
