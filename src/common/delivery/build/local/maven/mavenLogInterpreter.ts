@@ -23,7 +23,7 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
             relevantPart: "",
             message: "Failed with empty log",
             includeFullLog: false,
-            data: {}
+            data: {},
         };
     }
 
@@ -40,8 +40,8 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
             message: "Application failed to start",
             includeFullLog: false,
             data: {
-                timeMillis: timing
-            }
+                timeMillis: timing,
+            },
         };
     }
 
@@ -54,8 +54,8 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
             message: "Maven errors",
             includeFullLog: false,
             data: {
-                timeMillis: timing
-            }
+                timeMillis: timing,
+            },
         };
     }
 
@@ -75,9 +75,9 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
         message: "Unknown error",
         includeFullLog: true,
         data: {
-            timeMillis: timing
-        }
-    }
+            timeMillis: timing,
+        },
+    };
 }
 
 function appFailedToStart(log: string) {
