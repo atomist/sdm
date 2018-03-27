@@ -24,6 +24,7 @@ import { requestDescription } from "../../blueprint/issue/requestDescription";
 import { thankYouYouRock } from "../../blueprint/issue/thankYouYouRock";
 import { PublishNewRepo } from "../../blueprint/repo/publishNewRepo";
 import { addApacheLicenseHeaderEditor } from "../../commands/editors/license/addHeader";
+import { GraphGoalsToSlack } from "../../../common/delivery/goals/graph/graphGoalsToSlack";
 
 /**
  * Set up team policies
@@ -33,6 +34,7 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
     softwareDeliveryMachine
         .addNewIssueListeners(requestDescription, capitalizer)
         .addClosedIssueListeners(thankYouYouRock)
+        .addGoalsSetListeners(GraphGoalsToSlack)
         .addEditors(
             () => addApacheLicenseHeaderEditor,
         )

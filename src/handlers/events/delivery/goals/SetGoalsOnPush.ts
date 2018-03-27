@@ -31,8 +31,10 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../../../common/delivery/goals/Goals";
@@ -45,7 +47,7 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
-import { showGraph } from "./graphGoals";
+import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 
 /**
  * Set up goals on a push (e.g. for delivery).
@@ -56,8 +58,6 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     @Secret(Secrets.OrgToken)
     private githubToken: string;
 
-    private readonly goalSetters: GoalSetter[];
-
     private readonly rules: PushMapping<Goals>;
 
     /**
@@ -66,8 +66,8 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * @param goalSetters first GoalSetter that returns goals wins
      */
     constructor(private projectLoader: ProjectLoader,
-                ...goalSetters: GoalSetter[]) {
-        this.goalSetters = goalSetters;
+                goalSetters: GoalSetter[],
+                private goalsListeners: GoalsSetListener[]) {
         this.rules = new PushRules("Goal setter", goalSetters);
     }
 
@@ -79,12 +79,18 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         const credentials = {token: params.githubToken};
 
         const determinedGoals = await this.projectLoader.doWithProject({credentials, id, context, readOnly: true},
-                project => this.setGoalsForPushOnProject(push, id, credentials, context, project));
+            project => this.setGoalsForPushOnProject(push, id, credentials, context, project));
 
         await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
 
-        await showGraph(context, addressChannelsFor(push.repo, context), determinedGoals);
-
+        const gsi: GoalsSetInvocation = {
+            id,
+            context,
+            credentials,
+            goals: determinedGoals,
+            addressChannels: addressChannelsFor(push.repo, context),
+        };
+        await Promise.all(this.goalsListeners.map(l => l(gsi)));
         return Success;
     }
 

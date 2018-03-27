@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as _ from "lodash";
-import { splitContext } from "../../../../common/delivery/goals/gitHubContext";
-import { Goal, GoalWithPrecondition } from "../../../../common/delivery/goals/Goal";
-import { Goals } from "../../../../common/delivery/goals/Goals";
-import { AddressChannels } from "../../../../common/slack/addressChannels";
+import { splitContext } from "../gitHubContext";
+import { Goal, GoalWithPrecondition } from "../Goal";
+import { Goals } from "../Goals";
+import { GoalsSetListener } from "../../../listener/GoalsSetListener";
 
-export async function showGraph(ctx: HandlerContext, addressChannels: AddressChannels, goals: Goals) {
+export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     // This is an easter egg
     const graphvizServiceUrl = process.env.GRAPHVIZ_SERVICE_URL;
     if (!graphvizServiceUrl) {
@@ -31,7 +31,7 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
     }
 
     try {
-        const graphDefinition = goalsToDot(goals);
+        const graphDefinition = goalsToDot(gsi.goals);
         logger.debug("ShowGraph: generated .dot: " + graphDefinition);
 
         const generateGraphUrl = graphvizServiceUrl + "/dot/png";
@@ -53,7 +53,7 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
                 image_url: graphvizServiceUrl + "/" + graphImageRelativePath,
             }],
         };
-        return addressChannels(showGraphMessage);
+        return gsi.addressChannels(showGraphMessage);
     } catch (err) {
         // do not fail anything
         logger.error("ShowGraph: Unable to generate a cool graph of the goals: " + err.message);
@@ -61,7 +61,7 @@ export async function showGraph(ctx: HandlerContext, addressChannels: AddressCha
         logger.error("ShowGraph: stack trace: " + err.stack);
     }
 
-}
+};
 
 export function goalsToDot(goals: Goals) {
 

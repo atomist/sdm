@@ -93,6 +93,7 @@ import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { GoalSetterPushRule } from "./dsl/goalDsl";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { GoalsSetListener } from "../common/listener/GoalsSetListener";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -135,6 +136,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public newRepoWithCodeActions: ProjectListener[] = [];
 
     private readonly goalSetters: GoalSetter[] = [];
+
+    private goalsSetListeners: GoalsSetListener[] = [];
 
     private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
@@ -206,7 +209,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         if (this.goalSetters.length === 0) {
             throw new Error("No goal setters");
         }
-        return () => new SetGoalsOnPush(this.opts.projectLoader, ...this.goalSetters);
+        return () => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners);
     }
 
     private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
@@ -386,6 +389,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addNewRepoWithCodeActions(...pls: ProjectListener[]): this {
         this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(pls);
+        return this;
+    }
+
+    public addGoalsSetListeners(...listeners: GoalsSetListener[]): this {
+        this.goalsSetListeners = this.goalsSetListeners.concat(listeners);
         return this;
     }
 

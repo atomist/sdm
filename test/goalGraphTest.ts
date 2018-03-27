@@ -17,7 +17,7 @@
 import "mocha";
 import * as assert from "power-assert";
 import { HttpServiceGoals } from "../src/common/delivery/goals/common/httpServiceGoals";
-import { goalsToDot } from "../src/handlers/events/delivery/goals/graphGoals";
+import { goalsToDot } from "../src/common/delivery/goals/graph/graphGoalsToSlack";
 
 const DesiredDot = `digraph HTTP_Service {
     fontname="Arial";
