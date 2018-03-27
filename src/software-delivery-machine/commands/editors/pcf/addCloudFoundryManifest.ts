@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
+import { HandleCommand, logger } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { MavenProjectIdentifier } from "../../../../common/delivery/build/local/maven/pomParser";
@@ -28,6 +28,8 @@ export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";
 
 // Using this marker removes some buttons on the Pull Request
 export const AtomistGeneratedMarker = "[atomist:generated]";
+
+export const AtomistConfigTsPath = "src/atomist.config.ts";
 
 /**
  * Command handler wrapping addCloudFoundryManifest editor
@@ -58,7 +60,8 @@ export const addCloudFoundryManifestEditor: SimpleProjectEditor = async (p, ctx)
     }
     const nodeId = await NodeProjectIdentifier(p);
     if (nodeId) {
-        const isAutomationClient = !!(await p.getFile("src/atomist.config.ts"));
+        const isAutomationClient = !!await p.getFile(AtomistConfigTsPath);
+        logger.info(`addCloudFoundryManifestEditor: Node project %j: automation client=${isAutomationClient}`, p.id);
         return p.addFile(CloudFoundryManifestPath,
             isAutomationClient ?
                 automationClientManifestFor(nodeId.name, ctx.teamId) :
@@ -88,13 +91,16 @@ applications:
   env:
     ATOMIST_TEAMS: ${teamId}`;
 
+// tslint:disable-next-line:max-line-length
+export const StartAutomationClientCommand = "node --trace-warnings --expose_gc --optimize_for_size --always_compact --max_old_space_size=384 node_modules/@atomist/automation-client/start.client.js";
+
 /* tslint:disable:max-line-length */
 // dd: The poorly names "max_old_space_size" seems to map roughly to heap,
 // so you want your container limit to be 15-25% higher than whatever you set the max_old_space_size to.
 const automationClientManifestFor = (name, teamId) => `---
 applications:
 - name: ${name}
-  command: "node --trace-warnings --expose_gc --optimize_for_size --always_compact --max_old_space_size=384 node_modules/@atomist/automation-client/start.client.js"
+  command: "${StartAutomationClientCommand}"
   memory: 512M
   buildpack: https://github.com/cloudfoundry/nodejs-buildpack
   env:

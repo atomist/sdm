@@ -19,7 +19,10 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import "mocha";
 import * as assert from "power-assert";
 import { CloudFoundryManifestPath } from "../../../../src/common/delivery/deploy/pcf/CloudFoundryTarget";
-import { addCloudFoundryManifestEditor } from "../../../../src/software-delivery-machine/commands/editors/pcf/addCloudFoundryManifest";
+import {
+    addCloudFoundryManifestEditor, AtomistConfigTsPath,
+    StartAutomationClientCommand
+} from "../../../../src/software-delivery-machine/commands/editors/pcf/addCloudFoundryManifest";
 import { fakeContext } from "../../FakeContext";
 import { NonSpringPom, springBootPom } from "../TestPoms";
 
@@ -44,7 +47,7 @@ describe("addCloudFoundryManifest", () => {
         assert(!p.fileExistsSync(CloudFoundryManifestPath), "Should not have manifest file");
     });
 
-    it("should add a manifest to Node project when none exists", async () => {
+    it("should add a non automation client manifest to Node project when none exists", async () => {
         const p = InMemoryProject.from(new SimpleRepoId("owner", "repoName"),
             {
                 path: "package.json", content: JSON.stringify({name: "node-seed"}),
@@ -55,6 +58,24 @@ describe("addCloudFoundryManifest", () => {
         const content = p.findFileSync(CloudFoundryManifestPath).getContentSync();
         assert(content.includes("node-seed"), "Should contain app name");
         assert(content.includes(teamId), "Should contain team id");
+        assert(!content.includes(StartAutomationClientCommand), "Shouldn't contain automation client start command");
+    });
+
+    it("should add an automation client manifest to Node project when none exists", async () => {
+        const p = InMemoryProject.from(new SimpleRepoId("owner", "repoName"),
+            {
+                path: "package.json", content: JSON.stringify({name: "node-seed"})
+            },
+            {
+                path: AtomistConfigTsPath, content: "// automation client",
+            });
+        const teamId = "T123";
+        await addCloudFoundryManifestEditor(p, fakeContext(teamId));
+        assert(p.fileExistsSync(CloudFoundryManifestPath), "Should have manifest file");
+        const content = p.findFileSync(CloudFoundryManifestPath).getContentSync();
+        assert(content.includes("node-seed"), "Should contain app name");
+        assert(content.includes(teamId), "Should contain team id");
+        assert(content.includes(StartAutomationClientCommand), "Shouldn't contain automation client start command");
     });
 
 });
