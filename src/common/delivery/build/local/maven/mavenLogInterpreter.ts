@@ -16,11 +16,22 @@
 
 import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 
-export function interpretMavenLog(log: string): InterpretedLog | undefined {
+export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | undefined {
     if (!log) {
         logger.warn("Log was empty");
-        return undefined;
+        return {
+            relevantPart: "",
+            message: "Failed with empty log",
+            includeFullLog: false,
+            data: {}
+        };
     }
+
+    const mg = Microgrammar.fromString<{ seconds: number }>("Total time: ${seconds} s", {
+        seconds: Float,
+    });
+    const match = mg.firstMatch(log);
+    const timing = match ? match.seconds * 1000 : undefined;
 
     const maybeFailedToStart = appFailedToStart(log);
     if (maybeFailedToStart) {
@@ -28,6 +39,9 @@ export function interpretMavenLog(log: string): InterpretedLog | undefined {
             relevantPart: maybeFailedToStart,
             message: "Application failed to start",
             includeFullLog: false,
+            data: {
+                timeMillis: timing
+            }
         };
     }
 
@@ -35,7 +49,14 @@ export function interpretMavenLog(log: string): InterpretedLog | undefined {
     const maybeMavenErrors = mavenErrors(log);
     if (maybeMavenErrors) {
         logger.info("Recognized maven error");
-        return maybeMavenErrors;
+        return {
+            relevantPart: maybeMavenErrors,
+            message: "Maven errors",
+            includeFullLog: false,
+            data: {
+                timeMillis: timing
+            }
+        };
     }
 
     // or it could be this problem here
@@ -47,7 +68,16 @@ export function interpretMavenLog(log: string): InterpretedLog | undefined {
             includeFullLog: false,
         };
     }
+
     logger.info("Did not find anything to recognize in the log");
+    return {
+        relevantPart: "",
+        message: "Unknown error",
+        includeFullLog: true,
+        data: {
+            timeMillis: timing
+        }
+    }
 }
 
 function appFailedToStart(log: string) {
@@ -70,23 +100,12 @@ export interface MavenInfo {
     timeMillis?: number;
 }
 
-function mavenErrors(log: string): InterpretedLog<MavenInfo> | undefined {
+function mavenErrors(log: string): string | undefined {
     const relevantPart = log.split("\n")
         .filter(l => l.startsWith("[ERROR]"))
         .join("\n");
     if (!relevantPart) {
         return;
     }
-    const mg = Microgrammar.fromString<{seconds: number}>("Total time: ${seconds} s", {
-        seconds: Float,
-    });
-    const timing = mg.firstMatch(log);
-    return {
-        relevantPart,
-        message: "Maven log",
-        includeFullLog: true,
-        data: {
-            timeMillis: !!timing ? timing.seconds * 1000 : undefined,
-        },
-    };
+    return relevantPart;
 }

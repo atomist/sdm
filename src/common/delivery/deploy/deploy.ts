@@ -16,17 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { StatusState } from "../../../typings/types";
-import { AddressChannels } from "../../slack/addressChannels";
 import { GitHubStatusContext } from "../goals/gitHubContext";
 import { Goal } from "../goals/Goal";
 
@@ -62,7 +58,7 @@ export async function checkOutArtifact(targetUrl: string,
         });
 
     if (!artifactCheckout) {
-        throw new Error("No DeployableArtifact located");
+        throw new Error("Error checking out artifact: none found");
     }
     return artifactCheckout;
 }

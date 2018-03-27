@@ -23,7 +23,7 @@ describe("interpretMavenLog", () => {
     it("should handle empty log", () => {
         const r = interpretMavenLog("");
         assert(!!r);
-        assert(r.message === "Maven log");
+        assert.equal(r.message, "Failed with empty log");
         assert(!r.data.timeMillis);
     });
 
@@ -31,14 +31,14 @@ describe("interpretMavenLog", () => {
         const r = interpretMavenLog(Fail1);
         assert(!!r);
         assert(r.relevantPart.length > 30);
-        assert(r.relevantPart.includes("Unknown lifecycle phase \"build\""));
-        assert(r.data.timeMillis === 261);
+        assert(r.relevantPart.includes("Unknown lifecycle phase \"build\""), r.relevantPart);
+        assert.equal(r.data.timeMillis, 261);
     });
 
     it("should handle success log", () => {
         const r = interpretMavenLog(Success1);
         assert(!!r);
-        assert(r.relevantPart === "");
+        assert.equal(r.relevantPart, "");
         assert(r.data.timeMillis === 1640);
     });
 
