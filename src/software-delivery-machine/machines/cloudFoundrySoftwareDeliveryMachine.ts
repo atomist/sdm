@@ -111,15 +111,6 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     )
         .addDeployRules(
             deploy.when(IsMaven)
-                .itMeans("Maven local")
-                .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
-                .using(
-                    {
-                        deployer: mavenSourceDeployer(options.projectLoader),
-                        targeter: ManagedDeploymentTargeter,
-                    },
-                ),
-            deploy.when(IsMaven)
                 .itMeans("Maven test")
                 .deployTo(StagingDeploymentGoal, StagingEndpointGoal)
                 .using(
