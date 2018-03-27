@@ -40,7 +40,8 @@ import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/co
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
 import {
-    EndpointVerificationListener, executeVerifyEndpoint,
+    EndpointVerificationListener,
+    executeVerifyEndpoint,
     SdmVerification,
 } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
@@ -59,8 +60,7 @@ import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
-import { Goal, hasPreconditions } from "../common/delivery/goals/Goal";
-import { GoalExecutor } from "../common/delivery/goals/goalExecution";
+import { Goal } from "../common/delivery/goals/Goal";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionListener } from "../common/listener/CodeReactionListener";
@@ -78,7 +78,6 @@ import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -190,7 +189,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this.reviewerRegistrations.length === 0 ? EmptyFunctionalUnit :
             functionalUnitForGoal("Reviews",
             ReviewGoal,
-            executeReview(this.reviewerRegistrations));
+            executeReview(this.opts.projectLoader, this.reviewerRegistrations));
     }
 
     private get codeReactionHandling(): FunctionalUnit {

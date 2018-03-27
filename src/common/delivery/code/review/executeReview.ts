@@ -30,8 +30,10 @@ import { AddressChannels, addressChannelsFor } from "../../../slack/addressChann
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 
-export function executeReview(reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
+export function executeReview(projectLoader: ProjectLoader,
+                              reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Fragment, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
@@ -40,39 +42,43 @@ export function executeReview(reviewerRegistrations: ReviewerRegistration[]): Go
 
         try {
             if (reviewerRegistrations.length > 0) {
-                const project = await GitCommandGitProject.cloned(credentials, id);
-                const pti: ProjectListenerInvocation = {
-                    id,
-                    project,
-                    credentials,
-                    context: ctx,
-                    addressChannels: addressChannelsFor(commit.repo, ctx),
-                    push: commit.pushes[0],
-                };
-                const relevantReviewers = await relevantCodeActions(reviewerRegistrations, pti);
-                const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
-                    await Promise.all(relevantReviewers
-                    .map(reviewer =>
-                        reviewer.action(project, ctx, params as any)
-                            .then(rvw => ({review: rvw}),
-                                error => ({error}))));
-                const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
-                const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
+                await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+                    const pti: ProjectListenerInvocation = {
+                        id,
+                        project,
+                        credentials,
+                        context: ctx,
+                        addressChannels: addressChannelsFor(commit.repo, ctx),
+                        push: commit.pushes[0],
+                    };
+                    const relevantReviewers = await relevantCodeActions(reviewerRegistrations, pti);
+                    const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
+                        await
+                            Promise.all(relevantReviewers
+                                .map(reviewer =>
+                                    reviewer.action(project, ctx, params as any)
+                                        .then(rvw => ({review: rvw}),
+                                            error => ({error}))));
+                    const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
+                    const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
 
-                const review = consolidate(reviews);
+                    const review = consolidate(reviews);
 
-                if (review.comments.length === 0 && reviewerErrors.length === 0) {
-                    return { code: 0, requireApproval: false };
-                } else {
-                    // TODO might want to raise issue
-                    // Fail it??
-                    await sendReviewToSlack("Review comments", review, ctx, addressChannels);
-                    await sendErrorsToSlack(reviewerErrors, addressChannels);
-                    return { code: 0, requireApproval: true };
-                }
+                    if (review.comments.length === 0 && reviewerErrors.length === 0) {
+                        return {code: 0, requireApproval: false};
+                    } else {
+                        // TODO might want to raise issue
+                        // Fail it??
+                        await
+                            sendReviewToSlack("Review comments", review, ctx, addressChannels);
+                        await
+                            sendErrorsToSlack(reviewerErrors, addressChannels);
+                        return {code: 0, requireApproval: true};
+                    }
+                });
             } else {
                 // No reviewers
-                return { code: 0, requireApproval: false };
+                return {code: 0, requireApproval: false};
             }
         } catch (err) {
             return failure(err);
