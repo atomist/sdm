@@ -20,7 +20,7 @@ import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { StaticPushMapping} from "../../common/listener/support/StaticPushMapping";
 
-export class DeployPushRule extends PushRule<Target<any>> {
+export class DeployPushRule extends PushRule<Target> {
 
     constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
         super(guard1, guards, reason);

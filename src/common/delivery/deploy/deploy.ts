@@ -40,7 +40,7 @@ export interface DeployerInfo<T extends TargetInfo> {
     targeter: Targeter<T>;
 }
 
-export interface Target<T extends TargetInfo> extends DeployerInfo<T>, DeployStage {
+export interface Target<T extends TargetInfo = TargetInfo> extends DeployerInfo<T>, DeployStage {
 }
 
 export async function checkOutArtifact(targetUrl: string,

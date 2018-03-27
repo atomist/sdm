@@ -51,7 +51,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
                               projectLoader: ProjectLoader,
                               deployGoal: Goal,
                               endpointGoal: Goal,
-                              targetMapping: PushMapping<Target<any>>): GoalExecutor {
+                              targetMapping: PushMapping<Target>): GoalExecutor {
 
     return runWithLog(async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const commit = rwlc.status.commit;

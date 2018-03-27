@@ -141,7 +141,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
-    private readonly deployTargetMapping = new PushRules<Target<any>>("Deploy targets");
+    private readonly deployTargetMapping = new PushRules<Target>("Deploy targets");
 
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
@@ -235,7 +235,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         function executor(deploymentGoal: Goal, endpointGoal: Goal) {
             return executeDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
                 deploymentGoal, endpointGoal,
-                outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target<any>>).value.deployGoal === deploymentGoal));
+                outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target>).value.deployGoal === deploymentGoal));
         }
 
         const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal, name: string }> = [
@@ -462,7 +462,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addDeployRules(...rules: Array<StaticPushMapping<Target<any>>>): this {
+    public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         this.deployTargetMapping.add(rules);
         return this;
     }
