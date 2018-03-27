@@ -81,8 +81,12 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
         const determinedGoals = await this.projectLoader.doWithProject({credentials, id, context, readOnly: true},
             project => this.setGoalsForPushOnProject(push, id, credentials, context, project));
 
-        await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
+        if (!!determinedGoals) {
+            await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
+        }
 
+        // Let GoalSetListeners know even if we determined no goals.
+        // This is not an error
         const gsi: GoalsSetInvocation = {
             id,
             context,
