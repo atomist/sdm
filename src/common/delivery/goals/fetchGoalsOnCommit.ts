@@ -18,6 +18,8 @@ import { HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { SdmGoalsForCommit } from "../../../typings/types";
 
+import * as _ from "lodash";
+
 export async function fetchGoalsForCommit(ctx: HandlerContext, id: GitHubRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
     const result = await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
         name: "SdmGoalsForCommit", variables: {
@@ -34,6 +36,9 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: GitHubRepoRef
     if (result.SdmGoal.length === 0) {
         logger.warn("0 goals found for commit %j, provider %s", id, providerId);
     }
+    if (result.SdmGoal.some(g => !g)) {
+        logger.warn("Internal error: Null or undefined goal found for commit %j, provider %s", id, providerId);
+    }
 
-    return result.SdmGoal;
+    return _.flatten(result.SdmGoal);
 }
