@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-import "mocha";
-import { TruePushTest } from "./pushTestUtilsTest";
-import { PushRules } from "../../../../src/common/listener/support/PushRules";
-import * as assert from "power-assert";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import "mocha";
+import * as assert from "power-assert";
 import { PushTest, pushTest } from "../../../../src/common/listener/PushTest";
+import { PushRules } from "../../../../src/common/listener/support/PushRules";
+import { TruePushTest } from "./pushTestUtilsTest";
 
 export const UndefinedPushTest: PushTest = pushTest("true", async () => undefined);
 export const NullPushTest: PushTest = pushTest("true", async () => null);
-
 
 describe("PushRules", () => {
 
