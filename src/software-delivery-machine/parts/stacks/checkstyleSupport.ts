@@ -16,10 +16,11 @@
 
 import { logger } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
-import { CheckstyleReviewerRegistration } from "../../../common/delivery/code/review/checkstyle/checkstyleReviewer";
+import { checkstyleReviewerRegistration } from "../../../common/delivery/code/review/checkstyle/checkstyleReviewer";
 
 export interface CheckstyleSupportOptions {
-   useCheckstyle: boolean;
+    useCheckstyle: boolean;
+    reviewOnlyChangedFiles: boolean;
 }
 
 /**
@@ -31,7 +32,7 @@ export function addCheckstyleSupport(softwareDeliveryMachine: SoftwareDeliveryMa
     if (opts.useCheckstyle) {
         const checkStylePath = process.env.CHECKSTYLE_PATH;
         if (!!checkStylePath) {
-            softwareDeliveryMachine.addReviewerRegistrations(CheckstyleReviewerRegistration);
+            softwareDeliveryMachine.addReviewerRegistrations(checkstyleReviewerRegistration(opts.reviewOnlyChangedFiles));
         } else {
             logger.warn("Skipping Checkstyle; to enable it, set CHECKSTYLE_PATH env variable to the location of a downloaded checkstyle jar");
         }

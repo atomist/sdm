@@ -19,48 +19,61 @@ import * as _ from "lodash";
 import { failure, HandlerContext, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { StatusForExecuteGoal } from "../../../../typings/types";
-import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { filesChangedSince } from "../../../../util/git/filesChangedSince";
+import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
+import { Project } from "@atomist/automation-client/project/Project";
+import { filtered } from "../../../../util/project/filter";
 
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Fragment, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
+    return async (status: StatusForExecuteGoal.Fragment, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
+        const push = commit.pushes[0];
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        const addressChannels = addressChannelsFor(commit.repo, context);
 
         try {
             if (reviewerRegistrations.length > 0) {
                 await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-                    const pti: ProjectListenerInvocation = {
+                    const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : undefined;
+                    const pti: CodeReactionInvocation = {
                         id,
+                        context,
+                        addressChannels,
                         project,
                         credentials,
-                        context: ctx,
-                        addressChannels: addressChannelsFor(commit.repo, ctx),
-                        push: commit.pushes[0],
+                        filesChanged,
+                        commit,
+                        push,
                     };
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, pti);
+                    const filteredCopy: Project = await filtered(project, filesChanged);
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
-                        await
-                            Promise.all(relevantReviewers
-                                .map(reviewer =>
-                                    reviewer.action(project, ctx, params as any)
-                                        .then(rvw => ({review: rvw}),
-                                            error => ({error}))));
-                    const reviews = reviewsAndErrors.filter(r => !!r.review).map(r => r.review);
-                    const reviewerErrors = reviewsAndErrors.filter(e => !!e.error).map(e => e.error);
+                        await Promise.all(relevantReviewers
+                            .map(reviewer =>
+                                reviewer.action(
+                                    !!reviewer.options && reviewer.options.reviewOnlyChangedFiles ?
+                                        filteredCopy :
+                                        project,
+                                    context,
+                                    params as any)
+                                    .then(rvw => ({review: rvw}),
+                                        error => ({error}))));
+                    const reviews = reviewsAndErrors.filter(r => !!r.review)
+                        .map(r => r.review);
+                    const reviewerErrors = reviewsAndErrors.filter(e => !!e.error)
+                        .map(e => e.error);
 
                     const review = consolidate(reviews);
 
@@ -70,7 +83,7 @@ export function executeReview(projectLoader: ProjectLoader,
                         // TODO might want to raise issue
                         // Fail it??
                         await
-                            sendReviewToSlack("Review comments", review, ctx, addressChannels);
+                            sendReviewToSlack("Review comments", review, context, addressChannels);
                         await
                             sendErrorsToSlack(reviewerErrors, addressChannels);
                         return {code: 0, requireApproval: true};

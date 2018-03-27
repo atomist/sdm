@@ -21,8 +21,9 @@ import { ProjectListenerInvocation } from "../../../../src/common/listener/Liste
 import { PushTest, pushTest } from "../../../../src/common/listener/PushTest";
 import { allSatisfied, anySatisfied } from "../../../../src/common/listener/support/pushtest/pushTestUtils";
 
-const TruePushTest: PushTest = pushTest("true", async () => true);
-const FalsePushTest: PushTest = pushTest("false", async () => false);
+export const TruePushTest: PushTest = pushTest("true", async () => true);
+
+export const FalsePushTest: PushTest = pushTest("false", async () => false);
 
 const id = new GitHubRepoRef("atomist", "github-sdm");
 

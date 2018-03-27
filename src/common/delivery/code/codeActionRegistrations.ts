@@ -49,9 +49,19 @@ export interface AutofixRegistration extends CodeActionRegistration<AnyProjectEd
 
 }
 
+export interface ReviewerRegistrationOptions {
+
+    /**
+     * Run only on affected files?
+     */
+    reviewOnlyChangedFiles: boolean;
+}
+
 export interface ReviewerRegistration extends CodeActionRegistration<ProjectReviewer> {
 
     name: string;
+
+    options?: ReviewerRegistrationOptions;
 }
 
 /**

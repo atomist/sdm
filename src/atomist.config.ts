@@ -25,13 +25,16 @@ import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/mach
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
 import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sSoftwareDeliveryMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "./blueprint/SoftwareDeliveryMachine";
+import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
-const SdmOptions = {
+const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
     artifactStore: DefaultArtifactStore,
     projectLoader: new CachingProjectLoader(),
     useCheckstyle: process.env.USE_CHECKSTYLE === "true",
+    reviewOnlyChangedFiles: true,
 };
 
 /*

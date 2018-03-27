@@ -22,6 +22,9 @@ import {
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
+    /**
+     * Files changed in this push. Undefined if unknown how many files have changed
+     */
     filesChanged: string[];
 
     commit: StatusForExecuteGoal.Commit;

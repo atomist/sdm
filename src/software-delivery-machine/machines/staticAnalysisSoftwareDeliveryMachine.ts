@@ -34,10 +34,11 @@ export type StaticAnalysisSoftwareDeliveryMachineOptions = SoftwareDeliveryMachi
  * @return {SoftwareDeliveryMachine}
  */
 export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalysisSoftwareDeliveryMachineOptions> = {}): SoftwareDeliveryMachine {
-    const options = {
+    const options: StaticAnalysisSoftwareDeliveryMachineOptions = {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
         useCheckstyle: true,
+        reviewOnlyChangedFiles: false,
         ...opts,
     };
     const sdm = new SoftwareDeliveryMachine(
@@ -50,6 +51,7 @@ export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalys
     sdm.addReviewerRegistrations({
         name: "YML-hater",
         action: rodHatesYml,
+        options: { reviewOnlyChangedFiles: false},
     });
 
     addDemoEditors(sdm);

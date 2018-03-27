@@ -73,8 +73,11 @@ export const checkstyleReviewer: (checkstylePath: string) =>
         });
     };
 
-export const CheckstyleReviewerRegistration: ReviewerRegistration = {
-    pushTest: IsJava,
-    name: "Checkstyle",
-    action: checkstyleReviewer(process.env.CHECKSTYLE_PATH),
-};
+export function checkstyleReviewerRegistration(reviewOnlyChangedFiles: boolean): ReviewerRegistration {
+    return {
+        pushTest: IsJava,
+        name: "Checkstyle",
+        action: checkstyleReviewer(process.env.CHECKSTYLE_PATH),
+        options: {reviewOnlyChangedFiles},
+    };
+}
