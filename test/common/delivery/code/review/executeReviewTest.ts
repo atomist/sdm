@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import "mocha";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { executeReview } from "../../../../../src/common/delivery/code/review/executeReview";
-import { SingleProjectLoader } from "../../../SingleProjectLoader";
-import { ReviewerRegistration } from "../../../../../src/common/delivery/code/codeActionRegistrations";
 import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
+import "mocha";
+import { ReviewerRegistration } from "../../../../../src/common/delivery/code/codeActionRegistrations";
+import { executeReview } from "../../../../../src/common/delivery/code/review/executeReview";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
+import { SingleProjectLoader } from "../../../SingleProjectLoader";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
@@ -37,7 +37,7 @@ const HatesTheWorld: ReviewerRegistration = {
                     offset: -1,
                 })),
     }),
-    options: { reviewOnlyChangedFiles: false,}
+    options: { reviewOnlyChangedFiles: false},
 };
 
 describe("executeReview", () => {

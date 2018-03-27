@@ -19,20 +19,20 @@ import * as _ from "lodash";
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
+import { Project } from "@atomist/automation-client/project/Project";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { StatusForExecuteGoal } from "../../../../typings/types";
+import { filesChangedSince } from "../../../../util/git/filesChangedSince";
+import { filtered } from "../../../../util/project/filter";
+import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
+import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { filesChangedSince } from "../../../../util/git/filesChangedSince";
-import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
-import { Project } from "@atomist/automation-client/project/Project";
-import { filtered } from "../../../../util/project/filter";
 
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {

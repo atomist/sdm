@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import "mocha";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import "mocha";
 import { filtered } from "../../../src/util/project/filter";
 
 import * as assert from "power-assert";

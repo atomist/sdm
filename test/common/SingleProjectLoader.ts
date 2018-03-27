@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../src/common/repo/ProjectLoader";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../src/common/repo/ProjectLoader";
 
 export class SingleProjectLoader implements ProjectLoader {
 

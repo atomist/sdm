@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
-import * as tmp from "tmp-promise";
-import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import { logger } from "@atomist/automation-client";
+import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
+import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import * as fs from "fs";
+import * as tmp from "tmp-promise";
 import { promisify } from "util";
 
 /**
