@@ -38,7 +38,7 @@ export class RequestedCommitParameters {
     private readonly newBranch: string = "false";
 
     @Parameter({required: false})
-    private commitMessage = "Command handler commit from Atomist";
+    private readonly commitMessage = "Command handler commit from Atomist";
 
     private branchUsed: string;
 
