@@ -19,17 +19,22 @@ import "mocha";
 import * as assert from "power-assert";
 import { PushTest, pushTest } from "../../../../src/common/listener/PushTest";
 import { PushRules } from "../../../../src/common/listener/support/PushRules";
-import { TruePushTest } from "./pushTestUtilsTest";
+import { FalsePushTest, TruePushTest } from "./pushTestUtilsTest";
 
 export const UndefinedPushTest: PushTest = pushTest("true", async () => undefined);
 export const NullPushTest: PushTest = pushTest("true", async () => null);
 
 describe("PushRules", () => {
 
-    it("should match one", async () => {
+    it("should match true", async () => {
         const pm = TruePushTest;
         const pr = new PushRules("", [pm]);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
+    });
+
+    it("should be undefined on false", async () => {
+        const pr = new PushRules("", [FalsePushTest]);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
     });
 
     it("should not match undefined", async () => {
@@ -37,15 +42,30 @@ describe("PushRules", () => {
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
     });
 
-    it("should match undefined and one", async () => {
+    it("should match undefined and true", async () => {
         const pm = TruePushTest;
         const pr = new PushRules("", [UndefinedPushTest, pm]);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
     });
 
-    it("should return undefined on null and one", async () => {
+    it("should return undefined on null", async () => {
+        const pr = new PushRules("", [NullPushTest]);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
+    });
+
+    it("should return undefined on null and true", async () => {
         const pm = TruePushTest;
         const pr = new PushRules("", [NullPushTest, pm]);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
+    });
+
+    it("should return defined on true and null", async () => {
+        const pr = new PushRules("", [TruePushTest, NullPushTest]);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
+    });
+
+    it("should return undefined on false and null and true", async () => {
+        const pr = new PushRules("", [FalsePushTest, NullPushTest, TruePushTest]);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
     });
 

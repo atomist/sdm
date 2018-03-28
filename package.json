@@ -20,7 +20,7 @@
   "dependencies": {
     "@atomist/automation-client": "https://r.atomist.com/S1V2yPXO5z",
     "@atomist/slack-messages": "^0.12.1",
-    "@atomist/spring-automation": "^0.6.3",
+    "@atomist/spring-automation": "https://r.atomist.com/Syrsy8R_9f",
     "app-root-path": "^2.0.1",
     "archiver": "^2.1.1",
     "artifactory-publisher": "^1.1.4",

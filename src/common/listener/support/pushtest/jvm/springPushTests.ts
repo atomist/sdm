@@ -24,7 +24,7 @@ import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
  */
 export const HasSpringBootApplicationClass: PredicatePushTest = predicatePushTest(
     "Has Spring Boot @Application class",
-    async p => !!(await SpringBootProjectStructure.inferFromJavaSource(p)));
+    async p => await HasSpringBootPom.predicate(p) && !!(await SpringBootProjectStructure.inferFromJavaSource(p)));
 
 export const HasSpringBootPom: PredicatePushTest = predicatePushTest(
     "Has Spring Boot POM",

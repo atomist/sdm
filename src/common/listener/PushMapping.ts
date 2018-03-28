@@ -37,10 +37,11 @@ export interface PushMapping<V> {
     /**
      * Compute a value for the given push. Return undefined
      * if we don't find a mapped value.
-     * Return DoNotSetAnyGoals (null) to shortcut evaluation of the present set of rules
-     * and guarantee the return of undefined.
-     * This is a rude thing to do: Only do so if you are sure
-     * that this evaluation must be shortcircuited.
+     * Return DoNotSetAnyGoals (null) to shortcut evaluation of the present set of rules,
+     * terminating evaluation and guarantee the return of undefined if we've reached this point.
+     * Only do so if you are sure
+     * that this evaluation must be short circuited if it has reached this point.
+     * If a previous rule has matched, it will still be used.
      * The value may be static
      * or computed on demand, depending on the implementation.
      * @param {ProjectListenerInvocation} p
