@@ -21,12 +21,13 @@ import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
 import { SdmGoalIngester } from "./ingesters/sdmGoalIngester";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
-import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingSoftwareDeliveryMachine";
-import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixSoftwareDeliveryMachine";
-import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundrySoftwareDeliveryMachine";
-import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sSoftwareDeliveryMachine";
-import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisSoftwareDeliveryMachine";
+import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingMachine";
+import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixMachine";
+import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundryMachine";
+import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sMachine";
+import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisMachine";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
+import { projectCreationMachine } from "./software-delivery-machine/machines/projectCreationMachine";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
@@ -46,6 +47,8 @@ const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
  */
 
 const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+
+// const machine = projectCreationMachine(SdmOptions);
 
 // const machine = staticAnalysisSoftwareDeliveryMachine({ useCheckstyle: true});
 
