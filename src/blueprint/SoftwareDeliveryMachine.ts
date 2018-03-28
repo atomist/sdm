@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
     ArtifactGoal,
@@ -206,7 +206,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get goalSetting(): Maker<SetGoalsOnPush> {
         if (this.goalSetters.length === 0) {
-            throw new Error("No goal setters");
+            logger.warn("No goal setters");
+            return undefined;
         }
         return () => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners);
     }

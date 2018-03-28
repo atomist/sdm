@@ -26,9 +26,13 @@ export const NullPushTest: PushTest = pushTest("true", async () => null);
 
 describe("PushRules", () => {
 
+    it("should be undefined none", async () => {
+        const pr = new PushRules("", []);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
+    });
+
     it("should match true", async () => {
-        const pm = TruePushTest;
-        const pr = new PushRules("", [pm]);
+        const pr = new PushRules("", [TruePushTest]);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
     });
 
@@ -43,8 +47,7 @@ describe("PushRules", () => {
     });
 
     it("should match undefined and true", async () => {
-        const pm = TruePushTest;
-        const pr = new PushRules("", [UndefinedPushTest, pm]);
+        const pr = new PushRules("", [UndefinedPushTest, TruePushTest]);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
     });
 
@@ -54,8 +57,7 @@ describe("PushRules", () => {
     });
 
     it("should return undefined on null and true", async () => {
-        const pm = TruePushTest;
-        const pr = new PushRules("", [NullPushTest, pm]);
+        const pr = new PushRules("", [NullPushTest, TruePushTest]);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
     });
 

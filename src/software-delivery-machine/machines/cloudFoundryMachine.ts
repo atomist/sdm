@@ -73,6 +73,7 @@ export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSu
 
 /**
  * Assemble a machine that supports Java, Spring and Node and deploys to Cloud Foundry
+ * See generatorConfig.ts to customize generation defaults.
  * @return {SoftwareDeliveryMachine}
  */
 export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundryMachineOptions): SoftwareDeliveryMachine {

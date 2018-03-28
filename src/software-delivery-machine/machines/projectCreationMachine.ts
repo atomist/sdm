@@ -16,10 +16,8 @@
 
 import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { onAnyPush } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
-import { DoNotSetAnyGoals } from "../../common/listener/PushMapping";
 import { tagRepo } from "../../common/listener/support/tagRepo";
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { springBootGenerator } from "../commands/generators/java/spring/springBootGenerator";
@@ -30,7 +28,8 @@ export type ProjectCreationMachineOptions = SoftwareDeliveryMachineOptions;
 
 /**
  * Assemble a machine that performs only project creation and tagging,
- * for Spring/Java and Node
+ * for Spring/Java and Node.
+ * See generatorConfig.ts to customize generation defaults.
  * @return {SoftwareDeliveryMachine}
  */
 export function projectCreationMachine(opts: Partial<ProjectCreationMachineOptions> = {}): SoftwareDeliveryMachine {
@@ -39,11 +38,7 @@ export function projectCreationMachine(opts: Partial<ProjectCreationMachineOptio
         projectLoader: new CachingProjectLoader(),
         ...opts,
     };
-    const sdm = new SoftwareDeliveryMachine(
-        "Project creation machine",
-        options,
-        onAnyPush
-            .setGoals(DoNotSetAnyGoals));
+    const sdm = new SoftwareDeliveryMachine("Project creation machine", options);
 
     sdm.addGenerators(
         () => springBootGenerator({
