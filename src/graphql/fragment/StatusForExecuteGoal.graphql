@@ -22,6 +22,9 @@ fragment StatusForExecuteGoal on Status {
       }
       branch
       id
+      repo {
+        ...CoreRepoFieldsAndChannels
+      }
     }
     image {
       image
