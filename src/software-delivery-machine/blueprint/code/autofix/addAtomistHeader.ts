@@ -19,6 +19,9 @@ import { PushTest } from "../../../../common/listener/PushTest";
 import { IsJava } from "../../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { IsTypeScript } from "../../../../common/listener/support/pushtest/node/tsPushTests";
 import { AddHeaderParameters, addHeaderProjectEditor } from "../../../commands/editors/license/addHeader";
+import { allSatisfied } from "../../../../common/listener/support/pushtest/pushTestUtils";
+import { hasFileContaining } from "../../../../common/listener/support/pushtest/commonPushTests";
+import { LicenseFilename } from "./addLicenseFile";
 
 export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java header", "**/*.java", IsJava);
 
@@ -29,7 +32,7 @@ export function addAtomistHeader(name: string, glob: string, pushTest: PushTest)
     ourParams.glob = glob;
     return {
         name,
-        pushTest,
+        pushTest: allSatisfied(pushTest, hasFileContaining(LicenseFilename, /Apache License/)),
         // Ignored any parameters passed in, which will be undefined in an autofix, and provide predefined parameters
         action: (p, context) => addHeaderProjectEditor(p, context, ourParams),
     };

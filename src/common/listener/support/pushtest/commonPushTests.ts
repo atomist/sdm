@@ -58,3 +58,21 @@ export function hasFile(path: string): PredicatePushTest {
     return predicatePushTest(`HasFile(${path}})`,
         async p => !!(await p.getFile(path)));
 }
+
+/**
+ * Return a PushTest testing for the existence of the given file containing the pattern
+ * @param {string} path
+ * @param pattern regex to look for
+ * @return {PushTest}
+ */
+export function hasFileContaining(path: string, pattern: RegExp): PredicatePushTest {
+    return predicatePushTest(`HasFile(${path}} containing ${pattern.source})`,
+        async p => {
+            const f = await p.getFile(path);
+            if (!f) {
+                return false;
+            }
+            const content = await f.getContent();
+            return pattern.test(content);
+        });
+}
