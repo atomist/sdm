@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import {Deployment, TargetInfo} from "../../../../spi/deploy/Deployment";
-
-export const PCFTestingDomain = "ri-staging";
-export const PCFProductionDomain = "ri-production";
+import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
 
 /**
  * Path to Cloud Foundry manifest within deployable projects
@@ -45,30 +42,3 @@ export const PivotalWebServices = { // : Partial<CloudFoundryInfo> = {
 
     api: "https://api.run.pivotal.io",
 };
-
-export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
-
-    public api = process.env.PCF_API || PivotalWebServices.api;
-
-    public username = process.env.PIVOTAL_USER;
-
-    public password = process.env.PIVOTAL_PASSWORD;
-
-    public space = process.env.PCF_SPACE || PCFProductionDomain;
-
-    public org = process.env.PCF_ORG;
-
-    constructor(space?: string) {
-        if (!!space) {
-            this.space = space;
-        }
-    }
-
-    get name() {
-        return `PCF`;
-    }
-
-    get description() {
-        return `PCF ${this.api};org=${this.org};space=${this.space};user=${this.username}`;
-    }
-}

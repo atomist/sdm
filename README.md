@@ -559,12 +559,20 @@ To build Node projects:
 
 #### Cloud Foundry
 
-In order to enable Pivotal Cloud Foundry deployment, the following environment variables are required:
+In order to enable Pivotal Cloud Foundry deployment, the following environment variables are used.
+
+Required:
 
 - `PIVOTAL_USER`: your Pivotal Cloud Foundry user name
 - `PIVOTAL_PASSWORD`: your Pivotal Cloud Foundry password 
 - `PCF_ORG`: your Pivotal Cloud Foundry organization name
-- `PCF_SPACE`: your Pivotal Cloud Foundry space name within `$PCE_ORG`
+- `PCF_SPACE_STAGING`: your Pivotal Cloud Foundry staging space name within `$PCF_ORG`
+- `PCF_SPACE_PRODUCTION`: your Pivotal Cloud Foundry production space name within `$PCF_ORG`
+
+Optional:
+
+- `PIVOTAL_API`: PCF API to hit. Default if this key is not provided is Pivotal Web Services at `https://api.run.pivotal.io`. Specify a different value to deploy to your own Cloud Foundry instance.
+
 
 #### Kubernetes
 

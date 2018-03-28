@@ -17,7 +17,6 @@
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import {
     CloudFoundryInfo,
-    EnvironmentCloudFoundryTarget,
 } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
 import {
@@ -31,6 +30,12 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
+import { EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget";
+
+export const CloudFoundryStagingTarget = new EnvironmentCloudFoundryTarget("staging");
+
+export const CloudFoundryProductionTarget = new EnvironmentCloudFoundryTarget("production");
+
 
 /**
  * Deploy everything to the same Cloud Foundry space
@@ -42,7 +47,7 @@ export function cloudFoundryStagingDeploySpec(opts: {artifactStore: ArtifactStor
         endpointGoal: StagingEndpointGoal,
         artifactStore: opts.artifactStore,
         deployer: new CommandLineCloudFoundryDeployer(opts.projectLoader),
-        targeter: () => new EnvironmentCloudFoundryTarget("ri-staging"),
+        targeter: () => CloudFoundryStagingTarget,
     };
 }
 
@@ -53,7 +58,7 @@ export function cloudFoundryProductionDeploySpec(opts: {artifactStore: ArtifactS
         endpointGoal: ProductionEndpointGoal,
         artifactStore: opts.artifactStore,
         deployer: new CommandLineCloudFoundryDeployer(opts.projectLoader),
-        targeter: () => new EnvironmentCloudFoundryTarget("ri-production"),
+        targeter: () => CloudFoundryProductionTarget,
     };
 }
 

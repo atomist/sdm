@@ -16,7 +16,11 @@
 
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
+import {
+    ExecuteGoalInvocation,
+    ExecuteGoalResult,
+    GoalExecutor
+} from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { StatusForExecuteGoal } from "../../../../typings/types";
@@ -35,7 +39,8 @@ export async function executeGoal(execute: GoalExecutor,
         await markStatus(ctx, sdmGoal, params.goal, result);
         return Success;
     } catch (err) {
-        logger.warn("Error executing %s on %s: %s", params.implementationName, repoRefFromStatus(status).url, err.message);
+        logger.warn("Error executing %s on %s: %s",
+            params.implementationName, repoRefFromStatus(status).url, err);
         await markStatus(ctx, sdmGoal, params.goal, {code: 1});
         return failure(err);
     }

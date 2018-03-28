@@ -23,7 +23,8 @@ import {
     MappedParameters,
     Parameter,
     Secret,
-    Secrets, Success,
+    Secrets,
+    Success,
     success,
 } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
@@ -36,13 +37,11 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import {
-    CloudFoundryInfo,
-    EnvironmentCloudFoundryTarget,
-} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
-import {AddressChannels} from "../../../common/slack/addressChannels";
+import { CloudFoundryInfo } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import { AddressChannels } from "../../../common/slack/addressChannels";
 import { undeployFromK8s } from "../../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 import { deleteRepository } from "../../../util/github/ghub";
+import { CloudFoundryProductionTarget, CloudFoundryStagingTarget } from "./cloudFoundryDeploy";
 
 export const K8sTestingDomain = "testing";
 export const K8sProductionDomain = "production";
@@ -83,8 +82,8 @@ function disposeHandle(ctx: HandlerContext, params: DisposeParameters): Promise<
     const creds = {token: params.githubToken};
     return disposeOfProjectK8s(creds, id, msg => ctx.messageClient.respond(msg))
         .then(() => ctx.messageClient.respond("Repository deleted."))
-        .then(success, err => {
-            ctx.messageClient.respond("Problem disposing: " + err.message);
+        .then(success, async err => {
+            await ctx.messageClient.respond("Problem disposing: " + err.message);
             return Success;
         });
 }
@@ -107,10 +106,8 @@ async function disposeOfProjectPCF(creds: ProjectOperationCredentials, id: Remot
             .then(appNames =>
                 Promise.all(appNames
                     .map(async appName => {
-                        const cfi = new EnvironmentCloudFoundryTarget();
-                        await deletePCF(cfi, appName); // staging
-                        cfi.space = K8sProductionDomain;
-                        await deletePCF(cfi, appName);
+                        await deletePCF(CloudFoundryStagingTarget, appName);
+                        await deletePCF(CloudFoundryProductionTarget, appName);
                     })));
     await deleteRepository((creds as TokenCredentials).token, id as GitHubRepoRef);
 }
