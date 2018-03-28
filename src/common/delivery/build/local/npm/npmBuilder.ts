@@ -35,6 +35,12 @@ export function nodeRunBuildBuilder(projectLoader: ProjectLoader) {
         projectLoader, npmBuilderOptions([Install, RunBuild]));
 }
 
+export function nodeRunCompileBuilder(projectLoader: ProjectLoader) {
+    return new SpawnBuilder(undefined,
+        createEphemeralProgressLogWithConsole,
+        projectLoader, npmBuilderOptions([Install, RunCompile]));
+}
+
 export const npmLogInterpreter: LogInterpreter = log => {
     const relevantPart = log.split("\n")
         .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))

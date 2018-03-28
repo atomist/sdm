@@ -21,7 +21,7 @@ import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
-import { nodeRunBuildBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
+import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
@@ -105,12 +105,16 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     );
 
     const runBuildBuilder = nodeRunBuildBuilder(options.projectLoader);
+    const runCompileBuilder = nodeRunCompileBuilder(options.projectLoader);
 
     sdm.addBuildRules(
         new NpmDetectBuildMapping(options.artifactStore, options.projectLoader),
-        build.when(IsNode)
+        build.when(IsNode, ToDefaultBranch)
             .itMeans("Try standard node build")
             .set(runBuildBuilder),
+        build.when(IsNode)
+            .itMeans("Just compile")
+            .set(runCompileBuilder),
         build.setDefault(new MavenBuilder(options.artifactStore,
             createEphemeralProgressLog, options.projectLoader)),
     )
