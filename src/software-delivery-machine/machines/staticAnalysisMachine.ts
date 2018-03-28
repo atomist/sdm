@@ -27,14 +27,14 @@ import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 import { addCheckstyleSupport, CheckstyleSupportOptions } from "../parts/stacks/checkstyleSupport";
 
-export type StaticAnalysisSoftwareDeliveryMachineOptions = SoftwareDeliveryMachineOptions & CheckstyleSupportOptions;
+export type StaticAnalysisMachineOptions = SoftwareDeliveryMachineOptions & CheckstyleSupportOptions;
 
 /**
  * Assemble a machine that performs only static analysis.
  * @return {SoftwareDeliveryMachine}
  */
-export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalysisSoftwareDeliveryMachineOptions> = {}): SoftwareDeliveryMachine {
-    const options: StaticAnalysisSoftwareDeliveryMachineOptions = {
+export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalysisMachineOptions> = {}): SoftwareDeliveryMachine {
+    const options: StaticAnalysisMachineOptions = {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
         useCheckstyle: true,

@@ -24,13 +24,13 @@ import { AddAtomistJavaHeader, AddAtomistTypeScriptHeader } from "../blueprint/c
 import { AddLicenseFile } from "../blueprint/code/autofix/addLicenseFile";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 
-export type AutofixSoftwareDeliveryMachineOptions = SoftwareDeliveryMachineOptions;
+export type AutofixMachineOptions = SoftwareDeliveryMachineOptions;
 
 /**
  * Assemble a machine that performs only autofixes.
  * @return {SoftwareDeliveryMachine}
  */
-export function autofixSoftwareDeliveryMachine(opts: Partial<AutofixSoftwareDeliveryMachineOptions> = {}): SoftwareDeliveryMachine {
+export function autofixSoftwareDeliveryMachine(opts: Partial<AutofixMachineOptions> = {}): SoftwareDeliveryMachine {
     const options = {
         artifactStore: DefaultArtifactStore,
         projectLoader: CloningProjectLoader,

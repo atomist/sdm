@@ -65,6 +65,7 @@ describe("springBootGenerator", () => {
                 seedRepo: "bar",
                 intent: "whatever",
                 groupId: "atomist",
+                addAtomistWebhook: false,
             });
             params.target.repo = "repoName";
             params.serviceClassName = "foo";
@@ -96,6 +97,7 @@ describe("springBootGenerator", () => {
                 seedRepo: "spring-rest-seed",
                 intent: "whatever",
                 groupId: "atomist",
+                addAtomistWebhook: false,
             };
             let result: Project;
             const gen = springBootGenerator(config, {

@@ -21,7 +21,13 @@
 export interface GeneratorConfig {
 
     seedOwner: string;
+
     seedRepo: string;
 
     intent: string;
+
+    /**
+     * Add an Atomist webhook to new repos?
+     */
+    addAtomistWebhook: boolean;
 }

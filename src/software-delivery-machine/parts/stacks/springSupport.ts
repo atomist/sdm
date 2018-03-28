@@ -25,6 +25,7 @@ import { mavenSourceDeployer } from "../../blueprint/deploy/localSpringBootDeplo
 import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../../commands/generators/java/spring/springBootGenerator";
+import { CommonJavaGeneratorConfig } from "../../machines/generatorConfig";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
@@ -35,7 +36,7 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
     softwareDeliveryMachine
         .addDeployRules(
             deploy.when(IsMaven)
-                .itMeans("Maven local")
+                .itMeans("Maven local deploy")
                 .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
                 .using(
                     {
@@ -47,9 +48,8 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
             () => tryToUpgradeSpringBootVersion,
         )
         .addGenerators(() => springBootGenerator({
-            seedOwner: "spring-team",
+            ...CommonJavaGeneratorConfig,
             seedRepo: "spring-rest-seed",
-            groupId: "atomist",
             intent: "create spring",
         }))
         .addNewRepoWithCodeActions(

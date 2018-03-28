@@ -21,6 +21,7 @@ import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 import { AddBuildScript } from "../../blueprint/code/autofix/addBuildScript";
 import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
+import { CommonGeneratorConfig } from "../../machines/generatorConfig";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
@@ -29,12 +30,12 @@ import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
 export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine) {
     softwareDeliveryMachine
         .addGenerators(() => nodeGenerator({
-            seedOwner: "spring-team",
+            ...CommonGeneratorConfig,
             seedRepo: "typescript-express-seed",
             intent: "create node",
         }))
         .addGenerators(() => nodeGenerator({
-            seedOwner: "spring-team",
+            ...CommonGeneratorConfig,
             seedRepo: "minimal-node-seed",
             intent: "create minimal node",
         }))

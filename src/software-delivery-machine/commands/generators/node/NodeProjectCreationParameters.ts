@@ -55,5 +55,6 @@ export class NodeProjectCreationParameters extends BaseSeedDrivenGeneratorParame
         super();
         this.source.owner = config.seedOwner;
         this.source.repo = config.seedRepo;
+        this.addAtomistWebhook = config.addAtomistWebhook;
     }
 }

@@ -17,33 +17,63 @@
 import "mocha";
 import * as assert from "power-assert";
 import {
+    JavaIdentifierRegExp,
     JavaPackageRegExp,
     MavenGroupIdRegExp,
 } from "../../../../src/software-delivery-machine/commands/generators/java/javaPatterns";
 
 describe("javaPatterns", () => {
 
+    describe("JavaIdentifierRegExp", () => {
+
+        it("should match valid identifiers", () => {
+            const identifiers = [
+                "x",
+                "x3",
+                "comfoBarBazbar",
+                "BAR_Z",
+                "_article",
+                "barnacle_17_644_foo",
+                "ClassName",
+                "$className",
+            ];
+            identifiers.forEach(b => assert(JavaIdentifierRegExp.pattern.test(b)));
+        });
+
+        it("should reject invalid identifiers", () => {
+            const identifiers = [
+                "1x",
+                "com-1",
+                "com.foo-1.bar",
+                "c%",
+                "com.f",
+            ];
+            identifiers.forEach(b => assert(!JavaIdentifierRegExp.pattern.test(b)));
+        });
+
+    });
+
     describe("JavaPackageRegExp", () => {
 
         it("should match valid packages", () => {
-            const branches = [
+            const packages = [
                 "",
                 "com",
                 "com.foo.bar",
                 "com1",
                 "Fuga21",
             ];
-            branches.forEach(b => assert(JavaPackageRegExp.pattern.test(b)));
+            packages.forEach(b => assert(JavaPackageRegExp.pattern.test(b)));
         });
 
         it("should reject invalid packages", () => {
-            const branches = [
+            const packages = [
                 "1x",
                 "com-1",
                 "com.foo-1.bar",
                 "c%",
             ];
-            branches.forEach(b => assert(!JavaPackageRegExp.pattern.test(b)));
+            packages.forEach(b => assert(!JavaPackageRegExp.pattern.test(b)));
         });
 
     });
@@ -51,22 +81,22 @@ describe("javaPatterns", () => {
     describe("MavenGroupIdRegExp", () => {
 
         it("should match valid ids", () => {
-            const branches = [
+            const ids = [
                 "atomist",
                 "atomist-seeds",
                 "com.foo.bar",
                 "test_1",
             ];
-            branches.forEach(b => assert(MavenGroupIdRegExp.pattern.test(b)));
+            ids.forEach(b => assert(MavenGroupIdRegExp.pattern.test(b)));
         });
 
-        it("should reject invalid packages", () => {
-            const branches = [
+        it("should reject invalid ids", () => {
+            const ids = [
                 "&345",
                 "'66",
                 "c%",
             ];
-            branches.forEach(b =>
+            ids.forEach(b =>
                 assert(!MavenGroupIdRegExp.pattern.test(b), "Should have failed on " + b));
         });
 

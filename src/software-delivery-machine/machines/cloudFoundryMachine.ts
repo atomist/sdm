@@ -69,13 +69,13 @@ import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
 
-export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
+export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
 /**
  * Assemble a machine that supports Java, Spring and Node and deploys to Cloud Foundry
  * @return {SoftwareDeliveryMachine}
  */
-export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwareDeliverMachineOptions): SoftwareDeliveryMachine {
+export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundryMachineOptions): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         "CloudFoundry software delivery machine",
         options,

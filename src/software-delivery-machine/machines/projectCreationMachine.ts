@@ -27,6 +27,7 @@ import { tagRepo } from "../../common/listener/support/tagRepo";
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { springBootGenerator } from "../commands/generators/java/spring/springBootGenerator";
 import { nodeGenerator } from "../commands/generators/node/nodeGenerator";
+import { CommonGeneratorConfig, CommonJavaGeneratorConfig } from "./generatorConfig";
 
 export type ProjectCreationMachineOptions = SoftwareDeliveryMachineOptions;
 
@@ -49,18 +50,17 @@ export function projectCreationMachine(opts: Partial<ProjectCreationMachineOptio
 
     sdm.addGenerators(
         () => springBootGenerator({
-            seedOwner: "spring-team",
+            ...CommonJavaGeneratorConfig,
             seedRepo: "spring-rest-seed",
-            groupId: "atomist",
             intent: "create spring",
         }),
         () => nodeGenerator({
-            seedOwner: "spring-team",
+            ...CommonGeneratorConfig,
             seedRepo: "typescript-express-seed",
             intent: "create node",
         }),
         () => nodeGenerator({
-            seedOwner: "spring-team",
+            ...CommonGeneratorConfig,
             seedRepo: "minimal-node-seed",
             intent: "create minimal node",
         }))
