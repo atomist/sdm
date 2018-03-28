@@ -26,7 +26,7 @@ import {
     StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
-import { CodeReactionListener } from "../../../common/listener/CodeReactionListener";
+import { CodeReactionListener, CodeReactionRegistration } from "../../../common/listener/CodeReactionListener";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
@@ -57,10 +57,7 @@ export function cloudFoundryProductionDeploySpec(opts: {artifactStore: ArtifactS
     };
 }
 
-/**
- * Enable deployment when a PCF manifest is added to the default branch.
- */
-export const EnableDeployOnCloudFoundryManifestAddition: CodeReactionListener = async cri => {
+const EnableDeployOnCloudFoundryManifestAdditionListener: CodeReactionListener = async cri => {
     const commit = cri.commit;
     const repo = commit.repo;
     const push = commit.pushes[0];
@@ -69,4 +66,12 @@ export const EnableDeployOnCloudFoundryManifestAddition: CodeReactionListener = 
         await setDeployEnablement(true)
         (cri.context, {repo: repo.name, owner: repo.owner, providerId: repo.org.provider.providerId});
     }
+};
+
+/**
+ * Enable deployment when a PCF manifest is added to the default branch.
+ */
+export const EnableDeployOnCloudFoundryManifestAddition: CodeReactionRegistration = {
+    name: "EnableDeployOnCloudFoundryManifestAddition",
+    action: EnableDeployOnCloudFoundryManifestAdditionListener,
 };

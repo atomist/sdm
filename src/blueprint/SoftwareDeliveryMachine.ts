@@ -64,7 +64,7 @@ import { Goal } from "../common/delivery/goals/Goal";
 import { Goals } from "../common/delivery/goals/Goals";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
-import { CodeReactionListener } from "../common/listener/CodeReactionListener";
+import { CodeReactionListener, CodeReactionRegistration } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
@@ -144,7 +144,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
-    private codeReactions: CodeReactionListener[] = [];
+    private codeReactionRegistrations: CodeReactionRegistration[] = [];
 
     private autofixRegistrations: AutofixRegistration[] = [];
 
@@ -195,7 +195,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get codeReactionHandling(): FunctionalUnit {
         return functionalUnitForGoal("CodeReactions",
             CodeReactionGoal,
-            executeCodeReactions(this.opts.projectLoader, this.codeReactions));
+            executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations));
     }
 
     private get autofix(): FunctionalUnit {
@@ -401,8 +401,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addCodeReactions(...pls: CodeReactionListener[]): this {
-        this.codeReactions = this.codeReactions.concat(pls);
+    public addCodeReactions(...crrs: CodeReactionRegistration[]): this {
+        this.codeReactionRegistrations = this.codeReactionRegistrations.concat(crrs);
         return this;
     }
 

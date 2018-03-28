@@ -19,6 +19,7 @@ import {
     ProjectListenerInvocation,
     SdmListener,
 } from "./Listener";
+import { CodeActionRegistration } from "../delivery/code/codeActionRegistrations";
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
@@ -31,3 +32,12 @@ export interface CodeReactionInvocation extends ProjectListenerInvocation {
 }
 
 export type CodeReactionListener = SdmListener<CodeReactionInvocation>;
+
+/**
+ * Register a code reaction
+ */
+export interface CodeReactionRegistration extends CodeActionRegistration<CodeReactionListener> {
+
+    name: string;
+
+}

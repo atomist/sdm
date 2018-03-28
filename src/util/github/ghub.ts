@@ -171,11 +171,11 @@ export function isPublicRepo(token: string, rr: GitHubRepoRef): Promise<boolean>
     return axios.get(url, config)
         .then(ap => {
             const privateness = ap.data.private;
-            logger.info(`Retrieved ${url}. Visibility is: ${privateness}`);
+            logger.info(`Retrieved ${url}. Private is '${privateness}'`);
             return !privateness;
         })
         .catch(ap => {
-            logger.warn(`Could not access ${url}: ${ap.response.status}`);
+            logger.warn(`Could not access ${url} to determine repo visibility: ${ap.response.status}`);
             return false;
         });
 }

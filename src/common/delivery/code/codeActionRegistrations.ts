@@ -21,13 +21,16 @@ import { PushTest } from "../../listener/PushTest";
 
 export interface CodeActionRegistration<A> {
 
+    name: string;
+
     pushTest?: PushTest;
+
     action: A;
 }
 
 export interface AutofixRegistrationOptions {
-    ignoreFailure: boolean;
 
+    ignoreFailure: boolean;
 }
 
 /**
@@ -40,11 +43,6 @@ export interface AutofixRegistrationOptions {
  */
 export interface AutofixRegistration extends CodeActionRegistration<AnyProjectEditor> {
 
-    name: string;
-
-    /**
-     * Ignore failure of this editor. If this is true, revert and keep going
-     */
     options?: AutofixRegistrationOptions;
 
 }
@@ -58,8 +56,6 @@ export interface ReviewerRegistrationOptions {
 }
 
 export interface ReviewerRegistration extends CodeActionRegistration<ProjectReviewer> {
-
-    name: string;
 
     options?: ReviewerRegistrationOptions;
 }

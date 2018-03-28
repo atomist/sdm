@@ -18,26 +18,28 @@ import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { filesChangedSince } from "../../../util/git/filesChangedSince";
-import { CodeReactionInvocation, CodeReactionListener } from "../../listener/CodeReactionListener";
+import { CodeReactionInvocation, CodeReactionRegistration } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, GoalExecutor } from "../goals/goalExecution";
+import { relevantCodeActions } from "./codeActionRegistrations";
 
-export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions: CodeReactionListener[]): GoalExecutor {
+export function executeCodeReactions(projectLoader: ProjectLoader,
+                                     registrations: CodeReactionRegistration[]): GoalExecutor {
     return async (status: StatusForExecuteGoal.Fragment, context: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         const credentials = {token: params.githubToken};
 
-        logger.info("Will run %d code reactions on %j", codeReactions.length, id);
+        logger.info("Will run %d code reactions on %j", registrations.length, id);
         if (status.context !== params.goal.context || status.state !== "pending") {
             logger.debug("Looking for %s being pending, but heard about %s being %s", params.goal.context, status.context, status.state);
             return Success;
         }
 
         const addressChannels = addressChannelsFor(commit.repo, context);
-        if (codeReactions.length === 0) {
+        if (registrations.length === 0) {
             return Success;
         }
 
@@ -54,8 +56,14 @@ export function executeCodeReactions(projectLoader: ProjectLoader, codeReactions
                 commit,
                 push,
             };
+
+            const relevantCodeReactions: CodeReactionRegistration[] = await
+                relevantCodeActions<CodeReactionRegistration>(registrations, cri);
+            logger.info("Will invoke %d eligible code reactions of %d to %j",
+                relevantCodeReactions.length, registrations.length, cri.id);
             const allReactions: Promise<any> =
-                Promise.all(codeReactions.map(reaction => reaction(cri)));
+                Promise.all(relevantCodeReactions
+                    .map(reactionReg => reactionReg.action(cri)));
             await allReactions;
         });
         return Success;

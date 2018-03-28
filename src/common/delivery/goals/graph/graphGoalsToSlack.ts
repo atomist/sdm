@@ -29,6 +29,9 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     if (!graphvizServiceUrl) {
         return;
     }
+    if (!gsi.goals) {
+        return;
+    }
 
     try {
         const graphDefinition = goalsToDot(gsi.goals);
