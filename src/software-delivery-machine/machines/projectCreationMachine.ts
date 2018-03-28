@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
-import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { onAnyPush } from "../../blueprint/dsl/goalDsl";
@@ -70,17 +67,3 @@ export function projectCreationMachine(opts: Partial<ProjectCreationMachineOptio
         );
     return sdm;
 }
-
-const rodHatesYml: ProjectReviewer = async p => {
-    return {
-        repoId: p.id,
-        comments: await saveFromFiles(p, "**/*.yml", f =>
-            new DefaultReviewComment("info", "yml-reviewer",
-                `Found YML in \`${f.path}\`: Rod regards the format as an insult to computer science`,
-                {
-                    path: f.path,
-                    lineFrom1: 1,
-                    offset: -1,
-                })),
-    };
-};

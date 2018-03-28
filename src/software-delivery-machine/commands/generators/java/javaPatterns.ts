@@ -19,9 +19,8 @@ import { BaseParameter } from "@atomist/automation-client/internal/metadata/deco
 export const JavaIdentifierRegExp: Partial<BaseParameter> = {
     description: "valid Java identifier name",
     pattern: /^([$a-zA-Z_][\w$]*)*$/,
-    validInput: "a valid Git branch name, see" +
-    " https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html",
-    minLength: 0,
+    validInput: "a valid Java identifier",
+    minLength: 1,
     maxLength: 150,
 };
 
@@ -29,8 +28,7 @@ export const JavaPackageRegExp: Partial<BaseParameter> = {
     displayName: "Root Package",
     description: "root package for your generated source, often this will be namespaced under the group ID",
     pattern: /^([a-zA-Z_][.\w]*)*$/,
-    validInput: "a valid Git branch name, see" +
-    " https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html",
+    validInput: "valid java package name",
     minLength: 0,
     maxLength: 150,
 };
