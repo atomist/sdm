@@ -5,7 +5,7 @@ Atomist framework enabling you to control your delivery and development process 
 ## What is a Software Delivery Machine?
 >A **software delivery machine** is a development process in a box. 
 
-It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by Atomist's *API for software*.
+It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by the Atomist *API for software*.
 
 > Many teams have a blueprint in their mind for how they'd like to deliver software and ease their day to day work, but find it hard to realize. A Software Delivery Machine makes it possible.
 
@@ -154,7 +154,7 @@ such as artifact storage, logging, build and deployment.
 - `src/blueprint`
 - `src/common`
 - `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
-- `src/handlers` contains handlers that implement general SDM concepts.
+- `src/handlers` contains handlers that implement general SDM concepts. This is lower level infrastructure, which you generally won't need to modify directly.
 - `src/typings` is where generated-from-graphql types wind up. Refresh these with `npm run gql:gen` 
 if you update any GraphQL files in `src/graphql`.
 - `src/util` 

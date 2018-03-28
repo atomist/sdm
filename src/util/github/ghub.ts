@@ -69,13 +69,6 @@ function ensureValidUrl(inputStatus: Status): Status {
     };
 }
 
-export function listStatuses(token: string, rr: GitHubRepoRef): Promise<Status[]> {
-    const config = authHeaders(token);
-    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/commits/${rr.sha}/statuses`;
-    return axios.get(url, config)
-        .then(ap => ap.data);
-}
-
 export interface Tag {
     tag: string;
     message: string;
