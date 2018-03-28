@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CodeReactionInvocation } from "../../../common/listener/CodeReactionListener";
+import { CodeReactionInvocation, CodeReactionRegistration } from "../../../common/listener/CodeReactionListener";
 
 /**
  * React to a push by listing changed files to any Slack channels
@@ -22,6 +22,9 @@ import { CodeReactionInvocation } from "../../../common/listener/CodeReactionLis
  * @param {CodeReactionInvocation} i
  * @return {Promise<any>}
  */
-export async function listChangedFiles(i: CodeReactionInvocation): Promise<any> {
-    return i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
-}
+export const listChangedFiles: CodeReactionRegistration = {
+    action(i: CodeReactionInvocation) {
+        return i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
+    },
+    name: "List files changed",
+};
