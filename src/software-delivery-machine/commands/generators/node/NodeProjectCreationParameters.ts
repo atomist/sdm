@@ -18,8 +18,8 @@ import { MappedParameter, MappedParameters, Parameter } from "@atomist/automatio
 import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/BaseSeedDrivenGeneratorParameters";
 
 import { Parameters } from "@atomist/automation-client/decorators";
-import { GeneratorConfig } from "../GeneratorConfig";
 import { SemVerRegExp } from "../commonPatterns";
+import { GeneratorConfig } from "../GeneratorConfig";
 
 /**
  * Creates a GitHub Repo and installs Atomist collaborator if necessary
