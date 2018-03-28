@@ -59,7 +59,7 @@ with its previous knowledge, and invokes your event handlers with rich context. 
 
 - Scanning code for security or quality issues on every push
 - Driving deployments and promotion between environments
-- Perform custom actions on deployment, such as kick off integration test suites.
+- Performing custom actions on deployment, such as kicking off integration test suites.
 
 Its correlated event model also enables Atomist to provide you with visibility throughout the commit to deployment flow, in Slack or through the Atomist web dashboard.
 
@@ -120,7 +120,7 @@ The key events handled in this repository are:
 - _On repo creation_. When a new repository has been created, we often want to perform
 additional actions, such as provisioning an issue tracker. We provide a hook for this
 and also demonstrate how to add GitHub topics based on initial repo content.  
-- _On push to a repo._ This is often a trigger for code review or other actions based on code. Specifically, we allow
+- _On push to a repo._ This is often a trigger for code review or other actions based on the code. Specifically, we allow
    - Analysis of semantic diffs: What is the meaning of what changed?
 	- Code review, including using external tools such as Checkstyle
 	- Autofixes: Linting or making other automatic corrections such as supplying missing license files
@@ -149,7 +149,7 @@ The following directories will later become available as a library. We'll keep w
 while the interfaces will change less.
 > In particular, the event listener interfaces discussed later in the document are expected to remain stable.
 
-- The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure
+- The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure,
 such as artifact storage, logging, build and deployment.
 - `src/blueprint`
 - `src/common`
@@ -227,10 +227,10 @@ This is registed with a `SoftwareDeliveryMachine` instance as follows:
 ```typescript
 sdm.addNewIssueListeners(requestDescription)
 ```
-Using the `credentials` on the `NewIssueInvocation`, you can even use the GitHub API to modify the issue, for example correctly spelling errors.
+Using the `credentials` on the `NewIssueInvocation`, you can even use the GitHub API to modify the issue, for example correcting spelling errors.
 
 ### Repo Creation
-We frequently want to respond to the creation of a new repository: For example, to notify people, provision infrastructure, or tag it with GitHub topics based on its contents.
+We frequently want to respond to the creation of a new repository: For example, we may want to notify people, provision infrastructure, or tag it with GitHub topics based on its contents.
 
 #### Listener interfaces
 There are two scenarios to consider:
@@ -265,7 +265,7 @@ A push to the source control hosting system is typically a very important trigge
 
 - Code Review
 - Code
-- tbc
+- To Be Completed
 
 There are multiple domain-specific listeners associated with pushes.
 
@@ -295,7 +295,7 @@ export interface ProjectListenerInvocation extends ListenerInvocation {
 #### Goal Creation
 The first and most important reaction to a push is determining the set of *goals* that will be executed. 
 This will drive further behavior: For example, do we need a code review? 
-Do we need to deploy a push to this branch? Typically goal setting depends both on the
+Does a push to this branch trigger a deployment? Typically goal setting depends both on the
  characteristics of the push (usually, its branch), and the characteristics of the project--for example, 
  does it have a Cloud Foundry manifest?
 
