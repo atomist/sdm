@@ -31,7 +31,7 @@
         "no-switch-case-fall-through": true,
         "no-unnecessary-class": true,
         "no-var-keyword": true,
-        "prefer-readonly": true,
+        "prefer-readonly": false,
         "prefer-const": true,
         "member-access": true,
         "strict-boolean-expressions": false
