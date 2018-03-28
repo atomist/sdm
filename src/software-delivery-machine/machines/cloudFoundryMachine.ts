@@ -25,6 +25,7 @@ import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/deliver
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
+    AutofixGoal,
     LocalDeploymentGoal,
     LocalEndpointGoal,
     NoGoals,
@@ -66,6 +67,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { Goals } from "../../common/delivery/goals/Goals";
 
 export type CloudFoundrySoftwareDeliverMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -77,6 +79,9 @@ export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundrySoftwar
     const sdm = new SoftwareDeliveryMachine(
         "CloudFoundry software delivery machine",
         options,
+        whenPushSatisfies(HasTravisFile, IsNode)
+            .itMeans("Already builds with Travis")
+            .setGoals(new Goals("Autofix only", AutofixGoal)),
         whenPushSatisfies(HasTravisFile)
             .itMeans("Already builds with Travis")
             .setGoals(DoNotSetAnyGoals),
