@@ -17,16 +17,16 @@
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
+import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
+import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { onAnyPush } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
-import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
-import { tagRepo } from "../../common/listener/support/tagRepo";
-import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
-import { nodeGenerator } from "../commands/generators/node/nodeGenerator";
-import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
-import { springBootGenerator } from "../commands/generators/java/spring/springBootGenerator";
 import { DoNotSetAnyGoals } from "../../common/listener/PushMapping";
+import { tagRepo } from "../../common/listener/support/tagRepo";
+import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
+import { springBootGenerator } from "../commands/generators/java/spring/springBootGenerator";
+import { nodeGenerator } from "../commands/generators/node/nodeGenerator";
 
 export type ProjectCreationMachineOptions = SoftwareDeliveryMachineOptions;
 

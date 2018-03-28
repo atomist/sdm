@@ -25,9 +25,9 @@ import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-ma
 import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixMachine";
 import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundryMachine";
 import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sMachine";
+import { projectCreationMachine } from "./software-delivery-machine/machines/projectCreationMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisMachine";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
-import { projectCreationMachine } from "./software-delivery-machine/machines/projectCreationMachine";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
