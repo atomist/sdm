@@ -45,7 +45,9 @@ To enable deployment beyond the local one, `@atomist enable deploy`.
 If you have any Java or Node projects in your GitHub org, try linking one to a Slack channel (`@atomist link repo`), and then push to it.
 You'll see Atomist react to the push, and the SDM might have some Goals it can complete.
 
-### Change stuff
+### Customize
+
+Every organization has a different environment and different needs. Your software delivery machine is yours: change the code and do what helps you.
 
 In `atomist.config.ts`, you can choose the `machine` to start with. `cloudFoundryMachine` and `k8sMachine` take care of the whole delivery process from project creation through deployment, while other machines focus only on one aspect, such as project creation, static analysis or autofixing problems in repositories.
 
