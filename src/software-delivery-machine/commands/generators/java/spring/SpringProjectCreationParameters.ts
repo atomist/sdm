@@ -15,11 +15,11 @@
  */
 
 import { Parameter } from "@atomist/automation-client";
+import { GitHubNameRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { camelize } from "tslint/lib/utils";
 import { JavaGeneratorConfig } from "../JavaGeneratorConfig";
-import { JavaProjectCreationParameters } from "../JavaProjectCreationParameters";
-import { GitHubNameRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { JavaIdentifierRegExp } from "../javaPatterns";
+import { JavaProjectCreationParameters } from "../JavaProjectCreationParameters";
 
 /**
  * Parameters for creating Spring Boot apps.
