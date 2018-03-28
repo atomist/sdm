@@ -16,11 +16,11 @@
 
 import { AutofixRegistration } from "../../../../common/delivery/code/codeActionRegistrations";
 import { PushTest } from "../../../../common/listener/PushTest";
+import { hasFileContaining } from "../../../../common/listener/support/pushtest/commonPushTests";
 import { IsJava } from "../../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { IsTypeScript } from "../../../../common/listener/support/pushtest/node/tsPushTests";
-import { AddHeaderParameters, addHeaderProjectEditor } from "../../../commands/editors/license/addHeader";
 import { allSatisfied } from "../../../../common/listener/support/pushtest/pushTestUtils";
-import { hasFileContaining } from "../../../../common/listener/support/pushtest/commonPushTests";
+import { AddHeaderParameters, addHeaderProjectEditor } from "../../../commands/editors/license/addHeader";
 import { LicenseFilename } from "./addLicenseFile";
 
 export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java header", "**/*.java", IsJava);
