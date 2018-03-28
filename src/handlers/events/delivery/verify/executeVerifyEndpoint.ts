@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import sprintf from "sprintf-js";
+import { sprintf } from "sprintf-js";
 import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/deploy/runWithLog";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";

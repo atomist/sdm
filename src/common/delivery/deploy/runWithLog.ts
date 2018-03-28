@@ -17,7 +17,7 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import sprintf from "sprintf-js";
+import { sprintf } from "sprintf-js";
 import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
 import { InterpretedLog, LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";

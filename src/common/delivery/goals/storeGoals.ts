@@ -17,7 +17,7 @@
 import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
-import sprintf from "sprintf-js";
+import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";

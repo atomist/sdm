@@ -40,7 +40,7 @@ export async function executeGoal(execute: GoalExecutor,
         return Success;
     } catch (err) {
         logger.warn("Error executing %s on %s: %s",
-            params.implementationName, repoRefFromStatus(status).url, err);
+            params.implementationName, repoRefFromStatus(status).url, err.message);
         await markStatus(ctx, sdmGoal, params.goal, {code: 1});
         return failure(err);
     }
