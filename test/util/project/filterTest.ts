@@ -27,13 +27,13 @@ describe("Project filtered", () => {
         const p = await GitCommandGitProject.cloned({ token: null}, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const copied = await filtered(p, []);
         assert.equal(0, await copied.totalFileCount());
-    });
+    }).timeout(10000);
 
     it("should copy one", async () => {
         const p = await GitCommandGitProject.cloned({ token: null}, new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const copied = await filtered(p, ["pom.xml"]);
         assert.equal(1, await copied.totalFileCount());
         await copied.findFile("pom.xml");
-    });
+    }).timeout(10000);
 
 });
