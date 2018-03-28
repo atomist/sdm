@@ -15,11 +15,11 @@
  */
 
 import { StatusForExecuteGoal } from "../../typings/types";
+import { CodeActionRegistration } from "../delivery/code/codeActionRegistrations";
 import {
     ProjectListenerInvocation,
     SdmListener,
 } from "./Listener";
-import { CodeActionRegistration } from "../delivery/code/codeActionRegistrations";
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
