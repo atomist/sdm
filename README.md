@@ -17,7 +17,7 @@ The concept is explained in detail in Rod Johnson's blog [Why you need a Softwar
 This delivery machine feeds on the Atomist API. You'll need to be a member of an Atomist workspace to run it. <!-- TODO: reference auth story -->
 Create your own by [enrolling](https://github.com/atomist/welcome/blob/master/enroll.md) at [atomist.com]().
 
-Things work best if you install an org webhook.
+Things work best if you install an org webhook, so that Atomist receives events for all your GitHub repos.
 
 ## Get your Software Delivery Machine
 
@@ -28,7 +28,7 @@ You can fork and clone this repository.
 
 ## Run Locally
 
-This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md)
+This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
 
 See [integrations](#Integrations) for additional prerequisites according to the projects you're building. 
 
@@ -45,11 +45,13 @@ To enable deployment beyond the local one, `@atomist enable deploy`.
 If you have any Java or Node projects in your GitHub org, try linking one to a Slack channel (`@atomist link repo`), and then push to it.
 You'll see Atomist react to the push, and the SDM might have some Goals it can complete.
 
-### change stuff
+### Change stuff
 
-In `atomist.config.ts`, you can choose the `machine` to start with.
+In `atomist.config.ts`, you can choose the `machine` to start with. `cloudFoundryMachine` and `k8sMachine` take care of the whole delivery process from project creation through deployment, while other machines focus only on one aspect, such as project creation, static analysis or autofixing problems in repositories.
 
-Change the code, restart, and see your new automations. The rest of this README describes some changes you might make.
+> Atomist is about developing your development experience by using your coding skills. Change the code, restart, and see your new automations and changed behavior across all your projects, within seconds. 
+
+The rest of this README describes some changes you might make.
 
 # About this Software Delivery Machine
 
@@ -589,5 +591,4 @@ Get `checkstyle-8.8-all.jar` from [Checkstyle's download page](https://sourcefor
 This project is under active development, and still in flux. Some goals:
 
 - Breaking the repo into two, to separate the runnable instance from a library module exposing listener interfaces and other public types and common functionality.
-- Support for BitBucket, as well as GitHub. This will likely take the form of a parallel `bitbucket-sdm` project depending on a common `sdm-core` module.
-Deep at the center of my being is an infinite well of love.
+- Support for BitBucket, as well as GitHub.
