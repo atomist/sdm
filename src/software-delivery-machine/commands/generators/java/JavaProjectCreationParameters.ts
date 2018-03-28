@@ -19,8 +19,8 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/BaseSeedDrivenGeneratorParameters";
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { VersionedArtifact } from "@atomist/spring-automation/commands/generator/java/JavaProjectParameters";
-import { SemVerRegExp } from "../commonPatterns";
-import { JavaPackageRegExp, MavenArtifactIdRegExp, MavenGroupIdRegExp } from "./javaPatterns";
+import { SemVerRegExp } from "../../../../common/command/commonPatterns";
+import { JavaPackageRegExp, MavenArtifactIdRegExp, MavenGroupIdRegExp } from "../../../../common/command/javaPatterns";
 
 /**
  * Superclass for all Java seeds using Maven. Updates Maven pom

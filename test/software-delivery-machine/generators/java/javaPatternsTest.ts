@@ -20,7 +20,7 @@ import {
     JavaIdentifierRegExp,
     JavaPackageRegExp,
     MavenGroupIdRegExp,
-} from "../../../../src/software-delivery-machine/commands/generators/java/javaPatterns";
+} from "../../../../src/common/command/javaPatterns";
 
 describe("javaPatterns", () => {
 

@@ -18,7 +18,7 @@ import { MappedParameter, MappedParameters, Parameter } from "@atomist/automatio
 import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/BaseSeedDrivenGeneratorParameters";
 
 import { Parameters } from "@atomist/automation-client/decorators";
-import { SemVerRegExp } from "../commonPatterns";
+import { SemVerRegExp } from "../../../../common/command/commonPatterns";
 import { GeneratorConfig } from "../GeneratorConfig";
 
 /**
