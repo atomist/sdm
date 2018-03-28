@@ -19,12 +19,13 @@ import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/op
 
 import { Parameters } from "@atomist/automation-client/decorators";
 import { GeneratorConfig } from "../GeneratorConfig";
+import { SemVerRegExp } from "../java/commonPatterns";
 
 /**
  * Creates a GitHub Repo and installs Atomist collaborator if necessary
  */
 @Parameters()
-export class NodeGeneratorParameters extends BaseSeedDrivenGeneratorParameters {
+export class NodeProjectCreationParameters extends BaseSeedDrivenGeneratorParameters {
 
     @MappedParameter(MappedParameters.SlackUserName)
     public screenName: string;
@@ -44,11 +45,7 @@ export class NodeGeneratorParameters extends BaseSeedDrivenGeneratorParameters {
 
     @Parameter({
         displayName: "Version",
-        description: "initial version of the project, e.g., 1.2.3-SNAPSHOT",
-        pattern: /^.*$/,
-        validInput: "a valid semantic version, http://semver.org",
-        minLength: 1,
-        maxLength: 50,
+        ...SemVerRegExp,
         required: true,
         order: 52,
     })

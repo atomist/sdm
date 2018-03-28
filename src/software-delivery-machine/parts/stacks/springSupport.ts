@@ -24,7 +24,7 @@ import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { mavenSourceDeployer } from "../../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
-import { springBootGenerator } from "../../commands/generators/spring/springBootGenerator";
+import { springBootGenerator } from "../../commands/generators/java/spring/springBootGenerator";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy

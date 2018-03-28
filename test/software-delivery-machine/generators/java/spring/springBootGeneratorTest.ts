@@ -23,14 +23,11 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
+import { SpringProjectCreationParameters } from "../../../../../src/software-delivery-machine/commands/generators/java/spring/SpringProjectCreationParameters";
 import {
-    CustomSpringBootGeneratorParameters,
-} from "../../../src/software-delivery-machine/commands/generators/spring/CustomSpringBootGeneratorParameters";
-import {
-    setAtomistTeamInApplicationYml,
-    springBootGenerator,
-    updateReadme,
-} from "../../../src/software-delivery-machine/commands/generators/spring/springBootGenerator";
+    setAtomistTeamInApplicationYml, springBootGenerator,
+    replaceReadmeTitle
+} from "../../../../../src/software-delivery-machine/commands/generators/java/spring/springBootGenerator";
 
 const Readme1 = `# spring-rest-seed
 
@@ -54,14 +51,14 @@ atomist:
       domain: '\${vcap.application.space_name:development}'
       pod: '\${HOSTNAME:\${random.value}}'`;
 
-describe("custom Spring Boot generator", () => {
+describe("springBootGenerator", () => {
 
     describe("update README", () => {
 
         it("should get correct content", async () => {
             const p = InMemoryProject.from(new SimpleRepoId("owner", "repoName"),
                 {path: "README.md", content: Readme1});
-            const params = new CustomSpringBootGeneratorParameters({
+            const params = new SpringProjectCreationParameters({
                 seedOwner: "foo",
                 seedRepo: "bar",
                 intent: "whatever",
@@ -70,7 +67,7 @@ describe("custom Spring Boot generator", () => {
             params.target.repo = "repoName";
             params.serviceClassName = "foo";
             params.bindAndValidate();
-            await updateReadme(params)(p);
+            await replaceReadmeTitle(params)(p);
             const readmeContent = p.findFileSync("README.md").getContentSync();
             assert(readmeContent.includes("# repoName"), "Should include repo name");
             assert(readmeContent.includes("seed project \`foo:bar"));
@@ -91,7 +88,7 @@ describe("custom Spring Boot generator", () => {
 
     describe("run end to end", () => {
 
-        it("should put in Atomist team id", async () => {
+        it("should put in Atomist team id and ensure valid Java", async () => {
             const config = {
                 seedOwner: "spring-team",
                 seedRepo: "spring-rest-seed",
@@ -100,7 +97,8 @@ describe("custom Spring Boot generator", () => {
             };
             let result: Project;
             const gen = springBootGenerator(config, {
-                repoLoader: () => () => GitCommandGitProject.cloned({token: null}, new GitHubRepoRef(config.seedOwner, config.seedRepo)),
+                repoLoader: () => () => GitCommandGitProject.cloned({token: null},
+                    new GitHubRepoRef(config.seedOwner, config.seedRepo)),
                 projectPersister: async p => {
                     result = p;
                     return {target: p, success: true};
@@ -115,7 +113,9 @@ describe("custom Spring Boot generator", () => {
                     },
                 } as any,
             } as HandlerContext;
-            const params = new CustomSpringBootGeneratorParameters(config);
+            const params = new SpringProjectCreationParameters(config);
+            params.artifactId = "artifact";
+            params.rootPackage = "atomist.test";
             params.target.owner = "whoever";
             params.target.repo = "whatever";
             params.bindAndValidate();
@@ -123,6 +123,7 @@ describe("custom Spring Boot generator", () => {
 
             const yml = result.findFileSync("src/main/resources/application.yml").getContentSync();
             assert(yml.includes("/teams/T1000"), "Should include Atomist team");
+            const appClassContent = result.findFileSync("src/main/java/atomist/test/ArtifactApplication.java").getContentSync();
         }).timeout(18000);
     });
 

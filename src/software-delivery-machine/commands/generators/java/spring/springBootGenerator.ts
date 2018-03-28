@@ -17,33 +17,32 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import {
-    EditorFactory, GeneratorCommandDetails,
+    GeneratorCommandDetails,
     generatorHandler,
 } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import * as utils from "@atomist/automation-client/project/util/projectUtils";
 
-import { springBootProjectEditor } from "@atomist/spring-automation/commands/generator/spring/springBootGenerator";
-import { SpringBootGeneratorParameters } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
-import { CustomSpringBootGeneratorParameters } from "./CustomSpringBootGeneratorParameters";
-import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
+import { transformSeedToCustomProject } from "./transformSeedToCustomProject";
+import { SpringProjectCreationParameters } from "./SpringProjectCreationParameters";
+import { JavaGeneratorConfig } from "../JavaGeneratorConfig";
 
 /**
  * Function to create a Spring Boot generator.
  * Relies on generic Atomist Java & Spring functionality in spring-automations
  * @param config config for a Java generator, including location of seed
  * @param details allow customization
- * @return {HandleCommand<SpringBootGeneratorParameters>}
+ * @return {HandleCommand<SpringProjectCreationParameters>}
  */
 export function springBootGenerator(config: JavaGeneratorConfig,
-                                    details: Partial<GeneratorCommandDetails<CustomSpringBootGeneratorParameters>> = {}) {
-    return generatorHandler<CustomSpringBootGeneratorParameters>(
+                                    details: Partial<GeneratorCommandDetails<SpringProjectCreationParameters>> = {}) {
+    return generatorHandler<SpringProjectCreationParameters>(
         (params, ctx) => chainEditors(
-            updateReadme(params),
+            replaceReadmeTitle(params),
             setAtomistTeamInApplicationYml(params, ctx),
-            springBootProjectEditor(params),
+            transformSeedToCustomProject(params),
         ),
-        () => new CustomSpringBootGeneratorParameters(config),
-        "customSpringBootGenerator",
+        () => new SpringProjectCreationParameters(config),
+        "springBootGenerator",
         {
             tags: ["spring", "boot", "java"],
             ...details,
@@ -53,10 +52,9 @@ export function springBootGenerator(config: JavaGeneratorConfig,
 
 /**
  * Update the readme
- * @param {CustomSpringBootGeneratorParameters} params
  */
-export const updateReadme =
-    (params: CustomSpringBootGeneratorParameters) => async p => {
+export const replaceReadmeTitle =
+    (params: SpringProjectCreationParameters) => async p => {
         return utils.doWithFiles(p, "README.md", readMe => {
             readMe.recordReplace(/^#[\s\S]*?## /, titleBlock(params));
         });
@@ -74,7 +72,7 @@ export const setAtomistTeamInApplicationYml =
             f.replace(/\${ATOMIST_TEAM}/, ctx.teamId));
     };
 
-function titleBlock(params: CustomSpringBootGeneratorParameters): string {
+function titleBlock(params: SpringProjectCreationParameters): string {
     return `# ${params.target.repo}
 ${params.target.description}
 

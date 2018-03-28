@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+/**
+ * Basic config for all parameter creation
+ */
 export interface GeneratorConfig {
 
     seedOwner: string;

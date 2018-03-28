@@ -24,13 +24,13 @@ import {
 import { updatePackageJsonIdentification } from "../../editors/node/updatePackageJsonIdentification";
 import { updateReadmeTitle } from "../../editors/updateReadmeTitle";
 import { GeneratorConfig } from "../GeneratorConfig";
-import { NodeGeneratorParameters } from "./NodeGeneratorParameters";
+import { NodeProjectCreationParameters } from "./NodeProjectCreationParameters";
 
 export function nodeGenerator(config: GeneratorConfig,
-                              details: Partial<GeneratorCommandDetails<NodeGeneratorParameters>> = {}): HandleCommand {
-    return generatorHandler<NodeGeneratorParameters>(
+                              details: Partial<GeneratorCommandDetails<NodeProjectCreationParameters>> = {}): HandleCommand {
+    return generatorHandler<NodeProjectCreationParameters>(
         transformSeed,
-        () => new NodeGeneratorParameters(config),
+        () => new NodeProjectCreationParameters(config),
         "nodeGenerator",
         {
             tags: ["node", "typescript"],
@@ -39,7 +39,7 @@ export function nodeGenerator(config: GeneratorConfig,
         });
 }
 
-function transformSeed(params: NodeGeneratorParameters, ctx: HandlerContext): AnyProjectEditor<NodeGeneratorParameters> {
+function transformSeed(params: NodeProjectCreationParameters, ctx: HandlerContext): AnyProjectEditor<NodeProjectCreationParameters> {
     return chainEditors(
         updatePackageJsonIdentification(params.appName, params.target.description,
             params.version,

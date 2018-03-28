@@ -15,15 +15,16 @@
  */
 
 import { Parameter } from "@atomist/automation-client";
-import { SpringBootGeneratorParameters } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
-import { JavaGeneratorConfig } from "./JavaGeneratorConfig";
+import { JavaGeneratorConfig } from "../JavaGeneratorConfig";
+import { JavaProjectCreationParameters } from "../JavaProjectCreationParameters";
+import { camelize } from "tslint/lib/utils";
 
 /**
- * Custom parameters for Spring Boot.
+ * Parameters for creating Spring Boot apps.
  * Customize spring-automations default parameters to default our group
  * and choose our seed
  */
-export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorParameters {
+export class SpringProjectCreationParameters extends JavaProjectCreationParameters {
 
     @Parameter({
         displayName: "Maven Group ID",
@@ -73,6 +74,14 @@ export class CustomSpringBootGeneratorParameters extends SpringBootGeneratorPara
     public bindAndValidate() {
         super.bindAndValidate();
         this.source.repo = this.seed;
+        this.serviceClassName = !!this.serviceClassName ?
+            toInitialCap(this.serviceClassName) :
+            toInitialCap(camelize(this.artifactId));
     }
 
 }
+
+function toInitialCap(s: string) {
+    return s.charAt(0).toUpperCase() + s.substr(1);
+}
+
