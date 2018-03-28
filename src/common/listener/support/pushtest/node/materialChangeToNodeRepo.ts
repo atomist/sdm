@@ -15,10 +15,12 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { filesChangedSince } from "../../../../../util/git/filesChangedSince";
+import { anyFileChangedWithExtension, filesChangedSince } from "../../../../../util/git/filesChangedSince";
 import { PushTest, pushTest } from "../../../PushTest";
 
 import * as _ from "lodash";
+
+const FileToWatch = ["js", "ts", "json", "yml", "xml", "html", "graphql", "jsx", "tsx", "sh"];
 
 /**
  * Veto if change to deployment unit doesn't seem important enough to
@@ -35,13 +37,7 @@ export const MaterialChangeToNodeRepo: PushTest = pushTest("Material change to N
     }
     const changedFiles = await filesChangedSince(pci.project, pci.push.before.sha);
     logger.debug(`MaterialChangeToNodeRepo: Changed files are [${changedFiles.join(",")}]`);
-    if (changedFiles.some(f => f.endsWith(".js")) ||
-        changedFiles.some(f => f.endsWith(".ts")) ||
-        changedFiles.some(f => f.endsWith(".json")) ||
-        changedFiles.some(f => f.endsWith(".yml")) ||
-        changedFiles.some(f => f.endsWith(".xml")) ||
-        changedFiles.some(f => f.endsWith(".html"))
-    ) {
+    if (anyFileChangedWithExtension(changedFiles, FileToWatch)) {
         logger.debug("Change is material on %j: changed files=[%s]", pci.id, changedFiles.join(","));
         return true;
     }

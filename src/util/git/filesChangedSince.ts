@@ -32,3 +32,18 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
     return cr.stdout.split("\n")
         .filter(n => !!n);
 }
+
+/**
+ * Does a file satisfying this text exist within the set of changed files?
+ * @param {string[]} changedFilePaths
+ * @param {string[]} test test for the file change
+ * @return {boolean}
+ */
+export function anyFileChangedSuchThat(changedFilePaths: string[], test: (path: string) => boolean): boolean {
+    return changedFilePaths.some(test);
+}
+
+export function anyFileChangedWithExtension(changedFilePaths: string[], extensions: string[]): boolean {
+    return anyFileChangedSuchThat(changedFilePaths,
+        path => extensions.some(ext => path.endsWith("." + ext)));
+}
