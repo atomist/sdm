@@ -33,7 +33,7 @@ export class RequestedCommitParameters {
     )
     private readonly branch = "master";
 
-    // TODO should really be a boolean, consider client issue
+    // TODO should really be a boolean, investigate client issue
     @Parameter({required: false, pattern: /(true|false)/})
     private readonly newBranch: string = "false";
 
