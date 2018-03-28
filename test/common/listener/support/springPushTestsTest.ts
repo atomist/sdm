@@ -40,7 +40,7 @@ describe("springPushTests", () => {
         it("should find in repo with named pom and Spring application class", async () => {
             const project = InMemoryProject.of(
                 { path: "pom.xml", content: springBootPom("1.2.1")},
-                { path: "src/main/java/App.java", content: "@SpringBootApplication public class App {}"}
+                { path: "src/main/java/App.java", content: "@SpringBootApplication public class App {}"},
                 );
             const r = await HasSpringBootApplicationClass.valueForPush({project} as any as ProjectListenerInvocation);
             assert(r);
