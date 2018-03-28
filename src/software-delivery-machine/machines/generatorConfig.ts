@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 /**
  * Customize to change generator behavior everywhere
  * @type {{seedOwner: string; addAtomistWebhook: boolean}}
