@@ -64,7 +64,7 @@ export const configuration: Configuration = {
         DeployEnablementIngester,
     ],
     http: {
-        enabled: false,
+        enabled: notLocal,
     },
     applicationEvents: {
         enabled: true,
@@ -72,6 +72,12 @@ export const configuration: Configuration = {
     cluster: {
         enabled: notLocal,
         // worker: 2,
+    },
+    ws: {
+        enabled: true,
+        termination: {
+            graceful: notLocal,
+        },
     },
     logging: {
         level: "info",
