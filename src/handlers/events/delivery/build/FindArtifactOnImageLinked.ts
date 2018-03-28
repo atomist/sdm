@@ -41,16 +41,16 @@ import { createStatus } from "../../../../util/github/ghub";
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    private listeners: ArtifactListener[];
+    private readonly listeners: ArtifactListener[];
 
     /**
      * The goal to update when an artifact is linked.
      * When an artifact is linked to a commit, the build must be done.
      */
     constructor(public goal: Goal,
-                private artifactStore: ArtifactStore,
+                private readonly artifactStore: ArtifactStore,
                 ...listeners: ArtifactListener[]) {
         this.listeners = listeners;
     }

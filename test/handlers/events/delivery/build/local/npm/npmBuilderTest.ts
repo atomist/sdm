@@ -33,7 +33,7 @@ class TestableNpmBuilder extends SpawnBuilder {
 
     public runningBuild: LocalBuildInProgress;
 
-    constructor(buildCommand: SpawnCommand, private handleResult: (success: boolean) => any) {
+    constructor(buildCommand: SpawnCommand, private readonly handleResult: (success: boolean) => any) {
         super(undefined, async () => new ConsoleProgressLog(), CloningProjectLoader, npmBuilderOptions([Install, buildCommand]));
     }
 

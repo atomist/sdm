@@ -30,7 +30,7 @@ import { SimpleCache } from "../../util/misc/SimpleCache";
  */
 export class CachingProjectLoader implements ProjectLoader {
 
-    private cache: SimpleCache<GitProject>;
+    private readonly cache: SimpleCache<GitProject>;
 
     constructor(maxEntries: number = 20) {
         this.cache = new LruCache<GitProject>(maxEntries);

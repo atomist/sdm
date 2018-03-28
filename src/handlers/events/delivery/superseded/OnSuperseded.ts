@@ -40,9 +40,9 @@ import * as schema from "../../../../typings/types";
 export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    private listeners: SupersededListener[];
+    private readonly listeners: SupersededListener[];
 
     constructor(...listeners: SupersededListener[]) {
         this.listeners = listeners;

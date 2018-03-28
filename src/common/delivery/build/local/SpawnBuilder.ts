@@ -72,7 +72,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
     constructor(artifactStore: ArtifactStore,
                 logFactory: LogFactory,
                 projectLoader: ProjectLoader,
-                private options: SpawnBuilderOptions) {
+                private readonly options: SpawnBuilderOptions) {
         super(options.name, artifactStore, logFactory, projectLoader);
     }
 

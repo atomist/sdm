@@ -211,7 +211,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners);
     }
 
-    private oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
+    private readonly oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
     private get builder(): FunctionalUnit {
         const name = this.builderMapping.name.replace(" ", "_");
@@ -257,7 +257,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return [() => new FailDownstreamGoalsOnGoalFailure()];
     }
 
-    private artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
+    private readonly artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
         this.opts.artifactStore,
         ...this.artifactListeners)
 
@@ -287,7 +287,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private onBuildComplete: Maker<SetStatusOnBuildComplete> =
+    private readonly onBuildComplete: Maker<SetStatusOnBuildComplete> =
         () => new SetStatusOnBuildComplete([BuildGoal, JustBuildGoal])
 
     get showBuildLog(): Maker<HandleCommand> {

@@ -30,7 +30,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
 
     // TODO: @cd why doesn't this work, it doesn't register for the secret
     @Secret(Secrets.OrgToken)
-    private githubToken: string = process.env.GITHUB_TOKEN;
+    private readonly githubToken: string = process.env.GITHUB_TOKEN;
 
     public async handle(event: EventFired<OnAnyGoal.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const goal = event.data.SdmGoal[0];

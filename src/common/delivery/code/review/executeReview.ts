@@ -88,7 +88,7 @@ export function executeReview(projectLoader: ProjectLoader,
                         // TODO might want to raise issue
                         // Fail it??
                         await sendReviewToSlack("Review comments", review, context, addressChannels);
-                        await sendErrorsToSlack(reviewerErrors, addressChannels);
+                        sendErrorsToSlack(reviewerErrors, addressChannels);
                         return {code: 0, requireApproval: true};
                     }
                 });

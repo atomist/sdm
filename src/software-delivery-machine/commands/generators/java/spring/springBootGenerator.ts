@@ -22,9 +22,9 @@ import {
 } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import * as utils from "@atomist/automation-client/project/util/projectUtils";
 
-import { transformSeedToCustomProject } from "./transformSeedToCustomProject";
-import { SpringProjectCreationParameters } from "./SpringProjectCreationParameters";
 import { JavaGeneratorConfig } from "../JavaGeneratorConfig";
+import { SpringProjectCreationParameters } from "./SpringProjectCreationParameters";
+import { transformSeedToCustomProject } from "./transformSeedToCustomProject";
 
 /**
  * Function to create a Spring Boot generator.

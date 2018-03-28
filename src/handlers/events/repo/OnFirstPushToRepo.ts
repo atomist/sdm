@@ -44,9 +44,9 @@ export class OnFirstPushToRepo
     implements HandleEvent<schema.OnFirstPushToRepo.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    constructor(private actions: ProjectListener[]) {
+    constructor(private readonly actions: ProjectListener[]) {
     }
 
     public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,

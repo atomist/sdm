@@ -54,15 +54,15 @@ export const K8sProductionDomain = "production";
 export class NoticeK8sTestDeployCompletionOnStatus implements HandleEvent<OnAParticularStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
     /**
      *
      * @param {Goal} deployGoal
      * @param {Goal} endpointGoal
      */
-    constructor(private deployGoal: Goal,
-                private endpointGoal: Goal) {
+    constructor(private readonly deployGoal: Goal,
+                private readonly endpointGoal: Goal) {
     }
 
     public async handle(event: EventFired<OnAParticularStatus.Subscription>, ctx: HandlerContext, params: this): Promise<HandlerResult> {

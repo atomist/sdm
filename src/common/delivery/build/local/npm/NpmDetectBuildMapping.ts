@@ -34,7 +34,7 @@ export class NpmDetectBuildMapping implements PushMapping<Builder> {
 
     public readonly name = "NpmDetectBuildMapping";
 
-    constructor(private artifactStore: ArtifactStore, private projectLoader: ProjectLoader) {
+    constructor(private readonly artifactStore: ArtifactStore, private readonly projectLoader: ProjectLoader) {
     }
 
     public async valueForPush(p: ProjectListenerInvocation): Promise<Builder> {

@@ -70,8 +70,8 @@ export interface LocalBuildInProgress {
 export abstract class LocalBuilder implements Builder {
 
     constructor(public name: string,
-                private artifactStore: ArtifactStore,
-                private logFactory: LogFactory,
+                private readonly artifactStore: ArtifactStore,
+                private readonly logFactory: LogFactory,
                 protected projectLoader: ProjectLoader) {
     }
 

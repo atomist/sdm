@@ -29,4 +29,4 @@ export const IsMaven: PredicatePushTest = predicatePushTest(
 export const IsJava = predicatePushTest(
     "Is Java",
     async p =>
-        await fileExists(p, AllJavaFiles, () => true));
+        fileExists(p, AllJavaFiles, () => true));

@@ -27,7 +27,7 @@ import { AppInfo } from "../../../spi/deploy/Deployment";
  */
 export class EphemeralLocalArtifactStore implements ArtifactStore {
 
-    private entries: Array<StoredArtifact & { url: string }> = [];
+    private readonly entries: Array<StoredArtifact & { url: string }> = [];
 
     public async storeFile(appInfo: AppInfo, what: string): Promise<string> {
         const entry = {

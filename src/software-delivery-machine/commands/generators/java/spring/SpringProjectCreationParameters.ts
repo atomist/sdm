@@ -15,9 +15,9 @@
  */
 
 import { Parameter } from "@atomist/automation-client";
+import { camelize } from "tslint/lib/utils";
 import { JavaGeneratorConfig } from "../JavaGeneratorConfig";
 import { JavaProjectCreationParameters } from "../JavaProjectCreationParameters";
-import { camelize } from "tslint/lib/utils";
 
 /**
  * Parameters for creating Spring Boot apps.
@@ -84,4 +84,3 @@ export class SpringProjectCreationParameters extends JavaProjectCreationParamete
 function toInitialCap(s: string) {
     return s.charAt(0).toUpperCase() + s.substr(1);
 }
-

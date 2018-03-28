@@ -49,7 +49,7 @@ export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerpri
                     return isFingerprint(f) ? [f] : f;
                 }),
             ).then(x2 => _.flatten(x2));
-            await fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
+            fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
         });
         return Success;
     };

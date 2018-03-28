@@ -41,9 +41,9 @@ import * as schema from "../../../typings/types";
 export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    private newIssueListeners: NewIssueListener[];
+    private readonly newIssueListeners: NewIssueListener[];
 
     constructor(...newIssueListeners: NewIssueListener[]) {
         this.newIssueListeners = newIssueListeners;

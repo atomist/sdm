@@ -23,11 +23,13 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
-import { SpringProjectCreationParameters } from "../../../../../src/software-delivery-machine/commands/generators/java/spring/SpringProjectCreationParameters";
 import {
-    setAtomistTeamInApplicationYml, springBootGenerator,
-    replaceReadmeTitle
+    replaceReadmeTitle, setAtomistTeamInApplicationYml,
+    springBootGenerator,
 } from "../../../../../src/software-delivery-machine/commands/generators/java/spring/springBootGenerator";
+import {
+    SpringProjectCreationParameters,
+} from "../../../../../src/software-delivery-machine/commands/generators/java/spring/SpringProjectCreationParameters";
 
 const Readme1 = `# spring-rest-seed
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { inferSpringStructureAndRename, } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { curry } from "@typed/curry";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { cleanReadMe } from "@atomist/automation-client/operations/generate/UniversalSeed";
 import {
     doUpdatePom,
-    inferStructureAndMovePackage
+    inferStructureAndMovePackage,
 } from "@atomist/spring-automation/commands/generator/java/JavaProjectParameters";
-import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { inferSpringStructureAndRename } from "@atomist/spring-automation/commands/generator/spring/SpringBootProjectParameters";
+import { curry } from "@typed/curry";
 import { SpringProjectCreationParameters } from "./SpringProjectCreationParameters";
 
 /**

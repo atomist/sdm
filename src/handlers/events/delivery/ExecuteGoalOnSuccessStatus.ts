@@ -48,8 +48,8 @@ export class ExecuteGoalOnSuccessStatus
 
     constructor(implementationName: string,
                 public goal: Goal,
-                private execute: GoalExecutor,
-                private handleGoalUpdates: boolean = false) {
+                private readonly execute: GoalExecutor,
+                private readonly handleGoalUpdates: boolean = false) {
         this.implementationName = validSubscriptionName(implementationName);
         this.subscriptionName = this.implementationName + "OnSuccessStatus";
         this.name = this.subscriptionName + "OnSuccessStatus";

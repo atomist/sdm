@@ -20,5 +20,5 @@ import { PushTest, pushTest } from "../../../PushTest";
 
 export const IsTypeScript: PushTest = pushTest(
     "Is TypeScript",
-    async (pi: ProjectListenerInvocation) => await fileExists(pi.project, "**/*.ts", () => true),
+    async (pi: ProjectListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
 );

@@ -18,7 +18,7 @@ import "mocha";
 import * as assert from "power-assert";
 import {
     JavaPackageRegExp,
-    MavenGroupIdRegExp
+    MavenGroupIdRegExp,
 } from "../../../../src/software-delivery-machine/commands/generators/java/javaPatterns";
 
 describe("javaPatterns", () => {

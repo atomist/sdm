@@ -69,12 +69,12 @@ export async function initializeCloudFoundry(cfi: CloudFoundryInfo): Promise<Clo
 export class CloudFoundryApi {
 
     private authHeader;
-    private jsonContentHeader = {
+    private readonly jsonContentHeader = {
         "Content-Type": "application/json",
     };
 
-    constructor(private cf: CloudFoundryClientV2,
-                private retryInterval: number = 1000) {
+    constructor(private readonly cf: CloudFoundryClientV2,
+                private readonly retryInterval: number = 1000) {
     }
 
     private async refreshToken() {

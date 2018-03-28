@@ -49,9 +49,9 @@ import { OnSuccessStatus } from "../../../../typings/types";
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    private listeners: DeploymentListener[];
+    private readonly listeners: DeploymentListener[];
 
     constructor(...listeners: DeploymentListener[]) {
         this.listeners = listeners;

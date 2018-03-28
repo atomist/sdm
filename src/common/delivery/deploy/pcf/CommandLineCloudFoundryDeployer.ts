@@ -34,7 +34,7 @@ import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget
  */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
 
-    constructor(private projectLoader: ProjectLoader) {
+    constructor(private readonly projectLoader: ProjectLoader) {
     }
 
     public async deploy(da: DeployableArtifact,

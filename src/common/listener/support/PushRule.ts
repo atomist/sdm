@@ -61,7 +61,7 @@ export class PushRule<V = any> implements PushMapping<V> {
  */
 export class PushRuleExplanation<N extends PushRule<any>> {
 
-    constructor(private pushRule: N) {}
+    constructor(private readonly pushRule: N) {}
 
     public itMeans(reason: string): N {
         this.pushRule.reason = reason;

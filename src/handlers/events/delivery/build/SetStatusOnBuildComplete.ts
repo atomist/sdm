@@ -59,10 +59,10 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    constructor(private buildGoals: [Goal],
-                private logInterpretation?: LogInterpretation) {
+    constructor(private readonly buildGoals: [Goal],
+                private readonly logInterpretation?: LogInterpretation) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>,
@@ -71,7 +71,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const commit = build.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        await params.buildGoals.forEach(async buildGoal => {
+        params.buildGoals.forEach(async buildGoal => {
             const builtStatus = commit.statuses.find(s => s.context === buildGoal.context);
             const ghStatusState = buildStatusToGitHubStatusState(build.status);
             if (!!builtStatus) {

@@ -52,13 +52,12 @@ export function executeUndeployArtifact<T extends TargetInfo>(spec: DeploySpec<T
 
         logger.info("Detected deployments: %s", deployments.map(d => stringify(d)).join(", "));
 
-        await deployments.forEach(async d =>
-            await spec.deployer.undeploy(
+        deployments.forEach(async d =>
+            spec.deployer.undeploy(
                 targetInfo,
                 d,
                 progressLog,
             ));
-
         return {code: 0};
     };
 }

@@ -46,7 +46,7 @@ export const AnyPush: PushTest = pushTest("Any push", async p => true);
  */
 export const ToPublicRepo = pushTest("To public repo", async p =>
     // Ask GitHub if the repo is public as we do not have this information in our model
-    isGitHubRepoRef(p.id) && (await isPublicRepo(process.env.GITHUB_TOKEN, p.id)),
+    isGitHubRepoRef(p.id) && (isPublicRepo(process.env.GITHUB_TOKEN, p.id)),
 );
 
 /**

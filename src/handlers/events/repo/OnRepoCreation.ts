@@ -40,9 +40,9 @@ import * as schema from "../../../typings/types";
 export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    private newRepoActions: RepoCreationListener[];
+    private readonly newRepoActions: RepoCreationListener[];
 
     constructor(...newRepoActions: RepoCreationListener[]) {
         this.newRepoActions = newRepoActions;

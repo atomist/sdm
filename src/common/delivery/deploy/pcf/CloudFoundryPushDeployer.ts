@@ -42,7 +42,7 @@ import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } fr
  */
 export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
 
-    constructor(private projectLoader: ProjectLoader) {
+    constructor(private readonly projectLoader: ProjectLoader) {
     }
 
     private async getManifest(p: Project): Promise<Manifest> {

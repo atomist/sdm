@@ -64,7 +64,7 @@ export interface DeployedApp {
  */
 export class ManagedDeployments {
 
-    private deployments: DeployedApp[] = [];
+    private readonly deployments: DeployedApp[] = [];
 
     constructor(public initialPort: number) {
     }

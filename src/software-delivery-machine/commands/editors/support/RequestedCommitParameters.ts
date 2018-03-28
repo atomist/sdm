@@ -31,11 +31,11 @@ export class RequestedCommitParameters {
             ...GitBranchRegExp,
         },
     )
-    private branch = "master";
+    private readonly branch = "master";
 
     // TODO should really be a boolean, consider client issue
     @Parameter({required: false, pattern: /(true|false)/})
-    private newBranch: string = "false";
+    private readonly newBranch: string = "false";
 
     @Parameter({required: false})
     private commitMessage = "Command handler commit from Atomist";

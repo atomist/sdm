@@ -36,5 +36,5 @@ export const removeFileEditor: HandleCommand = editorCommand<RemoveFileParams>(
     });
 
 async function removeFile(p: Project, ctx: HandlerContext, params: RemoveFileParams) {
-    return await p.deleteFile(params.path);
+    return p.deleteFile(params.path);
 }

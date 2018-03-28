@@ -44,9 +44,9 @@ export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    constructor(private differenceListeners: FingerprintDifferenceListener[]) {
+    constructor(private readonly differenceListeners: FingerprintDifferenceListener[]) {
     }
 
     public async handle(event: EventFired<schema.OnPushImpact.Subscription>,

@@ -29,7 +29,7 @@ class EphemeralProgressLog implements ProgressLog {
 
     public url = undefined;
 
-    constructor(private writeToLog: boolean = true) {}
+    constructor(private readonly writeToLog: boolean = true) {}
 
     public flush() {
         return Promise.resolve();

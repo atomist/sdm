@@ -32,8 +32,8 @@ export class NewBranchWithStatus implements BranchCommit {
 
     constructor(public branch: string,
                 public message: string,
-                private creds: ProjectOperationCredentials,
-                private status: Status) {
+                private readonly creds: ProjectOperationCredentials,
+                private readonly status: Status) {
         logger.info("Created NewBranchWithStatus: %j", this);
     }
 

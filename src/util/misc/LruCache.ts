@@ -25,9 +25,9 @@ export class LruCache<T> implements SimpleCache<T> {
     private gets = 0;
     private hits = 0;
 
-    private values: Map<string, T> = new Map<string, T>();
+    private readonly values: Map<string, T> = new Map<string, T>();
 
-    constructor(private maxEntries: number = 200) {
+    constructor(private readonly maxEntries: number = 200) {
     }
 
     get stats() {

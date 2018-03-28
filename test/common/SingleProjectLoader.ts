@@ -20,7 +20,7 @@ import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../.
 
 export class SingleProjectLoader implements ProjectLoader {
 
-    constructor(private project: Project) {}
+    constructor(private readonly project: Project) {}
 
     public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         return action(this.project as GitProject);

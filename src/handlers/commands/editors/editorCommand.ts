@@ -102,5 +102,6 @@ function validate(targets: GitHubFallbackReposParameters) {
  * Convenient empty parameters class
  */
 @Parameters()
+// tslint:disable-next-line:no-unnecessary-class
 export class EmptyParameters {
 }

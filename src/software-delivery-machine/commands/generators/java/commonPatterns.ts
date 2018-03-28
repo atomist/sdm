@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { BaseParameter } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 
 export const SemVerRegExp: Partial<BaseParameter> = {

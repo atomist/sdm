@@ -35,7 +35,7 @@ export interface ServicesModifications {
  */
 export class CloudFoundryPusher {
 
-    constructor(private api: CloudFoundryApi, private defaultDomain: string = "cfapps.io") {}
+    constructor(private readonly api: CloudFoundryApi, private readonly defaultDomain: string = "cfapps.io") {}
 
     public async push(spaceName: string,
                       manifestApp: ManifestApplication,

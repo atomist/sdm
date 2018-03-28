@@ -30,7 +30,7 @@ export const breakBuildEditor: HandleCommand = editorCommand(
     });
 
 async function breakBuild(p: Project, ctx: HandlerContext) {
-    return await p.addFile(BadJavaFileName, "this is not Java");
+    return p.addFile(BadJavaFileName, "this is not Java");
 }
 
 export const unbreakBuildEditor: HandleCommand = editorCommand(
@@ -42,5 +42,5 @@ export const unbreakBuildEditor: HandleCommand = editorCommand(
     });
 
 async function unbreakBuild(p: Project, ctx: HandlerContext) {
-    return await p.deleteFile(BadJavaFileName);
+    return p.deleteFile(BadJavaFileName);
 }

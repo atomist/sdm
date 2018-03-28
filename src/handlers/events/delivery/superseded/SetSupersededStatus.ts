@@ -39,7 +39,7 @@ export const SupersededContext = "superseded";
 export class SetSupersededStatus implements HandleEvent<OnPushWithBefore.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
     public async handle(event: EventFired<OnPushWithBefore.Subscription>,
                         ctx: HandlerContext,

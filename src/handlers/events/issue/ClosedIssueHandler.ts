@@ -40,9 +40,9 @@ import * as schema from "../../../typings/types";
 export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
-    private closedIssueListeners: ClosedIssueListener[];
+    private readonly closedIssueListeners: ClosedIssueListener[];
 
     constructor(...closedIssueListeners: ClosedIssueListener[]) {
         this.closedIssueListeners = closedIssueListeners;

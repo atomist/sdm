@@ -40,7 +40,7 @@ import { DryRunContext } from "../../commands/editors/dry-run/dryRunEditor";
 export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryRun.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
     public async handle(event: EventFired<OnBuildCompleteForDryRun.Subscription>,
                         ctx: HandlerContext,

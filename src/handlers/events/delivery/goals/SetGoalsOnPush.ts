@@ -56,7 +56,7 @@ import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)
-    private githubToken: string;
+    private readonly githubToken: string;
 
     private readonly rules: PushMapping<Goals>;
 
@@ -65,9 +65,9 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * @param projectLoader use to load projects
      * @param goalSetters first GoalSetter that returns goals wins
      */
-    constructor(private projectLoader: ProjectLoader,
+    constructor(private readonly projectLoader: ProjectLoader,
                 goalSetters: GoalSetter[],
-                private goalsListeners: GoalsSetListener[]) {
+                private readonly goalsListeners: GoalsSetListener[]) {
         this.rules = new PushRules("Goal setter", goalSetters);
     }
 
