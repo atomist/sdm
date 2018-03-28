@@ -59,7 +59,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
                           addressChannels: AddressChannels,
                           progressLog: ProgressLog,
                           id: GitHubRepoRef,
-                          logInterpreter?: LogInterpreter) {
+                          logInterpreter: LogInterpreter) {
     return async (err: Error) => {
         logger.error(err.message);
         logger.error(err.stack);
@@ -74,7 +74,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
                 sha: id.sha,
             });
 
-        const interpretation = logInterpreter && !!progressLog.log && logInterpreter(progressLog.log);
+        const interpretation = logInterpreter(progressLog.log);
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
             await reportFailureInterpretation(executeGoalInvocation.implementationName, interpretation,

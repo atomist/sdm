@@ -168,7 +168,7 @@ export function applyGoalsToCommit(goals: Goals) {
     return async (ctx: HandlerContext,
                   params: { githubToken: string, owner: string, repo: string, sha?: string, providerId: string }) => {
         const sha = params.sha ? params.sha :
-            await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo));
+            await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo)); // TODO: use fetchDefaultBranchTip
         const id = new GitHubRepoRef(params.owner, params.repo, sha);
 
         await goals.setAllToPending(id, ctx, params.providerId);

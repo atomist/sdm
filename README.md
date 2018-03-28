@@ -11,6 +11,48 @@ It automates all steps in the flow from commit to production (potentially via st
 
 The concept is explained in detail in Rod Johnson's blog [Why you need a Software Delivery Machine](https://the-composition.com/why-you-need-a-software-delivery-machine-85e8399cdfc0). This [video](https://vimeo.com/260496136) shows it in action.
 
+
+## Get Started
+
+This delivery machine feeds on the Atomist API. You'll need to be a member of an Atomist workspace to run it. <!-- TODO: reference auth story -->
+Create your own by [enrolling](https://github.com/atomist/welcome/enroll.md) at [atomist.com]().
+
+Things work best if you install an org webhook.
+
+## Get your Software Delivery Machine
+
+If the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized version of
+ this repository for you.
+ 
+You can fork and clone this repository.
+
+## Run Locally
+
+This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/runClient.md)
+
+See [integrations](#Integrations) for additional prerequisites according to the projects you're building. 
+
+The client logs to the console so you can see it go. Once it runs, here are some things to do:
+
+### Start a new project
+
+In Slack, `@atomist create spring`. This will create a Spring Boot repository. The SDM will build it!
+
+To enable deployment beyond the local one, `@atomist enable deploy`.
+
+### Push to an existing repository
+
+If you have any Java or Node projects in your GitHub org, try linking one to a Slack channel (`@atomist link repo`), and then push to it.
+You'll see Atomist react to the push, and the SDM might have some Goals it can complete.
+
+### change stuff
+
+In `atomist.config.ts`, you can choose the `machine` to start with.
+
+Change the code, restart, and see your new automations. The rest of this README describes some changes you might make.
+
+# About this Software Delivery Machine
+
 ## Implementations of Atomist
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
 
@@ -495,42 +537,40 @@ Any tool that runs on code, such as Checkstyle, can easily be integrated.
 
 Use shell. node is good for this
 
-## Running this Project
+### Integrations
 
-### Binary Dependencies
-To start up these project, you will need the following on the deployment node:
+#### Java
 
-- `git` binary
+To build Java projects, you'll want:
+
 - JDK, for Maven and Checkstyle
 - Maven, with `mvn` on the path
 
-To start the project, type:
+#### Node
 
-```
-atomist start
-```
+To build Node projects:
 
+- npm
+- node
 
-### Environment Variables
+#### Cloud Foundry
 
-- `ATOMIST_TEAM`: A single Atomist workspace this automation will serve. For example, `export ATOMIST_TEAM="T5964N9B7"`.
+In order to enable Pivotal Cloud Foundry deployment, the following environment variables are required:
 
-Alternatively you can subscribe to events from multiple workspaces with `ATOMIST_TEAMS`. For example:
+- `PIVOTAL_USER`: your Pivotal Cloud Foundry user name
+- `PIVOTAL_PASSWORD`: your Pivotal Cloud Foundry password 
+- `PCF_ORG`: your Pivotal Cloud Foundry organization name
+- `PCF_SPACE`: your Pivotal Cloud Foundry space name within `$PCE_ORG`
 
-```bash
-export ATOMIST_TEAMS="T5964N9B7,T29E48P34"
-```
+#### Kubernetes
 
-If an `ATOMIST_TEAMS` environment variable is specified, it will always take precedence and other
-named workspaces will be ignored.
+The kubernetesSoftwareDevelopmentMachine included here deploys to an Atomist sandbox kubernetes environment, using
+[k8-automation](https://github.com/atomist/k8-automation) which we run inside our cluster. You can deploy the Spring Boot
+projects created with `@atomist create spring` here, in order to try out the Kubernetes integration with the SDM.
 
-The workspace id of your Atomist workspace can be obtained from the dashboard running at: https://app.atomist.com. Once
-logged in, visit the Settings page of your selected workspace. Make sure to copy the Atomist workspace id; not the Slack 
-workspace id.
-
-- `GITHUB_TOKEN`: Most of the GitHub access occurs with user credentials. However,
-one or two checks occur when they are not available, and a GitHub token must be supplied.
+#### Checkstyle
  
+Checkstyle is a style-checker for Java.
 For the optional Checkstyle integration to work, set up two Checkstyle environment variables as follows:
 
 ```
@@ -543,12 +583,6 @@ export CHECKSTYLE_PATH="/Users/rodjohnson/tools/checkstyle-8.8/checkstyle-8.8-al
 
 Get `checkstyle-8.8-all.jar` from [Checkstyle's download page](https://sourceforge.net/projects/checkstyle/files/checkstyle/8.8/).
 
-In order to enable Pivotal Cloud Foundry deployment, the following environment variables are required:
-
-- `PIVOTAL_USER`: your Pivotal Cloud Foundry user name
-- `PIVOTAL_PASSWORD`: your Pivotal Cloud Foundry password 
-- `PCF_ORG`: your Pivotal Cloud Foundry organization name
-- `PCF_SPACE`: your Pivotal Cloud Foundry space name within `$PCE_ORG`
 
 ## Roadmap
 
