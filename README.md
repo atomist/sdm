@@ -15,7 +15,7 @@ The concept is explained in detail in Rod Johnson's blog [Why you need a Softwar
 ## Get Started
 
 This delivery machine feeds on the Atomist API. You'll need to be a member of an Atomist workspace to run it. <!-- TODO: reference auth story -->
-Create your own by [enrolling](https://github.com/atomist/welcome/enroll.md) at [atomist.com]().
+Create your own by [enrolling](https://github.com/atomist/welcome/blob/master/enroll.md) at [atomist.com]().
 
 Things work best if you install an org webhook.
 
@@ -28,7 +28,7 @@ You can fork and clone this repository.
 
 ## Run Locally
 
-This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/runClient.md)
+This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md)
 
 See [integrations](#Integrations) for additional prerequisites according to the projects you're building. 
 
