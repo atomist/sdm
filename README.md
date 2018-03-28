@@ -415,6 +415,7 @@ Add in `atomist.config.ts` as follows:
 ```typescript
 sdm.addCodeReactions(listChangedFiles)
 ```
+> If your reaction is essentially a review--for example, it's associated with a known problem in a particular file location--use a ProjectReviewer rather than a CodeReaction.
 
 #### Fingerprints
 A special kind of push listener relates to **fingerprints**.
