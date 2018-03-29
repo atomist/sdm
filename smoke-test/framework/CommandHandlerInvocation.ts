@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-
-import { automationServerAuthHeaders, SmokeTestConfig } from "./config";
 import { logger } from "@atomist/automation-client";
 import { Arg, Secret } from "@atomist/automation-client/internal/invoker/Payload";
+import { automationServerAuthHeaders, SmokeTestConfig } from "./config";
 
 import axios from "axios";
 import * as _ from "lodash";

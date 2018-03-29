@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import "mocha";
 import * as assert from "assert";
 import * as stringify from "json-stringify-safe";
+import "mocha";
 import { SelfDescribeCommandName } from "../src/handlers/commands/SelfDescribe";
-import { invokeCommandHandler } from "./framework/CommandHandlerInvocation";
 import { TestConfig } from "./fixture";
+import { invokeCommandHandler } from "./framework/CommandHandlerInvocation";
 
 describe("basic thereness", () => {
 

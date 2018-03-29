@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { SmokeTestConfig } from "./framework/config";
 
 export const TestConfig: SmokeTestConfig = {

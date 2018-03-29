@@ -16,8 +16,8 @@
 
 import "mocha";
 import { AffirmationEditorName } from "../src/software-delivery-machine/commands/editors/demo/affirmationEditor";
-import { editorOneInvocation, invokeCommandHandler } from "./framework/CommandHandlerInvocation";
 import { TestConfig } from "./fixture";
+import { editorOneInvocation, invokeCommandHandler } from "./framework/CommandHandlerInvocation";
 
 const RepoToTest = "losgatos1";
 
