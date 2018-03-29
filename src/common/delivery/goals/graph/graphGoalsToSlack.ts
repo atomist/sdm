@@ -15,8 +15,10 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
+import * as https from "https";
 import * as _ from "lodash";
 import { GoalsSetListener } from "../../../listener/GoalsSetListener";
 import { splitContext } from "../gitHubContext";
@@ -29,21 +31,18 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     if (!graphvizServiceUrl) {
         return;
     }
-    if (!gsi.goals) {
+    if (!gsi.goalSet) {
         return;
     }
 
     try {
-        const graphDefinition = goalsToDot(gsi.goals);
+        const graphDefinition = goalsToDot(gsi.goalSet);
         logger.debug("ShowGraph: generated .dot: " + graphDefinition);
 
         const generateGraphUrl = graphvizServiceUrl + "/dot/png";
-        const generateGraphResponse = await axios.post(generateGraphUrl,
-            graphDefinition,
-            {headers: {"Content-Type": "text/plain"}});
-        logger.debug("ShowGraph: got from %s: %j", generateGraphUrl, generateGraphResponse);
+        const generateGraphResponse = await askForGraph(generateGraphUrl, graphDefinition);
 
-        const graphImageRelativePath = generateGraphResponse.data.goalGraphUrl;
+        const graphImageRelativePath = generateGraphResponse.goalGraphUrl;
         if (!graphImageRelativePath) {
             logger.info("ShowGraph: No image path returned from graphvizService");
             return;
@@ -52,19 +51,31 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
         const showGraphMessage: slack.SlackMessage = {
             attachments: [{
                 fallback: "dependency goal graph goes here",
-                text: "Graph of planned goals",
+                text: "Graph of planned goal set: " + gsi.goalSet.name,
                 image_url: graphvizServiceUrl + "/" + graphImageRelativePath,
             }],
         };
         return gsi.addressChannels(showGraphMessage);
     } catch (err) {
         // do not fail anything
-        logger.error("ShowGraph: Unable to generate a cool graph of the goals: " + err.message);
+        logger.error("ShowGraph: Unable to generate a cool graph of the goalSet: " + err.message);
         logger.error("ShowGraph: URL: " + graphvizServiceUrl);
         logger.error("ShowGraph: stack trace: " + err.stack);
     }
 
 };
+
+async function askForGraph(generateGraphUrl: string, graphDefinition: string) {
+    const agent = new https.Agent({
+        rejectUnauthorized: false,
+    });
+    const generateGraphResponse = await axios.post(generateGraphUrl,
+        graphDefinition,
+        {headers: {"Content-Type": "text/plain"}, httpsAgent: agent});
+    logger.debug("ShowGraph: got from %s: %j", generateGraphUrl, generateGraphResponse);
+
+    return generateGraphResponse.data;
+}
 
 export function goalsToDot(goals: Goals) {
 
