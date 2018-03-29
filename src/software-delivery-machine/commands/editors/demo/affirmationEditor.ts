@@ -20,6 +20,8 @@ import { doWithFiles } from "@atomist/automation-client/project/util/projectUtil
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
+export const AffirmationEditorName = "affirmation";
+
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
  * editor
@@ -27,10 +29,11 @@ import { RequestedCommitParameters } from "../support/RequestedCommitParameters"
  */
 export const affirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToReadMe,
-    "affirmation",
+    AffirmationEditorName,
     () => new RequestedCommitParameters("Everyone needs encouragement"),
     {
         editMode: ap => ap.editMode,
+        intent: "edit affirmation",
     },
 );
 

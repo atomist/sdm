@@ -18,12 +18,13 @@ import { logger } from "@atomist/automation-client";
 import "mocha";
 import { automationServerAuthHeaders, DefaultSmokeTestConfig, SmokeTestConfig } from "./config";
 
-import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
+import { Arg, Secret } from "@atomist/automation-client/internal/invoker/Payload";
 import * as assert from "assert";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { SelfDescribeCommandName } from "../src/handlers/commands/SelfDescribe";
+import { AffirmationEditorName } from "../src/software-delivery-machine/commands/editors/demo/affirmationEditor";
 
 const testConfig: SmokeTestConfig = DefaultSmokeTestConfig;
 
@@ -44,9 +45,20 @@ describe("local SDM", () => {
     describe("test against existing project", () => {
 
         it("changes readme", async () => {
-            const url = testConfig.baseEndpoint + "/info";
-            const resp = await axios.get(url, automationServerAuthHeaders(testConfig));
-            logger.info("RESP was " + resp.status);
+            // TODO factor out editor parameters
+            const handlerResult = await invokeCommandHandler(testConfig, {
+                name: AffirmationEditorName,
+                parameters: [
+                ],
+                mappedParameters: [
+                    // TODO get rid of hard coding of owning team
+                    { name: "owner", value: "spring-team"},
+                    { name: "targets.repo", value: "losgatos1"},
+                ],
+                secrets: [
+                    { uri: "github://user_token?scopes=repo,user:email,read:user", value: process.env.GITHUB_TOKEN},
+                ],
+            });
         });
 
     });
@@ -57,7 +69,7 @@ export interface CommandHandlerInvocation {
     name: string;
     parameters: Arg[];
     mappedParameters?: Arg[];
-    secrets?: Arg[];
+    secrets?: Secret[];
 }
 
 export async function invokeCommandHandler(config: SmokeTestConfig,
