@@ -61,7 +61,7 @@ function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
                           id: GitHubRepoRef,
                           logInterpreter: LogInterpreter) {
     return async (err: Error) => {
-        logger.error(err.message);
+        logger.error("RunWithLog caught error: %s", err.message);
         logger.error(err.stack);
         progressLog.write("ERROR: " + err.message);
         progressLog.write(err.stack);
