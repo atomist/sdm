@@ -1,5 +1,5 @@
 
-import { automationServerAuthHeaders, SmokeTestConfig } from "../config";
+import { automationServerAuthHeaders, SmokeTestConfig } from "./config";
 import { logger } from "@atomist/automation-client";
 import { Arg, Secret } from "@atomist/automation-client/internal/invoker/Payload";
 

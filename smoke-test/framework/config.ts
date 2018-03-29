@@ -24,17 +24,9 @@ export interface SmokeTestConfig {
     user: string;
 
     password: string;
+
+    githubOrg: string;
 }
-
-export const DefaultSmokeTestConfig = {
-
-    atomistTeamId: "T5964N9B7",
-    baseEndpoint: "http://localhost:2866",
-
-    user: "admin",
-    password: process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
-
-};
 
 export function automationServerAuthHeaders(config: SmokeTestConfig): AxiosRequestConfig {
     return {
