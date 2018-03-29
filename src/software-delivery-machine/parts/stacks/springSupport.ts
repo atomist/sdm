@@ -22,7 +22,6 @@ import { LocalDeploymentGoal, LocalEndpointGoal } from "../../../common/delivery
 import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { mavenSourceDeployer } from "../../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
-import { applyHttpServiceGoals } from "../../blueprint/goal/jvmGoalManagement";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../../commands/generators/java/spring/springBootGenerator";
 import { CommonJavaGeneratorConfig } from "../../machines/generatorConfig";
@@ -54,6 +53,5 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
         }))
         .addNewRepoWithCodeActions(
             tagRepo(springBootTagger),
-        )
-        .addSupportingCommands(() => applyHttpServiceGoals);
+        );
 }

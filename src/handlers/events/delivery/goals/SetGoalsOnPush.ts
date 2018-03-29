@@ -45,7 +45,7 @@ import { PushMapping } from "../../../../common/listener/PushMapping";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { OnPushToAnyBranch } from "../../../../typings/types";
+import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 
@@ -66,67 +66,51 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * @param goalSetters first GoalSetter that returns goals wins
      */
     constructor(private readonly projectLoader: ProjectLoader,
-                goalSetters: GoalSetter[],
+                private readonly goalSetters: GoalSetter[],
                 private readonly goalsListeners: GoalsSetListener[]) {
-        this.rules = new PushRules("Goal setter", goalSetters);
+
     }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>,
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
-        const id = repoRefFromPush(push);
+
         const credentials = {token: params.githubToken};
 
-        const determinedGoals = await this.projectLoader.doWithProject({credentials, id, context, readOnly: true},
-            project => this.setGoalsForPushOnProject(push, id, credentials, context, project));
+        await chooseAndSetGoals(context, params.projectLoader, credentials, push, params.goalsListeners, params.goalSetters);
 
-        if (!!determinedGoals) {
-            await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
-        }
-
-        // Let GoalSetListeners know even if we determined no goals.
-        // This is not an error
-        const gsi: GoalsSetInvocation = {
-            id,
-            context,
-            credentials,
-            goals: determinedGoals,
-            addressChannels: addressChannelsFor(push.repo, context),
-        };
-        await Promise.all(this.goalsListeners.map(l => l(gsi)));
         return Success;
     }
+}
 
-    private async setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
-                                           id: GitHubRepoRef,
-                                           credentials: ProjectOperationCredentials,
-                                           context: HandlerContext,
-                                           project: GitProject): Promise<Goals> {
-        const addressChannels = addressChannelsFor(push.repo, context);
-        const pi: ProjectListenerInvocation = {
-            id,
-            project,
-            credentials,
-            push,
-            context,
-            addressChannels,
-        };
+export async function chooseAndSetGoals(context: HandlerContext,
+                                        projectLoader: ProjectLoader,
+                                        credentials: ProjectOperationCredentials,
+                                        push: PushFields.Fragment,
+                                        goalsListeners: GoalsSetListener[],
+                                        goalSetters: GoalSetter[]) {
+    const id = repoRefFromPush(push);
 
-        try {
-            const determinedGoals: Goals = await this.rules.valueForPush(pi);
-            if (!determinedGoals) {
-                logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
-            } else {
-                logger.info("Goals for push on %j are %s", id, determinedGoals.name);
-            }
-            return determinedGoals;
-        } catch (err) {
-            logger.error("Error determining goals: %s", err);
-            await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
-            throw err;
-        }
+    const determinedGoals = await projectLoader.doWithProject({credentials, id, context, readOnly: true},
+        project => setGoalsForPushOnProject(push, id, credentials, context, project, goalSetters));
+
+    if (!!determinedGoals) {
+        await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
     }
+
+    // Let GoalSetListeners know even if we determined no goals.
+    // This is not an error
+    const gsi: GoalsSetInvocation = {
+        id,
+        context,
+        credentials,
+        goals: determinedGoals,
+        addressChannels: addressChannelsFor(push.repo, context),
+    };
+    await Promise.all(goalsListeners.map(l => l(gsi)));
+
+    return determinedGoals;
 }
 
 async function saveGoals(ctx: HandlerContext,
@@ -143,6 +127,38 @@ async function saveGoals(ctx: HandlerContext,
         });
     } else {
         await determinedGoals.setAllToPending(id, ctx, providerId);
+    }
+}
+
+async function setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
+                                        id: GitHubRepoRef,
+                                        credentials: ProjectOperationCredentials,
+                                        context: HandlerContext,
+                                        project: GitProject,
+                                        goalSetters: GoalSetter[]): Promise<Goals> {
+    const addressChannels = addressChannelsFor(push.repo, context);
+    const pi: ProjectListenerInvocation = {
+        id,
+        project,
+        credentials,
+        push,
+        context,
+        addressChannels,
+    };
+
+    try {
+        const rules = new PushRules("Goal setter", goalSetters);
+        const determinedGoals: Goals = await rules.valueForPush(pi);
+        if (!determinedGoals) {
+            logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
+        } else {
+            logger.info("Goals for push on %j are %s", id, determinedGoals.name);
+        }
+        return determinedGoals;
+    } catch (err) {
+        logger.error("Error determining goals: %s", err);
+        await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
+        throw err;
     }
 }
 

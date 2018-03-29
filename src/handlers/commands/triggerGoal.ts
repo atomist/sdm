@@ -50,7 +50,18 @@ export class RetryGoalParameters {
 }
 
 export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
-    return commandHandlerFrom(async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
+    return commandHandlerFrom(triggerGoalsOnCommit(goal),
+        RetryGoalParameters,
+        retryCommandNameFor(implementationName),
+        "Retry an execution of " + goal.name, goal.retryIntent);
+}
+
+export function retryCommandNameFor(deployName: string) {
+    return "Retry" + deployName;
+}
+
+function triggerGoalsOnCommit(goal: Goal) {
+    return async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
         // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
         const branch = commandParams.branch || repoData.defaultBranch;
@@ -73,14 +84,10 @@ export function triggerGoal(implementationName: string, goal: Goal): HandleComma
         // do the thing
         await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet});
         return Success;
-    }, RetryGoalParameters, retryCommandNameFor(implementationName), "Retry an execution of " + goal.name, goal.retryIntent);
+    }
 }
 
-export function retryCommandNameFor(deployName: string) {
-    return "Retry" + deployName;
-}
-
-async function fetchDefaultBranchTip(ctx: HandlerContext, id: GitHubRepoRef, providerId: string) {
+export async function fetchDefaultBranchTip(ctx: HandlerContext, id: GitHubRepoRef, providerId: string) {
     const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(
         {name: "RepoBranchTips", variables: {name: id.repo, owner: id.owner}});
     if (!result || !result.Repo || result.Repo.length === 0) {
@@ -93,7 +100,7 @@ async function fetchDefaultBranchTip(ctx: HandlerContext, id: GitHubRepoRef, pro
     return repo;
 }
 
-function tipOfBranch(repo: RepoBranchTips.Repo, branchName: string) {
+export function tipOfBranch(repo: RepoBranchTips.Repo, branchName: string) {
     const branchData = repo.branches.find(b => b.name === branchName);
     if (!branchData) {
         throw new Error("Branch not found: " + branchName);

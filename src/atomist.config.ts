@@ -46,7 +46,7 @@ const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
  * Take your pick.
  */
 
-const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+// const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 
 // const machine = projectCreationMachine(SdmOptions);
 
@@ -56,7 +56,7 @@ const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
 
 // const machine = artifactVerifyingSoftwareDeliveryMachine();
 
-// const machine = k8sSoftwareDeliveryMachine(SdmOptions);
+const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),
