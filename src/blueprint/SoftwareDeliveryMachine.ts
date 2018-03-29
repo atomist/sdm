@@ -87,6 +87,7 @@ import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetS
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
+import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/resetGoals";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
@@ -204,12 +205,15 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
-    private get goalSetting(): Maker<SetGoalsOnPush> {
+    private get goalSetting(): FunctionalUnit {
         if (this.goalSetters.length === 0) {
             logger.warn("No goal setters");
             return undefined;
         }
-        return () => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners);
+        return {
+            eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners)],
+            commandHandlers: [() => resetGoalsCommand(this.opts.projectLoader, this.goalsSetListeners, this.goalSetters)],
+        };
     }
 
     private readonly oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
@@ -307,6 +311,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.codeReactionHandling,
                 this.reviewHandling,
                 this.deployer,
+                this.goalSetting,
             ]);
     }
 
@@ -321,7 +326,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,
-                this.goalSetting,
                 this.oldPushSuperseder,
                 this.onSuperseded,
                 this.onBuildComplete,

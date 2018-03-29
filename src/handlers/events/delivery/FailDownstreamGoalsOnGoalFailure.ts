@@ -16,7 +16,7 @@
 
 import {
     EventFired,
-    EventHandler,
+    EventHandler, Failure,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -60,6 +60,10 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureSt
         const id = repoRefFromStatus(status);
         const goals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
         const failedGoal = goals.find(g => g.externalKey === status.context) as SdmGoal;
+        if (!failedGoal) {
+            logger.warn("Could not identify %s among %j", status.context, goals.map(g => g.externalKey));
+            return Failure;
+        }
         const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals as SdmGoal[])))
             .filter(g => stillWaitingForPreconditions(status, g as SdmGoal));
 
@@ -85,6 +89,7 @@ function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
             g.name === keyToFind.name);
         if (!found) {
             logger.warn("mapKeyToGoal: Unable to resolve %j", keyToFind);
+            logger.debug("set of goals: %j", goals);
         }
         return found;
     };

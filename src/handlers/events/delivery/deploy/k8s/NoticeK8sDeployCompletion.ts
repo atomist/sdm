@@ -47,7 +47,7 @@ export const K8sProductionDomain = "production";
     subscription({
         name: "OnAParticularStatus",
         variables: {
-            context: k8AutomationDeployContext(K8sProductionDomain),
+            context: k8AutomationDeployContext(K8sTestingDomain),
         }},
     ),
 )

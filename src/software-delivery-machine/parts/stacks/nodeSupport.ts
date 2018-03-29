@@ -22,6 +22,7 @@ import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtom
 import { AddBuildScript } from "../../blueprint/code/autofix/addBuildScript";
 import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
 import { CommonGeneratorConfig } from "../../machines/generatorConfig";
+import { CommonTypeScriptErrors } from "../team/commonTypeScriptErrors";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
@@ -46,5 +47,6 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
             AddAtomistTypeScriptHeader,
             tslintFix,
             AddBuildScript,
-        );
+        )
+    .addReviewerRegistrations(CommonTypeScriptErrors);
 }
