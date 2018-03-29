@@ -544,6 +544,14 @@ Use shell. node is good for this
 
 ### Integrations
 
+### Local HTTP server
+To run a local HTTP server to invoke via `curl` or for smoke testing, please set the following environment variable:
+
+```
+export LOCAL_ATOMIST_ADMIN_PASSWORD="<value>"
+
+```
+
 #### Java
 
 To build Java projects, you'll want:

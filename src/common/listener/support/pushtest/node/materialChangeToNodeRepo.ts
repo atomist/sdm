@@ -36,6 +36,10 @@ export const MaterialChangeToNodeRepo: PushTest = pushTest("Material change to N
         return true;
     }
     const changedFiles = await filesChangedSince(pci.project, pci.push.before.sha);
+    if (!changedFiles) {
+        logger.info("Cannot determine if change is material on %j: can't enumerate changed files", pci.id);
+        return true;
+    }
     logger.debug(`MaterialChangeToNodeRepo: Changed files are [${changedFiles.join(",")}]`);
     if (anyFileChangedWithExtension(changedFiles, FileToWatch)) {
         logger.debug("Change is material on %j: changed files=[%s]", pci.id, changedFiles.join(","));

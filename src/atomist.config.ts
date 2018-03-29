@@ -67,12 +67,12 @@ export const configuration: Configuration = {
         DeployEnablementIngester,
     ],
     http: {
-        enabled: true,
+        enabled: !!process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
         auth: {
             basic: {
                 enabled: true,
                 username: "admin",
-                password: "447b8bce-eeea-42ff-bf9a-c8368f70c9c7",
+                password: process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
             },
         },
     },

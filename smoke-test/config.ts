@@ -19,7 +19,6 @@ import axios from "axios";
 
 export interface SmokeTestConfig {
     atomistTeamId: string;
-    jwt: string;
     baseEndpoint: string;
 
     user: string;
@@ -30,11 +29,10 @@ export interface SmokeTestConfig {
 export const DefaultSmokeTestConfig = {
 
     atomistTeamId: "T5964N9B7",
-    jwt: "33cbc21d-fed4-4695-b0de-d383bf82c1fc",
     baseEndpoint: "http://localhost:2866",
 
     user: "admin",
-    password: "447b8bce-eeea-42ff-bf9a-c8368f70c9c7",
+    password: process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
 
 };
 
