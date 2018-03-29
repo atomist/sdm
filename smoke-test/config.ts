@@ -34,7 +34,7 @@ export const DefaultSmokeTestConfig = {
     baseEndpoint: "http://localhost:2866",
 
     user: "admin",
-    password: "d11da242-2a4d-4a09-a154-132b961c0162",
+    password: "447b8bce-eeea-42ff-bf9a-c8368f70c9c7",
 
 };
 

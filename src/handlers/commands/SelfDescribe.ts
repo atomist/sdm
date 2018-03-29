@@ -38,7 +38,8 @@ export function selfDescribeHandler(sdm: SoftwareDeliveryMachine): Maker<HandleC
 
 function handleDescribe(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
-        await ctx.messageClient.respond(`I am a brilliant SDM, eager to work for you.\nMy name is _${sdm.name}_`);
-        return Success;
+        const message = `I am a brilliant SDM, eager to work for you.\nMy name is _${sdm.name}_`;
+        await ctx.messageClient.respond(message);
+        return { code: 0, message };
     };
 }

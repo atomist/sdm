@@ -68,6 +68,13 @@ export const configuration: Configuration = {
     ],
     http: {
         enabled: true,
+        auth: {
+            basic: {
+                enabled: true,
+                username: "admin",
+                password: "447b8bce-eeea-42ff-bf9a-c8368f70c9c7",
+            }
+        }
     },
     applicationEvents: {
         enabled: true,

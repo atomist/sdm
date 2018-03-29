@@ -18,8 +18,11 @@ import "mocha";
 import { automationServerAuthHeaders, DefaultSmokeTestConfig, SmokeTestConfig } from "./config";
 
 import axios from "axios";
-import { Arg, CommandInvocation } from "@atomist/automation-client/internal/invoker/Payload";
+import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
 import { SelfDescribeCommandName } from "../src/handlers/commands/SelfDescribe";
+import * as stringify from "json-stringify-safe";
+import * as _ from "lodash";
+import * as assert from "assert";
 
 const testConfig: SmokeTestConfig = DefaultSmokeTestConfig;
 
@@ -28,10 +31,11 @@ describe("local SDM", () => {
     describe("basic thereness", () => {
 
         it("can describe itself", async () => {
-            await invokeCommandHandler(testConfig, {
+            const handlerResult = await invokeCommandHandler(testConfig, {
                 name: SelfDescribeCommandName,
                 parameters: [],
             });
+            assert(handlerResult.message.includes("brilliant"), "Not brilliant: " + stringify(handlerResult));
         });
 
     });
@@ -48,8 +52,6 @@ describe("local SDM", () => {
 
 });
 
-import * as _ from "lodash";
-
 export interface CommandHandlerInvocation {
     name: string;
     parameters: Arg[];
@@ -62,10 +64,13 @@ export async function invokeCommandHandler(config: SmokeTestConfig,
     const url = `${testConfig.baseEndpoint}/command/${_.kebabCase(invocation.name)}`;
     const data = {
         parameters: invocation.parameters,
-        mapped_paramers: invocation.mappedParameters,
+        mapped_parameters: invocation.mappedParameters,
         secrets: invocation.secrets,
+        command: invocation.name,
     };
     console.log(`Hitting ${url} to test command ${invocation.name} with payload ${JSON.stringify(data)}`);
     const resp = await axios.post(url, data, automationServerAuthHeaders(testConfig));
+
     console.log("RESP was " + resp.status);
+    return resp.data;
 }
