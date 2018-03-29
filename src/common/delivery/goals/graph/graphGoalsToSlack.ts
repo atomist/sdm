@@ -22,6 +22,8 @@ import { GoalsSetListener } from "../../../listener/GoalsSetListener";
 import { splitContext } from "../gitHubContext";
 import { Goal, GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
+import * as https from "https";
 
 export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     // This is an easter egg
@@ -38,12 +40,9 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
         logger.debug("ShowGraph: generated .dot: " + graphDefinition);
 
         const generateGraphUrl = graphvizServiceUrl + "/dot/png";
-        const generateGraphResponse = await axios.post(generateGraphUrl,
-            graphDefinition,
-            {headers: {"Content-Type": "text/plain"}});
-        logger.debug("ShowGraph: got from %s: %j", generateGraphUrl, generateGraphResponse);
+        const generateGraphResponse = await askForGraph(generateGraphUrl, graphDefinition);
 
-        const graphImageRelativePath = generateGraphResponse.data.goalGraphUrl;
+        const graphImageRelativePath = generateGraphResponse.goalGraphUrl;
         if (!graphImageRelativePath) {
             logger.info("ShowGraph: No image path returned from graphvizService");
             return;
@@ -65,6 +64,18 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     }
 
 };
+
+async function askForGraph(generateGraphUrl: string, graphDefinition: string) {
+    const agent = new https.Agent({
+        rejectUnauthorized: false,
+    });
+    const generateGraphResponse = await axios.post(generateGraphUrl,
+        graphDefinition,
+        {headers: {"Content-Type": "text/plain"}, httpsAgent: agent});
+    logger.debug("ShowGraph: got from %s: %j", generateGraphUrl, generateGraphResponse);
+
+    return generateGraphResponse.data
+}
 
 export function goalsToDot(goals: Goals) {
 
