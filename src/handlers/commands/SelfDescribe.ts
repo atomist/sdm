@@ -20,6 +20,8 @@ import { EmptyParameters } from "./editors/editorCommand";
 import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 
+export const SelfDescribeCommandName = "SelfDescribe";
+
 /**
  * Return a command handler that can describe the present software delivery machine
  * @param {SoftwareDeliveryMachine} sdm
@@ -29,7 +31,7 @@ export function selfDescribeHandler(sdm: SoftwareDeliveryMachine): Maker<HandleC
     return () => commandHandlerFrom(
         handleDescribe(sdm),
         EmptyParameters,
-        "SelfDescribe",
+        SelfDescribeCommandName,
         "Describe this SDM",
         "describe sdm");
 }
