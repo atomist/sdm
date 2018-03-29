@@ -1,38 +1,38 @@
 fragment PushFields on Push {
-    id
-    branch
-    before {
-        sha
-        message
-        committer {
-            person {
-                chatId {
-                    screenName
-                }
-            }
+  id
+  branch
+  before {
+    sha
+    message
+    committer {
+      person {
+        chatId {
+          screenName
         }
+      }
     }
-    after {
-        sha
-        message
-        committer {
-            person {
-                chatId {
-                    screenName
-                }
-            }
+  }
+  after {
+    sha
+    message
+    committer {
+      person {
+        chatId {
+          screenName
         }
+      }
     }
-    repo {
-        ...CoreRepoFieldsAndChannels
+  }
+  repo {
+    ...CoreRepoFieldsAndChannels
+  }
+  commits {
+    sha
+    message
+    author {
+      _id
+      login
+      name
     }
-    commits {
-        sha
-        message
-        author {
-            _id
-            login
-            name
-        }
-    }
+  }
 }
