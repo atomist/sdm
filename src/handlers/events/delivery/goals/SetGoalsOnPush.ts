@@ -50,9 +50,9 @@ import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRe
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 
 /**
- * Set up goals on a push (e.g. for delivery).
+ * Set up goalSet on a push (e.g. for delivery).
  */
-@EventHandler("Set up goals", subscription("OnPushToAnyBranch"))
+@EventHandler("Set up goalSet", subscription("OnPushToAnyBranch"))
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
     @Secret(Secrets.OrgToken)
@@ -63,7 +63,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     /**
      * Configure goal setting
      * @param projectLoader use to load projects
-     * @param goalSetters first GoalSetter that returns goals wins
+     * @param goalSetters first GoalSetter that returns goalSet wins
      */
     constructor(private readonly projectLoader: ProjectLoader,
                 private readonly goalSetters: GoalSetter[],
@@ -105,7 +105,7 @@ export async function chooseAndSetGoals(context: HandlerContext,
         id,
         context,
         credentials,
-        goals: determinedGoals,
+        goalSet: determinedGoals,
         addressChannels: addressChannelsFor(push.repo, context),
     };
     await Promise.all(goalsListeners.map(l => l(gsi)));
@@ -180,15 +180,3 @@ export class ApplyGoalsParameters {
     public sha?: string;
 }
 
-export function applyGoalsToCommit(goals: Goals) {
-    return async (ctx: HandlerContext,
-                  params: { githubToken: string, owner: string, repo: string, sha?: string, providerId: string }) => {
-        const sha = params.sha ? params.sha :
-            await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo)); // TODO: use fetchDefaultBranchTip
-        const id = new GitHubRepoRef(params.owner, params.repo, sha);
-
-        await goals.setAllToPending(id, ctx, params.providerId);
-        await ctx.messageClient.respond(":heavy_check_mark: Statuses reset on " + sha);
-        return Success;
-    };
-}

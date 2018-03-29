@@ -28,6 +28,7 @@ import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines
 import { projectCreationMachine } from "./software-delivery-machine/machines/projectCreationMachine";
 import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisMachine";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
+import { greeting } from "./util/misc/greeting";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
@@ -89,5 +90,6 @@ export const configuration: Configuration = {
             level: "debug",
             name: "./log/github-sdm.log",
         },
+        banner: greeting(),
     },
 };

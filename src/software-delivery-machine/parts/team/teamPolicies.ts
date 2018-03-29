@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import axios from "axios";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
 import { GraphGoalsToSlack } from "../../../common/delivery/goals/graph/graphGoalsToSlack";
 import { OnDryRunBuildComplete } from "../../../handlers/events/dry-run/OnDryRunBuildComplete";
