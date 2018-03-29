@@ -52,7 +52,7 @@ describe("local SDM", () => {
                 ],
                 mappedParameters: [
                     // TODO get rid of hard coding of owning team
-                    { name: "owner", value: "spring-team"},
+                    { name: "targets.owner", value: "spring-team"},
                     { name: "targets.repo", value: "losgatos1"},
                 ],
                 secrets: [
