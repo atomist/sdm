@@ -73,8 +73,8 @@ export const configuration: Configuration = {
                 enabled: true,
                 username: "admin",
                 password: "447b8bce-eeea-42ff-bf9a-c8368f70c9c7",
-            }
-        }
+            },
+        },
     },
     applicationEvents: {
         enabled: true,

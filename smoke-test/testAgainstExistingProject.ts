@@ -18,12 +18,12 @@ import { logger } from "@atomist/automation-client";
 import "mocha";
 import { automationServerAuthHeaders, DefaultSmokeTestConfig, SmokeTestConfig } from "./config";
 
-import axios from "axios";
 import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
-import { SelfDescribeCommandName } from "../src/handlers/commands/SelfDescribe";
+import * as assert from "assert";
+import axios from "axios";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import * as assert from "assert";
+import { SelfDescribeCommandName } from "../src/handlers/commands/SelfDescribe";
 
 const testConfig: SmokeTestConfig = DefaultSmokeTestConfig;
 
