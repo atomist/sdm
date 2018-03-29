@@ -87,13 +87,13 @@ import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetS
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
+import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/resetGoals";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/resetGoals";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -212,7 +212,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         }
         return {
             eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners)],
-            commandHandlers: [() => resetGoalsCommand(this.opts.projectLoader, this.goalsSetListeners, this.goalSetters)]
+            commandHandlers: [() => resetGoalsCommand(this.opts.projectLoader, this.goalsSetListeners, this.goalSetters)],
         };
     }
 

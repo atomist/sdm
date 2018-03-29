@@ -1,12 +1,12 @@
-import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
-import { Project } from "@atomist/automation-client/project/Project";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { Project } from "@atomist/automation-client/project/Project";
+import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { ReviewerRegistration } from "../../../common/delivery/code/codeActionRegistrations";
 
 const Problems = [{
     watchFor: `import sprintf from "sprintf-js"`,
-    shouldBe: `import { sprintf } from "sprintf-js"`
+    shouldBe: `import { sprintf } from "sprintf-js"`,
 }];
 
 export const CommonTypeScriptErrors: ReviewerRegistration = {
@@ -23,8 +23,8 @@ export const CommonTypeScriptErrors: ReviewerRegistration = {
                         category: "Dangerous TypeScript Errors of the Past",
                     });
                 }
-            })
+            });
         });
         return result;
-    }
+    },
 };

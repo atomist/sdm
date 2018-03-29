@@ -84,7 +84,7 @@ function triggerGoalsOnCommit(goal: Goal) {
         // do the thing
         await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet});
         return Success;
-    }
+    };
 }
 
 export async function fetchDefaultBranchTip(ctx: HandlerContext, id: GitHubRepoRef, providerId: string) {

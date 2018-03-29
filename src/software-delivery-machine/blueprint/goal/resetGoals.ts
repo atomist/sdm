@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-
 import {
     Failure, HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
-    Success
+    Success,
 } from "@atomist/automation-client";
+import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Parameters } from "@atomist/automation-client/decorators";
-import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
-import { PushForCommit } from "../../../typings/types";
 import * as stringify from "json-stringify-safe";
-import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
-import { ProjectLoader } from "../../../common/repo/ProjectLoader";
-import { GoalsSetListener } from "../../../common/listener/GoalsSetListener";
 import { GoalSetter } from "../../../common/listener/GoalSetter";
+import { GoalsSetListener } from "../../../common/listener/GoalsSetListener";
+import { ProjectLoader } from "../../../common/repo/ProjectLoader";
+import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
+import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
+import { PushForCommit } from "../../../typings/types";
 
 @Parameters()
 export class ResetGoalsParameters {
@@ -69,8 +68,8 @@ function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsS
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
         const commitResult = await ctx.graphClient.query<PushForCommit.Query, PushForCommit.Variables>({
             name: "PushForCommit", variables: {
-                owner: commandParams.owner, repo: commandParams.repo, providerId: commandParams.providerId, branch, sha
-            }
+                owner: commandParams.owner, repo: commandParams.repo, providerId: commandParams.providerId, branch, sha,
+            },
         });
 
         if (!commitResult || !commitResult.Commit || commitResult.Commit.length === 0) {
@@ -90,9 +89,9 @@ function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsS
         if (goals) {
             await ctx.messageClient.respond(`Set goals on ${sha} to ${goals.name}`);
         } else {
-            await ctx.messageClient.respond(`No goals found for ${sha}`)
+            await ctx.messageClient.respond(`No goals found for ${sha}`);
         }
 
         return Success;
-    }
+    };
 }

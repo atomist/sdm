@@ -15,15 +15,15 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
+import * as https from "https";
 import * as _ from "lodash";
 import { GoalsSetListener } from "../../../listener/GoalsSetListener";
 import { splitContext } from "../gitHubContext";
 import { Goal, GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
-import { doWithRetry } from "@atomist/automation-client/util/retry";
-import * as https from "https";
 
 export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     // This is an easter egg
@@ -74,7 +74,7 @@ async function askForGraph(generateGraphUrl: string, graphDefinition: string) {
         {headers: {"Content-Type": "text/plain"}, httpsAgent: agent});
     logger.debug("ShowGraph: got from %s: %j", generateGraphUrl, generateGraphResponse);
 
-    return generateGraphResponse.data
+    return generateGraphResponse.data;
 }
 
 export function goalsToDot(goals: Goals) {

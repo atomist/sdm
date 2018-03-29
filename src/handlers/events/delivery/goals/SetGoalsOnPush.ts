@@ -179,4 +179,3 @@ export class ApplyGoalsParameters {
     @Parameter({required: false})
     public sha?: string;
 }
-
