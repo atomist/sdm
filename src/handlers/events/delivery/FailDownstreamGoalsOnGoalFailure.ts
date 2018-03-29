@@ -87,10 +87,6 @@ function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
         const found = goals.find(g => g.goalSet === keyToFind.goalSet &&
             g.environment === keyToFind.environment &&
             g.name === keyToFind.name);
-        if (!found) {
-            logger.warn("mapKeyToGoal: Unable to resolve %j", keyToFind);
-            logger.debug("set of goals: %j", goals);
-        }
         return found;
     };
 }
