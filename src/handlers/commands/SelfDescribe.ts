@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, Success, } from "@atomist/automation-client";
+import { HandleCommand, Success } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { EmptyParameters } from "./editors/editorCommand";
-import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
+import { EmptyParameters } from "./editors/editorCommand";
 
 /**
  * Return a command handler that can describe the present software delivery machine
