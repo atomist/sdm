@@ -72,6 +72,7 @@ export async function invokeCommandHandler(config: SmokeTestConfig,
     logger.info(`Hitting ${url} to test command ${invocation.name} with payload ${JSON.stringify(data)}`);
     const resp = await axios.post(url, data, automationServerAuthHeaders(testConfig));
 
+    // tslint:disable-next-line:no-console
     console.log("RESP was " + resp.status);
     return resp.data;
 }
