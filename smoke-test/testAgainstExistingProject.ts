@@ -69,7 +69,7 @@ export async function invokeCommandHandler(config: SmokeTestConfig,
         secrets: invocation.secrets,
         command: invocation.name,
     };
-    console.log(`Hitting ${url} to test command ${invocation.name} with payload ${JSON.stringify(data)}`);
+    logger.info(`Hitting ${url} to test command ${invocation.name} with payload ${JSON.stringify(data)}`);
     const resp = await axios.post(url, data, automationServerAuthHeaders(testConfig));
 
     console.log("RESP was " + resp.status);
