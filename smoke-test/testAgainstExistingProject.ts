@@ -1,3 +1,4 @@
+import { logger } from "@atomist/automation-client";
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -45,7 +46,7 @@ describe("local SDM", () => {
         it("changes readme", async () => {
             const url = testConfig.baseEndpoint + "/info";
             const resp = await axios.get(url, automationServerAuthHeaders(testConfig));
-            console.log("RESP was " + resp.status);
+            logger.info("RESP was " + resp.status);
         });
 
     });
