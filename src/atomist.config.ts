@@ -68,7 +68,14 @@ export const configuration: Configuration = {
         DeployEnablementIngester,
     ],
     http: {
-        enabled: true,
+        enabled: !!process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
+        auth: {
+            basic: {
+                enabled: true,
+                username: "admin",
+                password: process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
+            },
+        },
     },
     applicationEvents: {
         enabled: true,
