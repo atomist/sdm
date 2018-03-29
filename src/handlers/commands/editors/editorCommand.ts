@@ -98,6 +98,8 @@ function validate(targets: GitHubFallbackReposParameters) {
     }
 }
 
+// TODO this is not editor specific vvvvvvvv
+
 /**
  * Convenient empty parameters class
  */

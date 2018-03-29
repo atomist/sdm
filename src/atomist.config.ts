@@ -67,7 +67,7 @@ export const configuration: Configuration = {
         DeployEnablementIngester,
     ],
     http: {
-        enabled: notLocal,
+        enabled: true,
     },
     applicationEvents: {
         enabled: true,

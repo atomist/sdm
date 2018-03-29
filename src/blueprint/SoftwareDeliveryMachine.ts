@@ -92,6 +92,7 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -471,6 +472,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
+        this.addSupportingCommands(selfDescribeHandler(this));
     }
 
 }
