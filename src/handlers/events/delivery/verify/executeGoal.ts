@@ -19,7 +19,7 @@ import { Goal } from "../../../../common/delivery/goals/Goal";
 import {
     ExecuteGoalInvocation,
     ExecuteGoalResult,
-    GoalExecutor
+    GoalExecutor,
 } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";

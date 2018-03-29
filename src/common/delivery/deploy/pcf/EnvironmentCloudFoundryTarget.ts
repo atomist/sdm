@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CloudFoundryInfo, PivotalWebServices } from "./CloudFoundryTarget";
 import { logger } from "@atomist/automation-client";
+import { CloudFoundryInfo, PivotalWebServices } from "./CloudFoundryTarget";
 
 /**
  * Configure cloud foundry from environment variables.
@@ -43,7 +43,7 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
         const space = process.env[envKey];
         logger.info("PCF space for environment [%s] is [%s]", this.environmentName, space);
         if (!space) {
-            throw new Error(`Please set environment key ${envKey} to deploy to Cloud Foundry environment ${this.environmentName}`)
+            throw new Error(`Please set environment key ${envKey} to deploy to Cloud Foundry environment ${this.environmentName}`);
         }
         return space;
     }

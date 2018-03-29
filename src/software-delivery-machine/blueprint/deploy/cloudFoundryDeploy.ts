@@ -19,6 +19,7 @@ import {
     CloudFoundryInfo,
 } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget";
 import {
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -30,12 +31,10 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
-import { EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget";
 
 export const CloudFoundryStagingTarget = new EnvironmentCloudFoundryTarget("staging");
 
 export const CloudFoundryProductionTarget = new EnvironmentCloudFoundryTarget("production");
-
 
 /**
  * Deploy everything to the same Cloud Foundry space
