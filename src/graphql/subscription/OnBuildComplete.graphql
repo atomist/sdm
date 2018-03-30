@@ -9,17 +9,7 @@ subscription OnBuildComplete {
       sha
       message
       repo {
-        name
-        owner
-        gitHubId
-        allowRebaseMerge
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
+        ...CoreRepoFieldsAndChannels
       }
       statuses {
         context

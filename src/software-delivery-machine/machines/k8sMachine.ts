@@ -18,6 +18,7 @@ import * as build from "../../blueprint/dsl/buildDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
+import { NoGoal, NoGoals } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
@@ -52,6 +53,9 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         "K8s software delivery machine",
         opts,
+        whenPushSatisfies(IsMaven, not(MaterialChangeToJavaRepo))
+            .itMeans("Immaterial change")
+            .setGoals(NoGoals),
         whenPushSatisfies(
             ToDefaultBranch,
             IsMaven,

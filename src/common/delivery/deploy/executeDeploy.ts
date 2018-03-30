@@ -21,7 +21,7 @@ import { PushMapping } from "../../listener/PushMapping";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { Goal } from "../goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
-import { checkOutArtifact, setEndpointStatusOnSuccessfulDeploy, Target, Targeter } from "./deploy";
+import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter } from "./deploy";
 
 import * as _ from "lodash";
 import { Deployer } from "../../../spi/deploy/Deployer";
@@ -72,7 +72,8 @@ export function executeDeploy(artifactStore: ArtifactStore,
                 const target = await targetMapping.valueForPush(pti);
                 if (!target) {
                     progressLog.write("SDM configuration error: no deploy rule applies to this code");
-                    throw new Error(`Don't know how to deploy project ${id.owner}:${id.repo}`);
+                    logger.error(`Don't know how to deploy project ${id.owner}:${id.repo}`);
+                    return Success;
                 }
                 logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
@@ -86,8 +87,8 @@ export function executeDeploy(artifactStore: ArtifactStore,
                     credentials,
                     atomistTeam);
 
-                return Promise.all(deployments.map(deployment => setEndpointStatusOnSuccessfulDeploy(
-                    {endpointGoal, credentials, id}, deployment)));
+                return Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
+                    {endpointGoal, rwlc, deployment})));
 
             });
         return Success;

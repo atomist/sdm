@@ -20,7 +20,7 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
+import { GoalRootType, SdmGoal, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function environmentFromGoal(goal: Goal) {
@@ -28,7 +28,7 @@ export function environmentFromGoal(goal: Goal) {
 }
 
 export interface UpdateSdmGoalParams {
-    state: GoalState;
+    state: SdmGoalState;
     description: string;
     url?: string;
     approved?: boolean;
@@ -59,7 +59,7 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
 export function storeGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
-    state: GoalState,
+    state: SdmGoalState,
     id: GitHubRepoRef,
     providerId: string
     url?: string,
@@ -127,7 +127,7 @@ function constructProvenance(ctx: HandlerContext): SdmProvenance {
     };
 }
 
-export function descriptionFromState(goal: Goal, state: GoalState): string {
+export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
     switch (state) {
         case  "planned" :
         case "requested" :

@@ -9,16 +9,7 @@ subscription OnBuildCompleteForDryRun {
       sha
       message
       repo {
-        name
-        owner
-        gitHubId
-        allowRebaseMerge
-        channels {
-          team {
-            id
-          }
-          id
-        }
+        ...CoreRepoFieldsAndChannels
       }
       pushes {
         branch

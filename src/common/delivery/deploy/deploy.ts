@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { HandlerContext, logger } from "@atomist/automation-client";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { StatusState } from "../../../typings/types";
-import { GitHubStatusContext } from "../goals/gitHubContext";
+import { providerIdFromStatus } from "../../../util/git/repoRef";
+import { findSdmGoalOnCommit } from "../goals/fetchGoalsOnCommit";
 import { Goal } from "../goals/Goal";
-
-import { createStatus } from "../../../util/github/ghub";
+import { descriptionFromState, updateGoal } from "../goals/storeGoals";
+import { RunWithLogContext } from "./runWithLog";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
@@ -72,39 +72,35 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
     };
 }
 
-export async function setEndpointStatusOnSuccessfulDeploy(params: {
-                                                              endpointGoal: Goal,
-                                                              credentials: ProjectOperationCredentials,
-                                                              id: RemoteRepoRef,
-                                                          },
-                                                          deployment: Deployment) {
-
+export async function setEndpointGoalOnSuccessfulDeploy(params: {
+    endpointGoal: Goal,
+    rwlc: RunWithLogContext,
+    deployment: Deployment,
+}) {
+    const {rwlc, deployment, endpointGoal} = params;
+    const sdmGoal = await findSdmGoalOnCommit(rwlc.context, rwlc.id, providerIdFromStatus(rwlc.status), endpointGoal);
     if (deployment.endpoint) {
-        await setStatus(params.credentials, params.id,
-            StatusState.success,
-            params.endpointGoal.context,
-            deployment.endpoint,
-            params.endpointGoal.successDescription)
-            .catch(endpointStatus => {
-                logger.error("Could not set Endpoint status: " + endpointStatus.message);
-                // do not fail this whole handler
-            });
+        const newState = "success";
+        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
     } else {
-        throw new Error("Deploy finished with success, but the endpoint was not found in the logs");
+        const error = new Error("Deploy finished with success, but the endpoint was not found");
+        const newState = "failure";
+        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
     }
 }
 
-export function setStatus(credentials: ProjectOperationCredentials,
-                          id: RemoteRepoRef,
-                          state: StatusState,
-                          context: GitHubStatusContext,
-                          targetUrl: string,
-                          description?: string): Promise<any> {
-    logger.info("Setting deploy status for %s to %s at %s", context, state, targetUrl);
-    return createStatus((credentials as TokenCredentials).token, id as GitHubRepoRef, {
-        state,
-        target_url: targetUrl,
-        context,
-        description,
+function markEndpointStatus(parameters: {
+    context: HandlerContext, sdmGoal: SdmGoal, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
+    error?: Error,
+}) {
+    const {context, sdmGoal, endpointGoal, newState, endpoint, error} = parameters;
+    return updateGoal(context, sdmGoal, {
+        description: descriptionFromState(endpointGoal, newState),
+        url: endpoint,
+        state: newState,
+        error,
+    }).catch(endpointStatus => {
+        logger.error("Could not set Endpoint status: " + endpointStatus.message);
+        // do not fail this whole handler
     });
 }

@@ -31,12 +31,9 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { NoGoals } from "../../../../common/delivery/goals/common/commonGoals";
+import { GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
@@ -47,7 +44,6 @@ import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -118,17 +114,13 @@ async function saveGoals(ctx: HandlerContext,
                          id: GitHubRepoRef,
                          providerId: string,
                          determinedGoals: Goals) {
-    if (determinedGoals === NoGoals) {
-        // TODO: let "Immaterial" be a goal instead of this special-case handling
-        await createStatus((credentials as TokenCredentials).token, id, {
-            context: "Immaterial",
-            state: "success",
-            description: "No significant change",
-        });
-    } else {
-        await determinedGoals.setAllToPending(id, ctx, providerId);
-    }
+    await determinedGoals.setAllToPending(id, ctx, providerId);
 }
+
+export const executeImmaterial: GoalExecutor = async () => {
+    logger.debug("Nothing to do here");
+    return Success;
+};
 
 async function setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
                                         id: GitHubRepoRef,

@@ -60,6 +60,6 @@ export function executeVerifyEndpoint(sdm: SdmVerification): GoalExecutor {
             throw err;
         })));
 
-        return { code: 0, requireApproval: sdm.requestApproval};
+        return { code: 0, requireApproval: sdm.requestApproval, targetUrl: endpointStatus.targetUrl };
     }, lastTenLinesLogInterpreter("Verification failed"));
 }
