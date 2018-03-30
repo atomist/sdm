@@ -36,7 +36,7 @@ export async function executeGoal(execute: GoalExecutor,
     try {
         let result = await execute(status, ctx, params);
         if (!result) {
-            logger.error("execute method for %s of %s returned undefined", params.implementationName, params.goal.name)
+            logger.error("execute method for %s of %s returned undefined", params.implementationName, params.goal.name);
             result = Success;
         }
         logger.info("ExecuteGoal: result of %s: %j", params.implementationName, result);
@@ -63,7 +63,7 @@ export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, re
             url: result.targetUrl,
             state: newState,
             description: descriptionFromState(goal, newState),
-            error
+            error,
         });
 }
 

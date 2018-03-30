@@ -17,11 +17,11 @@
 import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
+import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
-import * as _ from "lodash";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least

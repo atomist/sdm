@@ -57,7 +57,7 @@ const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
 
 // const machine = artifactVerifyingSoftwareDeliveryMachine();
 
- const machine = k8sSoftwareDeliveryMachine(SdmOptions);
+const machine = k8sSoftwareDeliveryMachine(SdmOptions);
 
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),
