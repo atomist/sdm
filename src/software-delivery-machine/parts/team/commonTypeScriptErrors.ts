@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
+import { logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { ReviewerRegistration } from "../../../common/delivery/code/codeActionRegistrations";
 
 const Problems = [{
-    watchFor: `import sprintf from "sprintf-js"`,
+    watchFor: /^import sprintf from "sprintf-js"/m,
     shouldBe: `import { sprintf } from "sprintf-js"`,
 }];
 
@@ -32,11 +32,17 @@ export const CommonTypeScriptErrors: ReviewerRegistration = {
         await doWithFiles(project, "**/*.ts", async f => {
             const content = await f.getContent();
             Problems.forEach(problem => {
-                if (content.includes(problem.watchFor)) {
+                if (problem.watchFor.test(content)) {
+                    logger.info("CommonTypeScriptErrors: Danger found in " + f.path);
                     result.comments.push({
                         severity: "error",
-                        detail: "This has been a problem in the past: " + problem.watchFor,
+                        detail: "This: " + problem.watchFor + " should be: " + problem.shouldBe,
                         category: "Dangerous TypeScript Errors of the Past",
+                        sourceLocation: {
+                           path: f.path,
+                           offset: undefined,
+                           lineFrom1: findLineNumber(content, problem.watchFor),
+                        },
                     });
                 }
             });
@@ -44,3 +50,9 @@ export const CommonTypeScriptErrors: ReviewerRegistration = {
         return result;
     },
 };
+
+function findLineNumber(source: string, regex: RegExp): number {
+    const lines = source.split("\n");
+    const lineFrom0 = lines.findIndex(l => regex.test(l));
+    return lineFrom0 + 1;
+}
