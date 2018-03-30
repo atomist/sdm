@@ -21,7 +21,7 @@ import { PushMapping } from "../../listener/PushMapping";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { Goal } from "../goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
-import { checkOutArtifact, setEndpointStatusOnSuccessfulDeploy, Target, Targeter } from "./deploy";
+import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter } from "./deploy";
 
 import * as _ from "lodash";
 import { Deployer } from "../../../spi/deploy/Deployer";
@@ -87,8 +87,8 @@ export function executeDeploy(artifactStore: ArtifactStore,
                     credentials,
                     atomistTeam);
 
-                return Promise.all(deployments.map(deployment => setEndpointStatusOnSuccessfulDeploy(
-                    {endpointGoal, credentials, id}, deployment)));
+                return Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
+                    {endpointGoal, rwlc, deployment})));
 
             });
         return Success;

@@ -14,46 +14,20 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import { NotARealUrl } from "../../../../common/delivery/build/local/LocalBuilder";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import {
-    AddressChannels,
-    addressChannelsFor,
-} from "../../../../common/slack/addressChannels";
+import { AddressChannels, addressChannelsFor, } from "../../../../common/slack/addressChannels";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
-import {
-    BuildStatus,
-    OnBuildComplete,
-} from "../../../../typings/types";
-import {
-    createStatus,
-    State,
-} from "../../../../util/github/ghub";
+import { BuildStatus, OnBuildComplete, } from "../../../../typings/types";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
-import { SdmGoalState, SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
 
 /**
