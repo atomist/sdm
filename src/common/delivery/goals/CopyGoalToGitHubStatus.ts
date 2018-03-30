@@ -19,7 +19,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import * as GoalEvent from "../../../ingesters/sdmGoalIngester";
-import { GoalState } from "../../../ingesters/sdmGoalIngester";
+import { SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { OnAnyGoal, ScmProvider, StatusState } from "../../../typings/types";
 import { createStatus, State } from "../../../util/github/ghub";
 import { fetchProvider } from "../../../util/github/gitHubProvider";
@@ -43,7 +43,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
         // For now, skip in_process updates. Someday we may change this,
         // when it's SdmGoals that are displayed in lifecycle and only some
         // of them are copied to statuses. #98
-        if ((goal.state as GoalState) === "in_process") {
+        if ((goal.state as SdmGoalState) === "in_process") {
             logger.debug("Skipping update to %s because in_process updates aren't important enough", goal.externalKey);
             return Success;
         }
@@ -57,7 +57,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
             branch: goal.branch,
         });
 
-        const goalState = goal.state as GoalEvent.GoalState;
+        const goalState = goal.state as GoalEvent.SdmGoalState;
 
         const url = goalState === "waiting_for_approval" ? forApproval(goal.url || "https://pretend.atomist.com") : goal.url;
 
@@ -73,7 +73,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
 
 }
 
-export function sdmGoalStateToGitHubStatusState(goalState: GoalState): StatusState {
+export function sdmGoalStateToGitHubStatusState(goalState: SdmGoalState): StatusState {
     switch (goalState) {
         case "planned":
         case "requested":

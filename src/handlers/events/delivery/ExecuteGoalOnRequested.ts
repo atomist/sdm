@@ -22,7 +22,7 @@ import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
 import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
-import { GoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { SdmGoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 
@@ -85,7 +85,7 @@ export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal.Commit): StatusForExecuteGoal.Fragment {
     return {
         commit,
-        state: sdmGoalStateToGitHubStatusState(sdmGoal.state as GoalState),
+        state: sdmGoalStateToGitHubStatusState(sdmGoal.state as SdmGoalState),
         targetUrl: sdmGoal.url, // not handling approval weirdness
         context: sdmGoal.externalKey,
         description: sdmGoal.description,

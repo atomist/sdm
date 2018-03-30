@@ -51,6 +51,10 @@ import {
     State,
 } from "../../../../util/github/ghub";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
+import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { SdmGoalState, SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
 
 /**
  * Set build status on complete build
@@ -68,19 +72,17 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
     public async handle(event: EventFired<OnBuildComplete.Subscription>,
                         ctx: HandlerContext, params: this): Promise<HandlerResult> {
         const build = event.data.Build[0];
-        const commit = build.commit;
+        const commit: OnBuildComplete.Commit = build.commit;
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         params.buildGoals.forEach(async buildGoal => {
+            const sdmGoal = await findSdmGoalOnCommit(ctx, id, commit.repo.org.provider.providerId, buildGoal);
             const builtStatus = commit.statuses.find(s => s.context === buildGoal.context);
-            const ghStatusState = buildStatusToGitHubStatusState(build.status);
             if (!!builtStatus) {
                 logger.info("Updating build status: %s", buildGoal.context);
-                await setBuiltContext(buildGoal,
-                    ghStatusState,
-                    build.buildUrl,
-                    id,
-                    {token: params.githubToken});
+                await setBuiltContext(ctx, buildGoal, sdmGoal,
+                    build.status,
+                    build.buildUrl);
             } else {
                 logger.info("No build status found for %s so not setting it to complete", buildGoal.context);
             }
@@ -96,7 +98,7 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
 export async function displayBuildLogFailure(id: RemoteRepoRef,
                                              build: { buildUrl?: string, status?: string },
                                              ac: AddressChannels,
-                                             logInterpretation?: LogInterpretation) {
+                                             logInterpretation: LogInterpretation) {
     const buildUrl = build.buildUrl;
     if (buildUrl) {
         logger.info("Retrieving failed build log from " + buildUrl);
@@ -124,7 +126,7 @@ function linkToSha(id: RemoteRepoRef) {
     return slack.url(id.url + "/tree/" + id.sha, id.sha.substr(0, 6));
 }
 
-function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
+function buildStatusToSdmGoalState(buildStatus: BuildStatus): SdmGoalState {
     switch (buildStatus) {
         case "passed" :
             return "success";
@@ -133,20 +135,20 @@ function buildStatusToGitHubStatusState(buildStatus: BuildStatus): State {
         case "canceled" :
             return "failure";
         default:
-            return "pending"; // in_process
+            return "in_process"; // in_process
     }
 }
 
-async function setBuiltContext(goal: Goal,
-                               state: State,
-                               url: string,
-                               id: GitHubRepoRef,
-                               creds: ProjectOperationCredentials): Promise<any> {
-    const description = state === "pending" /* in_process */ ? goal.inProcessDescription : goal.successDescription;
-    return createStatus((creds as TokenCredentials).token, id, {
-        state,
-        target_url: (url === NotARealUrl ? undefined : url),
-        context: goal.context,
-        description,
-    });
+async function setBuiltContext(ctx: HandlerContext,
+                               goal: Goal,
+                               sdmGoal: SdmGoal,
+                               state: BuildStatus,
+                               url: string,): Promise<any> {
+    const newState = buildStatusToSdmGoalState(state);
+    return updateGoal(ctx, sdmGoal as SdmGoal,
+        {
+            url,
+            state: newState,
+            description: descriptionFromState(goal, newState),
+        });
 }

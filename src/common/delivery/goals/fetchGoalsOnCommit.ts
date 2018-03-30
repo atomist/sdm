@@ -15,12 +15,24 @@
  */
 
 import { HandlerContext, logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { SdmGoalsForCommit } from "../../../typings/types";
 
 import * as _ from "lodash";
+import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { goalCorrespondsToSdmGoal } from "./storeGoals";
+import { Goal } from "./Goal";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
-export async function fetchGoalsForCommit(ctx: HandlerContext, id: GitHubRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
+export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
+    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId);
+    const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g as SdmGoal));
+    if (matches && matches.length > 1) {
+        logger.warn("FindSdmGoal: More than one match found for %s/%s; they are %j", goal.environment, goal.name, matches);
+    }
+    return _.get(matches, "[0]");
+}
+
+export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
     const result = await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
         name: "SdmGoalsForCommit", variables: {
             owner: id.owner,
