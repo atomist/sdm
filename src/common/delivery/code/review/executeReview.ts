@@ -46,7 +46,7 @@ export function executeReview(projectLoader: ProjectLoader,
         try {
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
-                await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+                return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
                     const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : undefined;
                     const pti: CodeReactionInvocation = {
                         id,

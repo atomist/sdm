@@ -21,6 +21,7 @@ import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { GoalRootType, GoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
+import * as _ from "lodash";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
@@ -31,6 +32,7 @@ export interface UpdateSdmGoalParams {
     description: string;
     url?: string;
     approved?: boolean;
+    error?: Error;
 }
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
@@ -44,6 +46,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         approval,
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(before.provenance),
+        error: _.get(params, "error.message"),
     };
     logger.debug(`Updating SdmGoal ${sdmGoal.externalKey} to ${sdmGoal.state}`);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));

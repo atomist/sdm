@@ -34,14 +34,18 @@ export async function executeGoal(execute: GoalExecutor,
     logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
     await markGoalInProcess(ctx, sdmGoal, params.goal);
     try {
-        const result = await execute(status, ctx, params);
+        let result = await execute(status, ctx, params);
+        if (!result) {
+            logger.error("execute method for %s of %s returned undefined", params.implementationName, params.goal.name)
+            result = Success;
+        }
         logger.info("ExecuteGoal: result of %s: %j", params.implementationName, result);
         await markStatus(ctx, sdmGoal, params.goal, result);
         return Success;
     } catch (err) {
         logger.warn("Error executing %s on %s: %s",
             params.implementationName, repoRefFromStatus(status).url, err.message);
-        await markStatus(ctx, sdmGoal, params.goal, {code: 1});
+        await markStatus(ctx, sdmGoal, params.goal, {code: 1}, err);
         return failure(err);
     }
 }
@@ -51,7 +55,7 @@ export function validSubscriptionName(input: string): string {
         .replace(/^(\d)/, "number$1");
 }
 
-export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult) {
+export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult, error?: Error) {
     const newState = result.code !== 0 ? "failure" :
         result.requireApproval ? "waiting_for_approval" : "success";
     return updateGoal(ctx, sdmGoal as SdmGoal,
@@ -59,6 +63,7 @@ export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, re
             url: result.targetUrl,
             state: newState,
             description: descriptionFromState(goal, newState),
+            error
         });
 }
 
