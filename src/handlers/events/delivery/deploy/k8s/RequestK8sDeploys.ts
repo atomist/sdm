@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, logger } from "@atomist/automation-client";
+import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
@@ -47,6 +47,7 @@ export function requestDeployToK8s(target: K8Target): GoalExecutor {
             state: "pending",
             description: "Requested deploy by k8-automation",
         });
+        return Success;
     };
 }
 
