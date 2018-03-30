@@ -16,7 +16,6 @@
 
 import * as _ from "lodash";
 
-
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
