@@ -22,7 +22,7 @@ import {
 
 export const GoalRootType = "SdmGoal";
 
-export type GoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
+export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
 
 export interface SdmGoal extends SdmGoalKey {
     sha: string;
@@ -36,7 +36,7 @@ export interface SdmGoal extends SdmGoalKey {
 
     description: string;
     url?: string;
-    state: GoalState;
+    state: SdmGoalState;
     ts: number;
 
     error?: string;
