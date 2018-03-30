@@ -48,6 +48,7 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { createStatus, tipOfDefaultBranch } from "../../../../util/github/ghub";
+import { GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -118,17 +119,13 @@ async function saveGoals(ctx: HandlerContext,
                          id: GitHubRepoRef,
                          providerId: string,
                          determinedGoals: Goals) {
-    if (determinedGoals === NoGoals) {
-        // TODO: let "Immaterial" be a goal instead of this special-case handling
-        await createStatus((credentials as TokenCredentials).token, id, {
-            context: "Immaterial",
-            state: "success",
-            description: "No significant change",
-        });
-    } else {
-        await determinedGoals.setAllToPending(id, ctx, providerId);
-    }
+    await determinedGoals.setAllToPending(id, ctx, providerId);
 }
+
+export const executeImmaterial: GoalExecutor = async () => {
+    logger.debug("Nothing to do here");
+    return Success;
+};
 
 async function setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
                                         id: GitHubRepoRef,

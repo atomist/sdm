@@ -35,7 +35,6 @@ import {
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
-import { createStatus } from "../../../../util/github/ghub";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 

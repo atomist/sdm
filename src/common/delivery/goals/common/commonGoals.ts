@@ -164,7 +164,6 @@ export const NoGoal = new Goal({
     orderedName: "1-immaterial",
     displayName: "immaterial",
     completedDescription: "No material changes",
-
 });
 
 export const StagingDeploymentContext = StagingDeploymentGoal.context;
