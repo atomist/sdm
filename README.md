@@ -544,6 +544,13 @@ Use shell. node is good for this
 
 ### Integrations
 
+### Choose a machine
+You must set environment variables to choose a machine, if you override the default.
+```
+export MACHINE_PATH="./software-delivery-machine/machines"
+export MACHINE_NAME="cloudFoundrySoftwareDeliveryMachine"
+```
+
 ### Local HTTP server
 To run a local HTTP server to invoke via `curl` or for smoke testing, please set the following environment variable:
 
@@ -554,14 +561,14 @@ export LOCAL_ATOMIST_ADMIN_PASSWORD="<value>"
 
 #### Java
 
-To build Java projects, you'll want:
+To build Java projects on the automation client node, you'll need:
 
 - JDK, for Maven and Checkstyle
 - Maven, with `mvn` on the path
 
 #### Node
 
-To build Node projects:
+To build Node projects on the automation client node, you'll need:
 
 - npm
 - node
