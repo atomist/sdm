@@ -24,7 +24,7 @@ import {
     FingerprintGoal,
     JustBuildGoal,
     LocalDeploymentGoal,
-    LocalEndpointGoal,
+    LocalEndpointGoal, NoGoal,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
     ReviewGoal,
@@ -81,7 +81,7 @@ import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
-import { SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -477,6 +477,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
         this.addSupportingCommands(selfDescribeHandler(this));
+        this.addFunctionalUnits(functionalUnitForGoal("DoNothing", NoGoal, executeImmaterial))
     }
 
 }

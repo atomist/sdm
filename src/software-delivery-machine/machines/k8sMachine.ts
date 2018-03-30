@@ -45,6 +45,7 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { NoGoal, NoGoals } from "../../common/delivery/goals/common/commonGoals";
 
 export type K8sMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -52,6 +53,9 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         "K8s software delivery machine",
         opts,
+        whenPushSatisfies(IsMaven, not(MaterialChangeToJavaRepo))
+            .itMeans("Immaterial change")
+            .setGoals(NoGoals),
         whenPushSatisfies(
             ToDefaultBranch,
             IsMaven,
