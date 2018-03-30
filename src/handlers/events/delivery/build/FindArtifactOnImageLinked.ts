@@ -36,6 +36,8 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
+import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
@@ -63,8 +65,8 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         const image = imageLinked.image;
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
-        const desiredStatus = commit.statuses.find(status => status.context === params.goal.context);
-        if (!desiredStatus) {
+        const artifactSdmGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, params.goal);
+        if (!artifactSdmGoal) {
             logger.debug("FindArtifactOnImageLinked: context %s not found for %j", params.goal.context, id);
             return Success;
         }
@@ -84,11 +86,10 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
             await Promise.all(params.listeners.map(l => l(ai)));
         }
 
-        await createStatus(params.githubToken, id, {
+        await updateGoal(context, artifactSdmGoal, {
             state: "success",
             description: params.goal.successDescription,
-            target_url: image.imageName,
-            context: params.goal.context,
+            url: image.imageName,
         });
         return Success;
     }
