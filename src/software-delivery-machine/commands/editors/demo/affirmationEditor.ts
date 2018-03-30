@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
+import { HandleCommand, Parameter, Parameters } from "@atomist/automation-client";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
 export const AffirmationEditorName = "affirmation";
+
+@Parameters()
+export class AffirmationParameters extends RequestedCommitParameters {
+
+    constructor(message: string) {
+        super(message);
+    }
+
+    @Parameter({required: false, pattern: /.*/})
+    public readonly customAffirmation: string;
+}
 
 /**
  * Function returning a command handler around the appendAffirmationToReadMe
@@ -30,7 +41,7 @@ export const AffirmationEditorName = "affirmation";
 export const affirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToReadMe,
     AffirmationEditorName,
-    () => new RequestedCommitParameters("Everyone needs encouragement"),
+    () => new AffirmationParameters("Everyone needs encouragement"),
     {
         editMode: ap => ap.editMode,
         intent: "edit affirmation",
@@ -55,8 +66,8 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToReadMe: SimpleProjectEditor<RequestedCommitParameters> = async (p, ctx, params) => {
-    const affirmation = randomAffirmation();
+export const appendAffirmationToReadMe: SimpleProjectEditor<AffirmationParameters> = async (p, ctx, params) => {
+    const affirmation = params.customAffirmation || randomAffirmation();
     await ctx.messageClient.respond(`Adding to \`README.md\` via \`${params.branchToUse}\`: _${affirmation}_`);
     return doWithFiles(p, "README.md", async f => {
         const content = await f.getContent();
