@@ -27,7 +27,9 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
 import { Goal } from "../../../../common/delivery/goals/Goal";
+import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import {
     ArtifactInvocation,
     ArtifactListener,
@@ -35,8 +37,6 @@ import {
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
-import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
-import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {

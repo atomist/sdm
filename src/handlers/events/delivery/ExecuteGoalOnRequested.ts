@@ -22,7 +22,7 @@ import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
 import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
-import { SdmGoalState, SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 

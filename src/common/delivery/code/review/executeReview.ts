@@ -16,6 +16,7 @@
 
 import * as _ from "lodash";
 
+
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
@@ -26,7 +27,6 @@ import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { StatusForExecuteGoal } from "../../../../typings/types";
 import { filesChangedSince } from "../../../../util/git/filesChangedSince";
-import { filtered } from "../../../../util/project/filter";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
@@ -131,11 +131,14 @@ function sendErrorsToSlack(errors: ReviewerError[], addressChannels: AddressChan
 }
 
 function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment): Attachment {
+    const link = rc.sourceLocation ? slack.url(deepLink(grr, rc.sourceLocation), "jump to") :
+        slack.url(grr.url + "/tree/" + grr.sha, "source");
+
     return {
         color: "#ff0000",
         author_name: rc.category,
         author_icon: "https://image.shutterstock.com/z/stock-vector-an-image-of-a-red-grunge-x-572409526.jpg",
-        text: `${slack.url(deepLink(grr, rc.sourceLocation), "jump to")} ${rc.detail}`,
+        text: `${link} ${rc.detail}`,
         mrkdwn_in: ["text"],
         fallback: "error",
         actions: !!rc.fix ? [

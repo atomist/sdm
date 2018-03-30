@@ -477,7 +477,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
         this.addSupportingCommands(selfDescribeHandler(this));
-        this.addFunctionalUnits(functionalUnitForGoal("DoNothing", NoGoal, executeImmaterial))
+        this.addFunctionalUnits(functionalUnitForGoal("DoNothing", NoGoal, executeImmaterial));
     }
 
 }

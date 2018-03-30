@@ -17,16 +17,16 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { providerIdFromStatus } from "../../../util/git/repoRef";
+import { findSdmGoalOnCommit } from "../goals/fetchGoalsOnCommit";
 import { Goal } from "../goals/Goal";
 import { descriptionFromState, updateGoal } from "../goals/storeGoals";
 import { RunWithLogContext } from "./runWithLog";
-import { findSdmGoalOnCommit } from "../goals/fetchGoalsOnCommit";
-import { providerIdFromStatus } from "../../../util/git/repoRef";
-import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
@@ -75,30 +75,30 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
 export async function setEndpointGoalOnSuccessfulDeploy(params: {
     endpointGoal: Goal,
     rwlc: RunWithLogContext,
-    deployment: Deployment
-},) {
+    deployment: Deployment,
+}) {
     const {rwlc, deployment, endpointGoal} = params;
     const sdmGoal = await findSdmGoalOnCommit(rwlc.context, rwlc.id, providerIdFromStatus(rwlc.status), endpointGoal);
     if (deployment.endpoint) {
         const newState = "success";
-        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint})
+        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
     } else {
         const error = new Error("Deploy finished with success, but the endpoint was not found");
         const newState = "failure";
-        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error})
+        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
     }
 }
 
 function markEndpointStatus(parameters: {
     context: HandlerContext, sdmGoal: SdmGoal, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
-    error?: Error
+    error?: Error,
 }) {
-    let {context, sdmGoal, endpointGoal, newState, endpoint, error} = parameters;
+    const {context, sdmGoal, endpointGoal, newState, endpoint, error} = parameters;
     return updateGoal(context, sdmGoal, {
         description: descriptionFromState(endpointGoal, newState),
         url: endpoint,
         state: newState,
-        error
+        error,
     }).catch(endpointStatus => {
         logger.error("Could not set Endpoint status: " + endpointStatus.message);
         // do not fail this whole handler

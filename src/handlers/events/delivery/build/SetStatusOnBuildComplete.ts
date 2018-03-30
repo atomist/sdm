@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success, } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import { AddressChannels, addressChannelsFor, } from "../../../../common/slack/addressChannels";
-import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
-import { BuildStatus, OnBuildComplete, } from "../../../../typings/types";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
-import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
-import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
+import { Goal } from "../../../../common/delivery/goals/Goal";
+import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
+import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
+import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
+import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 
 /**
  * Set build status on complete build
@@ -117,7 +117,7 @@ async function setBuiltContext(ctx: HandlerContext,
                                goal: Goal,
                                sdmGoal: SdmGoal,
                                state: BuildStatus,
-                               url: string,): Promise<any> {
+                               url: string): Promise<any> {
     const newState = buildStatusToSdmGoalState(state);
     return updateGoal(ctx, sdmGoal as SdmGoal,
         {
