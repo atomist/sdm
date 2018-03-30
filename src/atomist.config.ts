@@ -15,18 +15,11 @@
  */
 
 import { Configuration } from "@atomist/automation-client/configuration";
-import { SoftwareDeliveryMachineOptions } from "./blueprint/SoftwareDeliveryMachine";
-import { EphemeralLocalArtifactStore } from "./common/artifact/local/EphemeralLocalArtifactStore";
+import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "./blueprint/SoftwareDeliveryMachine";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DeployEnablementIngester } from "./ingesters/deployEnablement";
 import { SdmGoalIngester } from "./ingesters/sdmGoalIngester";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
-import { artifactVerifyingSoftwareDeliveryMachine } from "./software-delivery-machine/machines/artifactVerifyingMachine";
-import { autofixSoftwareDeliveryMachine } from "./software-delivery-machine/machines/autofixMachine";
-import { cloudFoundrySoftwareDeliveryMachine } from "./software-delivery-machine/machines/cloudFoundryMachine";
-import { k8sSoftwareDeliveryMachine } from "./software-delivery-machine/machines/k8sMachine";
-import { projectCreationMachine } from "./software-delivery-machine/machines/projectCreationMachine";
-import { staticAnalysisSoftwareDeliveryMachine } from "./software-delivery-machine/machines/staticAnalysisMachine";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 import { greeting } from "./util/misc/greeting";
 
@@ -44,20 +37,18 @@ const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
  * by default, and your PCF for Prod) and Kubernetes (which deploys Spring-boot services to an Atomist-provided
  * cluster for Test and Prod).
  * Other machines perform only static analysis or autofixes (e.g. to license files).
- * Take your pick.
+ * Choose by setting the following environment variables.
  */
 
-// const machine = cloudFoundrySoftwareDeliveryMachine(SdmOptions);
+const machineName = process.env.MACHINE_NAME ||  "cloudFoundryMachine";
+const machinePath = process.env.MACHINE_PATH || "./software-delivery-machine/machines";
 
-// const machine = projectCreationMachine(SdmOptions);
+function createMachine(options: SoftwareDeliveryMachineOptions): SoftwareDeliveryMachine {
+    const machineFunction = require(machinePath + "/" + machineName)[machineName];
+    return machineFunction(options);
+}
 
-// const machine = staticAnalysisSoftwareDeliveryMachine({ useCheckstyle: true});
-
-// const machine = autofixSoftwareDeliveryMachine();
-
-// const machine = artifactVerifyingSoftwareDeliveryMachine();
-
-const machine = k8sSoftwareDeliveryMachine(SdmOptions);
+const machine = createMachine(SdmOptions);
 
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),

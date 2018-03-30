@@ -48,7 +48,7 @@ import { addTeamPolicies } from "../parts/team/teamPolicies";
 
 export type K8sMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
-export function k8sSoftwareDeliveryMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
+export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         "K8s software delivery machine",
         opts,

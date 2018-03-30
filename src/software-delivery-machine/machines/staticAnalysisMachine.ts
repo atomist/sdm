@@ -33,7 +33,7 @@ export type StaticAnalysisMachineOptions = SoftwareDeliveryMachineOptions & Chec
  * Assemble a machine that performs only static analysis.
  * @return {SoftwareDeliveryMachine}
  */
-export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalysisMachineOptions> = {}): SoftwareDeliveryMachine {
+export function staticAnalysisMachine(opts: Partial<StaticAnalysisMachineOptions> = {}): SoftwareDeliveryMachine {
     const options: StaticAnalysisMachineOptions = {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
@@ -51,7 +51,7 @@ export function staticAnalysisSoftwareDeliveryMachine(opts: Partial<StaticAnalys
     sdm.addReviewerRegistrations({
         name: "YML-hater",
         action: rodHatesYml,
-        options: { reviewOnlyChangedFiles: false},
+        options: {reviewOnlyChangedFiles: false},
     });
 
     addDemoEditors(sdm);

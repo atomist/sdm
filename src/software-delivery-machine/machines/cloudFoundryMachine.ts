@@ -76,7 +76,7 @@ export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSu
  * See generatorConfig.ts to customize generation defaults.
  * @return {SoftwareDeliveryMachine}
  */
-export function cloudFoundrySoftwareDeliveryMachine(options: CloudFoundryMachineOptions): SoftwareDeliveryMachine {
+export function cloudFoundryMachine(options: CloudFoundryMachineOptions): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
         "CloudFoundry software delivery machine",
         options,

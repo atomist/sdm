@@ -30,7 +30,7 @@ export type AutofixMachineOptions = SoftwareDeliveryMachineOptions;
  * Assemble a machine that performs only autofixes.
  * @return {SoftwareDeliveryMachine}
  */
-export function autofixSoftwareDeliveryMachine(opts: Partial<AutofixMachineOptions> = {}): SoftwareDeliveryMachine {
+export function autofixMachine(opts: Partial<AutofixMachineOptions> = {}): SoftwareDeliveryMachine {
     const options = {
         artifactStore: DefaultArtifactStore,
         projectLoader: CloningProjectLoader,

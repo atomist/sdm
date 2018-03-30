@@ -33,7 +33,7 @@ export type ArtifactVerifyingMachineOptions = SoftwareDeliveryMachineOptions;
  * Assemble a machine that only builds and verifies Java artifacts.
  * @return {SoftwareDeliveryMachine}
  */
-export function artifactVerifyingSoftwareDeliveryMachine(opts: Partial<ArtifactVerifyingMachineOptions> = {}): SoftwareDeliveryMachine {
+export function artifactVerifyingMachine(opts: Partial<ArtifactVerifyingMachineOptions> = {}): SoftwareDeliveryMachine {
     const options = {
         artifactStore: DefaultArtifactStore,
         projectLoader: new CachingProjectLoader(),
