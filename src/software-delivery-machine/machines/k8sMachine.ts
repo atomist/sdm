@@ -18,6 +18,7 @@ import * as build from "../../blueprint/dsl/buildDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
+import { NoGoal, NoGoals } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
@@ -45,7 +46,6 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { NoGoal, NoGoals } from "../../common/delivery/goals/common/commonGoals";
 
 export type K8sMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 

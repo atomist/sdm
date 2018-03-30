@@ -17,11 +17,11 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { SdmGoalsForCommit } from "../../../typings/types";
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
-import { goalCorrespondsToSdmGoal } from "./storeGoals";
 import { Goal } from "./Goal";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
     const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId);

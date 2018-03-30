@@ -20,7 +20,7 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, SdmGoalState, SdmGoal, SdmGoalKey, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
+import { GoalRootType, SdmGoal, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function environmentFromGoal(goal: Goal) {

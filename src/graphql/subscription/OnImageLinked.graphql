@@ -13,7 +13,7 @@ subscription OnImageLinked {
         }
       }
       repo {
-       ...CoreRepoFieldsAndChannels
+        ...CoreRepoFieldsAndChannels
       }
       statuses {
         context
