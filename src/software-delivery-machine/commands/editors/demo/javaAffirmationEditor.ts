@@ -16,12 +16,10 @@
 
 import { HandleCommand } from "@atomist/automation-client";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import JSON = Mocha.reporters.JSON;
-import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
-import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
+import { AffirmationParameters } from "./affirmationEditor";
 
 /**
  * Harmlessly modify a Java file on master
@@ -30,7 +28,7 @@ import { RequestedCommitParameters } from "../support/RequestedCommitParameters"
 export const javaAffirmationEditor: HandleCommand = editorCommand(
     () => appendAffirmationToJava,
     "javaAffirmation",
-    () => new RequestedCommitParameters("Everyone needs encouragement to write Java"),
+    () => new AffirmationParameters("Everyone needs encouragement to write Java"),
     {
         editMode: ap => ap.editMode,
         intent: "javakick",
@@ -55,8 +53,8 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-export const appendAffirmationToJava: SimpleProjectEditor<RequestedCommitParameters> = (p, ctx, params) => {
-    const affirmation = randomAffirmation();
+export const appendAffirmationToJava: SimpleProjectEditor<AffirmationParameters> = (p, ctx, params) => {
+    const affirmation = params.customAffirmation || randomAffirmation();
     let count = 0;
     return doWithFiles(p, AllJavaFiles, f => {
         f.getContent().then(async content => {
