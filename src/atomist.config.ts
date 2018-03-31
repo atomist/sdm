@@ -33,11 +33,30 @@ const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
 };
 
 /*
- * The provided software delivery machines include Cloud Foundry (which runs locally for Test environment,
- * by default, and your PCF for Prod) and Kubernetes (which deploys Spring-boot services to an Atomist-provided
- * cluster for Test and Prod).
- * Other machines perform only static analysis or autofixes (e.g. to license files).
- * Choose by setting the following environment variables.
+ * The provided software delivery machines include
+ *
+ * Cloud Foundry full delivery (cloudFoundryMachine):
+ * - sample project creation is `create spring`
+ * - runs locally for the Test environment (you can change this)
+ * - deploys to PCF for production (see README.md for configuration)
+ *
+ * Kubernetes full delivery (k8sMachine):
+ * - deploys to a sandbox kubernetes environment. You don't need your own
+ * - sample project creation is `create spring`
+ *
+ * Autofix only (autofixMachine):
+ * - adds license headers to Java and TypeScript files
+ *
+ * Artifact checks only (artifactVerifyingMachine):
+ * - builds and performs a check on Java maven artifacts
+ *
+ * Project creation only (projectCreationMachine):
+ * - provides commands to create Java and Node projects
+ *
+ * Static analysis only (staticAnalysisMachine):
+ * - runs Checkstyle when Java changes; reports to GitHub status
+ *
+ * start with any of these and change it to make it your own!
  */
 
 const machineName = process.env.MACHINE_NAME ||  "cloudFoundryMachine";
