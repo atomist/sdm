@@ -21,6 +21,14 @@ import { anyFileChangedSuchThat, anyFileChangedWithExtension } from "../../../sr
 
 describe("filesChanged", () => {
 
+    describe("changesSince", () => {
+
+        it.skip("parse valid file", () => {
+            // TODO not done yet
+        });
+
+    });
+
     describe("anyFileChangedSuchThat", () => {
 
         it("should recognize passing", () => {
@@ -52,3 +60,35 @@ describe("filesChanged", () => {
     });
 
 });
+
+const diff = `M       .gitignore
+M       README.md
+M       package-lock.json
+M       package.json
+M       src/atomist.config.ts
+M       src/blueprint/SoftwareDeliveryMachine.ts
+R100    src/software-delivery-machine/commands/generators/java/commonPatterns.ts        src/common/command/commonPatterns.ts
+R088    src/software-delivery-machine/commands/generators/java/javaPatterns.ts  src/common/command/javaPatterns.ts
+M       src/common/delivery/code/codeActionRegistrations.ts
+M       src/common/delivery/code/executeCodeReactions.ts
+M       src/common/delivery/code/review/executeReview.ts
+M       src/common/delivery/deploy/deploy.ts
+M       src/common/delivery/deploy/executeDeploy.ts
+M       src/common/delivery/deploy/pcf/CloudFoundryTarget.ts
+A       src/common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget.ts
+M       src/common/delivery/deploy/runWithLog.ts
+M       src/common/delivery/goals/CopyGoalToGitHubStatus.ts
+M       src/common/delivery/goals/common/commonGoals.ts
+M       src/common/delivery/goals/common/npmGoals.ts
+M       src/common/delivery/goals/fetchGoalsOnCommit.ts
+M       src/common/delivery/goals/graph/graphGoalsToSlack.ts
+M       src/common/delivery/goals/storeGoals.ts
+M       src/common/listener/CodeReactionListener.ts
+M       src/common/listener/GoalsSetListener.ts
+M       src/common/listener/PushMapping.ts
+M       src/common/listener/support/PushRules.ts
+M       src/common/listener/support/pushtest/jvm/materialChangeToJavaRepo.ts
+M       src/common/listener/support/pushtest/jvm/springPushTests.ts
+M       src/common/listener/support/pushtest/node/materialChangeToNodeRepo.ts
+A       src/graphql/fragment/PushFIelds.graphql
+`;

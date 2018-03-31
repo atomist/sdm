@@ -26,6 +26,11 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
  * @return {Promise<string[]>}
  */
 export async function filesChangedSince(project: GitProject, sha: string): Promise<string[] | undefined> {
+    if (!sha) {
+        logger.info(`No sha passed in on ${JSON.stringify(project.id)}: Looking for parent sha`);
+        return filesChangedSinceParentCommit(project);
+    }
+
     const command = `git diff --name-only ${sha}`;
     try {
         const cr = await runCommand(command, {cwd: project.baseDir});
@@ -34,9 +39,52 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
         return cr.stdout.split("\n")
             .filter(n => !!n);
     } catch (err) {
-        logger.warn("Error diffing project %j since %s: %s", project, sha, err.message);
+        logger.warn("Error diffing project %j since %s: %s", project.id, sha, err.message);
         return undefined;
     }
+}
+
+export async function filesChangedSinceParentCommit(project: GitProject): Promise<string[] | undefined> {
+    try {
+        const command = `git show --name-only ${(await project.gitStatus()).sha}^`;
+        const cr = await runCommand(command, {cwd: project.baseDir});
+        // stdout starts with a line like this:
+        // commit acd5f89cb2c3e96fa47ef85b32b2028ea2e045fb (origin/master, origin/HEAD)
+        logger.debug(`$Output from filesChangedSinceParent on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
+        const matches = /commit ([a-f0-9]{40})/.exec(cr.stdout);
+        const sha = matches[1];
+        return filesChangedSince(project, sha);
+    } catch (err) {
+        logger.warn("Error diffing project %j finding parent: %s", project.id, err.message);
+        return undefined;
+    }
+}
+
+export type Mod = "added" | "deleted" | "modified" | "renamed";
+
+export interface Change {
+    readonly name: string;
+    readonly how: Mod;
+}
+
+export class Rename implements Change {
+
+    public readonly how: Mod = "renamed";
+
+    constructor(public name: string, public newName: string) {
+    }
+}
+
+export async function changesSince(project: GitProject, sha: string): Promise<string[]> {
+    const command = `git diff --name-status ${sha}`;
+    const cr = await runCommand(command, {cwd: project.baseDir});
+    // stdout is nothing but a list of files, one per line
+    logger.debug(`$Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
+    if (1 === 1 ) {
+        throw new Error("Not yet implemented");
+    }
+    return cr.stdout.split("\n")
+        .filter(n => !!n);
 }
 
 /**

@@ -30,12 +30,8 @@ const FileToWatch = ["js", "ts", "json", "yml", "xml", "html", "graphql", "jsx",
  * @constructor
  */
 export const MaterialChangeToNodeRepo: PushTest = pushTest("Material change to Node repo", async pci => {
-    const beforeSha = _.get(pci, "push.before.sha");
-    if (!beforeSha) {
-        logger.info("Cannot determine if change is material on %j: can't find old sha", pci.id);
-        return true;
-    }
-    const changedFiles = await filesChangedSince(pci.project, pci.push.before.sha);
+    const beforeSha: string = _.get(pci, "push.before.sha");
+    const changedFiles = await filesChangedSince(pci.project, beforeSha);
     if (!changedFiles) {
         logger.info("Cannot determine if change is material on %j: can't enumerate changed files", pci.id);
         return true;

@@ -17,7 +17,7 @@
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { StatusForExecuteGoal } from "../../../typings/types";
-import { filesChangedSince } from "../../../util/git/filesChangedSince";
+import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
 import { CodeReactionInvocation, CodeReactionRegistration } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
@@ -45,7 +45,9 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
 
         await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const push = commit.pushes[0];
-            const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : undefined;
+            const filesChanged = push.before ?
+                await filesChangedSince(project, push.before.sha) :
+                await filesChangedSinceParentCommit(project);
             const cri: CodeReactionInvocation = {
                 id,
                 context,
