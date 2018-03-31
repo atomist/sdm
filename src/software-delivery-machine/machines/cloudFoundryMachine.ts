@@ -96,7 +96,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
             .itMeans("Spring Boot service local deploy")
             .setGoals(LocalDeploymentGoals),
-        whenPushSatisfies(IsMaven, MaterialChangeToJavaRepo)
+        whenPushSatisfies(IsMaven)
             .itMeans("Build Java")
             .setGoals(LibraryGoals),
         whenPushSatisfies(IsNode, not(MaterialChangeToNodeRepo))
