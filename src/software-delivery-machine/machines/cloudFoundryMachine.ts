@@ -86,7 +86,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(HasTravisFile)
             .itMeans("Already builds with Travis")
             .setGoals(DoNotSetAnyGoals),
-        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist), not(MaterialChangeToJavaRepo))
+        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(MaterialChangeToJavaRepo))
             .itMeans("No material change to Java")
             .setGoals(NoGoals),
         whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
