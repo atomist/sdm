@@ -27,6 +27,9 @@ query CommitForSdmGoal(
       }
       branch
       id
+      repo {
+        ...CoreRepoFieldsAndChannels
+      }
     }
     image {
       image
