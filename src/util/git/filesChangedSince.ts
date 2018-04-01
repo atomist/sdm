@@ -44,6 +44,8 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
     }
 }
 
+// TODO: we should use the earliest commit in the push, and find its parent. See: https://github.com/atomist/github-sdm/issues/293
+// we're using this to list changes for code reactions, and that should include all changes in the push.
 export async function filesChangedSinceParentCommit(project: GitProject): Promise<string[] | undefined> {
     try {
         const command = `git show --name-only ${(await project.gitStatus()).sha}^`;
