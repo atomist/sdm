@@ -193,30 +193,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
     }
 
-    private get fingerprinter(): FunctionalUnit {
-        return this.fingerprinters.length === 0 ? EmptyFunctionalUnit :
-            functionalUnitForGoal("Fingerprinter",
-                FingerprintGoal,
-                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
-    }
-
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
         return this.fingerprintDifferenceListeners.length > 0 ?
             () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners) :
             undefined;
-    }
-
-    private get reviewHandling(): FunctionalUnit {
-        // Can't short circuit this if review goal is set or goal will never be satisfied
-        return functionalUnitForGoal("Reviews",
-            ReviewGoal,
-            executeReview(this.opts.projectLoader, this.reviewerRegistrations));
-    }
-
-    private get codeReactionHandling(): FunctionalUnit {
-        return functionalUnitForGoal("CodeReactions",
-            CodeReactionGoal,
-            executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations));
     }
 
     private get goalSetting(): FunctionalUnit {
@@ -288,16 +268,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get verifyEndpoint(): FunctionalUnit {
-        if (this.endpointVerificationListeners.length === 0) {
-            return {eventHandlers: [], commandHandlers: []};
-        }
+    private addVerifyImplementation(): void {
         const stagingVerification: SdmVerification = {
             verifiers: this.endpointVerificationListeners,
             endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
-        return functionalUnitForGoal("VerifyInStaging",
+       this.implementGoal("VerifyInStaging",
             StagingVerifiedGoal,
             executeVerifyEndpoint(stagingVerification));
     }
@@ -321,10 +298,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this.functionalUnits
             .concat([
                 this.builder,
-                this.fingerprinter,
-                this.verifyEndpoint,
-                this.codeReactionHandling,
-                this.reviewHandling,
                 this.deployer,
                 this.goalSetting,
             ]);
@@ -487,11 +460,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addImplementation(implementation: GoalImplementation): this {
-        this.goalImplementationMapper.addImplementation({pushTest: AnyPush, ...implementation});
-        return this;
-    }
-
     /**
      *
      * @param {string} name
@@ -504,13 +472,20 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
         this.addSupportingCommands(selfDescribeHandler(this));
-        this.addFunctionalUnits(functionalUnitForGoal("DoNothing", NoGoal, executeImmaterial));
 
         /*
-         * These should move out at some point so that we have a layer that knows nothing about specific goals
+         * These should move out at some point? so that we have a layer that knows nothing about specific goals
          */
         this.implementGoal("Autofix", AutofixGoal,
             executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
+        this.implementGoal("DoNothing", NoGoal, executeImmaterial);
+        this.implementGoal("Fingerprinter", FingerprintGoal,
+            executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
+        this.implementGoal("CodeReactions", CodeReactionGoal,
+            executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations));
+        this.implementGoal("Reviews", ReviewGoal,
+            executeReview(this.opts.projectLoader, this.reviewerRegistrations));
+        this.addVerifyImplementation();
     }
 
 }
