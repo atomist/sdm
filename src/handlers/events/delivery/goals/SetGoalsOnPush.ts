@@ -44,6 +44,8 @@ import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
+import { hasPreconditions } from "../../../../common/delivery/goals/Goal";
+import { constructSdmGoal, storeGoal } from "../../../../common/delivery/goals/storeGoals";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -114,7 +116,15 @@ async function saveGoals(ctx: HandlerContext,
                          id: GitHubRepoRef,
                          providerId: string,
                          determinedGoals: Goals) {
-    await determinedGoals.setAllToPending(id, ctx, providerId);
+    return Promise.all([
+        ...determinedGoals.goals.map(goal =>
+            storeGoal(ctx, constructSdmGoal(ctx, {
+                goalSet: this.name,
+                goal,
+                state: hasPreconditions(goal) ? "planned" : "requested",
+                id,
+                providerId,
+            })))]);
 }
 
 export const executeImmaterial: GoalExecutor = async () => {
