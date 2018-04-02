@@ -83,7 +83,7 @@ export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
 }
 
 export function goalKeyString(gk: SdmGoalKey): string {
-    return sprintf("%s/%s/%s", gk.goalSet, gk.name, gk.environment)
+    return sprintf("%s/%s/%s", gk.goalSet, gk.name, gk.environment);
 }
 
 export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)

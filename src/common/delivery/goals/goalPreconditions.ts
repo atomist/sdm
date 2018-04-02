@@ -1,6 +1,6 @@
 import { logger } from "@atomist/automation-client";
-import { goalKeyString, mapKeyToGoal, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { sprintf } from "sprintf-js";
+import { goalKeyString, mapKeyToGoal, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 
 /*
  * Right now the only preconditions supported are other goals.
@@ -40,6 +40,6 @@ function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoal[]): bool
             return true;
         default:
             throw new Error(sprintf("Unhandled state: %s on %s", preconditionGoal.state,
-                goalKeyString(preconditionKey)))
+                goalKeyString(preconditionKey)));
     }
 }

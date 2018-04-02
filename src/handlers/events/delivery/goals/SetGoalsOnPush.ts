@@ -33,8 +33,10 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { Goals } from "../../../../common/delivery/goals/Goals";
+import { constructSdmGoal, storeGoal } from "../../../../common/delivery/goals/storeGoals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
@@ -42,11 +44,9 @@ import { PushMapping } from "../../../../common/listener/PushMapping";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { hasPreconditions } from "../../../../common/delivery/goals/Goal";
-import { constructSdmGoal, storeGoal } from "../../../../common/delivery/goals/storeGoals";
-import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -94,7 +94,7 @@ export async function chooseAndSetGoals(context: HandlerContext,
     const addressChannels = addressChannelsFor(push.repo, context);
 
     const {determinedGoals, goalsToSave} = await determineGoals({projectLoader, goalSetters}, {
-        credentials, id, providerId, context, push, addressChannels
+        credentials, id, providerId, context, push, addressChannels,
     });
 
     await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
@@ -119,13 +119,13 @@ export async function determineGoals(rules: { projectLoader: ProjectLoader, goal
                                          providerId: string,
                                          context: HandlerContext,
                                          push: PushFields.Fragment,
-                                         addressChannels: AddressChannels
+                                         addressChannels: AddressChannels,
                                      }) {
     const {projectLoader, goalSetters} = rules;
     const {credentials, id, context, push, providerId, addressChannels} = circumstances;
     const determinedGoals = await projectLoader.doWithProject({credentials, id, context, readOnly: true},
         project => setGoalsForPushOnProject({
-            goalSetters
+            goalSetters,
         }, {
             push,
             id,
@@ -147,8 +147,7 @@ export async function determineGoals(rules: { projectLoader: ProjectLoader, goal
             providerId,
         }));
 
-
-    return {determinedGoals, goalsToSave}
+    return {determinedGoals, goalsToSave};
 }
 
 async function saveGoals(ctx: HandlerContext,

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success, } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
+import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { OnAnySuccessStatus, OnSuccessStatus } from "../../../typings/types";
 import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
-import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
 import Status = OnSuccessStatus.Status;
 
 /**
