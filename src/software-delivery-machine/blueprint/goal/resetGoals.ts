@@ -28,6 +28,7 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
 import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushForCommit } from "../../../typings/types";
+import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 
 @Parameters()
 export class ResetGoalsParameters {
@@ -52,15 +53,17 @@ export class ResetGoalsParameters {
 
 }
 
-export function resetGoalsCommand(projectLoader: ProjectLoader, goalsListeners: GoalsSetListener[], goalSetters: GoalSetter[]): HandleCommand {
-    return commandHandlerFrom(resetGoalsOnCommit(projectLoader, goalsListeners, goalSetters),
+export function resetGoalsCommand(projectLoader: ProjectLoader, goalsListeners: GoalsSetListener[],
+                                  goalSetters: GoalSetter[], implementationMapping: SdmGoalImplementationMapper): HandleCommand {
+    return commandHandlerFrom(resetGoalsOnCommit(projectLoader, goalsListeners, goalSetters, implementationMapping),
         ResetGoalsParameters,
         "ResetGoalsOnCommit",
         "Set goals",
         "reset goals");
 }
 
-function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsSetListener[], goalSetters: GoalSetter[]) {
+function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsSetListener[], goalSetters: GoalSetter[],
+                            implementationMapping: SdmGoalImplementationMapper) {
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
@@ -84,7 +87,16 @@ function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsS
 
         const credentials = {token: commandParams.githubToken};
 
-        const goals = await chooseAndSetGoals(ctx, projectLoader, credentials, commit.pushes[0], goalsListeners, goalSetters);
+        const goals = await chooseAndSetGoals({
+            projectLoader,
+            goalsListeners,
+            goalSetters,
+            implementationMapping,
+        }, {
+            context: ctx,
+            credentials,
+            push: commit.pushes[0],
+        });
 
         if (goals) {
             await ctx.messageClient.respond(`Set goals on ${sha} to ${goals.name}`);

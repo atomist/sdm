@@ -43,7 +43,8 @@ describe("implementing goals in the SDM", () => {
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
-                goalSetters: mySDM.goalSetters
+                goalSetters: mySDM.goalSetters,
+                implementationMapping: mySDM.goalImplementationMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
@@ -77,12 +78,14 @@ describe("implementing goals in the SDM", () => {
             .addImplementation({
                 implementationName: "Cornelius",
                 goal: customGoal,
-                goalExecutor
+                goalExecutor,
+                pushTest: AnyPush,
             });
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
-                goalSetters: mySDM.goalSetters
+                goalSetters: mySDM.goalSetters,
+                implementationMapping: mySDM.goalImplementationMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),

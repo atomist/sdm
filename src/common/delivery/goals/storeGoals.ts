@@ -22,6 +22,7 @@ import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { GoalRootType, SdmGoal, SdmGoalImplementationMethod, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
+import { GoalImplementation } from "./SdmGoalImplementationMapper";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
@@ -59,6 +60,13 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
 export type SdmGoalImplementation = {
     method: SdmGoalImplementationMethod,
     name: string,
+}
+
+export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalImplementation {
+    return {
+        method: "SDM fulfill on requested",
+        name: gi.implementationName,
+    }
 }
 
 export function constructSdmGoal(ctx: HandlerContext, parameters: {

@@ -24,7 +24,8 @@ import {
     FingerprintGoal,
     JustBuildGoal,
     LocalDeploymentGoal,
-    LocalEndpointGoal, NoGoal,
+    LocalEndpointGoal,
+    NoGoal,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
     ReviewGoal,
@@ -39,11 +40,7 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
-import {
-    EndpointVerificationListener,
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { EndpointVerificationListener, executeVerifyEndpoint, SdmVerification, } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
@@ -96,6 +93,7 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { GoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
+import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -219,8 +217,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             return undefined;
         }
         return {
-            eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners)],
-            commandHandlers: [() => resetGoalsCommand(this.opts.projectLoader, this.goalsSetListeners, this.goalSetters)],
+            eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners,
+                this.goalImplementationMapper)],
+            commandHandlers: [() => resetGoalsCommand(this.opts.projectLoader, this.goalsSetListeners,
+                this.goalSetters, this.goalImplementationMapper)],
         };
     }
 
@@ -480,7 +480,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     public addImplementation(implementation: GoalImplementation): this {
-        this.goalImplementationMapper.addImplementation(implementation);
+        this.goalImplementationMapper.addImplementation({ pushTest: AnyPush, ...implementation});
         return this;
     }
 
@@ -504,7 +504,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.goalImplementationMapper.addImplementation({
             implementationName: "Autofix",
             goal: AutofixGoal,
-            goalExecutor: executeAutofixes(this.opts.projectLoader, this.autofixRegistrations)
+            goalExecutor: executeAutofixes(this.opts.projectLoader, this.autofixRegistrations),
+            pushTest: AnyPush
         });
     }
 
