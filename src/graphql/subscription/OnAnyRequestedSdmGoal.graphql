@@ -1,0 +1,6 @@
+subscription OnRequestedSdmGoal {
+  SdmGoal(
+    state: ["requested"]) {
+    ...SdmGoalFields
+  }
+}

@@ -94,6 +94,8 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -103,6 +105,8 @@ export interface SoftwareDeliveryMachineOptions {
     artifactStore: ArtifactStore;
     projectLoader: ProjectLoader;
 }
+
+// NEXT: store the implementation with the goal
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -124,6 +128,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
 
     public functionalUnits: FunctionalUnit[] = [];
+
+    private goalImplementationMapper = new SdmGoalImplementationMapper();
 
     public newIssueListeners: NewIssueListener[] = [];
 
@@ -201,9 +207,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private get autofix(): FunctionalUnit {
         return this.autofixRegistrations.length === 0 ? EmptyFunctionalUnit :
-            functionalUnitForGoal("Autofix", AutofixGoal,
+            this.goalImplementationMapper.implement("Autofix", AutofixGoal,
                 executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
+
 
     private get goalSetting(): FunctionalUnit {
         if (this.goalSetters.length === 0) {
@@ -318,6 +325,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return (this.goalCleanup as Array<Maker<HandleEvent<any>>>)
             .concat(this.supportingEvents)
+            .concat(() => new FulfillGoalOnRequested(this.goalImplementationMapper))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
