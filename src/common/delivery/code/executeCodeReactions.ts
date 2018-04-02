@@ -19,8 +19,8 @@ import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/
 import { CodeReactionInvocation, CodeReactionRegistration } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
-import { relevantCodeActions } from "./codeActionRegistrations";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../deploy/runWithLog";
+import { relevantCodeActions } from "./codeActionRegistrations";
 
 export function executeCodeReactions(projectLoader: ProjectLoader,
                                      registrations: CodeReactionRegistration[]): ExecuteGoalWithLog {

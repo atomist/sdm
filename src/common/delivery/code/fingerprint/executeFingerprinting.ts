@@ -16,13 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { Success } from "@atomist/automation-client/Handlers";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import * as _ from "lodash";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 /**
  * Execute fingerprinting

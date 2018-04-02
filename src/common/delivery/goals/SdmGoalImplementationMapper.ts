@@ -1,16 +1,16 @@
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushTest } from "../../listener/PushTest";
-import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "../deploy/runWithLog";
-import { LogInterpreter } from "../../../spi/log/InterpretedLog";
+import { Goal } from "./Goal";
 
 export interface GoalImplementation {
     implementationName: string;
     goal: Goal;
     goalExecutor: ExecuteGoalWithLog;
     pushTest: PushTest;
-    logInterpreter: LogInterpreter,
+    logInterpreter: LogInterpreter;
 }
 
 export class SdmGoalImplementationMapper {

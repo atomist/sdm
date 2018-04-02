@@ -26,9 +26,9 @@ import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
 
 /**
  * Execute autofixes against this push

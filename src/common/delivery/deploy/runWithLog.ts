@@ -31,7 +31,7 @@ import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-export function runWithLog(whatToRun:ExecuteGoalWithLog,
+export function runWithLog(whatToRun: ExecuteGoalWithLog,
                            logInterpreter: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;

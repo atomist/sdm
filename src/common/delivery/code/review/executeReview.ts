@@ -29,10 +29,10 @@ import { filesChangedSince } from "../../../../util/git/filesChangedSince";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
 
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[]): ExecuteGoalWithLog  {

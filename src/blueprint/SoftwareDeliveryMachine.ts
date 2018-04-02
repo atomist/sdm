@@ -56,6 +56,7 @@ import { executeFingerprinting } from "../common/delivery/code/fingerprint/execu
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
+import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delivery/deploy/runWithLog";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
@@ -68,6 +69,7 @@ import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
 import { PushMapping } from "../common/listener/PushMapping";
+import { PushTest } from "../common/listener/PushTest";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { PushRules } from "../common/listener/support/PushRules";
@@ -90,13 +92,11 @@ import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandle
 import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/resetGoals";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
+import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { PushTest } from "../common/listener/PushTest";
-import { LogInterpreter } from "../spi/log/InterpretedLog";
-import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delivery/deploy/runWithLog";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -180,7 +180,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.goalImplementationMapper.addImplementation({
             implementationName, goal, goalExecutor,
             pushTest: pushTest || AnyPush,
-            logInterpreter: logInterpreter || lastTenLinesLogInterpreter(implementationName)
+            logInterpreter: logInterpreter || lastTenLinesLogInterpreter(implementationName),
         });
         return this;
     }

@@ -33,6 +33,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { Goals } from "../../../../common/delivery/goals/Goals";
@@ -48,7 +49,6 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
