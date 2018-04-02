@@ -19,6 +19,7 @@ import {
     IngesterBuilder,
     type,
 } from "@atomist/automation-client";
+import { sprintf } from "sprintf-js";
 
 export const GoalRootType = "SdmGoal";
 
@@ -68,10 +69,21 @@ export interface SdmGoalKey {
     name: string;
 }
 
-export function goalKeyEquals(a: SdmGoalKey, b: SdmGoal): boolean {
+export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
+    return (keyToFind: SdmGoalKey) => {
+        const found = goals.find(g => goalKeyEquals(g, keyToFind));
+        return found;
+    };
+}
+
+export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
     return a.goalSet === b.goalSet &&
         a.environment === b.environment &&
         a.name === b.name;
+}
+
+export function goalKeyString(gk: SdmGoalKey): string {
+    return sprintf("%s/%s/%s", gk.goalSet, gk.name, gk.environment)
 }
 
 export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
