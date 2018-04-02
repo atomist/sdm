@@ -98,7 +98,7 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withIntField("ts")
         .withStringField("userId")
         .withStringField("channelId"))
-    .withType(type("SdmGoalImplementation")
+    .withType(type("GoalImplementation")
         .withStringField("method")
         .withStringField("name"))
     .withType(type(GoalRootType)
@@ -129,7 +129,7 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
             ["name", "owner", "providerId"])
         .withObjectField(
             "implementation",
-            "SdmGoalImplementation",
+            "GoalImplementation",
             "How the goal gets implemented",
             ["method", "name"])
         .withStringField(

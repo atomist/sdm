@@ -1,4 +1,4 @@
-subscription OnRequestedSdmGoal {
+subscription OnAnyRequestedSdmGoal {
   SdmGoal(
     state: ["requested"]) {
     ...SdmGoalFields

@@ -23,7 +23,7 @@ import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
 import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
-import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
+import { CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
 import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 

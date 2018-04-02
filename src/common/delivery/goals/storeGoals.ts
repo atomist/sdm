@@ -20,7 +20,7 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, SdmGoal, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
+import { GoalRootType, SdmGoal, SdmGoalImplementationMethod, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 
 export function environmentFromGoal(goal: Goal) {
@@ -56,6 +56,11 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
+export type SdmGoalImplementation = {
+    method: SdmGoalImplementationMethod,
+    name: string,
+}
+
 export function constructSdmGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
@@ -63,8 +68,10 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     id: GitHubRepoRef,
     providerId: string
     url?: string,
+    implementation?: SdmGoalImplementation
 }): SdmGoal {
     const {goalSet, goal, state, id, providerId, url} = parameters;
+    const implementation = parameters.implementation || {method: "other", name: "unspecified"};
 
     if (id.branch === null) {
         throw new Error(sprintf("Please provide a branch in the GitHubRepoRef %j", parameters));
@@ -91,6 +98,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         goalSet,
         name: goal.name,
         environment,
+
+        implementation,
 
         sha: id.sha,
         branch: id.branch,

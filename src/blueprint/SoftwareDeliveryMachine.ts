@@ -94,7 +94,7 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { SdmGoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import { GoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 
 /**
@@ -132,7 +132,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     /*
      * Store all the implementations we know
      */
-    private goalImplementationMapper = new SdmGoalImplementationMapper();
+    public goalImplementationMapper = new SdmGoalImplementationMapper(); // public for testing
 
     public newIssueListeners: NewIssueListener[] = [];
 
@@ -172,7 +172,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
 
-    public implementGoal(implementation: SdmGoalImplementation) {
+    public implementGoal(implementation: GoalImplementation) {
         this.goalImplementationMapper.addImplementation(implementation)
     }
 
@@ -315,7 +315,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.builder,
                 this.fingerprinter,
                 this.verifyEndpoint,
-                this.autofix,
                 this.codeReactionHandling,
                 this.reviewHandling,
                 this.deployer,

@@ -2,7 +2,7 @@ import { GoalExecutor } from "./goalExecution";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { Goal } from "./Goal";
 
-export type SdmGoalImplementation = {
+export type GoalImplementation = {
     implementationName: string,
     goal: Goal,
     goalExecutor: GoalExecutor
@@ -10,13 +10,13 @@ export type SdmGoalImplementation = {
 
 export class SdmGoalImplementationMapper {
 
-    private mappings: SdmGoalImplementation[] = [];
+    private mappings: GoalImplementation[] = [];
 
-    public findBySdmGoal(goal: SdmGoal): { goal: Goal, goalExecutor: GoalExecutor } {
-        throw new Error("Not implemented");
+    public findBySdmGoal(goal: SdmGoal): GoalImplementation {
+        return this.mappings[0];
     }
 
-    public addImplementation(implementation: SdmGoalImplementation): void {
+    public addImplementation(implementation: GoalImplementation): void {
         this.mappings.push(implementation);
     }
 }
