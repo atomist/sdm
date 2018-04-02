@@ -19,13 +19,11 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import * as stringify from "json-stringify-safe";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
-import { Goal } from "../../../common/delivery/goals/Goal";
-import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { ExecuteGoalInvocation } from "../../../common/delivery/goals/goalExecution";
 import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
-import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
-import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
+import { executeGoal } from "./verify/executeGoal";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {

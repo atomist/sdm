@@ -94,6 +94,8 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { GoalExecutor } from "../common/delivery/goals/goalExecution";
+import { PushTest } from "../common/listener/PushTest";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -170,8 +172,15 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
 
-    public implementGoal(implementation: GoalImplementation) {
-        this.goalImplementationMapper.addImplementation(implementation);
+    public implementGoal(implementationName: string,
+                         goal: Goal,
+                         goalExecutor: GoalExecutor,
+                         pushTest?: PushTest): this {
+        this.goalImplementationMapper.addImplementation({
+            implementationName, goal, goalExecutor,
+            pushTest: pushTest || AnyPush
+        });
+        return this;
     }
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
@@ -479,7 +488,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     public addImplementation(implementation: GoalImplementation): this {
-        this.goalImplementationMapper.addImplementation({ pushTest: AnyPush, ...implementation});
+        this.goalImplementationMapper.addImplementation({pushTest: AnyPush, ...implementation});
         return this;
     }
 
@@ -500,12 +509,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         /*
          * These should move out at some point so that we have a layer that knows nothing about specific goals
          */
-        this.goalImplementationMapper.addImplementation({
-            implementationName: "Autofix",
-            goal: AutofixGoal,
-            goalExecutor: executeAutofixes(this.opts.projectLoader, this.autofixRegistrations),
-            pushTest: AnyPush,
-        });
+        this.implementGoal("Autofix", AutofixGoal,
+            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
 }

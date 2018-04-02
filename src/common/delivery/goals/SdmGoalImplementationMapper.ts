@@ -29,8 +29,9 @@ export class SdmGoalImplementationMapper {
         return matchedNames[0];
     }
 
-    public addImplementation(implementation: GoalImplementation): void {
+    public addImplementation(implementation: GoalImplementation): this {
         this.mappings.push(implementation);
+        return this;
     }
 
     public findByPush(goal: Goal, inv: ProjectListenerInvocation) {
