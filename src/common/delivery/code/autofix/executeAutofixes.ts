@@ -28,6 +28,7 @@ import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addre
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
 
 /**
  * Execute autofixes against this push
@@ -36,14 +37,13 @@ import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrat
  * @param {AutofixRegistration[]} registrations
  * @return GoalExecutor
  */
-export function executeAutofixes(projectLoader: ProjectLoader, registrations: AutofixRegistration[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Fragment,
-                  context: HandlerContext,
-                  egi: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
+export function executeAutofixes(projectLoader: ProjectLoader,
+                                 registrations: AutofixRegistration[]): ExecuteGoalWithLog {
+    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+        const {credentials, context, status} = rwlc;
         logger.info("Executing %d autofixes", registrations.length);
         try {
             const commit = status.commit;
-            const credentials = {token: egi.githubToken};
             const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
             if (registrations.length === 0) {
                 return Success;
@@ -107,7 +107,7 @@ async function runOne(project: GitProject, ctx: HandlerContext, autofix: Autofix
                 (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
             if (!!autofix.options && autofix.options.ignoreFailure) {
                 // Say we didn't edit and can keep going
-                return { target: project, edited: false, success: false };
+                return {target: project, edited: false, success: false};
             }
         } else if (editResult.edited) {
             await project.commit(`Autofix: ${autofix.name}\n\n[atomist]`);

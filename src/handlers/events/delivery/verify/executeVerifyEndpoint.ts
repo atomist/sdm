@@ -15,7 +15,7 @@
  */
 
 import { sprintf } from "sprintf-js";
-import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/deploy/runWithLog";
+import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/deploy/runWithLog";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
@@ -39,8 +39,8 @@ export interface SdmVerification {
     requestApproval: boolean;
 }
 
-export function executeVerifyEndpoint(sdm: SdmVerification): GoalExecutor {
-    return runWithLog(async (r: RunWithLogContext): Promise<ExecuteGoalResult> => {
+export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoalWithLog {
+    return async (r: RunWithLogContext): Promise<ExecuteGoalResult> => {
 
         const endpointStatus = r.status.commit.statuses.find(s => s.context === sdm.endpointGoal.context);
         if (!endpointStatus) {
@@ -61,5 +61,5 @@ export function executeVerifyEndpoint(sdm: SdmVerification): GoalExecutor {
         })));
 
         return { code: 0, requireApproval: sdm.requestApproval, targetUrl: endpointStatus.targetUrl };
-    }, lastTenLinesLogInterpreter("Verification failed"));
+    };
 }

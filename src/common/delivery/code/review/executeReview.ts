@@ -32,15 +32,14 @@ import { AddressChannels, addressChannelsFor } from "../../../slack/addressChann
 import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
 
 export function executeReview(projectLoader: ProjectLoader,
-                              reviewerRegistrations: ReviewerRegistration[]): GoalExecutor {
-    return async (status: StatusForExecuteGoal.Fragment, context: HandlerContext, params: ExecuteGoalInvocation) => {
+                              reviewerRegistrations: ReviewerRegistration[]): ExecuteGoalWithLog  {
+    return async (rwlc: RunWithLogContext) => {
+        const { status, credentials, id, addressChannels, context } = rwlc;
         const commit = status.commit;
         const push = commit.pushes[0];
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const credentials = {token: params.githubToken};
-        const addressChannels = addressChannelsFor(commit.repo, context);
 
         try {
             if (reviewerRegistrations.length > 0) {
@@ -71,7 +70,7 @@ export function executeReview(projectLoader: ProjectLoader,
                                         filteredCopy :
                                         project,
                                     context,
-                                    params as any)
+                                    {} as any) // Rod: Can reviewers expect any parameters here?
                                     .then(rvw => ({review: rvw}),
                                         error => ({error}))));
                     const reviews = reviewsAndErrors.filter(r => !!r.review)

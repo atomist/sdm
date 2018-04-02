@@ -1,17 +1,16 @@
-import { Project } from "@atomist/automation-client/project/Project";
-import { match } from "minimatch";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
-import { PushFields } from "../../../typings/types";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushTest } from "../../listener/PushTest";
 import { Goal } from "./Goal";
-import { GoalExecutor } from "./goalExecution";
+import { ExecuteGoalWithLog } from "../deploy/runWithLog";
+import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 
 export interface GoalImplementation {
     implementationName: string;
     goal: Goal;
-    goalExecutor: GoalExecutor;
+    goalExecutor: ExecuteGoalWithLog;
     pushTest: PushTest;
+    logInterpreter: LogInterpreter,
 }
 
 export class SdmGoalImplementationMapper {

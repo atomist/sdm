@@ -24,6 +24,7 @@ import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmG
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal } from "./verify/executeGoal";
+import { runWithLog } from "../../../common/delivery/deploy/runWithLog";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
@@ -69,7 +70,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
 
-        const { goal, goalExecutor } = this.implementationMapper.findBySdmGoal(sdmGoal);
+        const { goal, goalExecutor, logInterpreter } = this.implementationMapper.findBySdmGoal(sdmGoal);
 
         const inv: ExecuteGoalInvocation = {
             implementationName: sdmGoal.implementation.name,
@@ -77,7 +78,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
             goal,
         };
 
-        return executeGoal(goalExecutor, status, ctx, inv, sdmGoal);
+        return executeGoal(runWithLog(goalExecutor, logInterpreter), status, ctx, inv, sdmGoal);
     }
 }
 

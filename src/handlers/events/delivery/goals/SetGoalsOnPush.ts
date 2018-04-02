@@ -48,6 +48,7 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
+import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -191,7 +192,7 @@ function implement(implementationMapping: SdmGoalImplementationMapper, g: Goal, 
     return constructSdmGoalImplementation(implementation);
 }
 
-export const executeImmaterial: GoalExecutor = async () => {
+export const executeImmaterial: ExecuteGoalWithLog = async () => {
     logger.debug("Nothing to do here");
     return Success;
 };

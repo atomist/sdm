@@ -44,7 +44,7 @@ import { EndpointVerificationListener, executeVerifyEndpoint, SdmVerification } 
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
+import { FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
@@ -58,7 +58,7 @@ import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
-import { GoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionRegistration } from "../common/listener/CodeReactionListener";
@@ -94,8 +94,9 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { GoalExecutor } from "../common/delivery/goals/goalExecution";
 import { PushTest } from "../common/listener/PushTest";
+import { LogInterpreter } from "../spi/log/InterpretedLog";
+import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delivery/deploy/runWithLog";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -174,11 +175,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public implementGoal(implementationName: string,
                          goal: Goal,
-                         goalExecutor: GoalExecutor,
-                         pushTest?: PushTest): this {
+                         goalExecutor: ExecuteGoalWithLog,
+                         pushTest?: PushTest, logInterpreter?: LogInterpreter): this {
         this.goalImplementationMapper.addImplementation({
             implementationName, goal, goalExecutor,
-            pushTest: pushTest || AnyPush
+            pushTest: pushTest || AnyPush,
+            logInterpreter: logInterpreter || lastTenLinesLogInterpreter(implementationName)
         });
         return this;
     }
@@ -274,7 +276,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
-       this.implementGoal("VerifyInStaging",
+        this.implementGoal("VerifyInStaging",
             StagingVerifiedGoal,
             executeVerifyEndpoint(stagingVerification));
     }

@@ -75,12 +75,10 @@ describe("implementing goals in the SDM", () => {
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
                 .setGoals(new Goals("Springer", customGoal)))
-            .addImplementation({
-                implementationName: "Cornelius",
-                goal: customGoal,
+            .implementGoal("Cornelius",
+                customGoal,
                 goalExecutor,
-                pushTest: AnyPush,
-            });
+            );
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
@@ -100,7 +98,7 @@ describe("implementing goals in the SDM", () => {
         const myImpl = mySDM.goalImplementationMapper.findBySdmGoal(onlyGoal);
 
         assert.equal(myImpl.implementationName, "Cornelius");
-        await myImpl.goalExecutor(undefined, undefined, undefined);
+        await myImpl.goalExecutor(undefined);
         assert(executed);
     });
 

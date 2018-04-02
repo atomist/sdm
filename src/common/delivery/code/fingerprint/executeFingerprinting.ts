@@ -15,26 +15,24 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { HandlerContext, Success } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Success } from "@atomist/automation-client/Handlers";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { OnAnyPendingStatus } from "../../../../typings/types";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 /**
  * Execute fingerprinting
  * @param projectLoader project loader
  * @param {Fingerprinter} fingerprinters
  */
-export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerprinters: Fingerprinter[]): GoalExecutor {
-    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation) => {
-        const id = new GitHubRepoRef(status.commit.repo.owner, status.commit.repo.name, status.commit.sha);
-        const credentials = {token: params.githubToken};
+export function executeFingerprinting(projectLoader: ProjectLoader,
+                                      ...fingerprinters: Fingerprinter[]): ExecuteGoalWithLog {
+    return async (rwlc: RunWithLogContext) => {
+        const { id, credentials, context } = rwlc;
 
         if (fingerprinters.length === 0) {
             return Success;
@@ -49,7 +47,7 @@ export function executeFingerprinting(projectLoader: ProjectLoader, ...fingerpri
                     return isFingerprint(f) ? [f] : f;
                 }),
             ).then(x2 => _.flatten(x2));
-            fingerprints.map(fingerprint => sendFingerprint(id, fingerprint, context.teamId));
+            fingerprints.map(fingerprint => sendFingerprint(id as GitHubRepoRef, fingerprint, context.teamId));
         });
         return Success;
     };

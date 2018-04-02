@@ -29,7 +29,9 @@ import { ConsoleProgressLog, MultiProgressLog } from "../../log/progressLogs";
 import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 
-export function runWithLog(whatToRun: (r: RunWithLogContext) => Promise<ExecuteGoalResult>,
+export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
+
+export function runWithLog(whatToRun:ExecuteGoalWithLog,
                            logInterpreter: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
         const commit = status.commit;
