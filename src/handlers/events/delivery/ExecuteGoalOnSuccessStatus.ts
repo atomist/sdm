@@ -23,7 +23,7 @@ import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOn
 import { GitHubStatusAndFriends } from "../../../common/delivery/goals/gitHubContext";
 import { currentGoalIsStillPending, Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
-import { goalCorrespondsToSdmGoal, storeGoal } from "../../../common/delivery/goals/storeGoals";
+import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
@@ -91,7 +91,12 @@ export class ExecuteGoalOnSuccessStatus
             if (!thisSdmGoal) {
                 // automation-api#396: we can't always find the goals we have inserted.
                 const goalSet = sdmGoals[0].goalSet; // this is a very good guess. If there are no sdmGoals we're definitely screwed up
-                thisSdmGoal = await storeGoal(ctx, { goalSet, goal: params.goal, providerId: providerIdFromStatus(status), state: "requested", id });
+                thisSdmGoal = await storeGoal(ctx,
+                    constructSdmGoal(ctx,
+                        {
+                            goalSet, goal: params.goal,
+                            providerId: providerIdFromStatus(status), state: "requested", id
+                        }));
             }
 
             return executeGoal(this.execute, status, ctx, params, thisSdmGoal as SdmGoal).then(handleExecuteResult);

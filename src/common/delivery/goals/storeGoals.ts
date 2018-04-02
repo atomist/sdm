@@ -56,14 +56,14 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
-export function storeGoal(ctx: HandlerContext, parameters: {
+export function constructSdmGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
     state: SdmGoalState,
     id: GitHubRepoRef,
     providerId: string
     url?: string,
-}): Promise<SdmGoal> {
+}): SdmGoal {
     const {goalSet, goal, state, id, providerId, url} = parameters;
 
     if (id.branch === null) {
@@ -87,7 +87,7 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         })));
     }
 
-    const sdmGoal: SdmGoal = {
+    return {
         goalSet,
         name: goal.name,
         environment,
@@ -111,7 +111,9 @@ export function storeGoal(ctx: HandlerContext, parameters: {
 
         preConditions,
     };
+}
 
+export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoal) {
     logger.debug("Storing goal: %j", sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);
