@@ -57,16 +57,16 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
-export type SdmGoalImplementation = {
-    method: SdmGoalImplementationMethod,
-    name: string,
+export interface SdmGoalImplementation {
+    method: SdmGoalImplementationMethod;
+    name: string;
 }
 
 export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalImplementation {
     return {
         method: "SDM fulfill on requested",
         name: gi.implementationName,
-    }
+    };
 }
 
 export function constructSdmGoal(ctx: HandlerContext, parameters: {
@@ -76,7 +76,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     id: GitHubRepoRef,
     providerId: string
     url?: string,
-    implementation?: SdmGoalImplementation
+    implementation?: SdmGoalImplementation,
 }): SdmGoal {
     const {goalSet, goal, state, id, providerId, url} = parameters;
     const implementation = parameters.implementation || {method: "other", name: "unspecified"};

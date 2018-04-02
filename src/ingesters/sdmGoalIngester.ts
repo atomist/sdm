@@ -24,7 +24,7 @@ export const GoalRootType = "SdmGoal";
 
 export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
 
-export type SdmGoalImplementationMethod = "SDM fulfill on requested" | "other"
+export type SdmGoalImplementationMethod = "SDM fulfill on requested" | "other";
 
 export interface SdmGoal extends SdmGoalKey {
     sha: string;
@@ -39,7 +39,7 @@ export interface SdmGoal extends SdmGoalKey {
     implementation: {
         method: SdmGoalImplementationMethod;
         name: string
-    }
+    };
 
     description: string;
     url?: string;

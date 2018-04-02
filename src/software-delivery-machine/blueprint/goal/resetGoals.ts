@@ -22,13 +22,13 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as stringify from "json-stringify-safe";
+import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
 import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushForCommit } from "../../../typings/types";
-import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 
 @Parameters()
 export class ResetGoalsParameters {

@@ -95,7 +95,7 @@ export class ExecuteGoalOnSuccessStatus
                     constructSdmGoal(ctx,
                         {
                             goalSet, goal: params.goal,
-                            providerId: providerIdFromStatus(status), state: "requested", id
+                            providerId: providerIdFromStatus(status), state: "requested", id,
                         }));
             }
 

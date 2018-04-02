@@ -85,7 +85,7 @@ function triggerGoalsOnCommit(goal: Goal) {
         await storeGoal(ctx, constructSdmGoal(ctx,
             {
                 id, providerId: commandParams.providerId,
-                state: "requested", goal, goalSet
+                state: "requested", goal, goalSet,
             }));
         return Success;
     };

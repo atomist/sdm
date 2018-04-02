@@ -21,11 +21,11 @@ import * as stringify from "json-stringify-safe";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../../../common/delivery/goals/Goal";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../common/delivery/goals/goalExecution";
+import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
-import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
@@ -63,7 +63,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
         }
 
         if (sdmGoal.implementation.method !== "SDM fulfill on requested") {
-            logger.info("Implementation method is " + sdmGoal.implementation.method + "; not fulfilling")
+            logger.info("Implementation method is " + sdmGoal.implementation.method + "; not fulfilling");
         }
 
         logger.info("Really executing FulfillGoalOnRequested" ); // take this out when automation-api#395 is fixed
@@ -76,7 +76,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
         const inv: ExecuteGoalInvocation = {
             implementationName: sdmGoal.implementation.name,
             githubToken: params.githubToken,
-            goal
+            goal,
         };
 
         return executeGoal(goalExecutor, status, ctx, inv, sdmGoal);

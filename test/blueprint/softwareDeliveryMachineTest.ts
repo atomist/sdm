@@ -1,28 +1,28 @@
-import "mocha";
-import * as assert from "power-assert";
-import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachine";
-import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
-import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
-import { AutofixGoal } from "../../src/common/delivery/goals/common/commonGoals";
-import { Goals } from "../../src/common/delivery/goals/Goals";
-import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
-import { SingleProjectLoader } from "../common/SingleProjectLoader";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { HandlerContext, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { HandlerContext, Success } from "@atomist/automation-client";
-import { PushFields } from "../../src/typings/types";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import "mocha";
+import * as assert from "power-assert";
+import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
+import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachine";
+import { AutofixGoal } from "../../src/common/delivery/goals/common/commonGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
+import { Goals } from "../../src/common/delivery/goals/Goals";
+import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
+import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
+import { PushFields } from "../../src/typings/types";
+import { SingleProjectLoader } from "../common/SingleProjectLoader";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",
     repo: "monet",
     sha: "75132357b19889c4d6c2bef99fce8f477e1f2196",
-    branch: "claude"
+    branch: "claude",
 });
 const fakeSoftwareDeliveryMachineOptions = {
     projectLoader: new SingleProjectLoader(InMemoryProject.from(favoriteRepoRef,
-        {path: "README.md", content: "read sometthing else"}))
+        {path: "README.md", content: "read sometthing else"})),
 } as any as SoftwareDeliveryMachineOptions;
 
 const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
@@ -48,7 +48,7 @@ describe("implementing goals in the SDM", () => {
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
-            }
+            },
         );
 
         assert(determinedGoals.goals.includes(AutofixGoal));
@@ -61,13 +61,13 @@ describe("implementing goals in the SDM", () => {
         assert(myImpl.implementationName === "Autofix");
     });
 
-    const customGoal = new Goal({displayName: "Springer", environment: "1-staging/", orderedName: "1-springer"})
+    const customGoal = new Goal({displayName: "Springer", environment: "1-staging/", orderedName: "1-springer"});
 
     it("I can teach it to do a custom goal", async () => {
         let executed: boolean = false;
         const goalExecutor = async () => {
             executed = true;
-            return Success
+            return Success;
         };
 
         const mySDM = new SoftwareDeliveryMachine("Gustave",
@@ -89,7 +89,7 @@ describe("implementing goals in the SDM", () => {
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
-            }
+            },
         );
 
         assert(determinedGoals.goals.includes(customGoal));

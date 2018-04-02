@@ -40,7 +40,7 @@ import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetS
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
-import { EndpointVerificationListener, executeVerifyEndpoint, SdmVerification, } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { EndpointVerificationListener, executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
@@ -58,6 +58,7 @@ import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
+import { GoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionRegistration } from "../common/listener/CodeReactionListener";
@@ -70,6 +71,7 @@ import { PushMapping } from "../common/listener/PushMapping";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { PushRules } from "../common/listener/support/PushRules";
+import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
@@ -78,6 +80,7 @@ import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
+import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
@@ -91,9 +94,6 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { GoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
-import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
-import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -171,7 +171,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
 
     public implementGoal(implementation: GoalImplementation) {
-        this.goalImplementationMapper.addImplementation(implementation)
+        this.goalImplementationMapper.addImplementation(implementation);
     }
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
@@ -209,7 +209,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             CodeReactionGoal,
             executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations));
     }
-
 
     private get goalSetting(): FunctionalUnit {
         if (this.goalSetters.length === 0) {
@@ -505,7 +504,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             implementationName: "Autofix",
             goal: AutofixGoal,
             goalExecutor: executeAutofixes(this.opts.projectLoader, this.autofixRegistrations),
-            pushTest: AnyPush
+            pushTest: AnyPush,
         });
     }
 
