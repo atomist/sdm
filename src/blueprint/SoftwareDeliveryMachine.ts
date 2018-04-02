@@ -475,9 +475,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         addGitHubSupport(this);
         this.addSupportingCommands(selfDescribeHandler(this));
 
-        /*
-         * These should move out at some point? so that we have a layer that knows nothing about specific goals
-         */
         this.implementGoal("Autofix", AutofixGoal,
             executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
         this.implementGoal("DoNothing", NoGoal, executeImmaterial);
