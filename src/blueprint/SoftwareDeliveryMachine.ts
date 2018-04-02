@@ -94,7 +94,7 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalImplementation, SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 
 /**
@@ -129,6 +129,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public functionalUnits: FunctionalUnit[] = [];
 
+    /*
+     * Store all the implementations we know
+     */
     private goalImplementationMapper = new SdmGoalImplementationMapper();
 
     public newIssueListeners: NewIssueListener[] = [];
@@ -169,6 +172,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private endpointVerificationListeners: EndpointVerificationListener[] = [];
 
+    public implementGoal(implementation: SdmGoalImplementation) {
+        this.goalImplementationMapper.addImplementation(implementation)
+    }
+
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
             () => new OnRepoCreation(...this.repoCreationListeners) :
@@ -203,12 +210,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return functionalUnitForGoal("CodeReactions",
             CodeReactionGoal,
             executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations));
-    }
-
-    private get autofix(): FunctionalUnit {
-        return this.autofixRegistrations.length === 0 ? EmptyFunctionalUnit :
-            this.goalImplementationMapper.implement("Autofix", AutofixGoal,
-                executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
     }
 
 
@@ -492,6 +493,15 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         addGitHubSupport(this);
         this.addSupportingCommands(selfDescribeHandler(this));
         this.addFunctionalUnits(functionalUnitForGoal("DoNothing", NoGoal, executeImmaterial));
+
+        /*
+         * These should move out at some point so that we have a layer that knows nothing about specific goals
+         */
+        this.goalImplementationMapper.addImplementation({
+            implementationName: "Autofix",
+            goal: AutofixGoal,
+            goalExecutor: executeAutofixes(this.opts.projectLoader, this.autofixRegistrations)
+        });
     }
 
 }
