@@ -5,6 +5,10 @@ fragment SdmGoalFields on SdmGoal {
   sha
   branch
   state
+  implementation {
+    method
+    name
+  }
   description
   url
   externalKey

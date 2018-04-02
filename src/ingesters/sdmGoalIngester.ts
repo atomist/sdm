@@ -24,6 +24,8 @@ export const GoalRootType = "SdmGoal";
 
 export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
 
+export type SdmGoalImplementationMethod = "SDM fulfill on requested" | "other"
+
 export interface SdmGoal extends SdmGoalKey {
     sha: string;
     branch: string;
@@ -33,6 +35,11 @@ export interface SdmGoal extends SdmGoalKey {
         owner: string;
         providerId: string;
     };
+
+    implementation: {
+        method: SdmGoalImplementationMethod;
+        name: string
+    }
 
     description: string;
     url?: string;
@@ -91,6 +98,9 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withIntField("ts")
         .withStringField("userId")
         .withStringField("channelId"))
+    .withType(type("SdmGoalImplementation")
+        .withStringField("method")
+        .withStringField("name"))
     .withType(type(GoalRootType)
         .withStringField(
             "goalSet",
@@ -117,6 +127,11 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
             "SdmRepository",
             "Repository the commit was observed from",
             ["name", "owner", "providerId"])
+        .withObjectField(
+            "implementation",
+            "SdmGoalImplementation",
+            "How the goal gets implemented",
+            ["method", "name"])
         .withStringField(
             "description",
             "Description of the goal")
