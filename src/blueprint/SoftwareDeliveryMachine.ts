@@ -135,7 +135,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public newRepoWithCodeActions: ProjectListener[] = [];
 
-    private readonly goalSetters: GoalSetter[] = [];
+    public readonly goalSetters: GoalSetter[] = []; // public for tests
 
     private goalsSetListeners: GoalsSetListener[] = [];
 
@@ -471,6 +471,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
+    /**
+     *
+     * @param {string} name
+     * @param {SoftwareDeliveryMachineOptions} opts
+     * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
+     */
     constructor(public readonly name: string,
                 public readonly opts: SoftwareDeliveryMachineOptions,
                 ...goalSetters: GoalSetter[]) {

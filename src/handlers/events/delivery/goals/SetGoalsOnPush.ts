@@ -41,7 +41,7 @@ import { ProjectListenerInvocation } from "../../../../common/listener/Listener"
 import { PushMapping } from "../../../../common/listener/PushMapping";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { hasPreconditions } from "../../../../common/delivery/goals/Goal";
@@ -91,9 +91,10 @@ export async function chooseAndSetGoals(context: HandlerContext,
                                         goalSetters: GoalSetter[]) {
     const id = repoRefFromPush(push);
     const providerId = providerIdFromPush(push);
+    const addressChannels = addressChannelsFor(push.repo, context);
 
     const {determinedGoals, goalsToSave} = await determineGoals({projectLoader, goalSetters}, {
-        credentials, id, providerId, context, push
+        credentials, id, providerId, context, push, addressChannels
     });
 
     await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
@@ -117,12 +118,22 @@ export async function determineGoals(rules: { projectLoader: ProjectLoader, goal
                                          credentials: ProjectOperationCredentials, id: GitHubRepoRef,
                                          providerId: string,
                                          context: HandlerContext,
-                                         push: PushFields.Fragment
+                                         push: PushFields.Fragment,
+                                         addressChannels: AddressChannels
                                      }) {
     const {projectLoader, goalSetters} = rules;
-    const {credentials, id, context, push, providerId} = circumstances;
+    const {credentials, id, context, push, providerId, addressChannels} = circumstances;
     const determinedGoals = await projectLoader.doWithProject({credentials, id, context, readOnly: true},
-        project => setGoalsForPushOnProject(push, id, credentials, context, project, goalSetters));
+        project => setGoalsForPushOnProject({
+            goalSetters
+        }, {
+            push,
+            id,
+            credentials,
+            context,
+            project,
+            addressChannels,
+        }));
 
     if (!determinedGoals) {
         return {determinedGoals: undefined, goalsToSave: []};
@@ -152,13 +163,17 @@ export const executeImmaterial: GoalExecutor = async () => {
     return Success;
 };
 
-async function setGoalsForPushOnProject(push: PushFields.Fragment,
-                                        id: GitHubRepoRef,
-                                        credentials: ProjectOperationCredentials,
-                                        context: HandlerContext,
-                                        project: GitProject,
-                                        goalSetters: GoalSetter[]): Promise<Goals> {
-    const addressChannels = addressChannelsFor(push.repo, context);
+async function setGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
+                                        parameters: {
+                                            push: PushFields.Fragment,
+                                            id: GitHubRepoRef,
+                                            credentials: ProjectOperationCredentials,
+                                            context: HandlerContext,
+                                            project: GitProject,
+                                            addressChannels: AddressChannels,
+                                        }): Promise<Goals> {
+    const {goalSetters} = rules;
+    const {push, id, credentials, context, project, addressChannels} = parameters;
     const pi: ProjectListenerInvocation = {
         id,
         project,
