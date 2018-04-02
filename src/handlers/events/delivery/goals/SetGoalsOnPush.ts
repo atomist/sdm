@@ -46,6 +46,7 @@ import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { constructSdmGoal, storeGoal } from "../../../../common/delivery/goals/storeGoals";
+import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -89,12 +90,21 @@ export async function chooseAndSetGoals(context: HandlerContext,
                                         goalsListeners: GoalsSetListener[],
                                         goalSetters: GoalSetter[]) {
     const id = repoRefFromPush(push);
+    const providerId = providerIdFromPush(push);
 
     const determinedGoals = await projectLoader.doWithProject({credentials, id, context, readOnly: true},
         project => setGoalsForPushOnProject(push, id, credentials, context, project, goalSetters));
 
+
     if (!!determinedGoals) {
-        await saveGoals(context, credentials, id, providerIdFromPush(push), determinedGoals);
+        await saveGoals(context, determinedGoals.goals.map(g =>
+            constructSdmGoal(context, {
+                goalSet: determinedGoals.name,
+                goal: g,
+                state: hasPreconditions(g) ? "planned" : "requested",
+                id,
+                providerId,
+            })));
     }
 
     // Let GoalSetListeners know even if we determined no goals.
@@ -112,19 +122,10 @@ export async function chooseAndSetGoals(context: HandlerContext,
 }
 
 async function saveGoals(ctx: HandlerContext,
-                         credentials: ProjectOperationCredentials,
-                         id: GitHubRepoRef,
-                         providerId: string,
-                         determinedGoals: Goals) {
+                         determinedGoals: SdmGoal[]) {
     return Promise.all([
-        ...determinedGoals.goals.map(goal =>
-            storeGoal(ctx, constructSdmGoal(ctx, {
-                goalSet: this.name,
-                goal,
-                state: hasPreconditions(goal) ? "planned" : "requested",
-                id,
-                providerId,
-            })))]);
+        ...determinedGoals.map(g =>
+            storeGoal(ctx, g))]);
 }
 
 export const executeImmaterial: GoalExecutor = async () => {
