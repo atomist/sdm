@@ -92,20 +92,11 @@ export async function chooseAndSetGoals(context: HandlerContext,
     const id = repoRefFromPush(push);
     const providerId = providerIdFromPush(push);
 
-    const determinedGoals = await projectLoader.doWithProject({credentials, id, context, readOnly: true},
-        project => setGoalsForPushOnProject(push, id, credentials, context, project, goalSetters));
+    const {determinedGoals, goalsToSave} = await determineGoals({projectLoader, goalSetters}, {
+        credentials, id, providerId, context, push
+    });
 
-
-    if (!!determinedGoals) {
-        await saveGoals(context, determinedGoals.goals.map(g =>
-            constructSdmGoal(context, {
-                goalSet: determinedGoals.name,
-                goal: g,
-                state: hasPreconditions(g) ? "planned" : "requested",
-                id,
-                providerId,
-            })));
-    }
+    await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
 
     // Let GoalSetListeners know even if we determined no goals.
     // This is not an error
@@ -121,6 +112,34 @@ export async function chooseAndSetGoals(context: HandlerContext,
     return determinedGoals;
 }
 
+export async function determineGoals(rules: { projectLoader: ProjectLoader, goalSetters: GoalSetter[] },
+                                     circumstances: {
+                                         credentials: ProjectOperationCredentials, id: GitHubRepoRef,
+                                         providerId: string,
+                                         context: HandlerContext,
+                                         push: PushFields.Fragment
+                                     }) {
+    const {projectLoader, goalSetters} = rules;
+    const {credentials, id, context, push, providerId} = circumstances;
+    const determinedGoals = await projectLoader.doWithProject({credentials, id, context, readOnly: true},
+        project => setGoalsForPushOnProject(push, id, credentials, context, project, goalSetters));
+
+    if (!determinedGoals) {
+        return {determinedGoals: undefined, goalsToSave: []};
+    }
+    const goalsToSave = determinedGoals.goals.map(g =>
+        constructSdmGoal(context, {
+            goalSet: determinedGoals.name,
+            goal: g,
+            state: hasPreconditions(g) ? "planned" : "requested",
+            id,
+            providerId,
+        }));
+
+
+    return {determinedGoals, goalsToSave}
+}
+
 async function saveGoals(ctx: HandlerContext,
                          determinedGoals: SdmGoal[]) {
     return Promise.all([
@@ -133,7 +152,7 @@ export const executeImmaterial: GoalExecutor = async () => {
     return Success;
 };
 
-async function setGoalsForPushOnProject(push: OnPushToAnyBranch.Push,
+async function setGoalsForPushOnProject(push: PushFields.Fragment,
                                         id: GitHubRepoRef,
                                         credentials: ProjectOperationCredentials,
                                         context: HandlerContext,
