@@ -479,6 +479,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
+    public addImplementation(implementation: GoalImplementation): this {
+        this.goalImplementationMapper.addImplementation(implementation);
+        return this;
+    }
+
     /**
      *
      * @param {string} name

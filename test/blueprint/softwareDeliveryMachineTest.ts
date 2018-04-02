@@ -10,8 +10,9 @@ import { SingleProjectLoader } from "../common/SingleProjectLoader";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { HandlerContext } from "@atomist/automation-client";
+import { HandlerContext, Success } from "@atomist/automation-client";
 import { PushFields } from "../../src/typings/types";
+import { Goal } from "../../src/common/delivery/goals/Goal";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",
@@ -32,7 +33,7 @@ const aPush = {} as PushFields.Fragment;
 
 describe("implementing goals in the SDM", () => {
 
-    it("I can teach it to do an autofix", async () => {
+    it("I can ask it to do an autofix", async () => {
 
         const mySDM = new SoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
@@ -59,5 +60,45 @@ describe("implementing goals in the SDM", () => {
         assert(myImpl.implementationName === "Autofix");
     });
 
+    const customGoal = new Goal({displayName: "Springer", environment: "1-staging/", orderedName: "1-springer"})
+
+    it("I can teach it to do a custom goal", async () => {
+        let executed: boolean = false;
+        const goalExecutor = async () => {
+            executed = true;
+            return Success
+        };
+
+        const mySDM = new SoftwareDeliveryMachine("Gustave",
+            fakeSoftwareDeliveryMachineOptions,
+            whenPushSatisfies(AnyPush)
+                .itMeans("cornelius springer")
+                .setGoals(new Goals("Springer", customGoal)))
+            .addImplementation({
+                implementationName: "Cornelius",
+                goal: customGoal,
+                goalExecutor
+            });
+
+        const {determinedGoals, goalsToSave} = await determineGoals({
+                projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
+                goalSetters: mySDM.goalSetters
+            }, {
+                credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
+                providerId: "josh", addressChannels: () => Promise.resolve({}),
+            }
+        );
+
+        assert(determinedGoals.goals.includes(customGoal));
+
+        assert(goalsToSave.length === 1);
+        const onlyGoal = goalsToSave[0];
+
+        const myImpl = mySDM.goalImplementationMapper.findBySdmGoal(onlyGoal);
+
+        assert.equal(myImpl.implementationName, "Cornelius");
+        await myImpl.goalExecutor(undefined, undefined, undefined);
+        assert(executed);
+    });
 
 });
