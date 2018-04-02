@@ -235,7 +235,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
         this.opts.artifactStore,
-        ...this.artifactListeners);
+        ...this.artifactListeners)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -432,7 +432,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {
             this.implementGoal(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
-                r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter)
+                r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter);
         });
         return this;
     }
