@@ -80,7 +80,6 @@ import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
-import { ExecuteGoalOnSuccessStatus } from "../handlers/events/delivery/ExecuteGoalOnSuccessStatus";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
@@ -94,6 +93,7 @@ import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
 import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -226,8 +226,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: [
                 () => new ExecuteGoalOnRequested(name, BuildGoal, executor),
                 () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executor),
-                () => new ExecuteGoalOnSuccessStatus(name, BuildGoal, executor),
-                () => new ExecuteGoalOnSuccessStatus(name + "_jb", JustBuildGoal, executor),
             ],
             commandHandlers: [],
         };
@@ -258,8 +256,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get goalCleanup(): Array<Maker<FailDownstreamGoalsOnGoalFailure>> {
-        return [() => new FailDownstreamGoalsOnGoalFailure()];
+    private get goalConsequences(): FunctionalUnit {
+        return {
+            eventHandlers: [
+                () => new FailDownstreamGoalsOnGoalFailure(),
+                () => new RequestDownstreamGoalsOnGoalSuccess(),
+            ],
+            commandHandlers: []
+        };
     }
 
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
@@ -312,12 +316,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.reviewHandling,
                 this.deployer,
                 this.goalSetting,
+                this.goalConsequences,
             ]);
     }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
-        return (this.goalCleanup as Array<Maker<HandleEvent<any>>>)
-            .concat(this.supportingEvents)
+        return this.supportingEvents
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
