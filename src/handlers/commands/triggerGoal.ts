@@ -20,7 +20,7 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { fetchGoalsForCommit } from "../../common/delivery/goals/fetchGoalsOnCommit";
 import { Goal } from "../../common/delivery/goals/Goal";
-import { goalCorrespondsToSdmGoal, storeGoal } from "../../common/delivery/goals/storeGoals";
+import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal } from "../../common/delivery/goals/storeGoals";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
 
@@ -82,7 +82,11 @@ function triggerGoalsOnCommit(goal: Goal) {
         }
 
         // do the thing
-        await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet});
+        await storeGoal(ctx, constructSdmGoal(ctx,
+            {
+                id, providerId: commandParams.providerId,
+                state: "requested", goal, goalSet
+            }));
         return Success;
     };
 }
