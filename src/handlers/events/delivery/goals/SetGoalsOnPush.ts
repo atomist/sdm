@@ -57,8 +57,6 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
 
-    private readonly rules: PushMapping<Goals>;
-
     /**
      * Configure goal setting
      * @param projectLoader use to load projects
