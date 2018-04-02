@@ -122,8 +122,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .itMeans("Just compile")
             .set(runCompileBuilder),
         build.setDefault(new MavenBuilder(options.artifactStore,
-            createEphemeralProgressLog, options.projectLoader)),
-    )
+            createEphemeralProgressLog, options.projectLoader)))
         .addDeployRules(
             deploy.when(IsMaven)
                 .itMeans("Maven test")

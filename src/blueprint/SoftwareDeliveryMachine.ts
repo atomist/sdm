@@ -23,13 +23,8 @@ import {
     CodeReactionGoal,
     FingerprintGoal,
     JustBuildGoal,
-    LocalDeploymentGoal,
-    LocalEndpointGoal,
     NoGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
     ReviewGoal,
-    StagingDeploymentGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
@@ -93,8 +88,6 @@ import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/r
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
-import { composeFunctionalUnits } from "./ComposedFunctionalUnit";
-import { functionalUnitForGoal } from "./dsl/functionalUnitForGoal";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 
@@ -151,8 +144,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
-    private readonly deployTargetMapping = new PushRules<Target>("Deploy targets");
-
     private reviewerRegistrations: ReviewerRegistration[] = [];
 
     private codeReactionRegistrations: CodeReactionRegistration[] = [];
@@ -176,7 +167,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public implementGoal(implementationName: string,
                          goal: Goal,
                          goalExecutor: ExecuteGoalWithLog,
-                         pushTest?: PushTest, logInterpreter?: LogInterpreter): this {
+                         pushTest?: PushTest,
+                         logInterpreter?: LogInterpreter): this {
         this.goalImplementationMapper.addImplementation({
             implementationName, goal, goalExecutor,
             pushTest: pushTest || AnyPush,
@@ -231,25 +223,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         };
     }
 
-    private get deployer(): FunctionalUnit {
-        const outer = this;
-
-        function executor(deploymentGoal: Goal, endpointGoal: Goal) {
-            return executeDeploy(outer.opts.artifactStore, outer.opts.projectLoader,
-                deploymentGoal, endpointGoal,
-                outer.deployTargetMapping.filter(r => (r as StaticPushMapping<Target>).value.deployGoal === deploymentGoal));
-        }
-
-        const deployGoalPairs: Array<{ deployGoal: Goal, endpointGoal: Goal, name: string }> = [
-            {deployGoal: LocalDeploymentGoal, endpointGoal: LocalEndpointGoal, name: "LocalDeploy"},
-            {deployGoal: StagingDeploymentGoal, endpointGoal: StagingEndpointGoal, name: "StagingDeploy"},
-            {deployGoal: ProductionDeploymentGoal, endpointGoal: ProductionEndpointGoal, name: "ProductionDeploy"},
-        ];
-
-        return composeFunctionalUnits(...deployGoalPairs.map(dep =>
-            functionalUnitForGoal(dep.name, dep.deployGoal, executor(dep.deployGoal, dep.endpointGoal))));
-    }
-
     get onSuperseded(): Maker<OnSupersededStatus> {
         return this.supersededListeners.length > 0 ?
             () => new OnSupersededStatus(...this.supersededListeners) :
@@ -262,7 +235,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
         this.opts.artifactStore,
-        ...this.artifactListeners)
+        ...this.artifactListeners);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -300,7 +273,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this.functionalUnits
             .concat([
                 this.builder,
-                this.deployer,
                 this.goalSetting,
             ]);
     }
@@ -458,7 +430,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
-        this.deployTargetMapping.add(rules);
+        rules.forEach(r => {
+            this.implementGoal(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
+                r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter)
+        });
         return this;
     }
 
