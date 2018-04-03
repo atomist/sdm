@@ -90,7 +90,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .itMeans("No material change to Java")
             .setGoals(NoGoals),
         whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
-            ToPublicRepo, not(NamedSeedRepo), IsDeployEnabled)
+            ToPublicRepo, not(NamedSeedRepo), not(FromAtomist), IsDeployEnabled)
             .itMeans("Spring Boot service to deploy")
             .setGoals(HttpServiceGoals),
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
