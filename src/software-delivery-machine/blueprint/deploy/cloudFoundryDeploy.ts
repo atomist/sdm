@@ -31,6 +31,7 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
+import {CloudFoundryPushDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
 
 export const CloudFoundryStagingTarget = new EnvironmentCloudFoundryTarget("staging");
 
@@ -45,7 +46,7 @@ export function cloudFoundryStagingDeploySpec(opts: {artifactStore: ArtifactStor
         deployGoal: StagingDeploymentGoal,
         endpointGoal: StagingEndpointGoal,
         artifactStore: opts.artifactStore,
-        deployer: new CommandLineCloudFoundryDeployer(opts.projectLoader),
+        deployer: new CloudFoundryPushDeployer(opts.projectLoader),
         targeter: () => CloudFoundryStagingTarget,
     };
 }
@@ -56,7 +57,7 @@ export function cloudFoundryProductionDeploySpec(opts: {artifactStore: ArtifactS
         deployGoal: ProductionDeploymentGoal,
         endpointGoal: ProductionEndpointGoal,
         artifactStore: opts.artifactStore,
-        deployer: new CommandLineCloudFoundryDeployer(opts.projectLoader),
+        deployer: new CloudFoundryPushDeployer(opts.projectLoader),
         targeter: () => CloudFoundryProductionTarget,
     };
 }
