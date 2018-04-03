@@ -25,11 +25,12 @@ import { mavenSourceDeployer } from "../../blueprint/deploy/localSpringBootDeplo
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../../commands/generators/java/spring/springBootGenerator";
 import { CommonJavaGeneratorConfig } from "../../machines/generatorConfig";
+import { listLocalDeploys } from "../../../handlers/commands/listLocalDeploys";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
  * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
- * @param {{useCheckstyle: boolean}} opts
+ * @param {{useCheckstyle: boolean}} options
  */
 export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, options: SoftwareDeliveryMachineOptions) {
     softwareDeliveryMachine
@@ -43,6 +44,7 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
                         targeter: ManagedDeploymentTargeter,
                     },
                 ))
+        .addSupportingCommands(listLocalDeploys)
         .addEditors(
             () => tryToUpgradeSpringBootVersion,
         )

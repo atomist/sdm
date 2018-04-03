@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ChildProcess } from "child_process";
-import { TargetInfo } from "../../../../spi/deploy/Deployment";
+import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
 import { Targeter } from "../deploy";
 
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
@@ -55,16 +55,18 @@ export interface DeployedApp {
 
     /** Will be undefined if the app is not currently deployed */
     childProcess: ChildProcess;
+
+    deployment: Deployment;
 }
 
 /**
- * Manages deployments
+ * Manages local deployments to the automation server node
  * This is not intended for production use
  * @type {Array}
  */
 export class ManagedDeployments {
 
-    private readonly deployments: DeployedApp[] = [];
+    public readonly deployments: DeployedApp[] = [];
 
     constructor(public initialPort: number) {
     }
@@ -83,19 +85,19 @@ export class ManagedDeployments {
         return !!running ? running.port : this.nextFreePort();
     }
 
-    public async recordDeployment(da: DeployedApp) {
+    public recordDeployment(da: DeployedApp) {
         logger.info("Recording app [%j] on port [%d]", da.port);
         this.deployments.push(da);
     }
 
     public findDeployment(id: RemoteRepoRef): DeployedApp {
         return this.deployments.find(d => d.id.sha === id.sha ||
-            (d.id.owner === id.owner && d.id.repo === id.repo && !!id.branch && d.id.branch === id.branch));
+            (d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch));
     }
 
     /**
      * Terminate any process we're managing on behalf of this id
-     * @param {BranchRepoRef} id
+     * @param {RemoteRepoRef} id
      * @return {Promise<any>}
      */
     public async terminateIfRunning(id: RemoteRepoRef): Promise<any> {

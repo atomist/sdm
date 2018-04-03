@@ -29,7 +29,7 @@ import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "
 /**
  * Managed deployments
  */
-let managedDeployments: ManagedDeployments;
+export let managedExecutableJarDeployments: ManagedDeployments;
 
 /**
  * Start up an executable Jar on the same node as the automation client.
@@ -37,9 +37,9 @@ let managedDeployments: ManagedDeployments;
  * @param opts options
  */
 export function executableJarDeployer(opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
-    if (!managedDeployments) {
+    if (!managedExecutableJarDeployments) {
         logger.info("Created new deployments record");
-        managedDeployments = new ManagedDeployments(opts.lowerPort);
+        managedExecutableJarDeployments = new ManagedDeployments(opts.lowerPort);
     }
     return new ExecutableJarDeployer({
         ...DefaultLocalDeployerOptions,
@@ -60,11 +60,11 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
     }
 
     public async undeploy(id: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<any> {
-        return managedDeployments.terminateIfRunning(id.managedDeploymentKey);
+        return managedExecutableJarDeployments.terminateIfRunning(id.managedDeploymentKey);
     }
 
     private deploymentFor(ti: ManagedDeploymentTargetInfo): Deployment {
-        const managed = managedDeployments.findDeployment(ti.managedDeploymentKey);
+        const managed = managedExecutableJarDeployments.findDeployment(ti.managedDeploymentKey);
         if (!managed) {
             return undefined;
         }
@@ -84,14 +84,14 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment[]> {
-        const port = managedDeployments.findPort(ti.managedDeploymentKey);
+        const port = managedExecutableJarDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {
             port,
             atomistTeam,
             contextRoot: this.contextRoot(da.id),
         };
-        await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        await managedExecutableJarDeployments.terminateIfRunning(ti.managedDeploymentKey);
         // TODO switch to watchSpawned
         const childProcess = spawn("java",
             [
@@ -107,8 +107,11 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             childProcess.stdout.addListener("data", async what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    await managedDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess});
-                    resolve(this.deploymentFor(ti));
+                    const deployment = {
+                        endpoint: `${this.opts.baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
+                    };
+                    await managedExecutableJarDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess, deployment});
+                    resolve(deployment);
                 }
             });
             childProcess.addListener("exit", () => {

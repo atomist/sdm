@@ -30,7 +30,7 @@ import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeplo
 /**
  * Managed deployments
  */
-let managedDeployments: ManagedDeployments;
+export let managedMavenDeployments: ManagedDeployments;
 
 /**
  * Use Maven to deploy
@@ -38,9 +38,9 @@ let managedDeployments: ManagedDeployments;
  * @param opts options
  */
 export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
-    if (!managedDeployments) {
+    if (!managedMavenDeployments) {
         logger.info("Created new deployments record");
-        managedDeployments = new ManagedDeployments(opts.lowerPort);
+        managedMavenDeployments = new ManagedDeployments(opts.lowerPort);
     }
     return new MavenSourceDeployer(projectLoader, {
         ...DefaultLocalDeployerOptions,
@@ -54,8 +54,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     }
 
     public findDeployments(da: DeployableArtifact, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
-        return managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
-
+        return managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
     }
 
     public async deploy(da: DeployableArtifact,
@@ -64,9 +63,12 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                         credentials: ProjectOperationCredentials,
                         team: string): Promise<Deployment[]> {
         const id = da.id;
-        const port = managedDeployments.findPort(ti.managedDeploymentKey);
+        if (!id.branch) {
+            throw new Error(`Cannot locally deploy ${JSON.stringify(id)}: Branch must be set`);
+        }
+        const port = managedMavenDeployments.findPort(ti.managedDeploymentKey);
         logger.info("MavenSourceDeployer: Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, team);
-        await managedDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
         return [await this.projectLoader.doWithProject({credentials, id, readOnly: true},
                 project => this.deployProject(ti, log, project, port, team))];
 
@@ -102,13 +104,16 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {
-                    managedDeployments.recordDeployment({
-                        id: branchId,
-                        port, childProcess,
-                    });
-                    resolve({
+                    const deployment = {
                         endpoint: `${this.opts.baseUrl}:${port}/${startupInfo.contextRoot}`,
+                    };
+                    managedMavenDeployments.recordDeployment({
+                        id: branchId,
+                        port,
+                        childProcess,
+                        deployment,
                     });
+                    resolve(deployment);
                 }
             });
             childProcess.addListener("exit", () => {

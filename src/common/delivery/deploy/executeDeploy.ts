@@ -52,7 +52,6 @@ export function executeDeploy(artifactStore: ArtifactStore,
                               deployGoal: Goal,
                               endpointGoal: Goal,
                               targetMapping: PushMapping<Target>): GoalExecutor {
-
     return runWithLog(async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const commit = rwlc.status.commit;
         const { addressChannels, credentials, id, context, progressLog }  = rwlc;
@@ -79,6 +78,9 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
                 const artifactCheckout = await checkOutArtifact(_.get(commit, "image.imageName"),
                     artifactStore, id, credentials, progressLog);
+
+                // TODO this is a bit questionable
+                artifactCheckout.id.branch = push.branch;
 
                 const deployments = await target.deployer.deploy(
                     artifactCheckout,
