@@ -49,5 +49,6 @@ async function handleListDeploysWith(description: string, managedDeployments: Ma
 }
 
 function deployedAppToString(da: DeployedApp) {
-    return `${da.id.owner}:${da.id.repo}:${da.id.branch}@${da.id.sha} -  ${da.deployment.endpoint};port=${da.port};pid=${da.childProcess.pid}`;
+    return `${da.id.owner}:${da.id.repo}:${da.id.branch}@${da.id.sha} -  ${da.deployment.endpoint};port=${da.port};pid=${
+        !!da.childProcess ? da.childProcess.pid : "<not running>"}`;
 }
