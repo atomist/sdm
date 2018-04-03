@@ -21,11 +21,11 @@ import { ManagedDeploymentTargeter } from "../../../common/delivery/deploy/local
 import { LocalDeploymentGoal, LocalEndpointGoal } from "../../../common/delivery/goals/common/commonGoals";
 import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
+import { listLocalDeploys } from "../../../handlers/commands/listLocalDeploys";
 import { mavenSourceDeployer } from "../../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { tryToUpgradeSpringBootVersion } from "../../commands/editors/spring/tryToUpgradeSpringBootVersion";
 import { springBootGenerator } from "../../commands/generators/java/spring/springBootGenerator";
 import { CommonJavaGeneratorConfig } from "../../machines/generatorConfig";
-import { listLocalDeploys } from "../../../handlers/commands/listLocalDeploys";
 
 /**
  * Configuration common to Spring SDMs, wherever they deploy
