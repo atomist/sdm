@@ -44,7 +44,7 @@ function handleListDeploys(): OnCommand {
 
 async function handleListDeploysWith(description: string, managedDeployments: ManagedDeployments, ctx: HandlerContext) {
     const message = `*${description}* managing ${managedDeployments.deployments.length} deployments:\n${
-        managedDeployments.deployments.map(deployedAppToString)}`;
+        managedDeployments.deployments.map(deployedAppToString).join("\n")}`;
     await ctx.messageClient.respond(message);
 }
 
