@@ -92,7 +92,7 @@ function appFailedToStart(log: string) {
 
 import { logger } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
-import { Float } from "@atomist/microgrammar/primitives";
+import { Float } from "@atomist/microgrammar/Primitives";
 
 // TODO base on common build info
 export interface MavenInfo {
