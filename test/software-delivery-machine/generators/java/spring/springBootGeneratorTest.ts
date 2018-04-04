@@ -115,8 +115,13 @@ describe("springBootGenerator", () => {
                     respond() {
                         return Promise.resolve();
                     },
-                } as any,
-            } as HandlerContext;
+                },
+                graphClient: {
+                    query() {
+                        return Promise.resolve(false);
+                    },
+                },
+            } as any as HandlerContext;
             const params = new SpringProjectCreationParameters(config);
             params.artifactId = "artifact";
             params.rootPackage = "atomist.test";
