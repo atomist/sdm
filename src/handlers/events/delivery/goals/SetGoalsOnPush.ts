@@ -37,6 +37,7 @@ import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLo
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalSideEffectMapper } from "../../../../common/delivery/goals/SdmGoalSideEffectMapper";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
@@ -47,7 +48,6 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { SdmGoalSideEffectMapper } from "../../../../common/delivery/goals/SdmGoalSideEffectMapper";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -100,7 +100,7 @@ export async function chooseAndSetGoals(rules: {
     goalSetters: GoalSetter[],
     implementationMapping: SdmGoalImplementationMapper,
     sideEffectMapping: SdmGoalSideEffectMapper,
-}, parameters: {
+},                                      parameters: {
     context: HandlerContext,
     credentials: ProjectOperationCredentials,
     push: PushFields.Fragment,
@@ -149,12 +149,12 @@ export async function determineGoals(rules: {
                                          addressChannels: AddressChannels,
                                      }): Promise<{
     determinedGoals: Goals | undefined,
-    goalsToSave: SdmGoal[]
+    goalsToSave: SdmGoal[],
 }> {
     const {projectLoader, goalSetters, implementationMapping, sideEffectMapping} = rules;
     const {credentials, id, context, push, providerId, addressChannels} = circumstances;
-    return await projectLoader.doWithProject({credentials, id, context, readOnly: true},
-        async (project) => {
+    return projectLoader.doWithProject({credentials, id, context, readOnly: true},
+        async project => {
             const determinedGoals: Goals = await setGoalsForPushOnProject({
                 goalSetters,
             }, {
@@ -192,8 +192,8 @@ export async function determineGoals(rules: {
 
 function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
-    sideEffectMapping: SdmGoalSideEffectMapper
-}, g: Goal, inv: ProjectListenerInvocation): SdmGoalFulfillment {
+    sideEffectMapping: SdmGoalSideEffectMapper,
+},                   g: Goal, inv: ProjectListenerInvocation): SdmGoalFulfillment {
     const {implementationMapping, sideEffectMapping} = rules;
     const implementation = implementationMapping.findByPush(g, inv);
     if (implementation) {

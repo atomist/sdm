@@ -22,7 +22,7 @@ import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import {
     GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalFulfillmentMethod, SdmGoalKey, SdmGoalState,
-    SdmProvenance
+    SdmProvenance,
 } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 import { GoalImplementation } from "./SdmGoalImplementationMapper";

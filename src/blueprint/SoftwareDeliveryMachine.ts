@@ -55,6 +55,7 @@ import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delive
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalSideEffectMapper } from "../common/delivery/goals/SdmGoalSideEffectMapper";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionRegistration } from "../common/listener/CodeReactionListener";
@@ -90,7 +91,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { SdmGoalSideEffectMapper } from "../common/delivery/goals/SdmGoalSideEffectMapper";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -440,7 +440,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         rules.forEach(r => {
             this.implementGoal(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter);
-            this.sideEffectMapper.addSideEffect(r.value.endpointGoal, r.value.deployGoal.definition.displayName)
+            this.sideEffectMapper.addSideEffect(r.value.endpointGoal, r.value.deployGoal.definition.displayName);
         });
         return this;
     }
@@ -469,7 +469,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             executeReview(this.opts.projectLoader, this.reviewerRegistrations));
         this.addVerifyImplementation();
 
-        this.sideEffectMapper.addSideEffect(ArtifactGoal, "from ImageLinked")
+        this.sideEffectMapper.addSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
 }

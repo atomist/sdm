@@ -26,10 +26,10 @@ export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for
 
 export type SdmGoalFulfillmentMethod = "SDM fulfill on requested" | "side-effect" | "other";
 
-export type SdmGoalFulfillment =  {
+export interface SdmGoalFulfillment {
     method: SdmGoalFulfillmentMethod;
     name: string;
-};
+}
 
 export interface SdmGoal extends SdmGoalKey {
     sha: string;
