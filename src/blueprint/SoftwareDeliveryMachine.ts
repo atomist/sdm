@@ -128,44 +128,44 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     /*
      * Store all the implementations we know
      */
-    public goalImplementationMapper = new SdmGoalImplementationMapper(); // public for testing
-    public sideEffectMapper = new SdmGoalSideEffectMapper(); // public for testing
+    public readonly goalImplementationMapper = new SdmGoalImplementationMapper(); // public for testing
+    public readonly sideEffectMapper = new SdmGoalSideEffectMapper(); // public for testing
 
-    public newIssueListeners: NewIssueListener[] = [];
+    public readonly newIssueListeners: NewIssueListener[] = [];
 
-    public updatedIssueListeners: UpdatedIssueListener[] = [];
+    public readonly updatedIssueListeners: UpdatedIssueListener[] = [];
 
-    public closedIssueListeners: ClosedIssueListener[] = [];
+    public readonly closedIssueListeners: ClosedIssueListener[] = [];
 
-    public repoCreationListeners: RepoCreationListener[] = [];
+    public readonly repoCreationListeners: RepoCreationListener[] = [];
 
-    public newRepoWithCodeActions: ProjectListener[] = [];
+    public readonly newRepoWithCodeActions: ProjectListener[] = [];
 
     public readonly goalSetters: GoalSetter[] = []; // public for tests
 
-    private goalsSetListeners: GoalsSetListener[] = [];
+    private readonly goalsSetListeners: GoalsSetListener[] = [];
 
     private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
-    private reviewerRegistrations: ReviewerRegistration[] = [];
+    private readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
-    private codeReactionRegistrations: CodeReactionRegistration[] = [];
+    private readonly codeReactionRegistrations: CodeReactionRegistration[] = [];
 
-    private autofixRegistrations: AutofixRegistration[] = [];
+    private readonly autofixRegistrations: AutofixRegistration[] = [];
 
-    private artifactListeners: ArtifactListener[] = [];
+    private readonly artifactListeners: ArtifactListener[] = [];
 
-    private fingerprinters: Fingerprinter[] = [];
+    private readonly fingerprinters: Fingerprinter[] = [];
 
-    private supersededListeners: SupersededListener[] = [];
+    private readonly supersededListeners: SupersededListener[] = [];
 
-    private fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
+    private readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
-    private deploymentListeners?: DeploymentListener[] = [];
+    private readonly deploymentListeners?: DeploymentListener[] = [];
 
-    private verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
+    private readonly verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
-    private endpointVerificationListeners: EndpointVerificationListener[] = [];
+    private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
     public implementGoal(implementationName: string,
                          goal: Goal,
@@ -330,27 +330,27 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     public addNewIssueListeners(...e: NewIssueListener[]): this {
-        this.newIssueListeners = this.newIssueListeners.concat(e);
+        this.newIssueListeners.push(...e);
         return this;
     }
 
     public addUpdatedIssueListeners(...e: UpdatedIssueListener[]): this {
-        this.updatedIssueListeners = this.updatedIssueListeners.concat(e);
+        this.updatedIssueListeners.push(...e);
         return this;
     }
 
     public addClosedIssueListeners(...e: ClosedIssueListener[]): this {
-        this.closedIssueListeners = this.closedIssueListeners.concat(e);
+        this.closedIssueListeners.push(...e);
         return this;
     }
 
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
-        this.supportingCommands = this.supportingCommands.concat(e);
+        this.supportingCommands.push(...e);
         return this;
     }
 
     public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
-        this.supportingEvents = this.supportingEvents.concat(e);
+        this.supportingEvents.push(...e);
         return this;
     }
 
@@ -362,32 +362,32 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * @return {this}
      */
     public addRepoCreationListeners(...rcls: RepoCreationListener[]): this {
-        this.repoCreationListeners = this.repoCreationListeners.concat(rcls);
+        this.repoCreationListeners.push(...rcls);
         return this;
     }
 
     public addNewRepoWithCodeActions(...pls: ProjectListener[]): this {
-        this.newRepoWithCodeActions = this.newRepoWithCodeActions.concat(pls);
+        this.newRepoWithCodeActions.push(...pls);
         return this;
     }
 
     public addGoalsSetListeners(...listeners: GoalsSetListener[]): this {
-        this.goalsSetListeners = this.goalsSetListeners.concat(listeners);
+        this.goalsSetListeners.push(...listeners);
         return this;
     }
 
     public addReviewerRegistrations(...reviewers: ReviewerRegistration[]): this {
-        this.reviewerRegistrations = this.reviewerRegistrations.concat(reviewers);
+        this.reviewerRegistrations.push(...reviewers);
         return this;
     }
 
     public addCodeReactions(...crrs: CodeReactionRegistration[]): this {
-        this.codeReactionRegistrations = this.codeReactionRegistrations.concat(crrs);
+        this.codeReactionRegistrations.push(...crrs);
         return this;
     }
 
     public addArtifactListeners(...pls: ArtifactListener[]): this {
-        this.artifactListeners = this.artifactListeners.concat(pls);
+        this.artifactListeners.push(...pls);
         return this;
     }
 
@@ -397,42 +397,42 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * infinite recursion!!
      */
     public addAutofixes(...ars: AutofixRegistration[]): this {
-        this.autofixRegistrations = this.autofixRegistrations.concat(ars);
+        this.autofixRegistrations.push(...ars);
         return this;
     }
 
     public addFingerprinters(...f: Fingerprinter[]): this {
-        this.fingerprinters = this.fingerprinters.concat(f);
+        this.fingerprinters.push(...f);
         return this;
     }
 
     public addSupersededListeners(...l: SupersededListener[]): this {
-        this.supersededListeners = this.supersededListeners.concat(l);
+        this.supersededListeners.push(...l);
         return this;
     }
 
     public addFingerprintDifferenceListeners(...fh: FingerprintDifferenceListener[]): this {
-        this.fingerprintDifferenceListeners = this.fingerprintDifferenceListeners.concat(fh);
+        this.fingerprintDifferenceListeners.push(...fh);
         return this;
     }
 
     public addDeploymentListeners(...l: DeploymentListener[]): this {
-        this.deploymentListeners = this.deploymentListeners.concat(l);
+        this.deploymentListeners.push(...l);
         return this;
     }
 
     public addVerifiedDeploymentListeners(...l: VerifiedDeploymentListener[]): this {
-        this.verifiedDeploymentListeners = this.verifiedDeploymentListeners.concat(l);
+        this.verifiedDeploymentListeners.push(...l);
         return this;
     }
 
     public addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this {
-        this.endpointVerificationListeners = this.endpointVerificationListeners.concat(l);
+        this.endpointVerificationListeners.push(...l);
         return this;
     }
 
     public addFunctionalUnits(...fus: FunctionalUnit[]): this {
-        this.functionalUnits = this.functionalUnits.concat(fus);
+        this.functionalUnits.push(...fus);
         return this;
     }
 

@@ -68,6 +68,8 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
+import { logger, Success } from "@atomist/automation-client";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -147,10 +149,16 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             () => addCloudFoundryManifest,
             () => enableDeploy(),
             () => disableDeploy(),
+            () => isDeployEnabledCommand(),
         )
         .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition)
+        .addCodeReactions({
+            name: "hi there", action: async () => {
+                logger.info("Jess was here");
+                return Success;
+            }
+        })
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
-
     addJavaSupport(sdm, options);
     addSpringSupport(sdm, options);
     addNodeSupport(sdm);

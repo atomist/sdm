@@ -25,60 +25,52 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
+import { addressEvent, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import {
     DeployEnablement,
     DeployEnablementRootType,
 } from "../../ingesters/deployEnablement";
 import { success } from "../../util/slack/messages";
+import { SetDeployEnablementParameters } from "./SetDeployEnablement";
+import { isDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
+import { guid } from "@atomist/automation-client/internal/util/string";
+import { Action, SlackMessage } from "@atomist/slack-messages";
 
-@Parameters()
-export class SetDeployEnablementParameters {
-
-    @MappedParameter(MappedParameters.GitHubOwner)
-    public owner: string;
-
-    @MappedParameter(MappedParameters.GitHubRepository)
-    public repo: string;
-
-    @MappedParameter(MappedParameters.GitHubRepositoryProvider)
-    public providerId: string;
-
-}
-
-export function setDeployEnablement(enable: boolean) {
-    return (ctx: HandlerContext, params: SetDeployEnablementParameters): Promise<HandlerResult> => {
-        const deployEnablement: DeployEnablement = {
-            state: enable ? "requested" : "disabled",
-            owner: params.owner,
-            repo: params.repo,
-            providerId: params.providerId,
-        };
-        return ctx.messageClient.send(deployEnablement, addressEvent(DeployEnablementRootType))
-            .then(() => ctx.messageClient.respond(
-                success(
-                    "Deploy Enablement",
-                    `Successfully ${enable ? "enabled" : "disabled"} deployment`)))
+function displayDeployEnablement() {
+    return async (context: HandlerContext, params: SetDeployEnablementParameters): Promise<HandlerResult> => {
+        const enabled = await isDeployEnabled({context, id: params});
+        return context.messageClient.respond(
+            reportDeployEnablement(params, enabled))
             .then(() => Success, failure);
     };
 }
 
-export function enableDeploy(): HandleCommand<SetDeployEnablementParameters> {
-    return commandHandlerFrom(
-        setDeployEnablement(true),
-        SetDeployEnablementParameters,
-        "EnableDeploy",
-        "Enable deployment via Atomist SDM",
-        "enable deploy",
-    );
+export function reportDeployEnablement(params: SetDeployEnablementParameters, enabled: boolean): SlackMessage {
+    const text = `SDM Deployment is currently ${enabled ? "enabled" : "disabled"} on ${params.owner}/${params.repo}`;
+    const actions =
+        [buttonForCommand({text: enabled ? "Disable" : "Enable"},
+            enabled ? "DisableDeploy" : "EnableDeploy",
+            {...params})];
+    const msg: SlackMessage = {
+        attachments: [{
+            author_icon: `https://images.atomist.com/rug/check-circle.gif?gif=${guid()}`,
+            author_name: "SDM Deployment",
+            text,
+            fallback: text,
+            color: enabled ? "#45B254" : "#aaaaaa",
+            mrkdwn_in: ["text"],
+            actions,
+        }],
+    };
+    return msg;
 }
 
-export function disableDeploy(): HandleCommand<SetDeployEnablementParameters> {
+export function isDeployEnabledCommand(): HandleCommand<SetDeployEnablementParameters> {
     return commandHandlerFrom(
-        setDeployEnablement(false),
+        displayDeployEnablement(),
         SetDeployEnablementParameters,
-        "DisableDeploy",
-        "Disable deployment via Atomist SDM",
-        "disable deploy",
+        "DisplayDeployEnablement",
+        "Display whether deployment via Atomist SDM in enabled",
+        "is deploy enabled?",
     );
 }

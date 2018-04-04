@@ -20,6 +20,8 @@ import {
     PushTest,
     pushTest,
 } from "../../PushTest";
+import { HandlerContext } from "@atomist/automation-client";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 // TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `
@@ -38,17 +40,20 @@ query DeployEnablementForRepo($owner: [String], $repo: [String]) {
  * @param {ProjectListenerInvocation} pi
  * @constructor
  */
-export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", async (pi: ProjectListenerInvocation) => {
-      const enablement = await pi.context.graphClient.query<any, any>({
-          query: DeployEnablementQuery,
-          variables: {
-              owner: [ pi.push.repo.owner ],
-              repo: [ pi.push.repo.name ],
-          },
-          options: NoCacheOptions,
-      });
-      return enablement
-          && enablement.SdmDeployEnablement
-          && enablement.SdmDeployEnablement.length === 1
-          && enablement.SdmDeployEnablement[0].state === "requested";
-});
+export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", isDeployEnabled);
+
+export async function isDeployEnabled(parameters: { context: HandlerContext, id: RepoRef }) {
+    const {context, id} = parameters;
+    const enablement = await context.graphClient.query<any, any>({
+        query: DeployEnablementQuery,
+        variables: {
+            owner: [id.owner],
+            repo: [id.repo],
+        },
+        options: NoCacheOptions,
+    });
+    return enablement
+        && enablement.SdmDeployEnablement
+        && enablement.SdmDeployEnablement.length === 1
+        && enablement.SdmDeployEnablement[0].state === "requested";
+}
