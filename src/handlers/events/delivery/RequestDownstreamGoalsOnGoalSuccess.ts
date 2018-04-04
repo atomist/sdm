@@ -34,7 +34,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
     public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
-                        ctx: HandlerContext): Promise<HandlerResult>  {
+                        ctx: HandlerContext): Promise<HandlerResult> {
         const status: Status = event.data.Status[0];
 
         if (status.state !== "success") { // atomisthq/automation-api#395 (probably not an issue for Status but will be again for SdmGoal)
@@ -47,8 +47,9 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         const successfulGoal = goals.find(g => g.externalKey === status.context) as SdmGoal;
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(successfulGoal, g))
+            .filter(expectToBeFulfilledAfterRequest)
             .filter(shouldBePlannedOrSkipped)
-            .filter(g => preconditionsAreMet(g, { goalsForCommit: goals}));
+            .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
 
         /*
          * #294 Intention: for custom descriptions per goal, we need to look up the Goal.
@@ -80,6 +81,18 @@ function shouldBePlannedOrSkipped(dependentGoal: SdmGoal) {
     }
     logger.warn("Goal %s in state %s will not be requested", dependentGoal.name, dependentGoal.state);
     return false;
+}
+
+function expectToBeFulfilledAfterRequest(dependentGoal: SdmGoal) {
+    switch (dependentGoal.fulfillment.method) {
+        case "SDM fulfill on requested":
+            return true;
+        case "side-effect":
+            return false;
+        case"other":
+            // legacy behavior
+            return true;
+    }
 }
 
 function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
