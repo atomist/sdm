@@ -20,8 +20,8 @@ import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOn
 import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
-import { OnAnySuccessStatus, OnSuccessStatus } from "../../../typings/types";
-import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
+import { OnAnySuccessfulSdmGoal, OnAnySuccessStatus, OnSuccessStatus, RepoBranchTips, ScmProvider } from "../../../typings/types";
+import { providerIdFromStatus, repoRefFromSdmGoal, repoRefFromStatus } from "../../../util/git/repoRef";
 import Status = OnSuccessStatus.Status;
 
 /**
@@ -29,24 +29,23 @@ import Status = OnSuccessStatus.Status;
  */
 @EventHandler("Move downstream goals from 'planned' to 'success' when preconditions are met",
     subscription("OnAnySuccessStatus"))
-export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessStatus.Subscription> {
+export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessfulSdmGoal.Subscription> {
 
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
-    public async handle(event: EventFired<OnAnySuccessStatus.Subscription>,
+    public async handle(event: EventFired<OnAnySuccessfulSdmGoal.Subscription>,
                         ctx: HandlerContext): Promise<HandlerResult> {
-        const status: Status = event.data.Status[0];
+        const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
 
-        if (status.state !== "success") { // atomisthq/automation-api#395 (probably not an issue for Status but will be again for SdmGoal)
-            logger.debug(`********* success reported when the state was=[${status.state}]`);
+        if (sdmGoal.state !== "success") { // atomisthq/automation-api#395
+            logger.debug(`Nevermind: success reported when the state was=[${sdmGoal.state}]`);
             return Promise.resolve(Success);
         }
 
-        const id = repoRefFromStatus(status);
-        const goals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status)) as SdmGoal[];
-        const successfulGoal = goals.find(g => g.externalKey === status.context) as SdmGoal;
+        const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(ctx, sdmGoal.repo.providerId));
+        const goals = await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[];
 
-        const goalsToRequest = goals.filter(g => isDirectlyDependentOn(successfulGoal, g))
+        const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
             .filter(expectToBeFulfilledAfterRequest)
             .filter(shouldBePlannedOrSkipped)
             .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
@@ -66,6 +65,16 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         return Success;
     }
 }
+
+async function fetchScmProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
+    const result = await context.graphClient.query<ScmProvider.Query, ScmProvider.Variables>(
+        {name: "SCMProvider", variables: {providerId}});
+    if (!result || !result.SCMProvider || result.SCMProvider.length === 0) {
+        throw new Error(`Provider not found: ${providerId}`);
+    }
+    return result.SCMProvider[0];
+}
+
 
 function shouldBePlannedOrSkipped(dependentGoal: SdmGoal) {
     if (dependentGoal.state === "planned") {

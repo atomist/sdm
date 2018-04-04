@@ -22,6 +22,7 @@ import * as _ from "lodash";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { Goal } from "./Goal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
+import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
     const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId);
@@ -42,6 +43,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
             providerId,
             qty: 20,
         },
+        options: NoCacheOptions,
     });
     if (!result || !result.SdmGoal) {
         throw new Error(`No result finding goals for commit ${providerId}/${id.owner}/${id.repo}#${id.sha} on ${id.branch}`);
