@@ -29,6 +29,7 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
 import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushForCommit } from "../../../typings/types";
+import { SdmGoalSideEffectMapper } from "../../../common/delivery/goals/SdmGoalSideEffectMapper";
 
 @Parameters()
 export class ResetGoalsParameters {
@@ -53,17 +54,28 @@ export class ResetGoalsParameters {
 
 }
 
-export function resetGoalsCommand(projectLoader: ProjectLoader, goalsListeners: GoalsSetListener[],
-                                  goalSetters: GoalSetter[], implementationMapping: SdmGoalImplementationMapper): HandleCommand {
-    return commandHandlerFrom(resetGoalsOnCommit(projectLoader, goalsListeners, goalSetters, implementationMapping),
+export function resetGoalsCommand(rules: {
+    projectLoader: ProjectLoader,
+    goalsListeners: GoalsSetListener[],
+    goalSetters: GoalSetter[],
+    implementationMapping: SdmGoalImplementationMapper,
+    sideEffectMapping: SdmGoalSideEffectMapper
+}): HandleCommand {
+    return commandHandlerFrom(resetGoalsOnCommit(rules),
         ResetGoalsParameters,
         "ResetGoalsOnCommit",
         "Set goals",
         "reset goals");
 }
 
-function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsSetListener[], goalSetters: GoalSetter[],
-                            implementationMapping: SdmGoalImplementationMapper) {
+function resetGoalsOnCommit(rules: {
+    projectLoader: ProjectLoader,
+    goalsListeners: GoalsSetListener[],
+    goalSetters: GoalSetter[],
+    implementationMapping: SdmGoalImplementationMapper,
+    sideEffectMapping: SdmGoalSideEffectMapper
+}) {
+    let {projectLoader, goalsListeners, goalSetters, implementationMapping, sideEffectMapping} = rules;
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
@@ -92,6 +104,7 @@ function resetGoalsOnCommit(projectLoader: ProjectLoader, goalsListeners: GoalsS
             goalsListeners,
             goalSetters,
             implementationMapping,
+            sideEffectMapping,
         }, {
             context: ctx,
             credentials,

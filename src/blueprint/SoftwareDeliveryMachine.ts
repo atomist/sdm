@@ -90,6 +90,7 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { SdmGoalSideEffectMapper } from "../common/delivery/goals/SdmGoalSideEffectMapper";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -127,6 +128,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * Store all the implementations we know
      */
     public goalImplementationMapper = new SdmGoalImplementationMapper(); // public for testing
+    public sideEffectMapper = new SdmGoalSideEffectMapper(); // public for testing
 
     public newIssueListeners: NewIssueListener[] = [];
 
@@ -200,9 +202,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         }
         return {
             eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners,
-                this.goalImplementationMapper)],
-            commandHandlers: [() => resetGoalsCommand(this.opts.projectLoader, this.goalsSetListeners,
-                this.goalSetters, this.goalImplementationMapper)],
+                this.goalImplementationMapper, this.sideEffectMapper)],
+            commandHandlers: [() => resetGoalsCommand({
+                projectLoader: this.opts.projectLoader,
+                goalsListeners: this.goalsSetListeners,
+                goalSetters: this.goalSetters,
+                implementationMapping: this.goalImplementationMapper,
+                sideEffectMapping: this.sideEffectMapper,
+            })],
         };
     }
 
@@ -433,6 +440,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         rules.forEach(r => {
             this.implementGoal(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter);
+            this.sideEffectMapper.addSideEffect(r.value.endpointGoal, r.value.deployGoal.definition.displayName)
         });
         return this;
     }
@@ -460,6 +468,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.implementGoal("Reviews", ReviewGoal,
             executeReview(this.opts.projectLoader, this.reviewerRegistrations));
         this.addVerifyImplementation();
+
+        this.sideEffectMapper.addSideEffect(ArtifactGoal, "from ImageLinked")
     }
 
 }

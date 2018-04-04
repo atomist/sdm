@@ -20,7 +20,10 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, SdmGoal, SdmGoalImplementationMethod, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
+import {
+    GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalFulfillmentMethod, SdmGoalKey, SdmGoalState,
+    SdmProvenance
+} from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 import { GoalImplementation } from "./SdmGoalImplementationMapper";
 
@@ -57,12 +60,7 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
-export interface SdmGoalImplementation {
-    method: SdmGoalImplementationMethod;
-    name: string;
-}
-
-export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalImplementation {
+export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalFulfillment {
     return {
         method: "SDM fulfill on requested",
         name: gi.implementationName,
@@ -76,10 +74,10 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     id: GitHubRepoRef,
     providerId: string
     url?: string,
-    implementation?: SdmGoalImplementation,
+    fulfillment?: SdmGoalFulfillment,
 }): SdmGoal {
     const {goalSet, goal, state, id, providerId, url} = parameters;
-    const implementation = parameters.implementation || {method: "other", name: "unspecified"};
+    const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
 
     if (id.branch === null) {
         throw new Error(sprintf("Please provide a branch in the GitHubRepoRef %j", parameters));
@@ -107,7 +105,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         name: goal.name,
         environment,
 
-        implementation,
+        fulfillment,
 
         sha: id.sha,
         branch: id.branch,

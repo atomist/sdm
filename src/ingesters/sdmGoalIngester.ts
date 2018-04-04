@@ -24,7 +24,12 @@ export const GoalRootType = "SdmGoal";
 
 export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
 
-export type SdmGoalImplementationMethod = "SDM fulfill on requested" | "other";
+export type SdmGoalFulfillmentMethod = "SDM fulfill on requested" | "side-effect" | "other";
+
+export type SdmGoalFulfillment =  {
+    method: SdmGoalFulfillmentMethod;
+    name: string;
+};
 
 export interface SdmGoal extends SdmGoalKey {
     sha: string;
@@ -36,10 +41,7 @@ export interface SdmGoal extends SdmGoalKey {
         providerId: string;
     };
 
-    implementation: {
-        method: SdmGoalImplementationMethod;
-        name: string
-    };
+    fulfillment: SdmGoalFulfillment;
 
     description: string;
     url?: string;
@@ -75,7 +77,7 @@ export interface SdmGoalKey {
     name: string;
 }
 
-export function goalKeyEquals(a: SdmGoalKey, b: SdmGoal): boolean {
+export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
     return a.goalSet === b.goalSet &&
         a.environment === b.environment &&
         a.name === b.name;
@@ -98,7 +100,7 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withIntField("ts")
         .withStringField("userId")
         .withStringField("channelId"))
-    .withType(type("GoalImplementation")
+    .withType(type("GoalFulfillment")
         .withStringField("method")
         .withStringField("name"))
     .withType(type(GoalRootType)
@@ -128,9 +130,9 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
             "Repository the commit was observed from",
             ["name", "owner", "providerId"])
         .withObjectField(
-            "implementation",
-            "GoalImplementation",
-            "How the goal gets implemented",
+            "fulfillment",
+            "GoalFulfillment",
+            "How the goal gets fulfilled",
             ["method", "name"])
         .withStringField(
             "description",

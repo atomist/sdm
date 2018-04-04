@@ -61,8 +61,8 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
             return Success;
         }
 
-        if (sdmGoal.implementation.method !== "SDM fulfill on requested") {
-            logger.info("Implementation method is " + sdmGoal.implementation.method + "; not fulfilling");
+        if (sdmGoal.fulfillment.method !== "SDM fulfill on requested") {
+            logger.info("Implementation method is " + sdmGoal.fulfillment.method + "; not fulfilling");
         }
 
         logger.info("Really executing FulfillGoalOnRequested" ); // take this out when automation-api#395 is fixed
@@ -73,7 +73,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
         const { goal, goalExecutor, logInterpreter } = this.implementationMapper.findBySdmGoal(sdmGoal);
 
         const inv: ExecuteGoalInvocation = {
-            implementationName: sdmGoal.implementation.name,
+            implementationName: sdmGoal.fulfillment.name,
             githubToken: params.githubToken,
             goal,
         };

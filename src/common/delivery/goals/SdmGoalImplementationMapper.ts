@@ -34,12 +34,12 @@ export class SdmGoalImplementationMapper {
     private mappings: GoalImplementation[] = [];
 
     public findBySdmGoal(goal: SdmGoal): GoalImplementation {
-        const matchedNames =  this.mappings.filter(m => m.implementationName === goal.implementation.name);
+        const matchedNames = this.mappings.filter(m => m.implementationName === goal.fulfillment.name);
         if (matchedNames.length > 1) {
-            throw new Error("Multiple mappings for name " + goal.implementation.name);
+            throw new Error("Multiple mappings for name " + goal.fulfillment.name);
         }
         if (matchedNames.length === 0) {
-            throw new Error("No implementation found with name " + goal.implementation.name);
+            throw new Error("No implementation found with name " + goal.fulfillment.name);
         }
         return matchedNames[0];
     }

@@ -61,6 +61,7 @@ describe("implementing goals in the SDM", () => {
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 goalSetters: mySDM.goalSetters,
                 implementationMapping: mySDM.goalImplementationMapper,
+                sideEffectMapping: mySDM.sideEffectMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
@@ -100,6 +101,7 @@ describe("implementing goals in the SDM", () => {
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 goalSetters: mySDM.goalSetters,
                 implementationMapping: mySDM.goalImplementationMapper,
+            sideEffectMapping: mySDM.sideEffectMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
