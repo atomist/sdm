@@ -20,14 +20,11 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
 import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
 import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     AutofixGoal,
-    LocalDeploymentGoal,
-    LocalEndpointGoal,
     NoGoals,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -54,13 +51,11 @@ import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLo
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-    cloudFoundryProductionDeploySpec, cloudFoundryStagingDeploySpec,
+    cloudFoundryProductionDeploySpec,
+    cloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
-import {
-    LocalExecutableJarDeployer,
-    mavenSourceDeployer,
-} from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { LocalExecutableJarDeployer, } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -69,7 +64,6 @@ import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
 import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
-import { logger, Success } from "@atomist/automation-client";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -152,12 +146,6 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             () => isDeployEnabledCommand(),
         )
         .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition)
-        .addCodeReactions({
-            name: "hi there", action: async () => {
-                logger.info("Jess was here");
-                return Success;
-            }
-        })
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
     addJavaSupport(sdm, options);
     addSpringSupport(sdm, options);
