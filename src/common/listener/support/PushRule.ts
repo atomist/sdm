@@ -28,7 +28,7 @@ export class PushRule<V = any> implements PushMapping<V> {
     public choice: StaticPushMapping<V>;
 
     public get name(): string {
-        return this.choice.name;
+        return this.reason;
     }
 
     public readonly pushTest: PushTest;
@@ -39,7 +39,7 @@ export class PushRule<V = any> implements PushMapping<V> {
 
     public set(value: V): this {
         this.verify();
-        this.choice = new StaticPushMapping<V>(value, this.guard1, ...this.guards);
+        this.choice = new StaticPushMapping<V>(this.name, value, this.guard1, ...this.guards);
         return this;
     }
 

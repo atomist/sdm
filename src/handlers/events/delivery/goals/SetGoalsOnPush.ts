@@ -154,7 +154,7 @@ export async function determineGoals(rules: {
     const {credentials, id, context, push, providerId, addressChannels} = circumstances;
     return projectLoader.doWithProject({credentials, id, context, readOnly: true},
         async project => {
-            const determinedGoals: Goals = await setGoalsForPushOnProject({
+            const determinedGoals: Goals = await chooseGoalsForPushOnProject({
                 goalSetters,
             }, {
                 push,
@@ -212,7 +212,7 @@ export const executeImmaterial: ExecuteGoalWithLog = async () => {
     return Success;
 };
 
-async function setGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
+async function chooseGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
                                         parameters: {
                                             push: PushFields.Fragment,
                                             id: GitHubRepoRef,

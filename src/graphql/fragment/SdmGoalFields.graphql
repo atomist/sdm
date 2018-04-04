@@ -12,11 +12,6 @@ fragment SdmGoalFields on SdmGoal {
   description
   url
   externalKey
-  repo {
-    name
-    owner
-    providerId
-  }
   ts
   preConditions {
     goalSet

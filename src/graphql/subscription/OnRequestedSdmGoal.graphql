@@ -5,5 +5,6 @@ subscription OnRequestedSdmGoal($goalName: String!, $environment: String!) {
     environment: [$environment]
   ) {
     ...SdmGoalFields
+    ...SdmGoalRepo
   }
 }

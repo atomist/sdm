@@ -42,6 +42,9 @@ export interface UpdateSdmGoalParams {
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
+    if (!before.fulfillment) {
+        throw new Error("what happened to the fulfillment?")
+    }
     const sdmGoal = {
         ...before,
         state: params.state,
@@ -52,7 +55,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         provenance: [constructProvenance(ctx)].concat(before.provenance),
         error: _.get(params, "error.message"),
     };
-    logger.debug(`Updating SdmGoal ${sdmGoal.externalKey} to ${sdmGoal.state}`);
+    logger.debug("Updating SdmGoal %s to %s: %j",sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
