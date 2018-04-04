@@ -26,7 +26,7 @@ import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal } from "./verify/executeGoal";
 
-export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
+export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
 
     public subscriptionName: string;
@@ -39,10 +39,10 @@ export class FulfillGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Su
 
     constructor(private implementationMapper: SdmGoalImplementationMapper) {
         const implementationName = "FulfillGoal";
-        this.subscriptionName = implementationName + "OnRequested";
+        this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =
             subscription({name: "OnAnyRequestedSdmGoal"});
-        this.name = implementationName + "OnRequestedSdmGoal";
+        this.name = implementationName + "OnAnyRequestedSdmGoal";
         this.description = `Fulfill a goal when it reaches 'requested' state`;
     }
 

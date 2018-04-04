@@ -34,7 +34,9 @@ export class SdmGoalImplementationMapper {
     private mappings: GoalImplementation[] = [];
 
     public findBySdmGoal(goal: SdmGoal): GoalImplementation {
-        const matchedNames = this.mappings.filter(m => m.implementationName === goal.fulfillment.name);
+        const matchedNames = this.mappings.filter(m =>
+            m.implementationName === goal.fulfillment.name &&
+            m.goal.context === goal.externalKey);
         if (matchedNames.length > 1) {
             throw new Error("Multiple mappings for name " + goal.fulfillment.name);
         }

@@ -18,6 +18,7 @@ import { ProjectListenerInvocation } from "../Listener";
 import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
+import * as stringify from "json-stringify-safe";
 
 /**
  * PushMapping implementation wholly driven by a PushTest instance.
@@ -28,7 +29,7 @@ export class StaticPushMapping<V> implements PushMapping<V> {
     public readonly guard: PushTest;
 
     get name() {
-        return `GuardedPushChoice: ${this.guard.name}->${this.value}`;
+        return `GuardedPushChoice: ${this.guard.name}->${stringify(this.value)}`;
     }
 
     /**
