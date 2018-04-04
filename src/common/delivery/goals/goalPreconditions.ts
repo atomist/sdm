@@ -22,15 +22,19 @@ import { goalKeyString, mapKeyToGoal, SdmGoal, SdmGoalKey } from "../../../inges
  * Right now the only preconditions supported are other goals.
  * The intention is that others will be expressed, such as requiring an image.
  */
-export async function preconditionsAreMet(goal: SdmGoal, info: {
+export function preconditionsAreMet(goal: SdmGoal, info: {
     goalsForCommit: SdmGoal[], // I would like to make this optional and fetch if needed not provided
-}) {
+}): boolean {
     if (!goal.preConditions || goal.preConditions.length === 0) {
         return true;
     }
-    const otherGoalPreconditions = goal.preConditions;
-    const falsification = otherGoalPreconditions.find(p => !satisfied(p, info.goalsForCommit));
-    return !falsification;
+    const falsification = goal.preConditions.find(p => !satisfied(p, info.goalsForCommit));
+    if (falsification) {
+        logger.debug("Precondition not met for %s: %s", goalKeyString(goal), goalKeyString(falsification));
+        return false;
+    }
+    logger.debug("All %d preconditions satisfied for %s", goal.preConditions.length);
+    return true;
 }
 
 function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoal[]): boolean {
