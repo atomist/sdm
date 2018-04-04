@@ -27,7 +27,6 @@ import {ManifestApplication} from "./CloudFoundryManifest";
 
 import {doWithRetry} from "@atomist/automation-client/util/retry";
 import cfClient = require("cf-client");
-import randomWord = require("random-word");
 
 export interface CloudFoundryClientV2 {
     api_url: string;
@@ -173,6 +172,17 @@ export class CloudFoundryApi {
         });
     }
 
+    public async renameApp(appGuid: string, appName: string): Promise<any> {
+        await this.refreshToken();
+        return doWithRetry(() => axios.patch(
+            `${this.cf.api_url}/v3/apps/${appGuid}`,
+            {
+                name: appName,
+            },
+            {headers: _.assign({}, this.authHeader, this.jsonContentHeader)},
+        ), `rename app ${appGuid} to ${appName}`);
+    }
+
     private normalizeManifestMemory(memory: string): number {
         if (memory.endsWith("M")) {
             return +memory.replace("M", "");
@@ -293,23 +303,40 @@ export class CloudFoundryApi {
         });
     }
 
-    public async addRandomRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
+    public async getAppRoutes(appGuid: string): Promise<any> {
         await this.refreshToken();
-        const appRoutes = await this.cf.apps.getAppRoutes(appGuid);
-        if (appRoutes.resources.length > 0) {
-            return appRoutes.resources[0].entity.host;
-        }
+        const result = await this.cf.apps.getAppRoutes(appGuid);
+        return result.resources;
+    }
+
+    public async addRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
+        await this.refreshToken();
         const domains = await this.cf.domains.getSharedDomains();
-        const defaultDomain = domains.resources.find(d => d.entity.name === domainName);
-        const domainGuid = defaultDomain.metadata.guid;
-        const randomHostName = `${hostName}-${randomWord()}-${randomWord()}`;
-        const route = await this.cf.routes.add({
-                domain_guid: domainGuid,
-                space_guid: spaceGuid,
-                host: randomHostName,
-            });
-        await this.cf.apps.associateRoute(appGuid, route.metadata.guid);
-        return randomHostName;
+        const domain = domains.resources.find(d => d.entity.name === domainName);
+        const domainGuid = domain.metadata.guid;
+        const routesMatchingHost = await this.cf.routes.getRoutes({q: `host:${hostName}`});
+        const existingRoute = routesMatchingHost.resources.find(r =>
+            r.entity.domain_guid === domainGuid && r.entity.space_guid === spaceGuid);
+        const route = existingRoute ? existingRoute : await this.cf.routes.add({
+            domain_guid: domainGuid,
+            space_guid: spaceGuid,
+            host: hostName,
+        });
+        return this.cf.apps.associateRoute(appGuid, route.metadata.guid);
+    }
+
+    public async removeRouteFromApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
+        await this.refreshToken();
+        const appRoutes = await this.getAppRoutes(appGuid);
+        const domains = await this.cf.domains.getSharedDomains();
+        const domain = domains.resources.find(d => d.entity.name === domainName);
+        const domainGuid = domain.metadata.guid;
+        const existingRoute = appRoutes.find(r =>
+            r.entity.host === hostName && r.entity.domain_guid === domainGuid && r.entity.space_guid === spaceGuid);
+        if (existingRoute) {
+            return this.cf.apps.dissociateRoute(appGuid, existingRoute.metadata.guid);
+        }
+        return undefined;
     }
 
     public async getSpaceByName(spaceName: string): Promise<any> {

@@ -17,6 +17,7 @@
 import * as _ from "lodash";
 
 import {ReadStream} from "fs";
+import randomWord = require("random-word");
 import {ProgressLog} from "../../../../spi/log/ProgressLog";
 import {CloudFoundryApi} from "./CloudFoundryApi";
 import {ManifestApplication} from "./CloudFoundryManifest";
@@ -35,18 +36,30 @@ export interface ServicesModifications {
  */
 export class CloudFoundryPusher {
 
-    constructor(private readonly api: CloudFoundryApi, private readonly defaultDomain: string = "cfapps.io") {}
+    private spaceGuid: string;
 
-    public async push(spaceName: string,
-                      manifestApp: ManifestApplication,
+    constructor(private readonly api: CloudFoundryApi,
+                public readonly spaceName: string,
+                public readonly defaultDomain: string = "cfapps.io") {
+
+    }
+
+    public async getSpaceGuid(): Promise<string> {
+        if (!this.spaceGuid) {
+            const space = await this.api.getSpaceByName(this.spaceName);
+            this.spaceGuid = space.metadata.guid;
+        }
+        return this.spaceGuid;
+    }
+
+    public async push(manifestApp: ManifestApplication,
                       packageFile: ReadStream,
                       log: ProgressLog): Promise<CloudFoundryDeployment> {
-        const space = await this.api.getSpaceByName(spaceName);
-        const spaceGuid = space.metadata.guid;
+        const spaceGuid = await this.getSpaceGuid();
         const existingApp = await this.api.getApp(spaceGuid, manifestApp.name);
         const app = existingApp ? existingApp : await this.api.createApp(spaceGuid, manifestApp);
         const appGuid = app.metadata.guid;
-        const appNameForLog = `${spaceName}:${manifestApp.name}`;
+        const appNameForLog = `${this.spaceName}:${manifestApp.name}`;
         log.write(`Uploading package for ${appNameForLog}...`);
         const packageUploadResult = await this.api.uploadPackage(appGuid, packageFile);
         log.write(`Building package for ${appNameForLog}...`);
@@ -66,15 +79,26 @@ export class CloudFoundryPusher {
             log.write(`Removing services ${removeServiceNames} from ${appNameForLog}.`);
             await this.api.removeServices(appGuid, serviceModifications.servicesToRemove);
         }
-        log.write(`Adding default route to ${appNameForLog}.`);
-        const hostName = await this.api.addRandomRouteToApp(spaceGuid, appGuid, manifestApp.name, this.defaultDomain);
+
+        let hostName;
+        if (manifestApp["random-route"]) {
+            const appRoutes = await this.api.getAppRoutes(appGuid);
+            if (appRoutes.length === 0) {
+                hostName = `${manifestApp.name}-${randomWord()}-${randomWord()}`;
+                log.write(`Adding random route to ${appNameForLog}.`);
+                await this.api.addRouteToApp(spaceGuid, appGuid, hostName, this.defaultDomain);
+            } else {
+                hostName = appRoutes[0].entity.host;
+            }
+        }
+
         log.write(`Updating app with manifest ${appNameForLog}.`);
         await this.api.updateAppWithManifest(appGuid, manifestApp);
         log.write(`Starting ${appNameForLog}...`);
         await this.api.startApp(appGuid);
         log.write(`Push complete for ${appNameForLog}.`);
         return {
-            endpoint: this.constructEndpoint(hostName),
+            endpoint: !!hostName ? this.constructEndpoint(hostName) : undefined,
             appName: manifestApp.name,
         };
     }
