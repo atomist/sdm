@@ -33,21 +33,21 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
-import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
-import { Goals } from "../../../../common/delivery/goals/Goals";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
-import { SdmGoalSideEffectMapper } from "../../../../common/delivery/goals/SdmGoalSideEffectMapper";
-import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
-import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
-import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
-import { PushRules } from "../../../../common/listener/support/PushRules";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { GoalSetter } from "../../../../common/listener/GoalSetter";
+import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalSideEffectMapper } from "../../../../common/delivery/goals/SdmGoalSideEffectMapper";
+import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
+import { Goals } from "../../../../common/delivery/goals/Goals";
+import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
+import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
+import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
+import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
+import { PushRules } from "../../../../common/listener/support/PushRules";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -63,7 +63,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * @param projectLoader use to load projects
      * @param goalSetters first GoalSetter that returns goalSet wins
      */
-    constructor(private readonly projectLoader: ProjectLoader,
+    constructor(private readonly projectLoader,
                 private readonly goalSetters: GoalSetter[],
                 private readonly goalsListeners: GoalsSetListener[],
                 private readonly implementationMapping: SdmGoalImplementationMapper,
@@ -111,14 +111,13 @@ export async function chooseAndSetGoals(rules: {
     const providerId = providerIdFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
 
-    const {determinedGoals, goalsToSave} = await
-        determineGoals({projectLoader, goalSetters, implementationMapping, sideEffectMapping},
-            {
-                credentials, id, providerId, context, push, addressChannels,
-            });
 
-    await
-        Promise.all(goalsToSave.map(g => storeGoal(context, g)));
+    const {determinedGoals, goalsToSave} = await determineGoals(
+        {projectLoader, goalSetters, implementationMapping, sideEffectMapping}, {
+        credentials, id, providerId, context, push, addressChannels,
+    });
+
+    await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
 
     // Let GoalSetListeners know even if we determined no goals.
     // This is not an error
@@ -188,6 +187,7 @@ export async function determineGoals(rules: {
 
             return {determinedGoals, goalsToSave};
         });
+
 }
 
 function fulfillment(rules: {
