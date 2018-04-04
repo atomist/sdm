@@ -19,6 +19,8 @@ import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogC
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
+import { fetchGoalsForCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
+import { providerIdFromPush, providerIdFromStatus } from "../../../../util/git/repoRef";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 
@@ -41,15 +43,22 @@ export interface SdmVerification {
 
 export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoalWithLog {
     return async (r: RunWithLogContext): Promise<ExecuteGoalResult> => {
+        const { context, id, status } = r;
+        const sdmGoals = await fetchGoalsForCommit(context, id, providerIdFromStatus(status));
+        const endpointGoal = sdmGoals.find(sg => sg.externalKey === sdm.endpointGoal.context);
 
-        const endpointStatus = r.status.commit.statuses.find(s => s.context === sdm.endpointGoal.context);
-        if (!endpointStatus) {
+        if (!endpointGoal) {
             r.progressLog.write(sprintf("Did not find endpoint goal. Looking for context %s", sdm.endpointGoal.context));
-            throw new Error("Endpoint status unfound");
+            throw new Error("Endpoint goal unfound");
+        }
+        if (!endpointGoal.url) {
+            r.progressLog.write(sprintf("Did not find endpoint url: %j", endpointGoal));
+            throw new Error("Endpoint goal has no URL");
+
         }
         const inv: EndpointVerificationInvocation = {
             id: r.id,
-            url: endpointStatus.targetUrl,
+            url: endpointGoal.url,
             addressChannels: r.addressChannels,
             context: r.context,
             credentials: r.credentials,
@@ -60,6 +69,6 @@ export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoalWithLog 
             throw err;
         })));
 
-        return { code: 0, requireApproval: sdm.requestApproval, targetUrl: endpointStatus.targetUrl };
+        return { code: 0, requireApproval: sdm.requestApproval, targetUrl: endpointGoal.url };
     };
 }
