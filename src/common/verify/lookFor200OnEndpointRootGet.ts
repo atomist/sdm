@@ -15,19 +15,20 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { doWithRetry, RetryOptions } from "@atomist/automation-client/util/retry";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import * as https from "https";
 import {
     EndpointVerificationInvocation,
     EndpointVerificationListener,
 } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { WrapOptions } from "retry";
 
 /**
  * Make an HTTP request to the reported endpoint to check
  * @type {OnEndpointStatus}
  */
-export function lookFor200OnEndpointRootGet(retryOpts: Partial<RetryOptions> = {}): EndpointVerificationListener {
+export function lookFor200OnEndpointRootGet(retryOpts: Partial<WrapOptions> = {}): EndpointVerificationListener {
     return (inv: EndpointVerificationInvocation) => {
         const agent = new https.Agent({
             rejectUnauthorized: false,
