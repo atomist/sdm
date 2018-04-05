@@ -16,10 +16,10 @@
 
 import { sprintf } from "sprintf-js";
 import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/deploy/runWithLog";
+import { fetchGoalsForCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
 import { providerIdFromPush, providerIdFromStatus } from "../../../../util/git/repoRef";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {

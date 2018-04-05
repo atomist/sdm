@@ -54,10 +54,9 @@ export class CopyStatusApprovalToGoal implements HandleEvent<OnAnySuccessStatus.
 
         await updateGoal(ctx, sdmGoal, {
             state: "success",
-            description: status.description
+            description: status.description,
         });
 
         return Success;
     }
 }
-

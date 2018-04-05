@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { ProjectListenerInvocation } from "../../Listener";
 import {
     PushTest,
     pushTest,
 } from "../../PushTest";
-import { HandlerContext } from "@atomist/automation-client";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 // TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `

@@ -78,7 +78,10 @@ import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 
+import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
+import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -90,9 +93,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
-import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -243,7 +243,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 () => new RequestDownstreamGoalsOnGoalSuccess(),
                 () => new CopyStatusApprovalToGoal(),
             ],
-            commandHandlers: []
+            commandHandlers: [],
         };
     }
 

@@ -51,7 +51,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
 
         if (goalsToRequest.length > 0) {
             logger.info("because %s is successful, these goals are now ready: %s", goalKeyString(sdmGoal),
-                goalsToRequest.map(goalKeyString).join(", "))
+                goalsToRequest.map(goalKeyString).join(", "));
         }
 
         /*
@@ -78,7 +78,6 @@ async function fetchScmProvider(context: HandlerContext, providerId: string): Pr
     }
     return result.SCMProvider[0];
 }
-
 
 function shouldBePlannedOrSkipped(dependentGoal: SdmGoal) {
     if (dependentGoal.state === "planned") {

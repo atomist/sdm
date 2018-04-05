@@ -49,13 +49,14 @@ import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
+import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
     cloudFoundryProductionDeploySpec,
     cloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
-import { LocalExecutableJarDeployer, } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -63,7 +64,6 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 

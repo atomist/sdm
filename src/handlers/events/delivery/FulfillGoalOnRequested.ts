@@ -25,7 +25,7 @@ import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmG
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import {
     CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, SdmGoalRepo,
-    StatusForExecuteGoal
+    StatusForExecuteGoal,
 } from "../../../typings/types";
 import { executeGoal } from "./verify/executeGoal";
 

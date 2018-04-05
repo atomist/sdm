@@ -54,7 +54,7 @@ export class EphemeralLocalArtifactStore implements ArtifactStore {
 
         const local: DeployableArtifact = {
             ...storedArtifact.appInfo,
-            ...parseUrl(storedArtifact.deploymentUnitUrl)
+            ...parseUrl(storedArtifact.deploymentUnitUrl),
         };
         logger.info("EphemeralLocalArtifactStore: checking out %s at %j", url, local);
         return local;

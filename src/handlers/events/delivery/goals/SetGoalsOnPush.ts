@@ -33,21 +33,21 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
-import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
+import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
+import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
+import { Goals } from "../../../../common/delivery/goals/Goals";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { SdmGoalSideEffectMapper } from "../../../../common/delivery/goals/SdmGoalSideEffectMapper";
-import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
-import { Goals } from "../../../../common/delivery/goals/Goals";
-import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
+import { GoalSetter } from "../../../../common/listener/GoalSetter";
+import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
-import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
 import { PushRules } from "../../../../common/listener/support/PushRules";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
+import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
+import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -110,7 +110,6 @@ export async function chooseAndSetGoals(rules: {
     const id = repoRefFromPush(push);
     const providerId = providerIdFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
-
 
     const {determinedGoals, goalsToSave} = await determineGoals(
         {projectLoader, goalSetters, implementationMapping, sideEffectMapping}, {
@@ -213,7 +212,7 @@ export const executeImmaterial: ExecuteGoalWithLog = async () => {
 };
 
 async function chooseGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
-                                        parameters: {
+                                           parameters: {
                                             push: PushFields.Fragment,
                                             id: GitHubRepoRef,
                                             credentials: ProjectOperationCredentials,
