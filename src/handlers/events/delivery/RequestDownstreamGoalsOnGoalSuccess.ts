@@ -20,9 +20,8 @@ import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOn
 import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
-import { OnAnySuccessfulSdmGoal, OnAnySuccessStatus, OnSuccessStatus, RepoBranchTips, ScmProvider } from "../../../typings/types";
-import { providerIdFromStatus, repoRefFromSdmGoal, repoRefFromStatus } from "../../../util/git/repoRef";
-import Status = OnSuccessStatus.Status;
+import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../typings/types";
+import { repoRefFromSdmGoal } from "../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals

@@ -92,6 +92,7 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
+import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -240,6 +241,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(),
+                () => new CopyStatusApprovalToGoal(),
             ],
             commandHandlers: []
         };
