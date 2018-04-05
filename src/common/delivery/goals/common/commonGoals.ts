@@ -115,7 +115,7 @@ export const StagingVerifiedGoal = new GoalWithPrecondition({
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
-    waitingForApprovalDescription: "Ready for your approval",
+    waitingForApprovalDescription: "Test endpoint verified! Approve for production deploy.",
 }, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({

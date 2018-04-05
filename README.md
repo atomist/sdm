@@ -15,7 +15,7 @@ The concept is explained in detail in Rod Johnson's blog [Why you need a Softwar
 ## Get Started
 
 This delivery machine feeds on the Atomist API. You'll need to be a member of an Atomist workspace to run it. <!-- TODO: reference auth story -->
-Create your own by [enrolling](https://github.com/atomist/welcome/blob/master/enroll.md) at [atomist.com]().
+Create your own by [enrolling](https://github.com/atomist/welcome/blob/master/enroll.md) at [atomist.com](https://atomist.com).
 
 Things work best if you install an org webhook, so that Atomist receives events for all your GitHub repos.
 

@@ -18,6 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import * as https from "https";
+import { WrapOptions } from "retry";
 import {
     EndpointVerificationInvocation,
     EndpointVerificationListener,

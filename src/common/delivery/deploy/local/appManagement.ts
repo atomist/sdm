@@ -103,7 +103,7 @@ export class ManagedDeployments {
     public async terminateIfRunning(id: RemoteRepoRef): Promise<any> {
         const victim = this.findDeployment(id);
         if (!!victim && !!victim.childProcess) {
-            victim.childProcess.kill();
+            await poisonAndWait(victim.childProcess);
             // Keep the port but deallocate the process
             logger.info("Killed app [%j] with pid %d, but continuing to reserve port [%d]",
                 id, victim.childProcess.pid, victim.port);
@@ -121,4 +121,11 @@ export class ManagedDeployments {
         return port;
     }
 
+}
+
+function poisonAndWait(childProcess: ChildProcess): Promise<any> {
+    childProcess.kill();
+    return new Promise((resolve, reject) => childProcess.on("close", () => {
+        resolve();
+    }));
 }

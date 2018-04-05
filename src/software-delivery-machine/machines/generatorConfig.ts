@@ -20,7 +20,7 @@
  */
 export const CommonGeneratorConfig = {
     seedOwner: "spring-team",
-    addAtomistWebhook: false,
+    addAtomistWebhook: true,
 };
 
 /**
