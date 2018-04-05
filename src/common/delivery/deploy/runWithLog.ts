@@ -42,8 +42,13 @@ export function runWithLog(whatToRun: ExecuteGoalWithLog,
         const credentials = {token: params.githubToken};
 
         return whatToRun({status, progressLog, context: ctx, addressChannels, id, credentials})
-            .then(yay => progressLog.close()
-                    .then(() => yay),
+            .then(async (yay) => {
+                    if (yay && yay.code !== 0) {
+                        await howToReportError(params, addressChannels, progressLog, id, logInterpreter)(new Error("Failure reported: " + yay.message))
+                    }
+                    await progressLog.close();
+                    return yay;
+                },
                 err => howToReportError(params, addressChannels, progressLog, id, logInterpreter)(err)
                     .then(() => progressLog.close())
                     .then(() => Promise.reject(err)));

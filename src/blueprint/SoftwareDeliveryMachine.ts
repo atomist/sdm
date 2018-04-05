@@ -432,7 +432,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     r.choice.value.logInterpreter));
         return this;
     }
-\
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {

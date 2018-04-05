@@ -30,6 +30,7 @@ export interface GoalImplementation {
     pushTest: PushTest;
     logInterpreter: LogInterpreter;
 }
+
 export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {
     return !!f && !!(f as GoalImplementation).implementationName && true;
 }
@@ -39,6 +40,7 @@ export interface GoalSideEffect {
     goal: Goal;
     pushTest: PushTest;
 }
+
 export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName && true;
 }
@@ -72,27 +74,18 @@ export class SdmGoalImplementationMapper {
         return this;
     }
 
-    public findSideEffectByGoal(goal: Goal) {
-        const rulesForGoal = this.sideEffects
-            .filter(m => m.goal.context === goal.context);
-        if (rulesForGoal.length === 0) {
-            return undefined;
-        } else {
-            return rulesForGoal[0];
+    public async findFulfillmentByPush(goal: Goal, inv: ProjectListenerInvocation): Promise<GoalFulfillment | undefined> {
+        const implementationsForGoal = this.implementations.filter(m => m.goal === goal);
+        for (const implementation of implementationsForGoal) {
+            if (await implementation.pushTest.valueForPush(inv)) {
+                return implementation;
+            }
         }
-    }
-
-    public findFulfillmentByPush(goal: Goal, inv: ProjectListenerInvocation):
-        GoalFulfillment | undefined {
-        const implementationsForGoal = this.implementations.filter(m => m.goal === goal)
-            .filter(m => m.pushTest.valueForPush(inv));
-        if (implementationsForGoal.length > 0) {
-            return implementationsForGoal[0];
-        }
-        const knownSideEffects = this.sideEffects.filter(m => m.goal === goal)
-            .filter(m => m.pushTest.valueForPush(inv));
-        if (knownSideEffects.length > 0) {
-            return knownSideEffects[0];
+        const knownSideEffects = this.sideEffects.filter(m => m.goal === goal);
+        for (const sideEffect of knownSideEffects) {
+            if (await sideEffect.pushTest.valueForPush(inv)) {
+                return sideEffect;
+            }
         }
         return undefined;
     }

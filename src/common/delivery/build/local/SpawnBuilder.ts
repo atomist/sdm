@@ -33,6 +33,7 @@ import {
 } from "../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
+import { sprintf } from "sprintf-js";
 
 export interface SpawnBuilderOptions {
 
@@ -109,7 +110,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
                     .then(br => {
                         if (br.error) {
                             const message = "Stopping build commands due to error on " + stringifySpawnCommand(buildCommand);
-                            logger.info(message);
+                            log.write(message);
                             return {error: true, code: br.code, message};
                         }
                         return br;
@@ -123,7 +124,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
                         if (br.error) {
                             throw new Error("Build failure: " + br.error);
                         }
-                        logger.info("Next after %j is...%s", br, stringifySpawnCommand(buildCommand));
+                        log.write(sprintf("Next after %j is...%s", br, stringifySpawnCommand(buildCommand)));
                         return executeOne(buildCommand);
                     });
             }

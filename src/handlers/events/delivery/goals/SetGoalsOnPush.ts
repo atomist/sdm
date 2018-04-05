@@ -169,26 +169,26 @@ export async function determineGoals(rules: {
                 push,
                 context,
             };
-            const goalsToSave = determinedGoals.goals.map(g =>
+            const goalsToSave = await Promise.all(determinedGoals.goals.map(async (g) =>
                 constructSdmGoal(context, {
                     goalSet: determinedGoals.name,
                     goal: g,
                     state: hasPreconditions(g) ? "planned" : "requested",
                     id,
                     providerId,
-                    fulfillment: fulfillment({implementationMapping}, g, pli),
-                }));
+                    fulfillment: await fulfillment({implementationMapping}, g, pli),
+                })));
 
             return {determinedGoals, goalsToSave};
         });
 
 }
 
-function fulfillment(rules: {
+async function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
-},                   g: Goal, inv: ProjectListenerInvocation): SdmGoalFulfillment {
+},                   g: Goal, inv: ProjectListenerInvocation): Promise<SdmGoalFulfillment> {
     const {implementationMapping} = rules;
-    const plan = implementationMapping.findFulfillmentByPush(g, inv);
+    const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
         return constructSdmGoalImplementation(plan);
     }

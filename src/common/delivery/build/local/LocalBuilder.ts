@@ -14,38 +14,21 @@
  * limitations under the License.
  */
 
-import {
-    Failure,
-    HandlerResult,
-    logger,
-    Success,
-} from "@atomist/automation-client";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { Failure, HandlerResult, logger, Success, } from "@atomist/automation-client";
+import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import {
-    Builder,
-    PushThatTriggersBuild,
-} from "../../../../spi/build/Builder";
+import { Builder, PushThatTriggersBuild, } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import {
-    InterpretedLog,
-    LogInterpreter,
-} from "../../../../spi/log/InterpretedLog";
-import {
-    LogFactory,
-    ProgressLog,
-} from "../../../../spi/log/ProgressLog";
+import { InterpretedLog, LogInterpreter, } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog, } from "../../../../spi/log/ProgressLog";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
+import { sprintf } from "sprintf-js";
 
 export interface LocalBuildInProgress {
 
@@ -103,6 +86,7 @@ export abstract class LocalBuilder implements Builder {
         } catch (err) {
             // If we get here, the build failed before even starting
             logger.warn("Build on branch %s failed on start: %j - %s", push.branch, id, err.message);
+            log.write(sprintf("Build on branch %s failed on start: %j - %s", push.branch, id, err.message));
             await this.updateAtomistLifecycle({repoRef: id, team: atomistTeam, url: undefined},
                 "failed",
                 push.branch);
@@ -149,7 +133,7 @@ export abstract class LocalBuilder implements Builder {
         }
     }
 
-    protected updateAtomistLifecycle(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string},
+    protected updateAtomistLifecycle(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string },
                                      status: "started" | "failed" | "error" | "passed" | "canceled",
                                      branch: string): Promise<any> {
         logger.info("Telling Atomist about a %s build on %s, sha %s, url %s",
