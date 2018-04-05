@@ -36,8 +36,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { ExecuteGoalWithLog } from "../../../../common/delivery/deploy/runWithLog";
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
-import { SdmGoalSideEffectMapper } from "../../../../common/delivery/goals/SdmGoalSideEffectMapper";
+import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
@@ -66,8 +65,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     constructor(private readonly projectLoader,
                 private readonly goalSetters: GoalSetter[],
                 private readonly goalsListeners: GoalsSetListener[],
-                private readonly implementationMapping: SdmGoalImplementationMapper,
-                private readonly sideEffectMapping: SdmGoalSideEffectMapper) {
+                private readonly implementationMapping: SdmGoalImplementationMapper) {
 
     }
 
@@ -83,7 +81,6 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
             goalsListeners: params.goalsListeners,
             goalSetters: params.goalSetters,
             implementationMapping: params.implementationMapping,
-            sideEffectMapping: params.sideEffectMapping,
         }, {
             context,
             credentials,
@@ -99,20 +96,19 @@ export async function chooseAndSetGoals(rules: {
     goalsListeners: GoalsSetListener[],
     goalSetters: GoalSetter[],
     implementationMapping: SdmGoalImplementationMapper,
-    sideEffectMapping: SdmGoalSideEffectMapper,
 },                                      parameters: {
     context: HandlerContext,
     credentials: ProjectOperationCredentials,
     push: PushFields.Fragment,
 }) {
-    const {projectLoader, goalsListeners, goalSetters, implementationMapping, sideEffectMapping} = rules;
+    const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     const {context, credentials, push} = parameters;
     const id = repoRefFromPush(push);
     const providerId = providerIdFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
 
     const {determinedGoals, goalsToSave} = await determineGoals(
-        {projectLoader, goalSetters, implementationMapping, sideEffectMapping}, {
+        {projectLoader, goalSetters, implementationMapping}, {
         credentials, id, providerId, context, push, addressChannels,
     });
 
@@ -137,7 +133,6 @@ export async function determineGoals(rules: {
                                          projectLoader: ProjectLoader,
                                          goalSetters: GoalSetter[],
                                          implementationMapping: SdmGoalImplementationMapper,
-                                         sideEffectMapping: SdmGoalSideEffectMapper,
                                      },
                                      circumstances: {
                                          credentials: ProjectOperationCredentials, id: GitHubRepoRef,
@@ -149,7 +144,7 @@ export async function determineGoals(rules: {
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoal[],
 }> {
-    const {projectLoader, goalSetters, implementationMapping, sideEffectMapping} = rules;
+    const {projectLoader, goalSetters, implementationMapping} = rules;
     const {credentials, id, context, push, providerId, addressChannels} = circumstances;
     return projectLoader.doWithProject({credentials, id, context, readOnly: true},
         async project => {
@@ -181,7 +176,7 @@ export async function determineGoals(rules: {
                     state: hasPreconditions(g) ? "planned" : "requested",
                     id,
                     providerId,
-                    fulfillment: fulfillment({implementationMapping, sideEffectMapping}, g, pli),
+                    fulfillment: fulfillment({implementationMapping}, g, pli),
                 }));
 
             return {determinedGoals, goalsToSave};
@@ -191,15 +186,14 @@ export async function determineGoals(rules: {
 
 function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
-    sideEffectMapping: SdmGoalSideEffectMapper,
 },                   g: Goal, inv: ProjectListenerInvocation): SdmGoalFulfillment {
-    const {implementationMapping, sideEffectMapping} = rules;
-    const implementation = implementationMapping.findByPush(g, inv);
-    if (implementation) {
-        return constructSdmGoalImplementation(implementation);
+    const {implementationMapping} = rules;
+    const fulfillment = implementationMapping.findFulfillmentByPush(g, inv);
+    if (isGoalImplementation(fulfillment)) {
+        return constructSdmGoalImplementation(fulfillment);
     }
-    if (sideEffectMapping.findByGoal(g)) {
-        return {method: "side-effect", name: sideEffectMapping.findByGoal(g).sideEffectName};
+    if (isSideEffect(fulfillment)) {
+        return {method: "side-effect", name: fulfillment.sideEffectName };
     }
 
     logger.info("FYI, no implementation found for " + g.name);

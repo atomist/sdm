@@ -21,6 +21,8 @@ import { PushTest } from "../../listener/PushTest";
 import { ExecuteGoalWithLog } from "../deploy/runWithLog";
 import { Goal } from "./Goal";
 
+export type GoalFulfillment = GoalImplementation | GoalSideEffect;
+
 export interface GoalImplementation {
     implementationName: string;
     goal: Goal;
@@ -28,13 +30,28 @@ export interface GoalImplementation {
     pushTest: PushTest;
     logInterpreter: LogInterpreter;
 }
+export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {
+    return !!f && !!(f as GoalImplementation).implementationName && true;
+}
+
+export interface GoalSideEffect {
+    sideEffectName: string;
+    goal: Goal;
+    pushTest: PushTest;
+}
+export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
+    return !!f && (f as GoalSideEffect).sideEffectName && true;
+}
+
 
 export class SdmGoalImplementationMapper {
 
-    private mappings: GoalImplementation[] = [];
+    private implementations: GoalImplementation[] = [];
 
-    public findBySdmGoal(goal: SdmGoal): GoalImplementation {
-        const matchedNames = this.mappings.filter(m =>
+    private sideEffects: GoalSideEffect[] = [];
+
+    public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
+        const matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
             m.goal.context === goal.externalKey);
         if (matchedNames.length > 1) {
@@ -47,17 +64,37 @@ export class SdmGoalImplementationMapper {
     }
 
     public addImplementation(implementation: GoalImplementation): this {
-        this.mappings.push(implementation);
+        this.implementations.push(implementation);
         return this;
     }
 
-    public findByPush(goal: Goal, inv: ProjectListenerInvocation) {
-        const rulesForGoal = this.mappings.filter(m => m.goal === goal)
-            .filter(m => m.pushTest.valueForPush(inv));
+    public addSideEffect(sideEffect: GoalSideEffect): this {
+        this.sideEffects.push(sideEffect);
+        return this;
+    }
+
+    public findSideEffectByGoal(goal: Goal) {
+        const rulesForGoal = this.sideEffects
+            .filter(m => m.goal.context === goal.context);
         if (rulesForGoal.length === 0) {
             return undefined;
         } else {
             return rulesForGoal[0];
         }
+    }
+
+    public findFulfillmentByPush(goal: Goal, inv: ProjectListenerInvocation):
+        GoalFulfillment | undefined {
+        const implementationsForGoal = this.implementations.filter(m => m.goal === goal)
+            .filter(m => m.pushTest.valueForPush(inv));
+        if (implementationsForGoal.length > 0) {
+            return implementationsForGoal[0];
+        }
+        const knownSideEffects = this.sideEffects.filter(m => m.goal === goal)
+            .filter(m => m.pushTest.valueForPush(inv));
+        if (knownSideEffects.length > 0) {
+            return knownSideEffects[0];
+        }
+        return undefined;
     }
 }

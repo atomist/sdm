@@ -31,7 +31,7 @@ import {
 import { ProjectListener } from "../common/listener/Listener";
 import { NewIssueListener } from "../common/listener/NewIssueListener";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
-import { SetStatusOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
+import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
@@ -55,7 +55,6 @@ import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delive
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
-import { SdmGoalSideEffectMapper } from "../common/delivery/goals/SdmGoalSideEffectMapper";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { CodeReactionRegistration } from "../common/listener/CodeReactionListener";
@@ -129,8 +128,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     /*
      * Store all the implementations we know
      */
-    public readonly goalImplementationMapper = new SdmGoalImplementationMapper(); // public for testing
-    public readonly sideEffectMapper = new SdmGoalSideEffectMapper(); // public for testing
+    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(); // public for testing
 
     public readonly newIssueListeners: NewIssueListener[] = [];
 
@@ -173,7 +171,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                          goalExecutor: ExecuteGoalWithLog,
                          pushTest?: PushTest,
                          logInterpreter?: LogInterpreter): this {
-        this.goalImplementationMapper.addImplementation({
+        this.goalFulfillmentMapper.addImplementation({
             implementationName, goal, goalExecutor,
             pushTest: pushTest || AnyPush,
             logInterpreter: logInterpreter || lastTenLinesLogInterpreter(implementationName),
@@ -204,13 +202,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         }
         return {
             eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners,
-                this.goalImplementationMapper, this.sideEffectMapper)],
+                this.goalFulfillmentMapper)],
             commandHandlers: [() => resetGoalsCommand({
                 projectLoader: this.opts.projectLoader,
                 goalsListeners: this.goalsSetListeners,
                 goalSetters: this.goalSetters,
-                implementationMapping: this.goalImplementationMapper,
-                sideEffectMapping: this.sideEffectMapper,
+                implementationMapping: this.goalFulfillmentMapper,
             })],
         };
     }
@@ -274,8 +271,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private readonly onBuildComplete: Maker<SetStatusOnBuildComplete> =
-        () => new SetStatusOnBuildComplete([BuildGoal, JustBuildGoal])
+    private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {
@@ -294,7 +291,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalImplementationMapper))
+            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -447,9 +444,18 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         rules.forEach(r => {
             this.implementGoal(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter);
-            this.sideEffectMapper.addSideEffect(r.value.endpointGoal, r.value.deployGoal.definition.displayName);
+            this.knownSideEffect(
+                r.value.endpointGoal,
+                r.value.deployGoal.definition.displayName);
         });
         return this;
+    }
+
+    public knownSideEffect(goal: Goal, sideEffectName: string, pushTest: PushTest = AnyPush) {
+        this.goalFulfillmentMapper.addSideEffect({
+            goal,
+            sideEffectName, pushTest
+        });
     }
 
     /**
@@ -476,7 +482,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             executeReview(this.opts.projectLoader, this.reviewerRegistrations));
         this.addVerifyImplementation();
 
-        this.sideEffectMapper.addSideEffect(ArtifactGoal, "from ImageLinked");
+        this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
 }

@@ -23,7 +23,6 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as stringify from "json-stringify-safe";
 import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
-import { SdmGoalSideEffectMapper } from "../../../common/delivery/goals/SdmGoalSideEffectMapper";
 import { GoalSetter } from "../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
@@ -59,7 +58,6 @@ export function resetGoalsCommand(rules: {
     goalsListeners: GoalsSetListener[],
     goalSetters: GoalSetter[],
     implementationMapping: SdmGoalImplementationMapper,
-    sideEffectMapping: SdmGoalSideEffectMapper,
 }): HandleCommand {
     return commandHandlerFrom(resetGoalsOnCommit(rules),
         ResetGoalsParameters,
@@ -73,9 +71,8 @@ function resetGoalsOnCommit(rules: {
     goalsListeners: GoalsSetListener[],
     goalSetters: GoalSetter[],
     implementationMapping: SdmGoalImplementationMapper,
-    sideEffectMapping: SdmGoalSideEffectMapper,
 }) {
-    const {projectLoader, goalsListeners, goalSetters, implementationMapping, sideEffectMapping} = rules;
+    const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
@@ -104,7 +101,6 @@ function resetGoalsOnCommit(rules: {
             goalsListeners,
             goalSetters,
             implementationMapping,
-            sideEffectMapping,
         }, {
             context: ctx,
             credentials,

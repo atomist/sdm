@@ -74,7 +74,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
 
-        const { goal, goalExecutor, logInterpreter } = this.implementationMapper.findBySdmGoal(sdmGoal);
+        const { goal, goalExecutor, logInterpreter } = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 
         const inv: ExecuteGoalInvocation = {
             implementationName: sdmGoal.fulfillment.name,

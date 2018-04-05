@@ -19,7 +19,6 @@ import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import * as https from "https";
 import { WrapOptions } from "retry";
-import { WrapOptions } from "retry";
 import {
     EndpointVerificationInvocation,
     EndpointVerificationListener,

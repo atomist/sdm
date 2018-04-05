@@ -33,8 +33,8 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 /**
  * Set build status on complete build
  */
-@EventHandler("Set status on build complete", subscription("OnBuildComplete"))
-export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
+@EventHandler("Set build goal to successful on build complete, if it's side-effecting", subscription("OnBuildComplete"))
+export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
@@ -59,11 +59,11 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
             await setBuiltContext(ctx, buildGoal, sdmGoal,
                 build.status,
                 build.buildUrl);
-            if (build.status === "failed" && build.buildUrl) {
-                const ac = addressChannelsFor(commit.repo, ctx);
-                await displayBuildLogFailure(id, build, ac, params.logInterpretation);
-            }
         });
+        if (build.status === "failed" && build.buildUrl) {
+            const ac = addressChannelsFor(commit.repo, ctx);
+            await displayBuildLogFailure(id, build, ac, params.logInterpretation);
+        }
         return Success;
     }
 }

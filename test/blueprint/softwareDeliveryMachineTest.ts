@@ -60,8 +60,7 @@ describe("implementing goals in the SDM", () => {
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 goalSetters: mySDM.goalSetters,
-                implementationMapping: mySDM.goalImplementationMapper,
-                sideEffectMapping: mySDM.sideEffectMapper,
+                implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
@@ -73,7 +72,7 @@ describe("implementing goals in the SDM", () => {
         assert(goalsToSave.length === 1);
         const onlyGoal = goalsToSave[0];
 
-        const myImpl = mySDM.goalImplementationMapper.findBySdmGoal(onlyGoal);
+        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
 
         assert(myImpl.implementationName === "Autofix");
     });
@@ -100,8 +99,7 @@ describe("implementing goals in the SDM", () => {
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 goalSetters: mySDM.goalSetters,
-                implementationMapping: mySDM.goalImplementationMapper,
-            sideEffectMapping: mySDM.sideEffectMapper,
+                implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 providerId: "josh", addressChannels: () => Promise.resolve({}),
@@ -113,7 +111,7 @@ describe("implementing goals in the SDM", () => {
         assert(goalsToSave.length === 1);
         const onlyGoal = goalsToSave[0];
 
-        const myImpl = mySDM.goalImplementationMapper.findBySdmGoal(onlyGoal);
+        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
 
         assert.equal(myImpl.implementationName, "Cornelius");
         await myImpl.goalExecutor(undefined);
