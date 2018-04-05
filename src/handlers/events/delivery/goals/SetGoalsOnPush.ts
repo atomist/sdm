@@ -188,12 +188,12 @@ function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
 },                   g: Goal, inv: ProjectListenerInvocation): SdmGoalFulfillment {
     const {implementationMapping} = rules;
-    const fulfillment = implementationMapping.findFulfillmentByPush(g, inv);
-    if (isGoalImplementation(fulfillment)) {
-        return constructSdmGoalImplementation(fulfillment);
+    const plan = implementationMapping.findFulfillmentByPush(g, inv);
+    if (isGoalImplementation(plan)) {
+        return constructSdmGoalImplementation(plan);
     }
-    if (isSideEffect(fulfillment)) {
-        return {method: "side-effect", name: fulfillment.sideEffectName };
+    if (isSideEffect(plan)) {
+        return {method: "side-effect", name: plan.sideEffectName };
     }
 
     logger.info("FYI, no implementation found for " + g.name);
