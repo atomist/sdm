@@ -46,3 +46,7 @@ export class Goals {
         ]);
     }
 }
+
+export function isGoals(a: any): a is Goals {
+    return !!(a as Goals).goals;
+}
