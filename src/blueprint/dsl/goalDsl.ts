@@ -27,6 +27,9 @@ export class GoalSetterPushRule extends PushRule<Goals> {
     }
 
     public setGoals(goals: Goals | Goal): this {
+        if (goals === null) {
+            return this.set(null);
+        }
         return this.set(isGoals(goals) ? goals : new Goals("Solely " + goals.name, goals));
     }
 
