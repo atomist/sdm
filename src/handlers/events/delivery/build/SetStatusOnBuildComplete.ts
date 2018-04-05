@@ -55,6 +55,11 @@ export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subsc
                 logger.debug("No build goal on commit; ignoring someone else's build result");
                 return Success;
             }
+            if (sdmGoal.fulfillment.method !== "side-effect" && sdmGoal.fulfillment.method !== "other") {
+                logger.info("This build goal is not one we want to complete based on the build node. %j",
+                    sdmGoal.fulfillment);
+                return Success;
+            }
             logger.info("Updating build goal: %s", buildGoal.context);
             await setBuiltContext(ctx, buildGoal, sdmGoal,
                 build.status,
