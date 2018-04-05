@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { Goal } from "../../common/delivery/goals/Goal";
 import { Goals, isGoals } from "../../common/delivery/goals/Goals";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
-import { Goal } from "../../common/delivery/goals/Goal";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 
