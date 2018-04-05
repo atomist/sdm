@@ -28,7 +28,7 @@ import Status = OnSuccessStatus.Status;
  * Respond to a failure status by failing downstream goals
  */
 @EventHandler("Move downstream goals from 'planned' to 'success' when preconditions are met",
-    subscription("OnAnySuccessStatus"))
+    subscription("OnAnySuccessfulSdmGoal"))
 export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessfulSdmGoal.Subscription> {
 
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
