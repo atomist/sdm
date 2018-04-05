@@ -18,6 +18,8 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { PushTest } from "../../common/listener/PushTest";
 import { AddressChannels } from "../../common/slack/addressChannels";
+import { LogInterpretation } from "../log/InterpretedLog";
+import { ProgressLog } from "../log/ProgressLog";
 
 export interface PushThatTriggersBuild {
     branch: string;
@@ -27,7 +29,7 @@ export interface PushThatTriggersBuild {
  * Responsible for initiating a build and storing an artifact.
  * Wherever the build runs, it is responsible for emitting Atomist build events.
  */
-export interface Builder {
+export interface Builder extends LogInterpretation {
 
     name: string;
 
@@ -35,6 +37,6 @@ export interface Builder {
                   id: RemoteRepoRef,
                   ac: AddressChannels,
                   team: string,
-                  push: PushThatTriggersBuild): Promise<any>;
-
+                  push: PushThatTriggersBuild,
+                  log: ProgressLog): Promise<any>;
 }

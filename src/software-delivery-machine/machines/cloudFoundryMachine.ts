@@ -20,8 +20,7 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
-import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
+import { nodeRunBuildBuilder, nodeRunCompileBuilder, npmBuilderOptionsFromFile } from "../../common/delivery/build/local/npm/npmBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     AutofixGoal,
@@ -44,10 +43,10 @@ import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
 import { MaterialChangeToNodeRepo } from "../../common/listener/support/pushtest/node/materialChangeToNodeRepo";
-import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import { HasAtomistBuildFile, IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import { createEphemeralProgressLog, createEphemeralProgressLogWithConsole } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
@@ -64,6 +63,8 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
+import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
@@ -110,7 +111,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     const runCompileBuilder = nodeRunCompileBuilder(options.projectLoader);
 
     sdm.addBuildRules(
-        new NpmDetectBuildMapping(options.artifactStore, options.projectLoader),
+        build.when(HasAtomistBuildFile)
+            .itMeans("Custom build script")
+            .set(npmCustomBuilder(options.artifactStore, options.projectLoader)),
         build.when(IsNode, ToDefaultBranch)
             .itMeans("Try standard node build")
             .set(runBuildBuilder),

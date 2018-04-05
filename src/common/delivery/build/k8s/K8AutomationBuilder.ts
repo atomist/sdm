@@ -49,7 +49,7 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
 
     public initiateBuild(creds: ProjectOperationCredentials,
                          id: RemoteRepoRef, ac: AddressChannels,
-                         team: string, push: PushThatTriggersBuild): Promise<any> {
+                         team: string, push: PushThatTriggersBuild, l): Promise<any> {
             // someday we will do this with a "requested" build node but use a status for now.
         return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
             context: K8AutomationBuildContext + "/" + push.branch,

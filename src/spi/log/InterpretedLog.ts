@@ -49,7 +49,7 @@ export type LogInterpreter<D = any> = (log: string) => InterpretedLog<D> | undef
  */
 export interface LogInterpretation {
 
-    logInterpreter?: LogInterpreter;
+    logInterpreter: LogInterpreter;
 }
 
 export function hasLogInterpretation(b: any): b is LogInterpretation {

@@ -71,18 +71,17 @@ export abstract class LocalBuilder implements Builder {
 
     constructor(public name: string,
                 private readonly artifactStore: ArtifactStore,
-                private readonly logFactory: LogFactory,
                 protected projectLoader: ProjectLoader) {
     }
 
     public async initiateBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                addressChannels: AddressChannels,
-                               atomistTeam: string, push: PushThatTriggersBuild): Promise<HandlerResult> {
+                               atomistTeam: string,
+                               push: PushThatTriggersBuild,
+                               log: ProgressLog): Promise<HandlerResult> {
         const as = this.artifactStore;
         const token = (creds as TokenCredentials).token;
-        const log = await this.logFactory();
-        const logInterpreter = this.logInterpreter;
 
         try {
             const rb = await this.startBuild(creds, id, atomistTeam, log, addressChannels);
@@ -92,17 +91,13 @@ export abstract class LocalBuilder implements Builder {
                 await this.onExit(
                     token,
                     !br.error,
-                    rb, atomistTeam, push.branch, as,
-                    log,
-                    addressChannels, logInterpreter);
+                    rb, atomistTeam, push.branch, as);
                 return Success;
             } catch (err) {
                 await this.onExit(
                     token,
                     false,
-                    rb, atomistTeam, push.branch, as,
-                    log,
-                    addressChannels, logInterpreter);
+                    rb, atomistTeam, push.branch, as);
                 return Failure;
             }
         } catch (err) {
@@ -137,10 +132,7 @@ export abstract class LocalBuilder implements Builder {
                            runningBuild: LocalBuildInProgress,
                            atomistTeam: string,
                            branch: string,
-                           artifactStore: ArtifactStore,
-                           log: ProgressLog,
-                           ac: AddressChannels,
-                           logInterpreter: LogInterpreter): Promise<any> {
+                           artifactStore: ArtifactStore): Promise<any> {
         try {
             if (success) {
                 await this.updateAtomistLifecycle(runningBuild, "passed", branch);
@@ -151,17 +143,9 @@ export abstract class LocalBuilder implements Builder {
                 }
             } else {
                 await this.updateAtomistLifecycle(runningBuild, "failed", branch);
-                const interpretation = logInterpreter && !!log.log && logInterpreter(log.log);
-                // The deployer might have information about the failure; report it in the channels
-                if (interpretation) {
-                    await reportFailureInterpretation("build", interpretation,
-                        {url: log.url, log: log.log}, runningBuild.appInfo.id, ac);
-                }
             }
         } catch (err) {
             logger.warn("Unexpected build exit error: %s", err);
-        } finally {
-            await log.close();
         }
     }
 
@@ -191,8 +175,6 @@ export abstract class LocalBuilder implements Builder {
     }
 
 }
-
-export const NotARealUrl = "https://not.a.real.url";
 
 function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})

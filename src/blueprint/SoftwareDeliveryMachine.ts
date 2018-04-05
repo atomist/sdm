@@ -92,6 +92,7 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { PushRule } from "../common/listener/support/PushRule";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -143,8 +144,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public readonly goalSetters: GoalSetter[] = []; // public for tests
 
     private readonly goalsSetListeners: GoalsSetListener[] = [];
-
-    private readonly builderMapping = new PushRules<Builder>("Builder rules");
 
     private readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
@@ -214,19 +213,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
 
-    private get builder(): FunctionalUnit {
-        const name = this.builderMapping.name.replace(" ", "_");
-        const executor = executeBuild(this.opts.projectLoader, this.builderMapping);
-        // currently these handle their own statuses. Need not to. #264 in progress
-        return {
-            eventHandlers: [
-                () => new ExecuteGoalOnRequested(name, BuildGoal, executor),
-                () => new ExecuteGoalOnRequested(name + "_jb", JustBuildGoal, executor),
-            ],
-            commandHandlers: [],
-        };
-    }
-
     get onSuperseded(): Maker<OnSupersededStatus> {
         return this.supersededListeners.length > 0 ?
             () => new OnSupersededStatus(...this.supersededListeners) :
@@ -283,7 +269,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private get allFunctionalUnits(): FunctionalUnit[] {
         return this.functionalUnits
             .concat([
-                this.builder,
                 this.goalSetting,
                 this.goalConsequences,
             ]);
@@ -435,8 +420,16 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addBuildRules(...rules: Array<PushMapping<Builder>>): this {
-        this.builderMapping.add(rules);
+    public addBuildRules(...rules: Array<PushRule<Builder>>): this {
+        rules.forEach(r =>
+            this.implementGoal(r.name, BuildGoal,
+                executeBuild(this.opts.projectLoader, r.choice.value),
+                r.choice.guard,
+                r.choice.value.logInterpreter)
+                .implementGoal(r.name, BuildGoal,
+                    executeBuild(this.opts.projectLoader, r.choice.value),
+                    r.choice.guard,
+                    r.choice.value.logInterpreter));
         return this;
     }
 

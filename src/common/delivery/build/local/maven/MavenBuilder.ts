@@ -41,7 +41,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
                 logFactory: LogFactory,
                 projectLoader: ProjectLoader,
                 private readonly skipTests: boolean = true) {
-        super("MavenBuilder", artifactStore, logFactory, projectLoader);
+        super("MavenBuilder", artifactStore, projectLoader);
     }
 
     protected async startBuild(credentials: ProjectOperationCredentials,

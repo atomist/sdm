@@ -25,6 +25,7 @@ import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
+import { lastTenLinesLogInterpreter } from "../../runWithLog";
 
 /**
  * Managed deployments
@@ -123,4 +124,6 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             childProcess.addListener("error", reject);
         })];
     }
+
+    public logInterpreter = lastTenLinesLogInterpreter("Executable jar deployment");
 }
