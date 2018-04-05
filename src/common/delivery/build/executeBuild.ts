@@ -45,8 +45,7 @@ export function executeBuild(projectLoader: ProjectLoader,
 
         // the builder is expected to result in a complete Build event (which will update the build status)
         // and an ImageLinked event (which will update the artifact status).
-        await builder.initiateBuild(credentials, id, addressChannels,
+        return await builder.initiateBuild(credentials, id, addressChannels,
             atomistTeam, {branch: branchToMarkTheBuildWith}, progressLog);
-        return Success;
     };
 }

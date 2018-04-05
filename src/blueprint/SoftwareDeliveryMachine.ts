@@ -426,12 +426,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 executeBuild(this.opts.projectLoader, r.choice.value),
                 r.choice.guard,
                 r.choice.value.logInterpreter)
-                .implementGoal(r.name, BuildGoal,
+                .implementGoal(r.name, JustBuildGoal,
                     executeBuild(this.opts.projectLoader, r.choice.value),
                     r.choice.guard,
                     r.choice.value.logInterpreter));
         return this;
     }
+\
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {

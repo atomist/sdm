@@ -60,7 +60,7 @@ export const CodeReactionGoal = new Goal({
  */
 export const JustBuildGoal = new Goal({
     environment: IndependentOfEnvironment,
-    orderedName: "2-build ",
+    orderedName: "2-just-build ",
     workingDescription: "Building...",
     completedDescription: "Build successful",
     failedDescription: "Build failure",
