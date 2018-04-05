@@ -51,15 +51,14 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
         params.buildGoals.forEach(async buildGoal => {
             const sdmGoal = await findSdmGoalOnCommit(ctx, id, commit.repo.org.provider.providerId, buildGoal);
-            const builtStatus = commit.statuses.find(s => s.context === buildGoal.context);
-            if (!!builtStatus) {
-                logger.info("Updating build status: %s", buildGoal.context);
-                await setBuiltContext(ctx, buildGoal, sdmGoal,
-                    build.status,
-                    build.buildUrl);
-            } else {
-                logger.info("No build status found for %s so not setting it to complete", buildGoal.context);
+            if (!sdmGoal) {
+                logger.debug("No build goal on commit; ignoring someone else's build result");
+                return Success;
             }
+            logger.info("Updating build goal: %s", buildGoal.context);
+            await setBuiltContext(ctx, buildGoal, sdmGoal,
+                build.status,
+                build.buildUrl);
             if (build.status === "failed" && build.buildUrl) {
                 const ac = addressChannelsFor(commit.repo, ctx);
                 await displayBuildLogFailure(id, build, ac, params.logInterpretation);
