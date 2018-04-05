@@ -26,6 +26,7 @@ import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 import { addCheckstyleSupport, CheckstyleSupportOptions } from "../parts/stacks/checkstyleSupport";
+import { IsJava } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 
 export type StaticAnalysisMachineOptions = SoftwareDeliveryMachineOptions & CheckstyleSupportOptions;
 
@@ -44,7 +45,7 @@ export function staticAnalysisMachine(opts: Partial<StaticAnalysisMachineOptions
     const sdm = new SoftwareDeliveryMachine(
         "Static analysis SDM",
         options,
-        whenPushSatisfies(MaterialChangeToJavaRepo)
+        whenPushSatisfies(IsJava, MaterialChangeToJavaRepo)
             .itMeans("Change to Java")
             .setGoals(new Goals("Review only", ReviewGoal)));
     addCheckstyleSupport(sdm, options);
