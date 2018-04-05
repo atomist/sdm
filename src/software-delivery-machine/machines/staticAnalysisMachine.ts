@@ -22,11 +22,11 @@ import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../b
 import { EphemeralLocalArtifactStore } from "../../common/artifact/local/EphemeralLocalArtifactStore";
 import { ReviewGoal } from "../../common/delivery/goals/common/commonGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
+import { IsJava } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { CachingProjectLoader } from "../../common/repo/CachingProjectLoader";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 import { addCheckstyleSupport, CheckstyleSupportOptions } from "../parts/stacks/checkstyleSupport";
-import { IsJava } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 
 export type StaticAnalysisMachineOptions = SoftwareDeliveryMachineOptions & CheckstyleSupportOptions;
 
