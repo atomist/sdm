@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { Goals } from "../../common/delivery/goals/Goals";
+import { Goals, isGoals } from "../../common/delivery/goals/Goals";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
+import { Goal } from "../../common/delivery/goals/Goal";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 
@@ -25,8 +26,8 @@ export class GoalSetterPushRule extends PushRule<Goals> {
         super(guard1, guards, reason);
     }
 
-    public setGoals(goals: Goals): this {
-        return this.set(goals);
+    public setGoals(goals: Goals | Goal): this {
+        return this.set(isGoals(goals) ? goals : new Goals("Solely " + goals.name, goals));
     }
 
 }
