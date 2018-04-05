@@ -23,9 +23,9 @@ import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { lastTenLinesLogInterpreter } from "../../runWithLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
-import { lastTenLinesLogInterpreter } from "../../runWithLog";
 
 /**
  * Managed deployments

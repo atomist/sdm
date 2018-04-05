@@ -95,7 +95,6 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
 
             const commands: SpawnCommand[] = this.options.commands || await loadCommandsFromFile(p, this.options.commandFile);
 
-
             const appId: AppInfo = await this.options.projectToAppInfo(p);
             const opts = {
                 cwd: p.baseDir,

@@ -77,6 +77,7 @@ import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 
+import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -92,7 +93,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { PushRule } from "../common/listener/support/PushRule";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

@@ -25,5 +25,5 @@ export const AtomistBuildFile = ".atomist/build.sh";
 export function npmCustomBuilder(artifactStore: ArtifactStore, projectLoader: ProjectLoader) {
     return new SpawnBuilder(artifactStore,
         createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptionsFromFile(AtomistBuildFile))
+        projectLoader, npmBuilderOptionsFromFile(AtomistBuildFile));
 }

@@ -21,6 +21,8 @@ import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import { nodeRunBuildBuilder, nodeRunCompileBuilder, npmBuilderOptionsFromFile } from "../../common/delivery/build/local/npm/npmBuilder";
+import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
+import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     AutofixGoal,
@@ -63,8 +65,6 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
-import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 
