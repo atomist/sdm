@@ -454,7 +454,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public knownSideEffect(goal: Goal, sideEffectName: string, pushTest: PushTest = AnyPush) {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
-            sideEffectName, pushTest
+            sideEffectName, pushTest,
         });
     }
 

@@ -43,7 +43,6 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName && true;
 }
 
-
 export class SdmGoalImplementationMapper {
 
     private implementations: GoalImplementation[] = [];
