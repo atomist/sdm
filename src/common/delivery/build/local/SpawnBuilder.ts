@@ -19,6 +19,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
@@ -33,7 +34,6 @@ import {
 } from "../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
-import { sprintf } from "sprintf-js";
 
 export interface SpawnBuilderOptions {
 

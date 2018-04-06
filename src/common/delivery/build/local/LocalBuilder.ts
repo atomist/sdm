@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { Failure, HandlerResult, logger, Success, } from "@atomist/automation-client";
-import { ProjectOperationCredentials, TokenCredentials, } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { Failure, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
+import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { Builder, PushThatTriggersBuild, } from "../../../../spi/build/Builder";
+import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpreter, } from "../../../../spi/log/InterpretedLog";
-import { ProgressLog, } from "../../../../spi/log/ProgressLog";
+import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
-import { sprintf } from "sprintf-js";
 
 export interface LocalBuildInProgress {
 

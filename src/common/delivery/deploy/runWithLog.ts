@@ -42,14 +42,26 @@ export function runWithLog(whatToRun: ExecuteGoalWithLog,
         const credentials = {token: params.githubToken};
 
         return whatToRun({status, progressLog, context: ctx, addressChannels, id, credentials})
-            .then(async (yay) => {
+            .then(async yay => {
                     if (yay && yay.code !== 0) {
-                        await howToReportError(params, addressChannels, progressLog, id, logInterpreter)(new Error("Failure reported: " + yay.message))
+                        await reportError({
+                            executeGoalInvocation: params,
+                            addressChannels: addressChannels,
+                            progressLog: progressLog,
+                            id: id,
+                            logInterpreter: logInterpreter
+                        }, new Error("Failure reported: " + yay.message));
                     }
                     await progressLog.close();
                     return yay;
                 },
-                err => howToReportError(params, addressChannels, progressLog, id, logInterpreter)(err)
+                err => reportError({
+                    executeGoalInvocation: params,
+                    addressChannels: addressChannels,
+                    progressLog: progressLog,
+                    id: id,
+                    logInterpreter: logInterpreter
+                }, err)
                     .then(() => progressLog.close())
                     .then(() => Promise.reject(err)));
     };
@@ -62,36 +74,37 @@ export interface RunWithLogContext extends SdmContext {
 
 export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-function howToReportError(executeGoalInvocation: ExecuteGoalInvocation,
-                          addressChannels: AddressChannels,
-                          progressLog: ProgressLog,
-                          id: GitHubRepoRef,
-                          logInterpreter: LogInterpreter) {
-    return async (err: Error) => {
-        logger.error("RunWithLog caught error: %s", err.message);
-        logger.error(err.stack);
-        progressLog.write("ERROR: " + err.message);
-        progressLog.write(err.stack);
-        progressLog.write(sprintf("full error object: [%j]", err));
+async function reportError(parameters: {
+                               executeGoalInvocation: ExecuteGoalInvocation,
+                               addressChannels: AddressChannels, progressLog: ProgressLog, id: GitHubRepoRef,
+                               logInterpreter: LogInterpreter
+                           },
+                           err: Error) {
+    let {executeGoalInvocation, addressChannels, progressLog, id, logInterpreter} = parameters;
+    logger.error("RunWithLog caught error: %s", err.message);
+    logger.error(err.stack);
+    progressLog.write("ERROR: " + err.message + "\n");
+    progressLog.write(err.stack);
+    progressLog.write(sprintf("full error object: [%j]", err));
 
-        const retryButton = buttonForCommand({text: "Retry"},
-            retryCommandNameFor(executeGoalInvocation.implementationName), {
-                repo: id.repo,
-                owner: id.owner,
-                sha: id.sha,
-            });
+    const retryButton = buttonForCommand({text: "Retry"},
+        retryCommandNameFor(executeGoalInvocation.implementationName), {
+            repo: id.repo,
+            owner: id.owner,
+            sha: id.sha,
+        });
 
-        const interpretation = logInterpreter(progressLog.log);
-        // The deployer might have information about the failure; report it in the channels
-        if (interpretation) {
-            await reportFailureInterpretation(executeGoalInvocation.implementationName, interpretation,
+    const interpretation = logInterpreter(progressLog.log);
+    // The deployer might have information about the failure; report it in the channels
+    if (interpretation) {
+        await
+            reportFailureInterpretation(executeGoalInvocation.implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},
                 id, addressChannels, retryButton);
-        } else {
-            await addressChannels(":x: Failure deploying: " + err.message);
-        }
-        throw err;
-    };
+    } else {
+        await
+            addressChannels(":x: Failure deploying: " + err.message);
+    }
 }
 
 export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
