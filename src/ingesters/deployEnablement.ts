@@ -28,21 +28,3 @@ export interface DeployEnablement {
     repo: string;
     providerId: string;
 }
-
-export const DeployEnablementIngester: IngesterBuilder = ingester(DeployEnablementRootType)
-    .withType(type(DeployEnablementRootType)
-        .withStringField(
-            "owner",
-            "The name of the repo owner (org or user)",
-            ["compositeId"])
-        .withStringField(
-            "repo",
-            "The name of the repo",
-            ["compositeId"])
-        .withStringField(
-            "providerId",
-            "The internal providerId of the org/repo",
-            ["compositeId"])
-        .withStringField(
-            "state",
-            "State of deploy enablement (requested or disabled)"));

@@ -17,8 +17,6 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "./blueprint/SoftwareDeliveryMachine";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
-import { DeployEnablementIngester } from "./ingesters/deployEnablement";
-import { SdmGoalIngester } from "./ingesters/sdmGoalIngester";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 import { greeting } from "./util/misc/greeting";
@@ -72,11 +70,6 @@ const machine = createMachine(SdmOptions);
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),
     events: machine.eventHandlers.concat([]),
-    // TODO CD move ingesters to different global automation
-    ingesters: [
-        SdmGoalIngester,
-        DeployEnablementIngester,
-    ],
     http: {
         enabled: !!process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
         auth: {
