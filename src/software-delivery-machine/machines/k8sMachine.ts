@@ -32,7 +32,8 @@ import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTest
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import { K8sProductionDomain, K8sTestingDomain, NoticeK8sProdDeployCompletion, NoticeK8sTestDeployCompletion, } from "../blueprint/deploy/k8sDeploy";
+import { requestDeployToK8s } from "../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
+import { K8sProductionDomain, K8sTestingDomain, NoticeK8sProdDeployCompletion, NoticeK8sTestDeployCompletion } from "../blueprint/deploy/k8sDeploy";
 import { suggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "../commands/editors/k8s/addK8sSpec";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -40,7 +41,6 @@ import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport"
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { requestDeployToK8s } from "../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 
 export type K8sMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 

@@ -18,10 +18,10 @@ import { failure, HandlerContext, logger, Success } from "@atomist/automation-cl
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../common/delivery/deploy/runWithLog";
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../../../common/delivery/goals/goalExecution";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../common/delivery/deploy/runWithLog";
 
 export type K8Target = "testing" | "production";
 
