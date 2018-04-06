@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import "mocha";
 import * as assert from "power-assert";
 import { sumSdmGoalEvents } from "../../src/handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
