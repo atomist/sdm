@@ -77,7 +77,10 @@ describe("implementing goals in the SDM", () => {
         assert(myImpl.implementationName === "Autofix");
     });
 
-    const customGoal = new Goal({displayName: "Springer", environment: "1-staging/", orderedName: "1-springer"});
+    const customGoal = new Goal({
+        uniqueCamelCaseName: "Jerry",
+        displayName: "Springer", environment: "1-staging/", orderedName: "1-springer"
+    });
 
     it("I can teach it to do a custom goal", async () => {
         let executed: boolean = false;

@@ -29,12 +29,14 @@ import {
 import { Goals } from "../Goals";
 
 export const FingerprintGoal = new Goal({
+    uniqueCamelCaseName: "Fingerprint",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-fingerprint",
     completedDescription: "Fingerprinted",
 });
 
 export const AutofixGoal = new Goal({
+    uniqueCamelCaseName: "Autofix",
     environment: IndependentOfEnvironment,
     orderedName: "0.2-autofix",
     completedDescription: "Autofixes OK",
@@ -42,6 +44,7 @@ export const AutofixGoal = new Goal({
 });
 
 export const ReviewGoal = new Goal({
+    uniqueCamelCaseName: "Review",
     environment: IndependentOfEnvironment,
     orderedName: "1-review",
     completedDescription: "Code review passed",
@@ -49,6 +52,7 @@ export const ReviewGoal = new Goal({
 });
 
 export const CodeReactionGoal = new Goal({
+    uniqueCamelCaseName: "CodeReaction",
     environment: IndependentOfEnvironment,
     orderedName: "1.5-react",
     completedDescription: "Code reactions",
@@ -59,6 +63,7 @@ export const CodeReactionGoal = new Goal({
  * @type {Goal}
  */
 export const JustBuildGoal = new Goal({
+    uniqueCamelCaseName: "JustBuild",
     environment: IndependentOfEnvironment,
     orderedName: "2-just-build ",
     workingDescription: "Building...",
@@ -67,6 +72,7 @@ export const JustBuildGoal = new Goal({
 });
 
 export const BuildGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "Build",
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     workingDescription: "Building...",
@@ -77,6 +83,7 @@ export const BuildGoal = new GoalWithPrecondition({
 // This one is actually satisfied in an ImageLinked event,
 // which happens to be a result of the build.
 export const ArtifactGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "Artifact",
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "store artifact",
@@ -84,6 +91,7 @@ export const ArtifactGoal = new GoalWithPrecondition({
 }, BuildGoal);
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DeployToTest",
     environment: StagingEnvironment,
     orderedName: "3-deploy",
     displayName: "deploy to Test",
@@ -92,6 +100,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
 }, ArtifactGoal);
 
 export const StagingUndeploymentGoal = new Goal({
+    uniqueCamelCaseName: "UndeployFromTest",
     environment: StagingEnvironment,
     orderedName: "8-staging-undeploy",
     displayName: "undeploy from test",
@@ -103,6 +112,7 @@ export const StagingUndeploymentGoal = new Goal({
 // Setting the precondition lets FailDownstream know that this
 // one is never gonna succeed if the deploy failed.
 export const StagingEndpointGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "FindTestEndpoint",
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
@@ -111,6 +121,7 @@ export const StagingEndpointGoal = new GoalWithPrecondition({
 }, StagingDeploymentGoal);
 
 export const StagingVerifiedGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "VerifyTest",
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
@@ -119,6 +130,7 @@ export const StagingVerifiedGoal = new GoalWithPrecondition({
 }, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DeployToProduction",
     environment: ProductionEnvironment,
     orderedName: "3-prod-deploy",
     displayName: "deploy to Prod",
@@ -127,6 +139,7 @@ export const ProductionDeploymentGoal = new GoalWithPrecondition({
 ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionUndeploymentGoal = new Goal({
+    uniqueCamelCaseName: "UndeployFromProduction",
     environment: ProductionEnvironment,
     orderedName: "8-prod-undeploy",
     displayName: "undeploy from Prod",
@@ -138,6 +151,7 @@ export const ProductionUndeploymentGoal = new Goal({
 // Setting the precondition lets FailDownstream know that this
 // one is never gonna succeed if the deploy failed.
 export const ProductionEndpointGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "FindProductionEndpoint",
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
@@ -145,6 +159,7 @@ export const ProductionEndpointGoal = new GoalWithPrecondition({
 }, ProductionDeploymentGoal);
 
 export const LocalDeploymentGoal = new Goal({
+    uniqueCamelCaseName: "DeployHere",
     environment: IndependentOfEnvironment,
     orderedName: "1-deploy-locally",
     completedDescription: "Deployed locally",
@@ -152,6 +167,7 @@ export const LocalDeploymentGoal = new Goal({
 
 // not an enforced precondition, but it's real enough to graph
 export const LocalEndpointGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "FindLocalEndpoint",
     environment: IndependentOfEnvironment,
     orderedName: "2-endpoint",
     displayName: "locate local service endpoint",
@@ -160,6 +176,7 @@ export const LocalEndpointGoal = new GoalWithPrecondition({
 }, LocalDeploymentGoal);
 
 export const NoGoal = new Goal({
+    uniqueCamelCaseName: "Nevermind",
     environment: IndependentOfEnvironment,
     orderedName: "1-immaterial",
     displayName: "immaterial",
