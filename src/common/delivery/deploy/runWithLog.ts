@@ -46,10 +46,10 @@ export function runWithLog(whatToRun: ExecuteGoalWithLog,
                     if (yay && yay.code !== 0) {
                         await reportError({
                             executeGoalInvocation: params,
-                            addressChannels: addressChannels,
-                            progressLog: progressLog,
-                            id: id,
-                            logInterpreter: logInterpreter
+                            addressChannels,
+                            progressLog,
+                            id,
+                            logInterpreter,
                         }, new Error("Failure reported: " + yay.message));
                     }
                     await progressLog.close();
@@ -57,10 +57,10 @@ export function runWithLog(whatToRun: ExecuteGoalWithLog,
                 },
                 err => reportError({
                     executeGoalInvocation: params,
-                    addressChannels: addressChannels,
-                    progressLog: progressLog,
-                    id: id,
-                    logInterpreter: logInterpreter
+                    addressChannels,
+                    progressLog,
+                    id,
+                    logInterpreter,
                 }, err)
                     .then(() => progressLog.close())
                     .then(() => Promise.reject(err)));
@@ -77,10 +77,10 @@ export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalRes
 async function reportError(parameters: {
                                executeGoalInvocation: ExecuteGoalInvocation,
                                addressChannels: AddressChannels, progressLog: ProgressLog, id: GitHubRepoRef,
-                               logInterpreter: LogInterpreter
+                               logInterpreter: LogInterpreter,
                            },
                            err: Error) {
-    let {executeGoalInvocation, addressChannels, progressLog, id, logInterpreter} = parameters;
+    const {executeGoalInvocation, addressChannels, progressLog, id, logInterpreter} = parameters;
     logger.error("RunWithLog caught error: %s", err.message);
     logger.error(err.stack);
     progressLog.write("ERROR: " + err.message + "\n");
