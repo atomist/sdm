@@ -20,6 +20,7 @@ import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automa
 import * as stringify from "json-stringify-safe";
 import { runWithLog } from "../../../common/delivery/deploy/runWithLog";
 import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
+import { fetchCommitForSdmGoal } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 import { ExecuteGoalInvocation } from "../../../common/delivery/goals/goalExecution";
 import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
@@ -28,7 +29,6 @@ import {
     StatusForExecuteGoal,
 } from "../../../typings/types";
 import { executeGoal } from "./verify/executeGoal";
-import { fetchCommitForSdmGoal } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
@@ -96,4 +96,3 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
         description: sdmGoal.description,
     };
 }
-

@@ -44,7 +44,7 @@ export const affirmationEditor: HandleCommand = editorCommand(
     () => new AffirmationParameters("Everyone needs encouragement"),
     {
         editMode: ap => ap.editMode,
-        intent: "edit affirmation",
+        intent: ["edit affirmation", "i'm feeling blue", "cheer me up"],
     },
 );
 

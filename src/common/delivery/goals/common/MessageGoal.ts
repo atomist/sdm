@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-import { IndependentOfEnvironment, } from "../gitHubContext";
-import { Goal, } from "../Goal";
 import { SlackMessage } from "@atomist/slack-messages";
+import { IndependentOfEnvironment } from "../gitHubContext";
+import { Goal } from "../Goal";
 
 export class MessageGoal extends Goal {
 
-    constructor(
-                public readonly message: string | SlackMessage) {
+    constructor(public readonly code: string | SlackMessage) {
         super({
             environment: IndependentOfEnvironment,
-            orderedName: "0-message",
+            orderedName: `0-message-${code}`,
             completedDescription: "Sent",
         });
     }
-}
-
-export function isMessageGoal(g: Goal): g is MessageGoal {
-    return !!(g as MessageGoal).message;
 }

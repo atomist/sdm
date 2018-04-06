@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// tslint:disable:max-file-line-count
+
 import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
@@ -35,7 +37,11 @@ import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetSta
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
-import { EndpointVerificationListener, executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import {
+    EndpointVerificationListener,
+    executeVerifyEndpoint,
+    SdmVerification,
+} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
@@ -162,6 +168,18 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
+    /**
+     * Provide the implementation for a goal.
+     * The SDM will run it as soon as the goal is ready (all preconditions are met).
+     * If you provide a PushTest, then the SDM can assign different implementations
+     * to the same goal based on the code in the project.
+     * @param {string} implementationName
+     * @param {Goal} goal
+     * @param {ExecuteGoalWithLog} goalExecutor
+     * @param {PushTest} pushTest
+     * @param {LogInterpreter} logInterpreter
+     * @return {this}
+     */
     public implementGoal(implementationName: string,
                          goal: Goal,
                          goalExecutor: ExecuteGoalWithLog,
@@ -237,13 +255,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private addVerifyImplementation(): void {
+    private addVerifyImplementation(): this {
         const stagingVerification: SdmVerification = {
             verifiers: this.endpointVerificationListeners,
             endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
-        this.implementGoal("VerifyInStaging",
+        return this.implementGoal("VerifyInStaging",
             StagingVerifiedGoal,
             executeVerifyEndpoint(stagingVerification));
     }
@@ -441,6 +459,15 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
+    /**
+     * Declare that a goal will become successful based on something outside.
+     * For instance, ArtifactGoal succeeds because of an ImageLink event.
+     * This tells the SDM that it does not need to run anything when this
+     * goal becomes ready.
+     * @param {Goal} goal
+     * @param {string} sideEffectName
+     * @param {PushTest} pushTest
+     */
     public knownSideEffect(goal: Goal, sideEffectName: string, pushTest: PushTest = AnyPush) {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
@@ -462,15 +489,15 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.addSupportingCommands(selfDescribeHandler(this));
 
         this.implementGoal("Autofix", AutofixGoal,
-            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations));
-        this.implementGoal("DoNothing", NoGoal, executeImmaterial);
-        this.implementGoal("Fingerprinter", FingerprintGoal,
-            executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters));
-        this.implementGoal("CodeReactions", CodeReactionGoal,
-            executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations));
-        this.implementGoal("Reviews", ReviewGoal,
-            executeReview(this.opts.projectLoader, this.reviewerRegistrations));
-        this.addVerifyImplementation();
+            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations))
+            .implementGoal("DoNothing", NoGoal, executeImmaterial)
+            .implementGoal("Fingerprinter", FingerprintGoal,
+                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
+            .implementGoal("CodeReactions", CodeReactionGoal,
+                executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
+            .implementGoal("Reviews", ReviewGoal,
+                executeReview(this.opts.projectLoader, this.reviewerRegistrations))
+            .addVerifyImplementation();
 
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
