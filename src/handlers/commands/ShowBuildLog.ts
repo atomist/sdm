@@ -85,7 +85,6 @@ async function fetchBuildUrl(context: HandlerContext, id: RemoteRepoRef): Promis
 }
 
 export function displayBuildLogHandler(logInterpretation?: LogInterpretation): HandleCommand<DisplayBuildLogParameters> {
-    logger.info("Log interpreter provided? " + !!logInterpretation);
     return commandHandlerFrom(displayBuildLogForCommit(logInterpretation),
         DisplayBuildLogParameters, "DisplayBuildLog",
         "interpret and report on a build log",
