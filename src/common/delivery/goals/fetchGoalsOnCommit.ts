@@ -15,21 +15,27 @@
  */
 
 import { HandlerContext, logger } from "@atomist/automation-client";
-import { SdmGoalsForCommit } from "../../../typings/types";
+import { CommitForSdmGoal, SdmGoalFields, SdmGoalRepo, SdmGoalsForCommit } from "../../../typings/types";
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
+import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { goalKeyString, SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { Goal } from "./Goal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
-    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId);
-    const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g as SdmGoal));
+    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId) as SdmGoal[];
+    const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g));
     if (matches && matches.length > 1) {
         logger.warn("FindSdmGoal: More than one match found for %s/%s; they are %j", goal.environment, goal.name, matches);
     }
-    return _.get(matches, "[0]");
+    if (matches.length === 0) {
+        logger.debug("Did not find goal %s on commit %s#%s", goalKeyString(goal), id.repo, id.sha);
+        return undefined;
+    }
+    return matches[0];
 }
 
 export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
@@ -42,6 +48,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
             providerId,
             qty: 20,
         },
+        options: NoCacheOptions,
     });
     if (!result || !result.SdmGoal) {
         throw new Error(`No result finding goals for commit ${providerId}/${id.owner}/${id.repo}#${id.sha} on ${id.branch}`);
@@ -58,4 +65,19 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
     }
 
     return _.flatten(result.SdmGoal);
+}
+
+export async function fetchCommitForSdmGoal(ctx: HandlerContext,
+                                            goal: SdmGoalFields.Fragment & SdmGoalRepo.Fragment): Promise<CommitForSdmGoal.Commit> {
+    const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
+    const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
+        {
+            options: NoCacheOptions,
+            name: "CommitForSdmGoal",
+            variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch},
+        });
+    if (!result || !result.Commit || result.Commit.length === 0) {
+        throw new Error("No commit found for goal " + stringify(variables));
+    }
+    return result.Commit[0];
 }

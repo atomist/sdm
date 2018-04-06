@@ -18,10 +18,10 @@ import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Param
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { fetchGoalsForCommit } from "../../common/delivery/goals/fetchGoalsOnCommit";
+import { fetchGoalsForCommit, findSdmGoalOnCommit } from "../../common/delivery/goals/fetchGoalsOnCommit";
 import { Goal } from "../../common/delivery/goals/Goal";
-import { goalCorrespondsToSdmGoal, storeGoal } from "../../common/delivery/goals/storeGoals";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal, updateGoal } from "../../common/delivery/goals/storeGoals";
+import { goalKeyEquals, SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
 
 @Parameters()
@@ -52,12 +52,12 @@ export class RetryGoalParameters {
 export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
     return commandHandlerFrom(triggerGoalsOnCommit(goal),
         RetryGoalParameters,
-        retryCommandNameFor(implementationName),
+        retryCommandNameFor(goal),
         "Retry an execution of " + goal.name, goal.retryIntent);
 }
 
-export function retryCommandNameFor(deployName: string) {
-    return "Retry" + deployName;
+export function retryCommandNameFor(goal: Goal) {
+    return "Retry" + goal.uniqueCamelCaseName;
 }
 
 function triggerGoalsOnCommit(goal: Goal) {
@@ -69,20 +69,19 @@ function triggerGoalsOnCommit(goal: Goal) {
 
         // figure out which goalSet
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
-        let goalSet = commandParams.goalSet;
-        if (!goalSet) {
-            const sdmGoals = await fetchGoalsForCommit(ctx, id, commandParams.providerId);
-            const thisGoal = sdmGoals.find(g => goalCorrespondsToSdmGoal(goal, g as SdmGoal));
-            if (!thisGoal) {
+        const thisGoal = await findSdmGoalOnCommit(ctx, id, commandParams.providerId, goal);
+        if (!thisGoal) {
                 await ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
-                    sha.substr(0, 6)}. To create it anyway, pass goalSet=<name of goal set> to the trigger command`);
+                    sha.substr(0, 6)}. Ask Jess to implement this`);
                 return {code: 0};
             }
-            goalSet = thisGoal.goalSet;
-        }
 
         // do the thing
-        await storeGoal(ctx, {id, providerId: commandParams.providerId, state: "requested", goal, goalSet});
+        await updateGoal(ctx, thisGoal,
+            {
+                state: "requested",
+                description: "Manually reset",
+            });
         return Success;
     };
 }

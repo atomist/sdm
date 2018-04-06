@@ -15,9 +15,10 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnPushToAnyBranch, StatusForExecuteGoal } from "../../typings/types";
+import { OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
 import * as _ from "lodash";
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     return GitHubRepoRef.from({
@@ -44,5 +45,15 @@ export function repoRefFromStatus(status: StatusForExecuteGoal.Fragment) {
         sha: status.commit.sha,
         rawApiBase: status.commit.repo.org.provider.apiUrl,
         branch: _.get(status, "commit.pushes[0].branch"),
+    });
+}
+
+export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): GitHubRepoRef {
+    return GitHubRepoRef.from({
+        owner: sdmGoal.repo.owner,
+        repo: sdmGoal.repo.name,
+        sha: sdmGoal.sha,
+        branch: sdmGoal.branch,
+        rawApiBase: provider.apiUrl,
     });
 }

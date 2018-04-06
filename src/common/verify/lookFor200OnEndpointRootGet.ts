@@ -33,6 +33,9 @@ export function lookFor200OnEndpointRootGet(retryOpts: Partial<WrapOptions> = {}
         const agent = new https.Agent({
             rejectUnauthorized: false,
         });
+        if (!inv.url) {
+           throw new Error("Verify called with null URL");
+        }
         return doWithRetry(
             () => axios.get(inv.url, {httpsAgent: agent})
                 .then(resp => {

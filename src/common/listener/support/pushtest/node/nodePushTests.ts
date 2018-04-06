@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../../PushTest";
+import { AtomistBuildFile } from "../../../../delivery/build/local/npm/NpmDetectBuildMapping";
+import { PredicatePushTest, predicatePushTest } from "../../../PushTest";
 import { hasFile } from "../commonPushTests";
 
 export const IsNode: PredicatePushTest = predicatePushTest("Is Node", async p => {
@@ -29,3 +30,5 @@ export const IsNode: PredicatePushTest = predicatePushTest("Is Node", async p =>
 });
 
 export const IsAtomistAutomationClient = hasFile("src/atomist.config.ts");
+
+export const HasAtomistBuildFile = hasFile(AtomistBuildFile);

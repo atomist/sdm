@@ -27,10 +27,6 @@ export class StaticPushMapping<V> implements PushMapping<V> {
 
     public readonly guard: PushTest;
 
-    get name() {
-        return `GuardedPushChoice: ${this.guard.name}->${this.value}`;
-    }
-
     /**
      * Create a PushChoice that will always return the same goals if the guards
      * match
@@ -38,7 +34,7 @@ export class StaticPushMapping<V> implements PushMapping<V> {
      * @param {PushTest} guard1
      * @param {PushTest} guards
      */
-    constructor(public readonly value: V, guard1: PushTest, ...guards: PushTest[]) {
+    constructor(public readonly name: string, public readonly value: V, guard1: PushTest, ...guards: PushTest[]) {
         this.guard = allSatisfied(guard1, ...guards);
     }
 

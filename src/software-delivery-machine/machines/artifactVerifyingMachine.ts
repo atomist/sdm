@@ -46,7 +46,7 @@ export function artifactVerifyingMachine(opts: Partial<ArtifactVerifyingMachineO
             );
     sdm.addBuildRules(
         build.when(IsMaven)
-            .itMeans("Maven")
+            .itMeans("build with Maven")
             .set(new MavenBuilder(options.artifactStore, createEphemeralProgressLog, options.projectLoader)))
         .addArtifactListeners(async ai => {
             // Could invoke a security scanning tool etc.

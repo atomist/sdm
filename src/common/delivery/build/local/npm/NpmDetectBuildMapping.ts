@@ -14,44 +14,16 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
-import { Builder } from "../../../../../spi/build/Builder";
-import { asSpawnCommand } from "../../../../../util/misc/spawned";
-import { ProjectListenerInvocation } from "../../../../listener/Listener";
-import { PushMapping } from "../../../../listener/PushMapping";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder } from "../SpawnBuilder";
-import { npmBuilderOptions } from "./npmBuilder";
+import { npmBuilderOptionsFromFile } from "./npmBuilder";
 
 export const AtomistBuildFile = ".atomist/build.sh";
 
-/**
- * Detect Atomist build file and map to an Npm Build
- */
-export class NpmDetectBuildMapping implements PushMapping<Builder> {
-
-    public readonly name = "NpmDetectBuildMapping";
-
-    constructor(private readonly artifactStore: ArtifactStore, private readonly projectLoader: ProjectLoader) {
-    }
-
-    public async valueForPush(p: ProjectListenerInvocation): Promise<Builder> {
-        const buildFile = await p.project.getFile(AtomistBuildFile);
-        if (!buildFile) {
-            return undefined;
-        }
-        const content = await buildFile.getContent();
-        const commands = content.split("\n")
-            .filter(l => !!l)
-            .filter(l => !l.startsWith("#"))
-            .map(asSpawnCommand);
-        logger.info("Found Atomist build file in project %j: Commands are %j", p.id,
-            commands);
-
-        return new SpawnBuilder(this.artifactStore,
-            createEphemeralProgressLogWithConsole,
-            this.projectLoader, npmBuilderOptions(commands));
-    }
+export function npmCustomBuilder(artifactStore: ArtifactStore, projectLoader: ProjectLoader) {
+    return new SpawnBuilder(artifactStore,
+        createEphemeralProgressLogWithConsole,
+        projectLoader, npmBuilderOptionsFromFile(AtomistBuildFile));
 }

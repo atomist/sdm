@@ -14,35 +14,18 @@
  * limitations under the License.
  */
 
-import {
-    Failure,
-    HandlerResult,
-    logger,
-    Success,
-} from "@atomist/automation-client";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { Failure, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
+import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import {
-    Builder,
-    PushThatTriggersBuild,
-} from "../../../../spi/build/Builder";
+import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import {
-    InterpretedLog,
-    LogInterpreter,
-} from "../../../../spi/log/InterpretedLog";
-import {
-    LogFactory,
-    ProgressLog,
-} from "../../../../spi/log/ProgressLog";
+import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
@@ -71,18 +54,17 @@ export abstract class LocalBuilder implements Builder {
 
     constructor(public name: string,
                 private readonly artifactStore: ArtifactStore,
-                private readonly logFactory: LogFactory,
                 protected projectLoader: ProjectLoader) {
     }
 
     public async initiateBuild(creds: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                addressChannels: AddressChannels,
-                               atomistTeam: string, push: PushThatTriggersBuild): Promise<HandlerResult> {
+                               atomistTeam: string,
+                               push: PushThatTriggersBuild,
+                               log: ProgressLog): Promise<HandlerResult> {
         const as = this.artifactStore;
         const token = (creds as TokenCredentials).token;
-        const log = await this.logFactory();
-        const logInterpreter = this.logInterpreter;
 
         try {
             const rb = await this.startBuild(creds, id, atomistTeam, log, addressChannels);
@@ -92,22 +74,19 @@ export abstract class LocalBuilder implements Builder {
                 await this.onExit(
                     token,
                     !br.error,
-                    rb, atomistTeam, push.branch, as,
-                    log,
-                    addressChannels, logInterpreter);
+                    rb, atomistTeam, push.branch, as);
                 return Success;
             } catch (err) {
                 await this.onExit(
                     token,
                     false,
-                    rb, atomistTeam, push.branch, as,
-                    log,
-                    addressChannels, logInterpreter);
+                    rb, atomistTeam, push.branch, as);
                 return Failure;
             }
         } catch (err) {
             // If we get here, the build failed before even starting
             logger.warn("Build on branch %s failed on start: %j - %s", push.branch, id, err.message);
+            log.write(sprintf("Build on branch %s failed on start: %j - %s", push.branch, id, err.message));
             await this.updateAtomistLifecycle({repoRef: id, team: atomistTeam, url: undefined},
                 "failed",
                 push.branch);
@@ -137,10 +116,7 @@ export abstract class LocalBuilder implements Builder {
                            runningBuild: LocalBuildInProgress,
                            atomistTeam: string,
                            branch: string,
-                           artifactStore: ArtifactStore,
-                           log: ProgressLog,
-                           ac: AddressChannels,
-                           logInterpreter: LogInterpreter): Promise<any> {
+                           artifactStore: ArtifactStore): Promise<any> {
         try {
             if (success) {
                 await this.updateAtomistLifecycle(runningBuild, "passed", branch);
@@ -151,21 +127,13 @@ export abstract class LocalBuilder implements Builder {
                 }
             } else {
                 await this.updateAtomistLifecycle(runningBuild, "failed", branch);
-                const interpretation = logInterpreter && !!log.log && logInterpreter(log.log);
-                // The deployer might have information about the failure; report it in the channels
-                if (interpretation) {
-                    await reportFailureInterpretation("build", interpretation,
-                        {url: log.url, log: log.log}, runningBuild.appInfo.id, ac);
-                }
             }
         } catch (err) {
             logger.warn("Unexpected build exit error: %s", err);
-        } finally {
-            await log.close();
         }
     }
 
-    protected updateAtomistLifecycle(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string},
+    protected updateAtomistLifecycle(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string },
                                      status: "started" | "failed" | "error" | "passed" | "canceled",
                                      branch: string): Promise<any> {
         logger.info("Telling Atomist about a %s build on %s, sha %s, url %s",
@@ -191,8 +159,6 @@ export abstract class LocalBuilder implements Builder {
     }
 
 }
-
-export const NotARealUrl = "https://not.a.real.url";
 
 function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})

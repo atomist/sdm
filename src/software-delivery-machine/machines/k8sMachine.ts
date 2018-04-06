@@ -18,7 +18,7 @@ import * as build from "../../blueprint/dsl/buildDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { K8sAutomationBuilder } from "../../common/delivery/build/k8s/K8AutomationBuilder";
-import { NoGoal, NoGoals } from "../../common/delivery/goals/common/commonGoals";
+import { NoGoals, ProductionDeploymentGoal, StagingDeploymentGoal } from "../../common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
@@ -29,16 +29,11 @@ import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { HasK8Spec } from "../../common/listener/support/pushtest/k8s/k8sSpecPushTest";
 import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
-import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
-import {
-    K8sProductionDeployOnSuccessStatus,
-    K8sStagingDeployOnSuccessStatus,
-    NoticeK8sProdDeployCompletion,
-    NoticeK8sTestDeployCompletion,
-} from "../blueprint/deploy/k8sDeploy";
+import { requestDeployToK8s } from "../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
+import { K8sProductionDomain, K8sTestingDomain, NoticeK8sProdDeployCompletion, NoticeK8sTestDeployCompletion } from "../blueprint/deploy/k8sDeploy";
 import { suggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "../commands/editors/k8s/addK8sSpec";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -80,9 +75,12 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
     );
     sdm.addBuildRules(
         build.setDefault(new K8sAutomationBuilder()))
-        .addFunctionalUnits(
-            K8sStagingDeployOnSuccessStatus,
-            K8sProductionDeployOnSuccessStatus)
+        .implementGoal("K8TestDeploy",
+            StagingDeploymentGoal,
+            requestDeployToK8s(K8sTestingDomain))
+        .implementGoal("K8ProductionDeploy",
+            ProductionDeploymentGoal,
+            requestDeployToK8s(K8sProductionDomain))
         .addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(
             () => addK8sSpec,

@@ -56,7 +56,7 @@ describe("NpmBuilder", () => {
             success => assert(success, "Build should have succeeded"));
         await b.initiateBuild({token: process.env.GITHUB_TOKEN},
             new GitHubRepoRef("spring-team", "github-sdm"),
-            async () => true, "T123", {branch: "master"});
+            async () => true, "T123", {branch: "master"}, new ConsoleProgressLog());
     }); // .timeout(300000);
 
     // This is slow and unnecessary, as dog fooding usage tests this
@@ -65,7 +65,7 @@ describe("NpmBuilder", () => {
             success => assert(success, "Build should have succeeded"));
         await b.initiateBuild({token: process.env.GITHUB_TOKEN},
             new GitHubRepoRef("spring-team", "github-sdm"),
-            async () => true, "T123", {branch: "master"});
+            async () => true, "T123", {branch: "master"}, new ConsoleProgressLog());
     }); // .timeout(300000);
 
 });

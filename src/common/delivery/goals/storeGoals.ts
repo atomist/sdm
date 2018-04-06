@@ -20,8 +20,12 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { GoalRootType, SdmGoal, SdmGoalKey, SdmGoalState, SdmProvenance } from "../../../ingesters/sdmGoalIngester";
+import {
+    GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalFulfillmentMethod, SdmGoalKey, SdmGoalState,
+    SdmProvenance,
+} from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
+import { GoalImplementation } from "./SdmGoalImplementationMapper";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
@@ -38,6 +42,9 @@ export interface UpdateSdmGoalParams {
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
+    if (!before.fulfillment) {
+        throw new Error("what happened to the fulfillment?");
+    }
     const sdmGoal = {
         ...before,
         state: params.state,
@@ -48,7 +55,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         provenance: [constructProvenance(ctx)].concat(before.provenance),
         error: _.get(params, "error.message"),
     };
-    logger.debug(`Updating SdmGoal ${sdmGoal.externalKey} to ${sdmGoal.state}`);
+    logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
@@ -56,15 +63,24 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean 
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
-export function storeGoal(ctx: HandlerContext, parameters: {
+export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalFulfillment {
+    return {
+        method: "SDM fulfill on requested",
+        name: gi.implementationName,
+    };
+}
+
+export function constructSdmGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
     state: SdmGoalState,
     id: GitHubRepoRef,
     providerId: string
     url?: string,
-}): Promise<SdmGoal> {
+    fulfillment?: SdmGoalFulfillment,
+}): SdmGoal {
     const {goalSet, goal, state, id, providerId, url} = parameters;
+    const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
 
     if (id.branch === null) {
         throw new Error(sprintf("Please provide a branch in the GitHubRepoRef %j", parameters));
@@ -87,10 +103,12 @@ export function storeGoal(ctx: HandlerContext, parameters: {
         })));
     }
 
-    const sdmGoal: SdmGoal = {
+    return {
         goalSet,
         name: goal.name,
         environment,
+
+        fulfillment,
 
         sha: id.sha,
         branch: id.branch,
@@ -111,7 +129,9 @@ export function storeGoal(ctx: HandlerContext, parameters: {
 
         preConditions,
     };
+}
 
+export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoal) {
     logger.debug("Storing goal: %j", sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);

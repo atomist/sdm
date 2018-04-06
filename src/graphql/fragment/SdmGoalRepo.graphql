@@ -1,0 +1,7 @@
+fragment SdmGoalRepo on SdmGoal {
+  repo {
+    name
+    owner
+    providerId
+  }
+}

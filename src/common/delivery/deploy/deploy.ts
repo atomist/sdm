@@ -49,6 +49,7 @@ export async function checkOutArtifact(targetUrl: string,
                                        credentials: ProjectOperationCredentials,
                                        progressLog: ProgressLog): Promise<DeployableArtifact> {
     if (!targetUrl) {
+        logger.debug("No artifact, must be source-deployed");
         return sourceArtifact(id);
     }
     const artifactCheckout = await artifactStore.checkout(targetUrl, id, credentials)

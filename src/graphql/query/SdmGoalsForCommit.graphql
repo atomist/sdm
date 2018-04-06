@@ -7,32 +7,11 @@ query SdmGoalsForCommit(
   $qty: Int!
 ) {
   SdmGoal(sha: [$sha], branch: [$branch], _first: $qty) {
-    goalSet
-    environment
-    name
-    sha
-    branch
-    state
-    description
-    url
-    externalKey
     repo(name: [$repo], owner: [$owner], providerId: [$providerId]) @required {
       name
       owner
       providerId
     }
-    ts
-    preConditions {
-      goalSet
-      environment
-      name
-    }
-    provenance {
-      registration
-      version
-      name
-      correlationId
-      ts
-    }
+    ...SdmGoalFields
   }
 }

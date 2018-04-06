@@ -68,3 +68,20 @@ export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions
         },
     };
 }
+
+export function npmBuilderOptionsFromFile(commandFile: string): SpawnBuilderOptions {
+    return {
+        name: "NpmBuilder",
+        commandFile,
+        errorFinder: (code, signal, l) => {
+            return l.log.startsWith("[error]") || l.log.includes("ERR!");
+        },
+        logInterpreter: npmLogInterpreter,
+        async projectToAppInfo(p: Project): Promise<AppInfo> {
+            const packageJson = await p.findFile("package.json");
+            const content = await packageJson.getContent();
+            const pkg = JSON.parse(content);
+            return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
+        },
+    };
+}

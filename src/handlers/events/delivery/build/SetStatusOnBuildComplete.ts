@@ -33,8 +33,8 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 /**
  * Set build status on complete build
  */
-@EventHandler("Set status on build complete", subscription("OnBuildComplete"))
-export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
+@EventHandler("Set build goal to successful on build complete, if it's side-effecting", subscription("OnBuildComplete"))
+export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
@@ -55,15 +55,20 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
                 logger.debug("No build goal on commit; ignoring someone else's build result");
                 return Success;
             }
+            if (sdmGoal.fulfillment.method !== "side-effect" && sdmGoal.fulfillment.method !== "other") {
+                logger.info("This build goal is not set up to be completed based on the build node. %j",
+                    sdmGoal.fulfillment);
+                return Success;
+            }
             logger.info("Updating build goal: %s", buildGoal.context);
             await setBuiltContext(ctx, buildGoal, sdmGoal,
                 build.status,
                 build.buildUrl);
-            if (build.status === "failed" && build.buildUrl) {
-                const ac = addressChannelsFor(commit.repo, ctx);
-                await displayBuildLogFailure(id, build, ac, params.logInterpretation);
-            }
         });
+        if (build.status === "failed" && build.buildUrl) {
+            const ac = addressChannelsFor(commit.repo, ctx);
+            await displayBuildLogFailure(id, build, ac, params.logInterpretation);
+        }
         return Success;
     }
 }

@@ -22,6 +22,7 @@ import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushMapping } from "../../listener/PushMapping";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../deploy/runWithLog";
 import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
 
 /**
@@ -30,55 +31,21 @@ import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals
  * @param builderMapping mapping to a builder
  */
 export function executeBuild(projectLoader: ProjectLoader,
-                             builderMapping: PushMapping<Builder>): GoalExecutor {
-    return async (status: OnAnyPendingStatus.Status, context: HandlerContext, params: ExecuteGoalInvocation): Promise<ExecuteGoalResult> => {
+                             builder: Builder): ExecuteGoalWithLog {
+    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+        const {status, credentials, id, context, progressLog, addressChannels} = rwlc;
         const commit = status.commit;
-        await dedup(commit.sha, async () => {
-            const credentials = {token: params.githubToken};
-            const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-            const atomistTeam = context.teamId;
+        const atomistTeam = context.teamId;
 
-            await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-                const push = commit.pushes[0];
-                const pti: ProjectListenerInvocation = {
-                    id,
-                    project,
-                    credentials,
-                    context,
-                    addressChannels: addressChannelsFor(commit.repo, context),
-                    push,
-                };
+        logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
+        const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
+        const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
+        const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
+        const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
 
-                const builder = await builderMapping.valueForPush(pti);
-                if (!builder) {
-                    throw new Error(`Don't know how to build project ${id.owner}:${id.repo}`);
-                }
-                logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
-                const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
-                const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
-                const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
-                const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
-
-                // the builder is expected to result in a complete Build event (which will update the build status)
-                // and an ImageLinked event (which will update the artifact status).
-                return builder.initiateBuild(credentials, id, pti.addressChannels, atomistTeam, {branch: branchToMarkTheBuildWith});
-            });
-        });
-        return Success;
+        // the builder is expected to result in a complete Build event (which will update the build status)
+        // and an ImageLinked event (which will update the artifact status).
+        return builder.initiateBuild(credentials, id, addressChannels,
+            atomistTeam, {branch: branchToMarkTheBuildWith}, progressLog);
     };
 }
-
-async function dedup<T>(key: string, f: () => Promise<T>): Promise<T | void> {
-    if (running[key]) {
-        logger.warn("This op was called twice for " + key);
-        return Promise.resolve();
-    }
-    running[key] = true;
-    const promise = f().then(t => {
-        running[key] = undefined;
-        return t;
-    });
-    return promise;
-}
-
-const running = {};

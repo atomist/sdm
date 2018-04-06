@@ -20,14 +20,12 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { interpretMavenLog } from "../../common/delivery/build/local/maven/mavenLogInterpreter";
-import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
-import { NpmDetectBuildMapping } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
+import { nodeRunBuildBuilder, nodeRunCompileBuilder, npmBuilderOptionsFromFile } from "../../common/delivery/build/local/npm/npmBuilder";
+import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
+import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     AutofixGoal,
-    LocalDeploymentGoal,
-    LocalEndpointGoal,
     NoGoals,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -47,20 +45,19 @@ import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
 import { MaterialChangeToNodeRepo } from "../../common/listener/support/pushtest/node/materialChangeToNodeRepo";
-import { IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import { HasAtomistBuildFile, IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import { createEphemeralProgressLog, createEphemeralProgressLogWithConsole } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
+import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import {
-    cloudFoundryProductionDeploySpec, cloudFoundryStagingDeploySpec,
+    cloudFoundryProductionDeploySpec,
+    cloudFoundryStagingDeploySpec,
     EnableDeployOnCloudFoundryManifestAddition,
 } from "../blueprint/deploy/cloudFoundryDeploy";
-import {
-    LocalExecutableJarDeployer,
-    mavenSourceDeployer,
-} from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
+import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootDeployOnSuccessStatus";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
@@ -114,7 +111,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     const runCompileBuilder = nodeRunCompileBuilder(options.projectLoader);
 
     sdm.addBuildRules(
-        new NpmDetectBuildMapping(options.artifactStore, options.projectLoader),
+        build.when(HasAtomistBuildFile)
+            .itMeans("Custom build script")
+            .set(npmCustomBuilder(options.artifactStore, options.projectLoader)),
         build.when(IsNode, ToDefaultBranch)
             .itMeans("Try standard node build")
             .set(runBuildBuilder),
@@ -122,8 +121,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .itMeans("Just compile")
             .set(runCompileBuilder),
         build.setDefault(new MavenBuilder(options.artifactStore,
-            createEphemeralProgressLog, options.projectLoader)),
-    )
+            createEphemeralProgressLog, options.projectLoader)))
         .addDeployRules(
             deploy.when(IsMaven)
                 .itMeans("Maven test")
@@ -148,10 +146,10 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             () => addCloudFoundryManifest,
             () => enableDeploy(),
             () => disableDeploy(),
+            () => isDeployEnabledCommand(),
         )
         .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition)
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
-
     addJavaSupport(sdm, options);
     addSpringSupport(sdm, options);
     addNodeSupport(sdm);

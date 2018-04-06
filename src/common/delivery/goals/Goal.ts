@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-
 import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
+    // must be unique among goals
+    uniqueCamelCaseName: string;
     environment: GoalEnvironment;
     orderedName: string;
     displayName?: string;
@@ -41,6 +41,7 @@ export class Goal {
     public readonly context: GitHubStatusContext;
     public readonly name: string;
     public readonly definition: GoalDefinition;
+    public readonly uniqueCamelCaseName: string;
 
     get environment() {
         return this.definition.environment;
@@ -82,6 +83,8 @@ export class Goal {
 
         this.name = definition.displayName || matchGoal[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
+
+        this.uniqueCamelCaseName = definition.uniqueCamelCaseName;
     }
 
     // TODO decouple from github statuses

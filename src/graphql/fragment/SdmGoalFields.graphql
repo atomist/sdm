@@ -5,17 +5,15 @@ fragment SdmGoalFields on SdmGoal {
   sha
   branch
   state
+  fulfillment {
+    method
+    name
+  }
   description
   url
   externalKey
-  repo {
-    name
-    owner
-    providerId
-  }
   ts
   preConditions {
-    goalSet
     environment
     name
   }

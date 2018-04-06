@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-import {
-    ingester,
-    IngesterBuilder,
-    type,
-} from "@atomist/automation-client";
+import { ingester, IngesterBuilder, type } from "@atomist/automation-client";
+import { sprintf } from "sprintf-js";
 
 export const GoalRootType = "SdmGoal";
 
 export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
+
+export type SdmGoalFulfillmentMethod = "SDM fulfill on requested" | "side-effect" | "other";
+
+export interface SdmGoalFulfillment {
+    method: SdmGoalFulfillmentMethod;
+    name: string;
+}
 
 export interface SdmGoal extends SdmGoalKey {
     sha: string;
@@ -34,8 +38,11 @@ export interface SdmGoal extends SdmGoalKey {
         providerId: string;
     };
 
+    fulfillment: SdmGoalFulfillment;
+
     description: string;
     url?: string;
+    goalSet: string;
     state: SdmGoalState;
     ts: number;
 
@@ -63,15 +70,24 @@ export interface SdmProvenance {
 }
 
 export interface SdmGoalKey {
-    goalSet: string;
     environment: string;
     name: string;
 }
 
-export function goalKeyEquals(a: SdmGoalKey, b: SdmGoal): boolean {
-    return a.goalSet === b.goalSet &&
-        a.environment === b.environment &&
+export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
+    return (keyToFind: SdmGoalKey) => {
+        const found = goals.find(g => goalKeyEquals(g, keyToFind));
+        return found;
+    };
+}
+
+export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
+    return a.environment === b.environment &&
         a.name === b.name;
+}
+
+export function goalKeyString(gk: SdmGoalKey): string {
+    return sprintf("%s in %s", gk.name, gk.environment);
 }
 
 export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
@@ -80,7 +96,6 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withStringField("owner")
         .withStringField("providerId"))
     .withType(type("SdmCondition")
-        .withStringField("goalSet")
         .withStringField("environment")
         .withStringField("name"))
     .withType(type("SdmProvenance")
@@ -91,11 +106,10 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withIntField("ts")
         .withStringField("userId")
         .withStringField("channelId"))
+    .withType(type("GoalFulfillment")
+        .withStringField("method")
+        .withStringField("name"))
     .withType(type(GoalRootType)
-        .withStringField(
-            "goalSet",
-            "Goal set the goal is a part of",
-            ["compositeId"])
         .withStringField(
             "environment",
             "Environment the goal runs in",
@@ -117,6 +131,11 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
             "SdmRepository",
             "Repository the commit was observed from",
             ["name", "owner", "providerId"])
+        .withObjectField(
+            "fulfillment",
+            "GoalFulfillment",
+            "How the goal gets fulfilled",
+            ["method", "name"])
         .withStringField(
             "description",
             "Description of the goal")
@@ -129,7 +148,11 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withStringField(
             "externalKey",
             "key to a corresponding commit status in GitHub/BitBucket (optional)")
+        .withStringField(
+            "goalSet",
+            "Goal set the goal is a part of")
         .withIntField(
+
             "ts",
             "Timestamp of goal")
         .withStringField(

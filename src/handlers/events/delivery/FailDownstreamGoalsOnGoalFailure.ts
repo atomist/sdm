@@ -26,7 +26,7 @@ import {
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
-import { SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
+import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
 import Status = OnSuccessStatus.Status;
 import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
@@ -84,9 +84,7 @@ function stillWaitingForPreconditions(status: StatusForExecuteGoal.Fragment, sdm
 
 function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
     return (keyToFind: SdmGoalKey) => {
-        const found = goals.find(g => g.goalSet === keyToFind.goalSet &&
-            g.environment === keyToFind.environment &&
-            g.name === keyToFind.name);
+        const found = goals.find(g => goalKeyEquals(keyToFind, g));
         return found;
     };
 }

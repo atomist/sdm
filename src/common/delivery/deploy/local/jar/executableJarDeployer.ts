@@ -23,6 +23,7 @@ import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { lastTenLinesLogInterpreter } from "../../runWithLog";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
 
@@ -84,6 +85,9 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
                         atomistTeam: string): Promise<Deployment[]> {
+        if (!da.filename) {
+            throw new Error("No filename in deployable artifact!");
+        }
         const port = managedExecutableJarDeployments.findPort(ti.managedDeploymentKey);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {
@@ -120,4 +124,6 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             childProcess.addListener("error", reject);
         })];
     }
+
+    public logInterpreter = lastTenLinesLogInterpreter("Executable jar deployment");
 }

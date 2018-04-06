@@ -24,6 +24,6 @@ export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanati
     return new PushRuleExplanation(new PushRule(guard1, guards));
 }
 
-export function setDefault(builder: Builder): PushMapping<Builder> {
+export function setDefault(builder: Builder): PushRule<Builder> {
     return new PushRule<Builder>(AnyPush, [], "On any push").set(builder);
 }

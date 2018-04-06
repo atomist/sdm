@@ -26,7 +26,7 @@ import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter }
 import * as _ from "lodash";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "./runWithLog";
+import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "./runWithLog";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;
@@ -48,51 +48,32 @@ export interface DeploySpec<T extends TargetInfo> {
  * @param targetMapping mapping to a target
  */
 export function executeDeploy(artifactStore: ArtifactStore,
-                              projectLoader: ProjectLoader,
-                              deployGoal: Goal,
                               endpointGoal: Goal,
-                              targetMapping: PushMapping<Target>): GoalExecutor {
-    return runWithLog(async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+                              target: Target): ExecuteGoalWithLog {
+
+    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
+
         const commit = rwlc.status.commit;
-        const { addressChannels, credentials, id, context, progressLog }  = rwlc;
+        const {credentials, id, context, progressLog} = rwlc;
         const atomistTeam = context.teamId;
 
-        await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-                const push = commit.pushes[0];
-                const pti: ProjectListenerInvocation = {
-                    id,
-                    project,
-                    credentials,
-                    context,
-                    addressChannels,
-                    push,
-                };
+        logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
-                const target = await targetMapping.valueForPush(pti);
-                if (!target) {
-                    progressLog.write("SDM configuration error: no deploy rule applies to this code");
-                    logger.error(`Don't know how to deploy project ${id.owner}:${id.repo}`);
-                    return Success;
-                }
-                logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
+        const artifactCheckout = await checkOutArtifact(_.get(commit, "image.imageName"),
+            artifactStore, id, credentials, progressLog);
 
-                const artifactCheckout = await checkOutArtifact(_.get(commit, "image.imageName"),
-                    artifactStore, id, credentials, progressLog);
+        // questionable
+        artifactCheckout.id.branch = commit.pushes[0].branch;
+        const deployments = await target.deployer.deploy(
+            artifactCheckout,
+            target.targeter(id, id.branch),
+            progressLog,
+            credentials,
+            atomistTeam);
 
-                // TODO this is a bit questionable
-                artifactCheckout.id.branch = push.branch;
+        await Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
+            {endpointGoal, rwlc, deployment})));
 
-                const deployments = await target.deployer.deploy(
-                    artifactCheckout,
-                    target.targeter(id, id.branch),
-                    progressLog,
-                    credentials,
-                    atomistTeam);
-
-                return Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
-                    {endpointGoal, rwlc, deployment})));
-
-            });
         return Success;
-    }, lastTenLinesLogInterpreter("deploy failed"));
+    };
 }
