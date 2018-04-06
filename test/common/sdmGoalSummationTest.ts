@@ -8,7 +8,7 @@ import { goalKeyEquals, SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 describe("Putting SdmGoal events together", () => {
    it("Lets the event we just received override out-of-date query results", () => {
        const successfulSdmGoal = successEvent.data.SdmGoal[0] as SdmGoal;
-       const result = sumSdmGoalEvents(queryResult.SdmGoal as SdmGoal[],
+       const result = sumSdmGoalEvents(queryResult.SdmGoal as any as SdmGoal[],
            [successfulSdmGoal]);
 
        assert(result.length === queryResult.SdmGoal.length);

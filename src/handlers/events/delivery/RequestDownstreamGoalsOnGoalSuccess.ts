@@ -130,7 +130,7 @@ function expectToBeFulfilledAfterRequest(dependentGoal: SdmGoal) {
 
 function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
     return (keyToFind: SdmGoalKey) => {
-        const found = goals.find(g => g.goalSet === keyToFind.goalSet &&
+        const found = goals.find(g =>
             g.environment === keyToFind.environment &&
             g.name === keyToFind.name);
         return found;
