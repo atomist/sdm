@@ -27,16 +27,16 @@ import { InterpretedLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
-import { Manifest } from "./CloudFoundryManifest";
+import {BlueGreenNamer, CloudFoundryBlueGreener} from "./CloudFoundryBlueGreener";
+import {Manifest, ManifestApplication} from "./CloudFoundryManifest";
 import { CloudFoundryPusher } from "./CloudFoundryPusher";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 import { ProjectArchiver } from "./ProjectArchiver";
 
 /**
- * Use the Cloud Foundry API to approximate their CLI to push.
- * Note that this is indeed thread safe concerning multiple logins and spaces.
+ * Use the Cloud Foundry API to orchestrae a blue green deployment.
  */
-export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
+export class CloudFoundryBlueGreenDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
 
     constructor(private readonly projectLoader: ProjectLoader) {
     }
@@ -63,11 +63,15 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
             const cfClient = await initializeCloudFoundry(cfi);
             const cfApi = new CloudFoundryApi(cfClient);
             const pusher = new CloudFoundryPusher(cfApi, cfi.space);
-            const deploymentPromises = manifest.applications.map(manifestApp => {
-                manifestApp["random-route"] = true; // always use a random route for now to match previous behavior
-                return pusher.push(manifestApp, packageFile, log);
+            const deployments: Array<Promise<CloudFoundryDeployment>> = manifest.applications.map(async manifestApp => {
+                const namer = new BlueGreenNamer(manifestApp.name);
+                const bger = new CloudFoundryBlueGreener(cfApi, pusher, namer, log);
+                await bger.cleanUpExistingBlueGreenApps();
+                const deployment = await bger.createNextAppWithRoutes(manifestApp, packageFile);
+                await bger.retireCurrentApp();
+                return deployment;
             });
-            return Promise.all(deploymentPromises);
+            return Promise.all(deployments);
         });
     }
 
@@ -83,16 +87,16 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
             const cfApi = new CloudFoundryApi(cfClient);
             const pusher = new CloudFoundryPusher(cfApi, cfi.space);
             const spaceGuid = await pusher.getSpaceGuid();
-            const apps = manifest.applications.map(async manifestApp => {
-                const app = await cfApi.getApp(spaceGuid, manifestApp.name);
-                if (app) {
-                    return manifestApp.name;
-                } else {
-                    return undefined;
-                }
+            const appNames = manifest.applications.map( manifestApp => {
+                const namer = new BlueGreenNamer(manifestApp.name);
+                return [namer.getCurrentAppName(), namer.getPreviousAppName(), namer.getNextAppName()];
             });
-            const appNames = _.compact(await Promise.all(apps));
-            return appNames.map(appName => {
+            const existingAppNames = _.flatten(appNames).map(async n => {
+                const app = await cfApi.getApp(spaceGuid, n);
+                return !!app ? n : undefined;
+            });
+            const onlyExistingAppNames: string[] = _.compact(await Promise.all(existingAppNames));
+            return onlyExistingAppNames.map(appName => {
                 return {
                     appName,
                 } as CloudFoundryDeployment;
