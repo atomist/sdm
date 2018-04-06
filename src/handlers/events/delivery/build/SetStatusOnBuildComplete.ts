@@ -56,7 +56,7 @@ export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subsc
                 return Success;
             }
             if (sdmGoal.fulfillment.method !== "side-effect" && sdmGoal.fulfillment.method !== "other") {
-                logger.info("This build goal is not one we want to complete based on the build node. %j",
+                logger.info("This build goal is not set up to be completed based on the build node. %j",
                     sdmGoal.fulfillment);
                 return Success;
             }

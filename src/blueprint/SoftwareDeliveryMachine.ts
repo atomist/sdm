@@ -484,6 +484,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.addVerifyImplementation();
 
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
+        this.knownSideEffect(BuildGoal, "from Build event");
     }
 
 }
