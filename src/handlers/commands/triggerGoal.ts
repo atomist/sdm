@@ -52,12 +52,12 @@ export class RetryGoalParameters {
 export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
     return commandHandlerFrom(triggerGoalsOnCommit(goal),
         RetryGoalParameters,
-        retryCommandNameFor(implementationName),
+        retryCommandNameFor(goal),
         "Retry an execution of " + goal.name, goal.retryIntent);
 }
 
-export function retryCommandNameFor(deployName: string) {
-    return "Retry" + deployName;
+export function retryCommandNameFor(goal: Goal) {
+    return "Retry" + goal.uniqueCamelCaseName;
 }
 
 function triggerGoalsOnCommit(goal: Goal) {

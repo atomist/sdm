@@ -88,7 +88,7 @@ async function reportError(parameters: {
     progressLog.write(sprintf("full error object: [%j]", err));
 
     const retryButton = buttonForCommand({text: "Retry"},
-        retryCommandNameFor(executeGoalInvocation.implementationName), {
+        retryCommandNameFor(executeGoalInvocation.goal), {
             repo: id.repo,
             owner: id.owner,
             sha: id.sha,
