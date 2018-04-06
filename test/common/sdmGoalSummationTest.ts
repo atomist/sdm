@@ -4,7 +4,6 @@ import * as assert from "power-assert";
 import { sumSdmGoalEvents } from "../../src/handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
 import { goalKeyEquals, SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 
-
 describe("Putting SdmGoal events together", () => {
    it("Lets the event we just received override out-of-date query results", () => {
        const successfulSdmGoal = successEvent.data.SdmGoal[0] as SdmGoal;
@@ -15,458 +14,457 @@ describe("Putting SdmGoal events together", () => {
        const statusOfInterest = result.filter(sg => goalKeyEquals(sg, successfulSdmGoal));
        assert(statusOfInterest.length === 1);
        assert(statusOfInterest[0].state === "success");
-   })
+   });
 });
 
-
 const successEvent = {
-    "data": {
-        "SdmGoal": [{
-            "externalKey": "sdm/atomist/0-code/0.2-autofix",
-            "description": "Autofixes OK", "preConditions": [], "name": "autofix", "goalSet": "HTTP Service",
-            "state": "success",
-            "ts": 1522981779513,
-            "fulfillment": {"method": "SDM fulfill on requested", "name": "Autofix"},
-            "url": null, "provenance": [{
-                "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                "name": "OnAnyRequestedSdmGoal", "registration": "@atomist/github-sdm",
-                "ts": 1522981779513, "version": "0.2.0"
+    data: {
+        SdmGoal: [{
+            externalKey: "sdm/atomist/0-code/0.2-autofix",
+            description: "Autofixes OK", preConditions: [], name: "autofix", goalSet: "HTTP Service",
+            state: "success",
+            ts: 1522981779513,
+            fulfillment: {method: "SDM fulfill on requested", name: "Autofix"},
+            url: null, provenance: [{
+                correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                name: "OnAnyRequestedSdmGoal", registration: "@atomist/github-sdm",
+                ts: 1522981779513, version: "0.2.0",
             },
                 {
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "name": "SetGoalsOnPush",
-                    "registration": "@atomist/github-sdm", "ts": 1522981774110, "version": "0.2.0"
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    name: "SetGoalsOnPush",
+                    registration: "@atomist/github-sdm", ts: 1522981774110, version: "0.2.0",
                 }],
-            "environment": "0-code",
-            "repo": {"name": "losgatos1", "owner": "satellite-of-love", "providerId": "zjlmxjzwhurspem"},
-            "branch": "master", "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784"
-        }]
+            environment: "0-code",
+            repo: {name: "losgatos1", owner: "satellite-of-love", providerId: "zjlmxjzwhurspem"},
+            branch: "master", sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+        }],
     },
-    "extensions": {
-        "operationName": "RequestDownstreamGoalsOnGoalSuccess",
-        "team_id": "T1JVCMVH7",
-        "team_name": "satellite-of-love",
-        "correlation_id": "a54666c9-18e6-4259-a097-faed328275d4"
-    }
+    extensions: {
+        operationName: "RequestDownstreamGoalsOnGoalSuccess",
+        team_id: "T1JVCMVH7",
+        team_name: "satellite-of-love",
+        correlation_id: "a54666c9-18e6-4259-a097-faed328275d4",
+    },
 };
 
 const queryResult = {
-    "SdmGoal": [
+    SdmGoal: [
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "1-staging",
-            "name": "deploy to Test",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "Maven test"
+            goalSet: "HTTP Service",
+            environment: "1-staging",
+            name: "deploy to Test",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "Maven test",
             },
-            "description": "Planning to deploy to Test",
-            "url": null,
-            "externalKey": "sdm/atomist/1-staging/3-deploy",
-            "ts": 1522981774111,
-            "preConditions": [
+            description: "Planning to deploy to Test",
+            url: null,
+            externalKey: "sdm/atomist/1-staging/3-deploy",
+            ts: 1522981774111,
+            preConditions: [
                 {
-                    "goalSet": "HTTP Service",
-                    "environment": "0-code",
-                    "name": "store artifact"
-                }
+                    goalSet: "HTTP Service",
+                    environment: "0-code",
+                    name: "store artifact",
+                },
             ],
-            "provenance": [
+            provenance: [
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774111
-                }
-            ]
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774111,
+                },
+            ],
         },
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "1-staging",
-            "name": "verify Test deployment",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "VerifyInStaging"
+            goalSet: "HTTP Service",
+            environment: "1-staging",
+            name: "verify Test deployment",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "VerifyInStaging",
             },
-            "description": "Planning to verify Test deployment",
-            "url": null,
-            "externalKey": "sdm/atomist/1-staging/5-verifyEndpoint",
-            "ts": 1522981774110,
-            "preConditions": [
+            description: "Planning to verify Test deployment",
+            url: null,
+            externalKey: "sdm/atomist/1-staging/5-verifyEndpoint",
+            ts: 1522981774110,
+            preConditions: [
                 {
-                    "goalSet": "HTTP Service",
-                    "environment": "1-staging",
-                    "name": "locate service endpoint in Test"
-                }
+                    goalSet: "HTTP Service",
+                    environment: "1-staging",
+                    name: "locate service endpoint in Test",
+                },
             ],
-            "provenance": [
+            provenance: [
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
         },
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "0-code",
-            "name": "store artifact",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "side-effect",
-                "name": "from ImageLinked"
+            goalSet: "HTTP Service",
+            environment: "0-code",
+            name: "store artifact",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "side-effect",
+                name: "from ImageLinked",
             },
-            "description": "Planning to store artifact",
-            "url": null,
-            "externalKey": "sdm/atomist/0-code/2.5-artifact",
-            "ts": 1522981774110,
-            "preConditions": [
+            description: "Planning to store artifact",
+            url: null,
+            externalKey: "sdm/atomist/0-code/2.5-artifact",
+            ts: 1522981774110,
+            preConditions: [
                 {
-                    "goalSet": "HTTP Service",
-                    "environment": "0-code",
-                    "name": "build"
-                }
+                    goalSet: "HTTP Service",
+                    environment: "0-code",
+                    name: "build",
+                },
             ],
-            "provenance": [
+            provenance: [
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
         },
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "0-code",
-            "name": "build",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "On any push"
+            goalSet: "HTTP Service",
+            environment: "0-code",
+            name: "build",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "On any push",
             },
-            "description": "Planning to build",
-            "url": null,
-            "externalKey": "sdm/atomist/0-code/2-build",
-            "ts": 1522981774114,
-            "preConditions": [
+            description: "Planning to build",
+            url: null,
+            externalKey: "sdm/atomist/0-code/2-build",
+            ts: 1522981774114,
+            preConditions: [
                 {
-                    "goalSet": "HTTP Service",
-                    "environment": "0-code",
-                    "name": "autofix"
-                }
+                    goalSet: "HTTP Service",
+                    environment: "0-code",
+                    name: "autofix",
+                },
             ],
-            "provenance": [
+            provenance: [
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774114
-                }
-            ]
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774114,
+                },
+            ],
         },
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "0-code",
-            "name": "fingerprint",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "in_process",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "Fingerprinter"
+            goalSet: "HTTP Service",
+            environment: "0-code",
+            name: "fingerprint",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "in_process",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "Fingerprinter",
             },
-            "description": "Working: fingerprint",
-            "url": null,
-            "externalKey": "sdm/atomist/0-code/0.1-fingerprint",
-            "ts": 1522981777109,
-            "preConditions": [],
-            "provenance": [
+            description: "Working: fingerprint",
+            url: null,
+            externalKey: "sdm/atomist/0-code/0.1-fingerprint",
+            ts: 1522981777109,
+            preConditions: [],
+            provenance: [
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "OnAnyRequestedSdmGoal",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981777109
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "OnAnyRequestedSdmGoal",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981777109,
                 },
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
-        },
-        {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
-            },
-            "goalSet": "HTTP Service",
-            "environment": "0-code",
-            "name": "review",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "success",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "Reviews"
-            },
-            "description": "Code review passed",
-            "url": null,
-            "externalKey": "sdm/atomist/0-code/1-review",
-            "ts": 1522981777149,
-            "preConditions": [],
-            "provenance": [
-                {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "OnAnyRequestedSdmGoal",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981777149
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
                 },
-                {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
-        },
-        {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
-            },
-            "goalSet": "HTTP Service",
-            "environment": "2-prod",
-            "name": "deploy to Prod",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "Maven production"
-            },
-            "description": "Planning to deploy to Prod",
-            "url": null,
-            "externalKey": "sdm/atomist/2-prod/3-prod-deploy",
-            "ts": 1522981774111,
-            "preConditions": [
-                {
-                    "goalSet": "HTTP Service",
-                    "environment": "0-code",
-                    "name": "store artifact"
-                },
-                {
-                    "goalSet": "HTTP Service",
-                    "environment": "1-staging",
-                    "name": "verify Test deployment"
-                }
             ],
-            "provenance": [
-                {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774111
-                }
-            ]
         },
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "1-staging",
-            "name": "locate service endpoint in Test",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "side-effect",
-                "name": "deploy to Test"
+            goalSet: "HTTP Service",
+            environment: "0-code",
+            name: "review",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "success",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "Reviews",
             },
-            "description": "Planning to locate service endpoint in Test",
-            "url": null,
-            "externalKey": "sdm/atomist/1-staging/4-endpoint",
-            "ts": 1522981774110,
-            "preConditions": [
+            description: "Code review passed",
+            url: null,
+            externalKey: "sdm/atomist/0-code/1-review",
+            ts: 1522981777149,
+            preConditions: [],
+            provenance: [
                 {
-                    "goalSet": "HTTP Service",
-                    "environment": "1-staging",
-                    "name": "deploy to Test"
-                }
-            ],
-            "provenance": [
-                {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
-        },
-        {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
-            },
-            "goalSet": "HTTP Service",
-            "environment": "2-prod",
-            "name": "locate service endpoint in Prod",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "planned",
-            "fulfillment": {
-                "method": "side-effect",
-                "name": "deploy to Prod"
-            },
-            "description": "Planning to locate service endpoint in Prod",
-            "url": null,
-            "externalKey": "sdm/atomist/2-prod/4-endpoint",
-            "ts": 1522981774110,
-            "preConditions": [
-                {
-                    "goalSet": "HTTP Service",
-                    "environment": "2-prod",
-                    "name": "deploy to Prod"
-                }
-            ],
-            "provenance": [
-                {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
-        },
-        {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
-            },
-            "goalSet": "HTTP Service",
-            "environment": "0-code",
-            "name": "autofix",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "in_process",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "Autofix"
-            },
-            "description": "Working: autofix",
-            "url": null,
-            "externalKey": "sdm/atomist/0-code/0.2-autofix",
-            "ts": 1522981777110,
-            "preConditions": [],
-            "provenance": [
-                {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "OnAnyRequestedSdmGoal",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981777110
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "OnAnyRequestedSdmGoal",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981777149,
                 },
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
         },
         {
-            "repo": {
-                "name": "losgatos1",
-                "owner": "satellite-of-love",
-                "providerId": "zjlmxjzwhurspem"
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
             },
-            "goalSet": "HTTP Service",
-            "environment": "0-code",
-            "name": "react",
-            "sha": "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
-            "branch": "master",
-            "state": "in_process",
-            "fulfillment": {
-                "method": "SDM fulfill on requested",
-                "name": "CodeReactions"
+            goalSet: "HTTP Service",
+            environment: "2-prod",
+            name: "deploy to Prod",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "Maven production",
             },
-            "description": "Working: react",
-            "url": null,
-            "externalKey": "sdm/atomist/0-code/1.5-react",
-            "ts": 1522981777110,
-            "preConditions": [],
-            "provenance": [
+            description: "Planning to deploy to Prod",
+            url: null,
+            externalKey: "sdm/atomist/2-prod/3-prod-deploy",
+            ts: 1522981774111,
+            preConditions: [
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "OnAnyRequestedSdmGoal",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981777110
+                    goalSet: "HTTP Service",
+                    environment: "0-code",
+                    name: "store artifact",
                 },
                 {
-                    "registration": "@atomist/github-sdm",
-                    "version": "0.2.0",
-                    "name": "SetGoalsOnPush",
-                    "correlationId": "a54666c9-18e6-4259-a097-faed328275d4",
-                    "ts": 1522981774110
-                }
-            ]
-        }
-    ]
+                    goalSet: "HTTP Service",
+                    environment: "1-staging",
+                    name: "verify Test deployment",
+                },
+            ],
+            provenance: [
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774111,
+                },
+            ],
+        },
+        {
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
+            },
+            goalSet: "HTTP Service",
+            environment: "1-staging",
+            name: "locate service endpoint in Test",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "side-effect",
+                name: "deploy to Test",
+            },
+            description: "Planning to locate service endpoint in Test",
+            url: null,
+            externalKey: "sdm/atomist/1-staging/4-endpoint",
+            ts: 1522981774110,
+            preConditions: [
+                {
+                    goalSet: "HTTP Service",
+                    environment: "1-staging",
+                    name: "deploy to Test",
+                },
+            ],
+            provenance: [
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
+        },
+        {
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
+            },
+            goalSet: "HTTP Service",
+            environment: "2-prod",
+            name: "locate service endpoint in Prod",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "planned",
+            fulfillment: {
+                method: "side-effect",
+                name: "deploy to Prod",
+            },
+            description: "Planning to locate service endpoint in Prod",
+            url: null,
+            externalKey: "sdm/atomist/2-prod/4-endpoint",
+            ts: 1522981774110,
+            preConditions: [
+                {
+                    goalSet: "HTTP Service",
+                    environment: "2-prod",
+                    name: "deploy to Prod",
+                },
+            ],
+            provenance: [
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
+        },
+        {
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
+            },
+            goalSet: "HTTP Service",
+            environment: "0-code",
+            name: "autofix",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "in_process",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "Autofix",
+            },
+            description: "Working: autofix",
+            url: null,
+            externalKey: "sdm/atomist/0-code/0.2-autofix",
+            ts: 1522981777110,
+            preConditions: [],
+            provenance: [
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "OnAnyRequestedSdmGoal",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981777110,
+                },
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
+        },
+        {
+            repo: {
+                name: "losgatos1",
+                owner: "satellite-of-love",
+                providerId: "zjlmxjzwhurspem",
+            },
+            goalSet: "HTTP Service",
+            environment: "0-code",
+            name: "react",
+            sha: "3523cd4fa9a1de6175af7364f3b6d3913a67f784",
+            branch: "master",
+            state: "in_process",
+            fulfillment: {
+                method: "SDM fulfill on requested",
+                name: "CodeReactions",
+            },
+            description: "Working: react",
+            url: null,
+            externalKey: "sdm/atomist/0-code/1.5-react",
+            ts: 1522981777110,
+            preConditions: [],
+            provenance: [
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "OnAnyRequestedSdmGoal",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981777110,
+                },
+                {
+                    registration: "@atomist/github-sdm",
+                    version: "0.2.0",
+                    name: "SetGoalsOnPush",
+                    correlationId: "a54666c9-18e6-4259-a097-faed328275d4",
+                    ts: 1522981774110,
+                },
+            ],
+        },
+    ],
 };

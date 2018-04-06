@@ -16,14 +16,14 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import * as stringify from "json-stringify-safe";
+import * as _ from "lodash";
 import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../util/git/repoRef";
-import * as _ from "lodash";
-import * as stringify from "json-stringify-safe";
 
 /**
  * Respond to a failure status by failing downstream goals
@@ -45,7 +45,6 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
 
         const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(ctx, sdmGoal.repo.providerId));
         const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
-
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
             .filter(expectToBeFulfilledAfterRequest)

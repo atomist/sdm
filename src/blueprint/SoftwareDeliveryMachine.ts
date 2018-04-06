@@ -75,6 +75,7 @@ import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
 import { PushRule } from "../common/listener/support/PushRule";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -90,7 +91,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { triggerGoal } from "../handlers/commands/triggerGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -163,7 +163,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
-    private readonly goalsThatCanBeRetried: Array<Goal> = [];
+    private readonly goalsThatCanBeRetried: Goal[] = [];
 
     public implementGoal(implementationName: string,
                          goal: Goal,
@@ -187,7 +187,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     }
 
     private get goalTriggerCommands() {
-        const goals = _.uniqBy(this.goalsThatCanBeRetried, (g) => g.uniqueCamelCaseName);
+        const goals = _.uniqBy(this.goalsThatCanBeRetried,
+            g => g.uniqueCamelCaseName);
         return goals.map(g => () => triggerGoal(g.uniqueCamelCaseName, g));
     }
 

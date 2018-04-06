@@ -69,8 +69,8 @@ function triggerGoalsOnCommit(goal: Goal) {
 
         // figure out which goalSet
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
-            const thisGoal = await findSdmGoalOnCommit(ctx, id, commandParams.providerId, goal);
-            if (!thisGoal) {
+        const thisGoal = await findSdmGoalOnCommit(ctx, id, commandParams.providerId, goal);
+        if (!thisGoal) {
                 await ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
                     sha.substr(0, 6)}. Ask Jess to implement this`);
                 return {code: 0};
@@ -80,7 +80,7 @@ function triggerGoalsOnCommit(goal: Goal) {
         await updateGoal(ctx, thisGoal,
             {
                 state: "requested",
-                description: "Manually reset"
+                description: "Manually reset",
             });
         return Success;
     };
