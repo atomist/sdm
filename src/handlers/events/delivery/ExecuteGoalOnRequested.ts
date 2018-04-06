@@ -25,6 +25,7 @@ import { environmentFromGoal } from "../../../common/delivery/goals/storeGoals";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { CommitForSdmGoal, OnRequestedSdmGoal, SdmGoalFields, SdmGoalRepo, StatusForExecuteGoal } from "../../../typings/types";
 import { executeGoal, validSubscriptionName } from "./verify/executeGoal";
+import { fetchCommitForSdmGoal } from "../../../common/delivery/goals/fetchGoalsOnCommit";
 
 export class ExecuteGoalOnRequested implements HandleEvent<OnRequestedSdmGoal.Subscription>,
     ExecuteGoalInvocation, EventHandlerMetadata {
@@ -90,14 +91,4 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
         context: sdmGoal.externalKey,
         description: sdmGoal.description,
     };
-}
-
-async function fetchCommitForSdmGoal(ctx: HandlerContext, goal: SdmGoalFields.Fragment & SdmGoalRepo.Fragment): Promise<CommitForSdmGoal.Commit> {
-    const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
-    const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
-        {name: "CommitForSdmGoal", variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch}});
-    if (!result || !result.Commit || result.Commit.length === 0) {
-        throw new Error("No commit found for goal " + stringify(variables));
-    }
-    return result.Commit[0];
 }

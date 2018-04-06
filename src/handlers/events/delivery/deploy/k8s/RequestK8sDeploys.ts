@@ -21,6 +21,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { ExecuteGoalInvocation, GoalExecutor } from "../../../../../common/delivery/goals/goalExecution";
 import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../common/delivery/deploy/runWithLog";
 
 export type K8Target = "testing" | "production";
 
@@ -30,11 +31,11 @@ export function k8AutomationDeployContext(target: K8Target): string {
     return `${K8TargetBase}${target}`;
 }
 
-export function requestDeployToK8s(target: K8Target): GoalExecutor {
-    return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
+export function requestDeployToK8s(target: K8Target): ExecuteGoalWithLog {
+    return async (rwlc: RunWithLogContext) => {
+        const { status, id, credentials } = rwlc;
         const commit = status.commit;
         const image = status.commit.image;
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
 
         if (!image) {
             logger.warn(`No image found on commit ${commit.sha}; can't deploy`);
@@ -42,7 +43,8 @@ export function requestDeployToK8s(target: K8Target): GoalExecutor {
         }
 
         logger.info(`Requesting deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-        await createStatus(params.githubToken, id as GitHubRepoRef, {
+        // we want this to communicate via the status directly.
+        await createStatus((credentials as TokenCredentials).token, id as GitHubRepoRef, {
             context: k8AutomationDeployContext(target),
             state: "pending",
             description: "Requested deploy by k8-automation",
