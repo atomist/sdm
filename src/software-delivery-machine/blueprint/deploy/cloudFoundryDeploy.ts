@@ -15,6 +15,7 @@
  */
 
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import {CloudFoundryBlueGreenDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryBlueGreenDeployer";
 import {CloudFoundryPushDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
 import {
     CloudFoundryInfo,
@@ -32,7 +33,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
-import {CloudFoundryBlueGreenDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryBlueGreenDeployer";
 
 export const CloudFoundryStagingTarget = new EnvironmentCloudFoundryTarget("staging");
 
