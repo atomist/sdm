@@ -42,6 +42,7 @@ export interface SdmGoal extends SdmGoalKey {
 
     description: string;
     url?: string;
+    goalSet: string;
     state: SdmGoalState;
     ts: number;
 
@@ -69,7 +70,6 @@ export interface SdmProvenance {
 }
 
 export interface SdmGoalKey {
-    goalSet: string;
     environment: string;
     name: string;
 }
@@ -82,13 +82,12 @@ export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => 
 }
 
 export function goalKeyEquals(a: SdmGoalKey, b: SdmGoalKey): boolean {
-    return a.goalSet === b.goalSet &&
-        a.environment === b.environment &&
+    return a.environment === b.environment &&
         a.name === b.name;
 }
 
 export function goalKeyString(gk: SdmGoalKey): string {
-    return sprintf("%s/%s/%s", gk.goalSet, gk.environment, gk.name);
+    return sprintf("%s in %s", gk.name, gk.environment);
 }
 
 export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
@@ -112,10 +111,6 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withStringField("method")
         .withStringField("name"))
     .withType(type(GoalRootType)
-        .withStringField(
-            "goalSet",
-            "Goal set the goal is a part of",
-            ["compositeId"])
         .withStringField(
             "environment",
             "Environment the goal runs in",
@@ -154,7 +149,11 @@ export const SdmGoalIngester: IngesterBuilder = ingester(GoalRootType)
         .withStringField(
             "externalKey",
             "key to a corresponding commit status in GitHub/BitBucket (optional)")
+        .withStringField(
+            "goalSet",
+            "Goal set the goal is a part of")
         .withIntField(
+
             "ts",
             "Timestamp of goal")
         .withStringField(

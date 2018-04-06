@@ -41,7 +41,7 @@ export class Goal {
     public readonly context: GitHubStatusContext;
     public readonly name: string;
     public readonly definition: GoalDefinition;
-    public readonly retryCommandName: string;
+    public readonly uniqueCamelCaseName: string;
 
     get environment() {
         return this.definition.environment;
@@ -84,7 +84,7 @@ export class Goal {
         this.name = definition.displayName || matchGoal[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
 
-        this.retryCommandName = definition.uniqueCamelCaseName;
+        this.uniqueCamelCaseName = definition.uniqueCamelCaseName;
     }
 
     // TODO decouple from github statuses

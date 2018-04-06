@@ -90,6 +90,7 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -162,17 +163,32 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
+    private readonly goalsThatCanBeRetried: Array<Goal> = [];
+
     public implementGoal(implementationName: string,
                          goal: Goal,
                          goalExecutor: ExecuteGoalWithLog,
                          pushTest?: PushTest,
                          logInterpreter?: LogInterpreter): this {
+        this.goalsThatCanBeRetried.push(goal);
         this.goalFulfillmentMapper.addImplementation({
             implementationName, goal, goalExecutor,
             pushTest: pushTest || AnyPush,
             logInterpreter: logInterpreter || lastTenLinesLogInterpreter(implementationName),
         });
         return this;
+    }
+
+    public knownSideEffect(goal: Goal, sideEffectName: string, pushTest: PushTest = AnyPush) {
+        this.goalFulfillmentMapper.addSideEffect({
+            goal,
+            sideEffectName, pushTest,
+        });
+    }
+
+    private get goalTriggerCommands() {
+        const goals = _.uniqBy(this.goalsThatCanBeRetried, (g) => g.uniqueCamelCaseName);
+        return goals.map(g => () => triggerGoal(g.uniqueCamelCaseName, g));
     }
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
@@ -297,6 +313,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat([this.showBuildLog])
+            .concat(this.goalTriggerCommands)
             .filter(m => !!m);
     }
 
@@ -439,13 +456,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 r.value.deployGoal.definition.displayName);
         });
         return this;
-    }
-
-    public knownSideEffect(goal: Goal, sideEffectName: string, pushTest: PushTest = AnyPush) {
-        this.goalFulfillmentMapper.addSideEffect({
-            goal,
-            sideEffectName, pushTest,
-        });
     }
 
     /**
