@@ -22,6 +22,8 @@ import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
 import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../util/git/repoRef";
+import * as _ from "lodash";
+import * as stringify from "json-stringify-safe";
 
 /**
  * Respond to a failure status by failing downstream goals
@@ -42,7 +44,8 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         }
 
         const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(ctx, sdmGoal.repo.providerId));
-        const goals = await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[];
+        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
             .filter(expectToBeFulfilledAfterRequest)
@@ -68,6 +71,24 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
 
         return Success;
     }
+}
+
+export function sumSdmGoalEvents(some: SdmGoal[], more: SdmGoal[]): SdmGoal[] {
+    const byKey = _.groupBy(some.concat(more), (sg => goalKeyString(sg)));
+    logger.debug("goals by key: " + stringify(byKey, null, 2)); // take this out after it works
+    const summedGoals = Object.keys(byKey).map(k => sumEventsForOneSdmGoal(byKey[k]));
+    return summedGoals;
+}
+
+function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
+    if (events.length === 1) {
+        return events[0];
+    }
+    // here, I could get clever and sort by timestamp, or someday build a graph if they link to prior versions,
+    // or get smart about statuses. Let me be lazy.
+    logger.debug("Found %d events for %s. Taking the last one, which has state %s", events.length, goalKeyString(events[0]),
+        events[events.length - 1].state);
+    return events[events.length - 1];
 }
 
 async function fetchScmProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
