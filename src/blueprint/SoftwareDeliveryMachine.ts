@@ -63,11 +63,9 @@ import { FingerprintDifferenceListener } from "../common/listener/FingerprintDif
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
-import { PushMapping } from "../common/listener/PushMapping";
 import { PushTest } from "../common/listener/PushTest";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
-import { PushRules } from "../common/listener/support/PushRules";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
@@ -75,7 +73,6 @@ import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymen
 import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { ExecuteGoalOnRequested } from "../handlers/events/delivery/ExecuteGoalOnRequested";
 
 import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
