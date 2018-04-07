@@ -15,6 +15,7 @@
  */
 
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
+import {CloudFoundryBlueGreenDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryBlueGreenDeployer";
 import {CloudFoundryPushDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
 import {
     CloudFoundryInfo,
@@ -46,7 +47,7 @@ export function cloudFoundryStagingDeploySpec(opts: {artifactStore: ArtifactStor
         deployGoal: StagingDeploymentGoal,
         endpointGoal: StagingEndpointGoal,
         artifactStore: opts.artifactStore,
-        deployer: new CloudFoundryPushDeployer(opts.projectLoader),
+        deployer: new CloudFoundryBlueGreenDeployer(opts.projectLoader),
         targeter: () => CloudFoundryStagingTarget,
     };
 }
@@ -57,7 +58,7 @@ export function cloudFoundryProductionDeploySpec(opts: {artifactStore: ArtifactS
         deployGoal: ProductionDeploymentGoal,
         endpointGoal: ProductionEndpointGoal,
         artifactStore: opts.artifactStore,
-        deployer: new CloudFoundryPushDeployer(opts.projectLoader),
+        deployer: new CloudFoundryBlueGreenDeployer(opts.projectLoader),
         targeter: () => CloudFoundryProductionTarget,
     };
 }
