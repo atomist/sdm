@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { Success } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../delivery/deploy/runWithLog";
