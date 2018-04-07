@@ -15,7 +15,7 @@
             "never-prefix"
         ],
         "max-classes-per-file": 7,
-        "max-file-line-count": [true, 500],
+        "max-file-line-count": [true, 400],
         "object-literal-sort-keys": false,
         "member-ordering": false,
         "max-line-length": [true, 150],

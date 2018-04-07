@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// tslint:disable:max-file-line-count
+
 import "mocha";
 import * as assert from "power-assert";
 import { sumSdmGoalEvents } from "../../src/handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
