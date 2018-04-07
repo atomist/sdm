@@ -75,10 +75,10 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
     );
     sdm.addBuildRules(
         build.setDefault(new K8sAutomationBuilder()))
-        .implementGoal("K8TestDeploy",
+        .addGoalImplementation("K8TestDeploy",
             StagingDeploymentGoal,
             requestDeployToK8s(K8sTestingDomain))
-        .implementGoal("K8ProductionDeploy",
+        .addGoalImplementation("K8ProductionDeploy",
             ProductionDeploymentGoal,
             requestDeployToK8s(K8sProductionDomain))
         .addNewRepoWithCodeActions(suggestAddingK8sSpec)

@@ -94,7 +94,7 @@ describe("implementing goals in the SDM", () => {
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
                 .setGoals(new Goals("Springer", customGoal)))
-            .implementGoal("Cornelius",
+            .addGoalImplementation("Cornelius",
                 customGoal,
                 goalExecutor,
             );

@@ -176,15 +176,19 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * @param {string} implementationName
      * @param {Goal} goal
      * @param {ExecuteGoalWithLog} goalExecutor
-     * @param {PushTest} pushTest
-     * @param {LogInterpreter} logInterpreter
+     * @param {PushTest} pushTest PushTest that narrows whether this implementation
+     * should be used for present goal. It's possible to make multiple
+     * calls to this method with different implementations chosen by different
+     * PushTests.
+     * @param {LogInterpreter} logInterpreter LogInterpreter that can handle
+     * the log from the goalExecutor function
      * @return {this}
      */
-    public implementGoal(implementationName: string,
-                         goal: Goal,
-                         goalExecutor: ExecuteGoalWithLog,
-                         pushTest?: PushTest,
-                         logInterpreter?: LogInterpreter): this {
+    public addGoalImplementation(implementationName: string,
+                                 goal: Goal,
+                                 goalExecutor: ExecuteGoalWithLog,
+                                 pushTest?: PushTest,
+                                 logInterpreter?: LogInterpreter): this {
         this.goalFulfillmentMapper.addImplementation({
             implementationName, goal, goalExecutor,
             pushTest: pushTest || AnyPush,
@@ -261,7 +265,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             endpointGoal: StagingEndpointGoal,
             requestApproval: true,
         };
-        return this.implementGoal("VerifyInStaging",
+        return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
             executeVerifyEndpoint(stagingVerification));
     }
@@ -437,11 +441,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addBuildRules(...rules: Array<PushRule<Builder>>): this {
         rules.forEach(r =>
-            this.implementGoal(r.name, BuildGoal,
+            this.addGoalImplementation(r.name, BuildGoal,
                 executeBuild(this.opts.projectLoader, r.choice.value),
                 r.choice.guard,
                 r.choice.value.logInterpreter)
-                .implementGoal(r.name, JustBuildGoal,
+                .addGoalImplementation(r.name, JustBuildGoal,
                     executeBuild(this.opts.projectLoader, r.choice.value),
                     r.choice.guard,
                     r.choice.value.logInterpreter));
@@ -450,7 +454,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {
-            this.implementGoal(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
+            this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter);
             this.knownSideEffect(
                 r.value.endpointGoal,
@@ -488,14 +492,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         addGitHubSupport(this);
         this.addSupportingCommands(selfDescribeHandler(this));
 
-        this.implementGoal("Autofix", AutofixGoal,
+        this.addGoalImplementation("Autofix", AutofixGoal,
             executeAutofixes(this.opts.projectLoader, this.autofixRegistrations))
-            .implementGoal("DoNothing", NoGoal, executeImmaterial)
-            .implementGoal("Fingerprinter", FingerprintGoal,
+            .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
+            .addGoalImplementation("Fingerprinter", FingerprintGoal,
                 executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
-            .implementGoal("CodeReactions", CodeReactionGoal,
+            .addGoalImplementation("CodeReactions", CodeReactionGoal,
                 executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
-            .implementGoal("Reviews", ReviewGoal,
+            .addGoalImplementation("Reviews", ReviewGoal,
                 executeReview(this.opts.projectLoader, this.reviewerRegistrations))
             .addVerifyImplementation();
 

@@ -55,11 +55,11 @@ export function evangelicalMachine(options: EvangelicalMachineOptions): Software
             .setGoals(EnableSpringBoot),
     );
 
-    sdm.implementGoal("ImmaterialChangeToJava",
+    sdm.addGoalImplementation("ImmaterialChangeToJava",
         ImmaterialChangeToJava,
         sendMessageToSlack("Looks like you didn't change Java in a material way. " +
             "Atomist could prevent you needing to build! :atomist_build_started:"))
-        .implementGoal("EnableSpringBoot",
+        .addGoalImplementation("EnableSpringBoot",
             EnableSpringBoot,
             sendMessageToSlack("Congratulations. You're using Spring Boot. It's cool :sunglasses: and so is Atomist. " +
                 "Atomist knows lots about Spring Boot and would love to help"))
