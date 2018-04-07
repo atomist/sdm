@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-import { Success } from "@atomist/automation-client";
-import { SlackMessage } from "@atomist/slack-messages";
 import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
 import { springBootTagger } from "@atomist/spring-automation/commands/tag/springTagger";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../common/delivery/deploy/runWithLog";
 import { MessageGoal } from "../../common/delivery/goals/common/MessageGoal";
-import { ExecuteGoalResult } from "../../common/delivery/goals/goalExecution";
 import { ToDefaultBranch } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { tagRepo } from "../../common/listener/support/tagRepo";
+import { executeSendMessageToSlack } from "../../common/slack/executeSendMessageToSlack";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import { EnableDeployOnCloudFoundryManifestAddition } from "../blueprint/deploy/cloudFoundryDeploy";
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
@@ -55,13 +52,15 @@ export function evangelicalMachine(options: EvangelicalMachineOptions): Software
             .setGoals(EnableSpringBoot),
     );
 
+    // TODO check if we've sent the message before.
+    // Could do in a PushTest
     sdm.addGoalImplementation("ImmaterialChangeToJava",
         ImmaterialChangeToJava,
-        sendMessageToSlack("Looks like you didn't change Java in a material way. " +
+        executeSendMessageToSlack("Looks like you didn't change Java in a material way. " +
             "Atomist could prevent you needing to build! :atomist_build_started:"))
         .addGoalImplementation("EnableSpringBoot",
             EnableSpringBoot,
-            sendMessageToSlack("Congratulations. You're using Spring Boot. It's cool :sunglasses: and so is Atomist. " +
+            executeSendMessageToSlack("Congratulations. You're using Spring Boot. It's cool :sunglasses: and so is Atomist. " +
                 "Atomist knows lots about Spring Boot and would love to help"))
         .addNewRepoWithCodeActions(
             suggestAddingCloudFoundryManifest,
@@ -79,12 +78,4 @@ export function evangelicalMachine(options: EvangelicalMachineOptions): Software
     // addTeamPolicies(sdm);
     addDemoEditors(sdm);
     return sdm;
-}
-
-// TODO check if we've sent the message before
-export function sendMessageToSlack(msg: string | SlackMessage): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        await rwlc.addressChannels(msg);
-        return Success;
-    };
 }
