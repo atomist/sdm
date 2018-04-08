@@ -31,7 +31,7 @@ export function nodeGenerator(config: GeneratorConfig,
     return generatorHandler<NodeProjectCreationParameters>(
         transformSeed,
         () => new NodeProjectCreationParameters(config),
-        "nodeGenerator",
+        `nodeGenerator-${config.seedRepo}`,
         {
             tags: ["node", "typescript"],
             ...details,
