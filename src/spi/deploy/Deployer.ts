@@ -36,13 +36,13 @@ export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deploymen
     /**
      * Find all deployments of the artifact or app
      * @param id of the project
-     * @param {T} target info
-     * @param creds
+     * @param ti
+     * @param credentials
      * @return {Promise<Array<Promise<Deployment>>>}
      */
-    findDeployments?(id: RemoteRepoRef,
-                     ti: T,
-                     creds: ProjectOperationCredentials): Promise<U[]>;
+    findDeployments(id: RemoteRepoRef,
+                    ti: T,
+                    credentials: ProjectOperationCredentials): Promise<U[]>;
 
     /**
      * Deploy the app returning a promise of deployments

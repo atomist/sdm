@@ -28,6 +28,8 @@ import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { identification } from "../../build/local/maven/pomParser";
 
 
 /**
@@ -35,6 +37,7 @@ import { ExecuteGoalResult } from "../../goals/goalExecution";
  * Note that this isn't thread safe concerning multiple logins or spaces.
  */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
+
 
     constructor(private readonly projectLoader: ProjectLoader) {
     }
@@ -94,6 +97,17 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                 });
                 childProcess.addListener("error", reject);
             })];
+        });
+    }
+
+    public async findDeployments(id: RemoteRepoRef, ti: CloudFoundryInfo, credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
+        // This may or may not be deployed. For now, let's guess that it is.
+        return  this.projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+            const pom = await project.findFile("pom.xml");
+            const content = await pom.getContent();
+            const va = await identification(content);
+
+            return [{appName: va.artifact}]
         });
     }
 
