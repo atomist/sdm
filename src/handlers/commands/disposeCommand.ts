@@ -70,11 +70,14 @@ function disposeOfProject(rules: ChooseAndSetGoalsRules) {
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
         const push = await fetchPushForCommit(ctx, id, commandParams.providerId);
 
-        await chooseAndSetGoals(rules, {
+        const determinedGoals = await chooseAndSetGoals(rules, {
             context: ctx,
             credentials: { token: commandParams.githubToken },
             push
         });
+        if (!determinedGoals) {
+            await ctx.messageClient.respond("I don't know how to dispose of this project.")
+        }
         return Success;
     };
 }
