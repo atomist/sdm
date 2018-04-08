@@ -91,16 +91,19 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     }
 }
 
-export async function chooseAndSetGoals(rules: {
+export type ChooseAndSetGoalsRules = {
     projectLoader: ProjectLoader,
     goalsListeners: GoalsSetListener[],
     goalSetters: GoalSetter[],
     implementationMapping: SdmGoalImplementationMapper,
-}, parameters: {
-    context: HandlerContext,
-    credentials: ProjectOperationCredentials,
-    push: PushFields.Fragment,
-}) {
+}
+
+export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
+                                        parameters: {
+                                            context: HandlerContext,
+                                            credentials: ProjectOperationCredentials,
+                                            push: PushFields.Fragment,
+                                        }) {
     const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     const {context, credentials, push} = parameters;
     const id = repoRefFromPush(push);

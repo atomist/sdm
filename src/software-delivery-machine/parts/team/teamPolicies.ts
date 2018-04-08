@@ -17,7 +17,6 @@
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
 import { GraphGoalsToSlack } from "../../../common/delivery/goals/graph/graphGoalsToSlack";
 import { OnDryRunBuildComplete } from "../../../handlers/events/dry-run/OnDryRunBuildComplete";
-import { disposeProjectHandler } from "../../blueprint/deploy/dispose";
 import { PostToDeploymentsChannel } from "../../blueprint/deploy/postToDeploymentsChannel";
 import { capitalizer } from "../../blueprint/issue/capitalizer";
 import { requestDescription } from "../../blueprint/issue/requestDescription";
@@ -41,9 +40,6 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
             PublishNewRepo)
 
         .addDeploymentListeners(PostToDeploymentsChannel)
-        .addSupportingCommands(
-            () => disposeProjectHandler,
-        )
         .addSupportingEvents(OnDryRunBuildComplete)
         /*.addAutofixes({
             name: "License Fix",
