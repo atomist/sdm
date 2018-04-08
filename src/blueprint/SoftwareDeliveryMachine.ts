@@ -567,7 +567,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .addVerifyImplementation()
             .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
                 offerToDeleteRepository())
-            .addGoalImplementation("OfferToDeleteRepo", DeleteAfterUndeploysGoal,
+            .addGoalImplementation("OfferToDeleteRepoAfterUndeploys", DeleteAfterUndeploysGoal,
             offerToDeleteRepository());
 
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
