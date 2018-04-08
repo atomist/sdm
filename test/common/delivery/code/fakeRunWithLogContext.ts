@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RunWithLogContext } from "../../../../src/common/delivery/deploy/runWithLog";
+import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/runWithLog";
 import { fakeContext } from "../../../software-delivery-machine/FakeContext";
 import { RemoteRepoRef, RepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { ConsoleProgressLog } from "../../../../src/common/log/progressLogs";

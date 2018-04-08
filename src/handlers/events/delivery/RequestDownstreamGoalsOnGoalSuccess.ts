@@ -18,7 +18,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { fetchGoalsForCommit } from "../../../common/delivery/goals/fetchGoalsOnCommit";
+import { fetchGoalsForCommit } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
 import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";

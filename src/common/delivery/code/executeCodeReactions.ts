@@ -19,7 +19,7 @@ import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/
 import { CodeReactionInvocation, CodeReactionRegistration } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../deploy/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 import { relevantCodeActions } from "./codeActionRegistrations";
 
 export function executeCodeReactions(projectLoader: ProjectLoader,

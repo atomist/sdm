@@ -18,16 +18,16 @@ import { HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { sprintf } from "sprintf-js";
-import { retryCommandNameFor } from "../../../handlers/commands/triggerGoal";
-import { InterpretedLog, LogInterpreter } from "../../../spi/log/InterpretedLog";
-import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
-import { reportFailureInterpretation } from "../../../util/slack/reportFailureInterpretation";
-import { SdmContext } from "../../context/SdmContext";
-import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
-import { ConsoleProgressLog, MultiProgressLog } from "../../log/progressLogs";
-import { AddressChannels, addressChannelsFor } from "../../slack/addressChannels";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
+import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
+import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../../typings/types";
+import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { SdmContext } from "../../../context/SdmContext";
+import { createEphemeralProgressLog } from "../../../log/EphemeralProgressLog";
+import { ConsoleProgressLog, MultiProgressLog } from "../../../log/progressLogs";
+import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
+import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goalExecution";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 

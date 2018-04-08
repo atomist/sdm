@@ -26,7 +26,7 @@ import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter }
 import * as _ from "lodash";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "./runWithLog";
+import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;

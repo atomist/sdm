@@ -57,7 +57,6 @@ import { executeFingerprinting } from "../common/delivery/code/fingerprint/execu
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
-import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delivery/deploy/runWithLog";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
@@ -96,6 +95,7 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delivery/goals/support/runWithLog";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

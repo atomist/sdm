@@ -22,7 +22,7 @@ import * as _ from "lodash";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { Fingerprinter } from "../../../listener/Fingerprinter";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 
 /**
  * Execute fingerprinting

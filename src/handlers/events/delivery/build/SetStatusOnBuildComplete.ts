@@ -21,7 +21,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/fetchGoalsOnCommit";
+import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";

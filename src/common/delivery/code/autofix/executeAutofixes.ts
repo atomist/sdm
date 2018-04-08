@@ -25,7 +25,7 @@ import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";

@@ -23,10 +23,10 @@ import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
-import { findSdmGoalOnCommit } from "../goals/fetchGoalsOnCommit";
+import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
 import { Goal } from "../goals/Goal";
 import { descriptionFromState, updateGoal } from "../goals/storeGoals";
-import { RunWithLogContext } from "./runWithLog";
+import { RunWithLogContext } from "../goals/support/runWithLog";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 

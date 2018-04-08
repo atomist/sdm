@@ -24,13 +24,11 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { StatusForExecuteGoal } from "../../../../typings/types";
 import { filesChangedSince } from "../../../../util/git/filesChangedSince";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
-import { ExecuteGoalInvocation, GoalExecutor } from "../../goals/goalExecution";
+import { AddressChannels } from "../../../slack/addressChannels";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 
