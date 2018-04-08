@@ -22,7 +22,7 @@ import { SemVerRegExp } from "../../../../common/command/commonPatterns";
 import { GeneratorConfig } from "../GeneratorConfig";
 
 /**
- * Creates a GitHub Repo and installs Atomist collaborator if necessary
+ * Parameters for creating a Node project.
  */
 @Parameters()
 export class NodeProjectCreationParameters extends BaseSeedDrivenGeneratorParameters {
@@ -33,7 +33,7 @@ export class NodeProjectCreationParameters extends BaseSeedDrivenGeneratorParame
     @Parameter({
         displayName: "App name",
         description: "Application name",
-        pattern: /^(@?[a-z][-a-z0-9_]*)$/,
+        pattern: /^(@?[A-Za-z][-A-Za-z0-9_]*)$/,
         validInput: "a valid package.json application name, which starts with a lower-case letter and contains only " +
         " alphanumeric, -, and _ characters, or `${projectName}` to use the project name",
         minLength: 1,

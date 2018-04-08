@@ -23,8 +23,7 @@ import { SemVerRegExp } from "../../../../common/command/commonPatterns";
 import { JavaPackageRegExp, MavenArtifactIdRegExp, MavenGroupIdRegExp } from "../../../../common/command/javaPatterns";
 
 /**
- * Superclass for all Java seeds using Maven. Updates Maven pom
- * based on parameters.
+ * Superclass for all Java project generator parameters.
  */
 @Parameters()
 export class JavaProjectCreationParameters extends BaseSeedDrivenGeneratorParameters

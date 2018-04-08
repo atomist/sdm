@@ -23,8 +23,6 @@ import { JavaProjectCreationParameters } from "../JavaProjectCreationParameters"
 
 /**
  * Parameters for creating Spring Boot apps.
- * Customize spring-automations default parameters to default our group
- * and choose our seed
  */
 export class SpringProjectCreationParameters extends JavaProjectCreationParameters {
 
