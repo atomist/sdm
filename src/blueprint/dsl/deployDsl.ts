@@ -26,7 +26,7 @@ export class DeployPushRule extends PushRule<Target> {
         super(guard1, guards, reason);
     }
 
-    public deployTo(deployGoal: Goal, endpointGoal: Goal) {
+    public deployTo(deployGoal: Goal, endpointGoal: Goal, undeployGoal: Goal) {
         const outer = this;
         return {
             using(t: DeployerInfo<any>): StaticPushMapping<Target<any>> {
@@ -34,6 +34,7 @@ export class DeployPushRule extends PushRule<Target> {
                     ...t,
                     deployGoal,
                     endpointGoal,
+                    undeployGoal,
                 });
                 return outer.choice;
             },

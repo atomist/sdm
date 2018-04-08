@@ -18,7 +18,7 @@ import { springBootTagger } from "@atomist/spring-automation/commands/tag/spring
 import * as deploy from "../../../blueprint/dsl/deployDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../../blueprint/SoftwareDeliveryMachine";
 import { ManagedDeploymentTargeter } from "../../../common/delivery/deploy/local/appManagement";
-import { LocalDeploymentGoal, LocalEndpointGoal } from "../../../common/delivery/goals/common/commonGoals";
+import { LocalDeploymentGoal, LocalEndpointGoal, LocalUndeploymentGoal } from "../../../common/delivery/goals/common/commonGoals";
 import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { listLocalDeploys } from "../../../handlers/commands/listLocalDeploys";
@@ -37,7 +37,7 @@ export function addSpringSupport(softwareDeliveryMachine: SoftwareDeliveryMachin
         .addDeployRules(
             deploy.when(IsMaven)
                 .itMeans("Maven local deploy")
-                .deployTo(LocalDeploymentGoal, LocalEndpointGoal)
+                .deployTo(LocalDeploymentGoal, LocalEndpointGoal, LocalUndeploymentGoal)
                 .using(
                     {
                         deployer: mavenSourceDeployer(options.projectLoader),

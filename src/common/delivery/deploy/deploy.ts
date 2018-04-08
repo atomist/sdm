@@ -33,6 +33,7 @@ export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string)
 export interface DeployStage {
     deployGoal: Goal;
     endpointGoal: Goal;
+    undeployGoal: Goal;
 }
 
 export interface DeployerInfo<T extends TargetInfo> {

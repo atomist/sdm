@@ -165,6 +165,14 @@ export const LocalDeploymentGoal = new Goal({
     completedDescription: "Deployed locally",
 });
 
+
+export const LocalUndeploymentGoal = new Goal({
+    uniqueCamelCaseName: "UndeployHere",
+    environment: IndependentOfEnvironment,
+    orderedName: "8-undeploy-locally",
+    completedDescription: "Undeployed locally",
+});
+
 // not an enforced precondition, but it's real enough to graph
 export const LocalEndpointGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "FindLocalEndpoint",
