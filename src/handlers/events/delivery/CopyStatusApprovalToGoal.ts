@@ -16,8 +16,8 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { fetchGoalsForCommit } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../common/delivery/goals/storeGoals";
+import { fetchGoalsForCommit } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { OnAnySuccessStatus } from "../../../typings/types";
 import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";

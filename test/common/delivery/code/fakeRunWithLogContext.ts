@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/runWithLog";
-import { fakeContext } from "../../../software-delivery-machine/FakeContext";
 import { RemoteRepoRef, RepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/runWithLog";
 import { ConsoleProgressLog } from "../../../../src/common/log/progressLogs";
 import { StatusForExecuteGoal, StatusState } from "../../../../src/typings/types";
+import { fakeContext } from "../../../software-delivery-machine/FakeContext";
 
 export function fakeRunWithLogContext(id: RemoteRepoRef): RunWithLogContext {
     return {
@@ -26,6 +26,7 @@ export function fakeRunWithLogContext(id: RemoteRepoRef): RunWithLogContext {
         context: fakeContext("T1111"),
         id,
         addressChannels: async () => {
+            // do nothing
         },
         status: fakeStatus(id),
         progressLog: new ConsoleProgressLog(),

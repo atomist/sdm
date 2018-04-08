@@ -68,7 +68,7 @@ import { FingerprintDifferenceListener } from "../common/listener/FingerprintDif
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
-import { PushTest, pushTest } from "../common/listener/PushTest";
+import { PushTest } from "../common/listener/PushTest";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
@@ -79,6 +79,8 @@ import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
+import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
+import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
@@ -95,8 +97,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
-import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -491,7 +491,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * @param {string} sideEffectName
      * @param {PushTest} pushTest
      */
-    public knownSideEffect(goal: Goal, sideEffectName: string, pushTest: PushTest = AnyPush) {
+    public knownSideEffect(goal: Goal, sideEffectName: string,
+                           pushTest: PushTest = AnyPush) {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
             sideEffectName, pushTest,

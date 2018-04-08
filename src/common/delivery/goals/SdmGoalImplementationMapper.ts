@@ -18,8 +18,8 @@ import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushTest } from "../../listener/PushTest";
-import { ExecuteGoalWithLog } from "./support/runWithLog";
 import { Goal } from "./Goal";
+import { ExecuteGoalWithLog } from "./support/runWithLog";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
 

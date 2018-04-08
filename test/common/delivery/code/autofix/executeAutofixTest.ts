@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import "mocha";
-import { SingleProjectLoader } from "../../../SingleProjectLoader";
-import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
-import * as assert from "power-assert";
-import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import "mocha";
+import * as assert from "power-assert";
+import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
+import { SingleProjectLoader } from "../../../SingleProjectLoader";
+import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
 
 describe("executeAutofixes", () => {
 
-    it("should execute none", async() => {
+    it("should execute none", async () => {
         const id = new GitHubRepoRef("a", "b");
         const pl = new SingleProjectLoader({ id } as any);
         const r = await executeAutofixes(pl, [])(fakeRunWithLogContext(id));

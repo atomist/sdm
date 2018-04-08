@@ -18,6 +18,7 @@ import { HandlerContext, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
@@ -25,10 +26,9 @@ import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
-import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 
 /**
  * Execute autofixes against this push

@@ -17,8 +17,8 @@
 import { logger } from "@atomist/automation-client";
 import { Builder } from "../../../spi/build/Builder";
 import { ProjectLoader } from "../../repo/ProjectLoader";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 import { ExecuteGoalResult } from "../goals/goalExecution";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 
 /**
  * Execute build with the appropriate builder
