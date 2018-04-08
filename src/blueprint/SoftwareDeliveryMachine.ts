@@ -101,6 +101,7 @@ import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { executeUndeploy } from "../common/delivery/deploy/executeUndeploy";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
+import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -295,13 +296,18 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
-    private get disposalCommand(): Maker<HandleCommand<any>> {
-        return () => disposeCommand({
-            goalSetters: this.disposalGoalSetters,
-            projectLoader: this.opts.projectLoader,
-            goalsListeners: this.goalsSetListeners,
-            implementationMapping: this.goalFulfillmentMapper,
-        });
+    private get disposal(): FunctionalUnit {
+        return {
+            commandHandlers: [
+                () => disposeCommand({
+                    goalSetters: this.disposalGoalSetters,
+                    projectLoader: this.opts.projectLoader,
+                    goalsListeners: this.goalsSetListeners,
+                    implementationMapping: this.goalFulfillmentMapper,
+                }),
+                () => deleteRepositoryCommand()],
+            eventHandlers: []
+        };
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
@@ -318,6 +324,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat([
                 this.goalSetting,
                 this.goalConsequences,
+                this.disposal,
             ]);
     }
 
@@ -347,7 +354,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat([this.showBuildLog])
-            .concat([this.disposalCommand])
             .filter(m => !!m);
     }
 

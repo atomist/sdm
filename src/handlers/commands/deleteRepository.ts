@@ -29,11 +29,13 @@ import { RepoBranchTips } from "../../typings/types";
 import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../events/delivery/goals/SetGoalsOnPush";
 import { fetchDefaultBranchTip, tipOfBranch } from "./triggerGoal";
 import { fetchPushForCommit } from "../../software-delivery-machine/blueprint/goal/resetGoals";
+import { deleteRepository } from "../../util/github/ghub";
+import { fetchProvider } from "../../util/github/gitHubProvider";
 
 @Parameters()
-export class DisposeParameters {
+export class DeleteRepositoryParameters {
 
-    @Secret(Secrets.UserToken)
+    @Secret(Secrets.userToken("delete_repo"))
     public githubToken: string;
 
     @MappedParameter(MappedParameters.GitHubOwner)
@@ -49,32 +51,25 @@ export class DisposeParameters {
     public areYouSure: string;
 }
 
-export function disposeCommand(rules: ChooseAndSetGoalsRules): HandleCommand {
-    return commandHandlerFrom(disposeOfProject(rules),
-        DisposeParameters,
-        "DisposeOfProject",
-        "Remove this project from existence",
-        "dispose of this project");
+export function deleteRepositoryCommand(): HandleCommand {
+    return commandHandlerFrom(deleteRepositoryPlease(),
+        DeleteRepositoryParameters,
+        "DeleteRepository",
+        "Really delete the GitHub repository",
+        "delete this repository");
 }
 
-function disposeOfProject(rules: ChooseAndSetGoalsRules) {
-    return async (ctx: HandlerContext, commandParams: DisposeParameters) => {
+function deleteRepositoryPlease() {
+    return async (ctx: HandlerContext, commandParams: DeleteRepositoryParameters) => {
         if (commandParams.areYouSure.toLowerCase() !== "yes") {
             return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
                 .then(success);
         }
-        const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
-        const branch = repoData.defaultBranch;
-        const sha = tipOfBranch(repoData, branch);
 
-        const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
-        const push = await fetchPushForCommit(ctx, id, commandParams.providerId);
+        const provider = await fetchProvider(ctx, commandParams.providerId);
+        const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, rawApiBase: provider.apiUrl});
 
-        await chooseAndSetGoals(rules, {
-            context: ctx,
-            credentials: { token: commandParams.githubToken },
-            push
-        });
+        await deleteRepository(commandParams.githubToken, id);
         return Success;
     };
 }
