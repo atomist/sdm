@@ -16,10 +16,10 @@
 
 import { Goals } from "../Goals";
 import {
-    ArtifactGoal, AutofixGoal, BuildGoal, CodeReactionGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal,
+    ArtifactGoal, AutofixGoal, BuildGoal, CodeReactionGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal, LocalUndeploymentGoal,
     ProductionDeploymentGoal,
-    ProductionEndpointGoal, ReviewGoal,
-    StagingDeploymentGoal, StagingEndpointGoal, StagingVerifiedGoal,
+    ProductionEndpointGoal, ProductionUndeploymentGoal, ReviewGoal,
+    StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal, StagingVerifiedGoal,
 } from "./commonGoals";
 
 /**
@@ -45,3 +45,10 @@ export const LocalDeploymentGoals = new Goals(
     CodeReactionGoal,
     LocalDeploymentGoal,
     LocalEndpointGoal);
+
+export const UndeployEverywhereGoals = new Goals(
+    "Undeploy all environments",
+    LocalUndeploymentGoal,
+    StagingUndeploymentGoal,
+    ProductionUndeploymentGoal
+);

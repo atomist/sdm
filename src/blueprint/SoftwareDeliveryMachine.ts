@@ -150,6 +150,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public readonly goalSetters: GoalSetter[] = []; // public for tests
 
+    private readonly disposalGoalSetters: GoalSetter[] = [];
+
     private readonly goalsSetListeners: GoalsSetListener[] = [];
 
     private readonly reviewerRegistrations: ReviewerRegistration[] = [];
@@ -205,6 +207,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             pushTest: optsToUse.pushTest,
             logInterpreter: optsToUse.logInterpreter,
         });
+        return this;
+    }
+
+    public addDisposalRules(...goalSetters: GoalSetter[]): this {
+        this.disposalGoalSetters.push(...goalSetters);
         return this;
     }
 

@@ -32,7 +32,7 @@ import {
     StagingDeploymentGoal,
     StagingEndpointGoal, StagingUndeploymentGoal,
 } from "../../common/delivery/goals/common/commonGoals";
-import { HttpServiceGoals, LocalDeploymentGoals } from "../../common/delivery/goals/common/httpServiceGoals";
+import { HttpServiceGoals, LocalDeploymentGoals, UndeployEverywhereGoals } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
@@ -121,27 +121,31 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .itMeans("Just compile")
             .set(runCompileBuilder),
         build.setDefault(new MavenBuilder(options.artifactStore,
-            createEphemeralProgressLog, options.projectLoader)))
-        .addDeployRules(
-            deploy.when(IsMaven)
-                .itMeans("Maven test")
-                .deployTo(StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal)
-                .using(
-                    {
-                        deployer: LocalExecutableJarDeployer,
-                        targeter: ManagedDeploymentTargeter,
-                    },
-                ),
-            deploy.when(IsMaven)
-                .itMeans("Maven production")
-                .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal, ProductionUndeploymentGoal)
-                .using(cloudFoundryProductionDeploySpec(options)),
-            deploy.when(IsNode)
-                .itMeans("Node test")
-                .deployTo(StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal)
-                .using(cloudFoundryStagingDeploySpec(options)),
-        )
-        .addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
+            createEphemeralProgressLog, options.projectLoader)));
+    sdm.addDeployRules(
+        deploy.when(IsMaven)
+            .itMeans("Maven test")
+            .deployTo(StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal)
+            .using(
+                {
+                    deployer: LocalExecutableJarDeployer,
+                    targeter: ManagedDeploymentTargeter,
+                },
+            ),
+        deploy.when(IsMaven)
+            .itMeans("Maven production")
+            .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal, ProductionUndeploymentGoal)
+            .using(cloudFoundryProductionDeploySpec(options)),
+        deploy.when(IsNode)
+            .itMeans("Node test")
+            .deployTo(StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal)
+            .using(cloudFoundryStagingDeploySpec(options)),
+    );
+    sdm.addDisposalRules(
+        whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest)
+            .itMeans("It might be deployed in PCF")
+            .setGoals(UndeployEverywhereGoals));
+    sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
             () => addCloudFoundryManifest,
             () => enableDeploy(),
