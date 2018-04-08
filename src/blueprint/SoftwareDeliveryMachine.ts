@@ -68,7 +68,7 @@ import { FingerprintDifferenceListener } from "../common/listener/FingerprintDif
 import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
-import { PushTest } from "../common/listener/PushTest";
+import { PushTest, pushTest } from "../common/listener/PushTest";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 import { SupersededListener } from "../common/listener/SupersededListener";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
@@ -181,19 +181,26 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * should be used for present goal. It's possible to make multiple
      * calls to this method with different implementations chosen by different
      * PushTests.
-     * @param {LogInterpreter} logInterpreter LogInterpreter that can handle
+     * @param options PushTest to narrow matching & LogInterpreter that can handle
      * the log from the goalExecutor function
      * @return {this}
      */
     public addGoalImplementation(implementationName: string,
                                  goal: Goal,
                                  goalExecutor: ExecuteGoalWithLog,
-                                 pushTest?: PushTest,
-                                 logInterpreter?: LogInterpreter): this {
+                                 options?: Partial<{
+                                     pushTest: PushTest,
+                                     logInterpreter: LogInterpreter,
+                                 }>): this {
+        const optsToUse = {
+            pushTest: AnyPush,
+            logInterpreter: lastTenLinesLogInterpreter(implementationName),
+            ...options,
+        };
         this.goalFulfillmentMapper.addImplementation({
             implementationName, goal, goalExecutor,
-            pushTest: pushTest || AnyPush,
-            logInterpreter: logInterpreter || lastTenLinesLogInterpreter(implementationName),
+            pushTest: optsToUse.pushTest,
+            logInterpreter: optsToUse.logInterpreter,
         });
         return this;
     }
@@ -444,19 +451,30 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         rules.forEach(r =>
             this.addGoalImplementation(r.name, BuildGoal,
                 executeBuild(this.opts.projectLoader, r.choice.value),
-                r.choice.guard,
-                r.choice.value.logInterpreter)
+                {
+                    pushTest: r.choice.guard,
+                    logInterpreter: r.choice.value.logInterpreter,
+                })
                 .addGoalImplementation(r.name, JustBuildGoal,
                     executeBuild(this.opts.projectLoader, r.choice.value),
-                    r.choice.guard,
-                    r.choice.value.logInterpreter));
+                    {
+                        pushTest: r.choice.guard,
+                        logInterpreter:
+                        r.choice.value.logInterpreter,
+                    },
+                ));
         return this;
     }
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
-                r.value.endpointGoal, r.value), r.guard, r.value.deployer.logInterpreter);
+                r.value.endpointGoal, r.value),
+                {
+                    pushTest: r.guard,
+                    logInterpreter: r.value.deployer.logInterpreter,
+                },
+            );
             this.knownSideEffect(
                 r.value.endpointGoal,
                 r.value.deployGoal.definition.displayName);
