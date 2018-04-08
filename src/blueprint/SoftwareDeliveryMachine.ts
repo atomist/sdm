@@ -99,6 +99,7 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { executeUndeploy } from "../common/delivery/deploy/executeUndeploy";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -470,6 +471,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {
+            // deploy
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value),
                 {
@@ -477,9 +479,17 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     logInterpreter: r.value.deployer.logInterpreter,
                 },
             );
+            // endpoint
             this.knownSideEffect(
                 r.value.endpointGoal,
                 r.value.deployGoal.definition.displayName);
+            // undeploy
+            this.addGoalImplementation(r.name, r.value.undeployGoal, executeUndeploy(r.value),
+                {
+                    pushTest: r.guard,
+                    logInterpreter: r.value.deployer.logInterpreter,
+                },
+            );
         });
         return this;
     }

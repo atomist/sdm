@@ -22,25 +22,22 @@ import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { GoalExecutor } from "../goals/goalExecution";
 import { ExecuteWithLog, runWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 import { DeploySpec } from "./executeDeploy";
+import { Target } from "./deploy";
 
-export function executeUndeploy<T extends TargetInfo>(spec: DeploySpec<T>): ExecuteWithLog {
+export function executeUndeploy( target: Target): ExecuteWithLog {
     return async (rwlc: RunWithLogContext) => {
         const {id, credentials, status, progressLog} = rwlc;
         const commit = status.commit;
         const pushBranch = commit.pushes[0].branch;
         progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
 
-        if (!spec.deployer.findDeployments || !spec.deployer.undeploy) {
-            throw new Error("Deployer does not implement findDeployments and undeploy");
-        }
-
-        const targetInfo = spec.targeter(id, pushBranch);
-        const deployments = await spec.deployer.findDeployments(id, targetInfo, credentials);
+        const targetInfo = target.targeter(id, pushBranch);
+        const deployments = await target.deployer.findDeployments(id, targetInfo, credentials);
 
         logger.info("Detected deployments: %s", deployments.map(d => stringify(d)).join(", "));
 
         deployments.forEach(async d =>
-            spec.deployer.undeploy(
+            target.deployer.undeploy(
                 targetInfo,
                 d,
                 progressLog,
