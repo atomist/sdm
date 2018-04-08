@@ -63,7 +63,7 @@ describe("implementing goals in the SDM", () => {
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
-                providerId: "josh", addressChannels: () => Promise.resolve({}),
+                addressChannels: () => Promise.resolve({}),
             },
         );
 
@@ -105,7 +105,7 @@ describe("implementing goals in the SDM", () => {
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
-                providerId: "josh", addressChannels: () => Promise.resolve({}),
+                addressChannels: () => Promise.resolve({}),
             },
         );
 

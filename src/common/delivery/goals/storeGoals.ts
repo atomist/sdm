@@ -26,6 +26,7 @@ import {
 } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 import { GoalImplementation } from "./SdmGoalImplementationMapper";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
@@ -74,7 +75,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
     state: SdmGoalState,
-    id: GitHubRepoRef,
+    id: RemoteRepoRef,
     providerId: string
     url?: string,
     fulfillment?: SdmGoalFulfillment,
