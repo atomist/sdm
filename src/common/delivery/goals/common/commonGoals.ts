@@ -165,7 +165,6 @@ export const LocalDeploymentGoal = new Goal({
     completedDescription: "Deployed locally",
 });
 
-
 export const LocalUndeploymentGoal = new Goal({
     uniqueCamelCaseName: "UndeployHere",
     environment: ProjectDisposalEnvironment,

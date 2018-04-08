@@ -16,7 +16,7 @@
 
 import {
     HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success,
-    Success
+    Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
@@ -25,10 +25,10 @@ import { Goal } from "../../common/delivery/goals/Goal";
 import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal, updateGoal } from "../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit, findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyEquals, SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { fetchPushForCommit } from "../../software-delivery-machine/blueprint/goal/resetGoals";
 import { RepoBranchTips } from "../../typings/types";
 import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../events/delivery/goals/SetGoalsOnPush";
 import { fetchDefaultBranchTip, tipOfBranch } from "./triggerGoal";
-import { fetchPushForCommit } from "../../software-delivery-machine/blueprint/goal/resetGoals";
 
 @Parameters()
 export class DisposeParameters {
@@ -73,10 +73,10 @@ function disposeOfProject(rules: ChooseAndSetGoalsRules) {
         const determinedGoals = await chooseAndSetGoals(rules, {
             context: ctx,
             credentials: { token: commandParams.githubToken },
-            push
+            push,
         });
         if (!determinedGoals) {
-            await ctx.messageClient.respond("I don't know how to dispose of this project.")
+            await ctx.messageClient.respond("I don't know how to dispose of this project.");
         }
         return Success;
     };

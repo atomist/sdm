@@ -34,7 +34,7 @@ import {
 } from "../../common/delivery/goals/common/commonGoals";
 import {
     HttpServiceGoals, LocalDeploymentGoals, RepositoryDeletionGoals,
-    UndeployEverywhereGoals
+    UndeployEverywhereGoals,
 } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";

@@ -16,6 +16,7 @@
 
 import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
@@ -26,7 +27,6 @@ import {
 } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";
 import { GoalImplementation } from "./SdmGoalImplementationMapper";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least

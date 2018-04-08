@@ -16,6 +16,7 @@
 
 import { logger, Success } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
@@ -24,10 +25,9 @@ import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { ExecuteGoalResult } from "../../../goals/goalExecution";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
-import { ExecuteGoalResult } from "../../../goals/goalExecution";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Managed deployments
@@ -51,7 +51,6 @@ export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerO
 }
 
 class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
-
 
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }

@@ -15,13 +15,13 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
-import * as stringify from "json-stringify-safe";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
-import { Target } from "./deploy";
-import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import * as stringify from "json-stringify-safe";
 import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
 import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
+import { Target } from "./deploy";
 
 export function executeUndeploy(target: Target): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
@@ -67,14 +67,14 @@ export function offerToDeleteRepository(): ExecuteGoalWithLog {
             fallback: "delete repository button",
             color: "#ff0234",
             text: "Would you like to delete this repository?",
-            actions: [deleteRepoButton]
-        }
+            actions: [deleteRepoButton],
+        };
 
         const message: SlackMessage = {
-            attachments: [attachment]
+            attachments: [attachment],
         };
         await addressChannels(message);
 
         return Success;
-    }
+    };
 }

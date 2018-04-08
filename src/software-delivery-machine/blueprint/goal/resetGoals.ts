@@ -21,6 +21,7 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
 import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../../common/listener/GoalSetter";
@@ -29,7 +30,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
 import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushFields, PushForCommit } from "../../../typings/types";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 @Parameters()
 export class ResetGoalsParameters {
@@ -105,7 +105,6 @@ function resetGoalsOnCommit(rules: {
         return Success;
     };
 }
-
 
 export async function fetchPushForCommit(context: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<PushFields.Fragment> {
     const commitResult = await context.graphClient.query<PushForCommit.Query, PushForCommit.Variables>({

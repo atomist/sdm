@@ -91,11 +91,11 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     }
 }
 
-export type ChooseAndSetGoalsRules = {
-    projectLoader: ProjectLoader,
-    goalsListeners: GoalsSetListener[],
-    goalSetters: GoalSetter[],
-    implementationMapping: SdmGoalImplementationMapper,
+export interface ChooseAndSetGoalsRules {
+    projectLoader: ProjectLoader;
+    goalsListeners: GoalsSetListener[];
+    goalSetters: GoalSetter[];
+    implementationMapping: SdmGoalImplementationMapper;
 }
 
 export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
@@ -158,7 +158,7 @@ export async function determineGoals(rules: {
         };
         const determinedGoals = await chooseGoalsForPushOnProject({goalSetters}, pli);
         if (!determinedGoals) {
-            return {determinedGoals: undefined, goalsToSave: []}
+            return {determinedGoals: undefined, goalsToSave: []};
         }
         const goalsToSave = await sdmGoalsFromGoals(implementationMapping, pli, determinedGoals);
         return {determinedGoals, goalsToSave};
@@ -182,7 +182,7 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
 
 async function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
-}, g: Goal, inv: ProjectListenerInvocation): Promise<SdmGoalFulfillment> {
+},                         g: Goal, inv: ProjectListenerInvocation): Promise<SdmGoalFulfillment> {
     const {implementationMapping} = rules;
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {

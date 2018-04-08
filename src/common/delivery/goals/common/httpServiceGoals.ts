@@ -53,10 +53,10 @@ export const UndeployEverywhereGoals = new Goals(
     LocalUndeploymentGoal,
     StagingUndeploymentGoal,
     ProductionUndeploymentGoal,
-    DeleteAfterUndeploys
+    DeleteAfterUndeploys,
 );
 
 export const RepositoryDeletionGoals = new Goals(
     "Offer to delete repository",
-    DeleteRepositoryGoal
+    DeleteRepositoryGoal,
 );

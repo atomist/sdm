@@ -20,6 +20,7 @@ import * as yaml from "js-yaml";
 
 import * as _ from "lodash";
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
@@ -32,7 +33,6 @@ import {Manifest, ManifestApplication} from "./CloudFoundryManifest";
 import { CloudFoundryPusher } from "./CloudFoundryPusher";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 import { ProjectArchiver } from "./ProjectArchiver";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Use the Cloud Foundry API to orchestrae a blue green deployment.

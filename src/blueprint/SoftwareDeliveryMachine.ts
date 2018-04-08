@@ -84,6 +84,8 @@ import { listGeneratorsHandler } from "../common/command/listGenerators";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";
+import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
+import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -100,8 +102,6 @@ import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
-import { disposeCommand } from "../handlers/commands/disposeCommand";
-import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -306,7 +306,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     implementationMapping: this.goalFulfillmentMapper,
                 }),
                 () => deleteRepositoryCommand()],
-            eventHandlers: []
+            eventHandlers: [],
         };
     }
 

@@ -17,6 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
@@ -24,20 +25,17 @@ import { Deployment } from "../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { identification } from "../../build/local/maven/pomParser";
 import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
+import { ExecuteGoalResult } from "../../goals/goalExecution";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
-import { ExecuteGoalResult } from "../../goals/goalExecution";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { identification } from "../../build/local/maven/pomParser";
-
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
  * Note that this isn't thread safe concerning multiple logins or spaces.
  */
 export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
-
 
     constructor(private readonly projectLoader: ProjectLoader) {
     }
@@ -92,7 +90,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
                     }
                     resolve({
                         endpoint: parseCloudFoundryLogForEndpoint(log.log),
-                        appName: da.name
+                        appName: da.name,
                     });
                 });
                 childProcess.addListener("error", reject);
@@ -100,14 +98,16 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         });
     }
 
-    public async findDeployments(id: RemoteRepoRef, ti: CloudFoundryInfo, credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
+    public async findDeployments(id: RemoteRepoRef,
+                                 ti: CloudFoundryInfo,
+                                 credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
         // This may or may not be deployed. For now, let's guess that it is.
-        return  this.projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
             const pom = await project.findFile("pom.xml");
             const content = await pom.getContent();
             const va = await identification(content);
 
-            return [{appName: va.artifact}]
+            return [{appName: va.artifact}];
         });
     }
 
@@ -128,4 +128,3 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
     }
 
 }
-
