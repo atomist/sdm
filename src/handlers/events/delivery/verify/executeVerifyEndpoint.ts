@@ -15,12 +15,12 @@
  */
 
 import { sprintf } from "sprintf-js";
-import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../../../../common/delivery/goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../common/delivery/goals/support/runWithLog";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
+import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
 import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { providerIdFromPush, providerIdFromStatus } from "../../../../util/git/repoRef";
+import { providerIdFromStatus } from "../../../../util/git/repoRef";
 
 export interface EndpointVerificationInvocation extends ListenerInvocation {
 

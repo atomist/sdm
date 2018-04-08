@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { sprintf } from "sprintf-js";
 import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
-import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../../typings/types";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
@@ -111,14 +111,4 @@ async function reportError(parameters: {
         await
             addressChannels(":x: Failure deploying: " + err.message);
     }
-}
-
-export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
-    return (log: string): InterpretedLog => {
-        return {
-            relevantPart: log.split("\n").slice(-10).join("\n"),
-            message,
-            includeFullLog: true,
-        };
-    };
 }

@@ -95,7 +95,8 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { ExecuteGoalWithLog, lastTenLinesLogInterpreter } from "../common/delivery/goals/support/runWithLog";
+import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
+import { lastTenLinesLogInterpreter } from "../common/delivery/goals/support/logInterpreters";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

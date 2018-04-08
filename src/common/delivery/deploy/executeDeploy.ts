@@ -16,17 +16,14 @@
 
 import { logger, Success } from "@atomist/automation-client";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { ProjectListenerInvocation } from "../../listener/Listener";
-import { PushMapping } from "../../listener/PushMapping";
-import { ProjectLoader } from "../../repo/ProjectLoader";
 import { Goal } from "../goals/Goal";
-import { ExecuteGoalResult, GoalExecutor } from "../goals/goalExecution";
+import { ExecuteGoalResult } from "../goals/goalExecution";
 import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter } from "./deploy";
 
 import * as _ from "lodash";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { ExecuteGoalWithLog, lastTenLinesLogInterpreter, runWithLog, RunWithLogContext } from "../goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;
@@ -44,15 +41,12 @@ export interface DeploySpec<T extends TargetInfo> {
 
 /**
  * Execute deploy with the appropriate deployer and target from the underlying push
- * @param projectLoader used to load projects
- * @param targetMapping mapping to a target
  */
 export function executeDeploy(artifactStore: ArtifactStore,
                               endpointGoal: Goal,
                               target: Target): ExecuteGoalWithLog {
 
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-
         const commit = rwlc.status.commit;
         const {credentials, id, context, progressLog} = rwlc;
         const atomistTeam = context.teamId;
