@@ -18,7 +18,7 @@ import {
     GitHubStatusContext,
     GoalEnvironment,
     IndependentOfEnvironment,
-    ProductionEnvironment,
+    ProductionEnvironment, ProjectDisposalEnvironment,
     splitContext,
     StagingEnvironment,
 } from "../gitHubContext";
@@ -101,8 +101,8 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
 
 export const StagingUndeploymentGoal = new Goal({
     uniqueCamelCaseName: "UndeployFromTest",
-    environment: StagingEnvironment,
-    orderedName: "8-staging-undeploy",
+    environment: ProjectDisposalEnvironment,
+    orderedName: "2-staging-undeploy",
     displayName: "undeploy from test",
     completedDescription: "not deployed in test",
 });
@@ -140,8 +140,8 @@ ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionUndeploymentGoal = new Goal({
     uniqueCamelCaseName: "UndeployFromProduction",
-    environment: ProductionEnvironment,
-    orderedName: "8-prod-undeploy",
+    environment: ProjectDisposalEnvironment,
+    orderedName: "3-prod-undeploy",
     displayName: "undeploy from Prod",
     completedDescription: "not deployed in Prod",
 });
@@ -168,9 +168,17 @@ export const LocalDeploymentGoal = new Goal({
 
 export const LocalUndeploymentGoal = new Goal({
     uniqueCamelCaseName: "UndeployHere",
-    environment: IndependentOfEnvironment,
-    orderedName: "8-undeploy-locally",
+    environment: ProjectDisposalEnvironment,
+    orderedName: "1-undeploy-locally",
+    failedDescription: "Failed at local undeploy",
     completedDescription: "Undeployed locally",
+});
+
+export const DeleteRepositoryGoal = new Goal({
+    uniqueCamelCaseName: "DeleteRepository",
+    environment: ProjectDisposalEnvironment,
+    orderedName: "8-delete-repo",
+    completedDescription: "Repository deleted",
 });
 
 // not an enforced precondition, but it's real enough to graph

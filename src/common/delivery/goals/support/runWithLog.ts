@@ -78,8 +78,6 @@ export interface RunWithLogContext extends SdmContext {
     progressLog: ProgressLog;
 }
 
-export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
-
 async function reportError(parameters: {
                                executeGoalInvocation: ExecuteGoalInvocation,
                                addressChannels: AddressChannels, progressLog: ProgressLog, id: GitHubRepoRef,

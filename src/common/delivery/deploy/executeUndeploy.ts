@@ -16,15 +16,14 @@
 
 import { logger, Success } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
-import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { GoalExecutor } from "../goals/goalExecution";
-import { ExecuteWithLog, runWithLog, RunWithLogContext } from "../goals/support/runWithLog";
-import { DeploySpec } from "./executeDeploy";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
 import { Target } from "./deploy";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
+import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
 
-export function executeUndeploy( target: Target): ExecuteWithLog {
+export function executeUndeploy(target: Target): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         const {id, credentials, status, progressLog} = rwlc;
         const commit = status.commit;
@@ -48,4 +47,34 @@ export function executeUndeploy( target: Target): ExecuteWithLog {
             ));
         return {code: 0};
     };
+}
+
+export function offerToDeleteRepository(): ExecuteGoalWithLog {
+    return async (rwlc: RunWithLogContext) => {
+        const {addressChannels, id} = rwlc;
+
+        const params = new DeleteRepositoryParameters();
+        params.owner = id.owner;
+        params.repo = id.repo;
+        params.providerId = GitHubDotComProviderId; // we should put this in the RWLC?
+        params.areYouSure = "yes";
+
+        const deleteRepoButton = buttonForCommand({text: "Delete Repo", style: "danger"},
+            DeleteRepositoryCommandName,
+            params as any);
+
+        const attachment: Attachment = {
+            fallback: "delete repository button",
+            color: "#ff0234",
+            text: "Would you like to delete this repository?",
+            actions: [deleteRepoButton]
+        }
+
+        const message: SlackMessage = {
+            attachments: [attachment]
+        };
+        await addressChannels(message);
+
+        return Success;
+    }
 }

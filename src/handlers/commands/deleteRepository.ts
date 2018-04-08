@@ -51,10 +51,12 @@ export class DeleteRepositoryParameters {
     public areYouSure: string;
 }
 
+export const DeleteRepositoryCommandName = "DeleteRepository";
+
 export function deleteRepositoryCommand(): HandleCommand {
     return commandHandlerFrom(deleteRepositoryPlease(),
         DeleteRepositoryParameters,
-        "DeleteRepository",
+        DeleteRepositoryCommandName,
         "Really delete the GitHub repository",
         "delete this repository");
 }
