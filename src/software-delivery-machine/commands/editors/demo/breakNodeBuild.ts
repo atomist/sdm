@@ -19,28 +19,31 @@ import { commitToMaster } from "@atomist/automation-client/operations/edit/editM
 import { Project } from "@atomist/automation-client/project/Project";
 import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 
-export const BadJavaFileName = "src/main/java/Bad.java";
+export const BadTypeScriptFileName = "src/Bad.ts";
+export const BadJavaScriptFileName = "src/Bad.js";
 
-export const breakBuildEditor: HandleCommand = editorCommand(
+export const breakNodeBuildEditor: HandleCommand = editorCommand(
     () => breakBuild,
-    "breakBuild",
+    "breakNodeBuild",
     EmptyParameters,
     {
         editMode: commitToMaster(`You asked me to break the build!`),
     });
 
 async function breakBuild(p: Project, ctx: HandlerContext) {
-    return p.addFile(BadJavaFileName, "this is not Java");
+    await p.addFile(BadJavaScriptFileName, "this is not JavaScript");
+    return p.addFile(BadTypeScriptFileName, "this is not TypeScript");
 }
 
-export const unbreakBuildEditor: HandleCommand = editorCommand(
-    () => unbreakBuild,
-    "unbreakBuild",
+export const unbreakNodeBuildEditor: HandleCommand = editorCommand(
+    () => unbreakNodeBuild,
+    "unbreakNodeBuild",
     EmptyParameters,
     {
         editMode: commitToMaster(`Trying to unbreak the build!`),
     });
 
-async function unbreakBuild(p: Project, ctx: HandlerContext) {
-    return p.deleteFile(BadJavaFileName);
+async function unbreakNodeBuild(p: Project, ctx: HandlerContext) {
+    await p.deleteFile(BadTypeScriptFileName);
+    return p;
 }

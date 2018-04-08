@@ -16,10 +16,11 @@
 
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
 import { affirmationEditor } from "../../commands/editors/demo/affirmationEditor";
-import { breakBuildEditor, unbreakBuildEditor } from "../../commands/editors/demo/breakBuild";
+import { breakJavaBuildEditor, unbreakJavaBuildEditor } from "../../commands/editors/demo/breakJavaBuild";
 import { javaAffirmationEditor } from "../../commands/editors/demo/javaAffirmationEditor";
 import { whackHeaderEditor } from "../../commands/editors/demo/removeTypeScriptHeader";
 import { removeFileEditor } from "../../commands/editors/helper/removeFile";
+import { breakNodeBuildEditor, unbreakNodeBuildEditor } from "../../commands/editors/demo/breakNodeBuild";
 
 /**
  * Editors for use in demos
@@ -29,8 +30,10 @@ export function addDemoEditors(softwareDeliveryMachine: SoftwareDeliveryMachine)
     softwareDeliveryMachine
         .addEditors(
             () => affirmationEditor,
-            () => breakBuildEditor,
-            () => unbreakBuildEditor,
+            () => breakJavaBuildEditor,
+            () => unbreakJavaBuildEditor,
+            () => breakNodeBuildEditor,
+            () => unbreakNodeBuildEditor,
             () => javaAffirmationEditor,
             () => removeFileEditor,
             () => whackHeaderEditor,
