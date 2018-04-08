@@ -35,7 +35,7 @@ export interface ReferenceDeliveryBlueprint extends FunctionalUnit {
     supportingEvents: Array<Maker<HandleEvent<any>>>;
 
     /**
-     * FunctionalUnits brought in by this project
+     * FunctionalUnits brought in by this machine
      */
     functionalUnits: FunctionalUnit[];
 

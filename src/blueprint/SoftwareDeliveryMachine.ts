@@ -97,6 +97,8 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { createRepoHandler } from "../common/command/createRepo";
+import { listGeneratorsHandler } from "../common/command/listGenerators";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -510,7 +512,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 ...goalSetters: GoalSetter[]) {
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
-        this.addSupportingCommands(selfDescribeHandler(this));
+        this.addSupportingCommands(
+            selfDescribeHandler(this),
+            listGeneratorsHandler(this),
+            createRepoHandler(this),
+        );
 
         this.addGoalImplementation("Autofix", AutofixGoal,
             executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), {
