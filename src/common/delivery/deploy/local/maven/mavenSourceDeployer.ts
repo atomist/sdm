@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
@@ -26,6 +26,7 @@ import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import { ExecuteGoalResult } from "../../../goals/goalExecution";
 
 /**
  * Managed deployments
@@ -50,6 +51,7 @@ export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerO
 
 class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
 
+
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }
 
@@ -72,6 +74,11 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         return [await this.projectLoader.doWithProject({credentials, id, readOnly: true},
                 project => this.deployProject(ti, log, project, port, team))];
 
+    }
+
+    public async undeploy(ti: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<ExecuteGoalResult> {
+        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        return Success;
     }
 
     private async deployProject(ti: ManagedDeploymentTargetInfo,

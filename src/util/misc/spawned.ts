@@ -107,6 +107,7 @@ export function stringifySpawnCommand(sc: SpawnCommand): string {
 
 /**
  * Convenient function to create a spawn command from a sentence such as "npm run compile"
+ * Does not respect quoted arguments
  * @param {string} sentence
  * @return {SpawnCommand}
  */

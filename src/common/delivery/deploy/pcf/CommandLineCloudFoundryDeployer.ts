@@ -22,17 +22,19 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
+import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
-import { CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
+import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
+import { ExecuteGoalResult } from "../../goals/goalExecution";
+
 
 /**
  * Spawn a new process to use the Cloud Foundry CLI to push.
  * Note that this isn't thread safe concerning multiple logins or spaces.
  */
-export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo> {
+export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInfo, CloudFoundryDeployment> {
 
     constructor(private readonly projectLoader: ProjectLoader) {
     }
@@ -40,7 +42,7 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
     public async deploy(da: DeployableArtifact,
                         cfi: CloudFoundryInfo,
                         log: ProgressLog,
-                        credentials: ProjectOperationCredentials): Promise<Deployment[]> {
+                        credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
         logger.info("Deploying app [%j] to Cloud Foundry [%s]", da, cfi.description);
 
         // We need the Cloud Foundry manifest. If it's not found, we can't deploy
@@ -80,16 +82,27 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
             const childProcess = spawn(spawnCommand.command, spawnCommand.args, opts);
             childProcess.stdout.on("data", what => log.write(what.toString()));
             childProcess.stderr.on("data", what => log.write(what.toString()));
-            return [await new Promise((resolve, reject) => {
+            return [await new Promise<CloudFoundryDeployment>((resolve, reject) => {
                 childProcess.addListener("exit", (code, signal) => {
                     if (code !== 0) {
                         reject(`Error: code ${code}`);
                     }
-                    resolve({endpoint: parseCloudFoundryLogForEndpoint(log.log)});
+                    resolve({
+                        endpoint: parseCloudFoundryLogForEndpoint(log.log),
+                        appName: da.name
+                    });
                 });
                 childProcess.addListener("error", reject);
             })];
         });
+    }
+
+    public async undeploy(cfi: CloudFoundryInfo, deployment: CloudFoundryDeployment, log: ProgressLog): Promise<ExecuteGoalResult> {
+        await spawnAndWatch(asSpawnCommand(
+            `cf login -a ${cfi.api} -o ${cfi.org} -u ${cfi.username} -p '${cfi.password}' -s ${cfi.space}`),
+            {}, log);
+
+        return spawnAndWatch(asSpawnCommand(`cf delete ${deployment.appName}`), {}, log);
     }
 
     public logInterpreter(log: string) {
@@ -101,3 +114,4 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
     }
 
 }
+

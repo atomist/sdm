@@ -27,11 +27,10 @@ import { Deployment, TargetInfo } from "./Deployment";
 export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deployment = Deployment> extends LogInterpretation {
 
     /**
-     * Implemented by deployers that don't sit on an infrastructure like Cloud Foundry
-     * or Kubernetes that handles rolling update
+     * Remove a deployment. Very useful for project cleanup
      * @return {Promise<any>}
      */
-    undeploy?(ti: T, deployment: U, log: ProgressLog): Promise<any>;
+    undeploy(ti: T, deployment: U, log: ProgressLog): Promise<any>;
 
     /**
      * Find all deployments of the artifact or app
