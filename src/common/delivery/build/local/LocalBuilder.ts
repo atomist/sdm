@@ -75,7 +75,7 @@ export abstract class LocalBuilder implements Builder {
                     token,
                     !br.error,
                     rb, atomistTeam, push.branch, as);
-                return Success;
+                return br.error ? Failure : Success;
             } catch (err) {
                 await this.onExit(
                     token,
