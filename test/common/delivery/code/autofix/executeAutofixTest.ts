@@ -18,7 +18,7 @@ import "mocha";
 import { SingleProjectLoader } from "../../../SingleProjectLoader";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import * as assert from "power-assert";
-import { fakeRunWithLogContext } from "../../../../../src/common/delivery/code/fakeRunWithLogContext";
+import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 describe("executeAutofixes", () => {

@@ -31,6 +31,12 @@ import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goals
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
+/**
+ * Run the given goal execution function with error reporting
+ * @param {ExecuteGoalWithLog} whatToRun
+ * @param {LogInterpreter} logInterpreter
+ * @return {GoalExecutor}
+ */
 export function runWithLog(whatToRun: ExecuteGoalWithLog,
                            logInterpreter: LogInterpreter): GoalExecutor {
     return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {

@@ -20,15 +20,15 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
-import { StatusForExecuteGoal } from "../../../../typings/types";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { ProjectListenerInvocation } from "../../../listener/Listener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../deploy/runWithLog";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
+import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
+import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 
 /**
  * Execute autofixes against this push
@@ -112,7 +112,7 @@ async function runOne(project: GitProject, ctx: HandlerContext, autofix: Autofix
         } else if (editResult.edited) {
             await project.commit(`Autofix: ${autofix.name}\n\n[atomist]`);
         } else {
-            logger.debug("No changes by autofix %s", autofix.name);
+            logger.debug("No changes were made by autofix %s", autofix.name);
         }
         return editResult;
     } catch (err) {
@@ -124,15 +124,4 @@ async function runOne(project: GitProject, ctx: HandlerContext, autofix: Autofix
             err.message, (project.id as RemoteRepoRef).url, autofix.name);
         return {target: project, success: false, edited: false};
     }
-}
-
-// TODO will be exported in client
-function combineEditResults(r1: EditResult, r2: EditResult): EditResult {
-    return {
-        ...r1,
-        ...r2,
-        edited: (r1.edited || r2.edited) ? true :
-            (r1.edited === false && r2.edited === false) ? false : undefined,
-        success: r1.success && r2.success,
-    };
 }
