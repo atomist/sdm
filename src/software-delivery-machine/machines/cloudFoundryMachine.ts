@@ -143,7 +143,10 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     );
     sdm.addDisposalRules(
         whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest)
-            .itMeans("It might be deployed in PCF")
+            .itMeans("Java project to undeploy from PCF")
+            .setGoals(UndeployEverywhereGoals),
+        whenPushSatisfies(IsNode, HasCloudFoundryManifest)
+            .itMeans("Node project to undeploy from PCF")
             .setGoals(UndeployEverywhereGoals));
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(

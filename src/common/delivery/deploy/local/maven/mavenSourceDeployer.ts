@@ -56,8 +56,12 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }
 
-    public findDeployments(id: RemoteRepoRef, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
-        return managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
+    public async findDeployments(id: RemoteRepoRef, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
+        const deployedApp = managedMavenDeployments.findDeployment(ti.managedDeploymentKey);
+        if (!deployedApp) {
+            return [];
+        }
+        return [deployedApp.deployment];
     }
 
     public async deploy(da: DeployableArtifact,

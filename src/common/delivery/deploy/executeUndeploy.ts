@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
@@ -33,6 +33,10 @@ export function executeUndeploy( target: Target): ExecuteWithLog {
 
         const targetInfo = target.targeter(id, pushBranch);
         const deployments = await target.deployer.findDeployments(id, targetInfo, credentials);
+        if (!deployments) {
+            progressLog.write("No deployments found");
+            return Success;
+        }
 
         logger.info("Detected deployments: %s", deployments.map(d => stringify(d)).join(", "));
 
