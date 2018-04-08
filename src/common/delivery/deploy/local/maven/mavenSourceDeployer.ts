@@ -27,6 +27,7 @@ import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 import { ExecuteGoalResult } from "../../../goals/goalExecution";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Managed deployments
@@ -55,7 +56,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }
 
-    public findDeployments(da: DeployableArtifact, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
+    public findDeployments(id: RemoteRepoRef, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
         return managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
     }
 

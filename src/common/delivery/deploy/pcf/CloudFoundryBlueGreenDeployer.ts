@@ -32,6 +32,7 @@ import {Manifest, ManifestApplication} from "./CloudFoundryManifest";
 import { CloudFoundryPusher } from "./CloudFoundryPusher";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 import { ProjectArchiver } from "./ProjectArchiver";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Use the Cloud Foundry API to orchestrae a blue green deployment.
@@ -75,13 +76,13 @@ export class CloudFoundryBlueGreenDeployer implements Deployer<CloudFoundryInfo,
         });
     }
 
-    public async findDeployments(da: DeployableArtifact,
+    public async findDeployments(id: RemoteRepoRef,
                                  cfi: CloudFoundryInfo,
                                  credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
         if (!cfi.api || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
-        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: true}, async project => {
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
             const manifest = await this.getManifest(project);
             const cfClient = await initializeCloudFoundry(cfi);
             const cfApi = new CloudFoundryApi(cfClient);

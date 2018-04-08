@@ -19,6 +19,7 @@ import { DeployableArtifact } from "../artifact/ArtifactStore";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
 import { Deployment, TargetInfo } from "./Deployment";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Implemented by classes that can deploy from a published artifact that was build
@@ -34,12 +35,12 @@ export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deploymen
 
     /**
      * Find all deployments of the artifact or app
-     * @param {DeployableArtifact} da
-     * @param {T} ti
-     * @param {ProjectOperationCredentials} credentials
+     * @param id of the project
+     * @param {T} target info
+     * @param creds
      * @return {Promise<Array<Promise<Deployment>>>}
      */
-    findDeployments?(da: DeployableArtifact,
+    findDeployments?(id: RemoteRepoRef,
                      ti: T,
                      creds: ProjectOperationCredentials): Promise<U[]>;
 
