@@ -186,7 +186,7 @@ export const DeleteAfterUndeploys = new GoalWithPrecondition({
     environment: ProjectDisposalEnvironment,
     orderedName: "8-delete-repo",
     completedDescription: "Repository deleted",
-}, LocalUndeploymentGoal, StagingUndeploymentGoal, ProductionUndeploymentGoal);
+}, ProductionUndeploymentGoal);
 
 // not an enforced precondition, but it's real enough to graph
 export const LocalEndpointGoal = new GoalWithPrecondition({
