@@ -180,7 +180,7 @@ export const DeleteRepositoryGoal = new Goal({
     completedDescription: "Offered to delete repository",
 });
 
-export const DeleteAfterUndeploys = new GoalWithPrecondition({
+export const DeleteAfterUndeploysGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "DeleteRepositoryAfterUndeployed",
     environment: ProjectDisposalEnvironment,
     orderedName: "8-delete-repo",

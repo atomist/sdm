@@ -22,7 +22,7 @@ import {
     ArtifactGoal,
     AutofixGoal,
     BuildGoal,
-    CodeReactionGoal, DeleteRepositoryGoal,
+    CodeReactionGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
     FingerprintGoal,
     JustBuildGoal,
     NoGoal,
@@ -566,7 +566,9 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 executeReview(this.opts.projectLoader, this.reviewerRegistrations))
             .addVerifyImplementation()
             .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
-                offerToDeleteRepository());
+                offerToDeleteRepository())
+            .addGoalImplementation("OfferToDeleteRepo", DeleteAfterUndeploysGoal,
+            offerToDeleteRepository());
 
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
