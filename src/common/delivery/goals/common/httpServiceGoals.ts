@@ -16,7 +16,8 @@
 
 import { Goals } from "../Goals";
 import {
-    ArtifactGoal, AutofixGoal, BuildGoal, CodeReactionGoal, DeleteRepositoryGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal,
+    ArtifactGoal, AutofixGoal, BuildGoal, CodeReactionGoal, DeleteAfterUndeploys, DeleteRepositoryGoal, FingerprintGoal, LocalDeploymentGoal,
+    LocalEndpointGoal,
     LocalUndeploymentGoal,
     ProductionDeploymentGoal,
     ProductionEndpointGoal, ProductionUndeploymentGoal, ReviewGoal,
@@ -52,7 +53,7 @@ export const UndeployEverywhereGoals = new Goals(
     LocalUndeploymentGoal,
     StagingUndeploymentGoal,
     ProductionUndeploymentGoal,
-    DeleteRepositoryGoal
+    DeleteAfterUndeploys
 );
 
 export const RepositoryDeletionGoals = new Goals(

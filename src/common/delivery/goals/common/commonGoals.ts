@@ -130,13 +130,13 @@ export const StagingVerifiedGoal = new GoalWithPrecondition({
 }, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DeployToProduction",
-    environment: ProductionEnvironment,
-    orderedName: "3-prod-deploy",
-    displayName: "deploy to Prod",
-    completedDescription: "Deployed to Prod",
-},
-ArtifactGoal, StagingVerifiedGoal);
+        uniqueCamelCaseName: "DeployToProduction",
+        environment: ProductionEnvironment,
+        orderedName: "3-prod-deploy",
+        displayName: "deploy to Prod",
+        completedDescription: "Deployed to Prod",
+    },
+    ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionUndeploymentGoal = new Goal({
     uniqueCamelCaseName: "UndeployFromProduction",
@@ -171,15 +171,22 @@ export const LocalUndeploymentGoal = new Goal({
     environment: ProjectDisposalEnvironment,
     orderedName: "1-undeploy-locally",
     failedDescription: "Failed at local undeploy",
-    completedDescription: "Undeployed locally",
+    completedDescription: "not deployed locally",
 });
 
 export const DeleteRepositoryGoal = new Goal({
     uniqueCamelCaseName: "DeleteRepository",
     environment: ProjectDisposalEnvironment,
     orderedName: "8-delete-repo",
-    completedDescription: "Repository deleted",
+    completedDescription: "Offered to delete repository",
 });
+
+export const DeleteAfterUndeploys = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DeleteRepositoryAfterUndeployed",
+    environment: ProjectDisposalEnvironment,
+    orderedName: "8-delete-repo",
+    completedDescription: "Repository deleted",
+}, LocalUndeploymentGoal, StagingUndeploymentGoal, ProductionUndeploymentGoal);
 
 // not an enforced precondition, but it's real enough to graph
 export const LocalEndpointGoal = new GoalWithPrecondition({

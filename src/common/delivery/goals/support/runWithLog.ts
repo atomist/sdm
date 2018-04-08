@@ -107,6 +107,6 @@ async function reportError(parameters: {
                 id, addressChannels, retryButton);
     } else {
         await
-            addressChannels(":x: Failure executing goal: " + err.message);
+            addressChannels(`:x: Failure executing ${executeGoalInvocation.goal.definition.displayName}: ` + err.message);
     }
 }
