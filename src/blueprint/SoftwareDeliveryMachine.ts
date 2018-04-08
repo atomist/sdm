@@ -96,7 +96,7 @@ import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
-import { lastTenLinesLogInterpreter } from "../common/delivery/goals/support/logInterpreters";
+import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -512,7 +512,10 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         this.addSupportingCommands(selfDescribeHandler(this));
 
         this.addGoalImplementation("Autofix", AutofixGoal,
-            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations))
+            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), {
+                // Autofix errors should not be reported to the user
+                logInterpreter: LogSuppressor,
+            })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
             .addGoalImplementation("Fingerprinter", FingerprintGoal,
                 executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))

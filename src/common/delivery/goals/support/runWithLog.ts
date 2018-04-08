@@ -101,14 +101,14 @@ async function reportError(parameters: {
         });
 
     const interpretation = logInterpreter(progressLog.log);
-    // The deployer might have information about the failure; report it in the channels
-    if (interpretation) {
+    // The executor might have information about the failure; report it in the channels
+    if (interpretation && interpretation.doNotReportToUser !== true) {
         await
             reportFailureInterpretation(executeGoalInvocation.implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},
                 id, addressChannels, retryButton);
     } else {
         await
-            addressChannels(":x: Failure deploying: " + err.message);
+            addressChannels(":x: Failure executing goal: " + err.message);
     }
 }

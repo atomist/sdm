@@ -1,4 +1,3 @@
-
 import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
 
 export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
@@ -10,3 +9,19 @@ export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
         };
     };
 }
+
+/**
+ * Use when we don't want to report the log to the user under
+ * any circumstances
+ * @param {string} log
+ * @return {InterpretedLog}
+ * @constructor
+ */
+export const LogSuppressor: LogInterpreter = (log: string): InterpretedLog => {
+    return {
+        relevantPart: "",
+        message: "Do not report to user",
+        includeFullLog: false,
+        doNotReportToUser: true,
+    };
+};

@@ -37,10 +37,16 @@ export interface InterpretedLog<D = any> {
      */
     data?: D;
 
+    /**
+     * Set to true only if we should not bother to report this log to the user
+     */
+    doNotReportToUser?: boolean;
+
 }
 
 /**
- * Function that can try to interpret a log
+ * Function that can try to interpret a log for display to a user.
+ * Return undefined if the log cannot be interpreted.
  */
 export type LogInterpreter<D = any> = (log: string) => InterpretedLog<D> | undefined;
 
