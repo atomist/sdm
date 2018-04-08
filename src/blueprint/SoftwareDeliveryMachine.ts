@@ -79,6 +79,8 @@ import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
+import { createRepoHandler } from "../common/command/createRepo";
+import { listGeneratorsHandler } from "../common/command/listGenerators";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";
@@ -97,8 +99,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { createRepoHandler } from "../common/command/createRepo";
-import { listGeneratorsHandler } from "../common/command/listGenerators";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

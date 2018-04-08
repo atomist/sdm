@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { HandleCommand } from "@atomist/automation-client";
-import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { isCommandHandlerMetadata } from "@atomist/automation-client/internal/metadata/metadata";
+import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { FunctionalUnit } from "../../blueprint/FunctionalUnit";
 
 export interface HandlerInfo {
