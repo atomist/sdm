@@ -17,9 +17,9 @@
 import { HandleCommand, Parameter, Parameters } from "@atomist/automation-client";
 import { setSpringBootVersionEditor } from "@atomist/spring-automation/commands/editor/spring/setSpringBootVersionEditor";
 import { UnleashPhilParameters } from "@atomist/spring-automation/commands/editor/spring/unleashPhil";
-import { dryRunEditor } from "../../../../common/command/generator/dry-run/dryRunEditor";
 import { CurrentSpringBootVersion } from "@atomist/spring-automation/commands/reviewer/spring/SpringBootVersionReviewer";
 import { EditModeSuggestion } from "../../../../common/command/editor/EditModeSuggestion";
+import { dryRunEditor } from "../../../../common/command/generator/dry-run/dryRunEditor";
 
 @Parameters()
 export class UpgradeSpringBootParameters implements EditModeSuggestion {

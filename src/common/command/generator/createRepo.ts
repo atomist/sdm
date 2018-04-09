@@ -17,8 +17,8 @@
 import { HandleCommand, Success } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { commandHandlersWithTag } from "../commandSearch";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { commandHandlersWithTag } from "../commandSearch";
 import { EmptyParameters } from "../EmptyParameters";
 
 /**

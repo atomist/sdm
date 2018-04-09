@@ -27,9 +27,9 @@ import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
-import { chattyEditorFactory } from "./editorWrappers";
 import { EmptyParameters } from "../EmptyParameters";
 import { EditModeSuggestion } from "./EditModeSuggestion";
+import { chattyEditorFactory } from "./editorWrappers";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
