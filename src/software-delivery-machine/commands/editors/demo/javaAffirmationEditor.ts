@@ -18,7 +18,7 @@ import { HandleCommand } from "@atomist/automation-client";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
-import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { editorCommand } from "../../../../common/command/editor/editorCommand";
 import { AffirmationParameters } from "./affirmationEditor";
 
 /**

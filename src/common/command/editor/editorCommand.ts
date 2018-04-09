@@ -26,11 +26,10 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-
-import { Parameters } from "@atomist/automation-client/decorators";
 import * as assert from "power-assert";
 import { chattyEditorFactory } from "./editorWrappers";
-import { EmptyParameters } from "../../../common/command/EmptyParameters";
+import { EmptyParameters } from "../EmptyParameters";
+import { EditModeSuggestion } from "./EditModeSuggestion";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
@@ -55,8 +54,8 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         repoLoader:
             p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
         editMode: ((params: PARAMS) => new PullRequest(
-            `edit-${name}-${Date.now()}`,
-            description)),
+            (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
+            (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),
         ...details,
     };
 

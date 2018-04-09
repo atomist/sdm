@@ -2,7 +2,7 @@ import { HandleCommand, HandlerContext, logger, Parameter, Parameters } from "@a
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { editorCommand } from "../../../../common/command/editor/editorCommand";
 import { CFamilyLanguageSourceFiles } from "../GlobPatterns";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 

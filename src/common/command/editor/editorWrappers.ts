@@ -22,7 +22,7 @@ import {
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { spawn, SpawnOptions } from "child_process";
-import { ConsoleProgressLog } from "../../../common/log/progressLogs";
+import { ConsoleProgressLog } from "../../log/progressLogs";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { confirmEditedness } from "../../../util/git/confirmEditedness";
 import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";

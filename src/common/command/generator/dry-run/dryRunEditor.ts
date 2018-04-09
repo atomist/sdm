@@ -24,8 +24,8 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Status } from "../../../../util/github/ghub";
-import { toEditorOrReviewerParametersMaker } from "../../../../handlers/commands/editors/editorCommand";
-import { chattyEditorFactory } from "../../../../handlers/commands/editors/editorWrappers";
+import { toEditorOrReviewerParametersMaker } from "../../editor/editorCommand";
+import { chattyEditorFactory } from "../../editor/editorWrappers";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
 import { EmptyParameters } from "../../EmptyParameters";
 import { EditModeSuggestion } from "../../editor/EditModeSuggestion";

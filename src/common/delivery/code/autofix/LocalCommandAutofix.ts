@@ -15,7 +15,7 @@
  */
 
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { localCommandsEditor } from "../../../../handlers/commands/editors/editorWrappers";
+import { localCommandsEditor } from "../../../command/editor/editorWrappers";
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../listener/PushTest";
 import { AutofixRegistration, AutofixRegistrationOptions } from "../codeActionRegistrations";
