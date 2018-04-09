@@ -19,7 +19,7 @@ import {
     HandlerContext,
     HandlerResult,
     logger,
-    Success
+    Success,
 } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
