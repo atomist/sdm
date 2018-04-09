@@ -23,6 +23,7 @@ import {
 } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
+import * as path from "path";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import {
     ExecuteGoalInvocation,
@@ -101,7 +102,7 @@ export async function executeHook(status: StatusForExecuteGoal.Fragment,
         logger.info("Invoking goal %s hook '%s'", stage, hook);
 
         const opts = {
-            cwd: `${p.baseDir}/.atomist`,
+            cwd: path.join(p.baseDir, ".atomist"),
             env: {
                 // TODO cd do we need more variables to pass over?
                 GITHUB_TOKEN: params.githubToken,
@@ -112,7 +113,7 @@ export async function executeHook(status: StatusForExecuteGoal.Fragment,
         };
 
         let result: HandlerResult = await spawnAndWatch(
-            { command: "bash", args: [hook] },
+            { command:  path.join(p.baseDir, ".atomist", hook) },
              opts,
              new ConsoleProgressLog(),
             {
@@ -130,7 +131,7 @@ export async function executeHook(status: StatusForExecuteGoal.Fragment,
 }
 
 function goalToHookFile(sdmGoal: SdmGoal, suffix: string): string {
-    return `${sdmGoal.environment.slice(2)}-${sdmGoal.name}_${suffix}-hook.sh`;
+    return `${sdmGoal.environment.slice(2)}-${sdmGoal.name}_${suffix}-hook`;
 }
 
 export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult, error?: Error) {
