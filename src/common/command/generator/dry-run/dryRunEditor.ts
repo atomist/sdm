@@ -24,9 +24,11 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Status } from "../../../../util/github/ghub";
-import { EmptyParameters, toEditorOrReviewerParametersMaker } from "../editorCommand";
-import { chattyEditorFactory } from "../editorWrappers";
+import { toEditorOrReviewerParametersMaker } from "../../../../handlers/commands/editors/editorCommand";
+import { chattyEditorFactory } from "../../../../handlers/commands/editors/editorWrappers";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
+import { EmptyParameters } from "../../EmptyParameters";
+import { EditModeSuggestion } from "../../editor/EditModeSuggestion";
 
 export const DryRunContext = "atomist-dry-run";
 
@@ -46,24 +48,27 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
                                                        paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
                                                        name: string,
                                                        details: Partial<EditorCommandDetails<PARAMS>> = {}): HandleCommand<EditOneOrAllParameters> {
-    const description = details.description || name;
-    const status: Status = {
-        context: DryRunContext,
-        target_url: "https://www.atomist.com",
-        description,
-        state: "pending", // I'm not sure how this one works
-    };
+    if (!!details.editMode) {
+        throw new Error("Cannot set editMode for dryRunEditor");
+    }
     const detailsToUse: EditorCommandDetails = {
-        description,
+        description: details.description || name,
         intent: `try edit ${name}`,
         repoFinder: allReposInTeam(),
         repoLoader:
             p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
         editMode: ((params: PARAMS & EditorOrReviewerParameters) => {
             logger.info("About to create edit mode for dry run editor: params=%j", params);
+            const description = (params as any as EditModeSuggestion).desiredPullRequestTitle || details.description || name;
+            const status: Status = {
+                context: DryRunContext,
+                target_url: "https://www.atomist.com",
+                description,
+                state: "pending",
+            };
             return new NewBranchWithStatus(
-                `edit-${name}-${Date.now()}`,
-                `${description.substr(0, 50)}\n\n[atomist] ${description}`,
+                (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
+                toAtomistCommitMessage((params as any as EditModeSuggestion).desiredCommitMessage || description.substr(0, 50), description),
                 params.targets.credentials,
                 status);
         }),
@@ -74,4 +79,8 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
         toEditorOrReviewerParametersMaker(paramsMaker),
         name,
         detailsToUse);
+}
+
+function toAtomistCommitMessage(base: string, description: string) {
+    return `${base}\n\n[atomist] ${description}`;
 }

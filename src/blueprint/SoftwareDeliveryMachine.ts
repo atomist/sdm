@@ -79,8 +79,8 @@ import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
-import { createRepoHandler } from "../common/command/createRepo";
-import { listGeneratorsHandler } from "../common/command/listGenerators";
+import { createRepoHandler } from "../common/command/generator/createRepo";
+import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";

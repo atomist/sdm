@@ -21,7 +21,8 @@ import { MavenProjectIdentifier } from "../../../../common/delivery/build/local/
 import { NodeProjectIdentifier } from "../../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 import { CloudFoundryManifestPath } from "../../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { HasSpringBootPom } from "../../../../common/listener/support/pushtest/jvm/springPushTests";
-import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
+import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { EmptyParameters } from "../../../../common/command/EmptyParameters";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";

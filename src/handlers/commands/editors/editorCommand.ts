@@ -30,6 +30,7 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 import { Parameters } from "@atomist/automation-client/decorators";
 import * as assert from "power-assert";
 import { chattyEditorFactory } from "./editorWrappers";
+import { EmptyParameters } from "../../../common/command/EmptyParameters";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
@@ -96,14 +97,4 @@ function validate(targets: GitHubFallbackReposParameters) {
         assert(!!targets.repos, "Must set repos or repo");
         targets.repo = targets.repos;
     }
-}
-
-// TODO this is not editor specific vvvvvvvv
-
-/**
- * Convenient empty parameters class
- */
-@Parameters()
-// tslint:disable-next-line:no-unnecessary-class
-export class EmptyParameters {
 }

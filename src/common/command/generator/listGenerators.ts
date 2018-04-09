@@ -17,33 +17,32 @@
 import { HandleCommand, Success } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
-import { EmptyParameters } from "../../handlers/commands/editors/editorCommand";
-import { commandHandlersWithTag } from "./commandSearch";
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { commandHandlersWithTag } from "../commandSearch";
+import { EmptyParameters } from "../EmptyParameters";
 
 /**
- * Return a command handler that can create a repo using generators in this SDM
+ * Return a command handler that can list generators
  * @param {SoftwareDeliveryMachine} sdm
  * @return {HandleCommand<EmptyParameters>}
  */
-export function createRepoHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
+export function listGeneratorsHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
     return () => commandHandlerFrom(
-        handleCreateRepo(sdm),
+        handleListGenerators(sdm),
         EmptyParameters,
-        "createRepo",
-        "Create a repo",
-        "create repo", "new repo");
+        "listGenerators",
+        "List generators",
+        "list generators", "show generators");
 }
 
-// TODO implement this with dropdown
-
-function handleCreateRepo(sdm: SoftwareDeliveryMachine): OnCommand {
+function handleListGenerators(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
         const generators = commandHandlersWithTag(sdm, "generator");
-        await ctx.messageClient.respond(`${generators.length} generators in this SDM`);
+        let message = `${generators.length} generators in this software delivery machine\n`;
         generators.forEach(async hi => {
-            await ctx.messageClient.respond(`${hi.instance.intent.map(intent => "`" + intent + "`").join(", ")}`);
+            message += `${hi.instance.intent.map(intent => "`" + intent + "`").join(", ")}\n`;
         });
+        await ctx.messageClient.respond(message);
         return Success;
     };
 }

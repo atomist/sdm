@@ -20,7 +20,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { DeployedApp, ManagedDeployments } from "../../common/delivery/deploy/local/appManagement";
 import { managedExecutableJarDeployments } from "../../common/delivery/deploy/local/jar/executableJarDeployer";
 import { managedMavenDeployments } from "../../common/delivery/deploy/local/maven/mavenSourceDeployer";
-import { EmptyParameters } from "./editors/editorCommand";
+import { EmptyParameters } from "../../common/command/EmptyParameters";
 
 /**
  * Return a command handler that can list local deploys

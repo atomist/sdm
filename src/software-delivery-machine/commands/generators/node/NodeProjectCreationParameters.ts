@@ -19,7 +19,7 @@ import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/op
 
 import { Parameters } from "@atomist/automation-client/decorators";
 import { SemVerRegExp } from "../../../../common/command/commonPatterns";
-import { GeneratorConfig } from "../GeneratorConfig";
+import { GeneratorConfig } from "../../../../common/command/generator/GeneratorConfig";
 
 /**
  * Parameters for creating a Node project.

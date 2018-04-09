@@ -17,8 +17,9 @@
 import { HandleCommand, logger } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
+import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
 import { deploymentTemplate } from "./deploymentTemplate";
+import { EmptyParameters } from "../../../../common/command/EmptyParameters";
 
 export const AddK8sSpecCommandName = "AddK8sSpecCommandName";
 

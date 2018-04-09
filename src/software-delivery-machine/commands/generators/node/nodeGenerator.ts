@@ -23,7 +23,7 @@ import {
 } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { updatePackageJsonIdentification } from "../../editors/node/updatePackageJsonIdentification";
 import { updateReadmeTitle } from "../../editors/updateReadmeTitle";
-import { GeneratorConfig } from "../GeneratorConfig";
+import { GeneratorConfig } from "../../../../common/command/generator/GeneratorConfig";
 import { NodeProjectCreationParameters } from "./NodeProjectCreationParameters";
 
 export function nodeGenerator(config: GeneratorConfig,

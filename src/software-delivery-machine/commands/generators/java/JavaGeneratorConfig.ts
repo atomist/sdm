@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GeneratorConfig } from "../GeneratorConfig";
+import { GeneratorConfig } from "../../../../common/command/generator/GeneratorConfig";
 
 export interface JavaGeneratorConfig extends GeneratorConfig {
 
