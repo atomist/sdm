@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { Parameters } from "@atomist/automation-client";
 
 /**
