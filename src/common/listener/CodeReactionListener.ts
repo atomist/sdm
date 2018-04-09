@@ -15,7 +15,7 @@
  */
 
 import { StatusForExecuteGoal } from "../../typings/types";
-import { ProjectListenerInvocation, SdmListener, } from "./Listener";
+import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
@@ -28,4 +28,3 @@ export interface CodeReactionInvocation extends ProjectListenerInvocation {
 }
 
 export type CodeReactionListener = SdmListener<CodeReactionInvocation>;
-

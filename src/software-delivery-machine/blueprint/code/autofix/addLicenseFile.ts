@@ -15,12 +15,12 @@
  */
 
 import axios from "axios";
-import { hasFile } from "../../../../common/listener/support/pushtest/commonPushTests";
-import { not } from "../../../../common/listener/support/pushtest/pushTestUtils";
 import {
     AutofixRegistration,
-    editorAutofixRegistration
+    editorAutofixRegistration,
 } from "../../../../common/delivery/code/autofix/AutofixRegistration";
+import { hasFile } from "../../../../common/listener/support/pushtest/commonPushTests";
+import { not } from "../../../../common/listener/support/pushtest/pushTestUtils";
 
 export const LicenseFilename = "LICENSE";
 

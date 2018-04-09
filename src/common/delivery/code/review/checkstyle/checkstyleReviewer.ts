@@ -24,9 +24,9 @@ import { LocalProject } from "@atomist/automation-client/project/local/LocalProj
 import { spawn } from "child_process";
 import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
 import { ReviewerError } from "../ReviewerError";
+import { ReviewerRegistration } from "../ReviewerRegistration";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
-import { ReviewerRegistration } from "../ReviewerRegistration";
 
 /**
  * Spawn Checkstyle Java process against the project directory.

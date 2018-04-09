@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
 import { CloudFoundryBlueGreenDeployer } from "../../../common/delivery/deploy/pcf/CloudFoundryBlueGreenDeployer";
-import { CloudFoundryInfo, } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
+import { CloudFoundryInfo } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget";
 import {
     ProductionDeploymentGoal,
@@ -29,7 +30,6 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { AddCloudFoundryManifestMarker } from "../../commands/editors/pcf/addCloudFoundryManifest";
-import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
 
 export const CloudFoundryStagingTarget = new EnvironmentCloudFoundryTarget("staging");
 

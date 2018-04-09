@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CodeReactionInvocation } from "../../../common/listener/CodeReactionListener";
 import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
+import { CodeReactionInvocation } from "../../../common/listener/CodeReactionListener";
 
 /**
  * React to a push by listing changed files to any Slack channels

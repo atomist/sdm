@@ -18,11 +18,11 @@ import { HandlerContext } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithJson } from "@atomist/automation-client/project/util/jsonUtils";
 import * as _ from "lodash";
-import { IsNode } from "../../../../common/listener/support/pushtest/node/nodePushTests";
 import {
     AutofixRegistration,
-    editorAutofixRegistration
+    editorAutofixRegistration,
 } from "../../../../common/delivery/code/autofix/AutofixRegistration";
+import { IsNode } from "../../../../common/listener/support/pushtest/node/nodePushTests";
 
 export const AddBuildScript: AutofixRegistration = editorAutofixRegistration({
     name: "Make sure there is a build script",

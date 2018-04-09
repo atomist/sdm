@@ -79,6 +79,9 @@ import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
+import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
+import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
+import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";
@@ -97,9 +100,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
-import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
-import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

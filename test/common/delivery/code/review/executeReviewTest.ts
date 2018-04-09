@@ -18,8 +18,8 @@ import { DefaultReviewComment } from "@atomist/automation-client/operations/revi
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
 import "mocha";
 import { executeReview } from "../../../../../src/common/delivery/code/review/executeReview";
-import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
+import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",

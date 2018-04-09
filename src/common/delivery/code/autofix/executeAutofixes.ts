@@ -21,6 +21,7 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
+import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
@@ -28,7 +29,6 @@ import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { relevantCodeActions } from "../CodeActionRegistration";
 import { AutofixRegistration } from "./AutofixRegistration";
-import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 
 /**
  * Execute autofixes against this push

@@ -6,9 +6,9 @@
  * linked channels as autofixes are normally invoked in an EventHandler and EventHandlers
  * do not support respond.
  */
-import { CodeActionRegistration } from "../CodeActionRegistration";
 import { AnyProjectEditor, EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { PushTest } from "../../../listener/PushTest";
+import { CodeActionRegistration } from "../CodeActionRegistration";
 
 export interface AutofixRegistrationOptions {
 

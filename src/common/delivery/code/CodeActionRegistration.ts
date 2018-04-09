@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PushTest } from "../../listener/PushTest";
 import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
+import { PushTest } from "../../listener/PushTest";
 
 export type CodeAction<R> = (i: CodeReactionInvocation) => Promise<R>;
 

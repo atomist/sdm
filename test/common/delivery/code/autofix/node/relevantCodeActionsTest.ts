@@ -18,12 +18,12 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import axios from "axios";
 import "mocha";
 import * as assert from "power-assert";
-import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
-import { relevantCodeActions } from "../../../../../../src/common/delivery/code/CodeActionRegistration";
 import {
     AutofixRegistration,
-    editorAutofixRegistration
+    editorAutofixRegistration,
 } from "../../../../../../src/common/delivery/code/autofix/AutofixRegistration";
+import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
+import { relevantCodeActions } from "../../../../../../src/common/delivery/code/CodeActionRegistration";
 import { CodeReactionInvocation } from "../../../../../../src/common/listener/CodeReactionListener";
 
 describe("relevantCodeActions", () => {
