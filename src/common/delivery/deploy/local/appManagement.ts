@@ -16,11 +16,11 @@
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import axios from "axios";
 import { ChildProcess } from "child_process";
+import * as https from "https";
 import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
 import { Targeter } from "../deploy";
-import * as https from "https";
-import axios from "axios";
 
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
     managedDeploymentKey: RemoteRepoRef;
