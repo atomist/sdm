@@ -20,7 +20,8 @@ import { PushTest } from "../../listener/PushTest";
 export type CodeAction<R> = (i: CodeReactionInvocation) => Promise<R>;
 
 /**
- * Used to register actions on a push, that can return any type
+ * Used to register actions on a push that can return any type.
+ * Use ReviewerRegistration if you want to return a structured type.
  */
 export interface CodeActionRegistration<R = any> {
 
