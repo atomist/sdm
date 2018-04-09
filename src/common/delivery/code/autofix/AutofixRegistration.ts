@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-
+import { logger } from "@atomist/automation-client";
 import { AnyProjectEditor, EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { PushTest } from "../../../listener/PushTest";
 import { CodeActionRegistration } from "../CodeActionRegistration";
-import { logger } from "@atomist/automation-client";
 
 export interface AutofixRegistrationOptions {
 

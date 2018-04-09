@@ -15,16 +15,16 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import "mocha";
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
+import { AddAtomistTypeScriptHeader } from "../../../../../src/software-delivery-machine/blueprint/code/autofix/addAtomistHeader";
+import { ApacheHeader } from "../../../../../src/software-delivery-machine/commands/editors/license/addHeader";
 import { SingleProjectLoader } from "../../../SingleProjectLoader";
 import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { AddAtomistTypeScriptHeader } from "../../../../../src/software-delivery-machine/blueprint/code/autofix/addAtomistHeader";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { ApacheHeader } from "../../../../../src/software-delivery-machine/commands/editors/license/addHeader";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 describe("executeAutofixes", () => {
 

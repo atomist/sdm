@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { CodeActionRegistration } from "../CodeActionRegistration";
 
