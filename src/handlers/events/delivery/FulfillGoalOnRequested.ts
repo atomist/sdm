@@ -22,13 +22,19 @@ import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/
 import { ExecuteGoalInvocation } from "../../../common/delivery/goals/goalExecution";
 import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { runWithLog } from "../../../common/delivery/goals/support/runWithLog";
+import { RunWithLogContext } from "../../../common/delivery/goals/support/runWithLog";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import {
     CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, SdmGoalRepo,
     StatusForExecuteGoal,
 } from "../../../typings/types";
 import { executeGoal } from "./verify/executeGoal";
+import { ProjectLoader } from "../../../common/repo/ProjectLoader";
+import { createEphemeralProgressLog } from "../../../common/log/EphemeralProgressLog";
+import { ConsoleProgressLog, MultiProgressLog } from "../../../common/log/progressLogs";
+import { addressChannelsFor } from "../../../common/slack/addressChannels";
+import { repoRefFromSdmGoal } from "../../../util/git/repoRef";
+import { fetchProvider } from "../../../util/github/gitHubProvider";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
@@ -41,7 +47,8 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
     public githubToken: string;
 
-    constructor(private implementationMapper: SdmGoalImplementationMapper) {
+    constructor(private implementationMapper: SdmGoalImplementationMapper,
+                private projectLoader: ProjectLoader) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =
@@ -75,15 +82,25 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
 
-        const { goal, goalExecutor, logInterpreter } = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
+        const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 
-        const inv: ExecuteGoalInvocation = {
-            implementationName: sdmGoal.fulfillment.name,
-            githubToken: params.githubToken,
-            goal,
-        };
 
-        return executeGoal(runWithLog(goalExecutor, logInterpreter), status, ctx, inv, sdmGoal);
+        const log = await createEphemeralProgressLog();
+        const progressLog = new MultiProgressLog(new ConsoleProgressLog(), log);
+        const addressChannels = addressChannelsFor(commit.repo, ctx);
+        const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
+        const credentials = {token: params.githubToken};
+        const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials}
+
+        return executeGoal({projectLoader: params.projectLoader},
+            goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
+            .then(res => {
+                progressLog.close();
+                return res;
+            }, err => {
+                progressLog.close();
+                throw err;
+            });
     }
 }
 

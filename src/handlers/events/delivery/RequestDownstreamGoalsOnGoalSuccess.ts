@@ -74,7 +74,6 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
 
 export function sumSdmGoalEvents(some: SdmGoal[], more: SdmGoal[]): SdmGoal[] {
     const byKey = _.groupBy(some.concat(more), (sg => goalKeyString(sg)));
-    logger.debug("goals by key: " + stringify(byKey, null, 2)); // take this out after it works
     const summedGoals = Object.keys(byKey).map(k => sumEventsForOneSdmGoal(byKey[k]));
     return summedGoals;
 }
