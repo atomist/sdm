@@ -18,12 +18,12 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { preconditionsAreMet } from "../../../common/delivery/goals/goalPreconditions";
-import { updateGoal } from "../../../common/delivery/goals/storeGoals";
-import { fetchGoalsForCommit } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
-import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../typings/types";
-import { repoRefFromSdmGoal } from "../../../util/git/repoRef";
+import { preconditionsAreMet } from "../../../../common/delivery/goals/goalPreconditions";
+import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
+import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../../typings/types";
+import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals

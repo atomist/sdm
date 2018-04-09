@@ -24,12 +24,12 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { updateGoal } from "../../../common/delivery/goals/storeGoals";
-import { fetchGoalsForCommit } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../ingesters/sdmGoalIngester";
-import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal } from "../../../typings/types";
+import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
+import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal } from "../../../../typings/types";
 import Status = OnSuccessStatus.Status;
-import { providerIdFromStatus, repoRefFromStatus } from "../../../util/git/repoRef";
+import { providerIdFromStatus, repoRefFromStatus } from "../../../../util/git/repoRef";
+import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 
 /**
  * Respond to a failure status by failing downstream goals
