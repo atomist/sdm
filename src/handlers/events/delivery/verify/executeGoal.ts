@@ -97,23 +97,25 @@ export async function executeHook(status: StatusForExecuteGoal.Fragment,
                                   stage: "post" | "pre"): Promise<HandlerResult> {
     const p = await GitCommandGitProject.cloned({ token: params.githubToken }, repoRefFromStatus(status));
     const hook = goalToHookFile(sdmGoal, stage);
-    if (p.fileExistsSync(`.atomist/${hook}`)) {
+    if (p.fileExistsSync(`.atomist/hooks/${hook}`)) {
 
         logger.info("Invoking goal %s hook '%s'", stage, hook);
 
         const opts = {
-            cwd: path.join(p.baseDir, ".atomist"),
+            cwd: path.join(p.baseDir, ".atomist", "hooks"),
             env: {
+                ...process.env,
                 // TODO cd do we need more variables to pass over?
                 GITHUB_TOKEN: params.githubToken,
                 ATOMIST_TEAM: ctx.teamId,
                 ATOMIST_CORRELATION_ID: ctx.correlationId,
                 ATOMIST_JWT: jwtToken(),
             },
+            shell: true,
         };
 
         let result: HandlerResult = await spawnAndWatch(
-            { command:  path.join(p.baseDir, ".atomist", hook) },
+            { command:  path.join(p.baseDir, ".atomist", "hooks", hook) },
              opts,
              new ConsoleProgressLog(),
             {
@@ -130,8 +132,8 @@ export async function executeHook(status: StatusForExecuteGoal.Fragment,
     return Success;
 }
 
-function goalToHookFile(sdmGoal: SdmGoal, suffix: string): string {
-    return `${sdmGoal.environment.slice(2)}-${sdmGoal.name}_${suffix}-hook`;
+function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
+    return `${prefix}-${sdmGoal.environment.slice(2)}-${sdmGoal.name}`;
 }
 
 export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult, error?: Error) {
