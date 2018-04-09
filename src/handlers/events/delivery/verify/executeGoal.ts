@@ -111,11 +111,10 @@ export async function executeHook(status: StatusForExecuteGoal.Fragment,
                 ATOMIST_CORRELATION_ID: ctx.correlationId,
                 ATOMIST_JWT: jwtToken(),
             },
-            shell: true,
         };
 
         let result: HandlerResult = await spawnAndWatch(
-            { command:  path.join(p.baseDir, ".atomist", "hooks", hook) },
+            { command:  path.join(p.baseDir, ".atomist", "hooks", hook), args: [] },
              opts,
              new ConsoleProgressLog(),
             {
