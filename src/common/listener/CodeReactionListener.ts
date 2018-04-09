@@ -17,6 +17,9 @@
 import { StatusForExecuteGoal } from "../../typings/types";
 import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
+/**
+ * Invocation object used by most listeners that react to code changes
+ */
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
     /**
