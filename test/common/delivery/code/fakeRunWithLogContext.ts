@@ -19,14 +19,15 @@ import { RunWithLogContext } from "../../../../src/common/delivery/goals/support
 import { ConsoleProgressLog } from "../../../../src/common/log/progressLogs";
 import { StatusForExecuteGoal, StatusState } from "../../../../src/typings/types";
 import { fakeContext } from "../../../software-delivery-machine/FakeContext";
+import { logger } from "@atomist/automation-client";
 
 export function fakeRunWithLogContext(id: RemoteRepoRef): RunWithLogContext {
     return {
         credentials: {token: "foobar"},
         context: fakeContext("T1111"),
         id,
-        addressChannels: async () => {
-            // do nothing
+        addressChannels: async m => {
+            logger.info("channels > " + m);
         },
         status: fakeStatus(id),
         progressLog: new ConsoleProgressLog(),
@@ -43,7 +44,21 @@ export function fakeStatus(id: RepoId): StatusForExecuteGoal.Fragment {
                     owner: id.owner,
                 },
                 name: id.repo,
+                channels: [ {
+                    name: "foo",
+                    id: "1",
+                    team: {
+                        id: "T357",
+                    },
+                },
+                ],
             },
+            pushes: [
+                {
+                    id: "121",
+                    branch: "foo",
+                },
+            ],
         },
     };
 }

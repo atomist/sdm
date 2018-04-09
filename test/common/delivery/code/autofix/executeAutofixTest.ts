@@ -20,6 +20,11 @@ import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import { SingleProjectLoader } from "../../../SingleProjectLoader";
 import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { AddAtomistTypeScriptHeader } from "../../../../../src/software-delivery-machine/blueprint/code/autofix/addAtomistHeader";
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { ApacheHeader } from "../../../../../src/software-delivery-machine/commands/editors/license/addHeader";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 describe("executeAutofixes", () => {
 
@@ -28,6 +33,31 @@ describe("executeAutofixes", () => {
         const pl = new SingleProjectLoader({ id } as any);
         const r = await executeAutofixes(pl, [])(fakeRunWithLogContext(id));
         assert(r.code === 0);
+    });
+
+    it("should execute header adder and find no match", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const initialContent = "public class Thing {}";
+        const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
+        const p = InMemoryProject.from(id, f);
+        const pl = new SingleProjectLoader(p);
+        const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(id));
+        assert(r.code === 0);
+        assert(p.findFileSync(f.path).getContentSync() === initialContent);
+    });
+
+    it("should execute header adder and find a match and add a header", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const initialContent = "public class Thing {}";
+        const f = new InMemoryFile("src/Thing.ts", initialContent);
+        const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License"});
+        (p as any as GitProject).revert = async () => null;
+        (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
+        const pl = new SingleProjectLoader(p);
+        const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(id));
+        assert(r.code === 0);
+        assert(p.findFileSync(f.path).getContentSync().startsWith(ApacheHeader));
+        assert(p.findFileSync(f.path).getContentSync().includes(initialContent));
     });
 
 });

@@ -31,12 +31,13 @@ export const AddAtomistJavaHeader: AutofixRegistration = addAtomistHeader("Java 
 export const AddAtomistTypeScriptHeader: AutofixRegistration = addAtomistHeader("TypeScript header", "**/*.ts", IsTypeScript);
 
 export function addAtomistHeader(name: string, glob: string, pushTest: PushTest): AutofixRegistration {
-    const ourParams = new AddHeaderParameters();
-    ourParams.glob = glob;
+    const parameters = new AddHeaderParameters();
+    parameters.glob = glob;
     return editorAutofixRegistration({
         name,
         pushTest: allSatisfied(pushTest, hasFileContaining(LicenseFilename, /Apache License/)),
         // Ignored any parameters passed in, which will be undefined in an autofix, and provide predefined parameters
         editor: addHeaderProjectEditor,
+        parameters,
     });
 }

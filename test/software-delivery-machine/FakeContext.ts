@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import { HandlerContext, logger } from "@atomist/automation-client";
 
 export function fakeContext(teamId: string = "T123") {
     return {
         teamId,
         messageClient: {
-            respond() {
-                return undefined;
+            respond(m) {
+                logger.info("respond > " + m);
             },
         },
     } as any as HandlerContext;

@@ -2,6 +2,7 @@
 import { AnyProjectEditor, EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { PushTest } from "../../../listener/PushTest";
 import { CodeActionRegistration } from "../CodeActionRegistration";
+import { logger } from "@atomist/automation-client";
 
 export interface AutofixRegistrationOptions {
 
@@ -20,21 +21,23 @@ export interface AutofixRegistration extends CodeActionRegistration<EditResult> 
  * to use predefined parameters.
  * Any use of MessageClient.respond in an editor used in an autofix will be redirected to
  * linked channels as autofixes are normally invoked in an EventHandler and EventHandlers
- * do not support respond.
+ * do not support respond. Be sure to set parameters if they are required by your editor.
  */
-export function editorAutofixRegistration(params: {
+export function editorAutofixRegistration(use: {
     name: string,
     editor: AnyProjectEditor,
     pushTest?: PushTest,
     options?: AutofixRegistrationOptions,
+    parameters?: any,
 }): AutofixRegistration {
+    const editorToUse = toEditor(use.editor);
     return {
-        name: params.name,
-        pushTest: params.pushTest,
-        options: params.options,
+        name: use.name,
+        pushTest: use.pushTest,
+        options: use.options,
         action: async cri => {
-            const ed = toEditor(params.editor);
-            return ed(cri.project, cri.context, null);
+            logger.debug("About to edit using autofix editor %s", use.editor.toString());
+            return editorToUse(cri.project, cri.context, use.parameters);
         },
     };
 }
