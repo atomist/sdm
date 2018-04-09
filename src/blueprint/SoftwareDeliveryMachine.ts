@@ -51,7 +51,6 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
 import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
-import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/code/codeActionRegistrations";
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
@@ -62,7 +61,6 @@ import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
-import { CodeReactionRegistration } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { Fingerprinter } from "../common/listener/Fingerprinter";
@@ -99,6 +97,9 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
+import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
+import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -153,7 +154,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
-    private readonly codeReactionRegistrations: CodeReactionRegistration[] = [];
+    private readonly codeReactionRegistrations: CodeActionRegistration[] = [];
 
     private readonly autofixRegistrations: AutofixRegistration[] = [];
 
@@ -394,7 +395,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addCodeReactions(...crrs: CodeReactionRegistration[]): this {
+    public addCodeReactions(...crrs: CodeActionRegistration[]): this {
         this.codeReactionRegistrations.push(...crrs);
         return this;
     }

@@ -16,14 +16,14 @@
 
 import { logger, Success } from "@atomist/automation-client";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
-import { CodeReactionInvocation, CodeReactionRegistration } from "../../listener/CodeReactionListener";
+import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { addressChannelsFor } from "../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
-import { relevantCodeActions } from "./codeActionRegistrations";
+import { CodeActionRegistration, relevantCodeActions } from "./CodeActionRegistration";
 
 export function executeCodeReactions(projectLoader: ProjectLoader,
-                                     registrations: CodeReactionRegistration[]): ExecuteGoalWithLog {
+                                     registrations: CodeActionRegistration[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         const {status, credentials, id, context} = rwlc;
         const commit = status.commit;
@@ -49,8 +49,8 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
                 push,
             };
 
-            const relevantCodeReactions: CodeReactionRegistration[] = await
-                relevantCodeActions<CodeReactionRegistration>(registrations, cri);
+            const relevantCodeReactions: CodeActionRegistration[] = await
+                relevantCodeActions<CodeActionRegistration>(registrations, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j",
                 relevantCodeReactions.length, registrations.length, cri.id);
             const allReactions: Promise<any> =

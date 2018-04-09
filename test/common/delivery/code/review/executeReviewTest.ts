@@ -15,20 +15,18 @@
  */
 
 import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
 import "mocha";
-import { ReviewerRegistration } from "../../../../../src/common/delivery/code/codeActionRegistrations";
 import { executeReview } from "../../../../../src/common/delivery/code/review/executeReview";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
-import { SingleProjectLoader } from "../../../SingleProjectLoader";
+import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
     pushTest: TruePushTest,
-    action: async p => ({
-        repoId: p.id,
-        comments: await saveFromFiles(p, "**/*.*", f =>
+    action: async cri => ({
+        repoId: cri.project.id,
+        comments: await saveFromFiles(cri.project, "**/*.*", f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {

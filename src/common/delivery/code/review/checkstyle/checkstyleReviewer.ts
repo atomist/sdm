@@ -23,10 +23,10 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
-import { ReviewerRegistration } from "../../codeActionRegistrations";
 import { ReviewerError } from "../ReviewerError";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
+import { ReviewerRegistration } from "../ReviewerRegistration";
 
 /**
  * Spawn Checkstyle Java process against the project directory.
@@ -77,7 +77,7 @@ export function checkstyleReviewerRegistration(reviewOnlyChangedFiles: boolean):
     return {
         pushTest: IsJava,
         name: "Checkstyle",
-        action: checkstyleReviewer(process.env.CHECKSTYLE_PATH),
+        action: async cri => checkstyleReviewer(process.env.CHECKSTYLE_PATH)(cri.project, cri.context),
         options: {reviewOnlyChangedFiles},
     };
 }

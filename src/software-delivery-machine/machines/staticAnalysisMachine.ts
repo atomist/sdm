@@ -51,7 +51,7 @@ export function staticAnalysisMachine(opts: Partial<StaticAnalysisMachineOptions
     addCheckstyleSupport(sdm, options);
     sdm.addReviewerRegistrations({
         name: "YML-hater",
-        action: rodHatesYml,
+        action: cri => rodHatesYml(cri.project, cri.context),
         options: {reviewOnlyChangedFiles: false},
     });
 
