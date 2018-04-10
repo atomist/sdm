@@ -56,7 +56,7 @@ export function disposeCommand(rules: ChooseAndSetGoalsRules): HandleCommand {
         DisposeParameters,
         "DisposeOfProject",
         "Remove this project from existence",
-        "dispose of this project");
+        ["dispose of this project", "exterminate"]);
 }
 
 function disposeOfProject(rules: ChooseAndSetGoalsRules) {
@@ -74,7 +74,7 @@ function disposeOfProject(rules: ChooseAndSetGoalsRules) {
 
         const determinedGoals = await chooseAndSetGoals(rules, {
             context: ctx,
-            credentials: { token: commandParams.githubToken },
+            credentials: {token: commandParams.githubToken},
             push,
         });
         if (!determinedGoals) {
