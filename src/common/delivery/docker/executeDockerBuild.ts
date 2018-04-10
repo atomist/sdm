@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { DockerOptions } from "../../../software-delivery-machine/parts/stacks/dockerSupport";
 import { StatusForExecuteGoal } from "../../../typings/types";
@@ -28,7 +29,8 @@ import {
 
 export type DockerImageNameCreator = (p: Project,
                                       status: StatusForExecuteGoal.Fragment,
-                                      options: DockerOptions) => Promise<{registry: string, name: string, version: string}>;
+                                      options: DockerOptions,
+                                      ctx: HandlerContext) => Promise<{registry: string, name: string, version: string}>;
 
 /**
  * Execute docker build with
@@ -49,7 +51,7 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
                 errorFinder: code => code !== 0,
             };
 
-            const imageName = await imageNameCreator(p, status, options);
+            const imageName = await imageNameCreator(p, status, options, context);
             const image = `${imageName.registry}/${imageName.name}:${imageName.version}`;
 
             // 1. run docker build

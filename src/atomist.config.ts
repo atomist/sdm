@@ -81,7 +81,6 @@ export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),
     events: machine.eventHandlers.concat([]),
     http: {
-        enabled: !!process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
         auth: {
             basic: {
                 enabled: true,
@@ -90,8 +89,16 @@ export const configuration: Configuration = {
             },
         },
     },
+    cluster: {
+        enabled: !notLocal,
+        workers: 1,
+    },
+    statsd: {
+        host: "dd-agent",
+        port: 8125,
+    },
     logging: {
-        level: "info",
+        level: !notLocal ? "info" : "debug",
         file: {
             enabled: !notLocal,
             level: "debug",

@@ -8420,332 +8420,6 @@
               "deprecationReason": null
             },
             {
-              "name": "SdmGoal",
-              "description": "Auto-generated query for SdmGoal",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SdmGoal"
-                }
-              },
-              "args": [
-                {
-                  "name": "id",
-                  "description": "The ID of this SdmGoal",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                },
-                {
-                  "name": "_offset",
-                  "description": "Paging offset (default 0)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_first",
-                  "description": "Return the first X results (default 10)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_orderBy",
-                  "description": "Name of property to sort on",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_ordering",
-                  "description": "Direction of ordering",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "_Ordering"
-                  }
-                },
-                {
-                  "name": "_search",
-                  "description": "Elastic Search simple full text search syntax",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
-                },
-                {
-                  "name": "goalSet",
-                  "description": "Goal set the goal is a part of",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "environment",
-                  "description": "Environment the goal runs in",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "name",
-                  "description": "Name of the goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "sha",
-                  "description": "Commit that the goal belongs to",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "branch",
-                  "description": "Branch of the goal's commit",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "description",
-                  "description": "Description of the goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "url",
-                  "description": "URL of the goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
-                  "description": "State of goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "externalKey",
-                  "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "ts",
-                  "description": "Timestamp of goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Int"
-                    }
-                  }
-                },
-                {
-                  "name": "error",
-                  "description": "Error occurred during goal execution",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "retryFeasible",
-                  "description": "Goal can be retried",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Boolean"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "SdmDeployEnablement",
-              "description": "Auto-generated query for SdmDeployEnablement",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SdmDeployEnablement"
-                }
-              },
-              "args": [
-                {
-                  "name": "id",
-                  "description": "The ID of this SdmDeployEnablement",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                },
-                {
-                  "name": "_offset",
-                  "description": "Paging offset (default 0)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_first",
-                  "description": "Return the first X results (default 10)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_orderBy",
-                  "description": "Name of property to sort on",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_ordering",
-                  "description": "Direction of ordering",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "_Ordering"
-                  }
-                },
-                {
-                  "name": "_search",
-                  "description": "Elastic Search simple full text search syntax",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
-                },
-                {
-                  "name": "owner",
-                  "description": "The name of the repo owner (org or user)",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "repo",
-                  "description": "The name of the repo",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "providerId",
-                  "description": "The internal providerId of the org/repo",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
-                  "description": "State of deploy enablement (requested or disabled)",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                }
-              ]
-            },
-            {
               "name": "Card",
               "description": "Auto-generated query for Card",
               "type": {
@@ -8868,6 +8542,423 @@
                 },
                 {
                   "name": "shortTitle",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmDeployEnablement",
+              "description": "Auto-generated query for SdmDeployEnablement",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmDeployEnablement"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmDeployEnablement",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "owner",
+                  "description": "The name of the repo owner (org or user)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "repo",
+                  "description": "The name of the repo",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "providerId",
+                  "description": "The internal providerId of the org/repo",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "state",
+                  "description": "State of deploy enablement (requested or disabled)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmGoal",
+              "description": "Auto-generated query for SdmGoal",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoal"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmGoal",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "environment",
+                  "description": "Environment the goal runs in",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "name",
+                  "description": "Name of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "sha",
+                  "description": "Commit that the goal belongs to",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "branch",
+                  "description": "Branch of the goal's commit",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "description",
+                  "description": "Description of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "url",
+                  "description": "URL of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "state",
+                  "description": "State of goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "externalKey",
+                  "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "goalSet",
+                  "description": "Goal set the goal is a part of",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "ts",
+                  "description": "Timestamp of goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int"
+                    }
+                  }
+                },
+                {
+                  "name": "error",
+                  "description": "Error occurred during goal execution",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "retryFeasible",
+                  "description": "Goal can be retried",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmVersion",
+              "description": "Auto-generated query for SdmVersion",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmVersion"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmVersion",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "sha",
+                  "description": "Commit sha",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "version",
+                  "description": "Version associated with a commit",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -47110,478 +47201,6 @@
         },
         {
           "kind": "OBJECT",
-          "name": "SdmRepository",
-          "fields": [
-            {
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "owner",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "providerId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SdmCondition",
-          "fields": [
-            {
-              "name": "goalSet",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "environment",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SdmProvenance",
-          "fields": [
-            {
-              "name": "correlationId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "registration",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "version",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "ts",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int"
-              },
-              "args": []
-            },
-            {
-              "name": "userId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "channelId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "kind": "OBJECT",
-          "name": "GoalFulfillment",
-          "fields": [
-            {
-              "name": "method",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            },
-            {
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SdmGoal",
-          "fields": [
-            {
-              "name": "goalSet",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Goal set the goal is a part of",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "environment",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Environment the goal runs in",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "name",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Name of the goal",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "sha",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Commit that the goal belongs to",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "branch",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Branch of the goal's commit",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "repo",
-              "args": [
-                {
-                  "name": "name",
-                  "type": {
-                    "kind": "LIST",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "owner",
-                  "type": {
-                    "kind": "LIST",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "providerId",
-                  "type": {
-                    "kind": "LIST",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  },
-                  "defaultValue": null
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "SdmRepository"
-              },
-              "description": "Repository the commit was observed from"
-            },
-            {
-              "name": "fulfillment",
-              "args": [
-                {
-                  "name": "method",
-                  "type": {
-                    "kind": "LIST",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "name",
-                  "type": {
-                    "kind": "LIST",
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  },
-                  "defaultValue": null
-                }
-              ],
-              "type": {
-                "kind": "OBJECT",
-                "name": "GoalFulfillment"
-              },
-              "description": "How the goal gets fulfilled"
-            },
-            {
-              "name": "description",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Description of the goal",
-              "args": []
-            },
-            {
-              "name": "url",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "URL of the goal",
-              "args": []
-            },
-            {
-              "name": "state",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "State of goal",
-              "args": []
-            },
-            {
-              "name": "externalKey",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
-              "args": []
-            },
-            {
-              "name": "ts",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Int"
-              },
-              "description": "Timestamp of goal",
-              "args": []
-            },
-            {
-              "name": "error",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "Error occurred during goal execution",
-              "args": []
-            },
-            {
-              "name": "retryFeasible",
-              "type": {
-                "kind": "SCALAR",
-                "name": "Boolean"
-              },
-              "description": "Goal can be retried",
-              "args": []
-            },
-            {
-              "name": "preConditions",
-              "type": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SdmCondition"
-                }
-              },
-              "description": "Preconditions of goal",
-              "args": []
-            },
-            {
-              "name": "approval",
-              "type": {
-                "kind": "OBJECT",
-                "name": "SdmProvenance"
-              },
-              "description": "Where and how the goal was approved",
-              "args": []
-            },
-            {
-              "name": "provenance",
-              "type": {
-                "kind": "LIST",
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SdmProvenance"
-                }
-              },
-              "description": "Changes to goal",
-              "args": []
-            },
-            {
-              "name": "id",
-              "description": "The ID of this SdmGoal",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "kind": "OBJECT",
-          "name": "SdmDeployEnablement",
-          "fields": [
-            {
-              "name": "owner",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "The name of the repo owner (org or user)",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "repo",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "The name of the repo",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "providerId",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "The internal providerId of the org/repo",
-              "directives": [
-                {
-                  "name": "compositeId"
-                }
-              ],
-              "args": []
-            },
-            {
-              "name": "state",
-              "type": {
-                "kind": "SCALAR",
-                "name": "String"
-              },
-              "description": "State of deploy enablement (requested or disabled)",
-              "args": []
-            },
-            {
-              "name": "id",
-              "description": "The ID of this SdmDeployEnablement",
-              "type": {
-                "kind": "SCALAR",
-                "name": "ID"
-              },
-              "args": []
-            }
-          ],
-          "interfaces": []
-        },
-        {
-          "kind": "OBJECT",
           "name": "CardRepository",
           "fields": [
             {
@@ -48315,6 +47934,573 @@
                   "kind": "OBJECT",
                   "name": "CardActionParameterOption"
                 }
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmDeployEnablement",
+          "fields": [
+            {
+              "name": "owner",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "The name of the repo owner (org or user)",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "repo",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "The name of the repo",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "providerId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "The internal providerId of the org/repo",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "state",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "State of deploy enablement (requested or disabled)",
+              "args": []
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SdmDeployEnablement",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmRepository",
+          "fields": [
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "owner",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "providerId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmCondition",
+          "fields": [
+            {
+              "name": "environment",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmProvenance",
+          "fields": [
+            {
+              "name": "correlationId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "registration",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "ts",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int"
+              },
+              "args": []
+            },
+            {
+              "name": "userId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "channelId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "GoalFulfillment",
+          "fields": [
+            {
+              "name": "method",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmGoal",
+          "fields": [
+            {
+              "name": "environment",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Environment the goal runs in",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Name of the goal",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "sha",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Commit that the goal belongs to",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "branch",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Branch of the goal's commit",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "repo",
+              "args": [
+                {
+                  "name": "name",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "owner",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "providerId",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmRepository"
+              },
+              "description": "Repository the commit was observed from"
+            },
+            {
+              "name": "fulfillment",
+              "args": [
+                {
+                  "name": "method",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "name",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "GoalFulfillment"
+              },
+              "description": "How the goal gets fulfilled"
+            },
+            {
+              "name": "description",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Description of the goal",
+              "args": []
+            },
+            {
+              "name": "url",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "URL of the goal",
+              "args": []
+            },
+            {
+              "name": "state",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "State of goal",
+              "args": []
+            },
+            {
+              "name": "externalKey",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
+              "args": []
+            },
+            {
+              "name": "goalSet",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Goal set the goal is a part of",
+              "args": []
+            },
+            {
+              "name": "ts",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int"
+              },
+              "description": "Timestamp of goal",
+              "args": []
+            },
+            {
+              "name": "error",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Error occurred during goal execution",
+              "args": []
+            },
+            {
+              "name": "retryFeasible",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean"
+              },
+              "description": "Goal can be retried",
+              "args": []
+            },
+            {
+              "name": "preConditions",
+              "type": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmCondition"
+                }
+              },
+              "description": "Preconditions of goal",
+              "args": []
+            },
+            {
+              "name": "approval",
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmProvenance"
+              },
+              "description": "Where and how the goal was approved",
+              "args": []
+            },
+            {
+              "name": "provenance",
+              "type": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmProvenance"
+                }
+              },
+              "description": "Changes to goal",
+              "args": []
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SdmGoal",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmVersionRepository",
+          "fields": [
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "owner",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "providerId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmVersion",
+          "fields": [
+            {
+              "name": "sha",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Commit sha",
+              "args": []
+            },
+            {
+              "name": "version",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Version associated with a commit",
+              "args": []
+            },
+            {
+              "name": "repo",
+              "args": [
+                {
+                  "name": "name",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "owner",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "providerId",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmVersionRepository"
+              },
+              "description": "Repository the commit/version was observed from"
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SdmVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
               },
               "args": []
             }
@@ -56993,332 +57179,6 @@
               "deprecationReason": null
             },
             {
-              "name": "SdmGoal",
-              "description": "Auto-generated query for SdmGoal",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SdmGoal"
-                }
-              },
-              "args": [
-                {
-                  "name": "id",
-                  "description": "The ID of this SdmGoal",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                },
-                {
-                  "name": "_offset",
-                  "description": "Paging offset (default 0)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_first",
-                  "description": "Return the first X results (default 10)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_orderBy",
-                  "description": "Name of property to sort on",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_ordering",
-                  "description": "Direction of ordering",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "_Ordering"
-                  }
-                },
-                {
-                  "name": "_search",
-                  "description": "Elastic Search simple full text search syntax",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
-                },
-                {
-                  "name": "goalSet",
-                  "description": "Goal set the goal is a part of",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "environment",
-                  "description": "Environment the goal runs in",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "name",
-                  "description": "Name of the goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "sha",
-                  "description": "Commit that the goal belongs to",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "branch",
-                  "description": "Branch of the goal's commit",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "description",
-                  "description": "Description of the goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "url",
-                  "description": "URL of the goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
-                  "description": "State of goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "externalKey",
-                  "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "ts",
-                  "description": "Timestamp of goal",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Int"
-                    }
-                  }
-                },
-                {
-                  "name": "error",
-                  "description": "Error occurred during goal execution",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "retryFeasible",
-                  "description": "Goal can be retried",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "Boolean"
-                    }
-                  }
-                }
-              ]
-            },
-            {
-              "name": "SdmDeployEnablement",
-              "description": "Auto-generated query for SdmDeployEnablement",
-              "type": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "SdmDeployEnablement"
-                }
-              },
-              "args": [
-                {
-                  "name": "id",
-                  "description": "The ID of this SdmDeployEnablement",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "ID"
-                  }
-                },
-                {
-                  "name": "_offset",
-                  "description": "Paging offset (default 0)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_first",
-                  "description": "Return the first X results (default 10)",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "Int"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_orderBy",
-                  "description": "Name of property to sort on",
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  },
-                  "defaultValue": null
-                },
-                {
-                  "name": "_ordering",
-                  "description": "Direction of ordering",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "ENUM",
-                    "name": "_Ordering"
-                  }
-                },
-                {
-                  "name": "_search",
-                  "description": "Elastic Search simple full text search syntax",
-                  "defaultValue": null,
-                  "type": {
-                    "kind": "SCALAR",
-                    "name": "String"
-                  }
-                },
-                {
-                  "name": "owner",
-                  "description": "The name of the repo owner (org or user)",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "repo",
-                  "description": "The name of the repo",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "providerId",
-                  "description": "The internal providerId of the org/repo",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
-                  "description": "State of deploy enablement (requested or disabled)",
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                }
-              ]
-            },
-            {
               "name": "Card",
               "description": "Auto-generated query for Card",
               "type": {
@@ -57441,6 +57301,423 @@
                 },
                 {
                   "name": "shortTitle",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmDeployEnablement",
+              "description": "Auto-generated query for SdmDeployEnablement",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmDeployEnablement"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmDeployEnablement",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "owner",
+                  "description": "The name of the repo owner (org or user)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "repo",
+                  "description": "The name of the repo",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "providerId",
+                  "description": "The internal providerId of the org/repo",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "state",
+                  "description": "State of deploy enablement (requested or disabled)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmGoal",
+              "description": "Auto-generated query for SdmGoal",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoal"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmGoal",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "environment",
+                  "description": "Environment the goal runs in",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "name",
+                  "description": "Name of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "sha",
+                  "description": "Commit that the goal belongs to",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "branch",
+                  "description": "Branch of the goal's commit",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "description",
+                  "description": "Description of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "url",
+                  "description": "URL of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "state",
+                  "description": "State of goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "externalKey",
+                  "description": "key to a corresponding commit status in GitHub/BitBucket (optional)",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "goalSet",
+                  "description": "Goal set the goal is a part of",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "ts",
+                  "description": "Timestamp of goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Int"
+                    }
+                  }
+                },
+                {
+                  "name": "error",
+                  "description": "Error occurred during goal execution",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "retryFeasible",
+                  "description": "Goal can be retried",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmVersion",
+              "description": "Auto-generated query for SdmVersion",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmVersion"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmVersion",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "sha",
+                  "description": "Commit sha",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "version",
+                  "description": "Version associated with a commit",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -57818,6 +58095,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "86d40920-2fe6-4009-bb05-f225fa183121"
+    "correlation_id": "08e30a89-a9a7-48b6-8e39-6be9e8fc9193"
   }
 }

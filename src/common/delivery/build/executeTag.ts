@@ -28,18 +28,17 @@ import {
     ExecuteGoalWithLog,
     RunWithLogContext,
 } from "../goals/support/reportGoalError";
-import { ProjectIdentifier } from "./local/projectIdentifier";
+import { readSdmVersion } from "./local/projectVersioner";
 
-export function executeTag(projectLoader: ProjectLoader,
-                           projectIdentifier: ProjectIdentifier): ExecuteGoalWithLog {
+export function executeTag(projectLoader: ProjectLoader): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { status, credentials, id, context } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
 
-            const projectId = await projectIdentifier(p);
+            const version = await readSdmVersion(status, context);
             const tag: Tag = {
-                tag: projectId.version,
+                tag: version,
                 message: status.commit.message,
                 object: status.commit.sha,
                 type: "commit",

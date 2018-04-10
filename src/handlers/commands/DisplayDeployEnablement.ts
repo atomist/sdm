@@ -30,9 +30,9 @@ import { addressEvent, buttonForCommand } from "@atomist/automation-client/spi/m
 import { Action, SlackMessage } from "@atomist/slack-messages";
 import { isDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import {
-    DeployEnablement,
     DeployEnablementRootType,
-} from "../../ingesters/deployEnablement";
+    SdmDeployEnablement,
+} from "../../ingesters/sdmDeployEnablement";
 import { success } from "../../util/slack/messages";
 import { SetDeployEnablementParameters } from "./SetDeployEnablement";
 

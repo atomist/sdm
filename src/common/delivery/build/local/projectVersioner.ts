@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
+import {
+    HandlerContext,
+    Success,
+} from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
+import * as _ from "lodash";
+import {
+    SdmVersion,
+    SdmVersionRootType,
+} from "../../../../ingesters/sdmVersionIngester";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import {
+    SdmVersionForCommit,
+    StatusForExecuteGoal,
+} from "../../../../typings/types";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
 import {
@@ -23,7 +37,7 @@ import {
     RunWithLogContext,
 } from "../../goals/support/reportGoalError";
 
-export type ProjectVersioner = (p: GitProject, log: ProgressLog) => Promise<any>;
+export type ProjectVersioner = (p: GitProject, log: ProgressLog) => Promise<string>;
 
 /**
  * Version the project with a build specific version number
@@ -32,10 +46,35 @@ export type ProjectVersioner = (p: GitProject, log: ProgressLog) => Promise<any>
 export function executeVersioner(projectLoader: ProjectLoader,
                                  projectVersioner: ProjectVersioner): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const { credentials, id, context, progressLog } = rwlc;
+        const { status, credentials, id, context, progressLog } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
-            return projectVersioner(p, progressLog);
+            const version = await projectVersioner(p, progressLog);
+            const sdmVersion: SdmVersion = {
+                sha: status.commit.sha,
+                version,
+                repo: {
+                    owner: status.commit.repo.owner,
+                    name: status.commit.repo.name,
+                    providerId: status.commit.repo.org.provider.providerId,
+                },
+            };
+            await context.messageClient.send(sdmVersion, addressEvent(SdmVersionRootType));
+            return Success;
         });
     };
+}
+
+export async function readSdmVersion(status: StatusForExecuteGoal.Fragment,
+                                     context: HandlerContext): Promise<string> {
+    const version = await context.graphClient.query<SdmVersionForCommit.Query, SdmVersionForCommit.Variables>({
+            name: "SdmVersionForCommit",
+            variables: {
+                name: [status.commit.repo.name],
+                owner: [status.commit.repo.owner],
+                providerId: [status.commit.repo.org.provider.providerId],
+                sha: [status.commit.sha],
+            },
+        });
+    return _.get(version, "SdmVersion[0].version");
 }

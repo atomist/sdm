@@ -22,7 +22,10 @@ import {
 import { executeTag } from "../../../common/delivery/build/executeTag";
 import { NodeProjectIdentifier } from "../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 import { NodeProjectVersioner } from "../../../common/delivery/build/local/npm/nodeProjectVersioner";
-import { executeVersioner } from "../../../common/delivery/build/local/projectVersioner";
+import {
+    executeVersioner,
+    readSdmVersion,
+} from "../../../common/delivery/build/local/projectVersioner";
 import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
 import {
     DockerImageNameCreator,
@@ -72,13 +75,12 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine,
     .addGoalImplementation("nodeDockerBuild", DockerBuildGoal,
         executeDockerBuild(options.projectLoader, NodeDockerImageNameCreator, options))
     .addGoalImplementation("nodeTag", TagGoal,
-        executeTag(options.projectLoader, NodeProjectIdentifier));
+        executeTag(options.projectLoader));
 }
 
-export const NodeDockerImageNameCreator: DockerImageNameCreator = async (p, status, options) => {
+export const NodeDockerImageNameCreator: DockerImageNameCreator = async (p, status, options, ctx) => {
     const name = p.name;
-    const pj = (await p.getFile("package.json")).getContentSync();
-    const version = JSON.parse(pj).version;
+    const version = await readSdmVersion(status, ctx);
     return {
         registry: options.registry,
         name,
