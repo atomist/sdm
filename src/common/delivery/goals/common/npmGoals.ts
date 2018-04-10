@@ -16,7 +16,6 @@
 
 import { Goals } from "../Goals";
 import {
-<<<<<<< HEAD
     ArtifactGoal,
     AutofixGoal,
     BuildGoal,
@@ -26,10 +25,6 @@ import {
     StagingEndpointGoal,
     TagGoal,
     VersionGoal,
-=======
-    ArtifactGoal, AutofixGoal, BuildGoal, DockerBuildGoal, ReviewGoal, StagingDeploymentGoal,
-    StagingEndpointGoal
->>>>>>> Docker bits and pieces
 } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
@@ -51,16 +46,10 @@ export const NpmDeployGoals = new Goals(
 
 export const NpmDockerGoals = new Goals(
     "npm docker",
-<<<<<<< HEAD
     VersionGoal,
-=======
->>>>>>> Docker bits and pieces
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
     DockerBuildGoal,
-<<<<<<< HEAD
     TagGoal,
-=======
->>>>>>> Docker bits and pieces
 );

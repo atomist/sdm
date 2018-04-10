@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> further progress towards docker build and kube deploy
 import { HandlerContext } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { DockerOptions } from "../../../software-delivery-machine/parts/stacks/dockerSupport";
@@ -112,22 +108,5 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
                 return { code: 1, message: "Image link failed"};
             }
         });
-=======
-import { ProjectLoader } from "../../repo/ProjectLoader";
-import { ExecuteGoalResult } from "../goals/goalExecution";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
-
-/**
- * Execute build with the appropriate builder
- * @param projectLoader used to load projects
- */
-export function executeDockerBuild(projectLoader: ProjectLoader): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const {status, credentials, id, context, progressLog, addressChannels} = rwlc;
-        const commit = status.commit;
-        const atomistTeam = context.teamId;
-
-        throw new Error("Not implemented");
->>>>>>> Docker bits and pieces
     };
 }

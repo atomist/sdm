@@ -30,7 +30,8 @@ import {
 import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
-    AutofixGoal, DockerBuildGoal,
+    AutofixGoal,
+    DockerBuildGoal,
     NoGoals,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -58,14 +59,10 @@ import {
     AnyPush,
     FromAtomist,
     ToDefaultBranch,
-<<<<<<< HEAD
     ToPublicRepo,
-=======
-    ToPublicRepo
->>>>>>> Docker bits and pieces
 } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
-import { HasDockerFile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
+import { HasDockerfile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
 import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
@@ -101,8 +98,6 @@ import {
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { addDockerSupport } from "../parts/stacks/dockerSupport";
-import { HasDockerFile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions;
 
@@ -118,7 +113,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(HasTravisFile, IsNode)
             .itMeans("Already builds with Travis")
             .setGoals(new Goals("Autofix only", AutofixGoal)),
-        whenPushSatisfies(HasDockerFile, IsNode)
+        whenPushSatisfies(HasDockerfile, IsNode)
             .itMeans("Perform Docker build")
             .setGoals(DockerBuildGoal),
         whenPushSatisfies(HasTravisFile)
@@ -143,10 +138,10 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled, ToDefaultBranch)
             .itMeans("Build and deploy node")
             .setGoals(NpmDeployGoals),
-        whenPushSatisfies(IsNode, HasDockerFile, ToDefaultBranch)
+        whenPushSatisfies(IsNode, HasDockerfile, ToDefaultBranch)
             .itMeans("Docker build node")
             .setGoals(NpmDockerGoals),
-        whenPushSatisfies(IsNode, not(HasDockerFile))
+        whenPushSatisfies(IsNode, not(HasDockerfile))
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals),
     );
@@ -209,6 +204,5 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     addNodeSupport(sdm, options);
     addTeamPolicies(sdm);
     addDemoEditors(sdm);
-    addDockerSupport(sdm);
     return sdm;
 }
