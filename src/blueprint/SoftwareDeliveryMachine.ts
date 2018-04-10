@@ -88,6 +88,12 @@ import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 
+import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
+import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
+import { disposeCommand } from "../handlers/commands/disposeCommand";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
+import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
+import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
@@ -99,12 +105,6 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
-import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
-import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
-import { disposeCommand } from "../handlers/commands/disposeCommand";
-import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
-import { triggerGoal } from "../handlers/commands/triggerGoal";
-import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

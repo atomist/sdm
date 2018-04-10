@@ -41,7 +41,7 @@ export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext
 }
 
 export function messageDestinationsFor(hasChannels: HasChannels, ctx?: HandlerContext): Destination[] {
-    return hasChannels.channels.map(ch => addressSlackChannels(ch.team.id, ch.name))
+    return hasChannels.channels.map(ch => addressSlackChannels(ch.team.id, ch.name));
 }
 
 export function addressDestinations(ctx: HandlerContext, ...destinations: Destination[]): AddressChannels {
