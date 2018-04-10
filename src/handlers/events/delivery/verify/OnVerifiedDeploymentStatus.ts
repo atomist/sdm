@@ -79,7 +79,6 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
             context,
             status,
             addressChannels: addressChannelsFor(commit.repo, context),
-            messageDestination: messageDestinationsFor(commit.repo, context),
             credentials: {token: params.githubToken},
         };
 

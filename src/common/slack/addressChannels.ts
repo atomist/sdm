@@ -34,18 +34,14 @@ export interface HasChannels {
 
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
     if (hasChannels.channels && hasChannels.channels.length > 0) {
-        return addressDestinations(ctx, messageDestinationsFor(hasChannels, ctx));
+        return addressDestinations(ctx, ...messageDestinationsFor(hasChannels, ctx));
     } else {
         return () => Promise.resolve();
     }
 }
 
-export function messageDestinationsFor(hasChannels: HasChannels, ctx?: HandlerContext): Destination {
-    const channelNames = hasChannels.channels.map(c => c.name);
-
-    // TODO: support multiple slack teams. Return an Array<Destination>
-    const slackTeam = hasChannels.channels[0].team.id;
-    return addressSlackChannels(slackTeam, channelNames[0], ...channelNames.slice(1));
+export function messageDestinationsFor(hasChannels: HasChannels, ctx?: HandlerContext): Destination[] {
+    return hasChannels.channels.map(ch => addressSlackChannels(ch.team.id, ch.name));
 }
 
 export function addressDestinations(ctx: HandlerContext, ...destinations: Destination[]): AddressChannels {

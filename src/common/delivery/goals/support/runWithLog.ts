@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { logger } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { sprintf } from "sprintf-js";
 import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { OnAnySuccessStatus, StatusForExecuteGoal } from "../../../../typings/types";
+import { StatusForExecuteGoal } from "../../../../typings/types";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { SdmContext } from "../../../context/SdmContext";
-import { createEphemeralProgressLog } from "../../../log/EphemeralProgressLog";
-import { ConsoleProgressLog, MultiProgressLog } from "../../../log/progressLogs";
-import { AddressChannels, addressChannelsFor } from "../../../slack/addressChannels";
-import { ExecuteGoalInvocation, ExecuteGoalResult, GoalExecutor } from "../goalExecution";
+import { AddressChannels } from "../../../slack/addressChannels";
+import { Goal } from "../Goal";
+import { ExecuteGoalResult, GoalExecutor } from "../goalExecution";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
@@ -37,41 +36,34 @@ export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalRe
  * @param {LogInterpreter} logInterpreter
  * @return {GoalExecutor}
  */
-export function runWithLog(whatToRun: ExecuteGoalWithLog,
-                           logInterpreter: LogInterpreter): GoalExecutor {
-    return async (status: OnAnySuccessStatus.Status, ctx: HandlerContext, params: ExecuteGoalInvocation) => {
-        const commit = status.commit;
-        const log = await createEphemeralProgressLog();
-        const progressLog = new MultiProgressLog(new ConsoleProgressLog(), log);
-        const addressChannels = addressChannelsFor(commit.repo, ctx);
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        const credentials = {token: params.githubToken};
-
-        return whatToRun({status, progressLog, context: ctx, addressChannels, id, credentials})
-            .then(async yay => {
-                    if (yay && yay.code !== 0) {
-                        await reportError({
-                            executeGoalInvocation: params,
-                            addressChannels,
-                            progressLog,
-                            id,
-                            logInterpreter,
-                        }, new Error("Failure reported: " + yay.message));
-                    }
-                    await progressLog.close();
-                    return yay;
-                },
-                err => reportError({
-                    executeGoalInvocation: params,
-                    addressChannels,
-                    progressLog,
-                    id,
-                    logInterpreter,
-                }, err)
-                    .then(() => progressLog.close())
-                    .then(() => Promise.reject(err)));
-    };
-}
+// export function runWithLog(whatToRun: ExecuteGoalWithLog,
+//                            logInterpreter: LogInterpreter): ExecuteGoalWithLog {
+//     return async (rwlc: RunWithLogContext) => {
+//         return whatToRun(rwlc)
+//             .then(async yay => {
+//                     if (yay && yay.code !== 0) {
+//                         await reportError({
+//                             executeGoalInvocation: params,
+//                             addressChannels,
+//                             progressLog,
+//                             id,
+//                             logInterpreter,
+//                         }, new Error("Failure reported: " + yay.message));
+//                     }
+//                     await progressLog.close();
+//                     return yay;
+//                 },
+//                 err => reportError({
+//                     executeGoalInvocation: params,
+//                     addressChannels,
+//                     progressLog,
+//                     id,
+//                     logInterpreter,
+//                 }, err)
+//                     .then(() => progressLog.close())
+//                     .then(() => Promise.reject(err)));
+//     };
+// }
 
 export interface RunWithLogContext extends SdmContext {
     status: StatusForExecuteGoal.Fragment;
@@ -80,13 +72,16 @@ export interface RunWithLogContext extends SdmContext {
 
 export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-async function reportError(parameters: {
-                               executeGoalInvocation: ExecuteGoalInvocation,
-                               addressChannels: AddressChannels, progressLog: ProgressLog, id: GitHubRepoRef,
+export async function reportError(parameters: {
+                               goal: Goal,
+                               implementationName: string,
+                               addressChannels: AddressChannels,
+                               progressLog: ProgressLog,
+                               id: RemoteRepoRef,
                                logInterpreter: LogInterpreter,
                            },
-                           err: Error) {
-    const {executeGoalInvocation, addressChannels, progressLog, id, logInterpreter} = parameters;
+                                  err: Error) {
+    const {goal, implementationName, addressChannels, progressLog, id, logInterpreter} = parameters;
     logger.error("RunWithLog caught error: %s", err.message);
     logger.error(err.stack);
     progressLog.write("ERROR: " + err.message + "\n");
@@ -94,7 +89,7 @@ async function reportError(parameters: {
     progressLog.write(sprintf("full error object: [%j]", err));
 
     const retryButton = buttonForCommand({text: "Retry"},
-        retryCommandNameFor(executeGoalInvocation.goal), {
+        retryCommandNameFor(goal), {
             repo: id.repo,
             owner: id.owner,
             sha: id.sha,
@@ -104,7 +99,7 @@ async function reportError(parameters: {
     // The executor might have information about the failure; report it in the channels
     if (interpretation && interpretation.doNotReportToUser !== true) {
         await
-            reportFailureInterpretation(executeGoalInvocation.implementationName, interpretation,
+            reportFailureInterpretation(implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},
                 id, addressChannels, retryButton);
     } else {
