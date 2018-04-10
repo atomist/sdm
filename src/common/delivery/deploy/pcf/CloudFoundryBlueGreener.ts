@@ -80,12 +80,13 @@ export class CloudFoundryBlueGreener {
         if (currentRoutes.length > 0) {
             this.log.write(`Adding routes to app ${this.pusher.spaceName}:${appProperties.name}.`);
             const nextApp = await this.cfApi.getApp(spaceGuid, appProperties.name);
-            const domain = this.pusher.defaultDomain;
             currentRoutes.forEach(async route => {
-                await this.cfApi.addRouteToApp(spaceGuid, nextApp.metadata.guid, route.entity.host, domain);
+                await this.cfApi.addRouteToApp(spaceGuid, nextApp.metadata.guid, route.entity.host,
+                    route.entity.domain_guid);
             });
             const anyRoute = currentRoutes[0];
-            const endpoint = `https://${anyRoute.entity.host}.${anyRoute.entity.domain}`;
+            const domain = await this.cfApi.getDomainByGuid(anyRoute.entity.domain_guid);
+            const endpoint = `https://${anyRoute.entity.host}.${domain.entity.name}`;
             return _.assign({}, deployment, {endpoint});
         }
         return deployment;

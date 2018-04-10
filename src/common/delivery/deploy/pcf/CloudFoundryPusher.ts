@@ -86,7 +86,9 @@ export class CloudFoundryPusher {
             if (appRoutes.length === 0) {
                 hostName = `${manifestApp.name}-${randomWord()}-${randomWord()}`;
                 log.write(`Adding random route to ${appNameForLog}.`);
-                await this.api.addRouteToApp(spaceGuid, appGuid, hostName, this.defaultDomain);
+                const domain = await this.api.getDomain(this.defaultDomain);
+                const domainGuid = domain.metadata.guid;
+                await this.api.addRouteToApp(spaceGuid, appGuid, hostName, domainGuid);
             } else {
                 hostName = appRoutes[0].entity.host;
             }
