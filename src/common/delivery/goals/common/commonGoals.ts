@@ -223,3 +223,12 @@ export const ProductionMauve = "#cf5097";
 export const NoGoals = new Goals(
     "No action needed",
     NoGoal);
+
+export const DockerBuildGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DockerBuild",
+    environment: StagingEnvironment,
+    orderedName: "3-deploy",
+    displayName: "Docker build",
+    completedDescription: "Docker image built",
+    failedDescription: "Failed to build Docker image",
+}, BuildGoal);
