@@ -18,8 +18,8 @@ import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
 import { hasFile } from "../commonPushTests";
 
 /**
- * Does this project have a Docker file
+ * Does this project have a Dockerfile
  */
 export const HasDockerFile: PredicatePushTest = predicatePushTest(
-    "Has Docker File",
+    "Has Dockerfile",
     hasFile("Dockerfile").predicate);

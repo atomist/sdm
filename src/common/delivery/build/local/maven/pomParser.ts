@@ -26,7 +26,7 @@ export const MavenProjectIdentifier: ProjectIdentifier = async p => {
     }
     const content = await pom.getContent();
     const ident = await identification(content);
-    return {name: ident.artifact};
+    return { name: ident.artifact, version: ident.version };
 };
 
 /**

@@ -18,6 +18,7 @@ import { Project } from "@atomist/automation-client/project/Project";
 
 export interface ProjectIdentification {
     name: string;
+    version: string;
 }
 
 /**

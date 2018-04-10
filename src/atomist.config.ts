@@ -19,15 +19,25 @@ import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "./bluep
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
 import { greeting } from "./software-delivery-machine/misc/greeting";
+import { DockerOptions } from "./software-delivery-machine/parts/stacks/dockerSupport";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
-const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
+const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions = {
+
+    // SDM Options
     artifactStore: DefaultArtifactStore,
     projectLoader: new CachingProjectLoader(),
+
+    // Java options
     useCheckstyle: process.env.USE_CHECKSTYLE === "true",
     reviewOnlyChangedFiles: true,
+
+    // Docker options
+    registry: process.env.ATOMIST_DOCKER_REGISTRY,
+    user: process.env.ATOMIST_DOCKER_USER,
+    password: process.env.ATOMIST_DOCKER_PASSWORD,
 };
 
 /*
@@ -78,19 +88,6 @@ export const configuration: Configuration = {
                 username: "admin",
                 password: process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
             },
-        },
-    },
-    applicationEvents: {
-        enabled: true,
-    },
-    cluster: {
-        enabled: notLocal,
-        // worker: 2,
-    },
-    ws: {
-        enabled: true,
-        termination: {
-            graceful: notLocal,
         },
     },
     logging: {

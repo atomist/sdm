@@ -15,20 +15,38 @@
  */
 
 import { nodeTagger } from "@atomist/spring-automation/commands/tag/nodeTagger";
-import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import {
+    SoftwareDeliveryMachine,
+    SoftwareDeliveryMachineOptions,
+} from "../../../blueprint/SoftwareDeliveryMachine";
+import { executeTag } from "../../../common/delivery/build/executeTag";
+import { NodeProjectIdentifier } from "../../../common/delivery/build/local/npm/nodeProjectIdentifier";
+import { NodeProjectVersioner } from "../../../common/delivery/build/local/npm/nodeProjectVersioner";
+import { executeVersioner } from "../../../common/delivery/build/local/projectVersioner";
 import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
+import {
+    DockerImageNameCreator,
+    executeDockerBuild,
+} from "../../../common/delivery/docker/executeDockerBuild";
+import {
+    DockerBuildGoal,
+    TagGoal,
+    VersionGoal
+} from "../../../common/delivery/goals/common/commonGoals";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 import { AddBuildScript } from "../../blueprint/code/autofix/addBuildScript";
 import { nodeGenerator } from "../../commands/generators/node/nodeGenerator";
 import { CommonGeneratorConfig } from "../../machines/generatorConfig";
 import { CommonTypeScriptErrors } from "../team/commonTypeScriptErrors";
+import { DockerOptions } from "./dockerSupport";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
  * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
  */
-export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine) {
+export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine,
+                               options: SoftwareDeliveryMachineOptions & DockerOptions) {
     softwareDeliveryMachine
         .addGenerators(() => nodeGenerator({
             ...CommonGeneratorConfig,
@@ -48,5 +66,22 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine)
             tslintFix,
             AddBuildScript,
         )
-    .addReviewerRegistrations(CommonTypeScriptErrors);
+    .addReviewerRegistrations(CommonTypeScriptErrors)
+    .addGoalImplementation("nodeVersioner", VersionGoal,
+        executeVersioner(options.projectLoader, NodeProjectVersioner))
+    .addGoalImplementation("nodeDockerBuild", DockerBuildGoal,
+        executeDockerBuild(options.projectLoader, NodeDockerImageNameCreator, options))
+    .addGoalImplementation("nodeTag", TagGoal,
+        executeTag(options.projectLoader, NodeProjectIdentifier));
 }
+
+export const NodeDockerImageNameCreator: DockerImageNameCreator = async (p, status, options) => {
+    const name = p.name;
+    const pj = (await p.getFile("package.json")).getContentSync();
+    const version = JSON.parse(pj).version;
+    return {
+        registry: options.registry,
+        name,
+        version,
+    };
+};

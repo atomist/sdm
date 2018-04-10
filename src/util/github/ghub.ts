@@ -93,6 +93,16 @@ export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosProm
         ), `Updating github tag: ${url} to ${JSON.stringify(tag)}`, {});
 }
 
+export function createTagReference(token: string, rr: GitHubRepoRef, tag: Tag): AxiosPromise {
+    const config = authHeaders(token);
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/refs`;
+    logger.info("Creating github reference: %s to %j", url, tag);
+    return doWithRetry(() => axios.post(url, { ref: `refs/tags/${tag.tag}`, sha: tag.object }, config)
+        .catch(err =>
+            Promise.reject(new Error(`Error hitting ${url} to set tag ${JSON.stringify(tag)}: ${err.message}`)),
+        ), `Updating github tag: ${url} to ${JSON.stringify(tag)}`, {});
+}
+
 export function deleteRepository(token: string, rr: GitHubRepoRef): AxiosPromise {
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
