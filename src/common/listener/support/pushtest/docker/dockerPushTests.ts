@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { Project } from "@atomist/automation-client/project/Project";
-
-export interface ProjectIdentification {
-    name: string;
-    version: string;
-}
+import {
+    predicatePushTest,
+    PredicatePushTest,
+} from "../../../PushTest";
+import { hasFile } from "../commonPushTests";
 
 /**
- * Return identification of this project or undefined if it can't be identified
+ * Does this project have a Dockerfile
  */
-export type ProjectIdentifier = (p: Project) => Promise<ProjectIdentification | undefined>;
+export const HasDockerfile: PredicatePushTest = predicatePushTest(
+    "Has Dockerfile",
+    hasFile("Dockerfile").predicate);

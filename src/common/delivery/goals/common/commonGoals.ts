@@ -36,7 +36,7 @@ export const AutofixGoal = new Goal({
     uniqueCamelCaseName: "Autofix",
     environment: IndependentOfEnvironment,
     orderedName: "0.2-autofix",
-    completedDescription: "Autofixes OK",
+    completedDescription: "Autofixed",
     failedDescription: "Fixes made: Don't proceed",
 });
 
@@ -55,6 +55,13 @@ export const CodeReactionGoal = new Goal({
     completedDescription: "Code reactions",
 });
 
+export const VersionGoal = new Goal({
+    uniqueCamelCaseName: "Version",
+    environment: IndependentOfEnvironment,
+    orderedName: "0.1-version",
+    completedDescription: "Versioned",
+});
+
 /**
  * Just build, without any checks
  * @type {Goal}
@@ -63,19 +70,40 @@ export const JustBuildGoal = new Goal({
     uniqueCamelCaseName: "JustBuild",
     environment: IndependentOfEnvironment,
     orderedName: "2-just-build ",
+    displayName: "build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
-    failedDescription: "Build failure",
+    failedDescription: "Build failed",
 });
 
 export const BuildGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "Build",
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
+    displayName: "build",
     workingDescription: "Building...",
     completedDescription: "Build successful",
-    failedDescription: "Build failure",
+    failedDescription: "Build failed",
 }, AutofixGoal);
+
+export const DockerBuildGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DockerBuild",
+    environment: IndependentOfEnvironment,
+    orderedName: "3-build",
+    displayName: "docker build",
+    workingDescription: "Running Docker build...",
+    completedDescription: "Docker image built",
+    failedDescription: "Failed to build Docker image",
+}, BuildGoal);
+
+export const TagGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "Tag",
+    environment: IndependentOfEnvironment,
+    orderedName: "4-tag",
+    displayName: "tag",
+    completedDescription: "Tagged",
+    failedDescription: "Failed to create Tag",
+}, DockerBuildGoal, BuildGoal);
 
 // This one is actually satisfied in an ImageLinked event,
 // which happens to be a result of the build.

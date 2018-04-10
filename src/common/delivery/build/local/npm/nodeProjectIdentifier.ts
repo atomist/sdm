@@ -22,5 +22,5 @@ export const NodeProjectIdentifier: ProjectIdentifier = async p => {
         return undefined;
     }
     const parsed = JSON.parse(await pkg.getContent());
-    return { name: parsed.name };
+    return { name: parsed.name, version: parsed.version };
 };

@@ -1,0 +1,15 @@
+query SdmVersionForCommit(
+  $sha: [String!]
+  $name: [String!]
+  $owner: [String!]
+  $providerId: [String!]
+) {
+  SdmVersion(sha: $sha) {
+    repo(name: $name, owner: $owner, providerId: $providerId) {
+      name
+      owner
+      providerId
+    }
+    version
+  }
+}

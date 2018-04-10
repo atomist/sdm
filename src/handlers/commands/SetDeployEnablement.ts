@@ -27,9 +27,9 @@ import { HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import {
-    DeployEnablement,
     DeployEnablementRootType,
-} from "../../ingesters/deployEnablement";
+    SdmDeployEnablement,
+} from "../../ingesters/sdmDeployEnablement";
 import { success } from "../../util/slack/messages";
 
 @Parameters()
@@ -48,7 +48,7 @@ export class SetDeployEnablementParameters {
 
 export function setDeployEnablement(enable: boolean) {
     return (ctx: HandlerContext, params: SetDeployEnablementParameters): Promise<HandlerResult> => {
-        const deployEnablement: DeployEnablement = {
+        const deployEnablement: SdmDeployEnablement = {
             state: enable ? "requested" : "disabled",
             owner: params.owner,
             repo: params.repo,

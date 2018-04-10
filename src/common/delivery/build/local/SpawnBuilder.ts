@@ -47,6 +47,8 @@ export interface SpawnBuilderOptions {
 
     logInterpreter: LogInterpreter;
 
+    options?: any;
+
     /**
      * Find artifact info
      * @param {Project} p
@@ -99,6 +101,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
             const appId: AppInfo = await this.options.projectToAppInfo(p);
             const opts = {
                 cwd: p.baseDir,
+                ...(this.options.options || {}),
             };
 
             function executeOne(buildCommand: SpawnCommand): Promise<ChildProcessResult> {

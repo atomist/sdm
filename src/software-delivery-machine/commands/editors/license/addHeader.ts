@@ -89,7 +89,7 @@ export async function addHeaderProjectEditor(p: Project,
 
 function hasDifferentHeader(header: string, content: string): boolean {
     if (content.startsWith("/*")) {
-        if (content.startsWith(header)) {
+        if (content.startsWith(header) || content.startsWith("/* tslint:disable */")) {
             // great
             return false;
         }

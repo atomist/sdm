@@ -19,15 +19,25 @@ import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "./bluep
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
 import { greeting } from "./software-delivery-machine/misc/greeting";
+import { DockerOptions } from "./software-delivery-machine/parts/stacks/dockerSupport";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
-const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions = {
+const SdmOptions: SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions = {
+
+    // SDM Options
     artifactStore: DefaultArtifactStore,
     projectLoader: new CachingProjectLoader(),
+
+    // Java options
     useCheckstyle: process.env.USE_CHECKSTYLE === "true",
     reviewOnlyChangedFiles: true,
+
+    // Docker options
+    registry: process.env.ATOMIST_DOCKER_REGISTRY,
+    user: process.env.ATOMIST_DOCKER_USER,
+    password: process.env.ATOMIST_DOCKER_PASSWORD,
 };
 
 /*
@@ -71,7 +81,6 @@ export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),
     events: machine.eventHandlers.concat([]),
     http: {
-        enabled: !!process.env.LOCAL_ATOMIST_ADMIN_PASSWORD,
         auth: {
             basic: {
                 enabled: true,
@@ -80,21 +89,15 @@ export const configuration: Configuration = {
             },
         },
     },
-    applicationEvents: {
-        enabled: true,
-    },
     cluster: {
-        enabled: notLocal,
-        // worker: 2,
+        workers: 1,
     },
-    ws: {
-        enabled: true,
-        termination: {
-            graceful: notLocal,
-        },
+    statsd: {
+        host: "dd-agent",
+        port: 8125,
     },
     logging: {
-        level: "info",
+        level: !notLocal ? "info" : "debug",
         file: {
             enabled: !notLocal,
             level: "debug",

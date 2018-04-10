@@ -18,43 +18,69 @@ import * as build from "../../blueprint/dsl/buildDsl";
 import * as deploy from "../../blueprint/dsl/deployDsl";
 
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
-import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
+import {
+    SoftwareDeliveryMachine,
+    SoftwareDeliveryMachineOptions,
+} from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
+import {
+    nodeRunBuildBuilder,
+    nodeRunCompileBuilder,
+} from "../../common/delivery/build/local/npm/npmBuilder";
 import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
-import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     AutofixGoal,
+    DockerBuildGoal,
     NoGoals,
     ProductionDeploymentGoal,
-    ProductionEndpointGoal, ProductionUndeploymentGoal,
+    ProductionEndpointGoal,
+    ProductionUndeploymentGoal,
     StagingDeploymentGoal,
-    StagingEndpointGoal, StagingUndeploymentGoal,
+    StagingEndpointGoal,
+    StagingUndeploymentGoal,
 } from "../../common/delivery/goals/common/commonGoals";
 import {
-    HttpServiceGoals, LocalDeploymentGoals, RepositoryDeletionGoals,
+    HttpServiceGoals,
+    LocalDeploymentGoals,
+    RepositoryDeletionGoals,
     UndeployEverywhereGoals,
 } from "../../common/delivery/goals/common/httpServiceGoals";
 import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
-import { NpmBuildGoals, NpmDeployGoals } from "../../common/delivery/goals/common/npmGoals";
+import {
+    NpmBuildGoals,
+    NpmDeployGoals,
+    NpmDockerGoals,
+} from "../../common/delivery/goals/common/npmGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
 import { DoNotSetAnyGoals } from "../../common/listener/PushMapping";
 import { HasTravisFile } from "../../common/listener/support/pushtest/ci/ciPushTests";
-import { AnyPush, FromAtomist, ToDefaultBranch, ToPublicRepo } from "../../common/listener/support/pushtest/commonPushTests";
+import {
+    AnyPush,
+    FromAtomist,
+    ToDefaultBranch,
+    ToPublicRepo,
+} from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
+import { HasDockerfile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
 import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
 import { MaterialChangeToNodeRepo } from "../../common/listener/support/pushtest/node/materialChangeToNodeRepo";
-import { HasAtomistBuildFile, IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
+import {
+    HasAtomistBuildFile,
+    IsNode,
+} from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
-import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
+import {
+    disableDeploy,
+    enableDeploy,
+} from "../../handlers/commands/SetDeployEnablement";
 import {
     cloudFoundryProductionDeploySpec,
     cloudFoundryStagingDeploySpec,
@@ -64,12 +90,16 @@ import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootD
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
-import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport";
+import { DockerOptions } from "../parts/stacks/dockerSupport";
+import {
+    addJavaSupport,
+    JavaSupportOptions,
+} from "../parts/stacks/javaSupport";
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
 
-export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
+export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions;
 
 /**
  * Assemble a machine that supports Java, Spring and Node and deploys to Cloud Foundry
@@ -83,6 +113,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(HasTravisFile, IsNode)
             .itMeans("Already builds with Travis")
             .setGoals(new Goals("Autofix only", AutofixGoal)),
+        whenPushSatisfies(HasDockerfile, IsNode)
+            .itMeans("Perform Docker build")
+            .setGoals(DockerBuildGoal),
         whenPushSatisfies(HasTravisFile)
             .itMeans("Already builds with Travis")
             .setGoals(DoNotSetAnyGoals),
@@ -105,7 +138,10 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled, ToDefaultBranch)
             .itMeans("Build and deploy node")
             .setGoals(NpmDeployGoals),
-        whenPushSatisfies(IsNode)
+        whenPushSatisfies(IsNode, HasDockerfile, ToDefaultBranch)
+            .itMeans("Docker build node")
+            .setGoals(NpmDockerGoals),
+        whenPushSatisfies(IsNode, not(HasDockerfile))
             .itMeans("Build with npm")
             .setGoals(NpmBuildGoals),
     );
@@ -165,7 +201,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());
     addJavaSupport(sdm, options);
     addSpringSupport(sdm, options);
-    addNodeSupport(sdm);
+    addNodeSupport(sdm, options);
     addTeamPolicies(sdm);
     addDemoEditors(sdm);
     return sdm;
