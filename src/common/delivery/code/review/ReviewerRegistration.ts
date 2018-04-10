@@ -15,15 +15,9 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { CodeActionRegistration } from "../CodeActionRegistration";
+import { CodeActionRegistration, SelectiveCodeActionOptions } from "../CodeActionRegistration";
 
-export interface ReviewerRegistrationOptions {
-
-    /**
-     * Run only on affected files?
-     */
-    reviewOnlyChangedFiles: boolean;
-}
+export type ReviewerRegistrationOptions = SelectiveCodeActionOptions;
 
 export interface ReviewerRegistration extends CodeActionRegistration<ProjectReview> {
 

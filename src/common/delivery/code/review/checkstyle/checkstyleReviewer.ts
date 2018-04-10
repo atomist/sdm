@@ -73,11 +73,11 @@ export const checkstyleReviewer: (checkstylePath: string) =>
         });
     };
 
-export function checkstyleReviewerRegistration(reviewOnlyChangedFiles: boolean): ReviewerRegistration {
+export function checkstyleReviewerRegistration(considerOnlyChangedFiles: boolean): ReviewerRegistration {
     return {
         pushTest: IsJava,
         name: "Checkstyle",
         action: async cri => checkstyleReviewer(process.env.CHECKSTYLE_PATH)(cri.project, cri.context),
-        options: {reviewOnlyChangedFiles},
+        options: {considerOnlyChangedFiles},
     };
 }

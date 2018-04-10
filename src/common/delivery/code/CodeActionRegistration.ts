@@ -33,6 +33,17 @@ export interface CodeActionRegistration<R = any> {
 }
 
 /**
+ * Base options object for registrations that process selective files
+ */
+export interface SelectiveCodeActionOptions {
+
+    /**
+     * Run only on affected files?
+     */
+    considerOnlyChangedFiles: boolean;
+}
+
+/**
  * Compute the relevant actions for this push
  */
 export function relevantCodeActions<R>(registrations: Array<CodeActionRegistration<R>>,

@@ -35,7 +35,7 @@ const HatesTheWorld: ReviewerRegistration = {
                     offset: -1,
                 })),
     }),
-    options: { reviewOnlyChangedFiles: false},
+    options: { considerOnlyChangedFiles: false},
 };
 
 describe("executeReview", () => {

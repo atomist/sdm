@@ -17,9 +17,9 @@
 import { logger } from "@atomist/automation-client";
 import { AnyProjectEditor, EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { PushTest } from "../../../listener/PushTest";
-import { CodeActionRegistration } from "../CodeActionRegistration";
+import { CodeActionRegistration, SelectiveCodeActionOptions } from "../CodeActionRegistration";
 
-export interface AutofixRegistrationOptions {
+export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
 
     ignoreFailure: boolean;
 }

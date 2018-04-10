@@ -52,7 +52,7 @@ export function staticAnalysisMachine(opts: Partial<StaticAnalysisMachineOptions
     sdm.addReviewerRegistrations({
         name: "YML-hater",
         action: cri => rodHatesYml(cri.project, cri.context),
-        options: {reviewOnlyChangedFiles: false},
+        options: {considerOnlyChangedFiles: false},
     });
 
     addDemoEditors(sdm);
