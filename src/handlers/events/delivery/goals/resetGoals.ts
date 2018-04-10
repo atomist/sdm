@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-import {
-    Failure, HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success, } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
-import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
-import { GoalSetter } from "../../../common/listener/GoalSetter";
-import { GoalsSetListener } from "../../../common/listener/GoalsSetListener";
-import { ProjectLoader } from "../../../common/repo/ProjectLoader";
-import { fetchDefaultBranchTip, tipOfBranch } from "../../../handlers/commands/triggerGoal";
-import { chooseAndSetGoals } from "../../../handlers/events/delivery/goals/SetGoalsOnPush";
-import { PushFields, PushForCommit } from "../../../typings/types";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
+import { GoalSetter } from "../../../../common/listener/GoalSetter";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
+import { chooseAndSetGoals } from "./SetGoalsOnPush";
+import { PushFields, PushForCommit } from "../../../../typings/types";
+
 
 @Parameters()
 export class ResetGoalsParameters {

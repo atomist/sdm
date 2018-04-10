@@ -87,13 +87,13 @@ import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalE
 import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
+
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
-import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/resetGoals";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
@@ -104,6 +104,7 @@ import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { triggerGoal } from "../handlers/commands/triggerGoal";
+import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
