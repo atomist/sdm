@@ -90,7 +90,6 @@ export const configuration: Configuration = {
         },
     },
     cluster: {
-        enabled: !notLocal,
         workers: 1,
     },
     statsd: {
