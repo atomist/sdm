@@ -94,7 +94,7 @@ import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetS
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
-import { resetGoalsCommand } from "../software-delivery-machine/blueprint/goal/resetGoals";
+import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
