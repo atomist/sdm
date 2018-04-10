@@ -15,8 +15,8 @@
  */
 
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
-import { DockerBuildGoal } from "../../../common/delivery/goals/common/commonGoals";
 import { executeDockerBuild } from "../../../common/delivery/docker/executeDockerBuild";
+import { DockerBuildGoal } from "../../../common/delivery/goals/common/commonGoals";
 
 /**
  * Add Docker build capability

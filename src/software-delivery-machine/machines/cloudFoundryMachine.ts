@@ -48,9 +48,10 @@ import {
     AnyPush,
     FromAtomist,
     ToDefaultBranch,
-    ToPublicRepo
+    ToPublicRepo,
 } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
+import { HasDockerFile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
 import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
@@ -72,12 +73,11 @@ import { LocalExecutableJarDeployer } from "../blueprint/deploy/localSpringBootD
 import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
+import { addDockerSupport } from "../parts/stacks/dockerSupport";
 import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport";
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { addDockerSupport } from "../parts/stacks/dockerSupport";
-import { HasDockerFile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
 

@@ -17,7 +17,7 @@
 import { Goals } from "../Goals";
 import {
     ArtifactGoal, AutofixGoal, BuildGoal, DockerBuildGoal, ReviewGoal, StagingDeploymentGoal,
-    StagingEndpointGoal
+    StagingEndpointGoal,
 } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
