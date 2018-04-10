@@ -309,11 +309,8 @@ export class CloudFoundryApi {
         return result.resources;
     }
 
-    public async addRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
+    public async addRouteToApp(spaceGuid: string, appGuid: string, hostName: string, domainGuid: string): Promise<any> {
         await this.refreshToken();
-        const domains = await this.cf.domains.getSharedDomains();
-        const domain = domains.resources.find(d => d.entity.name === domainName);
-        const domainGuid = domain.metadata.guid;
         const routesMatchingHost = await this.cf.routes.getRoutes({q: `host:${hostName}`});
         const existingRoute = routesMatchingHost.resources.find(r =>
             r.entity.domain_guid === domainGuid && r.entity.space_guid === spaceGuid);
@@ -323,6 +320,18 @@ export class CloudFoundryApi {
             host: hostName,
         });
         return this.cf.apps.associateRoute(appGuid, route.metadata.guid);
+    }
+
+    public async getDomain(domainName: string): Promise<any> {
+        await this.refreshToken();
+        const domains = await this.cf.domains.getSharedDomains();
+        return domains.resources.find(d => d.entity.name === domainName);
+    }
+
+    public async getDomainByGuid(domainGuid: string): Promise<any> {
+        await this.refreshToken();
+        const domains = await this.cf.domains.getSharedDomains();
+        return domains.resources.find(d => d.metadata.guid === domainGuid);
     }
 
     public async removeRouteFromApp(spaceGuid: string, appGuid: string, hostName: string, domainName: string): Promise<any> {
