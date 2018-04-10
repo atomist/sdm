@@ -103,6 +103,7 @@ import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/dep
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -177,6 +178,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
+    private readonly goalRetryCommandMap: { [key: string]: Maker<HandleCommand<any>> } = {};
+
     /**
      * Provide the implementation for a goal.
      * The SDM will run it as soon as the goal is ready (all preconditions are met).
@@ -210,7 +213,12 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             pushTest: optsToUse.pushTest,
             logInterpreter: optsToUse.logInterpreter,
         });
+        this.goalRetryCommandMap[goal.uniqueCamelCaseName] = () => triggerGoal(goal.uniqueCamelCaseName, goal);
         return this;
+    }
+
+    private get goalRetryCommands(): Array<Maker<HandleCommand<any>>> {
+        return Object.keys(this.goalRetryCommandMap).map(k => this.goalRetryCommandMap[k]);
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {
@@ -352,6 +360,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     get commandHandlers(): Array<Maker<HandleCommand>> {
         return this.generators
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.commandHandlers)))
+            .concat(this.goalRetryCommands)
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat([this.showBuildLog])

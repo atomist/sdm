@@ -93,6 +93,7 @@ export async function reportError(parameters: {
             repo: id.repo,
             owner: id.owner,
             sha: id.sha,
+            branch: id.branch,
         });
 
     const interpretation = logInterpreter(progressLog.log);

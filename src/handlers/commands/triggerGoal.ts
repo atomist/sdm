@@ -21,7 +21,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Goal } from "../../common/delivery/goals/Goal";
 import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal, updateGoal } from "../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit, findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyEquals, SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { goalKeyEquals, goalKeyString, SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
 
 @Parameters()
@@ -71,8 +71,8 @@ function triggerGoalsOnCommit(goal: Goal) {
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
         const thisGoal = await findSdmGoalOnCommit(ctx, id, commandParams.providerId, goal);
         if (!thisGoal) {
-                await ctx.messageClient.respond(`The goal '${goal.name}' does not exist on ${
-                    sha.substr(0, 6)}. Ask Jess to implement this`);
+                await ctx.messageClient.respond(`The goal '${goalKeyString(goal)}' does not exist on ${
+                    sha.substr(0, 7)}. Ask Jess to implement this`);
                 return {code: 0};
             }
 
