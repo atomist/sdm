@@ -17,7 +17,7 @@
 import { HandlerContext } from "@atomist/automation-client";
 import {
     addressSlackChannels,
-    Destination, MessageClient,
+    Destination,
     MessageOptions,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";

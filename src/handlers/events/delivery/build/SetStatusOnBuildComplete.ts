@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
@@ -35,9 +43,6 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
  */
 @EventHandler("Set build goal to successful on build complete, if it's side-effecting", subscription("OnBuildComplete"))
 export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
-
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
 
     constructor(private readonly buildGoals: [Goal],
                 private readonly logInterpretation?: LogInterpretation) {

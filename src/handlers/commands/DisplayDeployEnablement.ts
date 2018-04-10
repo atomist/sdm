@@ -18,22 +18,14 @@ import {
     failure,
     HandleCommand,
     HandlerResult,
-    MappedParameter,
-    MappedParameters,
     Success,
 } from "@atomist/automation-client";
-import { Parameters } from "@atomist/automation-client/decorators";
 import { HandlerContext } from "@atomist/automation-client/Handlers";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import { addressEvent, buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { Action, SlackMessage } from "@atomist/slack-messages";
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { SlackMessage } from "@atomist/slack-messages";
 import { isDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
-import {
-    DeployEnablement,
-    DeployEnablementRootType,
-} from "../../ingesters/deployEnablement";
-import { success } from "../../util/slack/messages";
 import { SetDeployEnablementParameters } from "./SetDeployEnablement";
 
 function displayDeployEnablement() {

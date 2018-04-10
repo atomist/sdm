@@ -61,6 +61,8 @@ describe("filesChanged", () => {
 
 });
 
+/* tslint:disable */
+
 const diff = `M       .gitignore
 M       README.md
 M       package-lock.json

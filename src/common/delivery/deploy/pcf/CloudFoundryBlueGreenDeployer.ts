@@ -29,7 +29,7 @@ import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
 import {BlueGreenNamer, CloudFoundryBlueGreener} from "./CloudFoundryBlueGreener";
-import {Manifest, ManifestApplication} from "./CloudFoundryManifest";
+import {Manifest} from "./CloudFoundryManifest";
 import { CloudFoundryPusher } from "./CloudFoundryPusher";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 import { ProjectArchiver } from "./ProjectArchiver";

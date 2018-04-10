@@ -15,11 +15,8 @@
  */
 
 import {
-    GitHubStatusContext,
-    GoalEnvironment,
     IndependentOfEnvironment,
     ProductionEnvironment, ProjectDisposalEnvironment,
-    splitContext,
     StagingEnvironment,
 } from "../gitHubContext";
 import {

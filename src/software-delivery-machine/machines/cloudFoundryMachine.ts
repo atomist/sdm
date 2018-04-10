@@ -20,7 +20,7 @@ import * as deploy from "../../blueprint/dsl/deployDsl";
 import { whenPushSatisfies } from "../../blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../blueprint/SoftwareDeliveryMachine";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
-import { nodeRunBuildBuilder, nodeRunCompileBuilder, npmBuilderOptionsFromFile } from "../../common/delivery/build/local/npm/npmBuilder";
+import { nodeRunBuildBuilder, nodeRunCompileBuilder } from "../../common/delivery/build/local/npm/npmBuilder";
 import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { SpawnBuilder } from "../../common/delivery/build/local/SpawnBuilder";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
@@ -51,7 +51,7 @@ import { MaterialChangeToNodeRepo } from "../../common/listener/support/pushtest
 import { HasAtomistBuildFile, IsNode } from "../../common/listener/support/pushtest/node/nodePushTests";
 import { HasCloudFoundryManifest } from "../../common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 import { not } from "../../common/listener/support/pushtest/pushTestUtils";
-import { createEphemeralProgressLog, createEphemeralProgressLogWithConsole } from "../../common/log/EphemeralProgressLog";
+import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
 import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEndpointRootGet";
 import { isDeployEnabledCommand } from "../../handlers/commands/DisplayDeployEnablement";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";

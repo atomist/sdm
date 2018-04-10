@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
+import { failure, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ExecuteGoalInvocation, GoalExecutor } from "../../../../../common/delivery/goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../common/delivery/goals/support/reportGoalError";
-import { OnAnySuccessStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 
 export type K8Target = "testing" | "production";

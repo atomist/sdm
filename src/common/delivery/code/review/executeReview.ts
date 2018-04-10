@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* tslint:disable:no-unused-variable */
+
 import * as _ from "lodash";
 
 import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
@@ -36,9 +38,7 @@ import { ReviewerRegistration } from "./ReviewerRegistration";
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[]): ExecuteGoalWithLog  {
     return async (rwlc: RunWithLogContext) => {
-        const { status, credentials, id, addressChannels, context } = rwlc;
-        const commit = status.commit;
-        const push = commit.pushes[0];
+        const { credentials, id, addressChannels, context } = rwlc;
 
         try {
             if (reviewerRegistrations.length > 0) {

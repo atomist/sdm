@@ -18,8 +18,6 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import "mocha";
 import * as assert from "power-assert";
 import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
-import { IsJava, IsMaven } from "../../../../src/common/listener/support/pushtest/jvm/jvmPushTests";
-import { IsNode } from "../../../../src/common/listener/support/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../src/common/listener/support/pushtest/node/tsPushTests";
 
 describe("nodePushTests", () => {

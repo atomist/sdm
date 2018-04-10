@@ -17,7 +17,6 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectListenerInvocation } from "../Listener";
 import { PushMapping } from "../PushMapping";
-import { PushRule } from "./PushRule";
 
 /**
  * Use to execute a rule set for any push to resolve to an object.

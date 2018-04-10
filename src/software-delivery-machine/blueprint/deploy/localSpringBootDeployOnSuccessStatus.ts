@@ -63,6 +63,8 @@ const UndeployOnSuperseded = new OnSupersededStatus(inv => {
     return LocalExecutableJarDeploySpec.deployer.undeploy(targetInfoForAllBranches(inv.id), undefined, undefined);
 });
 
+/* tslint:disable:no-unused-variable */
+
 const undeployLocalOnSuperseded: FunctionalUnit = {eventHandlers: [() => UndeployOnSuperseded], commandHandlers: []};
 
 function springBootExecutableJarArgs(si: StartupInfo): string[] {

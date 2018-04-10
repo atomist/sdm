@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { forApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import * as GoalEvent from "../../../ingesters/sdmGoalIngester";
 import { SdmGoalState } from "../../../ingesters/sdmGoalIngester";
-import { OnAnyGoal, ScmProvider, StatusState } from "../../../typings/types";
-import { createStatus, State } from "../../../util/github/ghub";
+import { OnAnyGoal, StatusState } from "../../../typings/types";
+import { createStatus } from "../../../util/github/ghub";
 import { fetchProvider } from "../../../util/github/gitHubProvider";
 
-// when
 @EventHandler("Copy every SdmGoal to a GitHub Status", subscription({name: "OnAnyGoal"}))
 export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscription> {
 
     // TODO: @cd why doesn't this work, it doesn't register for the secret
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string = process.env.GITHUB_TOKEN;
+    // @Secret(Secrets.OrgToken)
+    // private readonly githubToken: string = process.env.GITHUB_TOKEN;
 
     public async handle(event: EventFired<OnAnyGoal.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const goal = event.data.SdmGoal[0];

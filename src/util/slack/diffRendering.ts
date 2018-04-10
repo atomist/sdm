@@ -27,6 +27,8 @@ import {
     userUrl,
 } from "../lifecycleHelpers";
 
+/* tslint:disable:no-unused-variable */
+
 export function linkToDiff(id: RemoteRepoRef, start: string, end: string, endDescription?: string) {
     return slack.url(diffUrl(id, start, end), `(Compare with ${endDescription || end.substr(0, 6)})`);
 }

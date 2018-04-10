@@ -17,7 +17,7 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
 import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
-import { addressChannelsFor, messageDestinationsFor } from "../../slack/addressChannels";
+import { messageDestinationsFor } from "../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../slack/contextMessageRouting";
 import { RunWithLogContext } from "../goals/support/reportGoalError";
 

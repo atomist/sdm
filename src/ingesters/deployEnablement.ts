@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-import {
-    ingester,
-    IngesterBuilder,
-    type,
-} from "@atomist/automation-client";
-
 export const DeployEnablementRootType = "SdmDeployEnablement";
 
 export interface DeployEnablement {

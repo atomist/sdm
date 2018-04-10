@@ -17,7 +17,6 @@
 import {
     EventFired,
     EventHandler,
-    GraphQL,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -36,7 +35,6 @@ import {
 } from "../../../../common/listener/VerifiedDeploymentListener";
 import {
     addressChannelsFor,
-    messageDestinationsFor,
 } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 

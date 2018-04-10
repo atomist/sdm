@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { PushMapping } from "../../common/listener/PushMapping";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
