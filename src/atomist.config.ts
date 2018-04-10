@@ -18,8 +18,8 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "./blueprint/SoftwareDeliveryMachine";
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
-import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 import { greeting } from "./software-delivery-machine/misc/greeting";
+import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
