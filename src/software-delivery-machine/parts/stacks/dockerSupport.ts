@@ -14,8 +14,24 @@
  * limitations under the License.
  */
 
+<<<<<<< HEAD
 export interface DockerOptions {
     registry: string;
     user: string;
     password: string;
+=======
+import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
+import { DockerBuildGoal } from "../../../common/delivery/goals/common/commonGoals";
+import { executeDockerBuild } from "../../../common/delivery/docker/executeDockerBuild";
+
+/**
+ * Add Docker build capability
+ * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
+ */
+export function addDockerSupport(softwareDeliveryMachine: SoftwareDeliveryMachine) {
+    softwareDeliveryMachine
+        .addGoalImplementation("dockerBuild", DockerBuildGoal,
+            executeDockerBuild(softwareDeliveryMachine.opts.projectLoader));
+
+>>>>>>> Docker bits and pieces
 }

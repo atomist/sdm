@@ -30,7 +30,7 @@ import {
 import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
-    AutofixGoal,
+    AutofixGoal, DockerBuildGoal,
     NoGoals,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
@@ -58,7 +58,11 @@ import {
     AnyPush,
     FromAtomist,
     ToDefaultBranch,
+<<<<<<< HEAD
     ToPublicRepo,
+=======
+    ToPublicRepo
+>>>>>>> Docker bits and pieces
 } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import { HasDockerFile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
@@ -97,6 +101,8 @@ import {
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { addDockerSupport } from "../parts/stacks/dockerSupport";
+import { HasDockerFile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions;
 
@@ -112,6 +118,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(HasTravisFile, IsNode)
             .itMeans("Already builds with Travis")
             .setGoals(new Goals("Autofix only", AutofixGoal)),
+        whenPushSatisfies(HasDockerFile, IsNode)
+            .itMeans("Perform Docker build")
+            .setGoals(DockerBuildGoal),
         whenPushSatisfies(HasTravisFile)
             .itMeans("Already builds with Travis")
             .setGoals(DoNotSetAnyGoals),
@@ -200,5 +209,6 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     addNodeSupport(sdm, options);
     addTeamPolicies(sdm);
     addDemoEditors(sdm);
+    addDockerSupport(sdm);
     return sdm;
 }
