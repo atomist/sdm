@@ -229,7 +229,7 @@ const queryResult = {
             state: "in_process",
             fulfillment: {
                 method: "SDM fulfill on requested",
-                name: "Fingerprinter",
+                name: "FingerprinterRegistration",
             },
             description: "Working: fingerprint",
             url: null,

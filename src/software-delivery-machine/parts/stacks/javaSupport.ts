@@ -29,6 +29,6 @@ export type JavaSupportOptions = CheckstyleSupportOptions;
 export function addJavaSupport(softwareDeliveryMachine: SoftwareDeliveryMachine, opts: JavaSupportOptions) {
     addCheckstyleSupport(softwareDeliveryMachine, opts);
     softwareDeliveryMachine
-        .addFingerprinters(new MavenFingerprinter())
+        .addFingerprinterRegistrations(new MavenFingerprinter())
         .addAutofixes(AddAtomistJavaHeader);
 }

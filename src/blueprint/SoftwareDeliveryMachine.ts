@@ -63,7 +63,6 @@ import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
-import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
 import { PushTest } from "../common/listener/PushTest";
@@ -81,6 +80,7 @@ import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
 import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
+import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
 import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
@@ -160,7 +160,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly artifactListeners: ArtifactListener[] = [];
 
-    private readonly fingerprinters: Fingerprinter[] = [];
+    private readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
 
     private readonly supersededListeners: SupersededListener[] = [];
 
@@ -415,8 +415,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addFingerprinters(...f: Fingerprinter[]): this {
-        this.fingerprinters.push(...f);
+    public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
+        this.fingerprinterRegistrations.push(...f);
         return this;
     }
 
@@ -525,8 +525,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 logInterpreter: LogSuppressor,
             })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
-            .addGoalImplementation("Fingerprinter", FingerprintGoal,
-                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
+            .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
+                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
             .addGoalImplementation("CodeReactions", CodeReactionGoal,
                 executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,

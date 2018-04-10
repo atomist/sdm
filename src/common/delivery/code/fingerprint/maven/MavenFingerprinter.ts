@@ -16,7 +16,8 @@
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { Fingerprinter } from "../../../../listener/Fingerprinter";
+import { CodeReactionInvocation } from "../../../../listener/CodeReactionListener";
+import { FingerprinterRegistration } from "../FingerprinterRegistration";
 import { dependenciesFingerprintsFromParsedPom } from "./dependenciesFingerprintsFromParsedPom";
 import { extractEffectivePom } from "./effectivePomExtractor";
 
@@ -26,16 +27,15 @@ import { extractEffectivePom } from "./effectivePomExtractor";
  * @param {GitProject} p
  * @return {Promise<Fingerprint[]>}
  */
-export class MavenFingerprinter implements Fingerprinter {
+export class MavenFingerprinter implements FingerprinterRegistration {
 
     public readonly name: "MavenFingerprinter";
 
-    public async fingerprint(p: GitProject): Promise<Fingerprint[]> {
+    public async action(cri: CodeReactionInvocation) {
         try {
-            await
-            p.findFile("pom.xml");
+            await cri.project.findFile("pom.xml");
             const epom = await
-            extractEffectivePom(p);
+            extractEffectivePom(cri.project);
             return Promise.all([
                 dependenciesFingerprintsFromParsedPom,
                 // TODO add other Maven POM fingerprints
