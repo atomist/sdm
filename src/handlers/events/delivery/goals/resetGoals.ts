@@ -26,9 +26,9 @@ import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/S
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { PushForCommit } from "../../../../typings/types";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
-import { PushForCommit } from "../../../../typings/types";
 
 @Parameters()
 export class ResetGoalsParameters {
