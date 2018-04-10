@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger, Success } from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
-import { ProjectListenerInvocation } from "../../../listener/Listener";
+import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
-import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
-import { AutofixRegistration, relevantCodeActions } from "../codeActionRegistrations";
+import { relevantCodeActions } from "../CodeActionRegistration";
+import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
+import { AutofixRegistration } from "./AutofixRegistration";
 
 /**
  * Execute autofixes against this push
@@ -44,7 +43,6 @@ export function executeAutofixes(projectLoader: ProjectLoader,
         logger.info("Executing %d autofixes", registrations.length);
         try {
             const commit = status.commit;
-            const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
             if (registrations.length === 0) {
                 return Success;
             }
@@ -57,29 +55,21 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                     readOnly: false,
                 },
                 async project => {
-                    const pti: ProjectListenerInvocation = {
-                        id: editableRepoRef,
-                        project,
-                        credentials,
-                        context,
-                        addressChannels: addressChannelsFor(commit.repo, context),
-                        push,
-                    };
-                    const relevantAutofixes: AutofixRegistration[] = await
-                        relevantCodeActions<AutofixRegistration>(registrations, pti);
+                    const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
+                    const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
                     logger.info("Will apply %d eligible autofixes of %d to %j",
-                        relevantAutofixes.length, registrations.length, pti.id);
+                        relevantAutofixes.length, registrations.length, cri.id);
                     let cumulativeResult: EditResult = {
-                        target: pti.project,
+                        target: cri.project,
                         success: true,
                         edited: false,
                     };
                     for (const autofix of _.flatten(relevantAutofixes)) {
-                        const thisEdit = await runOne(pti.project, smartContext, autofix);
+                        const thisEdit = await runOne(cri, autofix);
                         cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
                     }
                     if (cumulativeResult.edited) {
-                        await pti.project.push();
+                        await cri.project.push();
                     }
                     return cumulativeResult;
                 });
@@ -95,10 +85,11 @@ export function executeAutofixes(projectLoader: ProjectLoader,
     };
 }
 
-async function runOne(project: GitProject, ctx: HandlerContext, autofix: AutofixRegistration): Promise<EditResult> {
+async function runOne(cri: CodeReactionInvocation, autofix: AutofixRegistration): Promise<EditResult> {
+    const project = cri.project;
     logger.info("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name);
     try {
-        const tentativeEditResult = await toEditor(autofix.action)(project, ctx);
+        const tentativeEditResult = await autofix.action(cri);
         const editResult = await confirmEditedness(tentativeEditResult);
 
         if (!editResult.success) {

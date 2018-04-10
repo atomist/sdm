@@ -36,7 +36,7 @@ import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/Fin
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
+import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
 import {
     EndpointVerificationListener,
     executeVerifyEndpoint,
@@ -51,7 +51,6 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
 import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
-import { AutofixRegistration, ReviewerRegistration } from "../common/delivery/code/codeActionRegistrations";
 import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
@@ -62,10 +61,8 @@ import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
-import { CodeReactionRegistration } from "../common/listener/CodeReactionListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
-import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
 import { PushTest } from "../common/listener/PushTest";
@@ -79,17 +76,18 @@ import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
-import { createRepoHandler } from "../common/command/createRepo";
-import { listGeneratorsHandler } from "../common/command/listGenerators";
+import { createRepoHandler } from "../common/command/generator/createRepo";
+import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
+import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
+import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
+import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
+import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";
-import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
-import { disposeCommand } from "../handlers/commands/disposeCommand";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
-import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
+import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
+import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -102,6 +100,9 @@ import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
+import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
+import { disposeCommand } from "../handlers/commands/disposeCommand";
+import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -158,13 +159,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
-    private readonly codeReactionRegistrations: CodeReactionRegistration[] = [];
+    private readonly codeReactionRegistrations: CodeActionRegistration[] = [];
 
     private readonly autofixRegistrations: AutofixRegistration[] = [];
 
     private readonly artifactListeners: ArtifactListener[] = [];
 
-    private readonly fingerprinters: Fingerprinter[] = [];
+    private readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
 
     private readonly supersededListeners: SupersededListener[] = [];
 
@@ -330,7 +331,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper))
+            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -419,7 +420,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addCodeReactions(...crrs: CodeReactionRegistration[]): this {
+    public addCodeReactions(...crrs: CodeActionRegistration[]): this {
         this.codeReactionRegistrations.push(...crrs);
         return this;
     }
@@ -439,8 +440,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addFingerprinters(...f: Fingerprinter[]): this {
-        this.fingerprinters.push(...f);
+    public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
+        this.fingerprinterRegistrations.push(...f);
         return this;
     }
 
@@ -558,8 +559,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 logInterpreter: LogSuppressor,
             })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
-            .addGoalImplementation("Fingerprinter", FingerprintGoal,
-                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
+            .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
+                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
             .addGoalImplementation("CodeReactions", CodeReactionGoal,
                 executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,

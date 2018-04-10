@@ -17,11 +17,12 @@
 import { HandleCommand, logger } from "@atomist/automation-client";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { editorCommand } from "../../../../common/command/editor/editorCommand";
+import { EmptyParameters } from "../../../../common/command/EmptyParameters";
 import { MavenProjectIdentifier } from "../../../../common/delivery/build/local/maven/pomParser";
 import { NodeProjectIdentifier } from "../../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 import { CloudFoundryManifestPath } from "../../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { HasSpringBootPom } from "../../../../common/listener/support/pushtest/jvm/springPushTests";
-import { editorCommand, EmptyParameters } from "../../../../handlers/commands/editors/editorCommand";
 
 export const AddCloudFoundryManifestCommandName = "AddCloudFoundryManifest";
 export const AddCloudFoundryManifestMarker = "[atomist:add-pcf-manifest]";

@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
+import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
 import { DeploySpec } from "../../../common/delivery/deploy/executeDeploy";
-import {CloudFoundryBlueGreenDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryBlueGreenDeployer";
-import {CloudFoundryPushDeployer} from "../../../common/delivery/deploy/pcf/CloudFoundryPushDeployer";
-import {
-    CloudFoundryInfo,
-} from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
-import { CommandLineCloudFoundryDeployer } from "../../../common/delivery/deploy/pcf/CommandLineCloudFoundryDeployer";
+import { CloudFoundryBlueGreenDeployer } from "../../../common/delivery/deploy/pcf/CloudFoundryBlueGreenDeployer";
+import { CloudFoundryInfo } from "../../../common/delivery/deploy/pcf/CloudFoundryTarget";
 import { EnvironmentCloudFoundryTarget } from "../../../common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget";
 import {
     ProductionDeploymentGoal,
@@ -28,7 +25,7 @@ import {
     StagingDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
-import { CodeReactionListener, CodeReactionRegistration } from "../../../common/listener/CodeReactionListener";
+import { CodeReactionListener } from "../../../common/listener/CodeReactionListener";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { setDeployEnablement } from "../../../handlers/commands/SetDeployEnablement";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
@@ -77,7 +74,7 @@ const EnableDeployOnCloudFoundryManifestAdditionListener: CodeReactionListener =
 /**
  * Enable deployment when a PCF manifest is added to the default branch.
  */
-export const EnableDeployOnCloudFoundryManifestAddition: CodeReactionRegistration = {
+export const EnableDeployOnCloudFoundryManifestAddition: CodeActionRegistration = {
     name: "EnableDeployOnCloudFoundryManifestAddition",
     action: EnableDeployOnCloudFoundryManifestAdditionListener,
 };

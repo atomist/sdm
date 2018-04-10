@@ -15,12 +15,11 @@
  */
 
 import { StatusForExecuteGoal } from "../../typings/types";
-import { CodeActionRegistration } from "../delivery/code/codeActionRegistrations";
-import {
-    ProjectListenerInvocation,
-    SdmListener,
-} from "./Listener";
+import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
+/**
+ * Invocation object used by most listeners that react to code changes
+ */
 export interface CodeReactionInvocation extends ProjectListenerInvocation {
 
     /**
@@ -32,12 +31,3 @@ export interface CodeReactionInvocation extends ProjectListenerInvocation {
 }
 
 export type CodeReactionListener = SdmListener<CodeReactionInvocation>;
-
-/**
- * Register a code reaction
- */
-export interface CodeReactionRegistration extends CodeActionRegistration<CodeReactionListener> {
-
-    name: string;
-
-}

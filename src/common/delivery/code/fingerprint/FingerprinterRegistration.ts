@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { GeneratorConfig } from "../../../../common/command/generator/GeneratorConfig";
+import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { CodeActionRegistration } from "../CodeActionRegistration";
 
-export interface JavaGeneratorConfig extends GeneratorConfig {
+export type FingerprinterResult = Fingerprint | Fingerprint[];
 
-    groupId: string;
-}
+export type FingerprinterRegistration = CodeActionRegistration<FingerprinterResult>;

@@ -16,9 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { ReviewerRegistration } from "../../../common/delivery/code/codeActionRegistrations";
+import { ReviewerRegistration } from "../../../common/delivery/code/review/ReviewerRegistration";
 
 const Problems = [{
     watchFor: /^import sprintf from "sprintf-js"/m,
@@ -27,7 +26,8 @@ const Problems = [{
 
 export const CommonTypeScriptErrors: ReviewerRegistration = {
     name: "Dangerous TypeScript Errors of the Past",
-    action: async (project: Project) => {
+    action: async cri => {
+        const project = cri.project;
         const result: ProjectReview = {repoId: project.id, comments: []};
         await doWithFiles(project, "**/*.ts", async f => {
             const content = await f.getContent();

@@ -14,16 +14,51 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
+import { HandleCommand, Parameter, Parameters } from "@atomist/automation-client";
 import { setSpringBootVersionEditor } from "@atomist/spring-automation/commands/editor/spring/setSpringBootVersionEditor";
 import { UnleashPhilParameters } from "@atomist/spring-automation/commands/editor/spring/unleashPhil";
-import { dryRunEditor } from "../../../../handlers/commands/editors/dry-run/dryRunEditor";
+import { CurrentSpringBootVersion } from "@atomist/spring-automation/commands/reviewer/spring/SpringBootVersionReviewer";
+import { EditModeSuggestion } from "../../../../common/command/editor/EditModeSuggestion";
+import { dryRunEditor } from "../../../../common/command/generator/dry-run/dryRunEditor";
 
+@Parameters()
+export class UpgradeSpringBootParameters implements EditModeSuggestion {
+
+    @Parameter({
+        displayName: "Desired Spring Boot version",
+        description: "The desired Spring Boot version across these repos",
+        pattern: /^.+$/,
+        validInput: "Semantic version",
+        required: false,
+    })
+    // TODO this should be in a  object goals
+    public desiredBootVersion: string = CurrentSpringBootVersion;
+
+    private readonly guid = "" + new Date().getTime();
+
+    get desiredBranchName() {
+        return `boot-upgrade-${this.desiredBootVersion}-${this.guid}`;
+    }
+
+    get desiredPullRequestTitle() {
+        return `Upgrade Spring Boot version to ${this.desiredBootVersion}`;
+    }
+
+    get desiredCommitMessage() {
+        return this.desiredPullRequestTitle;
+    }
+}
+
+/**
+ * Wrap Spring Boot set version editor in a dryRunEditor, causing an event
+ * handler to respond to the build with either a PR and Issue
+ * @type {HandleCommand<EditOneOrAllParameters>}
+ */
 export const tryToUpgradeSpringBootVersion: HandleCommand = dryRunEditor<UnleashPhilParameters>(
     params => setSpringBootVersionEditor(params.desiredBootVersion),
-    UnleashPhilParameters,
+    UpgradeSpringBootParameters as any,
     "boot-upgrade", {
         description: `Upgrade Spring Boot version`,
         intent: "try to upgrade Spring Boot",
     },
-    );
+);

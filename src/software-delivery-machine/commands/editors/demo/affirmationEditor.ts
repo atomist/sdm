@@ -17,7 +17,7 @@
 import { HandleCommand, Parameter, Parameters } from "@atomist/automation-client";
 import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
-import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { editorCommand } from "../../../../common/command/editor/editorCommand";
 import { RequestedCommitParameters } from "../support/RequestedCommitParameters";
 
 export const AffirmationEditorName = "affirmation";

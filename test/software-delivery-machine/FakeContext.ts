@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import { HandlerContext, logger } from "@atomist/automation-client";
+import * as stringify from "json-stringify-safe";
 
 export function fakeContext(teamId: string = "T123") {
     return {
         teamId,
         messageClient: {
-            respond() {
-                return undefined;
+            respond(m) {
+                logger.info("respond > " + m);
+                return Promise.resolve({});
+            },
+            send(event) {
+                logger.debug("send > " + stringify(event));
+                return Promise.resolve({});
             },
         },
+
+        context: {name: "fakeContextName", version: "v0.0", operation: "fakeOperation" },
     } as any as HandlerContext;
 }

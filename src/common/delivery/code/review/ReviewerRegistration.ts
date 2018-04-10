@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { CodeActionRegistration } from "../CodeActionRegistration";
 
-export interface Fingerprinter {
+export interface ReviewerRegistrationOptions {
 
-    name: string;
-    fingerprint(p: GitProject): Promise<Fingerprint> | Promise<Fingerprint[]>;
+    /**
+     * Run only on affected files?
+     */
+    reviewOnlyChangedFiles: boolean;
+}
+
+export interface ReviewerRegistration extends CodeActionRegistration<ProjectReview> {
+
+    options?: ReviewerRegistrationOptions;
 }

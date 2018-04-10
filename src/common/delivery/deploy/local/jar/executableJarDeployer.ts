@@ -87,7 +87,7 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
         if (!da.filename) {
             throw new Error("No filename in deployable artifact!");
         }
-        const port = managedExecutableJarDeployments.findPort(ti.managedDeploymentKey);
+        const port = await managedExecutableJarDeployments.findPort(ti.managedDeploymentKey, this.opts.baseUrl);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {
             port,

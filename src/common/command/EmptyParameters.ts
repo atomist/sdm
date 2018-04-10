@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import { GeneratorConfig } from "../../../../common/command/generator/GeneratorConfig";
+import { Parameters } from "@atomist/automation-client";
 
-export interface JavaGeneratorConfig extends GeneratorConfig {
-
-    groupId: string;
+/**
+ * Convenient empty parameters class
+ */
+@Parameters()
+// tslint:disable-next-line:no-unnecessary-class
+export class EmptyParameters {
 }

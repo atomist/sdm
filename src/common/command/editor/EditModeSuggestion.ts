@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import { GeneratorConfig } from "../../../../common/command/generator/GeneratorConfig";
+/**
+ * Can be implemented by editor parameters that can suggest EditMode to present them
+ */
+export interface EditModeSuggestion {
 
-export interface JavaGeneratorConfig extends GeneratorConfig {
+    desiredBranchName: string;
 
-    groupId: string;
+    desiredPullRequestTitle?: string;
+
+    desiredCommitMessage?: string;
+
 }

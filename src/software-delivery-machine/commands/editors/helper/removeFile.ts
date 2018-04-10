@@ -18,7 +18,7 @@ import { HandleCommand, HandlerContext, Parameter } from "@atomist/automation-cl
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commitToMaster } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
-import { editorCommand } from "../../../../handlers/commands/editors/editorCommand";
+import { editorCommand } from "../../../../common/command/editor/editorCommand";
 
 @Parameters()
 export class RemoveFileParams {

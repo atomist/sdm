@@ -72,7 +72,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         if (!id.branch) {
             throw new Error(`Cannot locally deploy ${JSON.stringify(id)}: Branch must be set`);
         }
-        const port = managedMavenDeployments.findPort(ti.managedDeploymentKey);
+        const port = await managedMavenDeployments.findPort(ti.managedDeploymentKey, this.opts.baseUrl);
         logger.info("MavenSourceDeployer: Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, team);
         await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
         return [await this.projectLoader.doWithProject({credentials, id, readOnly: true},

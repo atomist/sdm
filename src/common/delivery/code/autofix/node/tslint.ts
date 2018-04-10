@@ -20,10 +20,12 @@ import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests
 import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushTests";
 import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
 import { Install } from "../../../build/local/npm/npmBuilder";
-import { LocalCommandAutofix } from "../LocalCommandAutofix";
+import { AutofixRegistration } from "../AutofixRegistration";
+import { spawnedCommandAutofix } from "../spawnedCommandAutofix";
 
-export const tslintFix = new LocalCommandAutofix("tslint",
+export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
+    "tslint",
     allSatisfied(IsTypeScript, IsNode, hasFile("tslint.json")),
-    {ignoreFailure: true },
+    {ignoreFailure: true},
     Install,
     asSpawnCommand("npm run lint:fix"));

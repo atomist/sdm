@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef, RepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/runWithLog";
 import { ConsoleProgressLog } from "../../../../src/common/log/progressLogs";
@@ -25,8 +26,8 @@ export function fakeRunWithLogContext(id: RemoteRepoRef): RunWithLogContext {
         credentials: {token: "foobar"},
         context: fakeContext("T1111"),
         id,
-        addressChannels: async () => {
-            // do nothing
+        addressChannels: async m => {
+            logger.info("channels > " + m);
         },
         status: fakeStatus(id),
         progressLog: new ConsoleProgressLog(),
@@ -43,7 +44,21 @@ export function fakeStatus(id: RepoId): StatusForExecuteGoal.Fragment {
                     owner: id.owner,
                 },
                 name: id.repo,
+                channels: [ {
+                    name: "foo",
+                    id: "1",
+                    team: {
+                        id: "T357",
+                    },
+                },
+                ],
             },
+            pushes: [
+                {
+                    id: "121",
+                    branch: "foo",
+                },
+            ],
         },
     };
 }

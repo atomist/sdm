@@ -16,7 +16,9 @@
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import axios from "axios";
 import { ChildProcess } from "child_process";
+import * as https from "https";
 import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
 import { Targeter } from "../deploy";
 
@@ -74,15 +76,16 @@ export class ManagedDeployments {
     /**
      * Find a new port for this app
      * @param {RemoteRepoRef} id
+     * @param host it will be on. Check for ports not in use
      * @return {number}
      */
-    public findPort(id: RemoteRepoRef): number {
+    public async findPort(id: RemoteRepoRef, host: string): Promise<number> {
         const running = !!id.branch ?
             this.deployments
                 .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch) :
             this.deployments
                 .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
-        return !!running ? running.port : this.nextFreePort();
+        return !!running ? running.port : this.nextFreePort(host);
     }
 
     public recordDeployment(da: DeployedApp) {
@@ -113,14 +116,33 @@ export class ManagedDeployments {
         }
     }
 
-    private nextFreePort(): number {
+    private async nextFreePort(host: string): Promise<number> {
         let port = this.initialPort;
-        while (this.deployments.some(d => d.port === port)) {
-            port++;
+        while (true) {
+            if (this.deployments.some(d => d.port === port)) {
+                port++;
+            } else if (await isAlreadyServingOn(host, port)) {
+                logger.warn("Unexpected: %s is serving on port %d", host, port);
+                port++;
+            } else {
+                break;
+            }
         }
         return port;
     }
 
+}
+
+async function isAlreadyServingOn(host: string, port: number) {
+    const agent = new https.Agent({
+        rejectUnauthorized: false,
+    });
+    try {
+        await axios.head(`${host}:${port}`, {httpsAgent: agent});
+        return true;
+    } catch {
+        return false;
+    }
 }
 
 function poisonAndWait(childProcess: ChildProcess): Promise<any> {

@@ -24,13 +24,14 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { filesChangedSince } from "../../../../util/git/filesChangedSince";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
-import { relevantCodeActions, ReviewerRegistration } from "../codeActionRegistrations";
+import { relevantCodeActions } from "../CodeActionRegistration";
+import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
+import { ReviewerRegistration } from "./ReviewerRegistration";
 
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[]): ExecuteGoalWithLog  {
@@ -43,18 +44,8 @@ export function executeReview(projectLoader: ProjectLoader,
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
                 return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-                    const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : undefined;
-                    const pti: CodeReactionInvocation = {
-                        id,
-                        context,
-                        addressChannels,
-                        project,
-                        credentials,
-                        filesChanged,
-                        commit,
-                        push,
-                    };
-                    const relevantReviewers = await relevantCodeActions(reviewerRegistrations, pti);
+                    const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
+                    const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers", id, relevantCodeActions.length);
 
                     // TODO should filter to support reviewOnlyChangedFiles
@@ -63,12 +54,7 @@ export function executeReview(projectLoader: ProjectLoader,
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                         await Promise.all(relevantReviewers
                             .map(reviewer =>
-                                reviewer.action(
-                                    !!reviewer.options && reviewer.options.reviewOnlyChangedFiles ?
-                                        filteredCopy :
-                                        project,
-                                    context,
-                                    {} as any) // Rod: Can reviewers expect any parameters here?
+                                reviewer.action(cri)
                                     .then(rvw => ({review: rvw}),
                                         error => ({error}))));
                     const reviews = reviewsAndErrors.filter(r => !!r.review)

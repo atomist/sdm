@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { localCommandsEditor } from "../../../../handlers/commands/editors/editorWrappers";
 import { SpawnCommand } from "../../../../util/misc/spawned";
+import { localCommandsEditor } from "../../../command/editor/editorWrappers";
 import { PushTest } from "../../../listener/PushTest";
-import { AutofixRegistration, AutofixRegistrationOptions } from "../codeActionRegistrations";
+import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "./AutofixRegistration";
 
 /**
  * Register an autofix based on spawned local shell commands.
  * For example, could wrap a linter
  */
-export class LocalCommandAutofix implements AutofixRegistration {
-
-    public readonly action: ProjectEditor;
-
-    private readonly commands: SpawnCommand[];
-
-    constructor(public readonly name: string,
-                public readonly pushTest: PushTest,
-                public options: AutofixRegistrationOptions,
-                command1: SpawnCommand,
-                ...additionalCommands: SpawnCommand[]) {
-        this.commands = [command1].concat(additionalCommands);
-        this.action = localCommandsEditor(this.commands);
-    }
-
+export function spawnedCommandAutofix(name: string,
+                                      pushTest: PushTest,
+                                      options: AutofixRegistrationOptions,
+                                      command1: SpawnCommand,
+                                      ...additionalCommands: SpawnCommand[]): AutofixRegistration {
+    return editorAutofixRegistration({
+        name,
+        editor: localCommandsEditor([command1].concat(additionalCommands)),
+        pushTest,
+        options,
+    });
 }

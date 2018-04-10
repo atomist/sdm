@@ -26,9 +26,9 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-
-import { Parameters } from "@atomist/automation-client/decorators";
 import * as assert from "power-assert";
+import { EmptyParameters } from "../EmptyParameters";
+import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
 
 /**
@@ -54,8 +54,8 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         repoLoader:
             p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
         editMode: ((params: PARAMS) => new PullRequest(
-            `edit-${name}-${Date.now()}`,
-            description)),
+            (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
+            (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),
         ...details,
     };
 
@@ -96,14 +96,4 @@ function validate(targets: GitHubFallbackReposParameters) {
         assert(!!targets.repos, "Must set repos or repo");
         targets.repo = targets.repos;
     }
-}
-
-// TODO this is not editor specific vvvvvvvv
-
-/**
- * Convenient empty parameters class
- */
-@Parameters()
-// tslint:disable-next-line:no-unnecessary-class
-export class EmptyParameters {
 }

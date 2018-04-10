@@ -43,9 +43,6 @@ export interface UpdateSdmGoalParams {
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
-    if (!before.fulfillment) {
-        throw new Error("what happened to the fulfillment?");
-    }
     const sdmGoal = {
         ...before,
         state: params.state,
