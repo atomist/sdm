@@ -66,6 +66,12 @@ export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions
             const pkg = JSON.parse(content);
             return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
         },
+        options: {
+            env: {
+                ...process.env,
+                NODE_ENV: "development",
+            },
+        },
     };
 }
 

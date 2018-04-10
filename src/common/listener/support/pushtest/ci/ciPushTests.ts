@@ -21,5 +21,5 @@ import { hasFile } from "../commonPushTests";
  * Does this project use Travis?
  */
 export const HasTravisFile: PredicatePushTest = predicatePushTest(
-    "Is Maven",
+    "Is Travis",
     hasFile(".travis.yml").predicate);

@@ -15,7 +15,17 @@
  */
 
 import { Goals } from "../Goals";
-import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingDeploymentGoal, StagingEndpointGoal } from "./commonGoals";
+import {
+    ArtifactGoal,
+    AutofixGoal,
+    BuildGoal,
+    DockerBuildGoal,
+    ReviewGoal,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
+    TagGoal,
+    VersionGoal,
+} from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
     "npm build",
@@ -32,4 +42,14 @@ export const NpmDeployGoals = new Goals(
     ArtifactGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
+);
+
+export const NpmDockerGoals = new Goals(
+    "npm docker",
+    VersionGoal,
+    ReviewGoal,
+    AutofixGoal,
+    BuildGoal,
+    DockerBuildGoal,
+    TagGoal,
 );

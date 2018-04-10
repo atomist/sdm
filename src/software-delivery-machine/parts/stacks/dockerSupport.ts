@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-export const DeployEnablementRootType = "SdmDeployEnablement";
-
-export interface DeployEnablement {
-    state: "requested" | "disabled";
-    owner: string;
-    repo: string;
-    providerId: string;
+export interface DockerOptions {
+    registry: string;
+    user: string;
+    password: string;
 }

@@ -72,7 +72,9 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
 }
 
 export function sumSdmGoalEvents(some: SdmGoal[], more: SdmGoal[]): SdmGoal[] {
-    const byKey = _.groupBy(some.concat(more), (goalKeyString));
+    // For some reason this won't compile with the obvious fix
+    // tslint:disable-next-line:no-unnecessary-callback-wrapper
+    const byKey = _.groupBy(some.concat(more), sg => goalKeyString(sg));
     const summedGoals = Object.keys(byKey).map(k => sumEventsForOneSdmGoal(byKey[k]));
     return summedGoals;
 }

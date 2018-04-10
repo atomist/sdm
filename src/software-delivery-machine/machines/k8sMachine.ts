@@ -37,12 +37,13 @@ import { K8sProductionDomain, K8sTestingDomain, NoticeK8sProdDeployCompletion, N
 import { suggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "../commands/editors/k8s/addK8sSpec";
 import { addDemoEditors } from "../parts/demo/demoEditors";
+import { DockerOptions } from "../parts/stacks/dockerSupport";
 import { addJavaSupport, JavaSupportOptions } from "../parts/stacks/javaSupport";
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
 
-export type K8sMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions;
+export type K8sMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions;
 
 export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
     const sdm = new SoftwareDeliveryMachine(
@@ -99,7 +100,7 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
 
     addJavaSupport(sdm, opts);
     addSpringSupport(sdm, opts);
-    addNodeSupport(sdm);
+    addNodeSupport(sdm, opts);
     addTeamPolicies(sdm);
 
     addDemoEditors(sdm);

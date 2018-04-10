@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import { Project } from "@atomist/automation-client/project/Project";
+export const DeployEnablementRootType = "SdmDeployEnablement";
 
-export interface ProjectIdentification {
-    name: string;
-    version: string;
+export interface SdmDeployEnablement {
+    state: "requested" | "disabled";
+    owner: string;
+    repo: string;
+    providerId: string;
 }
-
-/**
- * Return identification of this project or undefined if it can't be identified
- */
-export type ProjectIdentifier = (p: Project) => Promise<ProjectIdentification | undefined>;

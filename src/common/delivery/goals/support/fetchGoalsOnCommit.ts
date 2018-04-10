@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
-import { CommitForSdmGoal, SdmGoalFields, SdmGoalRepo, SdmGoalsForCommit } from "../../../../typings/types";
-
+import {
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { NoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
+import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { goalKeyString, SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import {
+    goalKeyString,
+    SdmGoal,
+} from "../../../../ingesters/sdmGoalIngester";
+import {
+    CommitForSdmGoal,
+    SdmGoalFields,
+    SdmGoalRepo,
+    SdmGoalsForCommit,
+} from "../../../../typings/types";
 import { Goal } from "../Goal";
 import { goalCorrespondsToSdmGoal } from "../storeGoals";
 
@@ -48,7 +58,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
             providerId,
             qty: 20,
         },
-        options: NoCacheOptions,
+        options: QueryNoCacheOptions,
     });
     if (!result || !result.SdmGoal) {
         throw new Error(`No result finding goals for commit ${providerId}/${id.owner}/${id.repo}#${id.sha} on ${id.branch}`);
@@ -72,7 +82,7 @@ export async function fetchCommitForSdmGoal(ctx: HandlerContext,
     const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
     const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
         {
-            options: NoCacheOptions,
+            options: QueryNoCacheOptions,
             name: "CommitForSdmGoal",
             variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch},
         });

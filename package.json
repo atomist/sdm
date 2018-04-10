@@ -18,7 +18,7 @@
     "url": "https://github.com/atomist/github-sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "https://r.atomist.com/ByNrUrKEsz",
+    "@atomist/automation-client": "https://r.atomist.com/rJVgB2i5iz",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/spring-automation": "https://r.atomist.com/Syrsy8R_9f",
     "app-root-path": "^2.0.1",
@@ -30,6 +30,7 @@
     "cf-client": "^0.13.26",
     "copyfiles": "^1.2.0",
     "curry": "^1.2.0",
+    "dateformat": "^3.0.3",
     "form-data": "^2.3.2",
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
@@ -84,7 +85,7 @@
     "fmt:gql": "prettier --write \"**/*.graphql\"",
     "git:info": "atomist git",
     "gql:copy": "copyfiles \"./src/**/*.graphql\" build",
-    "gql:gen": "gql-gen --file ./src/graphql/schema.cortex.json --template typescript --no-schema --out src/typings/types.ts \"./src/**/*.graphql\"",
+    "gql:gen": "atomist gql-gen \"src/graphql/**/*.graphql\"",
     "lint": "npm-run-all lint:ts lint:gql",
     "lint:ts": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
     "lint:gql": "prettier --list-different \"src/graphql/**/*.graphql\"",
