@@ -90,6 +90,10 @@ export const configuration: Configuration = {
         },
     },
     cluster: {
+<<<<<<< HEAD
+=======
+        enabled: !notLocal,
+>>>>>>> further progress towards docker build and kube deploy
         workers: 1,
     },
     statsd: {

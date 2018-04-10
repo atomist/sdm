@@ -15,6 +15,9 @@
  */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> further progress towards docker build and kube deploy
 import { HandlerContext } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { DockerOptions } from "../../../software-delivery-machine/parts/stacks/dockerSupport";

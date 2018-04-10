@@ -15,12 +15,12 @@
  */
 
 import * as df from "dateformat";
-import { spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectVersioner } from "../projectVersioner";
 
-export const NodeProjectVersioner: ProjectVersioner = async (p, log) => {
+export const NodeProjectVersioner: ProjectVersioner = async p => {
     const pjFile = await p.getFile("package.json");
     const pj = JSON.parse(await pjFile.getContent());
+<<<<<<< HEAD
     const version = `${pj.version}-${df(new Date(), "yyyymmddHHMMss")}`;
 
     await spawnAndWatch({
@@ -36,4 +36,7 @@ export const NodeProjectVersioner: ProjectVersioner = async (p, log) => {
         });
 
     return version;
+=======
+    return `${pj.version}-${df(new Date(), "yyyymmddHHMMss")}`;
+>>>>>>> further progress towards docker build and kube deploy
 };
