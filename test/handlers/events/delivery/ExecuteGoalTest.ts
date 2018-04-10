@@ -21,7 +21,7 @@ import * as assert from "power-assert";
 import { IndependentOfEnvironment } from "../../../../src/common/delivery/goals/gitHubContext";
 import { Goal } from "../../../../src/common/delivery/goals/Goal";
 import { lastTenLinesLogInterpreter } from "../../../../src/common/delivery/goals/support/logInterpreters";
-import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/runWithLog";
+import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/reportGoalError";
 import { createEphemeralProgressLog } from "../../../../src/common/log/EphemeralProgressLog";
 import { executeGoal } from "../../../../src/handlers/events/delivery/goals/executeGoal";
 import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";

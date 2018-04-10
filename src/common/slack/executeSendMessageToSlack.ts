@@ -17,7 +17,7 @@
 import { Success } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 import { ExecuteGoalResult } from "../delivery/goals/goalExecution";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../delivery/goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../delivery/goals/support/reportGoalError";
 
 /***
  * Execute a goal by sending a message to the linked Slack channels

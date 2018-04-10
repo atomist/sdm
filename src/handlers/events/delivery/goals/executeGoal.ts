@@ -21,7 +21,7 @@ import * as path from "path";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
-import { ExecuteGoalWithLog, reportError, RunWithLogContext } from "../../../../common/delivery/goals/support/runWithLog";
+import { ExecuteGoalWithLog, reportError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";

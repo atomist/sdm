@@ -30,47 +30,10 @@ import { ExecuteGoalResult, GoalExecutor } from "../goalExecution";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-/**
- * Run the given goal execution function with error reporting
- * @param {ExecuteGoalWithLog} whatToRun
- * @param {LogInterpreter} logInterpreter
- * @return {GoalExecutor}
- */
-// export function runWithLog(whatToRun: ExecuteGoalWithLog,
-//                            logInterpreter: LogInterpreter): ExecuteGoalWithLog {
-//     return async (rwlc: RunWithLogContext) => {
-//         return whatToRun(rwlc)
-//             .then(async yay => {
-//                     if (yay && yay.code !== 0) {
-//                         await reportError({
-//                             executeGoalInvocation: params,
-//                             addressChannels,
-//                             progressLog,
-//                             id,
-//                             logInterpreter,
-//                         }, new Error("Failure reported: " + yay.message));
-//                     }
-//                     await progressLog.close();
-//                     return yay;
-//                 },
-//                 err => reportError({
-//                     executeGoalInvocation: params,
-//                     addressChannels,
-//                     progressLog,
-//                     id,
-//                     logInterpreter,
-//                 }, err)
-//                     .then(() => progressLog.close())
-//                     .then(() => Promise.reject(err)));
-//     };
-// }
-
 export interface RunWithLogContext extends SdmContext {
     status: StatusForExecuteGoal.Fragment;
     progressLog: ProgressLog;
 }
-
-export type ExecuteWithLog = (rwlc: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
 export async function reportError(parameters: {
                                goal: Goal,

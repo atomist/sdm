@@ -19,7 +19,7 @@ import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/
 import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
 import { addressChannelsFor, messageDestinationsFor } from "../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../slack/contextMessageRouting";
-import { RunWithLogContext } from "../goals/support/runWithLog";
+import { RunWithLogContext } from "../goals/support/reportGoalError";
 
 /**
  * Create a CodeReactionInvocation from the given context

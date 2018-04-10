@@ -17,7 +17,7 @@
 import { logger, Success } from "@atomist/automation-client";
 import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { CodeActionRegistration, relevantCodeActions } from "./CodeActionRegistration";
 import { createCodeReactionInvocation } from "./createCodeReactionInvocation";
 

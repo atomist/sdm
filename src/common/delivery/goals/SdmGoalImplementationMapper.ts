@@ -19,7 +19,7 @@ import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { ProjectListenerInvocation } from "../../listener/Listener";
 import { PushTest } from "../../listener/PushTest";
 import { Goal } from "./Goal";
-import { ExecuteGoalWithLog } from "./support/runWithLog";
+import { ExecuteGoalWithLog } from "./support/reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
 

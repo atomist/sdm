@@ -20,7 +20,7 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import * as stringify from "json-stringify-safe";
 import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
 import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { Target } from "./deploy";
 
 export function executeUndeploy(target: Target): ExecuteGoalWithLog {

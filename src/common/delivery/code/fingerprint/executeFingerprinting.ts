@@ -21,7 +21,7 @@ import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fing
 import * as _ from "lodash";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
 import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
 import { FingerprinterRegistration } from "./FingerprinterRegistration";
