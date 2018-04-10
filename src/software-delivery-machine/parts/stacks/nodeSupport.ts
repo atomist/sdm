@@ -31,7 +31,7 @@ import {
 import {
     DockerBuildGoal,
     TagGoal,
-    VersionGoal
+    VersionGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";

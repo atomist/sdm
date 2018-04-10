@@ -20,7 +20,7 @@ import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
 import {
     ExecuteGoalWithLog,
-    RunWithLogContext
+    RunWithLogContext,
 } from "../../goals/support/reportGoalError";
 
 export type ProjectVersioner = (p: GitProject, log: ProgressLog) => Promise<any>;
