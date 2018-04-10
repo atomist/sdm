@@ -20,17 +20,19 @@ import * as assert from "power-assert";
 import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
 import { ToPublicRepo } from "../../../../src/common/listener/support/pushtest/commonPushTests";
 
+const credentials = { token: process.env.GITHUB_TOKEN};
+
 describe("pushToPublicRepo", () => {
 
     it("should work against public repo", async () => {
         const id = new GitHubRepoRef("atomist", "github-sdm");
-        const r = await ToPublicRepo.valueForPush({id} as any as ProjectListenerInvocation);
+        const r = await ToPublicRepo.valueForPush({id, credentials} as any as ProjectListenerInvocation);
         assert(r);
     }).timeout(5000);
 
     it("should work against private repo", async () => {
         const id = new GitHubRepoRef("atomisthq", "internal-automation");
-        const r = await ToPublicRepo.valueForPush({id} as any as ProjectListenerInvocation);
+        const r = await ToPublicRepo.valueForPush({id, credentials} as any as ProjectListenerInvocation);
         assert(!r);
     }).timeout(5000);
 
