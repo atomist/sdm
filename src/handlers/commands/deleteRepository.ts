@@ -15,22 +15,21 @@
  */
 
 import {
-    HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, success,
+    HandleCommand,
+    HandlerContext,
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Secret,
+    Secrets,
+    success,
     Success,
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Goal } from "../../common/delivery/goals/Goal";
-import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal, updateGoal } from "../../common/delivery/goals/storeGoals";
-import { fetchGoalsForCommit, findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyEquals, SdmGoal } from "../../ingesters/sdmGoalIngester";
-import { fetchPushForCommit } from "../../software-delivery-machine/blueprint/goal/resetGoals";
-import { RepoBranchTips } from "../../typings/types";
 import { deleteRepository } from "../../util/github/ghub";
 import { fetchProvider } from "../../util/github/gitHubProvider";
-import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../events/delivery/goals/SetGoalsOnPush";
-import { fetchDefaultBranchTip, tipOfBranch } from "./triggerGoal";
 
 @Parameters()
 export class DeleteRepositoryParameters {
