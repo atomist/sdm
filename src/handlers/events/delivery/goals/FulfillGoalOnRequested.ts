@@ -89,11 +89,11 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         return executeGoal({projectLoader: params.projectLoader},
             goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
-            .then(res => {
-                progressLog.close();
+            .then(async res => {
+                await progressLog.close();
                 return res;
-            }, err => {
-                progressLog.close();
+            }, async err => {
+                await progressLog.close();
                 throw err;
             });
     }

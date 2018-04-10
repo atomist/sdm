@@ -315,7 +315,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     goalsListeners: this.goalsSetListeners,
                     implementationMapping: this.goalFulfillmentMapper,
                 }),
-                () => deleteRepositoryCommand()],
+                deleteRepositoryCommand],
             eventHandlers: [],
         };
     }

@@ -70,8 +70,8 @@ export function evangelicalMachine(options: EvangelicalMachineOptions): Software
         )
         .addSupportingCommands(
             () => addCloudFoundryManifest,
-            () => enableDeploy(),
-            () => disableDeploy(),
+            enableDeploy,
+            disableDeploy,
         )
         .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition);
 

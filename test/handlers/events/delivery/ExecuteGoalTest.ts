@@ -60,14 +60,13 @@ describe("executing the goal", () => {
                 fakeSdmGoal,
                 fakeGoal,
                 lastTenLinesLogInterpreter("hi"))
-                .then(result => {
-                    fakeRWLC.progressLog.close();
-
+                .then(async result => {
+                    await fakeRWLC.progressLog.close();
                     //   const result = Success;
                     assert.equal(result.code, 0, result.message);
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
                 });
-         }).then(() => done(), done);
+         }).then(done, done);
     });
 
 });

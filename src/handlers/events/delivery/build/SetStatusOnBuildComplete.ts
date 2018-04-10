@@ -80,7 +80,7 @@ export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subsc
 
 export async function displayBuildLogFailure(id: RemoteRepoRef,
                                              build: { buildUrl?: string, status?: string },
-                                             ac: AddressChannels,
+                                             addressChannels: AddressChannels,
                                              logInterpretation: LogInterpretation) {
     const buildUrl = build.buildUrl;
     if (buildUrl) {
@@ -92,16 +92,16 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
             await reportFailureInterpretation("build", interpretation,
-                {log: buildLog, url: buildUrl}, id, ac);
+                {log: buildLog, url: buildUrl}, id, addressChannels);
         } else {
-            await ac({
+            await addressChannels({
                 content: buildLog,
                 fileType: "text",
                 fileName: `build-${build.status}-${id.sha}.log`,
             } as any);
         }
     } else {
-        ac("No build log detected for " + linkToSha(id));
+        return addressChannels("No build log detected for " + linkToSha(id));
     }
 }
 

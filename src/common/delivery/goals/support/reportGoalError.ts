@@ -61,7 +61,7 @@ export async function reportError(parameters: {
 
     const interpretation = logInterpreter(progressLog.log);
     // The executor might have information about the failure; report it in the channels
-    if (interpretation && interpretation.doNotReportToUser !== true) {
+    if (interpretation && !interpretation.doNotReportToUser) {
         await
             reportFailureInterpretation(implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},

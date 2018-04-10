@@ -72,7 +72,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         });
     }
 
-    public logInterpreter: LogInterpreter = log => interpretMavenLog(log);
+    public logInterpreter: LogInterpreter = interpretMavenLog;
 
 }
 

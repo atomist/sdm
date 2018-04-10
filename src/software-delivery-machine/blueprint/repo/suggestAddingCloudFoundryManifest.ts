@@ -35,7 +35,7 @@ const CloudFoundryDeployableProject: PushTest =
         IsNode);
 
 export async function suggestAddingCloudFoundryManifest(inv: ProjectListenerInvocation) {
-    const eligible = (await CloudFoundryDeployableProject.valueForPush(inv)) === true;
+    const eligible = (await CloudFoundryDeployableProject.valueForPush(inv));
     if (!eligible) {
         logger.info("Not suggesting Cloud Foundry manifest for %j as we don't know how to deploy yet", inv.id);
         return;
