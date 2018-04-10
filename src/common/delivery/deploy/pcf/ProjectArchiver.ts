@@ -23,7 +23,7 @@ import {ProgressLog} from "../../../../spi/log/ProgressLog";
 
 export class ProjectArchiver {
 
-    constructor(private log: ProgressLog) {
+    constructor(private readonly log: ProgressLog) {
     }
 
     public async archive(p: GitProject, da: DeployableArtifact): Promise<ReadStream> {

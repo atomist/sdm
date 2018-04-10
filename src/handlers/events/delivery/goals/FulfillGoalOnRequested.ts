@@ -43,8 +43,8 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
     public githubToken: string;
 
-    constructor(private implementationMapper: SdmGoalImplementationMapper,
-                private projectLoader: ProjectLoader) {
+    constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
+                private readonly projectLoader: ProjectLoader) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =

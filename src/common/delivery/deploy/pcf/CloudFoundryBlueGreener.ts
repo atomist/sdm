@@ -24,7 +24,7 @@ import {CloudFoundryPusher} from "./CloudFoundryPusher";
 import {CloudFoundryDeployment} from "./CloudFoundryTarget";
 
 export class BlueGreenNamer {
-    constructor(private currentAppName: string) {
+    constructor(private readonly currentAppName: string) {
     }
 
     public getCurrentAppName() {
@@ -42,10 +42,10 @@ export class BlueGreenNamer {
 
 export class CloudFoundryBlueGreener {
 
-    constructor(private cfApi: CloudFoundryApi,
-                private pusher: CloudFoundryPusher,
-                private namer: BlueGreenNamer,
-                private log: ProgressLog) {
+    constructor(private readonly cfApi: CloudFoundryApi,
+                private readonly pusher: CloudFoundryPusher,
+                private readonly namer: BlueGreenNamer,
+                private readonly log: ProgressLog) {
     }
 
     public async cleanUpExistingBlueGreenApps() {

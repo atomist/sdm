@@ -47,9 +47,9 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
 
 export class SdmGoalImplementationMapper {
 
-    private implementations: GoalImplementation[] = [];
+    private readonly implementations: GoalImplementation[] = [];
 
-    private sideEffects: GoalSideEffect[] = [];
+    private readonly sideEffects: GoalSideEffect[] = [];
 
     public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>

@@ -35,7 +35,7 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
      * Logical name for the space
      * @param {string} environmentName: Name of the environment, such as "staging" or "production"
      */
-    constructor(private environmentName: "staging" | "production") {
+    constructor(private readonly environmentName: "staging" | "production") {
     }
 
     get space() {

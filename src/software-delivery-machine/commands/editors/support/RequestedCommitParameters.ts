@@ -38,6 +38,8 @@ export class RequestedCommitParameters {
     private readonly newBranch: string = "false";
 
     @Parameter({required: false})
+    // tslint gets the following variable declaration wrong, producing a compile error
+    // tslint:disable-next-line:prefer-readonly
     private commitMessage = "Command handler commit from Atomist";
 
     private branchUsed: string;

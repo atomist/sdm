@@ -32,7 +32,7 @@
         "no-unnecessary-class": true,
         "no-unused-variable": true,
         "no-var-keyword": true,
-        "prefer-readonly": false,
+        "prefer-readonly": true,
         "prefer-const": true,
         "member-access": true,
         "strict-boolean-expressions": false
