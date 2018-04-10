@@ -30,6 +30,7 @@
         "no-string-throw": true,
         "no-switch-case-fall-through": true,
         "no-unnecessary-class": true,
+        "no-unused-variable": true,
         "no-var-keyword": true,
         "prefer-readonly": false,
         "prefer-const": true,

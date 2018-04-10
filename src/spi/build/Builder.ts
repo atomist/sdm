@@ -16,7 +16,6 @@
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { PushTest } from "../../common/listener/PushTest";
 import { AddressChannels } from "../../common/slack/addressChannels";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";

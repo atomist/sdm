@@ -15,7 +15,6 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { doWithRetry } from "@atomist/automation-client/util/retry";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as https from "https";

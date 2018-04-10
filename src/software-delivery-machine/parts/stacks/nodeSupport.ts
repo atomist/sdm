@@ -20,7 +20,6 @@ import {
     SoftwareDeliveryMachineOptions,
 } from "../../../blueprint/SoftwareDeliveryMachine";
 import { executeTag } from "../../../common/delivery/build/executeTag";
-import { NodeProjectIdentifier } from "../../../common/delivery/build/local/npm/nodeProjectIdentifier";
 import { NodeProjectVersioner } from "../../../common/delivery/build/local/npm/nodeProjectVersioner";
 import {
     executeVersioner,

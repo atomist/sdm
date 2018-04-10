@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import {
     GeneratorCommandDetails,
@@ -22,6 +21,7 @@ import {
 } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import * as utils from "@atomist/automation-client/project/util/projectUtils";
 
+import { HandleCommand } from "@atomist/automation-client";
 import { JavaGeneratorConfig } from "../JavaGeneratorConfig";
 import { SpringProjectCreationParameters } from "./SpringProjectCreationParameters";
 import { transformSeedToCustomProject } from "./transformSeedToCustomProject";
@@ -34,7 +34,8 @@ import { transformSeedToCustomProject } from "./transformSeedToCustomProject";
  * @return {HandleCommand<SpringProjectCreationParameters>}
  */
 export function springBootGenerator(config: JavaGeneratorConfig,
-                                    details: Partial<GeneratorCommandDetails<SpringProjectCreationParameters>> = {}) {
+                                    // tslint:disable-next-line:max-line-length
+                                    details: Partial<GeneratorCommandDetails<SpringProjectCreationParameters>> = {}): HandleCommand<SpringProjectCreationParameters> {
     return generatorHandler<SpringProjectCreationParameters>(
         (params, ctx) => chainEditors(
             replaceReadmeTitle(params),

@@ -17,10 +17,9 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
-import { ProjectListenerInvocation } from "../../Listener";
 import {
-    PushTest,
     pushTest,
+    PushTest,
 } from "../../PushTest";
 
 // TODO once the ingester is defined elsewhere move this into a file and generate types

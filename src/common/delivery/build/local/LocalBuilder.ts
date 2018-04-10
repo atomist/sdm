@@ -23,7 +23,7 @@ import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";

@@ -16,7 +16,6 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { preconditionsAreMet } from "../../../../common/delivery/goals/goalPreconditions";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";

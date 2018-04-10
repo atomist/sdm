@@ -15,7 +15,6 @@
  */
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { CodeReactionInvocation } from "../../../../listener/CodeReactionListener";
 import { FingerprinterRegistration } from "../FingerprinterRegistration";
 import { dependenciesFingerprintsFromParsedPom } from "./dependenciesFingerprintsFromParsedPom";
@@ -31,7 +30,7 @@ export class MavenFingerprinter implements FingerprinterRegistration {
 
     public readonly name: "MavenFingerprinter";
 
-    public async action(cri: CodeReactionInvocation) {
+    public async action(cri: CodeReactionInvocation): Promise<Fingerprint[]> {
         try {
             await cri.project.findFile("pom.xml");
             const epom = await

@@ -15,8 +15,7 @@
  */
 
 import { HandlerContext, HandlerResult } from "@atomist/automation-client";
-import { StatusForExecuteGoal, StatusState } from "../../../typings/types";
-import { HasChannels } from "../../slack/addressChannels";
+import { StatusForExecuteGoal } from "../../../typings/types";
 import { Goal } from "./Goal";
 
 export interface ExecuteGoalInvocation {

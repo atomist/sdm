@@ -15,14 +15,13 @@
  */
 
 import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { disregardApproval, requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
+import { disregardApproval } from "../../../handlers/events/delivery/verify/approvalGate";
 import {
-    GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalFulfillmentMethod, SdmGoalKey, SdmGoalState,
+    GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey, SdmGoalState,
     SdmProvenance,
 } from "../../../ingesters/sdmGoalIngester";
 import { Goal, hasPreconditions } from "./Goal";

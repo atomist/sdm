@@ -22,7 +22,7 @@ export const IsNode: PredicatePushTest = predicatePushTest("Is Node", async p =>
     try {
         const f = await p.findFile("package.json");
         const contents = await f.getContent();
-        const json = JSON.parse(contents);
+        JSON.parse(contents);
         return true;
     } catch (err) {
         return false;

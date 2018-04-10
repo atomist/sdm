@@ -16,7 +16,6 @@
 
 import {
     HandleCommand,
-    logger,
     MappedParameter,
     MappedParameters,
     Parameter,

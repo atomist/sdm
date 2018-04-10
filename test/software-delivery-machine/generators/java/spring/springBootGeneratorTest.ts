@@ -132,7 +132,7 @@ describe("springBootGenerator", () => {
 
             const yml = result.findFileSync("src/main/resources/application.yml").getContentSync();
             assert(yml.includes("/teams/T1000"), "Should include Atomist team");
-            const appClassContent = result.findFileSync("src/main/java/atomist/test/ArtifactApplication.java").getContentSync();
+            result.findFileSync("src/main/java/atomist/test/ArtifactApplication.java").getContentSync();
         }).timeout(18000);
     });
 

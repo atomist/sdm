@@ -23,7 +23,7 @@ import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
+import { ExecuteGoalResult } from "../../goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
 import { createCodeReactionInvocation } from "../createCodeReactionInvocation";

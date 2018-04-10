@@ -26,7 +26,7 @@ import { reportFailureInterpretation } from "../../../../util/slack/reportFailur
 import { SdmContext } from "../../../context/SdmContext";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { Goal } from "../Goal";
-import { ExecuteGoalResult, GoalExecutor } from "../goalExecution";
+import { ExecuteGoalResult } from "../goalExecution";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 

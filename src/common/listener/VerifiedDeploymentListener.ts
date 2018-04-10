@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
 import { StatusState } from "../../typings/types";
 import { ListenerInvocation, SdmListener } from "./Listener";
 

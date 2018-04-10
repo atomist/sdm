@@ -21,12 +21,10 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
-import { Deployment } from "../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { identification } from "../../build/local/maven/pomParser";
-import { npmBuilderOptions } from "../../build/local/npm/npmBuilder";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";

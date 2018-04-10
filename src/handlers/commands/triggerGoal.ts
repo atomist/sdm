@@ -19,9 +19,9 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../common/delivery/goals/Goal";
-import { constructSdmGoal, goalCorrespondsToSdmGoal, storeGoal, updateGoal } from "../../common/delivery/goals/storeGoals";
-import { fetchGoalsForCommit, findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyEquals, goalKeyString, SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { updateGoal } from "../../common/delivery/goals/storeGoals";
+import { findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { goalKeyString, SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
 
 @Parameters()
