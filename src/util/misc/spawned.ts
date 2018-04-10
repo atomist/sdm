@@ -47,7 +47,7 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
                                     options: SpawnOptions,
                                     log: ProgressLog,
                                     spOpts: Partial<SpawnWatchOptions> = {}): Promise<ChildProcessResult> {
-    const childProcess = spawn(spawnCommand.command, spawnCommand.args, options);
+    const childProcess = spawn(spawnCommand.command, spawnCommand.args || [], options);
     logger.info("%s > %s (spawn with pid=%d)", options.cwd, stringifySpawnCommand(spawnCommand), childProcess.pid);
     return watchSpawned(childProcess, log, spOpts);
 }
@@ -107,6 +107,7 @@ export function stringifySpawnCommand(sc: SpawnCommand): string {
 
 /**
  * Convenient function to create a spawn command from a sentence such as "npm run compile"
+ * Does not respect quoted arguments
  * @param {string} sentence
  * @return {SpawnCommand}
  */

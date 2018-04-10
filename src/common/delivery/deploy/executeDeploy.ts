@@ -23,7 +23,7 @@ import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter }
 import * as _ from "lodash";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/runWithLog";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 
 export interface DeploySpec<T extends TargetInfo> {
     implementationName: string;
@@ -40,7 +40,7 @@ export interface DeploySpec<T extends TargetInfo> {
 }
 
 /**
- * Execute deploy with the appropriate deployer and target from the underlying push
+ * Execute deploy with the supplied deployer and target
  */
 export function executeDeploy(artifactStore: ArtifactStore,
                               endpointGoal: Goal,

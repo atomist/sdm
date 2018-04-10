@@ -20,6 +20,7 @@ import * as yaml from "js-yaml";
 
 import * as _ from "lodash";
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
@@ -71,13 +72,13 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
         });
     }
 
-    public async findDeployments(da: DeployableArtifact,
+    public async findDeployments(id: RemoteRepoRef,
                                  cfi: CloudFoundryInfo,
                                  credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
         if (!cfi.api || !cfi.username || !cfi.password || !cfi.space) {
             throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
         }
-        return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: true}, async project => {
+        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
             const manifest = await this.getManifest(project);
             const cfClient = await initializeCloudFoundry(cfi);
             const cfApi = new CloudFoundryApi(cfClient);

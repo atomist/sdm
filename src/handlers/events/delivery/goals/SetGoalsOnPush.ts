@@ -32,12 +32,11 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
-import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/runWithLog";
+import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
@@ -91,26 +90,28 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
     }
 }
 
-export async function chooseAndSetGoals(rules: {
-    projectLoader: ProjectLoader,
-    goalsListeners: GoalsSetListener[],
-    goalSetters: GoalSetter[],
-    implementationMapping: SdmGoalImplementationMapper,
-},                                      parameters: {
-    context: HandlerContext,
-    credentials: ProjectOperationCredentials,
-    push: PushFields.Fragment,
-}) {
+export interface ChooseAndSetGoalsRules {
+    projectLoader: ProjectLoader;
+    goalsListeners: GoalsSetListener[];
+    goalSetters: GoalSetter[];
+    implementationMapping: SdmGoalImplementationMapper;
+}
+
+export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
+                                        parameters: {
+                                            context: HandlerContext,
+                                            credentials: ProjectOperationCredentials,
+                                            push: PushFields.Fragment,
+                                        }) {
     const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     const {context, credentials, push} = parameters;
     const id = repoRefFromPush(push);
-    const providerId = providerIdFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
 
     const {determinedGoals, goalsToSave} = await determineGoals(
         {projectLoader, goalSetters, implementationMapping}, {
-        credentials, id, providerId, context, push, addressChannels,
-    });
+            credentials, id, context, push, addressChannels,
+        });
 
     await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
 
@@ -136,7 +137,6 @@ export async function determineGoals(rules: {
                                      },
                                      circumstances: {
                                          credentials: ProjectOperationCredentials, id: GitHubRepoRef,
-                                         providerId: string,
                                          context: HandlerContext,
                                          push: PushFields.Fragment,
                                          addressChannels: AddressChannels,
@@ -145,43 +145,38 @@ export async function determineGoals(rules: {
     goalsToSave: SdmGoal[],
 }> {
     const {projectLoader, goalSetters, implementationMapping} = rules;
-    const {credentials, id, context, push, providerId, addressChannels} = circumstances;
-    return projectLoader.doWithProject({credentials, id, context, readOnly: true},
-        async project => {
-            const determinedGoals: Goals = await chooseGoalsForPushOnProject({
-                goalSetters,
-            }, {
-                push,
-                id,
-                credentials,
-                context,
-                project,
-                addressChannels,
-            });
+    const {credentials, id, context, push, addressChannels} = circumstances;
+    return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
+        const pli: ProjectListenerInvocation = {
+            project,
+            credentials,
+            id,
+            push,
+            context,
+            addressChannels,
+        };
+        const determinedGoals = await chooseGoalsForPushOnProject({goalSetters}, pli);
+        if (!determinedGoals) {
+            return {determinedGoals: undefined, goalsToSave: []};
+        }
+        const goalsToSave = await sdmGoalsFromGoals(implementationMapping, pli, determinedGoals);
+        return {determinedGoals, goalsToSave};
+    });
 
-            if (!determinedGoals) {
-                return {determinedGoals: undefined, goalsToSave: []};
-            }
-            const pli: ProjectListenerInvocation = {
-                project,
-                credentials,
-                id,
-                push,
-                context,
-            };
-            const goalsToSave = await Promise.all(determinedGoals.goals.map(async g =>
-                constructSdmGoal(context, {
-                    goalSet: determinedGoals.name,
-                    goal: g,
-                    state: hasPreconditions(g) ? "planned" : "requested",
-                    id,
-                    providerId,
-                    fulfillment: await fulfillment({implementationMapping}, g, pli),
-                })));
+}
 
-            return {determinedGoals, goalsToSave};
-        });
-
+async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMapper,
+                                 pli: ProjectListenerInvocation,
+                                 determinedGoals: Goals) {
+    return Promise.all(determinedGoals.goals.map(async g =>
+        constructSdmGoal(pli.context, {
+            goalSet: determinedGoals.name,
+            goal: g,
+            state: hasPreconditions(g) ? "planned" : "requested",
+            id: pli.id,
+            providerId: providerIdFromPush(pli.push),
+            fulfillment: await fulfillment({implementationMapping}, g, pli),
+        })));
 }
 
 async function fulfillment(rules: {
@@ -193,7 +188,7 @@ async function fulfillment(rules: {
         return constructSdmGoalImplementation(plan);
     }
     if (isSideEffect(plan)) {
-        return {method: "side-effect", name: plan.sideEffectName };
+        return {method: "side-effect", name: plan.sideEffectName};
     }
 
     logger.info("FYI, no implementation found for " + g.name);
@@ -206,24 +201,9 @@ export const executeImmaterial: ExecuteGoalWithLog = async () => {
 };
 
 async function chooseGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
-                                           parameters: {
-                                            push: PushFields.Fragment,
-                                            id: GitHubRepoRef,
-                                            credentials: ProjectOperationCredentials,
-                                            context: HandlerContext,
-                                            project: GitProject,
-                                            addressChannels: AddressChannels,
-                                        }): Promise<Goals> {
+                                           pi: ProjectListenerInvocation): Promise<Goals> {
     const {goalSetters} = rules;
-    const {push, id, credentials, context, project, addressChannels} = parameters;
-    const pi: ProjectListenerInvocation = {
-        id,
-        project,
-        credentials,
-        push,
-        context,
-        addressChannels,
-    };
+    const {push, id, addressChannels} = pi;
 
     try {
         const pushRules = new PushRules("Goal setter", goalSetters);

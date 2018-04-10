@@ -22,7 +22,7 @@ import {
     ArtifactGoal,
     AutofixGoal,
     BuildGoal,
-    CodeReactionGoal,
+    CodeReactionGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
     FingerprintGoal,
     JustBuildGoal,
     NoGoal,
@@ -83,10 +83,15 @@ import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegist
 import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
 import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
-import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
+import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
+
+import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
+import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
+import { disposeCommand } from "../handlers/commands/disposeCommand";
+import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -150,6 +155,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public readonly goalSetters: GoalSetter[] = []; // public for tests
 
+    private readonly disposalGoalSetters: GoalSetter[] = [];
+
     private readonly goalsSetListeners: GoalsSetListener[] = [];
 
     private readonly reviewerRegistrations: ReviewerRegistration[] = [];
@@ -171,6 +178,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     private readonly verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
     private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
+
+    private readonly goalRetryCommandMap: { [key: string]: Maker<HandleCommand<any>> } = {};
 
     /**
      * Provide the implementation for a goal.
@@ -205,6 +214,16 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             pushTest: optsToUse.pushTest,
             logInterpreter: optsToUse.logInterpreter,
         });
+        this.goalRetryCommandMap[goal.uniqueCamelCaseName] = () => triggerGoal(goal.uniqueCamelCaseName, goal);
+        return this;
+    }
+
+    private get goalRetryCommands(): Array<Maker<HandleCommand<any>>> {
+        return Object.keys(this.goalRetryCommandMap).map(k => this.goalRetryCommandMap[k]);
+    }
+
+    public addDisposalRules(...goalSetters: GoalSetter[]): this {
+        this.disposalGoalSetters.push(...goalSetters);
         return this;
     }
 
@@ -287,6 +306,20 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             undefined;
     }
 
+    private get disposal(): FunctionalUnit {
+        return {
+            commandHandlers: [
+                () => disposeCommand({
+                    goalSetters: this.disposalGoalSetters,
+                    projectLoader: this.opts.projectLoader,
+                    goalsListeners: this.goalsSetListeners,
+                    implementationMapping: this.goalFulfillmentMapper,
+                }),
+                () => deleteRepositoryCommand()],
+            eventHandlers: [],
+        };
+    }
+
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
         () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
 
@@ -301,12 +334,13 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .concat([
                 this.goalSetting,
                 this.goalConsequences,
+                this.disposal,
             ]);
     }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper))
+            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
@@ -327,6 +361,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     get commandHandlers(): Array<Maker<HandleCommand>> {
         return this.generators
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.commandHandlers)))
+            .concat(this.goalRetryCommands)
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat([this.showBuildLog])
@@ -471,6 +506,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
         rules.forEach(r => {
+            // deploy
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value),
                 {
@@ -478,9 +514,17 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                     logInterpreter: r.value.deployer.logInterpreter,
                 },
             );
+            // endpoint
             this.knownSideEffect(
                 r.value.endpointGoal,
                 r.value.deployGoal.definition.displayName);
+            // undeploy
+            this.addGoalImplementation(r.name, r.value.undeployGoal, executeUndeploy(r.value),
+                {
+                    pushTest: r.guard,
+                    logInterpreter: r.value.deployer.logInterpreter,
+                },
+            );
         });
         return this;
     }
@@ -531,7 +575,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,
                 executeReview(this.opts.projectLoader, this.reviewerRegistrations))
-            .addVerifyImplementation();
+            .addVerifyImplementation()
+            .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
+                offerToDeleteRepository())
+            .addGoalImplementation("OfferToDeleteRepoAfterUndeploys", DeleteAfterUndeploysGoal,
+            offerToDeleteRepository());
 
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }

@@ -15,6 +15,7 @@
  */
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { DeployableArtifact } from "../artifact/ArtifactStore";
 import { LogInterpretation } from "../log/InterpretedLog";
 import { ProgressLog } from "../log/ProgressLog";
@@ -27,22 +28,21 @@ import { Deployment, TargetInfo } from "./Deployment";
 export interface Deployer<T extends TargetInfo = TargetInfo, U extends Deployment = Deployment> extends LogInterpretation {
 
     /**
-     * Implemented by deployers that don't sit on an infrastructure like Cloud Foundry
-     * or Kubernetes that handles rolling update
+     * Remove a deployment. Very useful for project cleanup
      * @return {Promise<any>}
      */
-    undeploy?(ti: T, deployment: U, log: ProgressLog): Promise<any>;
+    undeploy(ti: T, deployment: U, log: ProgressLog): Promise<any>;
 
     /**
      * Find all deployments of the artifact or app
-     * @param {DeployableArtifact} da
-     * @param {T} ti
-     * @param {ProjectOperationCredentials} credentials
+     * @param id of the project
+     * @param ti
+     * @param credentials
      * @return {Promise<Array<Promise<Deployment>>>}
      */
-    findDeployments?(da: DeployableArtifact,
-                     ti: T,
-                     creds: ProjectOperationCredentials): Promise<U[]>;
+    findDeployments(id: RemoteRepoRef,
+                    ti: T,
+                    credentials: ProjectOperationCredentials): Promise<U[]>;
 
     /**
      * Deploy the app returning a promise of deployments

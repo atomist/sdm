@@ -14,46 +14,33 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import * as stringify from "json-stringify-safe";
-import { DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
-import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { GoalExecutor } from "../goals/goalExecution";
-import { ExecuteWithLog, runWithLog, RunWithLogContext } from "../goals/support/runWithLog";
-import { DeploySpec } from "./executeDeploy";
+import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
+import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
+import { Target } from "./deploy";
 
-export function undeployArtifactWithLogs<T extends TargetInfo>(spec: DeploySpec<T>): GoalExecutor {
-    return runWithLog(executeUndeployArtifact(spec), spec.deployer.logInterpreter);
-}
-
-export function executeUndeployArtifact<T extends TargetInfo>(spec: DeploySpec<T>): ExecuteWithLog {
+export function executeUndeploy(target: Target): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
-        const commit = rwlc.status.commit;
-        const image = rwlc.status.commit.image;
+        const {id, credentials, status, progressLog} = rwlc;
+        const commit = status.commit;
         const pushBranch = commit.pushes[0].branch;
-        rwlc.progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
+        progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
 
-        if (!spec.deployer.findDeployments || !spec.deployer.undeploy) {
-            throw new Error("Deployer does not implement findDeployments and undeploy");
+        const targetInfo = target.targeter(id, pushBranch);
+        const deployments = await target.deployer.findDeployments(id, targetInfo, credentials);
+        if (!deployments) {
+            progressLog.write("No deployments found");
+            return Success;
         }
-        const progressLog = rwlc.progressLog;
-
-        // some undeploy processes do not really need the artifact, so don't fail
-        let artifactCheckout: DeployableArtifact;
-        if (image) {
-            const targetUrl = image.imageName;
-            artifactCheckout = await spec.artifactStore.checkout(targetUrl, rwlc.id,
-                rwlc.credentials).then(rejectUndefined).catch(writeError(progressLog));
-        }
-
-        const targetInfo = spec.targeter(rwlc.id, pushBranch);
-        const deployments = await spec.deployer.findDeployments(artifactCheckout, targetInfo, rwlc.credentials);
 
         logger.info("Detected deployments: %s", deployments.map(d => stringify(d)).join(", "));
 
         deployments.forEach(async d =>
-            spec.deployer.undeploy(
+            target.deployer.undeploy(
                 targetInfo,
                 d,
                 progressLog,
@@ -62,16 +49,32 @@ export function executeUndeployArtifact<T extends TargetInfo>(spec: DeploySpec<T
     };
 }
 
-function writeError(progressLog: ProgressLog) {
-    return (err: Error) => {
-        progressLog.write("Error checking out artifact: " + err.message);
-        throw err;
-    };
-}
+export function offerToDeleteRepository(): ExecuteGoalWithLog {
+    return async (rwlc: RunWithLogContext) => {
+        const {addressChannels, id} = rwlc;
 
-function rejectUndefined<T>(thing: T): T {
-    if (!thing) {
-        throw new Error("No DeployableArtifact found");
-    }
-    return thing;
+        const params = new DeleteRepositoryParameters();
+        params.owner = id.owner;
+        params.repo = id.repo;
+        params.providerId = GitHubDotComProviderId; // we should put this in the RWLC?
+        params.areYouSure = "yes";
+
+        const deleteRepoButton = buttonForCommand({text: "Delete Repo", style: "danger"},
+            DeleteRepositoryCommandName,
+            params as any);
+
+        const attachment: Attachment = {
+            fallback: "delete repository button",
+            color: "#ff0234",
+            text: "Would you like to delete this repository?",
+            actions: [deleteRepoButton],
+        };
+
+        const message: SlackMessage = {
+            attachments: [attachment],
+        };
+        await addressChannels(message);
+
+        return Success;
+    };
 }

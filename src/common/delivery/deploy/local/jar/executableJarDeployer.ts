@@ -52,7 +52,7 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
     constructor(public opts: LocalDeployerOptions) {
     }
 
-    public async findDeployments(da: DeployableArtifact,
+    public async findDeployments(id: RemoteRepoRef,
                                  ti: ManagedDeploymentTargetInfo,
                                  creds: ProjectOperationCredentials) {
         const thisDeployment = this.deploymentFor(ti);

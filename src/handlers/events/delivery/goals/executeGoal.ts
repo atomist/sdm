@@ -14,45 +14,136 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
+import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { jwtToken } from "@atomist/automation-client/globals";
+import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import * as path from "path";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import {
-    ExecuteGoalInvocation,
-    ExecuteGoalResult,
-    GoalExecutor,
-} from "../../../../common/delivery/goals/goalExecution";
+import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { ExecuteGoalWithLog, reportError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
+import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { StatusForExecuteGoal } from "../../../../typings/types";
-import { repoRefFromStatus } from "../../../../util/git/repoRef";
+import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { spawnAndWatch } from "../../../../util/misc/spawned";
 
-export async function executeGoal(execute: GoalExecutor,
-                                  status: StatusForExecuteGoal.Fragment,
-                                  ctx: HandlerContext,
-                                  params: ExecuteGoalInvocation,
-                                  sdmGoal: SdmGoal): Promise<ExecuteGoalResult> {
-    logger.info(`Running ${params.goal.name}. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
-    await markGoalInProcess(ctx, sdmGoal, params.goal);
+export async function executeGoal(rules: { projectLoader: ProjectLoader },
+                                  execute: ExecuteGoalWithLog,
+                                  rwlc: RunWithLogContext,
+                                  sdmGoal: SdmGoal,
+                                  goal: Goal,
+                                  logInterpreter: LogInterpreter): Promise<ExecuteGoalResult> {
+    const ctx = rwlc.context;
+    const {addressChannels, progressLog, id} = rwlc;
+    const implementationName = sdmGoal.fulfillment.name;
+    logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
+
+    await markGoalInProcess(ctx, sdmGoal, goal);
     try {
-        let result = await execute(status, ctx, params);
-        if (!result) {
-            logger.error("execute method for %s of %s returned undefined", params.implementationName, params.goal.name);
-            result = Success;
+        // execute pre hook
+        let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
+
+        // TODO CD is there a isSuccess(result) method somewhere
+        if (result.code === 0) {
+
+            // execute the actual goal
+            let goalResult = await execute(rwlc)
+                .catch(err =>
+                    reportError({
+                        goal, implementationName, addressChannels, progressLog, id, logInterpreter,
+                    }, err)
+                        .then(() => Promise.reject(err)),
+                );
+            if (!goalResult) {
+                logger.error("execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
+                goalResult = Success;
+            }
+
+            if (goalResult.code !== 0) {
+                await reportError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
+                    new Error("Failure reported: " + goalResult.message));
+            }
+
+            result = {
+                ...result,
+                ...goalResult,
+            };
         }
-        logger.info("ExecuteGoal: result of %s: %j", params.implementationName, result);
-        await markStatus(ctx, sdmGoal, params.goal, result);
+
+        // execute post hook
+        if (result.code === 0) {
+            let hookResult = await executeHook(rules, rwlc, sdmGoal, "post");
+            if (!hookResult) {
+                hookResult = Success;
+            }
+            result = {
+                ...result,
+                ...hookResult,
+            };
+        }
+
+        logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
+        await markStatus(ctx, sdmGoal, goal, result);
         return Success;
     } catch (err) {
         logger.warn("Error executing %s on %s: %s",
-            params.implementationName, repoRefFromStatus(status).url, err.message);
-        await markStatus(ctx, sdmGoal, params.goal, {code: 1}, err);
+            implementationName, sdmGoal.sha, err.message);
+        logger.warn(err.stack);
+        await markStatus(ctx, sdmGoal, goal, {code: 1}, err);
         return failure(err);
     }
 }
 
-export function validSubscriptionName(input: string): string {
-    return input.replace(/[-\s]/, "_")
-        .replace(/^(\d)/, "number$1");
+export async function executeHook(rules: { projectLoader: ProjectLoader },
+                                  rwlc: RunWithLogContext,
+                                  sdmGoal: SdmGoal,
+                                  stage: "post" | "pre"): Promise<HandlerResult> {
+    const {projectLoader} = rules;
+    const {credentials, id, context, progressLog} = rwlc;
+    return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async p => {
+        const hook = goalToHookFile(sdmGoal, stage);
+        if (p.fileExistsSync(`.atomist/hooks/${hook}`)) {
+
+            logger.info("Invoking goal %s hook '%s'", stage, hook);
+
+            const opts = {
+                cwd: path.join(p.baseDir, ".atomist", "hooks"),
+                env: {
+                    ...process.env,
+                    // TODO cd do we need more variables to pass over?
+                    // jess: I vote for passing the fewest possible -- like just correlation ID maybe, to show it
+                    // can be done.
+                    // This is an interface that is easy to expand and very hard to contract.
+                    // plus, this is secure information; must we provide it to a script in any repo?
+                    GITHUB_TOKEN: (credentials as TokenCredentials).token,
+                    ATOMIST_TEAM: context.teamId,
+                    ATOMIST_CORRELATION_ID: context.correlationId,
+                    ATOMIST_JWT: jwtToken(),
+                },
+            };
+
+            let result: HandlerResult = await spawnAndWatch(
+                {command: path.join(p.baseDir, ".atomist", "hooks", hook), args: []},
+                opts,
+                progressLog,
+                {
+                    errorFinder: code => code !== 0,
+                });
+
+            if (!result) {
+                result = Success;
+            }
+
+            logger.info("Goal %s hook returned: %j", stage, result);
+            return result;
+        }
+        return Success;
+    });
+}
+
+function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
+    return `${prefix}-${sdmGoal.environment.slice(2)}-${sdmGoal.name}`;
 }
 
 export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult, error?: Error) {

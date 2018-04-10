@@ -26,13 +26,14 @@ import { providerIdFromStatus } from "../../../util/git/repoRef";
 import { Goal } from "../goals/Goal";
 import { descriptionFromState, updateGoal } from "../goals/storeGoals";
 import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
-import { RunWithLogContext } from "../goals/support/runWithLog";
+import { RunWithLogContext } from "../goals/support/reportGoalError";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;
 
 export interface DeployStage {
     deployGoal: Goal;
     endpointGoal: Goal;
+    undeployGoal: Goal;
 }
 
 export interface DeployerInfo<T extends TargetInfo> {

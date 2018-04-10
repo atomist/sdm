@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
@@ -24,6 +25,7 @@ import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { ExecuteGoalResult } from "../../../goals/goalExecution";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
 
@@ -53,8 +55,12 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     constructor(public projectLoader: ProjectLoader, public opts: LocalDeployerOptions) {
     }
 
-    public findDeployments(da: DeployableArtifact, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
-        return managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
+    public async findDeployments(id: RemoteRepoRef, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
+        const deployedApp = managedMavenDeployments.findDeployment(ti.managedDeploymentKey);
+        if (!deployedApp) {
+            return [];
+        }
+        return [deployedApp.deployment];
     }
 
     public async deploy(da: DeployableArtifact,
@@ -72,6 +78,11 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         return [await this.projectLoader.doWithProject({credentials, id, readOnly: true},
                 project => this.deployProject(ti, log, project, port, team))];
 
+    }
+
+    public async undeploy(ti: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<ExecuteGoalResult> {
+        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        return Success;
     }
 
     private async deployProject(ti: ManagedDeploymentTargetInfo,

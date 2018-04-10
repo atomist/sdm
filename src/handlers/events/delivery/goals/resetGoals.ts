@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-import {
-    Failure, HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { PushForCommit } from "../../../../typings/types";
+import { PushFields, PushForCommit } from "../../../../typings/types";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 
@@ -78,21 +76,9 @@ function resetGoalsOnCommit(rules: {
         const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
-        const commitResult = await ctx.graphClient.query<PushForCommit.Query, PushForCommit.Variables>({
-            name: "PushForCommit", variables: {
-                owner: commandParams.owner, repo: commandParams.repo, providerId: commandParams.providerId, branch, sha,
-            },
-        });
+        const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
 
-        if (!commitResult || !commitResult.Commit || commitResult.Commit.length === 0) {
-            await ctx.messageClient.respond("Could not find commit for " + stringify(commandParams));
-            return Failure;
-        }
-        const commit = commitResult.Commit[0];
-        if (!commit.pushes || commit.pushes.length === 0) {
-            await ctx.messageClient.respond("Could not find push for " + stringify(commandParams));
-            return Failure;
-        }
+        const push = await fetchPushForCommit(ctx, id, commandParams.providerId);
 
         const credentials = {token: commandParams.githubToken};
 
@@ -104,7 +90,7 @@ function resetGoalsOnCommit(rules: {
         }, {
             context: ctx,
             credentials,
-            push: commit.pushes[0],
+            push,
         });
 
         if (goals) {
@@ -115,4 +101,21 @@ function resetGoalsOnCommit(rules: {
 
         return Success;
     };
+}
+
+export async function fetchPushForCommit(context: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<PushFields.Fragment> {
+    const commitResult = await context.graphClient.query<PushForCommit.Query, PushForCommit.Variables>({
+        name: "PushForCommit", variables: {
+            owner: id.owner, repo: id.repo, providerId, branch: id.branch, sha: id.sha,
+        },
+    });
+
+    if (!commitResult || !commitResult.Commit || commitResult.Commit.length === 0) {
+        throw new Error("Could not find commit for " + stringify(id));
+    }
+    const commit = commitResult.Commit[0];
+    if (!commit.pushes || commit.pushes.length === 0) {
+        throw new Error("Could not find push for " + stringify(id));
+    }
+    return commit.pushes[0];
 }

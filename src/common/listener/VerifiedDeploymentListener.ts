@@ -29,7 +29,6 @@ export interface StatusInfo {
  */
 export interface VerifiedDeploymentInvocation extends ListenerInvocation {
     status: StatusInfo;
-    messageDestination: Destination;
 }
 
 export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentInvocation>;

@@ -16,6 +16,7 @@
 
 import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
@@ -42,9 +43,6 @@ export interface UpdateSdmGoalParams {
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
-    if (!before.fulfillment) {
-        throw new Error("what happened to the fulfillment?");
-    }
     const sdmGoal = {
         ...before,
         state: params.state,
@@ -74,7 +72,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
     goal: Goal,
     state: SdmGoalState,
-    id: GitHubRepoRef,
+    id: RemoteRepoRef,
     providerId: string
     url?: string,
     fulfillment?: SdmGoalFulfillment,

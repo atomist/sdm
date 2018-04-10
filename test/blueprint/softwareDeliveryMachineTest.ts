@@ -45,7 +45,7 @@ const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
 
 const fakeContext = {context: {name: "my favorite context "}} as any as HandlerContext;
 
-const aPush = {} as PushFields.Fragment;
+const aPush = {repo: {org: {provider: {providerId: "myProviderId"}}}} as PushFields.Fragment;
 
 describe("implementing goals in the SDM", () => {
 
@@ -63,7 +63,7 @@ describe("implementing goals in the SDM", () => {
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
-                providerId: "josh", addressChannels: () => Promise.resolve({}),
+                addressChannels: () => Promise.resolve({}),
             },
         );
 
@@ -105,7 +105,7 @@ describe("implementing goals in the SDM", () => {
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
-                providerId: "josh", addressChannels: () => Promise.resolve({}),
+                addressChannels: () => Promise.resolve({}),
             },
         );
 
