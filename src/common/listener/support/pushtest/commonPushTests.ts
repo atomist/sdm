@@ -15,9 +15,9 @@
  */
 
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { isPublicRepo } from "../../../../util/github/ghub";
 import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../PushTest";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
     p.push.branch === p.push.repo.defaultBranch);
