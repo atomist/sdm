@@ -19,7 +19,7 @@ import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "./bluep
 import { CachingProjectLoader } from "./common/repo/CachingProjectLoader";
 import { DefaultArtifactStore } from "./software-delivery-machine/blueprint/artifactStore";
 import { JavaSupportOptions } from "./software-delivery-machine/parts/stacks/javaSupport";
-import { greeting } from "./util/misc/greeting";
+import { greeting } from "./software-delivery-machine/misc/greeting";
 
 const notLocal = process.env.NODE_ENV === "production" || process.env.NODE_ENV === "staging";
 
