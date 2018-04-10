@@ -28,11 +28,10 @@ import { RunWithLogContext } from "../goals/support/runWithLog";
  * @return {Promise<CodeReactionInvocation>}
  */
 export async function createCodeReactionInvocation(rwlc: RunWithLogContext, project: GitProject): Promise<CodeReactionInvocation> {
-    const {status, credentials, id, context} = rwlc;
+    const {status, credentials, id, context, addressChannels} = rwlc;
     const commit = status.commit;
-    const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
+    const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(commit.repo, context));
 
-    const addressChannels = addressChannelsFor(commit.repo, context);
     const push = commit.pushes[0];
     const filesChanged = push.before ?
         await filesChangedSince(project, push.before.sha) :

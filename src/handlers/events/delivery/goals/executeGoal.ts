@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, HandlerResult, logger, Success, } from "@atomist/automation-client";
+import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
+import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as path from "path";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalResult, GoalExecutor, } from "../../../../common/delivery/goals/goalExecution";
-import { descriptionFromState, updateGoal, } from "../../../../common/delivery/goals/storeGoals";
-import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
-import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { spawnAndWatch } from "../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ExecuteGoalResult, GoalExecutor } from "../../../../common/delivery/goals/goalExecution";
+import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { ExecuteGoalWithLog, reportError, RunWithLogContext } from "../../../../common/delivery/goals/support/runWithLog";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ConsoleProgressLog } from "../../../../common/log/progressLogs";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
                                   execute: ExecuteGoalWithLog,
@@ -51,9 +51,9 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
             let goalResult = await execute(rwlc)
                 .catch(err =>
                     reportError({
-                        goal, implementationName, addressChannels, progressLog, id, logInterpreter
+                        goal, implementationName, addressChannels, progressLog, id, logInterpreter,
                     }, err)
-                        .then(() => Promise.reject(err))
+                        .then(() => Promise.reject(err)),
                 );
             if (!goalResult) {
                 logger.error("execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
@@ -101,7 +101,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                                   stage: "post" | "pre"): Promise<HandlerResult> {
     const {projectLoader} = rules;
     const {credentials, id, context, progressLog} = rwlc;
-    return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async (p) => {
+    return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async p => {
         const hook = goalToHookFile(sdmGoal, stage);
         if (p.fileExistsSync(`.atomist/hooks/${hook}`)) {
 

@@ -15,6 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { sprintf } from "sprintf-js";
 import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
@@ -24,9 +25,8 @@ import { StatusForExecuteGoal } from "../../../../typings/types";
 import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
 import { SdmContext } from "../../../context/SdmContext";
 import { AddressChannels } from "../../../slack/addressChannels";
-import { ExecuteGoalResult, GoalExecutor } from "../goalExecution";
 import { Goal } from "../Goal";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ExecuteGoalResult, GoalExecutor } from "../goalExecution";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
@@ -80,7 +80,7 @@ export async function reportError(parameters: {
                                id: RemoteRepoRef,
                                logInterpreter: LogInterpreter,
                            },
-                           err: Error) {
+                                  err: Error) {
     const {goal, implementationName, addressChannels, progressLog, id, logInterpreter} = parameters;
     logger.error("RunWithLog caught error: %s", err.message);
     logger.error(err.stack);

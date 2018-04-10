@@ -28,7 +28,7 @@ export function fakeContext(teamId: string = "T123") {
             send(event) {
                 logger.debug("send > " + stringify(event));
                 return Promise.resolve({});
-            }
+            },
         },
 
         context: {name: "fakeContextName", version: "v0.0", operation: "fakeOperation" },
