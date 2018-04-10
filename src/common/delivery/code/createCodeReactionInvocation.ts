@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
 import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
