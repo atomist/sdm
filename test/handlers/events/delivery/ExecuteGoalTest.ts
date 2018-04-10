@@ -16,7 +16,7 @@
 
 import "mocha";
 import * as assert from "power-assert";
-import { executeGoal } from "../../../../src/handlers/events/delivery/verify/executeGoal";
+import { executeGoal } from "../../../../src/handlers/events/delivery/goals/executeGoal";
 import { Success } from "@atomist/automation-client";
 import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/runWithLog";
 import { lastTenLinesLogInterpreter } from "../../../../src/common/delivery/goals/support/logInterpreters";

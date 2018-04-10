@@ -36,7 +36,7 @@ import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/Fin
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/FailDownstreamGoalsOnGoalFailure";
+import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
 import {
     EndpointVerificationListener,
     executeVerifyEndpoint,
@@ -63,7 +63,6 @@ import { ArtifactListener } from "../common/listener/ArtifactListener";
 import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
 import { DeploymentListener } from "../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
-import { Fingerprinter } from "../common/listener/Fingerprinter";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { GoalsSetListener } from "../common/listener/GoalsSetListener";
 import { PushTest } from "../common/listener/PushTest";
@@ -81,14 +80,15 @@ import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
 import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
+import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
 import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
 import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/runWithLog";
 import { PushRule } from "../common/listener/support/PushRule";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/CopyStatusApprovalToGoal";
-import { FulfillGoalOnRequested } from "../handlers/events/delivery/FulfillGoalOnRequested";
+import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
+import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
+import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
 import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
 import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
@@ -160,7 +160,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     private readonly artifactListeners: ArtifactListener[] = [];
 
-    private readonly fingerprinters: Fingerprinter[] = [];
+    private readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
 
     private readonly supersededListeners: SupersededListener[] = [];
 
@@ -415,8 +415,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addFingerprinters(...f: Fingerprinter[]): this {
-        this.fingerprinters.push(...f);
+    public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
+        this.fingerprinterRegistrations.push(...f);
         return this;
     }
 
@@ -525,8 +525,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 logInterpreter: LogSuppressor,
             })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
-            .addGoalImplementation("Fingerprinter", FingerprintGoal,
-                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinters))
+            .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
+                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
             .addGoalImplementation("CodeReactions", CodeReactionGoal,
                 executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,

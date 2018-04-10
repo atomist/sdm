@@ -23,11 +23,10 @@ import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { addressChannelsFor, messageDestinationsFor } from "../../../slack/addressChannels";
-import { teachToRespondInEventHandler } from "../../../slack/contextMessageRouting";
 import { ExecuteGoalResult, GoalExecutor } from "../../goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { relevantCodeActions } from "../CodeActionRegistration";
+import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
 import { AutofixRegistration } from "./AutofixRegistration";
 
 /**
@@ -44,7 +43,6 @@ export function executeAutofixes(projectLoader: ProjectLoader,
         logger.info("Executing %d autofixes", registrations.length);
         try {
             const commit = status.commit;
-            const smartContext = teachToRespondInEventHandler(context, messageDestinationsFor(commit.repo, context));
             if (registrations.length === 0) {
                 return Success;
             }
@@ -57,17 +55,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                     readOnly: false,
                 },
                 async project => {
-                    const cri: CodeReactionInvocation = {
-                        id: editableRepoRef,
-                        project,
-                        credentials,
-                        context: smartContext,
-                        addressChannels: addressChannelsFor(commit.repo, context),
-                        push,
-                        commit,
-                        // TODO fix this
-                        filesChanged: undefined,
-                    };
+                    const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
                     const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
                     logger.info("Will apply %d eligible autofixes of %d to %j",
                         relevantAutofixes.length, registrations.length, cri.id);

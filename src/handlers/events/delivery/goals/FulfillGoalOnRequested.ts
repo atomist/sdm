@@ -1,3 +1,4 @@
+///<reference path="../../../../common/log/EphemeralProgressLog.ts"/>
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -18,23 +19,23 @@ import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import * as stringify from "json-stringify-safe";
-import { sdmGoalStateToGitHubStatusState } from "../../../common/delivery/goals/CopyGoalToGitHubStatus";
-import { ExecuteGoalInvocation } from "../../../common/delivery/goals/goalExecution";
-import { SdmGoalImplementationMapper } from "../../../common/delivery/goals/SdmGoalImplementationMapper";
-import { fetchCommitForSdmGoal } from "../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { RunWithLogContext } from "../../../common/delivery/goals/support/runWithLog";
-import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
+
+import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import {
     CommitForSdmGoal, OnAnyRequestedSdmGoal, OnRequestedSdmGoal, SdmGoalFields, SdmGoalRepo,
     StatusForExecuteGoal,
-} from "../../../typings/types";
-import { executeGoal } from "./verify/executeGoal";
-import { ProjectLoader } from "../../../common/repo/ProjectLoader";
-import { createEphemeralProgressLog } from "../../../common/log/EphemeralProgressLog";
-import { ConsoleProgressLog, MultiProgressLog } from "../../../common/log/progressLogs";
-import { addressChannelsFor } from "../../../common/slack/addressChannels";
-import { repoRefFromSdmGoal } from "../../../util/git/repoRef";
-import { fetchProvider } from "../../../util/github/gitHubProvider";
+} from "../../../../typings/types";
+import { executeGoal } from "./executeGoal";
+import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
+import { ConsoleProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
+import { fetchProvider } from "../../../../util/github/gitHubProvider";
+import { RunWithLogContext } from "../../../../common/delivery/goals/support/runWithLog";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {

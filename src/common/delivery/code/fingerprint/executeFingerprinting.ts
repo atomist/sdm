@@ -20,30 +20,35 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import * as _ from "lodash";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
-import { Fingerprinter } from "../../../listener/Fingerprinter";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
+import { relevantCodeActions } from "../CodeActionRegistration";
+import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
+import { FingerprinterRegistration } from "./FingerprinterRegistration";
 
 /**
  * Execute fingerprinting
  * @param projectLoader project loader
- * @param {Fingerprinter} fingerprinters
+ * @param {FingerprinterRegistration} fingerprinters
  */
 export function executeFingerprinting(projectLoader: ProjectLoader,
-                                      ...fingerprinters: Fingerprinter[]): ExecuteGoalWithLog {
+                                      ...fingerprinters: FingerprinterRegistration[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         const { id, credentials, context } = rwlc;
-
         if (fingerprinters.length === 0) {
             return Success;
         }
 
         logger.debug("About to fingerprint %j using %d fingerprinters", id, fingerprinters.length);
         await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+            const cri = await createCodeReactionInvocation(rwlc, project);
+            const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
+            logger.info("Will invoke %d eligible fingerprinters of %d to %j",
+                relevantFingerprinters.length, fingerprinters.length, cri.project.id);
             const fingerprints: Fingerprint[] = await Promise.all(
-                fingerprinters.map(async fp => {
+                relevantFingerprinters.map(async fp => {
                     logger.info("Using fingerprinter %s to fingerprint %j", fp.name, id);
-                    const f = await fp.fingerprint(project);
+                    const f = await fp.action(cri);
                     return isFingerprint(f) ? [f] : f;
                 }),
             ).then(x2 => _.flatten(x2));

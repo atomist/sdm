@@ -24,12 +24,12 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { filesChangedSince } from "../../../../util/git/filesChangedSince";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/runWithLog";
 import { relevantCodeActions } from "../CodeActionRegistration";
+import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 import { ReviewerRegistration } from "./ReviewerRegistration";
 
@@ -44,17 +44,7 @@ export function executeReview(projectLoader: ProjectLoader,
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
                 return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-                    const filesChanged = push.before ? await filesChangedSince(project, push.before.sha) : undefined;
-                    const cri: CodeReactionInvocation = {
-                        id,
-                        context,
-                        addressChannels,
-                        project,
-                        credentials,
-                        filesChanged,
-                        commit,
-                        push,
-                    };
+                    const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers", id, relevantCodeActions.length);
 

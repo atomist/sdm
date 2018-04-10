@@ -18,7 +18,7 @@
 
 import "mocha";
 import * as assert from "power-assert";
-import { sumSdmGoalEvents } from "../../src/handlers/events/delivery/RequestDownstreamGoalsOnGoalSuccess";
+import { sumSdmGoalEvents } from "../../src/handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { goalKeyEquals, SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 
 describe("Putting SdmGoal events together", () => {
@@ -229,7 +229,7 @@ const queryResult = {
             state: "in_process",
             fulfillment: {
                 method: "SDM fulfill on requested",
-                name: "Fingerprinter",
+                name: "FingerprinterRegistration",
             },
             description: "Working: fingerprint",
             url: null,

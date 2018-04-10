@@ -16,9 +16,8 @@
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { CodeActionRegistration } from "../CodeActionRegistration";
 
-export interface Fingerprinter {
+export type FingerprinterResult = Fingerprint | Fingerprint[];
 
-    name: string;
-    fingerprint(p: GitProject): Promise<Fingerprint> | Promise<Fingerprint[]>;
-}
+export type FingerprinterRegistration = CodeActionRegistration<FingerprinterResult>;

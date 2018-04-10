@@ -19,13 +19,14 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import "mocha";
 import * as assert from "power-assert";
 import { MavenFingerprinter } from "../../../../../../../src/common/delivery/code/fingerprint/maven/MavenFingerprinter";
+import { CodeReactionInvocation } from "../../../../../../../src/common/listener/CodeReactionListener";
 
 describe("MavenFingerprinter", () => {
 
     it("should find some dependencies", async () => {
         const Seed = await GitCommandGitProject.cloned({token: null},
             new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
-        const fp = await new MavenFingerprinter().fingerprint(Seed);
+        const fp = await new MavenFingerprinter().action({ project: Seed} as CodeReactionInvocation);
         const f1 = JSON.parse(fp[0].data);
         assert(f1.length > 0);
         f1.forEach(f => assert(f.groupId === "org.springframework.boot"));
