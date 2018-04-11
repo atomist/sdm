@@ -21,7 +21,7 @@ import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushT
 import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
 import {
     DevelopmentEnvOptions,
-    Install
+    Install,
 } from "../../../build/local/npm/npmBuilder";
 import { AutofixRegistration } from "../AutofixRegistration";
 import { spawnedCommandAutofix } from "../spawnedCommandAutofix";

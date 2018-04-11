@@ -23,12 +23,10 @@ import { executeTag } from "../../../common/delivery/build/executeTag";
 import { NodeProjectVersioner } from "../../../common/delivery/build/local/npm/nodeProjectVersioner";
 import {
     executeVersioner,
-    readSdmVersion,
 } from "../../../common/delivery/build/local/projectVersioner";
 import { tslintFix } from "../../../common/delivery/code/autofix/node/tslint";
 import {
     DefaultDockerImageNameCreator,
-    DockerImageNameCreator,
     executeDockerBuild,
 } from "../../../common/delivery/docker/executeDockerBuild";
 import {

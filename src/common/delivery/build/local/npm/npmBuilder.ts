@@ -28,7 +28,7 @@ export const DevelopmentEnvOptions = {
         ...process.env,
         NODE_ENV: "development",
     },
-}
+};
 
 export const Install: SpawnCommand = asSpawnCommand("npm install", DevelopmentEnvOptions);
 

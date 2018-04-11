@@ -31,7 +31,6 @@ import { npmCustomBuilder } from "../../common/delivery/build/local/npm/NpmDetec
 import { ManagedDeploymentTargeter } from "../../common/delivery/deploy/local/appManagement";
 import {
     AutofixGoal,
-    DockerBuildGoal,
     NoGoals,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
