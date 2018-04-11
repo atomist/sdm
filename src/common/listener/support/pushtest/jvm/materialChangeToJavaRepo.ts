@@ -42,6 +42,5 @@ export const MaterialChangeToJavaRepo = pushTest("Material change to Java repo",
         return true;
     }
     logger.debug("Change is immaterial on %j: changed files=[%s]", pci.id, changedFiles.join(","));
-    // await pci.addressChannels(`Sorry. I'm not going to waste electricity on changes to [${changedFiles.join(",")}]`);
     return false;
 });

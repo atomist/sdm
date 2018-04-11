@@ -15,12 +15,16 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { anyFileChangedWithExtension, filesChangedSince } from "../../../../../util/git/filesChangedSince";
+import * as _ from "lodash";
+import {
+    anyFileChangedSuchThat,
+    anyFileChangedWithExtension,
+    filesChangedSince,
+} from "../../../../../util/git/filesChangedSince";
 import { PushTest, pushTest } from "../../../PushTest";
 
-import * as _ from "lodash";
-
-const FileToWatch = ["js", "ts", "json", "yml", "xml", "html", "graphql", "jsx", "tsx", "sh"];
+const FilesWithExtensionToWatch = ["js", "ts", "json", "yml", "xml", "html", "graphql", "jsx", "tsx", "sh"];
+const FilesToWatch = ["Dockerfile"];
 
 /**
  * Veto if change to deployment unit doesn't seem important enough to
@@ -37,11 +41,11 @@ export const MaterialChangeToNodeRepo: PushTest = pushTest("Material change to N
         return true;
     }
     logger.debug(`MaterialChangeToNodeRepo: Changed files are [${changedFiles.join(",")}]`);
-    if (anyFileChangedWithExtension(changedFiles, FileToWatch)) {
+    if (anyFileChangedWithExtension(changedFiles, FilesWithExtensionToWatch) ||
+        anyFileChangedSuchThat(changedFiles, path => FilesToWatch.some(f => path === f))) {
         logger.debug("Change is material on %j: changed files=[%s]", pci.id, changedFiles.join(","));
         return true;
     }
     logger.debug("Change is immaterial on %j: changed files=[%s]", pci.id, changedFiles.join(","));
-    // await pci.addressChannels(`Sorry. I'm not going to waste electricity on changes to [${changedFiles.join(",")}]`);
     return false;
 });
