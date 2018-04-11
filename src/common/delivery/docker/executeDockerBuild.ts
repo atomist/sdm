@@ -33,8 +33,11 @@ export type DockerImageNameCreator = (p: Project,
                                       ctx: HandlerContext) => Promise<{registry: string, name: string, version: string}>;
 
 /**
- * Execute docker build with
- * @param projectLoader used to load projects
+ * Execute a Docker build for the project available from provided projectLoader
+ * @param {ProjectLoader} projectLoader
+ * @param {DockerImageNameCreator} imageNameCreator
+ * @param {DockerOptions} options
+ * @returns {ExecuteGoalWithLog}
  */
 export function executeDockerBuild(projectLoader: ProjectLoader,
                                    imageNameCreator: DockerImageNameCreator,
