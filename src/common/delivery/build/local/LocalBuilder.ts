@@ -21,7 +21,10 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
@@ -29,7 +32,10 @@ import axios from "axios";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
+import {
+    Builder,
+    PushThatTriggersBuild,
+} from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
