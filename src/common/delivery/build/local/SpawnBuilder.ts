@@ -93,7 +93,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
                                log: ProgressLog): Promise<LocalBuildInProgress> {
         const errorFinder = this.options.errorFinder;
         logger.info("%s.startBuild on %s, buildCommands=[%j] or file=[%s]", this.name, id.url, this.options.commands,
-            this.options.commandFile, this.options);
+            this.options.commandFile);
         return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async p => {
 
             const commands: SpawnCommand[] = this.options.commands || await loadCommandsFromFile(p, this.options.commandFile);
@@ -105,7 +105,12 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
             };
 
             function executeOne(buildCommand: SpawnCommand): Promise<ChildProcessResult> {
-                return spawnAndWatch(buildCommand, opts, log,
+                return spawnAndWatch(buildCommand,
+                    {
+                        ...opts,
+                        ...buildCommand.options,
+                    },
+                    log,
                     {
                         errorFinder,
                         stripAnsi: true,
