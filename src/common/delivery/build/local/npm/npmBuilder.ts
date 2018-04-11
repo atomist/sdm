@@ -23,6 +23,7 @@ import { createEphemeralProgressLogWithConsole } from "../../../../log/Ephemeral
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 
+// Options to use when running node commands like npm run compile that require dev dependencies to be installed
 export const DevelopmentEnvOptions = {
     env: {
         ...process.env,
