@@ -2,6 +2,7 @@
 
 apt-get -yqq update && apt-get install -yqq \
     unzip \
-    default-jdk
+    default-jdk \
+    maven
 
 exit 0
