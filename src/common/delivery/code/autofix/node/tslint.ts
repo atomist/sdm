@@ -19,7 +19,10 @@ import { hasFile } from "../../../../listener/support/pushtest/commonPushTests";
 import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushTests";
 import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
-import { Install } from "../../../build/local/npm/npmBuilder";
+import {
+    DevelopmentEnvOptions,
+    Install
+} from "../../../build/local/npm/npmBuilder";
 import { AutofixRegistration } from "../AutofixRegistration";
 import { spawnedCommandAutofix } from "../spawnedCommandAutofix";
 
@@ -28,4 +31,4 @@ export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
     allSatisfied(IsTypeScript, IsNode, hasFile("tslint.json")),
     {ignoreFailure: true, considerOnlyChangedFiles: false},
     Install,
-    asSpawnCommand("npm run lint:fix", { env: { NODE_ENV: "development" }}));
+    asSpawnCommand("npm run lint:fix", DevelopmentEnvOptions));
