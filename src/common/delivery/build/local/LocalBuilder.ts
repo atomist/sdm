@@ -19,13 +19,14 @@ import {
     HandlerContext,
     HandlerResult,
     logger,
-    Success
+    Success,
 } from "@atomist/automation-client";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
+import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
@@ -37,7 +38,6 @@ import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
-import * as _ from "lodash";
 import { createTagForStatus } from "../executeTag";
 import { readSdmVersion } from "./projectVersioner";
 
@@ -196,7 +196,7 @@ export abstract class LocalBuilder implements Builder {
                 },
                 options: QueryNoCacheOptions,
             }).then(result => {
-                const no = _.get(result, "Build[0].name") || "0";
+                const no: string = _.get(result, "Build[0].name") || "0";
                 return (+no + 1).toString();
             });
     }
@@ -223,4 +223,3 @@ function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, art
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }
-

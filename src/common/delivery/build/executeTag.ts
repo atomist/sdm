@@ -18,10 +18,9 @@ import { Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials
+    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { StatusForExecuteGoal } from "../../../typings/types";
 import {
     createTag,
     createTagReference,

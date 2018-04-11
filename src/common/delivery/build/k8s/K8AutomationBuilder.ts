@@ -16,7 +16,7 @@
 
 import {
     HandlerContext,
-    success
+    success,
 } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {

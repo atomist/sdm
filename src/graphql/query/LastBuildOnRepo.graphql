@@ -1,5 +1,5 @@
-query LastBuildOnRepo ($owner: String!, $name: String!) {
-  Build(first: 1, provider: "github-sdm", orderBy: [timestamp_desc]) {
+query LastBuildOnRepo($owner: String!, $name: String!) {
+  Build(first: 1, provider: "sdm", orderBy: [timestamp_desc]) {
     repo(owner: $owner, name: $name) @required {
       id
     }

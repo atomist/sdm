@@ -30,7 +30,6 @@ export function executeBuild(projectLoader: ProjectLoader,
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const {status, credentials, id, context, progressLog, addressChannels} = rwlc;
         const commit = status.commit;
-        const atomistTeam = context.teamId;
 
         logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
         const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);

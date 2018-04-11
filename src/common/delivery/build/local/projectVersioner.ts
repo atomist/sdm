@@ -28,7 +28,6 @@ import {
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import {
     SdmVersionForCommit,
-    StatusForExecuteGoal,
 } from "../../../../typings/types";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
@@ -65,8 +64,8 @@ export function executeVersioner(projectLoader: ProjectLoader,
     };
 }
 
-export async function readSdmVersion(name: string,
-                                     owner: string,
+export async function readSdmVersion(owner: string,
+                                     name: string,
                                      providerId: string,
                                      sha: string,
                                      context: HandlerContext): Promise<string> {

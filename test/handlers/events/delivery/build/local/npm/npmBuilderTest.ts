@@ -14,20 +14,6 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
-import * as assert from "power-assert";
-
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { LocalBuildInProgress } from "../../../../../../../src/common/delivery/build/local/LocalBuilder";
-import {
-    Install, npmBuilderOptions, RunBuild,
-    RunCompile,
-} from "../../../../../../../src/common/delivery/build/local/npm/npmBuilder";
-import { SpawnBuilder } from "../../../../../../../src/common/delivery/build/local/SpawnBuilder";
-import { ConsoleProgressLog } from "../../../../../../../src/common/log/progressLogs";
-import { CloningProjectLoader } from "../../../../../../../src/common/repo/cloningProjectLoader";
-import { SpawnCommand } from "../../../../../../../src/util/misc/spawned";
-
 /*class TestableNpmBuilder extends SpawnBuilder {
 
     public runningBuild: LocalBuildInProgress;
