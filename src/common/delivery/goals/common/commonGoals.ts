@@ -89,7 +89,7 @@ export const BuildGoal = new GoalWithPrecondition({
 export const DockerBuildGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "DockerBuild",
     environment: IndependentOfEnvironment,
-    orderedName: "3-build",
+    orderedName: "3-docker",
     displayName: "docker build",
     workingDescription: "Running Docker build...",
     completedDescription: "Docker image built",
