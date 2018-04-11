@@ -35,21 +35,26 @@ export interface RunWithLogContext extends SdmContext {
     progressLog: ProgressLog;
 }
 
+/**
+ * Report an error executing a goal and present a retry button
+ * @return {Promise<void>}
+ */
 export async function reportError(parameters: {
-                               goal: Goal,
-                               implementationName: string,
-                               addressChannels: AddressChannels,
-                               progressLog: ProgressLog,
-                               id: RemoteRepoRef,
-                               logInterpreter: LogInterpreter,
-                           },
+                                      goal: Goal,
+                                      implementationName: string,
+                                      addressChannels: AddressChannels,
+                                      progressLog: ProgressLog,
+                                      id: RemoteRepoRef,
+                                      logInterpreter: LogInterpreter,
+                                  },
                                   err: Error) {
     const {goal, implementationName, addressChannels, progressLog, id, logInterpreter} = parameters;
-    logger.error("RunWithLog caught error: %s", err.message);
+    logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",
+        goal.name, implementationName, err.message);
     logger.error(err.stack);
     progressLog.write("ERROR: " + err.message + "\n");
     progressLog.write(err.stack);
-    progressLog.write(sprintf("full error object: [%j]", err));
+    progressLog.write(sprintf("Full error object: [%j]", err));
 
     const retryButton = buttonForCommand({text: "Retry"},
         retryCommandNameFor(goal), {
@@ -62,12 +67,10 @@ export async function reportError(parameters: {
     const interpretation = logInterpreter(progressLog.log);
     // The executor might have information about the failure; report it in the channels
     if (interpretation && !interpretation.doNotReportToUser) {
-        await
-            reportFailureInterpretation(implementationName, interpretation,
-                {url: progressLog.url, log: progressLog.log},
-                id, addressChannels, retryButton);
+        await reportFailureInterpretation(implementationName, interpretation,
+            {url: progressLog.url, log: progressLog.log},
+            id, addressChannels, retryButton);
     } else {
-        await
-            addressChannels(":x: Failure executing goal: " + err.message);
+        await addressChannels("Failure executing goal: " + err.message);
     }
 }

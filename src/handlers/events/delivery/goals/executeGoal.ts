@@ -27,6 +27,16 @@ import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
+/**
+ * Central function to execute a goal with progress logging
+ * @param {{projectLoader: ProjectLoader}} rules
+ * @param {ExecuteGoalWithLog} execute
+ * @param {RunWithLogContext} rwlc
+ * @param {SdmGoal} sdmGoal
+ * @param {Goal} goal
+ * @param {LogInterpreter} logInterpreter
+ * @return {Promise<ExecuteGoalResult>}
+ */
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
                                   execute: ExecuteGoalWithLog,
                                   rwlc: RunWithLogContext,
@@ -45,7 +55,6 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
 
         // TODO CD is there a isSuccess(result) method somewhere
         if (result.code === 0) {
-
             // execute the actual goal
             let goalResult = await execute(rwlc)
                 .catch(err =>
@@ -55,7 +64,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                         .then(() => Promise.reject(err)),
                 );
             if (!goalResult) {
-                logger.error("execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
+                logger.error("Execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
                 goalResult = Success;
             }
 

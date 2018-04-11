@@ -189,10 +189,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
      * @param {string} implementationName
      * @param {Goal} goal
      * @param {ExecuteGoalWithLog} goalExecutor
-     * @param {PushTest} pushTest PushTest that narrows whether this implementation
-     * should be used for present goal. It's possible to make multiple
-     * calls to this method with different implementations chosen by different
-     * PushTests.
      * @param options PushTest to narrow matching & LogInterpreter that can handle
      * the log from the goalExecutor function
      * @return {this}
