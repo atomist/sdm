@@ -77,12 +77,14 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
 export function localCommandsEditor(commands: SpawnCommand[],
                                     log: ProgressLog = new ConsoleProgressLog()): ProjectEditor {
     return async (p: GitProject) => {
-        const opts: SpawnOptions = {cwd: p.baseDir};
+        const opts: SpawnOptions = {
+            cwd: p.baseDir,
+        };
         let commandResult: ChildProcessResult;
         for (const cmd of commands) {
             logger.info("Executing command %s", stringifySpawnCommand(cmd));
             commandResult = await watchSpawned(
-                spawn(cmd.command, cmd.args, opts),
+                spawn(cmd.command, cmd.args, { ...opts, ...cmd.options }),
                 log,
                 {
                     errorFinder: (code, signal) => code !== 0,

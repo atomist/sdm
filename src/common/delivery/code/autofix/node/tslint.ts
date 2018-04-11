@@ -28,4 +28,4 @@ export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
     allSatisfied(IsTypeScript, IsNode, hasFile("tslint.json")),
     {ignoreFailure: true, considerOnlyChangedFiles: false},
     Install,
-    asSpawnCommand("npm run lint:fix"));
+    asSpawnCommand("npm run lint:fix", { env: { NODE_ENV: "development" }}));

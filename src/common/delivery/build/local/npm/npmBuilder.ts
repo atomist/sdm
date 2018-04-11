@@ -23,11 +23,18 @@ import { createEphemeralProgressLogWithConsole } from "../../../../log/Ephemeral
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 
-export const Install: SpawnCommand = asSpawnCommand("npm install");
+export const DevelopmentEnvOptions = {
+    env: {
+        ...process.env,
+        NODE_ENV: "development",
+    },
+}
 
-export const RunBuild: SpawnCommand = asSpawnCommand("npm run build");
+export const Install: SpawnCommand = asSpawnCommand("npm install", DevelopmentEnvOptions);
 
-export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile");
+export const RunBuild: SpawnCommand = asSpawnCommand("npm run build", DevelopmentEnvOptions);
+
+export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile", DevelopmentEnvOptions);
 
 export function nodeRunBuildBuilder(projectLoader: ProjectLoader) {
     return new SpawnBuilder(undefined,
@@ -65,12 +72,6 @@ export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions
             const content = await packageJson.getContent();
             const pkg = JSON.parse(content);
             return {id: p.id as RemoteRepoRef, name: pkg.name, version: pkg.version};
-        },
-        options: {
-            env: {
-                ...process.env,
-                NODE_ENV: "development",
-            },
         },
     };
 }

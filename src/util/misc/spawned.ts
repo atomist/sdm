@@ -99,6 +99,7 @@ export interface SpawnCommand {
 
     command: string;
     args?: string[];
+    options?: any;
 }
 
 export function stringifySpawnCommand(sc: SpawnCommand): string {
@@ -111,10 +112,11 @@ export function stringifySpawnCommand(sc: SpawnCommand): string {
  * @param {string} sentence
  * @return {SpawnCommand}
  */
-export function asSpawnCommand(sentence: string): SpawnCommand {
+export function asSpawnCommand(sentence: string, options: any = {}): SpawnCommand {
     const split = sentence.split(" ");
     return {
         command: split[0],
         args: split.slice(1),
+        options,
     };
 }
