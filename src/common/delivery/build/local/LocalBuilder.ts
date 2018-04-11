@@ -86,7 +86,7 @@ export abstract class LocalBuilder implements Builder {
 
         try {
             const rb = await this.startBuild(credentials, id, atomistTeam, log, addressChannels);
-            await this.onStarted(rb, push.branch, buildNo);
+            await this.onStarted(credentials, id, push, rb, buildNo, context);
             try {
                 const br = await rb.buildResult;
                 await this.onExit(
@@ -136,8 +136,13 @@ export abstract class LocalBuilder implements Builder {
                                   log: ProgressLog,
                                   addressChannels: AddressChannels): Promise<LocalBuildInProgress>;
 
-    protected onStarted(runningBuild: LocalBuildInProgress, branch: string, buildNo: string) {
-        return this.updateBuildStatus(runningBuild, "started", branch, buildNo);
+    protected onStarted(credentials: ProjectOperationCredentials,
+                        id: RemoteRepoRef,
+                        push: PushThatTriggersBuild,
+                        runningBuild: LocalBuildInProgress,
+                        buildNo: string,
+                        context: HandlerContext) {
+        return this.updateBuildStatus(runningBuild, "started", push.branch, buildNo);
     }
 
     protected async onExit(credentials: ProjectOperationCredentials,

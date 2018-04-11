@@ -6,7 +6,8 @@ RUN apt-get -yqq update && apt-get install -yqq \
     curl
 
 RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
-    && apt-get install -y nodejs
+    && apt-get install -y nodejs \
+    && npm i -g npm
 
 RUN apt-get -yqq update && apt-get -yqq install docker.io
 

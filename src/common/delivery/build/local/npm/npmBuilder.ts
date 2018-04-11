@@ -18,10 +18,16 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { Project } from "@atomist/automation-client/project/Project";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
-import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
+import {
+    asSpawnCommand,
+    SpawnCommand,
+} from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
+import {
+    SpawnBuilder,
+    SpawnBuilderOptions,
+} from "../SpawnBuilder";
 
 // Options to use when running node commands like npm run compile that require dev dependencies to be installed
 export const DevelopmentEnvOptions = {
@@ -31,7 +37,7 @@ export const DevelopmentEnvOptions = {
     },
 };
 
-export const Install: SpawnCommand = asSpawnCommand("npm install", DevelopmentEnvOptions);
+export const Install: SpawnCommand = asSpawnCommand("npm ci", DevelopmentEnvOptions);
 
 export const RunBuild: SpawnCommand = asSpawnCommand("npm run build", DevelopmentEnvOptions);
 
