@@ -16,7 +16,12 @@
 
 import { Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { StatusForExecuteGoal } from "../../../typings/types";
 import {
     createTag,
     createTagReference,
@@ -35,24 +40,34 @@ export function executeTag(projectLoader: ProjectLoader): ExecuteGoalWithLog {
         const { status, credentials, id, context } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+            const commit = status.commit;
 
-            const version = await readSdmVersion(status, context);
-            const tag: Tag = {
-                tag: version,
-                message: status.commit.message,
-                object: status.commit.sha,
-                type: "commit",
-                tagger: {
-                    name: "Atomist",
-                    email: "info@atomist.com",
-                    date: new Date().toISOString(),
-                },
-            };
-
-            await createTag((credentials as TokenCredentials).token, id as GitHubRepoRef, tag);
-            await createTagReference((credentials as TokenCredentials).token, id as GitHubRepoRef, tag);
+            const version = await readSdmVersion(commit.repo.owner, commit.repo.name,
+                commit.repo.org.provider.providerId, commit.sha, context);
+            await createTagForStatus(id, commit.sha, commit.message, version, credentials);
 
             return Success;
         });
     };
+}
+
+export async function createTagForStatus(id: RemoteRepoRef,
+                                         sha: string,
+                                         message: string,
+                                         version: string,
+                                         credentials: ProjectOperationCredentials) {
+    const tag: Tag = {
+        tag: version,
+        message,
+        object: sha,
+        type: "commit",
+        tagger: {
+            name: "Atomist",
+            email: "info@atomist.com",
+            date: new Date().toISOString(),
+        },
+    };
+
+    await createTag((credentials as TokenCredentials).token, id as GitHubRepoRef, tag);
+    await createTagReference((credentials as TokenCredentials).token, id as GitHubRepoRef, tag);
 }

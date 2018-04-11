@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
-import { Failure, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    Failure,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success
+} from "@atomist/automation-client";
 import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import { sprintf } from "sprintf-js";
@@ -25,10 +32,14 @@ import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { LastBuildOnRepo } from "../../../../typings/types";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
+import * as _ from "lodash";
+import { createTagForStatus } from "../executeTag";
+import { readSdmVersion } from "./projectVersioner";
 
 export interface LocalBuildInProgress {
 
@@ -57,39 +68,51 @@ export abstract class LocalBuilder implements Builder {
                 protected projectLoader: ProjectLoader) {
     }
 
-    public async initiateBuild(creds: ProjectOperationCredentials,
+    public async initiateBuild(credentials: ProjectOperationCredentials,
                                id: RemoteRepoRef,
                                addressChannels: AddressChannels,
-                               atomistTeam: string,
                                push: PushThatTriggersBuild,
-                               log: ProgressLog): Promise<HandlerResult> {
+                               log: ProgressLog,
+                               context: HandlerContext): Promise<HandlerResult> {
         const as = this.artifactStore;
-        const token = (creds as TokenCredentials).token;
+        const atomistTeam = context.teamId;
+        const buildNo = await this.obtainBuildNo(id, context);
 
         try {
-            const rb = await this.startBuild(creds, id, atomistTeam, log, addressChannels);
-            await this.onStarted(rb, push.branch);
+            const rb = await this.startBuild(credentials, id, atomistTeam, log, addressChannels);
+            await this.onStarted(rb, push.branch, buildNo);
             try {
                 const br = await rb.buildResult;
                 await this.onExit(
-                    token,
+                    credentials,
+                    id,
                     !br.error,
-                    rb, atomistTeam, push.branch, as);
+                    push,
+                    rb,
+                    buildNo,
+                    as,
+                    context);
                 return br.error ? Failure : Success;
             } catch (err) {
                 await this.onExit(
-                    token,
+                    credentials,
+                    id,
                     false,
-                    rb, atomistTeam, push.branch, as);
+                    push,
+                    rb,
+                    buildNo,
+                    as,
+                    context);
                 return Failure;
             }
         } catch (err) {
             // If we get here, the build failed before even starting
             logger.warn("Build on branch %s failed on start: %j - %s", push.branch, id, err.message);
             log.write(sprintf("Build on branch %s failed on start: %j - %s", push.branch, id, err.message));
-            await this.updateAtomistLifecycle({repoRef: id, team: atomistTeam, url: undefined},
+            await this.updateBuildStatus({repoRef: id, team: atomistTeam, url: undefined},
                 "failed",
-                push.branch);
+                push.branch,
+                buildNo);
             return Failure;
         }
     }
@@ -107,35 +130,40 @@ export abstract class LocalBuilder implements Builder {
                                   log: ProgressLog,
                                   addressChannels: AddressChannels): Promise<LocalBuildInProgress>;
 
-    protected onStarted(runningBuild: LocalBuildInProgress, branch: string) {
-        return this.updateAtomistLifecycle(runningBuild, "started", branch);
+    protected onStarted(runningBuild: LocalBuildInProgress, branch: string, buildNo: string) {
+        return this.updateBuildStatus(runningBuild, "started", branch, buildNo);
     }
 
-    protected async onExit(token: string,
+    protected async onExit(credentials: ProjectOperationCredentials,
+                           id: RemoteRepoRef,
                            success: boolean,
+                           push: PushThatTriggersBuild,
                            runningBuild: LocalBuildInProgress,
-                           atomistTeam: string,
-                           branch: string,
-                           artifactStore: ArtifactStore): Promise<any> {
+                           buildNo: string,
+                           artifactStore: ArtifactStore,
+                           context: HandlerContext): Promise<any> {
         try {
             if (success) {
-                await this.updateAtomistLifecycle(runningBuild, "passed", branch);
+                await this.updateBuildStatus(runningBuild, "passed", push.branch, buildNo);
+                await this.createBuildTag(id, push, buildNo, context, credentials);
                 if (!!runningBuild.deploymentUnitFile) {
-                    await linkArtifact(token, runningBuild, atomistTeam, artifactStore);
+                    await linkArtifact((credentials as TokenCredentials).token,
+                        runningBuild, context.teamId, artifactStore);
                 } else {
                     logger.warn("No artifact generated by build of %j", runningBuild.appInfo);
                 }
             } else {
-                await this.updateAtomistLifecycle(runningBuild, "failed", branch);
+                await this.updateBuildStatus(runningBuild, "failed", push.branch, buildNo);
             }
         } catch (err) {
             logger.warn("Unexpected build exit error: %s", err);
         }
     }
 
-    protected updateAtomistLifecycle(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string },
-                                     status: "started" | "failed" | "error" | "passed" | "canceled",
-                                     branch: string): Promise<any> {
+    protected updateBuildStatus(runningBuild: { repoRef: RemoteRepoRef, url: string, team: string },
+                                status: "started" | "failed" | "error" | "passed" | "canceled",
+                                branch: string,
+                                buildNo: string): Promise<any> {
         logger.info("Telling Atomist about a %s build on %s, sha %s, url %s",
             status, branch, runningBuild.repoRef.sha, runningBuild.url);
         const url = `https://webhook.atomist.com/atomist/build/teams/${runningBuild.team}`;
@@ -144,18 +172,49 @@ export abstract class LocalBuilder implements Builder {
                 owner_name: runningBuild.repoRef.owner,
                 name: runningBuild.repoRef.repo,
             },
-            name: `Build ${runningBuild.repoRef.sha}`,
+            name: `Build #${buildNo}`,
+            number: +buildNo,
             type: "push",
             build_url: runningBuild.url,
             status,
             commit: runningBuild.repoRef.sha,
             branch,
-            provider: "github-sdm-local",
+            provider: "sdm",
         };
         return doWithRetry(
             () => axios.post(url, data),
             `Update build to ${JSON.stringify(status)}`)
             .then(() => runningBuild);
+    }
+
+    protected obtainBuildNo(id: RemoteRepoRef, ctx: HandlerContext): Promise<string> {
+        return ctx.graphClient.query<LastBuildOnRepo.Query, LastBuildOnRepo.Variables>({
+                name: "LastBuildOnRepo",
+                variables: {
+                    owner: id.owner,
+                    name: id.repo,
+                },
+                options: QueryNoCacheOptions,
+            }).then(result => {
+                const no = _.get(result, "Build[0].name") || "0";
+                return (+no + 1).toString();
+            });
+    }
+
+    protected async createBuildTag(id: RemoteRepoRef,
+                                   push: PushThatTriggersBuild,
+                                   buildNo: string,
+                                   context: HandlerContext,
+                                   credentials: ProjectOperationCredentials) {
+        const version = await readSdmVersion(push.owner, push.name, push.providerId, push.sha, context);
+        if (version) {
+            await createTagForStatus(
+                id,
+                push.sha,
+                "Tag created by SDM",
+                `${version}+sdm.${buildNo}`,
+                credentials);
+        }
     }
 
 }
@@ -164,3 +223,4 @@ function linkArtifact(token: string, rb: LocalBuildInProgress, team: string, art
     return artifactStore.storeFile(rb.appInfo, rb.deploymentUnitFile, {token})
         .then(imageUrl => postLinkImageWebhook(rb.repoRef.owner, rb.repoRef.repo, rb.repoRef.sha, imageUrl, team));
 }
+

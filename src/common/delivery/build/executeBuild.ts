@@ -40,7 +40,18 @@ export function executeBuild(projectLoader: ProjectLoader,
 
         // the builder is expected to result in a complete Build event (which will update the build status)
         // and an ImageLinked event (which will update the artifact status).
-        return builder.initiateBuild(credentials, id, addressChannels,
-            atomistTeam, {branch: branchToMarkTheBuildWith}, progressLog);
+        return builder.initiateBuild(
+            credentials,
+            id,
+            addressChannels,
+            {
+                name: commit.repo.name,
+                owner: commit.repo.owner,
+                providerId: commit.repo.org.provider.providerId,
+                branch: branchToMarkTheBuildWith,
+                sha: commit.sha,
+            },
+            progressLog,
+            context);
     };
 }

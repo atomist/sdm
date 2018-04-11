@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AddressChannels } from "../../common/slack/addressChannels";
@@ -22,6 +23,12 @@ import { ProgressLog } from "../log/ProgressLog";
 
 export interface PushThatTriggersBuild {
     branch: string;
+
+    name: string;
+    owner: string;
+    providerId: string;
+
+    sha: string;
 }
 
 /**
@@ -35,7 +42,7 @@ export interface Builder extends LogInterpretation {
     initiateBuild(creds: ProjectOperationCredentials,
                   id: RemoteRepoRef,
                   ac: AddressChannels,
-                  team: string,
                   push: PushThatTriggersBuild,
-                  log: ProgressLog): Promise<any>;
+                  log: ProgressLog,
+                  context: HandlerContext): Promise<any>;
 }

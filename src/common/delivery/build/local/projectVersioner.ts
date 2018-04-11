@@ -65,15 +65,18 @@ export function executeVersioner(projectLoader: ProjectLoader,
     };
 }
 
-export async function readSdmVersion(status: StatusForExecuteGoal.Fragment,
+export async function readSdmVersion(name: string,
+                                     owner: string,
+                                     providerId: string,
+                                     sha: string,
                                      context: HandlerContext): Promise<string> {
     const version = await context.graphClient.query<SdmVersionForCommit.Query, SdmVersionForCommit.Variables>({
             name: "SdmVersionForCommit",
             variables: {
-                name: [status.commit.repo.name],
-                owner: [status.commit.repo.owner],
-                providerId: [status.commit.repo.org.provider.providerId],
-                sha: [status.commit.sha],
+                name: [name],
+                owner: [owner],
+                providerId: [providerId],
+                sha: [sha],
             },
         });
     return _.get(version, "SdmVersion[0].version");

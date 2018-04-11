@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { success } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    success
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
@@ -29,6 +32,7 @@ import {
     InterpretedLog,
     LogInterpretation,
 } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { createStatus } from "../../../../util/github/ghub";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { interpretMavenLog } from "../local/maven/mavenLogInterpreter";
@@ -48,8 +52,11 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
     public name = "K8AutomationBuilder";
 
     public initiateBuild(creds: ProjectOperationCredentials,
-                         id: RemoteRepoRef, ac: AddressChannels,
-                         team: string, push: PushThatTriggersBuild, l): Promise<any> {
+                         id: RemoteRepoRef,
+                         ac: AddressChannels,
+                         push: PushThatTriggersBuild,
+                         log: ProgressLog,
+                         context: HandlerContext): Promise<any> {
             // someday we will do this with a "requested" build node but use a status for now.
         return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
             context: K8AutomationBuildContext + "/" + push.branch,

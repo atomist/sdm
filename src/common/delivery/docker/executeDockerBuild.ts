@@ -115,9 +115,11 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
     };
 }
 
-export const DefaultDockerImageNameCreator: DockerImageNameCreator = async (p, status, options, ctx) => {
+export const DefaultDockerImageNameCreator: DockerImageNameCreator = async (p, status, options, context) => {
     const name = p.name;
-    const version = await readSdmVersion(status, ctx);
+    const commit = status.commit;
+    const version = await readSdmVersion(commit.repo.owner, commit.repo.name,
+        commit.repo.org.provider.providerId, commit.sha, context);
     return {
         registry: options.registry,
         name,
