@@ -113,9 +113,6 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(HasTravisFile, IsNode)
             .itMeans("Already builds with Travis")
             .setGoals(new Goals("Autofix only", AutofixGoal)),
-        whenPushSatisfies(HasDockerfile, IsNode)
-            .itMeans("Perform Docker build")
-            .setGoals(DockerBuildGoal),
         whenPushSatisfies(HasTravisFile)
             .itMeans("Already builds with Travis")
             .setGoals(DoNotSetAnyGoals),
