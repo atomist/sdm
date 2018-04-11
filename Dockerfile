@@ -1,28 +1,26 @@
 FROM ubuntu
 
-ENV NPM_CONFIG_LOGLEVEL warn
+RUN apt-get -yqq update && apt-get -yqq install \
+    curl \
+    docker.io
 
+RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
+    && apt-get -y install nodejs
+
+ENV DUMB_INIT_VERSION=1.2.1
+RUN curl -s -L -O https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INIT_VERSION/dumb-init_${DUMB_INIT_VERSION}_amd64.deb \
+    && dpkg -i dumb-init_${DUMB_INIT_VERSION}_amd64.deb \
+    && rm -f dumb-init_${DUMB_INIT_VERSION}_amd64.deb
+
+RUN git config --global user.email "bot@atomist.com" &&  git config --global user.name "Atomist Bot"
+
+ENV NPM_CONFIG_LOGLEVEL warn
 ENV SUPPRESS_NO_CONFIG_WARNING true
 ENV NODE_ENV production
 
 ENV PCF_ORG atomist
 ENV PCF_SPACE_STAGING ri-staging
 ENV PCF_SPACE_PRODUCTION ri-production
-
-ENV DUMB_INIT_VERSION=1.2.1
-
-RUN apt-get update && apt-get install -y \
-    curl
-
-RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
-    && apt-get install -y nodejs
-
-RUN apt-get -yqq update
-RUN apt-get -yqq install docker.io
-
-RUN curl -s -L -O https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INIT_VERSION/dumb-init_${DUMB_INIT_VERSION}_amd64.deb \
-    && dpkg -i dumb-init_${DUMB_INIT_VERSION}_amd64.deb \
-    && rm -f dumb-init_${DUMB_INIT_VERSION}_amd64.deb
 
 # Create app directory
 RUN mkdir -p /app
