@@ -63,7 +63,7 @@ import {
 } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import { HasDockerfile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
-import { IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { IsClojure, IsLein, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
@@ -98,6 +98,7 @@ import {
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
+import { leinBuilder } from "../../common/delivery/build/local/lein/leinBuilder";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions;
 
@@ -110,6 +111,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     const sdm = new SoftwareDeliveryMachine(
         "CloudFoundry software delivery machine",
         options,
+        whenPushSatisfies(IsLein)
+            .itMeans("Build a Clojure library")
+            .setGoals(LibraryGoals),
         whenPushSatisfies(HasTravisFile, IsNode)
             .itMeans("Already builds with Travis")
             .setGoals(new Goals("Autofix only", AutofixGoal)),
@@ -156,6 +160,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         build.when(IsNode, ToDefaultBranch)
             .itMeans("Try standard node build")
             .set(runBuildBuilder),
+        build.when(IsLein)
+            .itMeans("Lein build")
+            .set(leinBuilder(options.projectLoader)),
         build.when(IsNode)
             .itMeans("Just compile")
             .set(runCompileBuilder),
