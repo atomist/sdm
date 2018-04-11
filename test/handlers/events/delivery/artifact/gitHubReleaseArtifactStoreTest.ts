@@ -43,7 +43,7 @@ describe("GitHubReleaseArtifactStore", () => {
                     const filename = p.basename(path);
                     await runCommand(`unzip ${filename}`, { cwd });
                 });
-        }).timeout(56000);
+        }).timeout(120000);
 
         it("should checkout existing file and parse AppInfo", async done => {
             const ghras = new GitHubReleaseArtifactStore();
@@ -57,7 +57,7 @@ describe("GitHubReleaseArtifactStore", () => {
                     assert(da.name === "fintan", "name should be 'fintan', not " + da.name);
                     assert(da.version === "0.1.0-SNAPSHOT", "version should be '0.1.0-SNAPSHOT', not " + da.version);
                 });
-        }).timeout(55000);
+        }).timeout(120000);
     });
 
 });
