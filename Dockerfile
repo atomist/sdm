@@ -1,5 +1,7 @@
 FROM ubuntu
 
+LABEL maintainer="Christian Dupuis <cd@atmoist.com>"
+
 RUN apt-get -yqq update && apt-get install -yqq \
     curl
 
@@ -14,10 +16,6 @@ RUN curl -s -L -O https://github.com/Yelp/dumb-init/releases/download/v$DUMB_INI
     && rm -f dumb-init_${DUMB_INIT_VERSION}_amd64.deb
 
 RUN git config --global user.email "bot@atomist.com" &&  git config --global user.name "Atomist Bot"
-
-ENV PCF_ORG atomist
-ENV PCF_SPACE_STAGING ri-staging
-ENV PCF_SPACE_PRODUCTION ri-production
 
 # Create app directory
 RUN mkdir -p /app
