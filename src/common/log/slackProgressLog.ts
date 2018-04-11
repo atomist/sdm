@@ -29,7 +29,7 @@ export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext):
     const add = addressChannelsFor(hasChannels, ctx);
     return {
         write(msg) {
-            add(msg);
+            return add(msg);
         },
         flush() { return Promise.resolve(); },
         close() { return Promise.resolve(); },

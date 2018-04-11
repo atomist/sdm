@@ -193,9 +193,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
     sdm.addNewRepoWithCodeActions(suggestAddingCloudFoundryManifest)
         .addSupportingCommands(
             () => addCloudFoundryManifest,
-            () => enableDeploy(),
-            () => disableDeploy(),
-            () => isDeployEnabledCommand(),
+            enableDeploy,
+            disableDeploy,
+            isDeployEnabledCommand,
         )
         .addCodeReactions(EnableDeployOnCloudFoundryManifestAddition)
         .addEndpointVerificationListeners(lookFor200OnEndpointRootGet());

@@ -33,7 +33,7 @@ describe("PushRules", () => {
 
     it("should match true", async () => {
         const pr = new PushRules("", [TruePushTest]);
-        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any));
     });
 
     it("should be undefined on false", async () => {
@@ -48,7 +48,7 @@ describe("PushRules", () => {
 
     it("should match undefined and true", async () => {
         const pr = new PushRules("", [UndefinedPushTest, TruePushTest]);
-        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any));
     });
 
     it("should return undefined on null", async () => {
@@ -63,7 +63,7 @@ describe("PushRules", () => {
 
     it("should return defined on true and null", async () => {
         const pr = new PushRules("", [TruePushTest, NullPushTest]);
-        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === true);
+        assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any));
     });
 
     it("should return undefined on false and null and true", async () => {

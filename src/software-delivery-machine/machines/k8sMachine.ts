@@ -85,8 +85,8 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
         .addNewRepoWithCodeActions(suggestAddingK8sSpec)
         .addSupportingCommands(
             () => addK8sSpec,
-            () => enableDeploy(),
-            () => disableDeploy(),
+            enableDeploy,
+            disableDeploy,
         )
         .addSupportingEvents(() => NoticeK8sTestDeployCompletion,
             () => NoticeK8sProdDeployCompletion)

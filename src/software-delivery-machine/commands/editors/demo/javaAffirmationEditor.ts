@@ -57,7 +57,7 @@ export const appendAffirmationToJava: SimpleProjectEditor<AffirmationParameters>
     const affirmation = params.customAffirmation || randomAffirmation();
     let count = 0;
     return doWithFiles(p, AllJavaFiles, f => {
-        f.getContent().then(async content => {
+        return f.getContent().then(async content => {
             if (count++ >= 1) {
                 return;
             }

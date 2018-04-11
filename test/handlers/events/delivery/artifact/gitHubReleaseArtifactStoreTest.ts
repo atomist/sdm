@@ -32,34 +32,32 @@ describe("GitHubReleaseArtifactStore", () => {
 
     describe("checkout", () => {
 
-        it("should checkout existing file", done => {
+        it("should checkout existing file", async done => {
             const ghras = new GitHubReleaseArtifactStore();
             const id = new GitHubRepoRef("spring-team", "fintan");
-            ghras.checkout(asset,
+            await ghras.checkout(asset,
                 id,
                 {token: process.env.GITHUB_TOKEN})
-                .then(da => {
+                .then(async da => {
                     const path = `${da.cwd}/${da.filename}`;
                     assert(fs.existsSync(path), `File [${path}] must exist`);
                     const cwd = p.dirname(path);
                     const filename = p.basename(path);
-                    runCommand(`unzip ${filename}`, { cwd })
-                        .then(done());
+                    await runCommand(`unzip ${filename}`, { cwd });
                 });
         }).timeout(56000);
 
-        it("should checkout existing file and parse AppInfo", done => {
+        it("should checkout existing file and parse AppInfo", async done => {
             const ghras = new GitHubReleaseArtifactStore();
             const id = new GitHubRepoRef("spring-team", "fintan");
-            ghras.checkout(asset,
+            await ghras.checkout(asset,
                 id,
                 {token: process.env.GITHUB_TOKEN})
-                .then(da => {
+                .then(async da => {
                     assert(da.id.owner === id.owner);
                     assert(da.id.repo === id.repo);
                     assert(da.name === "fintan", "name should be 'fintan', not " + da.name);
                     assert(da.version === "0.1.0-SNAPSHOT", "version should be '0.1.0-SNAPSHOT', not " + da.version);
-                    done();
                 });
         }).timeout(55000);
     });

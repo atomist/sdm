@@ -37,12 +37,12 @@ describe("pushTestUtilsTest", () => {
 
         it("should handle one true", async () => {
             const r = await not(TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-            assert(r === false);
+            assert(!r);
         });
 
         it("should handle one false", async () => {
             const r = await not(FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-            assert(r === true);
+            assert(r);
         });
 
     });
@@ -53,17 +53,17 @@ describe("pushTestUtilsTest", () => {
 
             it("should handle one true", async () => {
                 const r = await allSatisfied(TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle two true", async () => {
                 const r = await allSatisfied(TruePushTest, TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle one true and one false", async () => {
                 const r = await allSatisfied(TruePushTest, FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === false);
+                assert(!r);
             });
         });
 
@@ -71,17 +71,17 @@ describe("pushTestUtilsTest", () => {
 
             it("should handle one true", async () => {
                 const r = await allSatisfied(TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle two true", async () => {
                 const r = await allSatisfied(TrueProjectPredicate, TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle one true and one false", async () => {
                 const r = await allSatisfied(TrueProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === false);
+                assert(!r);
             });
         });
 
@@ -93,22 +93,22 @@ describe("pushTestUtilsTest", () => {
 
             it("should handle one true", async () => {
                 const r = await anySatisfied(TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle two true", async () => {
                 const r = await anySatisfied(TruePushTest, TruePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle one true and one false", async () => {
                 const r = await anySatisfied(TruePushTest, FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle two false", async () => {
                 const r = await anySatisfied(FalsePushTest, FalsePushTest).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === false);
+                assert(!r);
             });
 
         });
@@ -117,22 +117,22 @@ describe("pushTestUtilsTest", () => {
 
             it("should handle one true", async () => {
                 const r = await anySatisfied(TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle two true", async () => {
                 const r = await anySatisfied(TrueProjectPredicate, TrueProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle one true and one false", async () => {
                 const r = await anySatisfied(TrueProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === true);
+                assert(r);
             });
 
             it("should handle two false", async () => {
                 const r = await anySatisfied(FalseProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as ProjectListenerInvocation);
-                assert(r === false);
+                assert(!r);
             });
 
         });
