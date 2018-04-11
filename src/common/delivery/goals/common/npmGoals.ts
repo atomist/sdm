@@ -16,7 +16,7 @@
 
 import {
     ProductionEnvironment,
-    StagingEnvironment
+    StagingEnvironment,
 } from "../gitHubContext";
 import { GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";

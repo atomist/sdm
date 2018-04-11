@@ -36,7 +36,7 @@ import {
 } from "../../../common/delivery/goals/common/commonGoals";
 import {
     ProductionDockerDeploymentGoal,
-    StagingDockerDeploymentGoal
+    StagingDockerDeploymentGoal,
 } from "../../../common/delivery/goals/common/npmGoals";
 import { IsNode } from "../../../common/listener/support/pushtest/node/nodePushTests";
 import { tagRepo } from "../../../common/listener/support/tagRepo";

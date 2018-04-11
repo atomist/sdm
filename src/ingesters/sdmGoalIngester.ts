@@ -28,6 +28,7 @@ export interface SdmGoalFulfillment {
 }
 
 export interface SdmGoal extends SdmGoalKey {
+    uniqueName: string;
     sha: string;
     branch: string;
 
@@ -55,6 +56,8 @@ export interface SdmGoal extends SdmGoalKey {
     preConditions: SdmGoalKey[];
 
     externalKey?: string;
+
+    data?: string;
 }
 
 export interface SdmProvenance {
