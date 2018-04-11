@@ -92,8 +92,8 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
                                team: string,
                                log: ProgressLog): Promise<LocalBuildInProgress> {
         const errorFinder = this.options.errorFinder;
-        logger.info("%s.startBuild on %s, buildCommands=[%j] or file=[%s]", this.name, id.url, this.options.commands,
-            this.options.commandFile);
+        logger.info("%s.startBuild on %s, buildCommands=[%j] or file=[%s], options=[%j]", this.name, id.url, this.options.commands,
+            this.options.commandFile, this.options);
         return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async p => {
 
             const commands: SpawnCommand[] = this.options.commands || await loadCommandsFromFile(p, this.options.commandFile);
