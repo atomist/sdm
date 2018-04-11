@@ -49,6 +49,7 @@ import { LibraryGoals } from "../../common/delivery/goals/common/libraryGoals";
 import {
     NpmBuildGoals,
     NpmDeployGoals,
+    NpmDockerDeployGoals,
     NpmDockerGoals,
 } from "../../common/delivery/goals/common/npmGoals";
 import { Goals } from "../../common/delivery/goals/Goals";
@@ -134,6 +135,9 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
         whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled, ToDefaultBranch)
             .itMeans("Build and deploy Node")
             .setGoals(NpmDeployGoals),
+        whenPushSatisfies(IsNode, HasDockerfile, ToDefaultBranch, IsDeployEnabled)
+            .itMeans("Docker deploy Node")
+            .setGoals(NpmDockerDeployGoals),
         whenPushSatisfies(IsNode, HasDockerfile, ToDefaultBranch)
             .itMeans("Docker build Node")
             .setGoals(NpmDockerGoals),

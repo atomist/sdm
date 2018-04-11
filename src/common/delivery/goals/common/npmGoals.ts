@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+import {
+    ProductionEnvironment,
+    StagingEnvironment
+} from "../gitHubContext";
+import { GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
 import {
     ArtifactGoal,
@@ -28,14 +33,14 @@ import {
 } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
-    "npm build",
+    "node build",
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
 );
 
 export const NpmDeployGoals = new Goals(
-    "npm deploy",
+    "node deploy",
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
@@ -45,11 +50,42 @@ export const NpmDeployGoals = new Goals(
 );
 
 export const NpmDockerGoals = new Goals(
-    "npm docker",
+    "node docker",
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
     DockerBuildGoal,
     TagGoal,
+);
+
+export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DeployToTest",
+    environment: StagingEnvironment,
+    orderedName: "3-deploy",
+    displayName: "deploy to Test",
+    completedDescription: "Deployed to Test",
+    failedDescription: "Test deployment failure",
+    waitingForApprovalDescription: "Promote to Prod",
+}, DockerBuildGoal);
+
+export const ProductionDockerDeploymentGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "DeployToProduction",
+    environment: ProductionEnvironment,
+    orderedName: "3-prod-deploy",
+    displayName: "deploy to Prod",
+    completedDescription: "Deployed to Prod",
+    failedDescription: "Prod deployment failure",
+}, StagingDockerDeploymentGoal);
+
+export const NpmDockerDeployGoals = new Goals(
+    "node docker deploy",
+    VersionGoal,
+    ReviewGoal,
+    AutofixGoal,
+    BuildGoal,
+    DockerBuildGoal,
+    TagGoal,
+    StagingDockerDeploymentGoal,
+    ProductionDockerDeploymentGoal,
 );

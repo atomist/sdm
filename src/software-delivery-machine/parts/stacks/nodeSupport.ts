@@ -34,6 +34,11 @@ import {
     TagGoal,
     VersionGoal,
 } from "../../../common/delivery/goals/common/commonGoals";
+import {
+    ProductionDockerDeploymentGoal,
+    StagingDockerDeploymentGoal
+} from "../../../common/delivery/goals/common/npmGoals";
+import { IsNode } from "../../../common/listener/support/pushtest/node/nodePushTests";
 import { tagRepo } from "../../../common/listener/support/tagRepo";
 import { AddAtomistTypeScriptHeader } from "../../blueprint/code/autofix/addAtomistHeader";
 import { AddBuildScript } from "../../blueprint/code/autofix/addBuildScript";
@@ -74,4 +79,14 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine,
         executeDockerBuild(options.projectLoader, DefaultDockerImageNameCreator, options))
     .addGoalImplementation("nodeTag", TagGoal,
         executeTag(options.projectLoader));
+
+    softwareDeliveryMachine.goalFulfillmentMapper.addSideEffect({
+        goal: StagingDockerDeploymentGoal,
+        pushTest: IsNode,
+        sideEffectName: "@atomist/k8-automation",
+    }).addSideEffect({
+        goal: ProductionDockerDeploymentGoal,
+        pushTest: IsNode,
+        sideEffectName: "@atomist/k8-automation",
+    });
 }
