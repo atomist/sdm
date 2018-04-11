@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { setLogLevel } from "@atomist/automation-client/internal/util/logger";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 
@@ -22,7 +21,6 @@ import * as assert from "power-assert";
 import { MavenFingerprinter } from "../../../../../../../src/common/delivery/code/fingerprint/maven/MavenFingerprinter";
 import { CodeReactionInvocation } from "../../../../../../../src/common/listener/CodeReactionListener";
 
-setLogLevel("debug");
 
 describe("MavenFingerprinter", () => {
 
