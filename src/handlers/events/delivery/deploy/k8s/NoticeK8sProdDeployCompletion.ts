@@ -84,7 +84,7 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
         logger.info(`Recognized deploy result. ${status.state} status: ${status.context}: ${status.description}`);
 
         const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
-        await createStatus(params.githubToken, id as GitHubRepoRef, {
+        await createStatus(params.githubToken, id, {
             context: params.deployGoal.context,
             state: status.state,
             // todo: don't say "complete" if it failed
@@ -92,7 +92,7 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
             target_url: undefined,
         });
         if (status.state === "success" && status.targetUrl) {
-            await createStatus(params.githubToken, id as GitHubRepoRef, {
+            await createStatus(params.githubToken, id, {
                 context: params.endpointGoal.context,
                 state: "success",
                 description: params.endpointGoal.successDescription,

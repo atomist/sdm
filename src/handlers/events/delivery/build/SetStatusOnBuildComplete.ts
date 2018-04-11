@@ -128,7 +128,7 @@ async function setBuiltContext(ctx: HandlerContext,
                                state: BuildStatus,
                                url: string): Promise<any> {
     const newState = buildStatusToSdmGoalState(state);
-    return updateGoal(ctx, sdmGoal as SdmGoal,
+    return updateGoal(ctx, sdmGoal,
         {
             url,
             state: newState,

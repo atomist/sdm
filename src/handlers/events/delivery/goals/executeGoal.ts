@@ -157,7 +157,7 @@ function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
 export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult, error?: Error) {
     const newState = result.code !== 0 ? "failure" :
         result.requireApproval ? "waiting_for_approval" : "success";
-    return updateGoal(ctx, sdmGoal as SdmGoal,
+    return updateGoal(ctx, sdmGoal,
         {
             url: result.targetUrl,
             state: newState,

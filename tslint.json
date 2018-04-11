@@ -36,6 +36,7 @@
         "no-reference": true,
         "no-return-await": true,
         "no-string-throw": true,
+        "no-unnecessary-type-assertion": true,
         "no-unnecessary-callback-wrapper": true,
         "no-switch-case-fall-through": true,
         "no-unnecessary-class": true,
