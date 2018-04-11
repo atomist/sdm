@@ -21,7 +21,6 @@ import * as assert from "power-assert";
 import { MavenFingerprinter } from "../../../../../../../src/common/delivery/code/fingerprint/maven/MavenFingerprinter";
 import { CodeReactionInvocation } from "../../../../../../../src/common/listener/CodeReactionListener";
 
-
 describe("MavenFingerprinter", () => {
 
     it("should find some dependencies", async () => {

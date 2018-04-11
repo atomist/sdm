@@ -30,10 +30,10 @@ describe("GitHubReleaseArtifactStore", () => {
 
     describe("checkout", () => {
 
-        it("should checkout existing file", done => {
+        it("should checkout existing file", () => {
             const ghras = new GitHubReleaseArtifactStore();
             const id = new GitHubRepoRef("spring-team", "fintan");
-            ghras.checkout(asset,
+            return ghras.checkout(asset,
                 id,
                 {token: process.env.GITHUB_TOKEN})
                 .then(da => {
@@ -41,15 +41,14 @@ describe("GitHubReleaseArtifactStore", () => {
                     assert(fs.existsSync(path), `File [${path}] must exist`);
                     const cwd = p.dirname(path);
                     const filename = p.basename(path);
-                    runCommand(`unzip ${filename}`, { cwd })
-                        .then(() => done());
+                    return runCommand(`unzip ${filename}`, { cwd });
                 });
         }).timeout(60000);
 
-        it("should checkout existing file and parse AppInfo", done => {
+        it("should checkout existing file and parse AppInfo", () => {
             const ghras = new GitHubReleaseArtifactStore();
             const id = new GitHubRepoRef("spring-team", "fintan");
-            ghras.checkout(asset,
+            return ghras.checkout(asset,
                 id,
                 {token: process.env.GITHUB_TOKEN})
                 .then(da => {
@@ -57,7 +56,6 @@ describe("GitHubReleaseArtifactStore", () => {
                     assert(da.id.repo === id.repo);
                     assert(da.name === "fintan", "name should be 'fintan', not " + da.name);
                     assert(da.version === "0.1.0-SNAPSHOT", "version should be '0.1.0-SNAPSHOT', not " + da.version);
-                    done();
                 });
         }).timeout(60000);
     });
