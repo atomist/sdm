@@ -106,7 +106,7 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return [await new Promise( (resolve, reject) => {
+        return [await new Promise<Deployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", async what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {

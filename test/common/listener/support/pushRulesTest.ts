@@ -27,7 +27,7 @@ export const NullPushTest: PushTest = pushTest("true", async () => null);
 describe("PushRules", () => {
 
     it("should be undefined none", async () => {
-        const pr = new PushRules("", []);
+        const pr = new PushRules<string>("", []);
         assert(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any) === undefined);
     });
 

@@ -104,7 +104,7 @@ export class CloudFoundryApi {
                 message: JSON.stringify(result.data),
             } as Error;
         }
-        await new Promise( res => setTimeout(res, this.retryInterval));
+        await new Promise<AxiosResponse>(res => setTimeout(res, this.retryInterval));
         return this.retryUntilCondition(action, successCondition, failureCondition);
     }
 

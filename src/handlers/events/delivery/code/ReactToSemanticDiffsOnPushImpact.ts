@@ -74,7 +74,7 @@ export class ReactToSemanticDiffsOnPushImpact
                     oldValue: oldValues.find(f => f.name === name),
                     newValue: newValues.find(f => f.name === name),
                 }))
-                .filter(fv => _.get(fv, "oldValue.sha") !== _.get(fv, "newValue.sha"));
+                .filter(fv => _.get<string>(fv, "oldValue.sha") !== _.get<string>(fv, "newValue.sha"));
 
         const inv: FingerprintDifferenceInvocation = {
             id,

@@ -111,7 +111,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         }
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return new Promise((resolve, reject) => {
+        return new Promise<Deployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", what => {
                 // TODO too Tomcat specific
                 if (!!what && what.toString().includes("Tomcat started on port")) {

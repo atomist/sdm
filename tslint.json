@@ -31,6 +31,7 @@
         "no-duplicate-switch-case": true,
         "no-eval": true,
         "no-floating-promises": true,
+        "no-inferred-empty-object-type": true,
         "no-import-side-effect": true,
         "no-invalid-template-strings": false,
         "no-magic-numbers": false,
