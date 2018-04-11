@@ -132,13 +132,13 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .itMeans("No material change to Node")
             .setGoals(NoGoals),
         whenPushSatisfies(IsNode, HasCloudFoundryManifest, IsDeployEnabled, ToDefaultBranch)
-            .itMeans("Build and deploy node")
+            .itMeans("Build and deploy Node")
             .setGoals(NpmDeployGoals),
         whenPushSatisfies(IsNode, HasDockerfile, ToDefaultBranch)
-            .itMeans("Docker build node")
+            .itMeans("Docker build Node")
             .setGoals(NpmDockerGoals),
         whenPushSatisfies(IsNode, not(HasDockerfile))
-            .itMeans("Build with npm")
+            .itMeans("Build Node")
             .setGoals(NpmBuildGoals),
     );
 
