@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import "mocha";
-
 import * as assert from "power-assert";
 import { parseCloudFoundryLogForEndpoint } from "../../../../../../src/common/delivery/deploy/pcf/cloudFoundryLogParser";
 

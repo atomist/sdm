@@ -15,7 +15,7 @@
  */
 
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import "mocha";
+
 import * as assert from "power-assert";
 import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
 import { HasSpringBootApplicationClass } from "../../../../src/common/listener/support/pushtest/jvm/springPushTests";

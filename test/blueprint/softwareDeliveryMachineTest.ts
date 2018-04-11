@@ -18,7 +18,7 @@ import { HandlerContext, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import "mocha";
+
 import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachine";

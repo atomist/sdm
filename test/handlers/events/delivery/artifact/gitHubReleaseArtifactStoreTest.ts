@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import "mocha";
-
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as fs from "fs";
 import * as assert from "power-assert";

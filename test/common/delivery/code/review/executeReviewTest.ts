@@ -16,7 +16,7 @@
 
 import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
-import "mocha";
+
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 

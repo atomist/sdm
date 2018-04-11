@@ -18,7 +18,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import "mocha";
+
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import { AddAtomistTypeScriptHeader } from "../../../../../src/software-delivery-machine/blueprint/code/autofix/addAtomistHeader";

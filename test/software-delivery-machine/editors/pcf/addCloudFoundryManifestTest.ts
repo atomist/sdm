@@ -16,7 +16,7 @@
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import "mocha";
+
 import * as assert from "power-assert";
 import { CloudFoundryManifestPath } from "../../../../src/common/delivery/deploy/pcf/CloudFoundryTarget";
 import {

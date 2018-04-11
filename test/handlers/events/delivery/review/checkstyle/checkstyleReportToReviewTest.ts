@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import "mocha";
-
 import * as assert from "power-assert";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";

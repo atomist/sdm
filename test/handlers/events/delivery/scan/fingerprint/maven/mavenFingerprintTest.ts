@@ -16,7 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import "mocha";
+
 import * as assert from "power-assert";
 import { MavenFingerprinter } from "../../../../../../../src/common/delivery/code/fingerprint/maven/MavenFingerprinter";
 import { CodeReactionInvocation } from "../../../../../../../src/common/listener/CodeReactionListener";

@@ -16,7 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Project } from "@atomist/automation-client/project/Project";
-import "mocha";
+
 import * as assert from "power-assert";
 import {
     allPredicatesSatisfied,

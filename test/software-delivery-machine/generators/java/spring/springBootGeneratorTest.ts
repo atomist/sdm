@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import "mocha";
-
 import { HandlerContext } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";

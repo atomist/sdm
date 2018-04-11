@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import "mocha";
-
 import * as assert from "power-assert";
 import { anyFileChangedSuchThat, anyFileChangedWithExtension } from "../../../src/util/git/filesChangedSince";
 

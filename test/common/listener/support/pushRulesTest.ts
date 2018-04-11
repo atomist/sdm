@@ -15,7 +15,7 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import "mocha";
+
 import * as assert from "power-assert";
 import { PushTest, pushTest } from "../../../../src/common/listener/PushTest";
 import { PushRules } from "../../../../src/common/listener/support/PushRules";

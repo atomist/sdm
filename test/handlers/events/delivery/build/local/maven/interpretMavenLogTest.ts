@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import "mocha";
 import * as assert from "power-assert";
 import { interpretMavenLog } from "../../../../../../../src/common/delivery/build/local/maven/mavenLogInterpreter";
 

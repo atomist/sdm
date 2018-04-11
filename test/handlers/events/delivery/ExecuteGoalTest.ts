@@ -16,7 +16,7 @@
 
 import { Success } from "@atomist/automation-client";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import "mocha";
+
 import * as assert from "power-assert";
 import { IndependentOfEnvironment } from "../../../../src/common/delivery/goals/gitHubContext";
 import { Goal } from "../../../../src/common/delivery/goals/Goal";
