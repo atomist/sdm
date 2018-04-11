@@ -21,6 +21,7 @@ import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../repo/ProjectLoader";
+import { readSdmVersion } from "../build/local/projectVersioner";
 import { ExecuteGoalResult } from "../goals/goalExecution";
 import {
     ExecuteGoalWithLog,
@@ -113,3 +114,13 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
         });
     };
 }
+
+export const DefaultDockerImageNameCreator: DockerImageNameCreator = async (p, status, options, ctx) => {
+    const name = p.name;
+    const version = await readSdmVersion(status, ctx);
+    return {
+        registry: options.registry,
+        name,
+        version,
+    };
+};
