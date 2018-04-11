@@ -42,9 +42,8 @@ describe("GitHubReleaseArtifactStore", () => {
                     const cwd = p.dirname(path);
                     const filename = p.basename(path);
                     runCommand(`unzip ${filename}`, { cwd })
-                        .then(done);
+                        .then(() => done());
                 });
-            done();
         }).timeout(60000);
 
         it("should checkout existing file and parse AppInfo", done => {
