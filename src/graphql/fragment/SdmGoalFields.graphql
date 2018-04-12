@@ -1,5 +1,4 @@
 fragment SdmGoalFields on SdmGoal {
-  id
   environment
   uniqueName
   name

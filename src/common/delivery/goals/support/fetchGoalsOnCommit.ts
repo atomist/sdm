@@ -56,7 +56,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
             branch: id.branch,
             sha: id.sha,
             providerId,
-            qty: 20,
+            qty: 100,
         },
         options: QueryNoCacheOptions,
     });
@@ -69,12 +69,19 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
     if (result.SdmGoal.some(g => !g)) {
         logger.warn("Internal error: Null or undefined goal found for commit %j, provider %s", id, providerId);
     }
-    if (result.SdmGoal.length === 20) {
-        logger.warn("Watch out! There may be more goals than this. We only retrieve 20.");
+    if (result.SdmGoal.length === 100) {
+        logger.warn("Watch out! There may be more goals than this. We only retrieve 100.");
         // automation-api#399 paging is not well-supported yet
     }
 
-    return _.flatten(result.SdmGoal);
+    // only maintain latest version of SdmGoals
+    const goals: SdmGoalsForCommit.SdmGoal[] = [];
+    _.forEach(_.groupBy(result.SdmGoal, g => `${g.environment}-${g.name}`), v => {
+        // using the ts property might not be good enough but let's see
+        goals.push(_.maxBy(v, "ts"));
+    });
+
+    return goals;
 }
 
 export async function fetchCommitForSdmGoal(ctx: HandlerContext,
