@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
+import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
-import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 
 export const RunBuild: SpawnCommand = asSpawnCommand("lein");
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { projectCljToAppInfo } from "../../../../../../../src/common/delivery/build/local/lein/leinBuilder";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
+import { projectCljToAppInfo } from "../../../../../../../src/common/delivery/build/local/lein/leinBuilder";
 
 describe("package.clj parsing", () => {
 

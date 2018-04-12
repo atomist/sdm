@@ -22,6 +22,7 @@ import {
     SoftwareDeliveryMachine,
     SoftwareDeliveryMachineOptions,
 } from "../../blueprint/SoftwareDeliveryMachine";
+import { leinBuilder } from "../../common/delivery/build/local/lein/leinBuilder";
 import { MavenBuilder } from "../../common/delivery/build/local/maven/MavenBuilder";
 import {
     nodeRunBuildBuilder,
@@ -63,7 +64,7 @@ import {
 } from "../../common/listener/support/pushtest/commonPushTests";
 import { IsDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
 import { HasDockerfile } from "../../common/listener/support/pushtest/docker/dockerPushTests";
-import { IsClojure, IsLein, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
+import { IsLein, IsMaven } from "../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { MaterialChangeToJavaRepo } from "../../common/listener/support/pushtest/jvm/materialChangeToJavaRepo";
 import { HasSpringBootApplicationClass } from "../../common/listener/support/pushtest/jvm/springPushTests";
 import { NamedSeedRepo } from "../../common/listener/support/pushtest/NamedSeedRepo";
@@ -98,7 +99,6 @@ import {
 import { addNodeSupport } from "../parts/stacks/nodeSupport";
 import { addSpringSupport } from "../parts/stacks/springSupport";
 import { addTeamPolicies } from "../parts/team/teamPolicies";
-import { leinBuilder } from "../../common/delivery/build/local/lein/leinBuilder";
 
 export type CloudFoundryMachineOptions = SoftwareDeliveryMachineOptions & JavaSupportOptions & DockerOptions;
 
