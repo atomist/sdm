@@ -29,7 +29,6 @@ describe("NpmLogInterpreter", () => {
         assert(!!r);
         assert(r.relevantPart.length > 30);
         assert(r.relevantPart.includes("Failed at the @atomist/github-sdm@0.4.0-20180412055619 test script"), r.relevantPart);
-        console.log(r.relevantPart)
         assert(!r.data);
     });
 
