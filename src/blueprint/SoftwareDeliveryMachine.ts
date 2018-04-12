@@ -105,6 +105,7 @@ import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { IssueHandling } from "./IssueHandling";
 import { NewRepoHandling } from "./NewRepoHandling";
+import { ChannelLinkListener } from "../common/listener/ChannelLinkListenerInvocation";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -152,6 +153,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public readonly repoCreationListeners: RepoCreationListener[] = [];
 
     public readonly newRepoWithCodeActions: PushListener[] = [];
+
+    public readonly channelLinkListeners: ChannelLinkListener[] = [];
 
     public readonly goalSetters: GoalSetter[] = []; // public for tests
 
@@ -342,6 +345,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
                 this.updatedIssueListeners.length > 0 ? () => new UpdatedIssueHandler(...this.updatedIssueListeners) : undefined,
                 this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(...this.closedIssueListeners) : undefined,
+                this.channelLinkListeners.length > 0 ? () => new ChannelLinkListener(...this.channelLinkListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,
@@ -386,6 +390,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addClosedIssueListeners(...e: ClosedIssueListener[]): this {
         this.closedIssueListeners.push(...e);
+        return this;
+    }
+
+    public addChannelLinkListeners(...e: ChannelLinkListener[]): this {
+        this.channelLinkListeners.push(...e);
         return this;
     }
 
