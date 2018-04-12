@@ -16,8 +16,11 @@
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../src/common/repo/ProjectLoader";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../common/repo/ProjectLoader";
 
+/**
+ * ProjectLoader that can only return one project.
+ */
 export class SingleProjectLoader implements ProjectLoader {
 
     constructor(private readonly project: Project) {}

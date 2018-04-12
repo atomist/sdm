@@ -21,8 +21,8 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
-import { SingleProjectLoader } from "../../../SingleProjectLoader";
-import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
+import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { AutofixRegistration } from "../../../../../src/common/delivery/code/autofix/AutofixRegistration";
 import { IsTypeScript } from "../../../../../src/common/listener/support/pushtest/node/tsPushTests";
 
