@@ -17,25 +17,25 @@
 import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { logger } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
-import { Float } from "@atomist/microgrammar/Primitives";
-import { BuildInfo } from "../../BuildInfo";
+import { Float, Integer } from "@atomist/microgrammar/Primitives";
+import { BuildStatus, TestStatus } from "../../BuildInfo";
 
-export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | undefined {
+export function interpretMavenLog(log: string): InterpretedLog<MavenStatus> | undefined {
+    const timingInfo = timingGrammar.firstMatch(log);
+    const data: MavenStatus = {
+        timeMillis: timingInfo ? timingInfo.seconds * 1000 : undefined,
+        success: log.includes("BUILD SUCCESS\----"),
+        testInfo: testSummaryGrammar.firstMatch(log) || undefined,
+    };
     if (!log) {
         logger.warn("Log was empty");
         return {
             relevantPart: "",
             message: "Failed with empty log",
             includeFullLog: false,
-            data: {},
+            data,
         };
     }
-
-    const mg = Microgrammar.fromString<{ seconds: number }>("Total time: ${seconds} s", {
-        seconds: Float,
-    });
-    const match = mg.firstMatch(log);
-    const timing = match ? match.seconds * 1000 : undefined;
 
     const maybeFailedToStart = appFailedToStart(log);
     if (maybeFailedToStart) {
@@ -43,9 +43,7 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
             relevantPart: maybeFailedToStart,
             message: "Application failed to start",
             includeFullLog: false,
-            data: {
-                timeMillis: timing,
-            },
+            data,
         };
     }
 
@@ -57,9 +55,7 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
             relevantPart: maybeMavenErrors,
             message: "Maven errors",
             includeFullLog: false,
-            data: {
-                timeMillis: timing,
-            },
+            data,
         };
     }
 
@@ -70,6 +66,7 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
             relevantPart: log,
             message: "I lost the local cache. Please rebuild",
             includeFullLog: false,
+            data,
         };
     }
 
@@ -78,9 +75,7 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
         relevantPart: "",
         message: "Unknown error",
         includeFullLog: true,
-        data: {
-            timeMillis: timing,
-        },
+        data,
     };
 }
 
@@ -94,7 +89,7 @@ function appFailedToStart(log: string) {
     return likelyLines.join("\n");
 }
 
-export type MavenInfo = BuildInfo;
+export type MavenStatus = BuildStatus;
 
 function mavenErrors(log: string): string | undefined {
     const relevantPart = log.split("\n")
@@ -106,3 +101,22 @@ function mavenErrors(log: string): string | undefined {
     }
     return relevantPart;
 }
+
+// Microgrammars...
+
+const timingGrammar = Microgrammar.fromString<{ seconds: number }>("Total time: ${seconds} s", {
+    seconds: Float,
+});
+
+/**
+ * Microgrammar for Maven test output
+ * @type {Microgrammar<MavenStatus>}
+ */
+const testSummaryGrammar = Microgrammar.fromString<TestStatus>(
+    "Tests run: ${testsRun}, Failures: ${failingTests}, Errors: ${errors}, Skipped: ${pendingTests}",
+    {
+        testsRun: Integer,
+        failingTests: Integer,
+        pendingTests: Integer,
+        errors: Integer,
+    });

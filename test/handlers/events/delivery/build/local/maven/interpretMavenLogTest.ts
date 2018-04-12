@@ -42,6 +42,16 @@ describe("interpretMavenLog", () => {
         assert.equal(r.data.timeMillis, 1814);
     });
 
+    it("should handle failure with tests", () => {
+        const r = interpretMavenLog(FailWithTests);
+        assert(!!r);
+        assert(r.relevantPart.length > 30);
+        assert(r.relevantPart.includes("There are test failures"), r.relevantPart);
+        assert.equal(r.data.testInfo.failingTests, 0);
+        assert.equal(r.data.testInfo.errors, 1);
+        assert.equal(r.data.timeMillis, 6151);
+    });
+
     it("should handle success log", () => {
         const r = interpretMavenLog(Success1);
         assert(!!r);
@@ -178,6 +188,64 @@ const Fail2 = `[INFO] Building spring-rest-seed 0.1.0-SNAPSHOT
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:compile (default-compile) on project wynyard: Compilation failure: Compilation failure: 
 [ERROR] /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/src/main/java/Bad.java:[1,1] class, interface, or enum expected
 [ERROR] /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/src/main/java/Bad.java:[1,6] class, interface, or enum expected
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException`;
+
+const FailWithTests = `[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building spring-rest-seed 0.0.1-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+Downloading: https://atomist.jfrog.io/atomist/libs-release-demo/com/atomist/spring-boot-agent/maven-metadata.xml
+Downloading: https://atomist.jfrog.io/atomist/libs-snapshot-demo/com/atomist/spring-boot-agent/maven-metadata.xml
+[INFO] 
+[INFO] --- git-commit-id-plugin:2.2.2:revision (default) @ spring-rest-seed ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ spring-rest-seed ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ spring-rest-seed ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ spring-rest-seed ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/rodjohnson/temp/spring-rest-seed/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ spring-rest-seed ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.18.1:test (default-test) @ spring-rest-seed ---
+[INFO] Surefire report directory: /Users/rodjohnson/temp/spring-rest-seed/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+... skipped Spring output
+
+Results :
+
+Tests in error: 
+  SpringRestSeedApplicationTests.contextLoads » IllegalState Failed to load Appl...
+
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 6.151 s
+[INFO] Finished at: 2018-04-12T14:53:29+10:00
+[INFO] Final Memory: 24M/310M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.18.1:test (default-test) on project spring-rest-seed: There are test failures.
+[ERROR] 
+[ERROR] Please refer to /Users/rodjohnson/temp/spring-rest-seed/target/surefire-reports for the individual test results.
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
