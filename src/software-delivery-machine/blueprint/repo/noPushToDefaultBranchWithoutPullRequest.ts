@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { PullRequestForSha } from "../../../typings/types";
-import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
 import { logger } from "@atomist/automation-client";
+import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
+import { PullRequestForSha } from "../../../typings/types";
 
 /**
  * DM a user who made a push to the default branch that doesn't have an associated pull request
