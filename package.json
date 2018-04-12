@@ -18,7 +18,7 @@
     "url": "https://github.com/atomist/github-sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "https://r.atomist.com/BJ482HLjjz",
+    "@atomist/automation-client": "https://r.atomist.com/B1N-WJB3of",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/spring-automation": "https://r.atomist.com/Syrsy8R_9f",
     "archiver": "^2.1.1",
