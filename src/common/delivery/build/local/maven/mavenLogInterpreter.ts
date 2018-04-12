@@ -15,6 +15,10 @@
  */
 
 import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
+import { logger } from "@atomist/automation-client";
+import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
+import { Float } from "@atomist/microgrammar/Primitives";
+import { BuildInfo } from "../../BuildInfo";
 
 export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | undefined {
     if (!log) {
@@ -48,7 +52,7 @@ export function interpretMavenLog(log: string): InterpretedLog<MavenInfo> | unde
     // default to maven errors
     const maybeMavenErrors = mavenErrors(log);
     if (maybeMavenErrors) {
-        logger.info("Recognized maven error");
+        logger.info("Recognized Maven error");
         return {
             relevantPart: maybeMavenErrors,
             message: "Maven errors",
@@ -90,15 +94,7 @@ function appFailedToStart(log: string) {
     return likelyLines.join("\n");
 }
 
-import { logger } from "@atomist/automation-client";
-import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
-import { Float } from "@atomist/microgrammar/Primitives";
-
-// TODO base on common build info
-export interface MavenInfo {
-
-    timeMillis?: number;
-}
+export type MavenInfo = BuildInfo;
 
 function mavenErrors(log: string): string | undefined {
     const relevantPart = log.split("\n")
