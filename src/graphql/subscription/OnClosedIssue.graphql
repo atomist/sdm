@@ -12,6 +12,15 @@ subscription OnClosedIssue {
         }
       }
     }
+    closedBy {
+      login
+      person {
+        name
+        chatId {
+          screenName
+        }
+      }
+    }
     createdAt
     updatedAt
     repo {
