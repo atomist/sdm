@@ -16,10 +16,16 @@
 
 import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
 
-export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
+/**
+ * Generally useful LogInterpreter that takes the last 10 logs of the log
+ * @param {string} message
+ * @param lines number of lines to take
+ * @return {LogInterpreter}
+ */
+export function lastLinesLogInterpreter(message: string, lines: number = 10): LogInterpreter {
     return (log: string): InterpretedLog => {
         return {
-            relevantPart: log.split("\n").slice(-10).join("\n"),
+            relevantPart: log.split("\n").slice(-lines).join("\n"),
             message,
             includeFullLog: true,
         };
@@ -29,11 +35,10 @@ export function lastTenLinesLogInterpreter(message: string): LogInterpreter {
 /**
  * Use when we don't want to report the log to the user under
  * any circumstances
- * @param {string} log
  * @return {InterpretedLog}
  * @constructor
  */
-export const LogSuppressor: LogInterpreter = (log: string): InterpretedLog => {
+export const LogSuppressor: LogInterpreter = () => {
     return {
         relevantPart: "",
         message: "Do not report to user",

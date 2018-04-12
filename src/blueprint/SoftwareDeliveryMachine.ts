@@ -82,7 +82,7 @@ import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegi
 import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
 import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
 import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
-import { lastTenLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
+import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { PushRule } from "../common/listener/support/PushRule";
 import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
@@ -206,7 +206,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                                  }>): this {
         const optsToUse = {
             pushTest: AnyPush,
-            logInterpreter: lastTenLinesLogInterpreter(implementationName),
+            logInterpreter: lastLinesLogInterpreter(implementationName, 10),
             ...options,
         };
         this.goalFulfillmentMapper.addImplementation({

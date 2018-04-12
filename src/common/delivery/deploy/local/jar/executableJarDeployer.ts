@@ -22,7 +22,7 @@ import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
-import { lastTenLinesLogInterpreter } from "../../../goals/support/logInterpreters";
+import { lastLinesLogInterpreter } from "../../../goals/support/logInterpreters";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
 
@@ -124,5 +124,5 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
         })];
     }
 
-    public logInterpreter = lastTenLinesLogInterpreter("Executable jar deployment");
+    public logInterpreter = lastLinesLogInterpreter("Executable jar deployment");
 }

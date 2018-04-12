@@ -27,6 +27,9 @@ import { ApacheHeader } from "../../../../../../src/software-delivery-machine/co
 import { SingleProjectLoader } from "../../../../SingleProjectLoader";
 import { fakeRunWithLogContext } from "../../fakeRunWithLogContext";
 
+/**
+ * Test an autofix end to end
+ */
 describe("addHeaderFix", () => {
 
     it("should lint and make fixes", async () => {
@@ -44,11 +47,12 @@ describe("addHeaderFix", () => {
         };
         const f = new InMemoryFile("src/bad.ts", "const foo;\n");
         const pl = new SingleProjectLoader(p);
-        // Now mess it up with a lint error
+        // Now mess it up with a lint error that tslint can fix
         await p.addFile(f.path, f.content);
         assert(!!p.findFileSync(f.path));
 
-        await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(p.id as RemoteRepoRef));
+        const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(p.id as RemoteRepoRef));
+        assert(r.code === 0);
         assert.equal(pushCount, 1);
         assert.equal(commitCount, 1);
 

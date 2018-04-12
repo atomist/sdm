@@ -20,7 +20,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { IndependentOfEnvironment } from "../../../../src/common/delivery/goals/gitHubContext";
 import { Goal } from "../../../../src/common/delivery/goals/Goal";
-import { lastTenLinesLogInterpreter } from "../../../../src/common/delivery/goals/support/logInterpreters";
+import { lastLinesLogInterpreter } from "../../../../src/common/delivery/goals/support/logInterpreters";
 import { RunWithLogContext } from "../../../../src/common/delivery/goals/support/reportGoalError";
 import { createEphemeralProgressLog } from "../../../../src/common/log/EphemeralProgressLog";
 import { executeGoal } from "../../../../src/handlers/events/delivery/goals/executeGoal";
@@ -43,8 +43,8 @@ const fakeSdmGoal = {fulfillment: {name: "HelloWorld"}, environment: "0-code"} a
 const fakeCredentials = {token: "NOT-A-TOKEN"};
 
 describe("executing the goal", () => {
-    it("calls a pre-hook and sends output to the log", done => {
 
+    it("calls a pre-hook and sends output to the log", done => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
 
         createEphemeralProgressLog().then(progressLog => {
@@ -59,7 +59,7 @@ describe("executing the goal", () => {
                 fakeRWLC,
                 fakeSdmGoal,
                 fakeGoal,
-                lastTenLinesLogInterpreter("hi"))
+                lastLinesLogInterpreter("hi"))
                 .then(async result => {
                     await fakeRWLC.progressLog.close();
                     //   const result = Success;
