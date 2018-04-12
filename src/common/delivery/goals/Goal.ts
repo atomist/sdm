@@ -60,7 +60,7 @@ export class Goal {
     }
 
     get requestedDescription() {
-        return "Planning to " + this.name;
+        return "Planned: " + this.name;
     }
 
     get waitingForApprovalDescription() {

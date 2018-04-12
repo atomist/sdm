@@ -36,6 +36,7 @@ export const AutofixGoal = new Goal({
     uniqueCamelCaseName: "Autofix",
     environment: IndependentOfEnvironment,
     orderedName: "0.2-autofix",
+    workingDescription: "Running autofixes...",
     completedDescription: "Autofixed",
     failedDescription: "Fixes made: Don't proceed",
 });
@@ -44,6 +45,7 @@ export const ReviewGoal = new Goal({
     uniqueCamelCaseName: "Review",
     environment: IndependentOfEnvironment,
     orderedName: "1-review",
+    workingDescription: "Running code reviews...",
     completedDescription: "Code review passed",
     waitingForApprovalDescription: "Manual approval needed",
 });
@@ -52,13 +54,15 @@ export const CodeReactionGoal = new Goal({
     uniqueCamelCaseName: "CodeReaction",
     environment: IndependentOfEnvironment,
     orderedName: "1.5-react",
-    completedDescription: "Code reactions",
+    workingDescription: "Running code reactions...",
+    completedDescription: "Code reactions passed",
 });
 
 export const VersionGoal = new Goal({
     uniqueCamelCaseName: "Version",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-version",
+    workingDescription: "Calculating project version...",
     completedDescription: "Versioned",
 });
 
@@ -92,7 +96,7 @@ export const DockerBuildGoal = new GoalWithPrecondition({
     orderedName: "3-docker",
     displayName: "docker build",
     workingDescription: "Running Docker build...",
-    completedDescription: "Docker image built",
+    completedDescription: "Docker build successful",
     failedDescription: "Failed to build Docker image",
 }, BuildGoal);
 
@@ -101,6 +105,7 @@ export const TagGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "4-tag",
     displayName: "tag",
+    workingDescription: "Tagging...",
     completedDescription: "Tagged",
     failedDescription: "Failed to create Tag",
 }, DockerBuildGoal, BuildGoal);
