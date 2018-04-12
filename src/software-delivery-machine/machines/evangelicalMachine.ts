@@ -28,7 +28,7 @@ import { tagRepo } from "../../common/listener/support/tagRepo";
 import { executeSendMessageToSlack } from "../../common/slack/executeSendMessageToSlack";
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import { EnableDeployOnCloudFoundryManifestAddition } from "../blueprint/deploy/cloudFoundryDeploy";
-import { suggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
+import { SuggestAddingCloudFoundryManifest } from "../blueprint/repo/suggestAddingCloudFoundryManifest";
 import { addCloudFoundryManifest } from "../commands/editors/pcf/addCloudFoundryManifest";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 
@@ -62,8 +62,8 @@ export function evangelicalMachine(options: EvangelicalMachineOptions): Software
             EnableSpringBoot,
             executeSendMessageToSlack("Congratulations. You're using Spring Boot. It's cool :sunglasses: and so is Atomist. " +
                 "Atomist knows lots about Spring Boot and would love to help"))
+        .addChannelLinkListeners(SuggestAddingCloudFoundryManifest)
         .addNewRepoWithCodeActions(
-            suggestAddingCloudFoundryManifest,
             // TODO suggest creating projects with generator
             tagRepo(springBootTagger),
             tagRepo(nodeTagger),

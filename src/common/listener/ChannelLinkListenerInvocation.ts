@@ -1,5 +1,5 @@
-import { ProjectListenerInvocation, SdmListener } from "./Listener";
 import { AddressChannels } from "../slack/addressChannels";
+import { ProjectListenerInvocation, SdmListener } from "./Listener";
 
 export interface ChannelLinkListenerInvocation extends ProjectListenerInvocation {
 

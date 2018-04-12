@@ -16,7 +16,7 @@
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { PushListenerInvocation } from "../../../common/listener/Listener";
+import { ChannelLinkListener } from "../../../common/listener/ChannelLinkListenerInvocation";
 import { AddK8sSpecCommandName } from "../../commands/editors/k8s/addK8sSpec";
 
 /**
@@ -24,7 +24,7 @@ import { AddK8sSpecCommandName } from "../../commands/editors/k8s/addK8sSpec";
  * @param {PushListenerInvocation} inv
  * @return {Promise<any>}
  */
-export async function suggestAddingK8sSpec(inv: PushListenerInvocation) {
+export const SuggestAddingK8sSpec: ChannelLinkListener = async inv => {
     try {
         const f = await inv.project.findFile("pom.xml");
         const content = await f.getContent();
@@ -49,4 +49,4 @@ export async function suggestAddingK8sSpec(inv: PushListenerInvocation) {
     } catch {
         // It's not a Maven project, we don't know how to deploy it
     }
-}
+};

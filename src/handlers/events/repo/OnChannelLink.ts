@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success, } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
-import * as schema from "../../../typings/types";
 import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../common/listener/ChannelLinkListenerInvocation";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
+import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
+import * as schema from "../../../typings/types";
 
 /**
  * A new channel has been linked to a repo

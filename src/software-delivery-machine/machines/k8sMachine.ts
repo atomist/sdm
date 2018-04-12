@@ -34,7 +34,7 @@ import { lookFor200OnEndpointRootGet } from "../../common/verify/lookFor200OnEnd
 import { disableDeploy, enableDeploy } from "../../handlers/commands/SetDeployEnablement";
 import { requestDeployToK8s } from "../../handlers/events/delivery/deploy/k8s/RequestK8sDeploys";
 import { K8sProductionDomain, K8sTestingDomain, NoticeK8sProdDeployCompletion, NoticeK8sTestDeployCompletion } from "../blueprint/deploy/k8sDeploy";
-import { suggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
+import { SuggestAddingK8sSpec } from "../blueprint/repo/suggestAddingK8sSpec";
 import { addK8sSpec } from "../commands/editors/k8s/addK8sSpec";
 import { addDemoEditors } from "../parts/demo/demoEditors";
 import { DockerOptions } from "../parts/stacks/dockerSupport";
@@ -82,7 +82,7 @@ export function k8sMachine(opts: K8sMachineOptions): SoftwareDeliveryMachine {
         .addGoalImplementation("K8ProductionDeploy",
             ProductionDeploymentGoal,
             requestDeployToK8s(K8sProductionDomain))
-        .addNewRepoWithCodeActions(suggestAddingK8sSpec)
+        .addChannelLinkListeners(SuggestAddingK8sSpec)
         .addSupportingCommands(
             () => addK8sSpec,
             enableDeploy,

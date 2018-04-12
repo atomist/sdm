@@ -17,25 +17,25 @@
 import { logger } from "@atomist/automation-client";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { PushListenerInvocation } from "../../../common/listener/Listener";
-import { PushTest } from "../../../common/listener/PushTest";
+import { ChannelLinkListener } from "../../../common/listener/ChannelLinkListenerInvocation";
+import { ProjectPredicate } from "../../../common/listener/PushTest";
 import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { HasSpringBootApplicationClass } from "../../../common/listener/support/pushtest/jvm/springPushTests";
 import { IsNode } from "../../../common/listener/support/pushtest/node/nodePushTests";
-import { allSatisfied, anySatisfied } from "../../../common/listener/support/pushtest/pushTestUtils";
+import { allPredicatesSatisfied, anyPredicateSatisfied } from "../../../common/listener/support/pushtest/projectPredicateUtils";
 import { AddCloudFoundryManifestCommandName } from "../../commands/editors/pcf/addCloudFoundryManifest";
 
 /**
  * PushTest to determine whether we know how to deploy a project
  * @type {PushTest}
  */
-const CloudFoundryDeployableProject: PushTest =
-    anySatisfied(
-        allSatisfied(IsMaven, HasSpringBootApplicationClass),
-        IsNode);
+const CloudFoundryDeployableProject: ProjectPredicate =
+    anyPredicateSatisfied(
+        allPredicatesSatisfied(IsMaven.predicate, HasSpringBootApplicationClass.predicate),
+        IsNode.predicate);
 
-export async function suggestAddingCloudFoundryManifest(inv: PushListenerInvocation) {
-    const eligible = (await CloudFoundryDeployableProject.valueForPush(inv));
+export const SuggestAddingCloudFoundryManifest: ChannelLinkListener = async inv => {
+    const eligible = await CloudFoundryDeployableProject(inv.project);
     if (!eligible) {
         logger.info("Not suggesting Cloud Foundry manifest for %j as we don't know how to deploy yet", inv.id);
         return;
@@ -54,4 +54,4 @@ export async function suggestAddingCloudFoundryManifest(inv: PushListenerInvocat
         attachments: [attachment],
     };
     return inv.addressChannels(message);
-}
+};
