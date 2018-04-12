@@ -15,7 +15,7 @@
  */
 
 import { Project } from "@atomist/automation-client/project/Project";
-import { ProjectListenerInvocation } from "./Listener";
+import { PushListenerInvocation } from "./Listener";
 import { PushMapping } from "./PushMapping";
 
 /**
@@ -36,7 +36,7 @@ export type ProjectPredicate = (p: Project) => Promise<boolean>;
  * @param valueForPush test function
  * @return {PushTest}
  */
-export function pushTest(name: string, valueForPush: (p: ProjectListenerInvocation) => Promise<boolean>): PushTest {
+export function pushTest(name: string, valueForPush: (p: PushListenerInvocation) => Promise<boolean>): PushTest {
     return {
         name,
         valueForPush,

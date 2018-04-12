@@ -39,7 +39,7 @@ import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../
 import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
-import { ProjectListenerInvocation } from "../../../../common/listener/Listener";
+import { PushListenerInvocation } from "../../../../common/listener/Listener";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -147,7 +147,7 @@ export async function determineGoals(rules: {
     const {projectLoader, goalSetters, implementationMapping} = rules;
     const {credentials, id, context, push, addressChannels} = circumstances;
     return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-        const pli: ProjectListenerInvocation = {
+        const pli: PushListenerInvocation = {
             project,
             credentials,
             id,
@@ -166,7 +166,7 @@ export async function determineGoals(rules: {
 }
 
 async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMapper,
-                                 pli: ProjectListenerInvocation,
+                                 pli: PushListenerInvocation,
                                  determinedGoals: Goals) {
     return Promise.all(determinedGoals.goals.map(async g =>
         constructSdmGoal(pli.context, {
@@ -181,7 +181,7 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
 
 async function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
-},                         g: Goal, inv: ProjectListenerInvocation): Promise<SdmGoalFulfillment> {
+},                         g: Goal, inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const {implementationMapping} = rules;
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
@@ -201,7 +201,7 @@ export const executeImmaterial: ExecuteGoalWithLog = async () => {
 };
 
 async function chooseGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
-                                           pi: ProjectListenerInvocation): Promise<Goals> {
+                                           pi: PushListenerInvocation): Promise<Goals> {
     const {goalSetters} = rules;
     const {push, id, addressChannels} = pi;
 

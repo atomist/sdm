@@ -30,8 +30,7 @@ export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R ext
     Function1<I, Promise<R>>;
 
 /**
- * Invocation for an event relating to a project for which we have source code.
- * Many event listeners listen to this type of event.
+ * Invocation for an event on a project
  */
 export interface ProjectListenerInvocation extends ListenerInvocation {
 
@@ -48,8 +47,16 @@ export interface ProjectListenerInvocation extends ListenerInvocation {
      */
     project: GitProject;
 
+}
+
+/**
+ * Invocation for an event relating to a push on a project.
+ * Many event listeners listen to this type of event.
+ */
+export interface PushListenerInvocation extends ProjectListenerInvocation {
+
     readonly push: OnPushToAnyBranch.Push;
 
 }
 
-export type ProjectListener = SdmListener<ProjectListenerInvocation>;
+export type PushListener = SdmListener<PushListenerInvocation>;

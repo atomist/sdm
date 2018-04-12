@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { ProjectListenerInvocation } from "../../../common/listener/Listener";
+import { PushListenerInvocation } from "../../../common/listener/Listener";
 import { PushTest } from "../../../common/listener/PushTest";
 import { IsMaven } from "../../../common/listener/support/pushtest/jvm/jvmPushTests";
 import { HasSpringBootApplicationClass } from "../../../common/listener/support/pushtest/jvm/springPushTests";
@@ -34,7 +34,7 @@ const CloudFoundryDeployableProject: PushTest =
         allSatisfied(IsMaven, HasSpringBootApplicationClass),
         IsNode);
 
-export async function suggestAddingCloudFoundryManifest(inv: ProjectListenerInvocation) {
+export async function suggestAddingCloudFoundryManifest(inv: PushListenerInvocation) {
     const eligible = (await CloudFoundryDeployableProject.valueForPush(inv));
     if (!eligible) {
         logger.info("Not suggesting Cloud Foundry manifest for %j as we don't know how to deploy yet", inv.id);

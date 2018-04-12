@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectListenerInvocation } from "./Listener";
+import { PushListenerInvocation } from "./Listener";
 
 export type NeverMatch = null;
 
@@ -44,10 +44,10 @@ export interface PushMapping<V> {
      * If a previous rule has matched, it will still be used.
      * The value may be static
      * or computed on demand, depending on the implementation.
-     * @param {ProjectListenerInvocation} p
+     * @param {PushListenerInvocation} p
      * @return {Promise<V | undefined | NeverMatch>}
      */
-    valueForPush(p: ProjectListenerInvocation): Promise<V | undefined | NeverMatch>;
+    valueForPush(p: PushListenerInvocation): Promise<V | undefined | NeverMatch>;
 }
 
 export function isPushMapping(a: any): a is PushMapping<any> {

@@ -16,15 +16,15 @@
 
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { ProjectListenerInvocation } from "../../../common/listener/Listener";
+import { PushListenerInvocation } from "../../../common/listener/Listener";
 import { AddK8sSpecCommandName } from "../../commands/editors/k8s/addK8sSpec";
 
 /**
  * Present a button suggesting a Kubernetes spec is added by an editor
- * @param {ProjectListenerInvocation} inv
+ * @param {PushListenerInvocation} inv
  * @return {Promise<any>}
  */
-export async function suggestAddingK8sSpec(inv: ProjectListenerInvocation) {
+export async function suggestAddingK8sSpec(inv: PushListenerInvocation) {
     try {
         const f = await inv.project.findFile("pom.xml");
         const content = await f.getContent();

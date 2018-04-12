@@ -17,7 +17,7 @@
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
+import { PushListenerInvocation } from "../../../../src/common/listener/Listener";
 import { hasFile, hasFileContaining } from "../../../../src/common/listener/support/pushtest/commonPushTests";
 
 describe("commonPushTests", () => {
@@ -26,13 +26,13 @@ describe("commonPushTests", () => {
 
         it("should not find file in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await hasFile("whatever").valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await hasFile("whatever").valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find file", async () => {
             const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
-            const r = await hasFile("pom.xml").valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await hasFile("pom.xml").valueForPush({project} as any as PushListenerInvocation);
             assert(r);
         });
     });
@@ -41,19 +41,19 @@ describe("commonPushTests", () => {
 
         it("should not find in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await hasFileContaining("x", /y/).valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await hasFileContaining("x", /y/).valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find containing", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.java", content: "public class Thing {}"});
-            const r = await hasFileContaining("src/main/java/Thing.java", /class/).valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await hasFileContaining("src/main/java/Thing.java", /class/).valueForPush({project} as any as PushListenerInvocation);
             assert(r);
         });
 
         it("should not find whe file does not contain", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
-            const r = await hasFileContaining("src/main/java/Thing.java", /xclass/).valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await hasFileContaining("src/main/java/Thing.java", /xclass/).valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
         });
     });

@@ -29,7 +29,7 @@ const FilesToWatch = ["Dockerfile"];
 /**
  * Veto if change to deployment unit doesn't seem important enough to
  * build and deploy
- * @param {ProjectListenerInvocation} pci
+ * @param {PushListenerInvocation} pci
  * @return {Promise<void>}
  * @constructor
  */

@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
-import { ProjectListenerInvocation } from "../../Listener";
+import { PushListenerInvocation } from "../../Listener";
 import { isPushMapping } from "../../PushMapping";
 import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
 
@@ -94,6 +94,6 @@ export function memoize(pt: PushTest): PushTest {
     };
 }
 
-function ptCacheKey(pt: PushTest, pti: ProjectListenerInvocation): string {
+function ptCacheKey(pt: PushTest, pti: PushListenerInvocation): string {
     return pti.push.id + "_" + pt.name;
 }

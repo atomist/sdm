@@ -30,7 +30,7 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
-import { ProjectListener } from "../common/listener/Listener";
+import { PushListener } from "../common/listener/Listener";
 import { NewIssueListener } from "../common/listener/NewIssueListener";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
@@ -151,7 +151,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public readonly repoCreationListeners: RepoCreationListener[] = [];
 
-    public readonly newRepoWithCodeActions: ProjectListener[] = [];
+    public readonly newRepoWithCodeActions: PushListener[] = [];
 
     public readonly goalSetters: GoalSetter[] = []; // public for tests
 
@@ -411,7 +411,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addNewRepoWithCodeActions(...pls: ProjectListener[]): this {
+    public addNewRepoWithCodeActions(...pls: PushListener[]): this {
         this.newRepoWithCodeActions.push(...pls);
         return this;
     }

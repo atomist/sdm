@@ -15,10 +15,10 @@
  */
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { ProjectListenerInvocation } from "../../../Listener";
+import { PushListenerInvocation } from "../../../Listener";
 import { PushTest, pushTest } from "../../../PushTest";
 
 export const IsTypeScript: PushTest = pushTest(
     "Is TypeScript",
-    async (pi: ProjectListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+    async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
 );

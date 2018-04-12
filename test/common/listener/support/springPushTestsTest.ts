@@ -17,7 +17,7 @@
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
+import { PushListenerInvocation } from "../../../../src/common/listener/Listener";
 import { HasSpringBootApplicationClass } from "../../../../src/common/listener/support/pushtest/jvm/springPushTests";
 import { springBootPom } from "../../../software-delivery-machine/editors/TestPoms";
 
@@ -27,13 +27,13 @@ describe("springPushTests", () => {
 
         it("should not find maven in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await HasSpringBootApplicationClass.valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await HasSpringBootApplicationClass.valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find maven in repo with named pom but no Spring application", async () => {
             const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
-            const r = await HasSpringBootApplicationClass.valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await HasSpringBootApplicationClass.valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
@@ -42,7 +42,7 @@ describe("springPushTests", () => {
                 { path: "pom.xml", content: springBootPom("1.2.1")},
                 { path: "src/main/java/App.java", content: "@SpringBootApplication public class App {}"},
                 );
-            const r = await HasSpringBootApplicationClass.valueForPush({project} as any as ProjectListenerInvocation);
+            const r = await HasSpringBootApplicationClass.valueForPush({project} as any as PushListenerInvocation);
             assert(r);
         });
     });

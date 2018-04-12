@@ -18,7 +18,7 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 import * as assert from "power-assert";
-import { ProjectListenerInvocation } from "../../../../src/common/listener/Listener";
+import { PushListenerInvocation } from "../../../../src/common/listener/Listener";
 import { IsDeployEnabled } from "../../../../src/common/listener/support/pushtest/deployPushTests";
 
 describe("deployPushTests tests thing", () => {
@@ -46,7 +46,7 @@ describe("deployPushTests tests thing", () => {
                  },
                  id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
              };
-             const result = await IsDeployEnabled.valueForPush(pi as any as ProjectListenerInvocation);
+             const result = await IsDeployEnabled.valueForPush(pi as any as PushListenerInvocation);
              assert(!result);
         });
 
@@ -76,7 +76,7 @@ describe("deployPushTests tests thing", () => {
                 id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
 
             };
-            const result = await IsDeployEnabled.valueForPush(pi as any as ProjectListenerInvocation);
+            const result = await IsDeployEnabled.valueForPush(pi as any as PushListenerInvocation);
             assert(result);
         });
 
@@ -105,7 +105,7 @@ describe("deployPushTests tests thing", () => {
                 },
                 id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
             };
-            const result = await IsDeployEnabled.valueForPush(pi as any as ProjectListenerInvocation);
+            const result = await IsDeployEnabled.valueForPush(pi as any as PushListenerInvocation);
             assert(!result);
         });
     });

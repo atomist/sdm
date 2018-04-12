@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectListenerInvocation } from "../Listener";
+import { PushListenerInvocation } from "../Listener";
 import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied, memoize } from "./pushtest/pushTestUtils";
@@ -43,7 +43,7 @@ export class PushRule<V = any> implements PushMapping<V> {
         return this;
     }
 
-    public valueForPush(p: ProjectListenerInvocation): Promise<V | undefined> {
+    public valueForPush(p: PushListenerInvocation): Promise<V | undefined> {
         return this.choice.valueForPush(p);
     }
 

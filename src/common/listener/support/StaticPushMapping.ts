@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectListenerInvocation } from "../Listener";
+import { PushListenerInvocation } from "../Listener";
 import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied } from "./pushtest/pushTestUtils";
@@ -38,7 +38,7 @@ export class StaticPushMapping<V> implements PushMapping<V> {
         this.guard = allSatisfied(guard1, ...guards);
     }
 
-    public async valueForPush(pi: ProjectListenerInvocation): Promise<V> {
+    public async valueForPush(pi: PushListenerInvocation): Promise<V> {
         return (await this.guard.valueForPush(pi)) ? this.value : undefined;
     }
 }

@@ -30,8 +30,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
 import {
-    ProjectListener,
-    ProjectListenerInvocation,
+    PushListener,
+    PushListenerInvocation,
 } from "../../../common/listener/Listener";
 import { AddressChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
@@ -46,7 +46,7 @@ export class OnFirstPushToRepo
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
 
-    constructor(private readonly actions: ProjectListener[]) {
+    constructor(private readonly actions: PushListener[]) {
     }
 
     public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,
@@ -77,7 +77,7 @@ export class OnFirstPushToRepo
         const addressChannels: AddressChannels = m => context.messageClient.addressUsers(m, screenName);
 
         const project = await GitCommandGitProject.cloned(credentials, id);
-        const invocation: ProjectListenerInvocation = {
+        const invocation: PushListenerInvocation = {
             id,
             context,
             addressChannels,

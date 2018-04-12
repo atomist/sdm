@@ -16,7 +16,7 @@
 
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
-import { ProjectListenerInvocation } from "../../listener/Listener";
+import { PushListenerInvocation } from "../../listener/Listener";
 import { PushTest } from "../../listener/PushTest";
 import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";
@@ -74,7 +74,7 @@ export class SdmGoalImplementationMapper {
         return this;
     }
 
-    public async findFulfillmentByPush(goal: Goal, inv: ProjectListenerInvocation): Promise<GoalFulfillment | undefined> {
+    public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
         const implementationsForGoal = this.implementations.filter(m => m.goal === goal);
         for (const implementation of implementationsForGoal) {
             if (await implementation.pushTest.valueForPush(inv)) {

@@ -25,7 +25,7 @@ export const ToDefaultBranch: PushTest = pushTest("Push to default branch", asyn
 /**
  * Is this a push originated by Atomist? Note that we can't look at the committer,
  * as if a user invoked a command handler, their credentials will be used
- * @param {ProjectListenerInvocation} p
+ * @param {PushListenerInvocation} p
  * @return {boolean}
  * @constructor
  */
@@ -34,14 +34,14 @@ export const FromAtomist = pushTest("Push from Atomist", async p =>
 
 /**
  * Match on any push
- * @param {ProjectListenerInvocation} p
+ * @param {PushListenerInvocation} p
  * @constructor
  */
 export const AnyPush: PushTest = pushTest("Any push", async p => true);
 
 /**
  * Match only pushes on a public repo
- * @param {ProjectListenerInvocation} p
+ * @param {PushListenerInvocation} p
  * @return {Promise<boolean>}
  * @constructor
  */

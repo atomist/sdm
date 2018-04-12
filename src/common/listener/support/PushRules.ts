@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProjectListenerInvocation } from "../Listener";
+import { PushListenerInvocation } from "../Listener";
 import { PushMapping } from "../PushMapping";
 
 /**
@@ -49,7 +49,7 @@ export class PushRules<V> implements PushMapping<V> {
         this.choices = this.choices.concat(rules);
     }
 
-    public async valueForPush(pi: ProjectListenerInvocation): Promise<V> {
+    public async valueForPush(pi: PushListenerInvocation): Promise<V> {
         const results: V[] = await Promise.all(this.choices
             .map(async pc => {
                 const found = await pc.valueForPush(pi);

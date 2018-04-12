@@ -15,12 +15,12 @@
  */
 
 import { StatusForExecuteGoal } from "../../typings/types";
-import { ProjectListenerInvocation, SdmListener } from "./Listener";
+import { PushListenerInvocation, SdmListener } from "./Listener";
 
 /**
  * Invocation object used by most listeners that react to code changes
  */
-export interface CodeReactionInvocation extends ProjectListenerInvocation {
+export interface CodeReactionInvocation extends PushListenerInvocation {
 
     /**
      * Files changed in this push. Undefined if unknown how many files have changed

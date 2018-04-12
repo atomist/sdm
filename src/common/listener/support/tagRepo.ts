@@ -17,13 +17,13 @@
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
 import { publishTags } from "../../repo/publishTags";
-import { ProjectListener } from "../Listener";
+import { PushListener } from "../Listener";
 
 /**
  * Tag the repo using the given tagger
  * @param {Tagger} tagger
  */
-export function tagRepo(tagger: Tagger): ProjectListener {
+export function tagRepo(tagger: Tagger): PushListener {
     return async pInv =>
         isGitHubRepoRef(pInv.id) ?
             publishTags(tagger, pInv.id, pInv.credentials, pInv.addressChannels, pInv.context) :
