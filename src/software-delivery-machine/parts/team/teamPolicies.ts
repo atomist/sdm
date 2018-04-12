@@ -39,7 +39,7 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         )
         .addNewRepoWithCodeActions(
             PublishNewRepo)
-        .addCodeReactions(NoPushToDefaultBranchWithoutPullRequest)
+        //.addCodeReactions(NoPushToDefaultBranchWithoutPullRequest)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addSupportingEvents(OnDryRunBuildComplete);
     // .addFingerprintDifferenceListeners(diff1)

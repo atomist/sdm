@@ -18,6 +18,8 @@ import { logger } from "@atomist/automation-client";
 import { CodeActionRegistration } from "../../../common/delivery/code/CodeActionRegistration";
 import { PullRequestForSha } from "../../../typings/types";
 
+import * as _ from "lodash";
+
 /**
  * DM a user who made a push to the default branch that doesn't have an associated pull request
  * @param {PushListenerInvocation} pli
@@ -34,13 +36,15 @@ export const NoPushToDefaultBranchWithoutPullRequest: CodeActionRegistration = {
         const vars: PullRequestForSha.Variables = {owner: pli.id.owner, repo: pli.id.repo, sha: pli.push.commits[0].sha};
         logger.info("About to query for pull requests with variables %j", vars);
         const foundPr = await pli.context.graphClient.query<PullRequestForSha.Query, PullRequestForSha.Variables>({
-                name: "PullRequestForSha",
-                variables: vars,
-            });
+            name: "PullRequestForSha",
+            variables: vars,
+        });
         if (foundPr.PullRequest.length === 0) {
-            const chatTo = pli.push.after.committer.person.chatId.screenName;
-            return pli.context.messageClient.addressUsers(`You committed without a pull request: _${pli.push.after.message}_: This isn't recommended`,
-                chatTo);
+            const chatTo = _.get<string>(pli, "push.after.committer.person.chatId.screenName");
+            return !!chatTo ?
+                pli.context.messageClient.addressUsers(`You committed without a pull request: _${pli.push.after.message}_: This isn't recommended`,
+                    chatTo) :
+                pli.addressChannels("Committing without a pull request is not recommended");
         }
     },
 };
