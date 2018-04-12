@@ -20,11 +20,11 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
-import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
-import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { AutofixRegistration } from "../../../../../src/common/delivery/code/autofix/AutofixRegistration";
+import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import { IsTypeScript } from "../../../../../src/common/listener/support/pushtest/node/tsPushTests";
+import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
 const AddThingAutofix: AutofixRegistration = {
     name: "thinger",

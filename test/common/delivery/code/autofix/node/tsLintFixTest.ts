@@ -23,8 +23,8 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
-import { SingleProjectLoader } from "../../../../../../src/util/test/SingleProjectLoader";
 import { fakeRunWithLogContext } from "../../../../../../src/util/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../../../../src/util/test/SingleProjectLoader";
 
 describe("tsLintFix", () => {
 

@@ -24,10 +24,10 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Status } from "../../../../util/github/ghub";
-import { EditModeSuggestion } from "../../editor/EditModeSuggestion";
-import { toEditorOrReviewerParametersMaker } from "../../editor/editorCommand";
-import { chattyEditorFactory } from "../../editor/editorWrappers";
 import { EmptyParameters } from "../../EmptyParameters";
+import { EditModeSuggestion } from "../EditModeSuggestion";
+import { toEditorOrReviewerParametersMaker } from "../editorCommand";
+import { chattyEditorFactory } from "../editorWrappers";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";
