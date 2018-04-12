@@ -37,7 +37,7 @@ export function greeting() {
     try {
         const host = os.hostname();
         if (host.includes("Rods-MBP")) {
-            return randomElement(greetings);
+            return randomElement(greetings) + "";
         }
         return undefined;
     } catch (err) {
