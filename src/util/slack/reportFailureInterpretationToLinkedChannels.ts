@@ -19,13 +19,13 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels } from "../../common/slack/addressChannels";
 import { InterpretedLog } from "../../spi/log/InterpretedLog";
 
-export async function reportFailureInterpretation(stepName: string,
-                                                  interpretation: InterpretedLog,
-                                                  fullLog: { url?: string, log: string },
-                                                  id: RemoteRepoRef,
-                                                  ac: AddressChannels,
-                                                  retryButton?: slack.Action) {
-    await ac({
+export async function reportFailureInterpretationToLinkedChannels(stepName: string,
+                                                                  interpretation: InterpretedLog,
+                                                                  fullLog: { url?: string, log: string },
+                                                                  id: RemoteRepoRef,
+                                                                  addressChannels: AddressChannels,
+                                                                  retryButton?: slack.Action) {
+    await addressChannels({
         text: `Failed ${stepName} of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 6))}`,
         attachments: [{
             title: interpretation.message || "Failure",
@@ -37,7 +37,7 @@ export async function reportFailureInterpretation(stepName: string,
         }],
     });
     if (interpretation.includeFullLog) {
-        await ac({
+        await addressChannels({
             content: fullLog.log,
             fileType: "text",
             fileName: `${stepName}-failure-${id.sha}.log`,

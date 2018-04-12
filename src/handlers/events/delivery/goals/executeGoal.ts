@@ -21,7 +21,7 @@ import * as path from "path";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
-import { ExecuteGoalWithLog, reportError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
+import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
@@ -58,7 +58,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
             // execute the actual goal
             let goalResult = await execute(rwlc)
                 .catch(err =>
-                    reportError({
+                    reportGoalError({
                         goal, implementationName, addressChannels, progressLog, id, logInterpreter,
                     }, err)
                         .then(() => Promise.reject(err)),
@@ -69,7 +69,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
             }
 
             if (goalResult.code !== 0) {
-                await reportError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
+                await reportGoalError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
                     new Error("Failure reported: " + goalResult.message));
             }
 

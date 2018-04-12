@@ -36,7 +36,7 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
 
 /**
  * Set build status on complete build
@@ -91,7 +91,7 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
         logger.debug("What did it say? " + stringify(interpretation));
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
-            await reportFailureInterpretation("build", interpretation,
+            await reportFailureInterpretationToLinkedChannels("build", interpretation,
                 {log: buildLog, url: buildUrl}, id, addressChannels);
         } else {
             await addressChannels({

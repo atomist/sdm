@@ -22,7 +22,7 @@ import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../../../typings/types";
-import { reportFailureInterpretation } from "../../../../util/slack/reportFailureInterpretation";
+import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
 import { SdmContext } from "../../../context/SdmContext";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { Goal } from "../Goal";
@@ -39,7 +39,7 @@ export interface RunWithLogContext extends SdmContext {
  * Report an error executing a goal and present a retry button
  * @return {Promise<void>}
  */
-export async function reportError(parameters: {
+export async function reportGoalError(parameters: {
                                       goal: Goal,
                                       implementationName: string,
                                       addressChannels: AddressChannels,
@@ -47,7 +47,7 @@ export async function reportError(parameters: {
                                       id: RemoteRepoRef,
                                       logInterpreter: LogInterpreter,
                                   },
-                                  err: Error) {
+                                      err: Error) {
     const {goal, implementationName, addressChannels, progressLog, id, logInterpreter} = parameters;
     logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",
         goal.name, implementationName, err.message);
@@ -66,11 +66,14 @@ export async function reportError(parameters: {
 
     const interpretation = logInterpreter(progressLog.log);
     // The executor might have information about the failure; report it in the channels
-    if (interpretation && !interpretation.doNotReportToUser) {
-        await reportFailureInterpretation(implementationName, interpretation,
-            {url: progressLog.url, log: progressLog.log},
-            id, addressChannels, retryButton);
+    if (interpretation) {
+        if (!interpretation.doNotReportToUser) {
+            await reportFailureInterpretationToLinkedChannels(implementationName, interpretation,
+                {url: progressLog.url, log: progressLog.log},
+                id, addressChannels, retryButton);
+        }
     } else {
+        // We don't have an interpretation available. Just report
         await addressChannels("Failure executing goal: " + err.message);
     }
 }
