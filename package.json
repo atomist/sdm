@@ -1,21 +1,21 @@
 {
-  "name": "@atomist/github-sdm",
+  "name": "@atomist/sdm",
   "version": "0.4.0",
   "description": "GitHub Software Delivery Machine",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atomist/github-sdm.git"
+    "url": "https://github.com/atomist/.git"
   },
   "keywords": [
     "atomist",
     "automation",
     "github"
   ],
-  "homepage": "https://github.com/atomist/github-sdm#readme",
+  "homepage": "https://github.com/atomist/sdm#readme",
   "bugs": {
-    "url": "https://github.com/atomist/github-sdm/issues"
+    "url": "https://github.com/atomist/sdm/issues"
   },
   "dependencies": {
     "@atomist/automation-client": "https://r.atomist.com/B1N-WJB3of",
