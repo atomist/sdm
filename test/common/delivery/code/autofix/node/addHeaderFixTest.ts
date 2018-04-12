@@ -20,16 +20,17 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import * as assert from "power-assert";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { SingleProjectLoader } from "../../../../SingleProjectLoader";
-import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
 import { fakeRunWithLogContext } from "../../fakeRunWithLogContext";
 import { executeAutofixes } from "../../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { successOn } from "@atomist/automation-client/action/ActionResult";
+import { ApacheHeader } from "../../../../../../src/software-delivery-machine/commands/editors/license/addHeader";
+import { AddAtomistTypeScriptHeader } from "../../../../../../src/software-delivery-machine/blueprint/code/autofix/addAtomistHeader";
 
-describe("tsLintFix", () => {
+describe("addHeaderFix", () => {
 
     it("should lint and make fixes", async () => {
-        const p = await GitCommandGitProject.cloned({token: null}, new GitHubRepoRef("atomist", "tree-path-ts"));
+        const p = await GitCommandGitProject.cloned({token: null}, new GitHubRepoRef("atomist", "github-sdm"));
         // Make commit and push harmless
         p.commit = async () => {
             return successOn(p);
@@ -37,17 +38,17 @@ describe("tsLintFix", () => {
         p.push = async () => {
             return successOn(p);
         };
-        const f = new InMemoryFile("src/bad.ts", "const foo\n\n");
+        const f = new InMemoryFile("src/bad.ts", "const foo;\n");
         const pl = new SingleProjectLoader(p);
         // Now mess it up with a lint error
         await p.addFile(f.path, f.content);
         assert(!!p.findFileSync(f.path));
 
-        const r = await executeAutofixes(pl, [tslintFix])(fakeRunWithLogContext(p.id as RemoteRepoRef));
+        const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(p.id as RemoteRepoRef));
         // assert(r.code === 0);
         const fileNow = p.findFileSync(f.path);
         assert(!!fileNow);
-        assert(fileNow.getContentSync().startsWith("const foo;"));
+        assert(fileNow.getContentSync().startsWith(ApacheHeader));
     }).timeout(40000);
 
 });
