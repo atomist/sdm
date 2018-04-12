@@ -77,7 +77,7 @@ export const MavenLogInterpreter: LogInterpreter<MavenStatus> = log => {
         includeFullLog: true,
         data,
     };
-}
+};
 
 function appFailedToStart(log: string) {
     const lines = log.split("\n");
