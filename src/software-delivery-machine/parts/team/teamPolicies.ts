@@ -21,6 +21,7 @@ import { PostToDeploymentsChannel } from "../../blueprint/deploy/postToDeploymen
 import { capitalizer } from "../../blueprint/issue/capitalizer";
 import { requestDescription } from "../../blueprint/issue/requestDescription";
 import { thankYouYouRock } from "../../blueprint/issue/thankYouYouRock";
+import { NoPushToDefaultBranchWithoutPullRequest } from "../../blueprint/repo/noPushToDefaultBranchWithoutPullRequest";
 import { PublishNewRepo } from "../../blueprint/repo/publishNewRepo";
 import { addApacheLicenseHeaderEditor } from "../../commands/editors/license/addHeader";
 
@@ -38,8 +39,7 @@ export function addTeamPolicies(softwareDeliveryMachine: SoftwareDeliveryMachine
         )
         .addNewRepoWithCodeActions(
             PublishNewRepo)
-            // TODO currently encountering an Apollo 400
-       // .addCodeReactions(NoPushToDefaultBranchWithoutPullRequest)
+        .addCodeReactions(NoPushToDefaultBranchWithoutPullRequest)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addSupportingEvents(OnDryRunBuildComplete);
     // .addFingerprintDifferenceListeners(diff1)

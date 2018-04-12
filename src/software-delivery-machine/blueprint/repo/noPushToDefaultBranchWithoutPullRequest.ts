@@ -33,9 +33,10 @@ export const NoPushToDefaultBranchWithoutPullRequest: CodeActionRegistration = {
         }
         const vars: PullRequestForSha.Variables = {owner: pli.id.owner, repo: pli.id.repo, sha: pli.push.commits[0].sha};
         logger.info("About to query for pull requests with variables %j", vars);
-        const foundPr = await pli.context.graphClient.executeQueryFromFile<PullRequestForSha.Query, PullRequestForSha.Variables>(
-            "src/graphql/query/PullRequestForSha",
-            vars);
+        const foundPr = await pli.context.graphClient.query<PullRequestForSha.Query, PullRequestForSha.Variables>({
+                name: "PullRequestForSha",
+                variables: vars,
+            });
         if (foundPr.PullRequest.length === 0) {
             const chatTo = pli.push.after.committer.person.chatId.screenName;
             return pli.context.messageClient.addressUsers(`You committed without a pull request: _${pli.push.after.message}_: This isn't recommended`,
