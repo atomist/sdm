@@ -32,10 +32,14 @@ describe("addHeaderFix", () => {
     it("should lint and make fixes", async () => {
         const p = await GitCommandGitProject.cloned({token: null}, new GitHubRepoRef("atomist", "github-sdm"));
         // Make commit and push harmless
+        let pushCount = 0;
+        let commitCount = 0;
         p.commit = async () => {
+            ++commitCount;
             return successOn(p);
         };
         p.push = async () => {
+            ++pushCount;
             return successOn(p);
         };
         const f = new InMemoryFile("src/bad.ts", "const foo;\n");
@@ -45,6 +49,9 @@ describe("addHeaderFix", () => {
         assert(!!p.findFileSync(f.path));
 
         await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(p.id as RemoteRepoRef));
+        assert.equal(pushCount, 1);
+        assert.equal(commitCount, 1);
+
         const fileNow = p.findFileSync(f.path);
         assert(!!fileNow);
         assert(fileNow.getContentSync().startsWith(ApacheHeader));
