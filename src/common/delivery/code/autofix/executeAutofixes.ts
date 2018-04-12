@@ -101,7 +101,7 @@ async function runOne(cri: CodeReactionInvocation, autofix: AutofixRegistration)
                 return {target: project, edited: false, success: false};
             }
         } else if (editResult.edited) {
-            await project.commit(`Autofix: ${autofix.name}\n\n[atomist]`);
+            await project.commit(`Autofix: ${autofix.name}\n\n[atomist:generated]`);
         } else {
             logger.debug("No changes were made by autofix %s", autofix.name);
         }
