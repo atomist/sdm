@@ -26,12 +26,20 @@ describe("interpretMavenLog", () => {
         assert(!r.data.timeMillis);
     });
 
-    it("should handle failure log", () => {
+    it("should handle short failure log", () => {
         const r = interpretMavenLog(Fail1);
         assert(!!r);
         assert(r.relevantPart.length > 30);
         assert(r.relevantPart.includes("Unknown lifecycle phase \"build\""), r.relevantPart);
         assert.equal(r.data.timeMillis, 261);
+    });
+
+    it("should handle longer failure log", () => {
+        const r = interpretMavenLog(Fail2);
+        assert(!!r);
+        assert(r.relevantPart.length > 30);
+        assert(r.relevantPart.includes("COMPILATION ERROR"), r.relevantPart);
+        assert.equal(r.data.timeMillis, 1814);
     });
 
     it("should handle success log", () => {
@@ -137,3 +145,43 @@ const Success1 = `[INFO] Scanning for projects...
 [INFO] Finished at: 2018-03-12T13:38:44+11:00
 [INFO] Final Memory: 19M/266M
 [INFO] ------------------------------------------------------------------------`;
+
+const Fail2 = `[INFO] Building spring-rest-seed 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> spring-boot-maven-plugin:1.5.4.RELEASE:run (default-cli) > test-compile @ wynyard >>>
+[INFO] 
+[INFO] --- git-commit-id-plugin:2.2.2:revision (default) @ wynyard ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ wynyard ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ wynyard ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 3 source files to /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/target/classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/src/main/java/Bad.java:[1,1] class, interface, or enum expected
+[ERROR] /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/src/main/java/Bad.java:[1,6] class, interface, or enum expected
+[INFO] 2 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1.814 s
+[INFO] Finished at: 2018-04-12T14:29:17+10:00
+[INFO] Final Memory: 21M/272M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:compile (default-compile) on project wynyard: Compilation failure: Compilation failure: 
+[ERROR] /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/src/main/java/Bad.java:[1,1] class, interface, or enum expected
+[ERROR] /private/var/folders/86/p817yp991bdddrqr_bdf20gh0000gp/T/tmp-37499RMXgIoo246rw/src/main/java/Bad.java:[1,6] class, interface, or enum expected
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException`;

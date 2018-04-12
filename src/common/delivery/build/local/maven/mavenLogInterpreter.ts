@@ -103,6 +103,7 @@ export interface MavenInfo {
 function mavenErrors(log: string): string | undefined {
     const relevantPart = log.split("\n")
         .filter(l => l.startsWith("[ERROR]"))
+        .map(l => l.replace("[ERROR] ", ""))
         .join("\n");
     if (!relevantPart) {
         return;
