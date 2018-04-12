@@ -103,6 +103,6 @@ export const configuration: Configuration = {
             level: "debug",
             name: "./log/github-sdm.log",
         },
-        banner: greeting() + "bla",
+        banner: greeting(),
     },
 };
