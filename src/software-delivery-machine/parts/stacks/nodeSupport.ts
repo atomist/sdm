@@ -49,12 +49,11 @@ import { DockerOptions } from "./dockerSupport";
 
 /**
  * Configuration common to Node SDMs, wherever they deploy
- * @param {SoftwareDeliveryMachine} softwareDeliveryMachine
+ * @param {SoftwareDeliveryMachine} sdm
  */
-export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine,
+export function addNodeSupport(sdm: SoftwareDeliveryMachine,
                                options: SoftwareDeliveryMachineOptions & DockerOptions) {
-    softwareDeliveryMachine
-        .addGenerators(() => nodeGenerator({
+    sdm.addGenerators(() => nodeGenerator({
             ...CommonGeneratorConfig,
             seedRepo: "typescript-express-seed",
             intent: "create node",
@@ -80,7 +79,7 @@ export function addNodeSupport(softwareDeliveryMachine: SoftwareDeliveryMachine,
     .addGoalImplementation("nodeTag", TagGoal,
         executeTag(options.projectLoader));
 
-    softwareDeliveryMachine.goalFulfillmentMapper.addSideEffect({
+    sdm.goalFulfillmentMapper.addSideEffect({
         goal: StagingDockerDeploymentGoal,
         pushTest: IsNode,
         sideEffectName: "@atomist/k8-automation",
