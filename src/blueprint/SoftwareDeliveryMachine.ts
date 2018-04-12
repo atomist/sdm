@@ -22,7 +22,9 @@ import {
     ArtifactGoal,
     AutofixGoal,
     BuildGoal,
-    CodeReactionGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
+    CodeReactionGoal,
+    DeleteAfterUndeploysGoal,
+    DeleteRepositoryGoal,
     FingerprintGoal,
     JustBuildGoal,
     NoGoal,
@@ -30,18 +32,12 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
-import { NewIssueListener } from "../common/listener/NewIssueListener";
-import { PushListener } from "../common/listener/PushListener";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
-import {
-    EndpointVerificationListener,
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
@@ -59,29 +55,16 @@ import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
-import { ArtifactListener } from "../common/listener/ArtifactListener";
-import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
-import { DeploymentListener } from "../common/listener/DeploymentListener";
-import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
 import { GoalSetter } from "../common/listener/GoalSetter";
-import { GoalsSetListener } from "../common/listener/GoalsSetListener";
 import { PushTest } from "../common/listener/PushTest";
-import { RepoCreationListener } from "../common/listener/RepoCreationListener";
-import { SupersededListener } from "../common/listener/SupersededListener";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
-import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
-import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
-import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
-import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
-import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
-import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { PushRule } from "../common/listener/support/PushRule";
@@ -89,8 +72,6 @@ import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/Copy
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
-import { ChannelLinkListener } from "../common/listener/ChannelLinkListenerInvocation";
-import { PullRequestListener } from "../common/listener/PullRequestListener";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { triggerGoal } from "../handlers/commands/triggerGoal";
@@ -107,8 +88,7 @@ import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
-import { IssueHandling } from "./IssueHandling";
-import { NewRepoHandling } from "./NewRepoHandling";
+import { ListenerRegistrations } from "./ListenerRegistrations";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -130,7 +110,7 @@ export interface SoftwareDeliveryMachineOptions {
  * Driven by Goals
  * Uses the builder pattern.
  */
-export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDeliveryBlueprint, IssueHandling {
+export class SoftwareDeliveryMachine extends ListenerRegistrations implements ReferenceDeliveryBlueprint {
 
     public generators: Array<Maker<HandleCommand>> = [];
 
@@ -142,50 +122,14 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public functionalUnits: FunctionalUnit[] = [];
 
+    public readonly goalSetters: GoalSetter[] = [];
+
+    private readonly disposalGoalSetters: GoalSetter[] = [];
+
     /*
      * Store all the implementations we know
      */
     public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(); // public for testing
-
-    public readonly newIssueListeners: NewIssueListener[] = [];
-
-    public readonly updatedIssueListeners: UpdatedIssueListener[] = [];
-
-    public readonly closedIssueListeners: ClosedIssueListener[] = [];
-
-    public readonly repoCreationListeners: RepoCreationListener[] = [];
-
-    private readonly pullRequestListeners: PullRequestListener[] = [];
-
-    public readonly newRepoWithCodeActions: PushListener[] = [];
-
-    public readonly channelLinkListeners: ChannelLinkListener[] = [];
-
-    public readonly goalSetters: GoalSetter[] = []; // public for tests
-
-    private readonly disposalGoalSetters: GoalSetter[] = [];
-
-    private readonly goalsSetListeners: GoalsSetListener[] = [];
-
-    private readonly reviewerRegistrations: ReviewerRegistration[] = [];
-
-    private readonly codeReactionRegistrations: CodeActionRegistration[] = [];
-
-    private readonly autofixRegistrations: AutofixRegistration[] = [];
-
-    private readonly artifactListeners: ArtifactListener[] = [];
-
-    private readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
-
-    private readonly supersededListeners: SupersededListener[] = [];
-
-    private readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
-
-    private readonly deploymentListeners?: DeploymentListener[] = [];
-
-    private readonly verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
-
-    private readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
     private readonly goalRetryCommandMap: { [key: string]: Maker<HandleCommand<any>> } = {};
 
@@ -384,26 +328,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
         return this;
     }
 
-    public addNewIssueListeners(...e: NewIssueListener[]): this {
-        this.newIssueListeners.push(...e);
-        return this;
-    }
-
-    public addUpdatedIssueListeners(...e: UpdatedIssueListener[]): this {
-        this.updatedIssueListeners.push(...e);
-        return this;
-    }
-
-    public addClosedIssueListeners(...e: ClosedIssueListener[]): this {
-        this.closedIssueListeners.push(...e);
-        return this;
-    }
-
-    public addChannelLinkListeners(...e: ChannelLinkListener[]): this {
-        this.channelLinkListeners.push(...e);
-        return this;
-    }
-
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
         this.supportingCommands.push(...e);
         return this;
@@ -411,88 +335,6 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
         this.supportingEvents.push(...e);
-        return this;
-    }
-
-    /**
-     * You probably mean to use addNewRepoWithCodeActions!
-     * This responds to a repo creation, but there may be no
-     * code in it.
-     * @param {RepoCreationListener} rcls
-     * @return {this}
-     */
-    public addRepoCreationListeners(...rcls: RepoCreationListener[]): this {
-        this.repoCreationListeners.push(...rcls);
-        return this;
-    }
-
-    public addNewRepoWithCodeActions(...pls: PushListener[]): this {
-        this.newRepoWithCodeActions.push(...pls);
-        return this;
-    }
-
-    public addPullRequestListeners(...pls: PullRequestListener[]): this {
-        this.pullRequestListeners.push(...pls);
-        return this;
-    }
-
-    public addGoalsSetListeners(...listeners: GoalsSetListener[]): this {
-        this.goalsSetListeners.push(...listeners);
-        return this;
-    }
-
-    public addReviewerRegistrations(...reviewers: ReviewerRegistration[]): this {
-        this.reviewerRegistrations.push(...reviewers);
-        return this;
-    }
-
-    public addCodeReactions(...crrs: CodeActionRegistration[]): this {
-        this.codeReactionRegistrations.push(...crrs);
-        return this;
-    }
-
-    public addArtifactListeners(...pls: ArtifactListener[]): this {
-        this.artifactListeners.push(...pls);
-        return this;
-    }
-
-    /**
-     * Editors automatically invoked on eligible commits.
-     * Note: be sure that these editors check and don't cause
-     * infinite recursion!!
-     */
-    public addAutofixes(...ars: AutofixRegistration[]): this {
-        this.autofixRegistrations.push(...ars);
-        return this;
-    }
-
-    public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
-        this.fingerprinterRegistrations.push(...f);
-        return this;
-    }
-
-    public addSupersededListeners(...l: SupersededListener[]): this {
-        this.supersededListeners.push(...l);
-        return this;
-    }
-
-    public addFingerprintDifferenceListeners(...fh: FingerprintDifferenceListener[]): this {
-        this.fingerprintDifferenceListeners.push(...fh);
-        return this;
-    }
-
-    public addDeploymentListeners(...l: DeploymentListener[]): this {
-        this.deploymentListeners.push(...l);
-        return this;
-    }
-
-    public addVerifiedDeploymentListeners(...l: VerifiedDeploymentListener[]): this {
-        this.verifiedDeploymentListeners.push(...l);
-        return this;
-    }
-
-    public addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this {
-        this.endpointVerificationListeners.push(...l);
         return this;
     }
 
@@ -571,6 +413,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     constructor(public readonly name: string,
                 public readonly opts: SoftwareDeliveryMachineOptions,
                 ...goalSetters: GoalSetter[]) {
+        super();
         this.goalSetters = goalSetters;
         addGitHubSupport(this);
         this.addSupportingCommands(
@@ -595,8 +438,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
             .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
                 offerToDeleteRepository())
             .addGoalImplementation("OfferToDeleteRepoAfterUndeploys", DeleteAfterUndeploysGoal,
-            offerToDeleteRepository());
-
+                offerToDeleteRepository());
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
