@@ -64,7 +64,7 @@
   "scripts": {
     "autostart": "npm-run-all --print-label --parallel watch:compile watch",
     "autotest": "supervisor --watch src,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
-    "build": "npm-run-all compile test",
+    "build": "npm-run-all compile test package:copy",
     "clean": "npm-run-all clean:js clean:build",
     "clean:build": "rimraf *-v8.log profile.txt build",
     "clean:dist": "npm-run-all clean clean:npm",
@@ -85,6 +85,7 @@
     "lint:gql": "prettier --list-different \"src/graphql/**/*.graphql\"",
     "lint:fix": "npm-run-all lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
+    "package:copy": "copyfiles \"package.json\" build/src",
     "test": "mocha --exit --require espower-typescript/guess \"test/**/*.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc src",
