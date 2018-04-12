@@ -52,7 +52,7 @@ describe("addHeaderFix", () => {
         assert(!!p.findFileSync(f.path));
 
         const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(p.id as RemoteRepoRef));
-        assert(r.code === 0);
+        assert(r.code === 1);
         assert.equal(pushCount, 1);
         assert.equal(commitCount, 1);
 
