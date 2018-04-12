@@ -570,8 +570,8 @@ To build Java projects on the automation client node, you'll need:
 
 To build Node projects on the automation client node, you'll need:
 
-- npm
-- node
+- `npm` - v 5.8.0 or above
+- `node`
 
 #### Cloud Foundry
 
