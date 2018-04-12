@@ -17,17 +17,11 @@
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
-import {
-    asSpawnCommand,
-    SpawnCommand,
-} from "../../../../../util/misc/spawned";
+import { asSpawnCommand, SpawnCommand, } from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import {
-    SpawnBuilder,
-    SpawnBuilderOptions,
-} from "../SpawnBuilder";
+import { SpawnBuilder, SpawnBuilderOptions, } from "../SpawnBuilder";
+import { NpmLogInterpreter } from "./npmLogInterpreter";
 
 // Options to use when running node commands like npm run compile that require dev dependencies to be installed
 export const DevelopmentEnvOptions = {
@@ -55,17 +49,6 @@ export function nodeRunCompileBuilder(projectLoader: ProjectLoader) {
         projectLoader, npmBuilderOptions([Install, RunCompile]));
 }
 
-export const npmLogInterpreter: LogInterpreter = log => {
-    const relevantPart = log.split("\n")
-        .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))
-        .join("\n");
-    return {
-        relevantPart,
-        message: "npm errors",
-        includeFullLog: true,
-    };
-};
-
 export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions {
     return {
         name: "NpmBuilder",
@@ -73,7 +56,7 @@ export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions
         errorFinder: (code, signal, l) => {
             return l.log.startsWith("[error]") || l.log.includes("ERR!");
         },
-        logInterpreter: npmLogInterpreter,
+        logInterpreter: NpmLogInterpreter,
         async projectToAppInfo(p: Project): Promise<AppInfo> {
             const packageJson = await p.findFile("package.json");
             const content = await packageJson.getContent();
@@ -90,7 +73,7 @@ export function npmBuilderOptionsFromFile(commandFile: string): SpawnBuilderOpti
         errorFinder: (code, signal, l) => {
             return l.log.startsWith("[error]") || l.log.includes("ERR!");
         },
-        logInterpreter: npmLogInterpreter,
+        logInterpreter: NpmLogInterpreter,
         async projectToAppInfo(p: Project): Promise<AppInfo> {
             const packageJson = await p.findFile("package.json");
             const content = await packageJson.getContent();

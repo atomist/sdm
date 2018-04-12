@@ -24,7 +24,7 @@ import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../.
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../../slack/addressChannels";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
-import { interpretMavenLog } from "./mavenLogInterpreter";
+import { MavenLogInterpreter } from "./mavenLogInterpreter";
 import { identification } from "./pomParser";
 
 /**
@@ -72,7 +72,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         });
     }
 
-    public logInterpreter: LogInterpreter = interpretMavenLog;
+    public logInterpreter: LogInterpreter = MavenLogInterpreter;
 
 }
 

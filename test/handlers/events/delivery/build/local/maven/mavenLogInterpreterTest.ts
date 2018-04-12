@@ -15,19 +15,19 @@
  */
 
 import * as assert from "power-assert";
-import { interpretMavenLog } from "../../../../../../../src/common/delivery/build/local/maven/mavenLogInterpreter";
+import { MavenLogInterpreter } from "../../../../../../../src/common/delivery/build/local/maven/mavenLogInterpreter";
 
-describe("interpretMavenLog", () => {
+describe("MavenLogInterpreter", () => {
 
     it("should handle empty log", () => {
-        const r = interpretMavenLog("");
+        const r = MavenLogInterpreter("");
         assert(!!r);
         assert.equal(r.message, "Failed with empty log");
         assert(!r.data.timeMillis);
     });
 
     it("should handle short failure log", () => {
-        const r = interpretMavenLog(Fail1);
+        const r = MavenLogInterpreter(Fail1);
         assert(!!r);
         assert(r.relevantPart.length > 30);
         assert(r.relevantPart.includes("Unknown lifecycle phase \"build\""), r.relevantPart);
@@ -35,7 +35,7 @@ describe("interpretMavenLog", () => {
     });
 
     it("should handle longer failure log", () => {
-        const r = interpretMavenLog(Fail2);
+        const r = MavenLogInterpreter(Fail2);
         assert(!!r);
         assert(r.relevantPart.length > 30);
         assert(r.relevantPart.includes("COMPILATION ERROR"), r.relevantPart);
@@ -43,7 +43,7 @@ describe("interpretMavenLog", () => {
     });
 
     it("should handle failure with tests", () => {
-        const r = interpretMavenLog(FailWithTests);
+        const r = MavenLogInterpreter(FailWithTests);
         assert(!!r);
         assert(r.relevantPart.length > 30);
         assert(r.relevantPart.includes("There are test failures"), r.relevantPart);
@@ -53,7 +53,7 @@ describe("interpretMavenLog", () => {
     });
 
     it("should handle success log", () => {
-        const r = interpretMavenLog(Success1);
+        const r = MavenLogInterpreter(Success1);
         assert(!!r);
         assert.equal(r.relevantPart, "");
         assert(r.data.timeMillis === 1640);

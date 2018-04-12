@@ -35,7 +35,7 @@ import {
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { createStatus } from "../../../../util/github/ghub";
 import { AddressChannels } from "../../../slack/addressChannels";
-import { interpretMavenLog } from "../local/maven/mavenLogInterpreter";
+import { MavenLogInterpreter } from "../local/maven/mavenLogInterpreter";
 
 const K8AutomationBuildContext = "build/atomist/k8s";
 /**
@@ -67,6 +67,6 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
     }
 
     public logInterpreter(log: string): InterpretedLog | undefined {
-        return interpretMavenLog(log);
+        return MavenLogInterpreter(log);
     }
 }
