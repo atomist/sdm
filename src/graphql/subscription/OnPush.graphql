@@ -19,6 +19,11 @@ subscription OnPush($branch: String!) {
         _id
         login
         name
+        person {
+          chatId {
+            screenName
+          }
+        }
       }
     }
   }
