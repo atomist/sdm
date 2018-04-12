@@ -23,6 +23,7 @@ import { ProgressLog } from "../log/ProgressLog";
 
 export interface PushThatTriggersBuild {
     branch: string;
+    defaultBranch: string;
 
     name: string;
     owner: string;

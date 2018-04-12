@@ -28,6 +28,7 @@ import {
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import {
     SdmVersionForCommit,
+    StatusForExecuteGoal,
 } from "../../../../typings/types";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
@@ -36,7 +37,8 @@ import {
     RunWithLogContext,
 } from "../../goals/support/reportGoalError";
 
-export type ProjectVersioner = (p: GitProject, log: ProgressLog) => Promise<string>;
+export type ProjectVersioner =
+    (status: StatusForExecuteGoal.Fragment, p: GitProject, log: ProgressLog) => Promise<string>;
 
 /**
  * Version the project with a build specific version number
@@ -48,7 +50,7 @@ export function executeVersioner(projectLoader: ProjectLoader,
         const { status, credentials, id, context, progressLog } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
-            const version = await projectVersioner(p, progressLog);
+            const version = await projectVersioner(status, p, progressLog);
             const sdmVersion: SdmVersion = {
                 sha: status.commit.sha,
                 version,

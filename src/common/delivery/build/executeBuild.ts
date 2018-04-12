@@ -16,6 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { Builder } from "../../../spi/build/Builder";
+import { StatusForExecuteGoal } from "../../../typings/types";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
@@ -32,10 +33,6 @@ export function executeBuild(projectLoader: ProjectLoader,
         const commit = status.commit;
 
         logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
-        const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
-        const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
-        const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
-        const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
 
         // the builder is expected to result in a complete Build event (which will update the build status)
         // and an ImageLinked event (which will update the artifact status).
@@ -47,10 +44,19 @@ export function executeBuild(projectLoader: ProjectLoader,
                 name: commit.repo.name,
                 owner: commit.repo.owner,
                 providerId: commit.repo.org.provider.providerId,
-                branch: branchToMarkTheBuildWith,
+                branch: branchFromCommit(commit),
+                defaultBranch: commit.repo.defaultBranch,
                 sha: commit.sha,
             },
             progressLog,
             context);
     };
+}
+
+export function branchFromCommit(commit: StatusForExecuteGoal.Commit): string {
+    const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
+    const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
+    const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
+    const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
+    return branchToMarkTheBuildWith;
 }

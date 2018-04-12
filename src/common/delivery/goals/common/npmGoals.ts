@@ -33,14 +33,14 @@ import {
 } from "./commonGoals";
 
 export const NpmBuildGoals = new Goals(
-    "node build",
+    "Node.js Build",
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
 );
 
 export const NpmDeployGoals = new Goals(
-    "node deploy",
+    "Node.js Deploy",
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
@@ -50,7 +50,7 @@ export const NpmDeployGoals = new Goals(
 );
 
 export const NpmDockerGoals = new Goals(
-    "node docker",
+    "Node.js Docker Build",
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
@@ -78,8 +78,8 @@ export const ProductionDockerDeploymentGoal = new GoalWithPrecondition({
     failedDescription: "Prod deployment failure",
 }, StagingDockerDeploymentGoal);
 
-export const NpmDockerDeployGoals = new Goals(
-    "node docker deploy",
+export const NpmKubernetesDeployGoals = new Goals(
+    "Node.js Kubernetes Deploy",
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
