@@ -1,12 +1,12 @@
 {
   "name": "@atomist/sdm",
-  "version": "0.4.0",
-  "description": "GitHub Software Delivery Machine",
+  "version": "0.4.1",
+  "description": "Software Delivery Machine",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atomist/.git"
+    "url": "https://github.com/atomist/sdm.git"
   },
   "keywords": [
     "atomist",
@@ -85,7 +85,6 @@
     "lint:gql": "prettier --list-different \"src/graphql/**/*.graphql\"",
     "lint:fix": "npm-run-all lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
-    "start": "atomist start --no-install --no-compile",
     "test": "mocha --exit --require espower-typescript/guess \"test/**/*.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc src",
