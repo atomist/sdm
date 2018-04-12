@@ -1,8 +1,0 @@
-query LastBuildOnRepo($owner: String!, $name: String!) {
-  Build(provider: "sdm", orderBy: [name_desc]) {
-    repo(owner: $owner, name: $name) @required {
-      id
-    }
-    name
-  }
-}

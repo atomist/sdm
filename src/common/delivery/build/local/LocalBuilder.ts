@@ -27,9 +27,9 @@ import {
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
+import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
-import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import {
@@ -39,13 +39,14 @@ import {
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { LastBuildOnRepo } from "../../../../typings/types";
+import { SdmBuildIdentifierForRepo } from "../../../../typings/types";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { createTagForStatus } from "../executeTag";
 import { readSdmVersion } from "./projectVersioner";
+import SdmBuildIdentifier = SdmBuildIdentifierForRepo.SdmBuildIdentifier;
 
 export interface LocalBuildInProgress {
 
@@ -82,7 +83,7 @@ export abstract class LocalBuilder implements Builder {
                                context: HandlerContext): Promise<HandlerResult> {
         const as = this.artifactStore;
         const atomistTeam = context.teamId;
-        const buildNo = await this.obtainBuildNo(id, context);
+        const buildNo = await this.obtainBuildIdentifier(push, context);
 
         try {
             const rb = await this.startBuild(credentials, id, atomistTeam, log, addressChannels);
@@ -198,18 +199,37 @@ export abstract class LocalBuilder implements Builder {
             .then(() => runningBuild);
     }
 
-    protected obtainBuildNo(id: RemoteRepoRef, ctx: HandlerContext): Promise<string> {
-        return ctx.graphClient.query<LastBuildOnRepo.Query, LastBuildOnRepo.Variables>({
-                name: "LastBuildOnRepo",
+    protected async obtainBuildIdentifier(push: PushThatTriggersBuild,
+                                          ctx: HandlerContext): Promise<string> {
+        const result = await ctx.graphClient.query<SdmBuildIdentifierForRepo.Query, SdmBuildIdentifierForRepo.Variables>({
+                name: "SdmBuildIdentifierForRepo",
                 variables: {
-                    owner: id.owner,
-                    name: id.repo,
+                    owner: [push.owner],
+                    name: [push.name],
+                    providerId: [push.providerId],
                 },
                 options: QueryNoCacheOptions,
-            }).then(result => {
-                const no: string = _.get(result, "Build[0].name") || "0";
-                return (+no + 1).toString();
             });
+
+        let buildIdentifier: SdmBuildIdentifier;
+        if (result.SdmBuildIdentifier && result.SdmBuildIdentifier.length === 1) {
+            buildIdentifier = result.SdmBuildIdentifier[0];
+        } else {
+            buildIdentifier = {
+                identifier: "0",
+                repo: {
+                    owner: push.owner,
+                    name: push.name,
+                    providerId: push.providerId,
+                },
+            };
+        }
+
+        buildIdentifier.identifier = (+buildIdentifier.identifier + 1).toString();
+
+        await ctx.messageClient.send(buildIdentifier, addressEvent("SdmBuildIdentifier"));
+
+        return buildIdentifier.identifier;
     }
 
     protected async createBuildTag(id: RemoteRepoRef,

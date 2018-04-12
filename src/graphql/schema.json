@@ -8746,6 +8746,18 @@
                   }
                 },
                 {
+                  "name": "uniqueName",
+                  "description": "Unique name of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
                   "name": "name",
                   "description": "Name of the goal",
                   "type": {
@@ -8876,6 +8888,18 @@
                       "name": "Boolean"
                     }
                   }
+                },
+                {
+                  "name": "data",
+                  "description": "Serialized data of the goal execution",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
                 }
               ]
             },
@@ -8959,6 +8983,85 @@
                 {
                   "name": "version",
                   "description": "Version associated with a commit",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmBuildIdentifier",
+              "description": "Auto-generated query for SdmBuildIdentifier",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmBuildIdentifier"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmBuildIdentifier",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "identifier",
+                  "description": "Identifier of build",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -48126,7 +48229,7 @@
         },
         {
           "kind": "OBJECT",
-          "name": "GoalFulfillment",
+          "name": "SdmGoalFulfillment",
           "fields": [
             {
               "name": "method",
@@ -48163,6 +48266,15 @@
                   "name": "compositeId"
                 }
               ],
+              "args": []
+            },
+            {
+              "name": "uniqueName",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Unique name of the goal",
               "args": []
             },
             {
@@ -48278,7 +48390,7 @@
               ],
               "type": {
                 "kind": "OBJECT",
-                "name": "GoalFulfillment"
+                "name": "SdmGoalFulfillment"
               },
               "description": "How the goal gets fulfilled"
             },
@@ -48385,6 +48497,15 @@
                 }
               },
               "description": "Changes to goal",
+              "args": []
+            },
+            {
+              "name": "data",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Serialized data of the goal execution",
               "args": []
             },
             {
@@ -48498,6 +48619,105 @@
             {
               "name": "id",
               "description": "The ID of this SdmVersion",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmBuildIdentifierRepository",
+          "fields": [
+            {
+              "name": "name",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "owner",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            },
+            {
+              "name": "providerId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "args": []
+            }
+          ],
+          "interfaces": []
+        },
+        {
+          "kind": "OBJECT",
+          "name": "SdmBuildIdentifier",
+          "fields": [
+            {
+              "name": "identifier",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Identifier of build",
+              "args": []
+            },
+            {
+              "name": "repo",
+              "args": [
+                {
+                  "name": "name",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "owner",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "providerId",
+                  "type": {
+                    "kind": "LIST",
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmBuildIdentifierRepository"
+              },
+              "description": "Repository the commit/version was observed from"
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SdmBuildIdentifier",
               "type": {
                 "kind": "SCALAR",
                 "name": "ID"
@@ -57505,6 +57725,18 @@
                   }
                 },
                 {
+                  "name": "uniqueName",
+                  "description": "Unique name of the goal",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
                   "name": "name",
                   "description": "Name of the goal",
                   "type": {
@@ -57635,6 +57867,18 @@
                       "name": "Boolean"
                     }
                   }
+                },
+                {
+                  "name": "data",
+                  "description": "Serialized data of the goal execution",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
                 }
               ]
             },
@@ -57718,6 +57962,85 @@
                 {
                   "name": "version",
                   "description": "Version associated with a commit",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "name": "SdmBuildIdentifier",
+              "description": "Auto-generated query for SdmBuildIdentifier",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmBuildIdentifier"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmBuildIdentifier",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "identifier",
+                  "description": "Identifier of build",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -58095,6 +58418,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "08e30a89-a9a7-48b6-8e39-6be9e8fc9193"
+    "correlation_id": "f6967ce9-76f7-4a6e-bdfc-3cf857d14d52"
   }
 }
