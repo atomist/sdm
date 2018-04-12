@@ -1,27 +1,48 @@
 fragment SdmGoalFields on SdmGoal {
-  goalSet
+  id
   environment
+  uniqueName
   name
   sha
   branch
-  state
+  repo {
+    name
+    owner
+    providerId
+  }
   fulfillment {
     method
     name
   }
   description
   url
+  state
   externalKey
+  goalSet
   ts
+  error
+  retryFeasible
   preConditions {
     environment
     name
   }
-  provenance {
-    registration
-    version
-    name
+  approval {
     correlationId
+    registration
+    name
+    version
     ts
+    userId
+    channelId
   }
+  provenance {
+    correlationId
+    registration
+    name
+    version
+    ts
+    userId
+    channelId
+  }
+  data
 }
