@@ -49,7 +49,7 @@ export class SetSupersededStatus implements HandleEvent<OnPushWithBefore.Subscri
         createStatus(params.githubToken, id, {
             context: SupersededContext,
             state: "error",
-            description: `Superseded by \`${push.after.sha.substring(0, 6)}\`: _${truncateCommitMessage(push.after.message, push.repo)}_`,
+            description: `Superseded by \`${push.after.sha.substring(0, 7)}\`: _${truncateCommitMessage(push.after.message, push.repo)}_`,
             target_url: `${id.url}/tree/${id.sha}`,
         });
 
