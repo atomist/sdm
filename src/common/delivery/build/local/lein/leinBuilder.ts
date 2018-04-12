@@ -22,6 +22,7 @@ import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
+import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 
 export const RunBuild: SpawnCommand = asSpawnCommand("lein");
 
@@ -32,12 +33,10 @@ export function leinBuilder(projectLoader: ProjectLoader) {
 }
 
 export const leinLogInterpreter: LogInterpreter = log => {
-    const relevantPart = log.split("\n")
-        .filter(l => l.startsWith("ERROR") || l.includes("ERR!"))
-        .join("\n");
     return {
-        relevantPart,
-        message: "npm errors",
+        // We don't yet know how to interpret clojure logs
+        relevantPart: undefined,
+        message: "lein errors",
         includeFullLog: true,
     };
 };
@@ -47,17 +46,10 @@ export function leinBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOption
         name: "LeinBuilder",
         commands,
         errorFinder: (code, signal, l) => {
-            return l.log.startsWith("[error]") || l.log.includes("ERR!");
+            return code !== 0;
         },
         logInterpreter: leinLogInterpreter,
-        async projectToAppInfo(p: Project): Promise<AppInfo> {
-            // const packageJson = await p.findFile("package.json");
-            // const content = await packageJson.getContent();
-            // const pkg = JSON.parse(content);
-            const name = "name";
-            const version = "version";
-            return {id: p.id as RemoteRepoRef, name, version};
-        },
+        projectToAppInfo: projectCljToAppInfo,
         options: {
             env: {
                 ...process.env,
@@ -66,3 +58,14 @@ export function leinBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOption
         },
     };
 }
+
+export async function projectCljToAppInfo(p: Project): Promise<AppInfo> {
+    const projectClj = await p.findFile("project.clj");
+    const content = await projectClj.getContent();
+    return appInfoGrammar.firstMatch(content);
+}
+
+const appInfoGrammar = Microgrammar.fromString<AppInfo>(
+    "(defproject ${pkg}/${name} \"${version}\"", {
+        name: /[\w-\-]+/,
+    });
