@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { logger } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { Float, Integer } from "@atomist/microgrammar/Primitives";
+import { InterpretedLog } from "../../../../../spi/log/InterpretedLog";
 import { BuildStatus, TestStatus } from "../../BuildInfo";
 
 export function interpretMavenLog(log: string): InterpretedLog<MavenStatus> | undefined {
