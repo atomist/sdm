@@ -27,6 +27,7 @@ const Problems = [{
 export const CommonTypeScriptErrors: ReviewerRegistration = {
     name: "Dangerous TypeScript Errors of the Past",
     action: async cri => {
+        logger.debug("Running TypeScript code review");
         const project = cri.project;
         const result: ProjectReview = {repoId: project.id, comments: []};
         await doWithFiles(project, "**/*.ts", async f => {
