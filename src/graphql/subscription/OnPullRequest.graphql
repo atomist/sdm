@@ -1,0 +1,34 @@
+subscription OnPullRequest {
+  PullRequest {
+    title
+    number
+    body
+    id
+    base {
+      sha
+      message
+    }
+    head {
+      sha
+      message
+      pushes {
+        before {
+          sha
+          message
+        }
+        commits {
+          sha
+          message
+        }
+        branch
+        id
+        repo {
+          ...CoreRepoFieldsAndChannels
+        }
+      }
+    }
+    repo {
+      ...CoreRepoFieldsAndChannels
+    }
+  }
+}

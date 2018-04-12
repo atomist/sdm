@@ -90,6 +90,7 @@ import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/Fulfil
 
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
 import { ChannelLinkListener } from "../common/listener/ChannelLinkListenerInvocation";
+import { PullRequestListener } from "../common/listener/PullRequestListener";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { triggerGoal } from "../handlers/commands/triggerGoal";
@@ -102,6 +103,7 @@ import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler"
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { OnChannelLink } from "../handlers/events/repo/OnChannelLink";
+import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
@@ -152,6 +154,8 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
     public readonly closedIssueListeners: ClosedIssueListener[] = [];
 
     public readonly repoCreationListeners: RepoCreationListener[] = [];
+
+    private readonly pullRequestListeners: PullRequestListener[] = [];
 
     public readonly newRepoWithCodeActions: PushListener[] = [];
 
@@ -347,6 +351,7 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
                 this.updatedIssueListeners.length > 0 ? () => new UpdatedIssueHandler(...this.updatedIssueListeners) : undefined,
                 this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(...this.closedIssueListeners) : undefined,
                 this.channelLinkListeners.length > 0 ? () => new OnChannelLink(this.opts.projectLoader, this.channelLinkListeners) : undefined,
+                this.pullRequestListeners.length > 0 ? () => new OnPullRequest(this.opts.projectLoader, this.pullRequestListeners) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,
@@ -423,6 +428,11 @@ export class SoftwareDeliveryMachine implements NewRepoHandling, ReferenceDelive
 
     public addNewRepoWithCodeActions(...pls: PushListener[]): this {
         this.newRepoWithCodeActions.push(...pls);
+        return this;
+    }
+
+    public addPullRequestListeners(...pls: PullRequestListener[]): this {
+        this.pullRequestListeners.push(...pls);
         return this;
     }
 

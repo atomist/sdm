@@ -53,5 +53,5 @@ export const SuggestAddingCloudFoundryManifest: ChannelLinkListener = async inv 
     const message: slack.SlackMessage = {
         attachments: [attachment],
     };
-    return inv.addressChannels(message);
+    return inv.addressNewlyLinkedChannel(message);
 };
