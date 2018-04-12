@@ -5,11 +5,6 @@ fragment SdmGoalFields on SdmGoal {
   name
   sha
   branch
-  repo {
-    name
-    owner
-    providerId
-  }
   fulfillment {
     method
     name
