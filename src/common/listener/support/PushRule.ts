@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation } from "../Listener";
+import { PushListenerInvocation } from "../PushListener";
 import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied, memoize } from "./pushtest/pushTestUtils";

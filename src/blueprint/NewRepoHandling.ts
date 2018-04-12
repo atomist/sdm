@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushListener } from "../common/listener/Listener";
+import { PushListener } from "../common/listener/PushListener";
 import { RepoCreationListener } from "../common/listener/RepoCreationListener";
 
 /**

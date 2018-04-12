@@ -282,7 +282,7 @@ We frequently want to respond to the creation of a new repository: For example, 
 There are two scenarios to consider:
 
 1. The creation of a new repository. `RepoCreationListener`: [RepoCreationListener](src/common/listener/RepoCreationListener.ts)
-2. The first push to a repository, which uses the more generic [ProjectListener](src/common/listener/Listener.ts)
+2. The first push to a repository, which uses the more generic [ProjectListener](src/common/listener/PushListener.ts)
 
 The second scenario is usually more important, as it is possible to create a repository without any source code or a master branch, which isn't enough to work with for common actions.
 

@@ -16,7 +16,7 @@
 
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
-import { PushListenerInvocation } from "../../listener/Listener";
+import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
 import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";

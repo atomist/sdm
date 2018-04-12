@@ -39,7 +39,7 @@ import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../
 import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
-import { PushListenerInvocation } from "../../../../common/listener/Listener";
+import { PushListenerInvocation } from "../../../../common/listener/PushListener";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";

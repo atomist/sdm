@@ -32,7 +32,7 @@ import * as _ from "lodash";
 import {
     PushListener,
     PushListenerInvocation,
-} from "../../../common/listener/Listener";
+} from "../../../common/listener/PushListener";
 import { AddressChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 

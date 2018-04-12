@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
-import { PushListenerInvocation } from "../../Listener";
+import { PushListenerInvocation } from "../../PushListener";
 import { isPushMapping } from "../../PushMapping";
 import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
 

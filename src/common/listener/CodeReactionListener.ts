@@ -15,7 +15,8 @@
  */
 
 import { StatusForExecuteGoal } from "../../typings/types";
-import { PushListenerInvocation, SdmListener } from "./Listener";
+import { SdmListener } from "./Listener";
+import { PushListenerInvocation } from "./PushListener";
 
 /**
  * Invocation object used by most listeners that react to code changes

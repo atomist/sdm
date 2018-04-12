@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-import { Function1 } from "lodash";
-import { SdmContext } from "../context/SdmContext";
+import { OnPushToAnyBranch } from "../../typings/types";
+import { SdmListener } from "./Listener";
+import { ProjectListenerInvocation } from "./ProjectListener";
 
 /**
- * Common parameters to an invocation of a listener to one of the
- * SDM's specific events. These are fired by our event handlers to allow
- * multiple, domain specific, listeners to be invoked.
+ * Invocation for an event relating to a push on a project.
+ * Many event listeners listen to this type of event.
  */
-export type ListenerInvocation = SdmContext;
+export interface PushListenerInvocation extends ProjectListenerInvocation {
 
-export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R extends any = any> =
-    Function1<I, Promise<R>>;
+    readonly push: OnPushToAnyBranch.Push;
+
+}
+
+export type PushListener = SdmListener<PushListenerInvocation>;

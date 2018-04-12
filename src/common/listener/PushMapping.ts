@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation } from "./Listener";
+import { PushListenerInvocation } from "./PushListener";
 
 export type NeverMatch = null;
 
