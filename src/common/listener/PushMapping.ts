@@ -25,7 +25,8 @@ export type NeverMatch = null;
 export const DoNotSetAnyGoals: NeverMatch = null;
 
 /**
- * Mapping from push to value, it it can be resolved.
+ * Mapping from push to value, id it can be resolved.
+ * This is a central interface used throughout the SDM.
  */
 export interface PushMapping<V> {
 

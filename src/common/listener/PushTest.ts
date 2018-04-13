@@ -19,7 +19,7 @@ import { PushListenerInvocation } from "./PushListener";
 import { PushMapping } from "./PushMapping";
 
 /**
- * Special PushTest. Return true if we like this push. Used in goal setting etc.
+ * Special PushMapping. Return true if we like this push. Used in goal setting etc.
  */
 export interface PushTest extends PushMapping<boolean> {
 
