@@ -1,6 +1,5 @@
 .idea/
 config/
-graphql/
 src/
 test/
 tmp/
@@ -17,3 +16,4 @@ yarn.lock
 schema.json
 scratch.txt
 graphql.config.json
+graphql.schema.json
