@@ -33,14 +33,14 @@ export const DevelopmentEnvOptions = {
 
 export const Install: SpawnCommand = asSpawnCommand("npm ci", DevelopmentEnvOptions);
 
-export const RunBuild: SpawnCommand = asSpawnCommand("npm run build", DevelopmentEnvOptions);
+export const NpmRunBuild: SpawnCommand = asSpawnCommand("npm run build", DevelopmentEnvOptions);
 
 export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile", DevelopmentEnvOptions);
 
 export function nodeRunBuildBuilder(projectLoader: ProjectLoader) {
     return new SpawnBuilder(undefined,
         createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptions([Install, RunBuild]));
+        projectLoader, npmBuilderOptions([Install, NpmRunBuild]));
 }
 
 export function nodeRunCompileBuilder(projectLoader: ProjectLoader) {

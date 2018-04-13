@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import { AutofixRegistration } from "../common/delivery/code/autofix/AutofixRegistration";
-import { CodeActionRegistration } from "../common/delivery/code/CodeActionRegistration";
-import { FingerprinterRegistration } from "../common/delivery/code/fingerprint/FingerprinterRegistration";
-import { ReviewerRegistration } from "../common/delivery/code/review/ReviewerRegistration";
-import { ArtifactListener } from "../common/listener/ArtifactListener";
-import { ChannelLinkListener } from "../common/listener/ChannelLinkListenerInvocation";
-import { ClosedIssueListener } from "../common/listener/ClosedIssueListener";
-import { DeploymentListener } from "../common/listener/DeploymentListener";
-import { FingerprintDifferenceListener } from "../common/listener/FingerprintDifferenceListener";
-import { GoalsSetListener } from "../common/listener/GoalsSetListener";
-import { NewIssueListener } from "../common/listener/NewIssueListener";
-import { PullRequestListener } from "../common/listener/PullRequestListener";
-import { PushListener } from "../common/listener/PushListener";
-import { RepoCreationListener } from "../common/listener/RepoCreationListener";
-import { SupersededListener } from "../common/listener/SupersededListener";
-import { UpdatedIssueListener } from "../common/listener/UpdatedIssueListener";
-import { VerifiedDeploymentListener } from "../common/listener/VerifiedDeploymentListener";
-import { EndpointVerificationListener } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
+import { CodeActionRegistration } from "../../common/delivery/code/CodeActionRegistration";
+import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
+import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
+import { ArtifactListener } from "../../common/listener/ArtifactListener";
+import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
+import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
+import { DeploymentListener } from "../../common/listener/DeploymentListener";
+import { FingerprintDifferenceListener } from "../../common/listener/FingerprintDifferenceListener";
+import { GoalsSetListener } from "../../common/listener/GoalsSetListener";
+import { NewIssueListener } from "../../common/listener/NewIssueListener";
+import { PullRequestListener } from "../../common/listener/PullRequestListener";
+import { PushListener } from "../../common/listener/PushListener";
+import { RepoCreationListener } from "../../common/listener/RepoCreationListener";
+import { SupersededListener } from "../../common/listener/SupersededListener";
+import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
+import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
+import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
 
 /**
  * Simple listener management offering a fluent builder pattern registrations

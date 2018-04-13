@@ -28,7 +28,7 @@ export interface TestStatus {
 /**
  * Data common to all builds
  */
-export interface BuildStatus {
+export interface BuildInfo {
 
     timeMillis?: number;
 

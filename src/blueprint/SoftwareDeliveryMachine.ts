@@ -88,7 +88,7 @@ import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
-import { ListenerRegistrations } from "./ListenerRegistrations";
+import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine

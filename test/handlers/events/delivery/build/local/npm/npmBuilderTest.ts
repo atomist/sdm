@@ -46,7 +46,7 @@
 
     // This is slow and unnecessary, as dog fooding usage tests this
     it.skip("should test", async () => {
-        const b = new TestableNpmBuilder(RunBuild,
+        const b = new TestableNpmBuilder(NpmRunBuild,
             success => assert(success, "Build should have succeeded"));
         await b.initiateBuild({token: process.env.GITHUB_TOKEN},
             new GitHubRepoRef("spring-team", "github-sdm"),
