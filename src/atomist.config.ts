@@ -80,6 +80,7 @@ const machine = createMachine(SdmOptions);
 export const configuration: Configuration = {
     commands: machine.commandHandlers.concat([]),
     events: machine.eventHandlers.concat([]),
+    policy: "ephemeral",
     http: {
         auth: {
             basic: {

@@ -158,7 +158,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .itMeans("Custom build script")
             .set(npmCustomBuilder(options.artifactStore, options.projectLoader)),
         build.when(IsNode, ToDefaultBranch)
-            .itMeans("Try standard node build")
+            .itMeans("npm run compile")
             .set(runBuildBuilder),
         build.when(IsLein)
             .itMeans("Lein build")
@@ -170,7 +170,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             createEphemeralProgressLog, options.projectLoader)));
     sdm.addDeployRules(
         deploy.when(IsMaven)
-            .itMeans("Maven test")
+            .itMeans("mvn test")
             .deployTo(StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal)
             .using(
                 {
@@ -183,7 +183,7 @@ export function cloudFoundryMachine(options: CloudFoundryMachineOptions): Softwa
             .deployTo(ProductionDeploymentGoal, ProductionEndpointGoal, ProductionUndeploymentGoal)
             .using(cloudFoundryProductionDeploySpec(options)),
         deploy.when(IsNode)
-            .itMeans("Node test")
+            .itMeans("node run test")
             .deployTo(StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal)
             .using(cloudFoundryStagingDeploySpec(options)),
     );
