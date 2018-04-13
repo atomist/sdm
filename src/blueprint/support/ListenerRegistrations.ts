@@ -32,11 +32,14 @@ import { SupersededListener } from "../../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { BuildListener } from "../../common/listener/BuildListener";
 
 /**
  * Simple listener management offering a fluent builder pattern registrations
  */
 export class ListenerRegistrations {
+
+    protected readonly buildListeners: BuildListener[] = [];
 
     protected readonly newIssueListeners: NewIssueListener[] = [];
 
@@ -91,6 +94,11 @@ export class ListenerRegistrations {
 
     public addChannelLinkListeners(...e: ChannelLinkListener[]): this {
         this.channelLinkListeners.push(...e);
+        return this;
+    }
+
+    public addBuildListeners(...e: BuildListener[]): this {
+        this.buildListeners.push(...e);
         return this;
     }
 
