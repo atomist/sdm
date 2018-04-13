@@ -343,8 +343,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         return this;
     }
 
-    public addBuildRules(...rules: Array<PushRule<Builder>>): this {
-        rules.forEach(r =>
+    public addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this {
+        _.flatten(rules).forEach(r =>
             this.addGoalImplementation(r.name, BuildGoal,
                 executeBuild(this.opts.projectLoader, r.choice.value),
                 {
@@ -362,8 +362,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         return this;
     }
 
-    public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
-        rules.forEach(r => {
+    public addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this {
+        _.flatten(rules).forEach(r => {
             // deploy
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value),
@@ -412,9 +412,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
      */
     constructor(public readonly name: string,
                 public readonly opts: SoftwareDeliveryMachineOptions,
-                ...goalSetters: GoalSetter[]) {
+                ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
-        this.goalSetters = goalSetters;
+        this.goalSetters = _.flatten(goalSetters);
         addGitHubSupport(this);
         this.addSupportingCommands(
             selfDescribeHandler(this),
