@@ -28,6 +28,7 @@ fragment PushFields on Push {
   }
   commits {
     sha
+    timestamp
     message
     author {
       _id

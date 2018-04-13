@@ -202,14 +202,14 @@ export abstract class LocalBuilder implements Builder {
     protected async obtainBuildIdentifier(push: PushThatTriggersBuild,
                                           ctx: HandlerContext): Promise<string> {
         const result = await ctx.graphClient.query<SdmBuildIdentifierForRepo.Query, SdmBuildIdentifierForRepo.Variables>({
-                name: "SdmBuildIdentifierForRepo",
-                variables: {
-                    owner: [push.owner],
-                    name: [push.name],
-                    providerId: [push.providerId],
-                },
-                options: QueryNoCacheOptions,
-            });
+            name: "SdmBuildIdentifierForRepo",
+            variables: {
+                owner: [push.owner],
+                name: [push.name],
+                providerId: [push.providerId],
+            },
+            options: QueryNoCacheOptions,
+        });
 
         let buildIdentifier: SdmBuildIdentifier;
         if (result.SdmBuildIdentifier && result.SdmBuildIdentifier.length === 1) {
@@ -225,11 +225,12 @@ export abstract class LocalBuilder implements Builder {
             };
         }
 
-        buildIdentifier.identifier = (+buildIdentifier.identifier + 1).toString();
-
-        await ctx.messageClient.send(buildIdentifier, addressEvent("SdmBuildIdentifier"));
-
-        return buildIdentifier.identifier;
+        const bumpedBuildIdentifier = {
+            ...buildIdentifier,
+            identifier: (+buildIdentifier.identifier + 1).toString(),
+        };
+        await ctx.messageClient.send(bumpedBuildIdentifier, addressEvent("SdmBuildIdentifier"));
+        return bumpedBuildIdentifier.identifier;
     }
 
     protected async createBuildTag(id: RemoteRepoRef,

@@ -28,7 +28,7 @@ import {
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
-import { DryRunContext } from "../../../common/command/generator/dry-run/dryRunEditor";
+import { DryRunContext } from "../../../common/command/editor/dry-run/dryRunEditor";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 

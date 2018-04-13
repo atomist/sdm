@@ -5,9 +5,13 @@ subscription OnBuildComplete {
     compareUrl
     name
     status
+    jobId
+    startedAt
+    timestamp
     commit {
       sha
       message
+      timestamp
       repo {
         ...CoreRepoFieldsAndChannels
       }

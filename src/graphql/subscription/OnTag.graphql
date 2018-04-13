@@ -1,0 +1,18 @@
+subscription OnTag {
+  Tag {
+    id
+    name
+    description
+    timestamp
+    release {
+      name
+      id
+      timestamp
+    }
+    commit {
+      repo {
+        ...CoreRepoFieldsAndChannels
+      }
+    }
+  }
+}

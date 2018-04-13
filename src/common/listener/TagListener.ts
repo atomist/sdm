@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-export interface TestStatus {
-
-    passingTests: number;
-
-    pendingTests: number;
-
-    failingTests: number;
-
-    errors: number;
-}
+import { OnTag } from "../../typings/types";
+import { ListenerInvocation, SdmListener } from "./Listener";
+import Tag = OnTag.Tag;
 
 /**
- * Data common to all builds
+ * Invocation when a tag has been created
  */
-export interface BuildInfo {
+export interface TagListenerInvocation extends ListenerInvocation {
 
-    timeMillis?: number;
-
-    success: boolean;
-
-    testInfo?: TestStatus;
+    tag: Tag;
 
 }
+
+export type TagListener = SdmListener<TagListenerInvocation>;

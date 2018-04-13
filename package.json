@@ -1,21 +1,21 @@
 {
-  "name": "@atomist/github-sdm",
-  "version": "0.6.0",
-  "description": "GitHub Software Delivery Machine",
+  "name": "@atomist/sdm",
+  "version": "0.4.1",
+  "description": "Software Delivery Machine",
   "author": "Atomist",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/atomist/github-sdm.git"
+    "url": "https://github.com/atomist/sdm.git"
   },
   "keywords": [
     "atomist",
     "automation",
     "github"
   ],
-  "homepage": "https://github.com/atomist/github-sdm#readme",
+  "homepage": "https://github.com/atomist/sdm#readme",
   "bugs": {
-    "url": "https://github.com/atomist/github-sdm/issues"
+    "url": "https://github.com/atomist/sdm/issues"
   },
   "dependencies": {
     "@atomist/automation-client": "https://r.atomist.com/B1N-WJB3of",
@@ -44,6 +44,7 @@
     "@types/node": "^8.9.5",
     "@types/power-assert": "^1.4.29",
     "apollo-codegen": "^0.19.0",
+    "barrelsby": "0.0.8",
     "espower-typescript": "^8.1.3",
     "graphql-code-generator": "^0.8.19",
     "mocha": "^4.1.0",
@@ -64,7 +65,7 @@
   "scripts": {
     "autostart": "npm-run-all --print-label --parallel watch:compile watch",
     "autotest": "supervisor --watch src,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
-    "build": "npm-run-all compile test",
+    "build": "npm-run-all compile generate:barrels test package:copy",
     "clean": "npm-run-all clean:js clean:build",
     "clean:build": "rimraf *-v8.log profile.txt build",
     "clean:dist": "npm-run-all clean clean:npm",
@@ -77,6 +78,7 @@
     "fmt": "npm-run-all fmt:ts fmt:gql",
     "fmt:ts": "tsfmt --replace",
     "fmt:gql": "prettier --write \"**/*.graphql\"",
+    "generate:barrels": "barrelsby --delete -d src --i '.*/listener/.*' --i 'blueprint/SoftwareDel.*' --i 'blueprint/FunctionalU.*' --i 'goalDsl' --i 'spi/.*' --i 'common/command' --i 'common/artifact' --i 'common/log' --i 'common/delivery' --i 'ProjectLoader' --i OnDryRunBuildComplete --i Config --i 'regexpReviewer' --i typings/.*",
     "git:info": "atomist git",
     "gql:copy": "copyfiles \"./src/**/*.graphql\" build",
     "gql:gen": "atomist gql-gen \"src/graphql/**/*.graphql\"",
@@ -85,7 +87,7 @@
     "lint:gql": "prettier --list-different \"src/graphql/**/*.graphql\"",
     "lint:fix": "npm-run-all lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
-    "start": "atomist start --no-install --no-compile",
+    "package:copy": "copyfiles \"package.json\" build/src",
     "test": "mocha --exit --require espower-typescript/guess \"test/**/*.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc src",

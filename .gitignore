@@ -13,8 +13,5 @@ npm-debug.log
 graphql.config.json
 git-info.json
 
-community.sh
-spring-team.sh
-
 *.log
 *.log.gz

@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-export interface TestStatus {
-
-    passingTests: number;
-
-    pendingTests: number;
-
-    failingTests: number;
-
-    errors: number;
-}
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Project } from "@atomist/automation-client/project/Project";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../common/repo/ProjectLoader";
 
 /**
- * Data common to all builds
+ * ProjectLoader that can only return one project.
  */
-export interface BuildInfo {
+export class SingleProjectLoader implements ProjectLoader {
 
-    timeMillis?: number;
+    constructor(private readonly project: Project) {}
 
-    success: boolean;
-
-    testInfo?: TestStatus;
-
+    public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
+        return action(this.project as GitProject);
+    }
 }

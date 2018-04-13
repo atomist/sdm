@@ -25,8 +25,8 @@ import { RunWithLogContext } from "../../../../src/common/delivery/goals/support
 import { createEphemeralProgressLog } from "../../../../src/common/log/EphemeralProgressLog";
 import { executeGoal } from "../../../../src/handlers/events/delivery/goals/executeGoal";
 import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";
-import { SingleProjectLoader } from "../../../common/SingleProjectLoader";
-import { fakeContext } from "../../../software-delivery-machine/FakeContext";
+import { fakeContext } from "../../../../src/util/test/fakeContext";
+import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 
 const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
     rwlc.progressLog.write("Hello world\n");

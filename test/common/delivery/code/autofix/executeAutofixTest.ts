@@ -20,11 +20,20 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
+import { AutofixRegistration } from "../../../../../src/common/delivery/code/autofix/AutofixRegistration";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
-import { AddAtomistTypeScriptHeader } from "../../../../../src/software-delivery-machine/blueprint/code/autofix/addAtomistHeader";
-import { ApacheHeader } from "../../../../../src/software-delivery-machine/commands/editors/license/addHeader";
-import { SingleProjectLoader } from "../../../SingleProjectLoader";
-import { fakeRunWithLogContext } from "../fakeRunWithLogContext";
+import { IsTypeScript } from "../../../../../src/common/listener/support/pushtest/node/tsPushTests";
+import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
+
+const AddThingAutofix: AutofixRegistration = {
+    name: "thinger",
+    pushTest: IsTypeScript,
+    action: async cri => {
+        await cri.project.addFile("thing", "1");
+        return { edited: true, success: true, target: cri.project};
+    },
+};
 
 describe("executeAutofixes", () => {
 
@@ -41,7 +50,7 @@ describe("executeAutofixes", () => {
         const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
         assert(r.code === 0);
         assert(p.findFileSync(f.path).getContentSync() === initialContent);
     });
@@ -54,10 +63,9 @@ describe("executeAutofixes", () => {
         (p as any as GitProject).revert = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl, [AddAtomistTypeScriptHeader])(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
         assert(r.code === 0);
-        assert(p.findFileSync(f.path).getContentSync().startsWith(ApacheHeader));
-        assert(p.findFileSync(f.path).getContentSync().includes(initialContent));
+        assert.equal(p.findFileSync("thing").getContentSync(), "1");
     });
 
 });

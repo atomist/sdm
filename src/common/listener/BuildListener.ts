@@ -14,26 +14,19 @@
  * limitations under the License.
  */
 
-export interface TestStatus {
-
-    passingTests: number;
-
-    pendingTests: number;
-
-    failingTests: number;
-
-    errors: number;
-}
+import { OnBuildComplete } from "../../typings/types";
+import { ListenerInvocation, SdmListener } from "./Listener";
+import Build = OnBuildComplete.Build;
 
 /**
- * Data common to all builds
+ * Invocation for a build on a project. Not a part of our delivery control:
+ * Purely for observational purposes, such as determining the time
+ * a build took.
  */
-export interface BuildInfo {
+export interface BuildListenerInvocation extends ListenerInvocation {
 
-    timeMillis?: number;
-
-    success: boolean;
-
-    testInfo?: TestStatus;
+   build: Build;
 
 }
+
+export type BuildListener = SdmListener<BuildListenerInvocation>;

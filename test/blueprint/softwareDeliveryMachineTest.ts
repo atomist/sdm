@@ -28,7 +28,7 @@ import { Goals } from "../../src/common/delivery/goals/Goals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushFields } from "../../src/typings/types";
-import { SingleProjectLoader } from "../common/SingleProjectLoader";
+import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",

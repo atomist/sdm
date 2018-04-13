@@ -18,11 +18,11 @@ import { logger } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { Float, Integer } from "@atomist/microgrammar/Primitives";
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
-import { BuildStatus, TestStatus } from "../../BuildInfo";
+import { BuildInfo, TestStatus } from "../../BuildInfo";
 
-export const MavenLogInterpreter: LogInterpreter<MavenStatus> = log => {
+export const MavenLogInterpreter: LogInterpreter<MavenInfo> = log => {
     const timingInfo = timingGrammar.firstMatch(log);
-    const data: MavenStatus = {
+    const data: MavenInfo = {
         timeMillis: timingInfo ? timingInfo.seconds * 1000 : undefined,
         success: log.includes("BUILD SUCCESS\----"),
         testInfo: testSummaryGrammar.firstMatch(log) || undefined,
@@ -89,7 +89,7 @@ function appFailedToStart(log: string) {
     return likelyLines.join("\n");
 }
 
-export type MavenStatus = BuildStatus;
+export type MavenInfo = BuildInfo;
 
 function mavenErrors(log: string): string | undefined {
     const relevantPart = log.split("\n")
@@ -110,7 +110,7 @@ const timingGrammar = Microgrammar.fromString<{ seconds: number }>("Total time: 
 
 /**
  * Microgrammar for Maven test output
- * @type {Microgrammar<MavenStatus>}
+ * @type {Microgrammar<MavenInfo>}
  */
 const testSummaryGrammar = Microgrammar.fromString<TestStatus>(
     "Tests run: ${testsRun}, Failures: ${failingTests}, Errors: ${errors}, Skipped: ${pendingTests}",

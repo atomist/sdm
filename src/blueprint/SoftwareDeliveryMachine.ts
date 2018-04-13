@@ -75,6 +75,7 @@ import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/dep
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { triggerGoal } from "../handlers/commands/triggerGoal";
+import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -85,10 +86,11 @@ import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { OnChannelLink } from "../handlers/events/repo/OnChannelLink";
 import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
+import { OnTag } from "../handlers/events/repo/OnTag";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
-import { ListenerRegistrations } from "./ListenerRegistrations";
+import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
@@ -291,6 +293,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
+                this.buildListeners.length > 0 ? () => new InvokeListenersOnBuildComplete(this.buildListeners) : undefined,
+                this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners) : undefined,
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,
                 this.updatedIssueListeners.length > 0 ? () => new UpdatedIssueHandler(...this.updatedIssueListeners) : undefined,
                 this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(...this.closedIssueListeners) : undefined,
@@ -343,8 +347,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         return this;
     }
 
-    public addBuildRules(...rules: Array<PushRule<Builder>>): this {
-        rules.forEach(r =>
+    public addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this {
+        _.flatten(rules).forEach(r =>
             this.addGoalImplementation(r.name, BuildGoal,
                 executeBuild(this.opts.projectLoader, r.choice.value),
                 {
@@ -362,8 +366,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         return this;
     }
 
-    public addDeployRules(...rules: Array<StaticPushMapping<Target>>): this {
-        rules.forEach(r => {
+    public addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this {
+        _.flatten(rules).forEach(r => {
             // deploy
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value),
@@ -412,9 +416,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
      */
     constructor(public readonly name: string,
                 public readonly opts: SoftwareDeliveryMachineOptions,
-                ...goalSetters: GoalSetter[]) {
+                ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
-        this.goalSetters = goalSetters;
+        this.goalSetters = _.flatten(goalSetters);
         addGitHubSupport(this);
         this.addSupportingCommands(
             selfDescribeHandler(this),

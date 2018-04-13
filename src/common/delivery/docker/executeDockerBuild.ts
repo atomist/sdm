@@ -16,7 +16,6 @@
 
 import { HandlerContext } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
-import { DockerOptions } from "../../../software-delivery-machine/parts/stacks/dockerSupport";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
@@ -27,6 +26,12 @@ import {
     ExecuteGoalWithLog,
     RunWithLogContext,
 } from "../goals/support/reportGoalError";
+
+export interface DockerOptions {
+    registry: string;
+    user: string;
+    password: string;
+}
 
 export type DockerImageNameCreator = (p: Project,
                                       status: StatusForExecuteGoal.Fragment,
