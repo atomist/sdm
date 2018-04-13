@@ -41,7 +41,7 @@ import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/deliv
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { FunctionalUnit } from "./FunctionalUnit";
+import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 
 import * as _ from "lodash";
@@ -194,7 +194,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     private get goalSetting(): FunctionalUnit {
         if (this.goalSetters.length === 0) {
             logger.warn("No goal setters");
-            return undefined;
+            return EmptyFunctionalUnit;
         }
         return {
             eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners,
