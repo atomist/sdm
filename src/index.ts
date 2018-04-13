@@ -53,6 +53,7 @@ export * from "./common/delivery/code/review/checkstyle/CheckstyleReport";
 export * from "./common/delivery/code/review/checkstyle/checkStyleReportToReview";
 export * from "./common/delivery/code/review/checkstyle/checkstyleReportExtractor";
 export * from "./common/delivery/code/review/checkstyle/checkstyleReviewer";
+export * from "./common/delivery/code/review/support/regexpReviewer";
 export * from "./common/delivery/deploy/deploy";
 export * from "./common/delivery/deploy/executeDeploy";
 export * from "./common/delivery/deploy/executeUndeploy";
