@@ -30,6 +30,7 @@ import { PullRequestListener } from "../../common/listener/PullRequestListener";
 import { PushListener } from "../../common/listener/PushListener";
 import { RepoCreationListener } from "../../common/listener/RepoCreationListener";
 import { SupersededListener } from "../../common/listener/SupersededListener";
+import { TagListener } from "../../common/listener/TagListener";
 import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
@@ -40,6 +41,8 @@ import { EndpointVerificationListener } from "../../handlers/events/delivery/ver
 export class ListenerRegistrations {
 
     protected readonly buildListeners: BuildListener[] = [];
+
+    protected readonly tagListeners: TagListener[] = [];
 
     protected readonly newIssueListeners: NewIssueListener[] = [];
 
@@ -89,6 +92,11 @@ export class ListenerRegistrations {
 
     public addClosedIssueListeners(...e: ClosedIssueListener[]): this {
         this.closedIssueListeners.push(...e);
+        return this;
+    }
+
+    public addTagListeners(...e: TagListener[]): this {
+        this.tagListeners.push(...e);
         return this;
     }
 
