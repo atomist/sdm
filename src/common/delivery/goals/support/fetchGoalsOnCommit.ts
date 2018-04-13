@@ -56,7 +56,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
             branch: id.branch,
             sha: id.sha,
             providerId,
-            qty: 100,
+            qty: 200,
         },
         options: QueryNoCacheOptions,
     });
@@ -69,8 +69,8 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
     if (result.SdmGoal.some(g => !g)) {
         logger.warn("Internal error: Null or undefined goal found for commit %j, provider %s", id, providerId);
     }
-    if (result.SdmGoal.length === 100) {
-        logger.warn("Watch out! There may be more goals than this. We only retrieve 100.");
+    if (result.SdmGoal.length === 200) {
+        logger.warn("Watch out! There may be more goals than this. We only retrieve 200.");
         // automation-api#399 paging is not well-supported yet
     }
 

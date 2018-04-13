@@ -1,6 +1,6 @@
 FROM ubuntu
 
-LABEL maintainer="Christian Dupuis <cd@atmoist.com>"
+LABEL maintainer="Christian Dupuis <cd@atomist.com>"
 
 RUN apt-get -yqq update && apt-get install -yqq \
     curl
@@ -30,7 +30,7 @@ ENV NPM_CONFIG_LOGLEVEL warn
 ENV SUPPRESS_NO_CONFIG_WARNING true
 ENV NODE_ENV production
 
-RUN npm install
+RUN npm ci
 
 # Bundle app source
 COPY . /app
