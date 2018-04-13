@@ -15,12 +15,12 @@
  */
 
 import { AllFiles } from "@atomist/automation-client/project/fileGlobs";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
-import { CodeReactionInvocation } from "../../../../../../src/common/listener/CodeReactionListener";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { regexpReviewer } from "../../../../../../src/common/delivery/code/review/support/regexpReviewer";
 import { ReviewerRegistration } from "../../../../../../src/common/delivery/code/review/ReviewerRegistration";
+import { regexpReviewer } from "../../../../../../src/common/delivery/code/review/support/regexpReviewer";
+import { CodeReactionInvocation } from "../../../../../../src/common/listener/CodeReactionListener";
 
 describe("regexpReviewer", () => {
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { ListenerInvocation, SdmListener } from "./Listener";
 import { OnBuildComplete } from "../../typings/types";
+import { ListenerInvocation, SdmListener } from "./Listener";
 import Build = OnBuildComplete.Build;
 
 /**

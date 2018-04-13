@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success, } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { BuildListener, BuildListenerInvocation } from "../../../../common/listener/BuildListener";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnBuildComplete } from "../../../../typings/types";
-import { BuildListener, BuildListenerInvocation } from "../../../../common/listener/BuildListener";
 
 /**
  * Invoke listeners on complete build. Not a part of our delivery flow:
@@ -31,7 +31,7 @@ export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComple
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
 
-    constructor(private listeners: BuildListener[]) {
+    constructor(private readonly listeners: BuildListener[]) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>,

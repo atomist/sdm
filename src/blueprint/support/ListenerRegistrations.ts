@@ -19,6 +19,7 @@ import { CodeActionRegistration } from "../../common/delivery/code/CodeActionReg
 import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
 import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
 import { ArtifactListener } from "../../common/listener/ArtifactListener";
+import { BuildListener } from "../../common/listener/BuildListener";
 import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
 import { DeploymentListener } from "../../common/listener/DeploymentListener";
@@ -32,7 +33,6 @@ import { SupersededListener } from "../../common/listener/SupersededListener";
 import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
 import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
-import { BuildListener } from "../../common/listener/BuildListener";
 
 /**
  * Simple listener management offering a fluent builder pattern registrations

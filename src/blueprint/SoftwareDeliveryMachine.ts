@@ -75,6 +75,7 @@ import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/dep
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { triggerGoal } from "../handlers/commands/triggerGoal";
+import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
@@ -89,7 +90,6 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
-import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine
