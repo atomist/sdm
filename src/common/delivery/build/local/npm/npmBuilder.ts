@@ -23,7 +23,9 @@ import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 import { NpmLogInterpreter } from "./npmLogInterpreter";
 
-// Options to use when running node commands like npm run compile that require dev dependencies to be installed
+/**
+ * Options to use when running node commands like npm run compile that require dev dependencies to be installed
+ */
 export const DevelopmentEnvOptions = {
     env: {
         ...process.env,
@@ -33,23 +35,13 @@ export const DevelopmentEnvOptions = {
 
 export const Install: SpawnCommand = asSpawnCommand("npm ci", DevelopmentEnvOptions);
 
-export const NpmRunBuild: SpawnCommand = asSpawnCommand("npm run build", DevelopmentEnvOptions);
-
-export const RunCompile: SpawnCommand = asSpawnCommand("npm run compile", DevelopmentEnvOptions);
-
-export function nodeRunBuildBuilder(projectLoader: ProjectLoader) {
+export function nodeBuilder(projectLoader: ProjectLoader, ...commands: string[]) {
     return new SpawnBuilder(undefined,
         createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptions([Install, NpmRunBuild]));
+        projectLoader, npmBuilderOptions(commands.map(cmd => asSpawnCommand(cmd, DevelopmentEnvOptions))));
 }
 
-export function nodeRunCompileBuilder(projectLoader: ProjectLoader) {
-    return new SpawnBuilder(undefined,
-        createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptions([Install, RunCompile]));
-}
-
-export function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions {
+function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions {
     return {
         name: "NpmBuilder",
         commands,
