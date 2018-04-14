@@ -15,6 +15,7 @@
  */
 
 import {
+    IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
 } from "../gitHubContext";
@@ -32,32 +33,15 @@ import {
     VersionGoal,
 } from "./commonGoals";
 
-export const NpmBuildGoals = new Goals(
-    "Node.js Build",
-    ReviewGoal,
-    AutofixGoal,
-    BuildGoal,
-);
-
-export const NpmDeployGoals = new Goals(
-    "Node.js Deploy",
-    ReviewGoal,
-    AutofixGoal,
-    BuildGoal,
-    ArtifactGoal,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-);
-
-export const NpmDockerGoals = new Goals(
-    "Node.js Docker Build",
-    VersionGoal,
-    ReviewGoal,
-    AutofixGoal,
-    BuildGoal,
-    DockerBuildGoal,
-    TagGoal,
-);
+export const NpmPublishGoal = new GoalWithPrecondition({
+    uniqueCamelCaseName: "Publish",
+    environment: IndependentOfEnvironment,
+    orderedName: "2-publish",
+    displayName: "publish",
+    workingDescription: "Publishing...",
+    completedDescription: "Published",
+    failedDescription: "Published failed",
+}, BuildGoal);
 
 export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "DeployToTest",
@@ -78,12 +62,44 @@ export const ProductionDockerDeploymentGoal = new GoalWithPrecondition({
     failedDescription: "Prod deployment failure",
 }, StagingDockerDeploymentGoal);
 
+export const NpmDeployGoals = new Goals(
+    "Node.js Deploy",
+    ReviewGoal,
+    AutofixGoal,
+    BuildGoal,
+    ArtifactGoal,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
+);
+
+export const NpmBuildGoals = new Goals(
+    "Node.js Build",
+    VersionGoal,
+    ReviewGoal,
+    AutofixGoal,
+    BuildGoal,
+    NpmPublishGoal,
+    TagGoal,
+);
+
+export const NpmDockerGoals = new Goals(
+    "Node.js Docker Build",
+    VersionGoal,
+    ReviewGoal,
+    AutofixGoal,
+    BuildGoal,
+    NpmPublishGoal,
+    DockerBuildGoal,
+    TagGoal,
+);
+
 export const NpmKubernetesDeployGoals = new Goals(
     "Node.js Kubernetes Deploy",
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
     BuildGoal,
+    NpmPublishGoal,
     DockerBuildGoal,
     TagGoal,
     StagingDockerDeploymentGoal,

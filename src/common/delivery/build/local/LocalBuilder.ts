@@ -238,7 +238,7 @@ export abstract class LocalBuilder implements Builder {
                                    buildNo: string,
                                    context: HandlerContext,
                                    credentials: ProjectOperationCredentials) {
-        const version = await readSdmVersion(push.owner, push.name, push.providerId, push.sha, context);
+        const version = await readSdmVersion(push.owner, push.name, push.providerId, push.sha, id.branch, context);
         if (version) {
             await createTagForStatus(
                 id,

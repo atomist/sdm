@@ -30,7 +30,7 @@ import { OnPushWithBefore } from "../../../../typings/types";
 import { createStatus } from "../../../../util/github/ghub";
 import { truncateCommitMessage } from "../../../../util/lifecycleHelpers";
 
-export const SupersededContext = "superseded";
+export const SupersededContext = "superseded/atomist";
 
 /**
  * Set superseded status on previous commit on a push

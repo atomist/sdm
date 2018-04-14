@@ -40,8 +40,10 @@ export function preconditionsAreMet(goal: SdmGoal, info: {
 function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoal[]): boolean {
     const preconditionGoal = mapKeyToGoal(goalsForCommit)(preconditionKey);
     if (!preconditionGoal) {
+        // TODO CD I'd suggest that goals that have a precondition that doesn't exist in the goal set
+        // are satisfied
         logger.error("Precondition %s not found on commit", goalKeyString(preconditionKey));
-        return false;
+        return true;
     }
     switch (preconditionGoal.state) {
         case "failure":

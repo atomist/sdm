@@ -20,6 +20,7 @@ import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../repo/ProjectLoader";
+import { branchFromCommit } from "../build/executeBuild";
 import { readSdmVersion } from "../build/local/projectVersioner";
 import { ExecuteGoalResult } from "../goals/goalExecution";
 import {
@@ -124,7 +125,7 @@ export const DefaultDockerImageNameCreator: DockerImageNameCreator = async (p, s
     const name = p.name;
     const commit = status.commit;
     const version = await readSdmVersion(commit.repo.owner, commit.repo.name,
-        commit.repo.org.provider.providerId, commit.sha, context);
+        commit.repo.org.provider.providerId, commit.sha, branchFromCommit(commit), context);
     return {
         registry: options.registry,
         name,

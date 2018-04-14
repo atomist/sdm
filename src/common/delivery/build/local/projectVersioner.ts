@@ -53,6 +53,7 @@ export function executeVersioner(projectLoader: ProjectLoader,
             const version = await projectVersioner(status, p, progressLog);
             const sdmVersion: SdmVersion = {
                 sha: status.commit.sha,
+                branch: id.branch,
                 version,
                 repo: {
                     owner: status.commit.repo.owner,
@@ -70,6 +71,7 @@ export async function readSdmVersion(owner: string,
                                      name: string,
                                      providerId: string,
                                      sha: string,
+                                     branch: string,
                                      context: HandlerContext): Promise<string> {
     const version = await context.graphClient.query<SdmVersionForCommit.Query, SdmVersionForCommit.Variables>({
             name: "SdmVersionForCommit",
@@ -78,6 +80,7 @@ export async function readSdmVersion(owner: string,
                 owner: [owner],
                 providerId: [providerId],
                 sha: [sha],
+                branch: [branch],
             },
         });
     return _.get(version, "SdmVersion[0].version");

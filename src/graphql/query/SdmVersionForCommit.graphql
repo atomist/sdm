@@ -1,10 +1,11 @@
 query SdmVersionForCommit(
-  $sha: [String!]
-  $name: [String!]
-  $owner: [String!]
-  $providerId: [String!]
+$sha: [String!]
+$branch: [String!]
+$name: [String!]
+$owner: [String!]
+$providerId: [String!]
 ) {
-  SdmVersion(sha: $sha) {
+  SdmVersion(sha: $sha, branch: $branch, _orderBy: "version") {
     repo(name: $name, owner: $owner, providerId: $providerId) {
       name
       owner

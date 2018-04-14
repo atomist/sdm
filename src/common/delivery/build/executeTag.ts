@@ -42,7 +42,7 @@ export function executeTag(projectLoader: ProjectLoader): ExecuteGoalWithLog {
             const commit = status.commit;
 
             const version = await readSdmVersion(commit.repo.owner, commit.repo.name,
-                commit.repo.org.provider.providerId, commit.sha, context);
+                commit.repo.org.provider.providerId, commit.sha, id.branch, context);
             await createTagForStatus(id, commit.sha, commit.message, version, credentials);
 
             return Success;
