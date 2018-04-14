@@ -15,13 +15,13 @@
  */
 
 import { OnTag } from "../../typings/types";
-import { ListenerInvocation, SdmListener } from "./Listener";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 import Tag = OnTag.Tag;
 
 /**
  * Invocation when a tag has been created
  */
-export interface TagListenerInvocation extends ListenerInvocation {
+export interface TagListenerInvocation extends RepoListenerInvocation {
 
     tag: Tag;
 

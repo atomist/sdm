@@ -23,16 +23,18 @@ import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../../../typings/types";
 import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
-import { SdmContext } from "../../../context/SdmContext";
+import { RepoContext } from "../../../context/SdmContext";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { Goal } from "../Goal";
 import { ExecuteGoalResult } from "../goalExecution";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-export interface RunWithLogContext extends SdmContext {
+export interface RunWithLogContext extends RepoContext {
+
     status: StatusForExecuteGoal.Fragment;
     progressLog: ProgressLog;
+
 }
 
 /**

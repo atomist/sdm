@@ -32,6 +32,7 @@ import { RepoCreationListener } from "../../common/listener/RepoCreationListener
 import { SupersededListener } from "../../common/listener/SupersededListener";
 import { TagListener } from "../../common/listener/TagListener";
 import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
+import { UserJoiningChannelListener } from "../../common/listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
 
@@ -41,6 +42,8 @@ import { EndpointVerificationListener } from "../../handlers/events/delivery/ver
 export class ListenerRegistrations {
 
     protected readonly buildListeners: BuildListener[] = [];
+
+    protected readonly userJoiningChannelListeners: UserJoiningChannelListener[] = [];
 
     protected readonly tagListeners: TagListener[] = [];
 
@@ -189,6 +192,11 @@ export class ListenerRegistrations {
 
     public addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this {
         this.endpointVerificationListeners.push(...l);
+        return this;
+    }
+
+    public addUserJoiningChannelListeners(...l: UserJoiningChannelListener[]): this {
+        this.userJoiningChannelListeners.push(...l);
         return this;
     }
 

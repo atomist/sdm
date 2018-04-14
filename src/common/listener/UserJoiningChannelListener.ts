@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-import { StatusState } from "../../typings/types";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import * as schema from "../../typings/types";
+import { ListenerInvocation, SdmListener } from "./Listener";
 
-export interface StatusInfo {
-    state?: StatusState | null;
-    targetUrl?: string | null;
-    context?: string | null;
+export interface UserJoiningChannelListenerInvocation extends ListenerInvocation {
+
+    joinEvent: schema.OnUserJoiningChannel.UserJoinedChannel;
+
+    /**
+     * Any linked repo refs
+     */
+    repos: RemoteRepoRef[];
 }
 
 /**
- * Represents a verified deployment
+ * Respond to a user joining a channel
  */
-export interface VerifiedDeploymentInvocation extends RepoListenerInvocation {
-    status: StatusInfo;
-}
-
-export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentInvocation>;
+export type UserJoiningChannelListener = SdmListener<UserJoiningChannelListenerInvocation>;

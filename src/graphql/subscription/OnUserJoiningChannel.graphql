@@ -1,0 +1,13 @@
+subscription OnUserJoiningChannel {
+  UserJoinedChannel {
+    user @required {
+      screenName
+    }
+    channel {
+      name
+      repos {
+        ...CoreRepoFieldsAndChannels
+      }
+    }
+  }
+}

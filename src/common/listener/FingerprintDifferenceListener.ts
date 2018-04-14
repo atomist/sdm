@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ListenerInvocation, SdmListener } from "./Listener";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 
 export interface FingerprintValue {
     name: string;
@@ -32,7 +32,7 @@ export interface FingerprintDifference {
     newValue?: FingerprintValue;
 }
 
-export interface FingerprintDifferenceInvocation extends ListenerInvocation {
+export interface FingerprintDifferenceInvocation extends RepoListenerInvocation {
 
     diffs: FingerprintDifference[];
 }

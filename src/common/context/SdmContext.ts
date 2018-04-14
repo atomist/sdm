@@ -25,11 +25,6 @@ import { AddressChannels } from "../slack/addressChannels";
 export interface SdmContext {
 
     /**
-     * The repo this relates to
-     */
-    id: RemoteRepoRef;
-
-    /**
      * Context of the Atomist EventHandler invocation. Use to run GraphQL
      * queries, use the messageClient directly and find
      * the team and correlation id
@@ -37,13 +32,25 @@ export interface SdmContext {
     context: HandlerContext;
 
     /**
-     * If available, provides a way to address the channel(s) related to this repo.
-     */
-    addressChannels?: AddressChannels;
-
-    /**
      * Credentials for use with source control hosts such as GitHub
      */
     credentials: ProjectOperationCredentials;
+
+}
+
+/**
+ * Context for an SDM action on a particular repo
+ */
+export interface RepoContext extends SdmContext {
+
+    /**
+     * The repo this relates to
+     */
+    id: RemoteRepoRef;
+
+    /**
+     * If available, provides a way to address the channel(s) related to this repo.
+     */
+    addressChannels?: AddressChannels;
 
 }

@@ -24,7 +24,7 @@ import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGo
 /**
  * Execute build with the appropriate builder
  * @param projectLoader used to load projects
- * @param builderMapping mapping to a builder
+ * @param builder builder to user
  */
 export function executeBuild(projectLoader: ProjectLoader,
                              builder: Builder): ExecuteGoalWithLog {

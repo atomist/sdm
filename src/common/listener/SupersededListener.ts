@@ -15,9 +15,9 @@
  */
 
 import * as schema from "../../typings/types";
-import { ListenerInvocation, SdmListener } from "./Listener";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface SupersededListenerInvocation extends ListenerInvocation {
+export interface SupersededListenerInvocation extends RepoListenerInvocation {
 
     status: schema.OnSupersededStatus.Status;
 }

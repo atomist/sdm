@@ -15,9 +15,9 @@
  */
 
 import * as schema from "../../typings/types";
-import { ListenerInvocation, SdmListener } from "./Listener";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface RepoCreationInvocation extends ListenerInvocation {
+export interface RepoCreationInvocation extends RepoListenerInvocation {
 
     repo: schema.OnRepoCreation.Repo;
 }

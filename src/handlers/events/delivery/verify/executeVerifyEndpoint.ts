@@ -19,10 +19,10 @@ import { Goal } from "../../../../common/delivery/goals/Goal";
 import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { ListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
+import { RepoListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
 import { providerIdFromStatus } from "../../../../util/git/repoRef";
 
-export interface EndpointVerificationInvocation extends ListenerInvocation {
+export interface EndpointVerificationInvocation extends RepoListenerInvocation {
 
     /**
      * Reported endpoint base url

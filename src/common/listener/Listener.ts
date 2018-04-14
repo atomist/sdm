@@ -15,14 +15,22 @@
  */
 
 import { Function1 } from "lodash";
-import { SdmContext } from "../context/SdmContext";
+import { RepoContext, SdmContext } from "../context/SdmContext";
+
+export type ListenerInvocation = SdmContext;
 
 /**
  * Common parameters to an invocation of a listener to one of the
  * SDM's specific events. These are fired by our event handlers to allow
  * multiple, domain specific, listeners to be invoked.
  */
-export type ListenerInvocation = SdmContext;
+export type RepoListenerInvocation = RepoContext;
 
-export type SdmListener<I extends ListenerInvocation = ListenerInvocation, R extends any = any> =
+/**
+ * Mapping from a ListenerInvocation to any result
+ */
+export type SdmListener<I extends ListenerInvocation, R extends any = any> =
+    Function1<I, Promise<R>>;
+
+export type RepoListener<I extends RepoListenerInvocation = RepoListenerInvocation, R extends any = any> =
     Function1<I, Promise<R>>;

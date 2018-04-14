@@ -87,6 +87,7 @@ import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandle
 import { OnChannelLink } from "../handlers/events/repo/OnChannelLink";
 import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { OnTag } from "../handlers/events/repo/OnTag";
+import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
@@ -293,6 +294,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
+                this.userJoiningChannelListeners.length > 0 ? () => new OnUserJoiningChannel(this.userJoiningChannelListeners) : undefined,
                 this.buildListeners.length > 0 ? () => new InvokeListenersOnBuildComplete(this.buildListeners) : undefined,
                 this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners) : undefined,
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(...this.newIssueListeners) : undefined,

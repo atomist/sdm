@@ -15,7 +15,7 @@
  */
 
 import { OnBuildComplete } from "../../typings/types";
-import { ListenerInvocation, SdmListener } from "./Listener";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 import Build = OnBuildComplete.Build;
 
 /**
@@ -23,7 +23,7 @@ import Build = OnBuildComplete.Build;
  * Purely for observational purposes, such as determining the time
  * a build took.
  */
-export interface BuildListenerInvocation extends ListenerInvocation {
+export interface BuildListenerInvocation extends RepoListenerInvocation {
 
    build: Build;
 
