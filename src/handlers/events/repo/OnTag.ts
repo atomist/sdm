@@ -18,6 +18,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, S
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { TagListener, TagListenerInvocation } from "../../../common/listener/TagListener";
+import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
 /**
@@ -35,8 +36,11 @@ export class OnTag implements HandleEvent<schema.OnTag.Subscription> {
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const tag = event.data.Tag[0];
-        const id = new GitHubRepoRef(tag.commit.repo.owner, tag.commit.repo.name);
+        const repo = tag.commit.repo;
+        const id = new GitHubRepoRef(repo.owner, repo.name);
+        const addressChannels = addressChannelsFor(repo, context);
         const invocation: TagListenerInvocation = {
+            addressChannels,
             id,
             context,
             tag,

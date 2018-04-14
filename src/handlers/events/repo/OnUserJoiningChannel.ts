@@ -39,7 +39,9 @@ export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningCha
         const repos = joinEvent.channel.repos.map(
             repo => new GitHubRepoRef(repo.owner, repo.name));
         const credentials = {token: params.githubToken};
+        const addressChannels = (msg, opts) => context.messageClient.addressChannels(msg, joinEvent.channel.name, opts);
         const invocation: UserJoiningChannelListenerInvocation = {
+            addressChannels,
             context,
             credentials,
             joinEvent,

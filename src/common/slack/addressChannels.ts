@@ -28,6 +28,12 @@ import { SlackMessage } from "@atomist/slack-messages";
  */
 export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions) => Promise<any>;
 
+/**
+ * Throw away contents. Use when we know that there can be no linked channels.
+ * @constructor
+ */
+export const AddressNoChannels: AddressChannels = async () => undefined;
+
 export interface HasChannels {
     channels?: Array<{ name?: string, id?: string, team?: { id?: string }}>;
 }

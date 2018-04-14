@@ -32,6 +32,14 @@ export interface SdmContext {
     context: HandlerContext;
 
     /**
+     * If available, provides a way to address the channel(s) related to this event.
+     * This is usually, but not always, the channels linked to a
+     * In some cases, such as repo creation or a push to a repo where there is no linked channel,
+     * addressChannels will go to dev/null without error.
+     */
+    addressChannels: AddressChannels;
+
+    /**
      * Credentials for use with source control hosts such as GitHub
      */
     credentials: ProjectOperationCredentials;
@@ -47,10 +55,5 @@ export interface RepoContext extends SdmContext {
      * The repo this relates to
      */
     id: RemoteRepoRef;
-
-    /**
-     * If available, provides a way to address the channel(s) related to this repo.
-     */
-    addressChannels?: AddressChannels;
 
 }

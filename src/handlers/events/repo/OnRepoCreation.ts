@@ -30,6 +30,7 @@ import {
     RepoCreationInvocation,
     RepoCreationListener,
 } from "../../../common/listener/RepoCreationListener";
+import { AddressNoChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 
 /**
@@ -53,6 +54,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
         const repo = event.data.Repo[0];
         const id = new GitHubRepoRef(repo.owner, repo.name);
         const invocation: RepoCreationInvocation = {
+            addressChannels: AddressNoChannels,
             id,
             context,
             repo,
