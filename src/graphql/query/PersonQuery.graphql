@@ -3,14 +3,7 @@ query PersonByChatId($screenName: String!) {
     userId
     screenName
     person @required {
-      forename
-      surname
-      emails {
-        address
-      }
-      gitHubId {
-        login
-      }
+      ...PersonFields
     }
   }
 }
