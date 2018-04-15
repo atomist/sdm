@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-import { Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import * as appRoot from "app-root-path";
 import * as fs from "fs-extra";
 import * as p from "path";
 import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/goalExecution";
-import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../../goals/support/reportGoalError";
-import * as appRoot from "app-root-path";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../goals/support/reportGoalError";
 import { ProjectIdentifier } from "../projectIdentifier";
 
 export function executePublish(projectLoader: ProjectLoader,
@@ -36,7 +31,7 @@ export function executePublish(projectLoader: ProjectLoader,
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
             const npmConfig = await configure();
 
             const result: ExecuteGoalResult = await spawnAndWatch({
@@ -47,13 +42,13 @@ export function executePublish(projectLoader: ProjectLoader,
                         npmConfig.access ? npmConfig.access : "restricted"],
                 },
                 {
-                    cwd: p.baseDir,
+                    cwd: project.baseDir,
                 },
                 rwlc.progressLog,
                 {
                     errorFinder: code => code !== 0,
                 });
-            
+
             if (result.code === 0) {
                 const pi = await projectIdentifier(p);
                 const url = `${npmConfig.registry}/${pi.name}/-/${pi.name}-${pi.version}.tgz`;
@@ -74,9 +69,7 @@ export function executePublish(projectLoader: ProjectLoader,
 }
 
 async function configure(): Promise<NpmConfiguration> {
-
-    let npmConfig = JSON.parse(process.env.ATOMIST_NPM || "{}") as NpmConfiguration;
-
+    const npmConfig = JSON.parse(process.env.ATOMIST_NPM || "{}") as NpmConfiguration;
     const npmrc = p.join(process.env.HOME || process.env.USER_DIR, ".npmrc");
     let npm = "";
     if (fs.existsSync(npmrc))  {
@@ -92,7 +85,6 @@ ${npmConfig.npmrc}`;
 
     return npmConfig;
 }
-
 
 interface NpmConfiguration {
     npmrc: string;
