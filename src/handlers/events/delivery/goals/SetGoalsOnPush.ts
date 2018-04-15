@@ -61,10 +61,12 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * Configure goal setting
      * @param projectLoader use to load projects
      * @param goalSetters first GoalSetter that returns goalSet wins
+     * @param goalsListeners listener to goals set
+     * @param implementationMapping
      */
     constructor(private readonly projectLoader,
                 private readonly goalSetters: GoalSetter[],
-                private readonly goalsListeners: GoalsSetListener[],
+                public readonly goalsListeners: GoalsSetListener[],
                 private readonly implementationMapping: SdmGoalImplementationMapper) {
 
     }

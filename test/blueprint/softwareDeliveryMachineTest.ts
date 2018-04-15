@@ -14,111 +14,44 @@
  * limitations under the License.
  */
 
-import { HandlerContext, Success } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-
-import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
-import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachine";
-import { AutofixGoal } from "../../src/common/delivery/goals/common/commonGoals";
-import { Goal } from "../../src/common/delivery/goals/Goal";
-import { Goals } from "../../src/common/delivery/goals/Goals";
+import { SoftwareDeliveryMachine } from "../../src/blueprint/SoftwareDeliveryMachine";
+import { NoGoals } from "../../src/common/delivery/goals/common/commonGoals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
-import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
-import { PushFields } from "../../src/typings/types";
-import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
+import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest";
 
-const favoriteRepoRef = GitHubRepoRef.from({
-    owner: "jess",
-    repo: "monet",
-    sha: "75132357b19889c4d6c2bef99fce8f477e1f2196",
-    branch: "claude",
-});
-const fakeSoftwareDeliveryMachineOptions = {
-    projectLoader: new SingleProjectLoader(InMemoryProject.from(favoriteRepoRef,
-        {path: "README.md", content: "read sometthing else"})),
-} as any as SoftwareDeliveryMachineOptions;
+import { toFactory } from "@atomist/automation-client/util/constructionUtils";
+import * as assert from "power-assert";
+import { GoalsSetListener } from "../../src/common/listener/GoalsSetListener";
+import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 
-const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
+describe("SDM handler creation", () => {
 
-const fakeContext = {context: {name: "my favorite context "}} as any as HandlerContext;
+    describe("emits event handlers", () => {
 
-const aPush = {repo: {org: {provider: {providerId: "myProviderId"}}}} as PushFields.Fragment;
+        it("emits goal setter", async () => {
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(AnyPush)
+                    .itMeans("do nothing")
+                    .setGoals(NoGoals));
+            assert(sdm.eventHandlers.length > 0);
+            const sgop = sdm.eventHandlers.map(h => toFactory(h)()).find(h => !!(h as SetGoalsOnPush).goalsListeners) as SetGoalsOnPush;
+            assert(sgop.goalsListeners.length === 0);
+        });
 
-describe("implementing goals in the SDM", () => {
+        it("emits goal setter with listener", async () => {
+            const gl: GoalsSetListener = async () => undefined;
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(AnyPush)
+                    .itMeans("do nothing")
+                    .setGoals(NoGoals));
+            sdm.addGoalsSetListeners(gl);
+            assert(sdm.eventHandlers.length > 0);
+            const sgop = sdm.eventHandlers.map(h => toFactory(h)()).find(h => !!(h as SetGoalsOnPush).goalsListeners) as SetGoalsOnPush;
+            assert.deepEqual(sgop.goalsListeners, [gl]);
+        });
 
-    it("I can ask it to do an autofix", async () => {
-
-        const mySDM = new SoftwareDeliveryMachine("Gustave",
-            fakeSoftwareDeliveryMachineOptions,
-            whenPushSatisfies(AnyPush)
-                .itMeans("autofix the crap out of that thing")
-                .setGoals(new Goals("Autofix only", AutofixGoal)));
-
-        const {determinedGoals, goalsToSave} = await determineGoals({
-                projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
-                goalSetters: mySDM.goalSetters,
-                implementationMapping: mySDM.goalFulfillmentMapper,
-            }, {
-                credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
-                addressChannels: () => Promise.resolve({}),
-            },
-        );
-
-        assert(determinedGoals.goals.includes(AutofixGoal));
-
-        assert(goalsToSave.length === 1);
-        const onlyGoal = goalsToSave[0];
-
-        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
-
-        assert(myImpl.implementationName === "Autofix");
     });
-
-    const customGoal = new Goal({
-        uniqueCamelCaseName: "Jerry",
-        displayName: "Springer", environment: "1-staging/", orderedName: "1-springer",
-    });
-
-    it("I can teach it to do a custom goal", async () => {
-        let executed: boolean = false;
-        const goalExecutor = async () => {
-            executed = true;
-            return Success;
-        };
-
-        const mySDM = new SoftwareDeliveryMachine("Gustave",
-            fakeSoftwareDeliveryMachineOptions,
-            whenPushSatisfies(AnyPush)
-                .itMeans("cornelius springer")
-                .setGoals(new Goals("Springer", customGoal)))
-            .addGoalImplementation("Cornelius",
-                customGoal,
-                goalExecutor,
-            );
-
-        const {determinedGoals, goalsToSave} = await determineGoals({
-                projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
-                goalSetters: mySDM.goalSetters,
-                implementationMapping: mySDM.goalFulfillmentMapper,
-            }, {
-                credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
-                addressChannels: () => Promise.resolve({}),
-            },
-        );
-
-        assert(determinedGoals.goals.includes(customGoal));
-
-        assert(goalsToSave.length === 1);
-        const onlyGoal = goalsToSave[0];
-
-        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
-
-        assert.equal(myImpl.implementationName, "Cornelius");
-        await myImpl.goalExecutor(undefined);
-        assert(executed);
-    });
-
 });
