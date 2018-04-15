@@ -21,14 +21,15 @@ import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { DevelopmentEnvOptions } from "../npm/npmBuilder";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 
 export const RunBuild: SpawnCommand = asSpawnCommand("lein");
 
-export function leinBuilder(projectLoader: ProjectLoader) {
+export function leinBuilder(projectLoader: ProjectLoader, ...commands: string[]) {
     return new SpawnBuilder(undefined,
         createEphemeralProgressLogWithConsole,
-        projectLoader, leinBuilderOptions([RunBuild]));
+        projectLoader, leinBuilderOptions(commands.map(cmd => asSpawnCommand(cmd))));
 }
 
 export const leinLogInterpreter: LogInterpreter = log => {
@@ -52,7 +53,6 @@ export function leinBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOption
         options: {
             env: {
                 ...process.env,
-                NODE_ENV: "development",
             },
         },
     };

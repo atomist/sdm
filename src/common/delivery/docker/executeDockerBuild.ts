@@ -18,7 +18,7 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client";
-import { Project } from "@atomist/automation-client/project/Project";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { ProjectVersioner } from "../../..";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
@@ -36,14 +36,16 @@ export interface DockerOptions {
     registry: string;
     user: string;
     password: string;
+
+    dockerfileFinder?: (p: GitProject) => Promise<string>;
 }
 
-export type DockerImageNameCreator = (p: Project,
+export type DockerImageNameCreator = (p: GitProject,
                                       status: StatusForExecuteGoal.Fragment,
                                       options: DockerOptions,
                                       ctx: HandlerContext) => Promise<{registry: string, name: string, version: string}>;
 
-export type DockerBuildPreparer = (p: Project,
+export type DockerBuildPreparer = (p: GitProject,
                                    rwlc: RunWithLogContext,
                                    options: DockerOptions) => Promise<HandlerResult>;
 
@@ -62,7 +64,7 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { status, credentials, id, context, progressLog } = rwlc;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {
+        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
 
             await projectVersioner(status, p, progressLog);
             let result = await buildPreparer(p, rwlc, options);
@@ -80,12 +82,13 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
 
             const imageName = await imageNameCreator(p, status, options, context);
             const image = `${imageName.registry}/${imageName.name}:${imageName.version}`;
+            const dockerfilePath = await (options.dockerfileFinder ? options.dockerfileFinder(p) : "Dockerfile");
 
-            // 1. run docker build
+            // 1. run docker login
             result = await spawnAndWatch(
                 {
                     command: "docker",
-                    args: ["build", ".", "-t", image],
+                    args: ["login", "--username", options.user, "--password", options.password, options.registry],
                 },
                 opts,
                 progressLog,
@@ -95,11 +98,11 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
                 return result;
             }
 
-            // 2. run docker login
+            // 2. run docker build
             result = await spawnAndWatch(
                 {
                     command: "docker",
-                    args: ["login", "--username", options.user, "--password", options.password, options.registry],
+                    args: ["build", ".", "-f", dockerfilePath, "-t", image],
                 },
                 opts,
                 progressLog,
