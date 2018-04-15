@@ -33,6 +33,9 @@ export class PushRules<V> implements PushMapping<V> {
      * and is not an error.
      */
     constructor(public readonly name: string, choices: Array<PushMapping<V>> = []) {
+        if (!name) {
+            throw new Error("PushRule name must be specified");
+        }
         this.add(choices);
     }
 
