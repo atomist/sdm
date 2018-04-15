@@ -69,6 +69,7 @@ export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalF
 
 export function constructSdmGoal(ctx: HandlerContext, parameters: {
     goalSet: string,
+    goalSetId: string,
     goal: Goal,
     state: SdmGoalState,
     id: RemoteRepoRef,
@@ -76,7 +77,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     url?: string,
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoal {
-    const {goalSet, goal, state, id, providerId, url} = parameters;
+    const {goalSet, goal, goalSetId, state, id, providerId, url} = parameters;
     const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
 
     if (id.branch === null) {
@@ -102,6 +103,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
 
     return {
         goalSet,
+        goalSetId,
         name: goal.name,
         uniqueName: goal.definition.uniqueCamelCaseName,
 

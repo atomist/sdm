@@ -8854,6 +8854,18 @@
                   }
                 },
                 {
+                  "name": "goalSetId",
+                  "description": "Id if goal set execution",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
                   "name": "ts",
                   "description": "Timestamp of goal",
                   "type": {
@@ -8971,6 +8983,18 @@
                 {
                   "name": "sha",
                   "description": "Commit sha",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "branch",
+                  "description": "Branch of commit",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -48440,12 +48464,26 @@
               "args": []
             },
             {
+              "name": "goalSetId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Id if goal set execution",
+              "args": []
+            },
+            {
               "name": "ts",
               "type": {
                 "kind": "SCALAR",
                 "name": "Int"
               },
               "description": "Timestamp of goal",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
               "args": []
             },
             {
@@ -48562,6 +48600,25 @@
                 "name": "String"
               },
               "description": "Commit sha",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
+              "args": []
+            },
+            {
+              "name": "branch",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
+              "description": "Branch of commit",
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
               "args": []
             },
             {
@@ -48638,6 +48695,11 @@
                 "kind": "SCALAR",
                 "name": "String"
               },
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
               "args": []
             },
             {
@@ -48646,6 +48708,11 @@
                 "kind": "SCALAR",
                 "name": "String"
               },
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
               "args": []
             },
             {
@@ -48654,6 +48721,11 @@
                 "kind": "SCALAR",
                 "name": "String"
               },
+              "directives": [
+                {
+                  "name": "compositeId"
+                }
+              ],
               "args": []
             }
           ],
@@ -57833,6 +57905,18 @@
                   }
                 },
                 {
+                  "name": "goalSetId",
+                  "description": "Id if goal set execution",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
                   "name": "ts",
                   "description": "Timestamp of goal",
                   "type": {
@@ -57950,6 +58034,18 @@
                 {
                   "name": "sha",
                   "description": "Commit sha",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "branch",
+                  "description": "Branch of commit",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -58418,6 +58514,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "f6967ce9-76f7-4a6e-bdfc-3cf857d14d52"
+    "correlation_id": "ce6b4845-39e6-4f22-be19-39c26ffe4f25"
   }
 }

@@ -13,6 +13,7 @@ fragment SdmGoalFields on SdmGoal {
   state
   externalKey
   goalSet
+  goalSetId
   ts
   error
   retryFeasible

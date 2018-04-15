@@ -30,6 +30,7 @@ import {
 } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { guid } from "@atomist/automation-client/internal/util/string";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
@@ -168,9 +169,11 @@ export async function determineGoals(rules: {
 async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMapper,
                                  pli: PushListenerInvocation,
                                  determinedGoals: Goals) {
+    const goalSetId = guid();
     return Promise.all(determinedGoals.goals.map(async g =>
         constructSdmGoal(pli.context, {
             goalSet: determinedGoals.name,
+            goalSetId,
             goal: g,
             state: hasPreconditions(g) ? "planned" : "requested",
             id: pli.id,

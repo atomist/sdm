@@ -43,6 +43,7 @@ export interface SdmGoal extends SdmGoalKey {
     description: string;
     url?: string;
     goalSet: string;
+    goalSetId: string;
     state: SdmGoalState;
     ts: number;
 
