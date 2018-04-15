@@ -15,3 +15,6 @@ git-info.json
 
 *.log
 *.log.gz
+
+.nyc_output/
+coverage/

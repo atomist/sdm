@@ -47,8 +47,10 @@
     "barrelsby": "0.0.8",
     "espower-typescript": "^8.1.3",
     "graphql-code-generator": "^0.8.19",
+    "istanbul": "^0.4.5",
     "mocha": "^4.1.0",
     "npm-run-all": "^4.1.2",
+    "nyc": "^11.6.0",
     "power-assert": "^1.4.4",
     "prettier": "^1.11.1",
     "rimraf": "^2.6.2",
@@ -88,7 +90,7 @@
     "lint:fix": "npm-run-all lint:ts:fix fmt:gql",
     "lint:ts:fix": "npm run lint:ts -- --fix",
     "package:copy": "copyfiles \"package.json\" build/src",
-    "test": "mocha --exit --require espower-typescript/guess \"test/**/*.ts\"",
+    "test": "nyc mocha --exit --require ts-node/register --require source-map-support/register \"test/**/*.ts\"",
     "test:one": "mocha --require espower-typescript/guess \"test/**/${TEST:-*.ts}\"",
     "typedoc": "typedoc --mode modules --excludeExternals --out build/typedoc src",
     "watch:compile": "tsc --project . --watch",
@@ -97,5 +99,17 @@
   "engines": {
     "node": "8.x.x",
     "npm": "5.x.x"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "all": true
   }
 }
