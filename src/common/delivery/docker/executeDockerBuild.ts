@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    HandlerResult,
+} from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
@@ -39,6 +42,10 @@ export type DockerImageNameCreator = (p: Project,
                                       options: DockerOptions,
                                       ctx: HandlerContext) => Promise<{registry: string, name: string, version: string}>;
 
+export type DockerBuildPreparer = (p: Project,
+                                   rwlc: RunWithLogContext,
+                                   options: DockerOptions) => Promise<HandlerResult>;
+
 /**
  * Execute a Docker build for the project available from provided projectLoader
  * @param {ProjectLoader} projectLoader
@@ -47,12 +54,19 @@ export type DockerImageNameCreator = (p: Project,
  * @returns {ExecuteGoalWithLog}
  */
 export function executeDockerBuild(projectLoader: ProjectLoader,
+                                   buildPreparer: DockerBuildPreparer,
                                    imageNameCreator: DockerImageNameCreator,
                                    options: DockerOptions): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { status, credentials, id, context, progressLog } = rwlc;
 
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+
+            let result = await buildPreparer(p, rwlc, options);
+            if (result.code !== 0) {
+                return result;
+            }
+
             const opts = {
                 cwd: p.baseDir,
             };
@@ -65,7 +79,7 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
             const image = `${imageName.registry}/${imageName.name}:${imageName.version}`;
 
             // 1. run docker build
-            let result = await spawnAndWatch(
+            result = await spawnAndWatch(
                 {
                     command: "docker",
                     args: ["build", ".", "-t", image],
