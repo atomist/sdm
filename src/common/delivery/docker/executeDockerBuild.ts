@@ -19,6 +19,7 @@ import {
     HandlerResult,
 } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
+import { ProjectVersioner } from "../../..";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
@@ -54,14 +55,16 @@ export type DockerBuildPreparer = (p: Project,
  * @returns {ExecuteGoalWithLog}
  */
 export function executeDockerBuild(projectLoader: ProjectLoader,
+                                   projectVersioner: ProjectVersioner,
                                    buildPreparer: DockerBuildPreparer,
                                    imageNameCreator: DockerImageNameCreator,
                                    options: DockerOptions): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { status, credentials, id, context, progressLog } = rwlc;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+        return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {
 
+            await projectVersioner(status, p, progressLog);
             let result = await buildPreparer(p, rwlc, options);
             if (result.code !== 0) {
                 return result;
