@@ -39,6 +39,7 @@ export function executePublish(projectLoader: ProjectLoader,
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
             const npmConfig = await configure();
 
+            // TODO CD this appRoot path is not going to work from a node_module
             const result: ExecuteGoalResult = await spawnAndWatch({
                     command: "bash",
                     args: [`${appRoot.path}/scripts/npm-publish.bash`,
