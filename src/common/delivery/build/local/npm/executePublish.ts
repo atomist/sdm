@@ -50,7 +50,7 @@ export function executePublish(projectLoader: ProjectLoader,
                 });
 
             if (result.code === 0) {
-                const pi = await projectIdentifier(p);
+                const pi = await projectIdentifier(project);
                 const url = `${npmConfig.registry}/${pi.name}/-/${pi.name}-${pi.version}.tgz`;
                 await createStatus(
                     (credentials as TokenCredentials).token,
