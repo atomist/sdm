@@ -18,11 +18,20 @@ import S3StreamLogger = require("s3-streamlogger");
 import winston = require("winston");
 import { ProgressLog} from "../../spi/log/ProgressLog";
 
+import os = require("os");
+
 export class S3ProgressLog implements ProgressLog {
 
     private readonly winstonLogger;
 
-    constructor(s3StreamLogger: S3StreamLogger) {
+    constructor(env: string, awsId: string, awsKey: string) {
+        const s3StreamLogger = new S3StreamLogger.S3StreamLogger({
+            bucket: "streamlogger",
+            folder: `${env}/${os.hostname()}`,
+            access_key_id: awsId,
+            secret_access_key: awsKey,
+            name_format: `%Y-%m-%d-%H-%M-%S-%L.log`,
+        });
         this.winstonLogger = new (winston.Logger)({
             transports: [
                 new (winston.transports.Console)({timestamp: true}),
