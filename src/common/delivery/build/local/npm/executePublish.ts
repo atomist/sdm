@@ -16,7 +16,6 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import * as appRoot from "app-root-path";
 import * as fs from "fs-extra";
 import * as p from "path";
 import { createStatus } from "../../../../../util/github/ghub";
@@ -34,10 +33,9 @@ export function executePublish(projectLoader: ProjectLoader,
         return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
             const npmConfig = await configure();
 
-            // TODO CD this appRoot path is not going to work from a node_module
             const result: ExecuteGoalResult = await spawnAndWatch({
                     command: "bash",
-                    args: [`${appRoot.path}/scripts/npm-publish.bash`,
+                    args: [p.join(__dirname, "..", "..", "..", "..", "scripts", "npm-publish.bash"),
                         `--registry=${npmConfig.registry}`,
                         "--access",
                         npmConfig.access ? npmConfig.access : "restricted"],
