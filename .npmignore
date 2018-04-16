@@ -6,7 +6,6 @@ tmp/
 build/
 release/
 .travis.yml
-*.bash
 tsconfig.*
 tslint.json
 yarn.lock
