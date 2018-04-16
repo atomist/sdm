@@ -19,7 +19,10 @@ import { Builder } from "../../../spi/build/Builder";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../goals/goalExecution";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../goals/support/reportGoalError";
 
 /**
  * Execute build with the appropriate builder
