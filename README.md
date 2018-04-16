@@ -14,55 +14,36 @@ The concept is explained in detail in Rod Johnson's blog [Why you need a Softwar
 
 ## Get Started
 
-This delivery machine feeds on the Atomist API. You'll need to be a member of an Atomist workspace to run it. <!-- TODO: reference auth story -->
+SDMs based on this framework processe events from Atomist SaaS event hub. You'll need to be a member of an Atomist workspace to run one.
 Create your own by [enrolling](https://github.com/atomist/welcome/blob/master/enroll.md) at [atomist.com](https://atomist.com).
 
 Things work best if you install an org webhook, so that Atomist receives events for all your GitHub repos.
 
 ## Get your Software Delivery Machine
 
-If the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized SDM using this project. You could also choose to clone the `sample-sdm` project.
+Once the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized SDM instance using this project. You can also clone the `sample-sdm` project.
 
 ## Run Locally
 
-This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
+SDM projects are Atomist automation clients. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
 
-See [set up](./docs/Setup.md) for additional prerequisites according to the projects you're building. 
+See [set up](./docs/Setup.md) for additional prerequisites depending on the projects you're building. 
 
-The client logs to the console so you can see it go. Once it runs, here are some things to do:
+The client logs to the console so you can see it run. Once it runs, here are some things to do.
 
-### Start a new project
-
-In Slack, `@atomist create spring`. This will create a Spring Boot repository. The SDM will build it!
-
-To enable deployment beyond the local one, `@atomist enable deploy`.
-
-### Push to an existing repository
-
-If you have any Java or Node projects in your GitHub org, try linking one to a Slack channel (`@atomist link repo`), and then push to it.
-You'll see Atomist react to the push, and the SDM might have some Goals it can complete.
-
-### Customize
-
-Every organization has a different environment and different needs. Your software delivery machine is yours: change the code and do what helps you.
-
-In `atomist.config.ts`, you can choose the `machine` to start with. `cloudFoundryMachine` and `k8sMachine` take care of the whole delivery process from project creation through deployment, while other machines focus only on one aspect, such as project creation, static analysis or autofixing problems in repositories.
+- Create a new project using a generator
+- React to push. You'll see Atomist react to the push, and the SDM might have some Goals it can complete.
 
 > Atomist is about developing your development experience by using your coding skills. Change the code, restart, and see your new automations and changed behavior across all your projects, within seconds. 
-
-The rest of this README describes some changes you might make.
-
-# About this Software Delivery Machine
 
 ## Implementations of Atomist
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
 
-This repository is a *reference implementation* of Atomist, which focuses on the goals of a typical delivery
- flow. You can fork it and modify it as the starting point for your own Atomist implementation, 
- or use it purely as a reference.
+This framework is based on the goals of a typical delivery
+flow.
 
 ## Concepts
-This repository shows how Atomist can automate important tasks and improve your delivery flow. Specifically:
+An Atomist SDM can automate important tasks and improve your delivery flow. Specifically:
 
 - How Atomist **command handlers** can be used to create services
 the right way every time, and help keep them up to date 
@@ -178,17 +159,17 @@ and also demonstrate how to add GitHub topics based on initial repo content.
 - The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure,
 such as artifact storage, logging, build and deployment.
 - `src/blueprint` contains the higher level software delivery machine concept that ties things together
-- `src/common` contains common behavior
+- `src/common` contains lower level code
 - `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
 - `src/handlers` contains handlers that implement general SDM concepts. This is lower level infrastructure, which you generally won't need to modify directly.
 - `src/typings` is where generated-from-graphql types wind up. Refresh these with `npm run gql:gen` 
 if you update any GraphQL files in `src/graphql`.
-- `src/util` 
+- `src/util` contains miscellaneous utilities.
+
+The important types can be imported into downstream problems from the `index.ts` barrel.
 
 ## GitHub Statuses
-We use the following GitHub statuses as events to drive our flow and show the goals:
-
-> The use of GitHub statuses to drive and identify stages in the flow is a choice in this implementation. It's just one strategy and the core listener interfaces are decoupled from it.
+When running on GitHub, the goals of the SDM are surfaced as GitHub statuses.
 
 ## Goals in Detail
 Each of the delivery goals results in the triggering of domain specific
@@ -201,7 +182,7 @@ Each of the delivery goals results in the triggering of domain specific
 All listener invocations receive at least the following generally useful information:
 
 ```typescript
-export interface ListenerInvocation {
+export interface RepoListenerInvocation {
 
     /**
      * The repo this relates to
@@ -416,9 +397,9 @@ tbc
 #### Examples
 ## Pulling it All Together: The `SoftwareDeliveryMachine` class
 
-Your event listeners need to be invoked by Atomist handlers. The `SoftwareDeliveryMachine` takes care of this, ensuring that the correct handlers are emitted for use in `atomist.config.ts`.
+Your event listeners need to be invoked by Atomist handlers. The `SoftwareDeliveryMachine` takes care of this, ensuring that the correct handlers are emitted for use in `atomist.config.ts`, without you needing to worry about the event handler registrations on underlying GraphQL.
 
-It also allows you to use a fluent builder approach to adding command handlers, generators and editors.
+The `SoftwareDeliveryMachine` classes also offers a fluent builder approach to adding command handlers, generators and editors.
 
 ### Example
 For example:
@@ -497,8 +478,7 @@ commands: assembled.commandHandlers.concat([
 
 ## Plugging in Third Party Tools
 
-This repo shows the use of Atomist to perform many steps itself.
- However, each of the goals used by Atomist here is pluggable.
+This repo shows the use of Atomist to perform many steps itself. However, each of the goals used by Atomist here is pluggable.
 
 It's also easy to integrate third party tools like Checkstyle.
 
@@ -522,10 +502,8 @@ Any tool that runs on code, such as Checkstyle, can easily be integrated.
 
 Use shell. node is good for this
 
-
 ## Roadmap
 
 This project is under active development, and still in flux. Some goals:
 
-- Breaking the repo into two, to separate the runnable instance from a library module exposing listener interfaces and other public types and common functionality.
 - Support for BitBucket, as well as GitHub.
