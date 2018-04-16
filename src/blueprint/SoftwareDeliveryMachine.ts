@@ -185,7 +185,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     private get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
-        return () => new OnFirstPushToRepo(this.newRepoWithCodeActions);
+        return this.newRepoWithCodeActions.length > 0 ?
+            () => new OnFirstPushToRepo(this.newRepoWithCodeActions) :
+            undefined;
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
