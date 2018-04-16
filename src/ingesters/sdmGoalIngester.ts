@@ -77,7 +77,7 @@ export interface SdmGoalKey {
     name: string;
 }
 
-export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
+export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (k: SdmGoalKey) => T {
     return (keyToFind: SdmGoalKey) => {
         const found = goals.find(g => goalKeyEquals(g, keyToFind));
         return found;
