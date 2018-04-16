@@ -14,35 +14,30 @@ The concept is explained in detail in Rod Johnson's blog [Why you need a Softwar
 
 ## Get Started
 
-SDMs based on this framework processe events from Atomist SaaS event hub. You'll need to be a member of an Atomist workspace to run one.
+SDMs based on this framework process events from the Atomist SaaS event hub. The architecture is as follows, with events coming in from the systems that matter in your development process:
+
+<img src="https://atomist.com/img/Atomist-Team-Development.jpg"/>
+
+You'll need to be a member of an Atomist workspace to run one.
 Create your own by [enrolling](https://github.com/atomist/welcome/blob/master/enroll.md) at [atomist.com](https://atomist.com).
-
 Things work best if you install an org webhook, so that Atomist receives events for all your GitHub repos.
-
-## Get your Software Delivery Machine
 
 Once the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized SDM instance using this project. You can also clone the `sample-sdm` project.
 
 ## Run Locally
 
-SDM projects are Atomist automation clients. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
+SDM projects are Atomist automation clients, written in [TypeScript](https://www.typescriptlang.org) or JavaScript. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
 
 See [set up](./docs/Setup.md) for additional prerequisites depending on the projects you're building. 
 
-The client logs to the console so you can see it run. Once it runs, here are some things to do.
-
-- Create a new project using a generator
-- React to push. You'll see Atomist react to the push, and the SDM might have some Goals it can complete.
-
 > Atomist is about developing your development experience by using your coding skills. Change the code, restart, and see your new automations and changed behavior across all your projects, within seconds. 
 
-## Implementations of Atomist
+## Concepts
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
 
 This framework is based on the goals of a typical delivery
-flow.
+flow, but is flexible and extensible.
 
-## Concepts
 An Atomist SDM can automate important tasks and improve your delivery flow. Specifically:
 
 - How Atomist **command handlers** can be used to create services
@@ -56,21 +51,20 @@ It demonstrates Atomist as the *API for software*, exposing
 - *What just happened*: An event, triggered by a GraphQL subscription, which is contextualized with the existing knowledge
 - *What you're working on*: A library that enables you to comprehend and manipulate the source code you're working on.
 
+This project builds on other Atomist core functionality available from global automations, such as: Atomist **lifecycle**, showing commit, pull request and other activity through actionable messages.
+
 Atomist is not tied to GitHub, but this repository focuses on using Atomist with GitHub.com or
 GitHub Enterprise.
 
-## Key Functionality
-The following key functionality of this project will be available when you run this automation client in your team:
+## Typical Functionality
+Every SDM is different, but the 
+following functionality is typical and will be available out of the box when you run `sample-sdm` in your team:
 
 - *Project creation for Spring*. Atomist is not Spring specific, but we use Spring boot as an illustration here. Try `@atomist create spring`. The seed project used by default will be `spring-team/spring-rest-seed`. 
  - If you want to add or modify the content of generated projects, modify `CustomSpringBootGeneratorParameters.ts` to specify your own seed. Just about any Spring Boot project will work as the transformation of a seed project is quite forgiving, and parses the seed to find the location and name of the `@SpringBootApplication` class, rather than relying on hard coding. 
  - To perform sophisticated changes, such as dynamically computing content, modify the code in `springBootGenerator.ts`. 
 - *Delivery pipeline to either Kubernetes or Pivotal Cloud Foundry for Spring Boot projects*. This includes automatic local deployment of non-default branches on the same node as the automation client. The delivery pipeline is automatically triggered on pushes.
 - *Upgrading Spring Boot version* across one or many repositories. Try `@atomist try to upgrade spring boot`. This will create a branch upgrading to Spring Boot `1.5.9` and wait for the build to complete. If the build succeeds, a PR will be created; if it fails, an issue will be created linking to the failed build log and offending branch. To choose a specific Spring Boot version, or see what happens when a bogus version triggers a failure, try `@atomist try to upgrade spring boot desiredBootVersion=<version>`. If you run such a command in a channel linked to an Atomist repository, it will affect only that repository. If you run it in a channel that is not linked, it will affect all repositories by default. You can add a `targets.repos=<regex>` parameter to specify a regular expression to target a subset of repo names. For example: `@atomist try to upgrade spring boot targets.repos=test.*`.
-
-This project builds on other Atomist core functionality available from global automations, such as:
-
-- Atomist **lifecycle** for GitHub, showing commit, pull request and other activity through actionable messages.
 - Issue handling:
 	- `@atomist create issue`
 
@@ -153,20 +147,6 @@ and also demonstrate how to add GitHub topics based on initial repo content.
 - _On image link (a binary artifact has been built)_ A trigger for deployment.
 - _On successful deployment_, as shown by a GitHub status.
 - _On validation of a deployed endpoint_, as shown by a GitHub status.
-
-## Structure of This Project
-
-- The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure,
-such as artifact storage, logging, build and deployment.
-- `src/blueprint` contains the higher level software delivery machine concept that ties things together
-- `src/common` contains lower level code
-- `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
-- `src/handlers` contains handlers that implement general SDM concepts. This is lower level infrastructure, which you generally won't need to modify directly.
-- `src/typings` is where generated-from-graphql types wind up. Refresh these with `npm run gql:gen` 
-if you update any GraphQL files in `src/graphql`.
-- `src/util` contains miscellaneous utilities.
-
-The important types can be imported into downstream problems from the `index.ts` barrel.
 
 ## Core Concepts
 
@@ -522,13 +502,23 @@ The `SoftwareDeliveryMachine` instance will create the necessary Atomist event h
 In `atomist.config.ts` you can bring them in simply as follows:
 
 ```typescript
-commands: assembled.commandHandlers.concat([
-        // other command handlers,
-    ]),
-    events: assembled.eventHandlers.concat([
-    		// other event handlers
-    ]),
+commands: assembled.commandHandlers,
+    events: assembled.eventHandlers,
 ```
+
+## Structure of This Project
+
+- The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure,
+such as artifact storage, logging, build and deployment.
+- `src/blueprint` contains the higher level software delivery machine concept that ties things together
+- `src/common` contains lower level code
+- `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
+- `src/handlers` contains handlers that implement general SDM concepts. This is lower level infrastructure, which you generally won't need to modify directly.
+- `src/typings` is where types generated from GraphQL wind up. Refresh these with `npm run gql:gen` 
+if you update any GraphQL files in `src/graphql`.
+- `src/util` contains miscellaneous utilities.
+
+The important types can be imported into downstream projects from the `index.ts` barrel.
 
 ## Plugging in Third Party Tools
 
