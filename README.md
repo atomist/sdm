@@ -1,9 +1,9 @@
-# GitHub Software Delivery Machine
+# Software Delivery Machine
 
 Atomist framework enabling you to control your delivery and development process in code.
 
 ## What is a Software Delivery Machine?
->A **software delivery machine** is a development process in a box. 
+>A **software delivery machine**  (SDM) is a development process in a box. 
 
 It automates all steps in the flow from commit to production (potentially via staging environments), and many other actions, using the consistent model provided by the Atomist *API for software*.
 
@@ -21,16 +21,13 @@ Things work best if you install an org webhook, so that Atomist receives events 
 
 ## Get your Software Delivery Machine
 
-If the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized version of
- this repository for you.
- 
-You can fork and clone this repository.
+If the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized SDM using this project. You could also choose to clone the `sample-sdm` project.
 
 ## Run Locally
 
 This is an Atomist automation client. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
 
-See [integrations](#Integrations) for additional prerequisites according to the projects you're building. 
+See [set up](./docs/Setup.md) for additional prerequisites according to the projects you're building. 
 
 The client logs to the console so you can see it go. Once it runs, here are some things to do:
 
@@ -178,27 +175,10 @@ and also demonstrate how to add GitHub topics based on initial repo content.
 
 ## Structure of This Project
 
-This repository contains the entire implementation of the software delivery machine
-built on Atomist event and command handlers. It's all here if you want to dig into it,
- but most of your changes will be 
-at a higher level: choosing goals and adding high-level listeners.
-
-Start with `atomist.config.ts` and find the choice of Software Delivery Machine to start with,
-`cloudFoundrySoftwareDeliveryMachine` or kubernetes. Click into the definition of those to see the setting of goals
-and all the other components that go into the machine.
-
-This code is in `src/software-delivery-machine`, and that is where we recommend you make changes.
-
-### Library code
-
-The following directories will later become available as a library. We'll keep working on the implementations,
-while the interfaces will change less.
-> In particular, the event listener interfaces discussed later in the document are expected to remain stable.
-
 - The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure,
 such as artifact storage, logging, build and deployment.
-- `src/blueprint`
-- `src/common`
+- `src/blueprint` contains the higher level software delivery machine concept that ties things together
+- `src/common` contains common behavior
 - `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
 - `src/handlers` contains handlers that implement general SDM concepts. This is lower level infrastructure, which you generally won't need to modify directly.
 - `src/typings` is where generated-from-graphql types wind up. Refresh these with `npm run gql:gen` 
@@ -541,75 +521,6 @@ tbc
 Any tool that runs on code, such as Checkstyle, can easily be integrated.
 
 Use shell. node is good for this
-
-### Integrations
-
-### Choose a machine
-You must set environment variables to choose a machine, if you override the default.
-```
-export MACHINE_PATH="./software-delivery-machine/machines"
-export MACHINE_NAME="cloudFoundrySoftwareDeliveryMachine"
-```
-
-### Local HTTP server
-To run a local HTTP server to invoke via `curl` or for smoke testing, please set the following environment variable:
-
-```
-export LOCAL_ATOMIST_ADMIN_PASSWORD="<value>"
-
-```
-
-#### Java
-
-To build Java projects on the automation client node, you'll need:
-
-- JDK, for Maven and Checkstyle
-- Maven, with `mvn` on the path
-
-#### Node
-
-To build Node projects on the automation client node, you'll need:
-
-- `npm` - v 5.8.0 or above
-- `node`
-
-#### Cloud Foundry
-
-In order to enable Pivotal Cloud Foundry deployment, the following environment variables are used.
-
-Required:
-
-- `PIVOTAL_USER`: your Pivotal Cloud Foundry user name
-- `PIVOTAL_PASSWORD`: your Pivotal Cloud Foundry password 
-- `PCF_ORG`: your Pivotal Cloud Foundry organization name
-- `PCF_SPACE_STAGING`: your Pivotal Cloud Foundry staging space name within `$PCF_ORG`
-- `PCF_SPACE_PRODUCTION`: your Pivotal Cloud Foundry production space name within `$PCF_ORG`
-
-Optional:
-
-- `PIVOTAL_API`: PCF API to hit. Default if this key is not provided is Pivotal Web Services at `https://api.run.pivotal.io`. Specify a different value to deploy to your own Cloud Foundry instance.
-
-
-#### Kubernetes
-
-The kubernetesSoftwareDevelopmentMachine included here deploys to an Atomist sandbox kubernetes environment, using
-[k8-automation](https://github.com/atomist/k8-automation) which we run inside our cluster. You can deploy the Spring Boot
-projects created with `@atomist create spring` here, in order to try out the Kubernetes integration with the SDM.
-
-#### Checkstyle
- 
-Checkstyle is a style-checker for Java.
-For the optional Checkstyle integration to work, set up two Checkstyle environment variables as follows:
-
-```
-# Toggle Checkstyle usage
-export USE_CHECKSTYLE=true
-
-# Path to checkstyle JAR
-export CHECKSTYLE_PATH="/Users/rodjohnson/tools/checkstyle-8.8/checkstyle-8.8-all.jar"
-```
-
-Get `checkstyle-8.8-all.jar` from [Checkstyle's download page](https://sourceforge.net/projects/checkstyle/files/checkstyle/8.8/).
 
 
 ## Roadmap
