@@ -38,7 +38,7 @@ export function executePublish(projectLoader: ProjectLoader,
 
             const result: ExecuteGoalResult = await spawnAndWatch({
                     command: "bash",
-                    args: [p.join(__dirname, "..", "..", "..", "..", "scripts", "npm-publish.bash"),
+                    args: [p.join(__dirname, "..", "..", "..", "..", "..", "scripts", "npm-publish.bash"),
                         `--registry=${npmConfig.registry}`,
                         "--access",
                         npmConfig.access ? npmConfig.access : "restricted"],
