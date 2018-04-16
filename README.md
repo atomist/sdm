@@ -168,10 +168,49 @@ if you update any GraphQL files in `src/graphql`.
 
 The important types can be imported into downstream problems from the `index.ts` barrel.
 
-## GitHub Statuses
-When running on GitHub, the goals of the SDM are surfaced as GitHub statuses.
+## Core Concepts
 
-## Goals in Detail
+### Push Mappings
+The core event that Atomist reacts to is a push.
+
+The `PushMapping` interface is used consistently to decide how to handle pushes.
+
+```typescript
+export interface PushMapping<V> {
+
+    /**
+     * Name of the PushMapping. Must be unique
+     */
+    readonly name: string;
+
+    /**
+     * Compute a value for the given push. Return undefined
+     * if we don't find a mapped value.
+     * Return DoNotSetAnyGoals (null) to shortcut evaluation of the present set of rules,
+     * terminating evaluation and guarantee the return of undefined if we've reached this point.
+     * Only do so if you are sure
+     * that this evaluation must be short circuited if it has reached this point.
+     * If a previous rule has matched, it will still be used.
+     * The value may be static
+     * or computed on demand, depending on the implementation.
+     * @param {PushListenerInvocation} p
+     * @return {Promise<V | undefined | NeverMatch>}
+     */
+    valueForPush(p: PushListenerInvocation): Promise<V | undefined | NeverMatch>;
+}
+```
+
+A `PushTest` is a `PushMapping` that returns boolean.
+
+The DSL
+
+### Goal Setters
+When a push is set, **goals** are set.
+
+Goals correspond to necessary activities in the delivery process. They do not need to be sequential. They can run in parallel, but can specify preconditions (goals that must have succeeded for them to initiate).
+
+### Listeners
+
 Each of the delivery goals results in the triggering of domain specific
  listeners that are provided with the appropriate context to process the event: 
  For example, access to the project source code in the case of a code review, 
@@ -208,6 +247,33 @@ export interface RepoListenerInvocation {
 
 }
 ```
+
+#### Available listeners
+- `ArtifactListener`: Invoked when a new binary has been created
+- `BuildListener`: Invoked when a build is complete. 
+- `ChannelLinkListenerInvocation`: Invoked when a channel is linked to a repo
+- `ClosedIssueListener`: Invoked when an issue is closed
+- `CodeReactionListener`: Invoked in response to a code change
+- `DeploymentListener`: Invoked when a deployment has succeeded
+- `FingerprintDifferenceListener`: Invoked when a fingerprint has changed
+- `GoalsSetListener`: Invoked when goals are set on a push
+- `Listener`: Superinterface for all listeners
+- `NewIssueListener`: Invoked when an issue has been created
+- `ProjectListener`: Superinterface for all listeners that relate to a project and make the cloned project available
+- `PullRequestListener`: Invoked when a pull request is raised
+- `PushListener`: Superinterface for listeners to push events
+- `RepoCreationListener`: Invoked when a repository has been created
+- `SupersededListener`: Invoked when a commit has been superseded by a subsequent commit
+- `TagListener`: Invoked when a repo is created
+- `UpdatedIssueListener`: Invoked when an issue has been updated
+- `UserJoiningChannelListener`: Invoked when a user joins a channel
+- `VerifiedDeploymentListener`: Invoked when an endpoint has been verified
+
+
+## GitHub Statuses
+When running on GitHub, the goals of the SDM are surfaced as GitHub statuses.
+
+## Goals in Detail
 
 ### Issue Creation
 When a new issue is created, you may want to notify people or perform an action.
@@ -383,18 +449,6 @@ A special kind of push listener relates to **fingerprints**.
 
 tbc
 
-### Deployment Result
-#### Listener interfaces
-
-#### Examples
-### Endpoint Reported
-#### Listener interfaces
-
-#### Examples
-### Endpoint Verification
-#### Listener interfaces
-
-#### Examples
 ## Pulling it All Together: The `SoftwareDeliveryMachine` class
 
 Your event listeners need to be invoked by Atomist handlers. The `SoftwareDeliveryMachine` takes care of this, ensuring that the correct handlers are emitted for use in `atomist.config.ts`, without you needing to worry about the event handler registrations on underlying GraphQL.
