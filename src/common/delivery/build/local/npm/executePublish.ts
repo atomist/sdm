@@ -22,7 +22,10 @@ import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/goalExecution";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../goals/support/reportGoalError";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../../goals/support/reportGoalError";
 import { ProjectIdentifier } from "../projectIdentifier";
 
 export function executePublish(projectLoader: ProjectLoader,
