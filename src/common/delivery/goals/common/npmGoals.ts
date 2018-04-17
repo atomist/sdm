@@ -32,17 +32,6 @@ import {
     VersionGoal,
 } from "./commonGoals";
 
-export const NpmBuildGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "Build",
-    environment: IndependentOfEnvironment,
-    orderedName: "2-build",
-    displayName: "build",
-    workingDescription: "Building...",
-    completedDescription: "Build successful",
-    failedDescription: "Build failed",
-    fork: true,
-}, AutofixGoal);
-
 export const NpmDockerBuildGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "DockerBuild",
     environment: IndependentOfEnvironment,
@@ -52,7 +41,7 @@ export const NpmDockerBuildGoal = new GoalWithPrecondition({
     completedDescription: "Docker build successful",
     failedDescription: "Failed to build Docker image",
     fork: true,
-}, NpmBuildGoal);
+}, BuildGoal);
 
 export const NpmPublishGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "Publish",
@@ -63,7 +52,7 @@ export const NpmPublishGoal = new GoalWithPrecondition({
     completedDescription: "Published",
     failedDescription: "Published failed",
     fork: true,
-}, NpmBuildGoal);
+},BuildGoal);
 
 export const NpmTagGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "Tag",
@@ -73,7 +62,7 @@ export const NpmTagGoal = new GoalWithPrecondition({
     workingDescription: "Tagging...",
     completedDescription: "Tagged",
     failedDescription: "Failed to create Tag",
-}, NpmDockerBuildGoal, NpmBuildGoal);
+}, NpmDockerBuildGoal, BuildGoal);
 
 export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "DeployToTest",
@@ -109,7 +98,7 @@ export const NpmBuildGoals = new Goals(
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
-    NpmBuildGoal,
+    BuildGoal,
     NpmPublishGoal,
     NpmTagGoal,
 );
@@ -119,7 +108,7 @@ export const NpmDockerGoals = new Goals(
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
-    NpmBuildGoal,
+    BuildGoal,
     NpmPublishGoal,
     DockerBuildGoal,
     NpmTagGoal,
@@ -130,7 +119,7 @@ export const NpmKubernetesDeployGoals = new Goals(
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
-    NpmBuildGoal,
+    BuildGoal,
     NpmPublishGoal,
     DockerBuildGoal,
     NpmTagGoal,
