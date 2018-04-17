@@ -23,7 +23,7 @@ import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog } from "../../../../spi/log/ProgressLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import {
     asSpawnCommand,
     ChildProcessResult,
