@@ -28,7 +28,7 @@ export class PushRules<V> implements PushMapping<V> {
     /**
      * Return all possible values
      * @param {string} name
-     * @param {Array<PushRule<V>>} choices Array of choices.
+     * @param {Array<PushMapping<V>>} choices Array of choices.
      * Passing an empty array will result in an instance that always maps to undefined,
      * and is not an error.
      */

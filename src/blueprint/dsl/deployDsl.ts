@@ -36,7 +36,7 @@ export class DeployPushRule extends PushRule<Target> {
                     endpointGoal,
                     undeployGoal,
                 });
-                return outer.choice;
+                return outer;
             },
         };
 

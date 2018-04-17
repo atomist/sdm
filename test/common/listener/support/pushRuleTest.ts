@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-import { PushMapping } from "../PushMapping";
-import { PushTest } from "../PushTest";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
-/**
- * PushMapping that always returns the same value, guarded by a PushTest.
- * Return undefined if the PushTest doesn't match.
- */
-export interface StaticPushMapping<V> extends PushMapping<V> {
+import * as assert from "power-assert";
+import { PushRule } from "../../../../src";
+import { TruePushTest } from "./pushTestUtilsTest";
 
-    readonly pushTest: PushTest;
+describe("PushRule", () => {
 
-    /**
-     * Value we always return
-     */
-    readonly value: V;
-}
+    it("should set literal value", async () => {
+        const pr = new PushRule<string>(TruePushTest, [], "reason");
+        pr.set("frogs");
+        assert.equal(await pr.valueForPush({id: new GitHubRepoRef("a", "b")} as any), "frogs");
+    });
+
+});
