@@ -24,16 +24,27 @@ import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/goalExecution";
 import {
     ExecuteGoalWithLog,
+    PrepareForGoalExecution,
     RunWithLogContext,
 } from "../../../goals/support/reportGoalError";
 import { ProjectIdentifier } from "../projectIdentifier";
+import { NpmPreparations } from "./npmBuilder";
 
 export function executePublish(projectLoader: ProjectLoader,
-                               projectIdentifier: ProjectIdentifier): ExecuteGoalWithLog {
+                               projectIdentifier: ProjectIdentifier,
+                               preparations: PrepareForGoalExecution[] = NpmPreparations): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
+        return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async project => {
+
+            for (const preparation of preparations) {
+                const pResult = await preparation(project, rwlc);
+                if (pResult.code !== 0) {
+                    return pResult;
+                }
+            }
+
             const npmConfig = await configure();
 
             const result: ExecuteGoalResult = await spawnAndWatch({

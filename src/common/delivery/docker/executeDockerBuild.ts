@@ -19,7 +19,6 @@ import {
     HandlerResult,
 } from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ProjectVersioner } from "../../..";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
@@ -29,6 +28,7 @@ import { readSdmVersion } from "../build/local/projectVersioner";
 import { ExecuteGoalResult } from "../goals/goalExecution";
 import {
     ExecuteGoalWithLog,
+    PrepareForGoalExecution,
     RunWithLogContext,
 } from "../goals/support/reportGoalError";
 
@@ -57,19 +57,19 @@ export type DockerBuildPreparer = (p: GitProject,
  * @returns {ExecuteGoalWithLog}
  */
 export function executeDockerBuild(projectLoader: ProjectLoader,
-                                   projectVersioner: ProjectVersioner,
-                                   buildPreparer: DockerBuildPreparer,
                                    imageNameCreator: DockerImageNameCreator,
+                                   preparations: PrepareForGoalExecution[] = [],
                                    options: DockerOptions): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { status, credentials, id, context, progressLog } = rwlc;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+        return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {
 
-            await projectVersioner(status, p, progressLog);
-            let result = await buildPreparer(p, rwlc, options);
-            if (result.code !== 0) {
-                return result;
+            for (const preparation of preparations) {
+                const pResult = await preparation(p, rwlc);
+                if (pResult.code !== 0) {
+                    return pResult;
+                }
             }
 
             const opts = {
@@ -85,7 +85,7 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
             const dockerfilePath = await (options.dockerfileFinder ? options.dockerfileFinder(p) : "Dockerfile");
 
             // 1. run docker login
-            result = await spawnAndWatch(
+            let result = await spawnAndWatch(
                 {
                     command: "docker",
                     args: ["login", "--username", options.user, "--password", options.password, options.registry],
