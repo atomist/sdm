@@ -354,17 +354,17 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     public addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this {
         _.flatten(rules).forEach(r =>
             this.addGoalImplementation(r.name, BuildGoal,
-                executeBuild(this.opts.projectLoader, r.choice.value),
+                executeBuild(this.opts.projectLoader, r.value),
                 {
-                    pushTest: r.choice.guard,
-                    logInterpreter: r.choice.value.logInterpreter,
+                    pushTest: r.pushTest,
+                    logInterpreter: r.value.logInterpreter,
                 })
                 .addGoalImplementation(r.name, JustBuildGoal,
-                    executeBuild(this.opts.projectLoader, r.choice.value),
+                    executeBuild(this.opts.projectLoader, r.value),
                     {
-                        pushTest: r.choice.guard,
+                        pushTest: r.pushTest,
                         logInterpreter:
-                        r.choice.value.logInterpreter,
+                        r.value.logInterpreter,
                     },
                 ));
         return this;
@@ -376,7 +376,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
                 r.value.endpointGoal, r.value),
                 {
-                    pushTest: r.guard,
+                    pushTest: r.pushTest,
                     logInterpreter: r.value.deployer.logInterpreter,
                 },
             );
@@ -387,7 +387,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             // undeploy
             this.addGoalImplementation(r.name, r.value.undeployGoal, executeUndeploy(r.value),
                 {
-                    pushTest: r.guard,
+                    pushTest: r.pushTest,
                     logInterpreter: r.value.deployer.logInterpreter,
                 },
             );
