@@ -27,7 +27,7 @@ describe("PushRule", () => {
         pr.set("frogs");
         assert.equal(await pr.valueForPush({
             push: { id: new Date().getTime() + "_"},
-            id: new GitHubRepoRef("a", "b")
+            id: new GitHubRepoRef("a", "b"),
         } as any), "frogs");
     });
 
