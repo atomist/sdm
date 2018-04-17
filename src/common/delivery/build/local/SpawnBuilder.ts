@@ -87,7 +87,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
         }
     }
 
-    public logInterpreter: LogInterpreter = this.options.logInterpreter;
+    public get logInterpreter(): LogInterpreter { return this.options.logInterpreter };
 
     protected async startBuild(credentials: ProjectOperationCredentials,
                                id: RemoteRepoRef,
