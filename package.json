@@ -70,7 +70,7 @@
     "autotest": "supervisor --watch src,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
     "build": "npm-run-all compile generate:barrels test",
     "clean": "npm-run-all clean:js clean:build",
-    "clean:build": "rimraf *-v8.log profile.txt build",
+    "clean:build": "rimraf *-v8.log profile.txt build coverage",
     "clean:dist": "npm-run-all clean clean:npm",
     "clean:js": "rimraf \"{src,test}/**/*.js\"",
     "clean:npm": "rimraf node_modules",
