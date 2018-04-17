@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { PushMapping, PushRules, PushTest } from "../..";
+import { allSatisfied, PushMapping, PushRules, PushTest } from "../..";
 
 /**
  * Simple DSL to create a decision tree
- * @param {PushTest} givenPushTest
+ * @param givenPushTests PushTests
  * @return interim DSL structure
  */
-export function given<V>(givenPushTest: PushTest) {
+export function given<V>(...givenPushTests: PushTest[]) {
+    const givenPushTest = allSatisfied(...givenPushTests);
     return {
         itMeans(name: string) {
             return {

@@ -44,6 +44,14 @@ describe("given", () => {
         assert.equal(mapped, undefined);
     });
 
+    it("allows multiple given guards", async () => {
+        const pm: PushMapping<any> = given(TruePushTest, TruePushTest)
+            .itMeans("frogs coming")
+            .then(FrogPushMapping);
+        const mapped = await pm.valueForPush(fakePush());
+        assert.equal(mapped, "frog");
+    });
+
     it("nest with when", async () => {
         const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
             .itMeans("no frogs coming")
