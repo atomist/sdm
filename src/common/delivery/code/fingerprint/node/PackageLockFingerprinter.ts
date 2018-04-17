@@ -1,9 +1,8 @@
-import { FingerprinterRegistration, FingerprinterResult } from "../FingerprinterRegistration";
-import { CodeReactionInvocation } from "../../../../listener/CodeReactionListener";
-import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
+import { logger } from "@atomist/automation-client";
 import { IsNode, PushTest } from "../../../../..";
 import { computeShaOf } from "../../../../../util/misc/sha";
-import { logger } from "@atomist/automation-client";
+import { CodeReactionInvocation } from "../../../../listener/CodeReactionListener";
+import { FingerprinterRegistration, FingerprinterResult } from "../FingerprinterRegistration";
 
 /**
  * Compute a fingerprint from a package-lock.json file.
@@ -24,11 +23,13 @@ export class PackageLockFingerprinter implements FingerprinterRegistration {
         try {
             const content = await lockFile.getContent();
             const json = JSON.parse(content);
+            const deps = json.dependencies;
+            const dstr = JSON.stringify(deps);
             return {
                 name: "dependencies",
                 abbreviation: "deps",
                 version: "0.1",
-                sha: computeShaOf(json.dependencies),
+                sha: computeShaOf(dstr),
                 data: json,
             };
         } catch (err) {

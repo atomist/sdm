@@ -1,9 +1,9 @@
-import { PackageLockFingerprinter } from "../../../../../../src/common/delivery/code/fingerprint/node/PackageLockFingerprinter";
-import { CodeReactionInvocation } from "../../../../../../src";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import * as assert from "power-assert";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import * as assert from "power-assert";
+import { CodeReactionInvocation } from "../../../../../../src";
+import { PackageLockFingerprinter } from "../../../../../../src/common/delivery/code/fingerprint/node/PackageLockFingerprinter";
 
 describe("package-lock.json", () => {
 

@@ -1,5 +1,5 @@
-import { MavenFingerprinter } from "../../../../../../src";
 import * as assert from "power-assert";
+import { MavenFingerprinter } from "../../../../../../src";
 
 describe("Maven fingerprinter", () => {
 
