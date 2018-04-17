@@ -15,7 +15,6 @@
  */
 
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
-import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder } from "../SpawnBuilder";
 import { npmBuilderOptionsFromFile } from "./npmBuilder";
@@ -23,7 +22,6 @@ import { npmBuilderOptionsFromFile } from "./npmBuilder";
 export const AtomistBuildFile = ".atomist/build.sh";
 
 export function npmCustomBuilder(artifactStore: ArtifactStore, projectLoader: ProjectLoader) {
-    return new SpawnBuilder(artifactStore,
-        createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptionsFromFile(AtomistBuildFile));
+    return new SpawnBuilder({ artifactStore,
+        projectLoader, options: npmBuilderOptionsFromFile(AtomistBuildFile)});
 }

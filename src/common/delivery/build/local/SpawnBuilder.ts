@@ -75,12 +75,14 @@ export interface SpawnBuilderOptions {
  */
 export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
 
-    constructor(artifactStore: ArtifactStore,
-                logFactory: LogFactory,
+    private readonly options: SpawnBuilderOptions;
+
+    constructor(params: { artifactStore?: ArtifactStore,
                 projectLoader: ProjectLoader,
-                private readonly options: SpawnBuilderOptions) {
-        super(options.name, artifactStore, projectLoader);
-        if (!options.commands && !options.commandFile) {
+                options: SpawnBuilderOptions}) {
+        super(params.options.name, params.artifactStore, params.projectLoader);
+        this.options = params.options;
+        if (!this.options.commands && !this.options.commandFile) {
             throw new Error("Please supply either commands or a path to a file in the project containing them");
         }
     }
