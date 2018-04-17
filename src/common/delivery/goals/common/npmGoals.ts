@@ -29,19 +29,9 @@ import {
     ReviewGoal,
     StagingDeploymentGoal,
     StagingEndpointGoal,
+    TagGoal,
     VersionGoal,
 } from "./commonGoals";
-
-export const NpmDockerBuildGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DockerBuild",
-    environment: IndependentOfEnvironment,
-    orderedName: "3-docker",
-    displayName: "docker build",
-    workingDescription: "Running Docker build...",
-    completedDescription: "Docker build successful",
-    failedDescription: "Failed to build Docker image",
-    fork: true,
-}, BuildGoal);
 
 export const NpmPublishGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "Publish",
@@ -52,17 +42,7 @@ export const NpmPublishGoal = new GoalWithPrecondition({
     completedDescription: "Published",
     failedDescription: "Published failed",
     fork: true,
-},BuildGoal);
-
-export const NpmTagGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "Tag",
-    environment: IndependentOfEnvironment,
-    orderedName: "4-tag",
-    displayName: "tag",
-    workingDescription: "Tagging...",
-    completedDescription: "Tagged",
-    failedDescription: "Failed to create Tag",
-}, NpmDockerBuildGoal, BuildGoal);
+}, BuildGoal);
 
 export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
     uniqueCamelCaseName: "DeployToTest",
@@ -100,7 +80,7 @@ export const NpmBuildGoals = new Goals(
     AutofixGoal,
     BuildGoal,
     NpmPublishGoal,
-    NpmTagGoal,
+    TagGoal,
 );
 
 export const NpmDockerGoals = new Goals(
@@ -111,7 +91,7 @@ export const NpmDockerGoals = new Goals(
     BuildGoal,
     NpmPublishGoal,
     DockerBuildGoal,
-    NpmTagGoal,
+    TagGoal,
 );
 
 export const NpmKubernetesDeployGoals = new Goals(
@@ -122,7 +102,7 @@ export const NpmKubernetesDeployGoals = new Goals(
     BuildGoal,
     NpmPublishGoal,
     DockerBuildGoal,
-    NpmTagGoal,
+    TagGoal,
     StagingDockerDeploymentGoal,
     ProductionDockerDeploymentGoal,
 );

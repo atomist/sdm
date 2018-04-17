@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Success } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
@@ -30,8 +29,9 @@ import {
 } from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { branchFromCommit } from "../../executeBuild";
+import { readSdmVersion } from "../projectVersioner";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
-import { NodeProjectVersioner } from "./nodeProjectVersioner";
 import { NpmLogInterpreter } from "./npmLogInterpreter";
 
 /**
@@ -103,8 +103,25 @@ export async function npmInstallPreparation(p: GitProject, rwlc: RunWithLogConte
 }
 
 export async function npmVersionPreparation(p: GitProject, rwlc: RunWithLogContext): Promise<ExecuteGoalResult> {
-    await NodeProjectVersioner(rwlc.status, p, rwlc.progressLog);
-    return Success;
+    const commit = rwlc.status.commit;
+    const version = await readSdmVersion(
+        commit.repo.owner,
+        commit.repo.name,
+        commit.repo.org.provider.providerId,
+        commit.sha,
+        branchFromCommit(commit),
+        rwlc.context);
+    return spawnAndWatch({
+            command: "npm",
+            args: ["--no-git-tag-version", "version", version],
+        },
+        {
+            cwd: p.baseDir,
+        },
+        rwlc.progressLog,
+        {
+            errorFinder: code => code !== 0,
+        });
 }
 
 export async function npmCompilePreparation(p: GitProject, rwlc: RunWithLogContext): Promise<ExecuteGoalResult> {

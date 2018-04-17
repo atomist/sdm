@@ -58,7 +58,7 @@ export async function executeGoalForked(goal: OnAnyRequestedSdmGoal.SdmGoal,
         name = name.split("/")[1];
     }
     const version = pj.version;
-    jobSpec.metadata.name = `${name}-goal-${goal.id}`;
+    jobSpec.metadata.name = `${name}-${goal.uniqueName.toLocaleLowerCase()}-${goal.id}`;
     jobSpec.spec.template.spec.containers[0].name = name;
     jobSpec.spec.template.spec.containers[0].image = `sforzando-dockerv2-local.jfrog.io/${name}:${version}`;
     jobSpec.spec.template.spec.containers[0].env.push({
