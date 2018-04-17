@@ -21,6 +21,7 @@ import {
     logger,
     Secrets,
 } from "@atomist/automation-client";
+import { automationClientInstance } from "@atomist/automation-client/automationClient";
 import { ApolloGraphClient } from "@atomist/automation-client/graph/ApolloGraphClient";
 import {
     EventIncoming,
@@ -29,9 +30,9 @@ import {
 import { RegistrationConfirmation } from "@atomist/automation-client/internal/transport/websocket/WebSocketRequestProcessor";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { AutomationEventListenerSupport } from "@atomist/automation-client/server/AutomationEventListener";
-import { BuildableAutomationServer } from "@atomist/automation-client/server/BuildableAutomationServer";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as appRoot from "app-root-path";
+import * as cluster from "cluster";
 import * as fs from "fs-extra";
 import {
     OnAnyRequestedSdmGoal,
@@ -103,50 +104,59 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
         super();
     }
 
+    public eventIncoming(payload: EventIncoming) {
+        if (cluster.isWorker) {
+            // Register event handler locally only
+            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader);
+            automationClientInstance().withEventHandler(maker);
+        }
+    }
+
     public async registrationSuccessful(eventHandler: RequestProcessor) {
-        const registration = (eventHandler as any).registration as RegistrationConfirmation;
-        const automationServer = (eventHandler as any).automations as BuildableAutomationServer;
-        const teamId = process.env.ATOMIST_GOAL_TEAM;
-        const teamName = process.env.ATOMIST_GOAL_TEAM_NAME || teamId;
-        const goalId = process.env.ATOMIST_GOAL_ID;
-        const correlationId = process.env.ATOMIST_CORRELATION_ID || guid();
+        if (cluster.isMaster) {
+            const registration = (eventHandler as any).registration as RegistrationConfirmation;
+            const teamId = process.env.ATOMIST_GOAL_TEAM;
+            const teamName = process.env.ATOMIST_GOAL_TEAM_NAME || teamId;
+            const goalId = process.env.ATOMIST_GOAL_ID;
+            const correlationId = process.env.ATOMIST_CORRELATION_ID || guid();
 
-        // Obtain goal via graphql query
-        const graphClient = new ApolloGraphClient(
-            `https://automation.atomist.com/graphql/team/${teamId}`,
-            { Authorization: `Bearer ${registration.jwt}`});
+            // Obtain goal via graphql query
+            const graphClient = new ApolloGraphClient(
+                `https://automation.atomist.com/graphql/team/${teamId}`,
+                { Authorization: `Bearer ${registration.jwt}`});
 
-        const goal = await graphClient.query<SdmGoalById.Query, SdmGoalById.Variables>({
-            name: "SdmGoalById",
-            variables: {
-                id: goalId,
-            },
-            options: QueryNoCacheOptions,
-        });
+            const goal = await graphClient.query<SdmGoalById.Query, SdmGoalById.Variables>({
+                name: "SdmGoalById",
+                variables: {
+                    id: goalId,
+                },
+                options: QueryNoCacheOptions,
+            });
 
-        // Register event handler locally only
-        const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader);
-        automationServer.registerEventHandler(maker);
+            // Register event handler locally only
+            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader);
+            automationClientInstance().withEventHandler(maker);
 
-        // Create event and run event handler
-        const event: EventIncoming = {
-            data: goal,
-            extensions: {
-                correlation_id: correlationId,
-                team_id: teamId,
-                team_name: teamName,
-                operationName: maker().subscriptionName,
-            },
-            secrets: [{
-                uri: Secrets.OrgToken,
-                value: process.env.GITHUB_TOKEN,
-            }],
-        };
-        await eventHandler.processEvent(event, async results => {
-            const resolved = await results;
-            logger.info("Processing goal completed with results %j", resolved);
-            process.exit(0);
-        });
+            // Create event and run event handler
+            const event: EventIncoming = {
+                data: goal,
+                extensions: {
+                    correlation_id: correlationId,
+                    team_id: teamId,
+                    team_name: teamName,
+                    operationName: maker().subscriptionName,
+                },
+                secrets: [{
+                    uri: Secrets.OrgToken,
+                    value: process.env.GITHUB_TOKEN,
+                }],
+            };
+            await eventHandler.processEvent(event, async results => {
+                const resolved = await results;
+                logger.info("Processing goal completed with results %j", resolved);
+                process.exit(0);
+            });
+        }
     }
 }
 
