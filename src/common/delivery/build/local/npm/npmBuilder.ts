@@ -18,7 +18,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { Project } from "@atomist/automation-client/project/Project";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
-import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 import { NpmLogInterpreter } from "./npmLogInterpreter";
@@ -36,9 +35,9 @@ export const DevelopmentEnvOptions = {
 export const Install: SpawnCommand = asSpawnCommand("npm ci", DevelopmentEnvOptions);
 
 export function nodeBuilder(projectLoader: ProjectLoader, ...commands: string[]) {
-    return new SpawnBuilder(undefined,
-        createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptions(commands.map(cmd => asSpawnCommand(cmd, DevelopmentEnvOptions))));
+    return new SpawnBuilder({
+        projectLoader,
+        options: npmBuilderOptions(commands.map(cmd => asSpawnCommand(cmd, DevelopmentEnvOptions)))});
 }
 
 function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions {
