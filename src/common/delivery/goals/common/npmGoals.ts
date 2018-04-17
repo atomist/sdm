@@ -95,7 +95,7 @@ export const NpmDockerGoals = new Goals(
 );
 
 export const NpmKubernetesDeployGoals = new Goals(
-    "Node.js Kubernetes Deploy",
+    "Node.js Kubernetes Build and Deploy",
     VersionGoal,
     ReviewGoal,
     AutofixGoal,
