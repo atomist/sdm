@@ -35,9 +35,9 @@ See [set up](./docs/Setup.md) for additional prerequisites depending on the proj
 See the [sample-sdm project](https://github.com/atomist/sample-sdm) project for instructions on how to run an SDM instance.
 
 ## Concepts
-Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
+Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties. Because you're using a real programming language (not YAML or Bash), and you have access to a real ecosystem (Node), you can create a rich er delivery experience than you've even imagined.
 
-This framework is based around the goals of a typical delivery
+The SDM framework is based around the goals of a typical delivery
 flow (such as code analysis, build and deploy) but is flexible and extensible.
 
 An Atomist SDM can automate important tasks and improve your delivery flow. Specifically:
@@ -59,7 +59,7 @@ Atomist is not tied to GitHub, but this repository focuses on using Atomist with
 GitHub Enterprise.
 
 ## Typical Functionality
-Every SDM is different, but the 
+SDMs differ, but the 
 following functionality is typical and will be available out of the box when you run `sample-sdm` in your team:
 
 - *Project creation for Spring*. Atomist is not Spring specific, but we use Spring boot as an illustration here. Try `@atomist create spring`. The seed project used by default will be `spring-team/spring-rest-seed`. 
@@ -135,13 +135,15 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
 
 The underlying GraphQL/event handler infrastructure is generic and powerful. This project provides a framework above it that makes typical tasks far easier, while not preventing you from breaking out into lower level functionality. 
 
-## Core SDM Concepts: Goals, Listeners and Generators
+## Core SDM Concepts: Goals and Listeners
 
 The core SDM functionality relates to what happens on a push to a repository. An SDM allows you to process a push in any way you choose, but typically you want it to initiate a delivery flow.
 
-An SDM allows you to set **goals** on push. Goals correspond to actions that should occur during delivery flow, such as build and deployment. Goals are not necessarily sequential--some may be executed in parallel--but certain goals, such as deployment, do have preconditions (goals that must have previously completed successfully).
+### Goals
 
-Goals are set using rules, which are typically expressed in a simple internal DSL. For example:
+An SDM allows you to set **goals** on push. Goals correspond to the actions that make up a delivery flow, such as build and deployment. Goals are not necessarily sequential--some may be executed in parallel--but certain goals, such as deployment, have preconditions (goals that must have previously completed successfully).
+
+Goals are set using **rules**, which are typically expressed in a simple internal DSL. For example:
 
 ```typescript
 whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
@@ -171,30 +173,32 @@ export const HttpServiceGoals = new Goals(
     ProductionEndpointGoal);
 ```
 
-It is possible to define new goals and implementations, so this approach is highly extensible.
+It is possible to define new goals with accompanying implementations, so this approach is highly extensible.
 
-Goals drive the delivery process. **Listeners** help in goal implementation and also allow observation of process. For example:
+### Listeners
+
+While goals drive the delivery process, **listeners** help in goal implementation and allow observation of the delivery process. Listener **registrations** allow listeners to be narrowed to being fired on particular pushes.
+
+For example, the following listener registration causes an automatic fix to be made on every push to a Node project, adding a license file if none is found:
 
 ```typescript
+ sdm.addAutofixes({
+        name: "fix me",
+        pushTest: IsNode,
+        action: async cri => {
+            const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
+            return cri.project.addFile("LICENSE", license.data);
+        },
+    })
 
 ```
 
-## Key Events
+The following listener observes a build, notifying any linked Slack channels of its status:
 
-The key events handled in this repository are:
-
-- _On repo creation_. When a new repository has been created, we often want to perform
-additional actions, such as provisioning an issue tracker. We provide a hook for this
-and also demonstrate how to add GitHub topics based on initial repo content.  
-- _On push to a repo._ This is often a trigger for code review or other actions based on the code. Specifically, we allow
-   - Analysis of semantic diffs: What is the meaning of what changed?
-	- Code review, including using external tools such as Checkstyle
-	- Autofixes: Linting or making other automatic corrections such as supplying missing license files
-	- Arbitrary actions on the code, such as notifying people or systems of significant changes
-- _On build result_: For example, notifying a committer who has broken the build, or setting a build status.
-- _On image link (a binary artifact has been built)_ A trigger for deployment.
-- _On successful deployment_, as shown by a GitHub status.
-- _On validation of a deployed endpoint_, as shown by a GitHub status.
+```typescript
+sdm.addBuildListeners(async br => 
+        br.addressChannels(`Build of ${br.id.repo} has status ${br.build.status}`));
+```
 
 ## Core Concepts
 
@@ -298,10 +302,7 @@ export interface RepoListenerInvocation {
 - `VerifiedDeploymentListener`: Invoked when an endpoint has been verified
 
 
-## GitHub Statuses
-When running on GitHub, the goals of the SDM are surfaced as GitHub statuses.
-
-## Goals in Detail
+## Code Examples
 
 ### Issue Creation
 When a new issue is created, you may want to notify people or perform an action.
@@ -362,11 +363,6 @@ sdm.addNewRepoWithCodeActions(
 ```
 
 ### Push
-A push to the source control hosting system is typically a very important trigger for actions. The `SoftwareDeliveryMachine` divides the actions into several steps:
-
-- Code Review
-- Code
-- To Be Completed
 
 There are multiple domain-specific listeners associated with pushes.
 
@@ -475,13 +471,147 @@ sdm.addCodeReactions(listChangedFiles)
 #### Fingerprints
 A special kind of push listener relates to **fingerprints**.
 
-tbc
+Fingerprints are data computed against a push. Typically they reflect the state of the repository's source code after the push; they can also take into account other characteristics of the commit. Fingerprinting is valuable because:
+
+1. *It enables us to assess the impact of a particular commit, through providing a semantic diff*. For example, did the commit change dependencies? Did it change some particularly sensitive files that necessitate closer than usual review?
+2. *It enables us to understand the evolution of a code base over time.* Atomist persists fingerprints, so we can trace over time anything we fingerprint, and report against it. For example, what is happening to code quality metrics over time?
+
+Atomist ships some out of the box fingerprints, such as Maven and `npm` dependency fingerprints. But it's easy to write your own. Fingerprint registrations are like other listener registrations, specifying a name and `PushTest`. The following example is the complete code for fingerprinting dependencies specified in a `package-lock.json` file:
+
+```typescript
+export class PackageLockFingerprinter implements FingerprinterRegistration {
+
+    public readonly name = "PackageLockFingerprinter";
+
+    public readonly pushTest: PushTest = IsNode;
+
+    public async action(cri: CodeReactionInvocation): Promise<FingerprinterResult> {
+        const lockFile = await cri.project.getFile("package-lock.json");
+        if (!lockFile) {
+            return [];
+        }
+        try {
+            const content = await lockFile.getContent();
+            const json = JSON.parse(content);
+            const deps = json.dependencies;
+            const dstr = JSON.stringify(deps);
+            return {
+                name: "dependencies",
+                abbreviation: "deps",
+                version: "0.1",
+                sha: computeShaOf(dstr),
+                data: json,
+            };
+        } catch (err) {
+            logger.warn("Unable to compute package-lock.json fingerprint: %s", err.message);
+            return [];
+        }
+    }
+}
+```
+Fingerprinting will only occur if a `FingerprintGoal` is selected when goals are set.
+
+## Generators
+Another important concern is project creation. Consistent project creation is important to governance.
+
+Atomist's unique take on project generation starts from a **seed project**--a kind of golden master, that is version controlled using your regular repository hosting solution. A seed project doesn't need to include template content: It's a regular project in whatever stack, and Atomist transforms it to be a unique, custom project based on the parameters supplied at the time of project creation. This allows freedom to evolve the seed project with regular development tools.
+
+Generators can be registered with an SDM as follows:
+
+```typescript
+.addGenerators(() => springBootGenerator({
+    ...CommonJavaGeneratorConfig,
+    seedRepo: "spring-rest-seed",
+    intent: "create spring",
+}))
+```
+
+The `springBootGenerator` function used here is provided in `sample-sdm`, but it's easy enough to write your own. 
+
+You can invoke such a generator from Slack, like this:
+
+<img src="./create_sample1.png"/>
+
+Note how the repo was automatically tagged with GitHub topics after creation. This was the work of a listener, specified as follows:
+
+```typescript
+sdm.addNewRepoWithCodeActions(
+    tagRepo(springBootTagger),
+);
+```
+
+You can then follow along in a linked channel like this:
+
+<img src="./sample1_channel.png"/>
+
+Note the suggestion to add a Cloud Foundry manifest. This is the work of another listener, which reacts to finding new code in a repo. Listeners and commands such as generators work hand in hand for Atomist.
+
+## Editors
+Another core concept is a project **editor**. An editor is a command that transforms project content. Atomist infrastructure can help persist such transformations through branch commits or pull requests, with clean diffs.
+
+### A Simple Editor
+Editors use the Atomist `Project` API for simple, testable, access to project contents. They are completely decoupled from the underlying source control system and even from the file system, allowing for straightforward, fast, unit testing.
+
+Here's an example of a simple editor that takes as a parameter the path of a file to remove from a repository. 
+
+```typescript
+@Parameters()
+export class RemoveFileParams {
+
+    @Parameter()
+    public path: string;
+}
+
+export const removeFileEditor: HandleCommand = editorCommand<RemoveFileParams>(
+    () => removeFile,
+    "remove file",
+    RemoveFileParams,
+    {
+        editMode: params => commitToMaster(`You asked me to remove file ${params.path}!`),
+    });
+
+async function removeFile(p: Project, ctx: HandlerContext, params: RemoveFileParams) {
+    return p.deleteFile(params.path);
+}
+```
+
+Editors can be registered with an SDM as follows:
+
+```typescript
+sdm.addEditors(
+    () => removeFileEditor,
+);
+```
+
+### Dry Run Editors
+More elaborate editors use helper APIs on top of the `Project` API such as Atomist's microgrammar API and ANTLR integration.
+
+There's also an important capability of "dry run editing": Performing an edit on a branch, and then either raising either a PR or an issue, depending on build success or failure. This allows us to safely apply edits across many repositories. There's a simple wrapper function to enable this:
+
+```typescript
+export const tryToUpgradeSpringBootVersion: HandleCommand = dryRunEditor<UpgradeSpringBootParameters>(
+    params => setSpringBootVersionEditor(params.desiredBootVersion),
+    UpgradeSpringBootParameters,
+    "boot-upgrade", {
+        description: `Upgrade Spring Boot version`,
+        intent: "try to upgrade Spring Boot",
+    },
+);
+```
+
+Dry run editing is another example of how commands and events can work hand in hand with Atomist to provide a uniquely powerful solution.
+
+
+## Arbitrary Commands
+Both generators and editors are special cases of Atomist **command handlers**, which can be invoked via Slack or HTTP.
 
 ## Pulling it All Together: The `SoftwareDeliveryMachine` class
 
+Your ideal delivery blueprint spans delivery flow, generators, editors and other commands. All we need is something to pull it together.
+
 Your event listeners need to be invoked by Atomist handlers. The `SoftwareDeliveryMachine` takes care of this, ensuring that the correct handlers are emitted for use in `atomist.config.ts`, without you needing to worry about the event handler registrations on underlying GraphQL.
 
-The `SoftwareDeliveryMachine` classes also offers a fluent builder approach to adding command handlers, generators and editors.
+The `SoftwareDeliveryMachine` class offers a fluent builder approach to adding command handlers, generators and editors.
 
 ### Example
 For example:
@@ -529,7 +659,6 @@ For example:
         .addProjectReviewers(logReview)
         .addCodeReactions(listChangedFiles)
         .addFingerprinters(mavenFingerprinter)
-        .addFingerprintDifferenceListeners(diff1)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
         .addVerifiedDeploymentListeners(presentPromotionButton)
@@ -551,7 +680,7 @@ In `atomist.config.ts` you can bring them in simply as follows:
 
 ```typescript
 commands: assembled.commandHandlers,
-    events: assembled.eventHandlers,
+events: assembled.eventHandlers,
 ```
 
 ## Structure of This Project
