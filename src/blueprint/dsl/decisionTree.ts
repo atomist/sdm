@@ -26,6 +26,12 @@ export function given<V>(...givenPushTests: PushTest[]) {
     return {
         itMeans(name: string) {
             return {
+                set(value: V): PushMapping<V> {
+                    return {
+                        name,
+                        valueForPush: async () => value,
+                    };
+                },
                 then(...pushMappings: Array<PushMapping<V>>): PushMapping<V> {
                     const rules = new PushRules<V>(name, pushMappings);
                     return {

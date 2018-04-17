@@ -45,11 +45,19 @@ describe("given", () => {
     });
 
     it("allows multiple given guards", async () => {
-        const pm: PushMapping<any> = given(TruePushTest, TruePushTest)
+        const pm: PushMapping<string> = given<string>(TruePushTest, TruePushTest)
             .itMeans("frogs coming")
             .then(FrogPushMapping);
         const mapped = await pm.valueForPush(fakePush());
         assert.equal(mapped, "frog");
+    });
+
+    it("should allow literal", async () => {
+        const pm: PushMapping<string> = given<string>(TruePushTest)
+            .itMeans("frogs coming")
+            .set("frogs");
+        const mapped = await pm.valueForPush(fakePush());
+        assert.equal(mapped, "frogs");
     });
 
     it("nest with when", async () => {
