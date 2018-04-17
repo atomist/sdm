@@ -99,6 +99,7 @@ export const DockerBuildGoal = new GoalWithPrecondition({
     workingDescription: "Running Docker build...",
     completedDescription: "Docker build successful",
     failedDescription: "Failed to build Docker image",
+    fork: true,
 }, BuildGoal);
 
 export const TagGoal = new GoalWithPrecondition({
