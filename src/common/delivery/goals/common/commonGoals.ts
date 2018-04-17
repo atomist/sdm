@@ -64,6 +64,8 @@ export const VersionGoal = new Goal({
     orderedName: "0.1-version",
     workingDescription: "Calculating project version...",
     completedDescription: "Versioned",
+
+    fork: true,
 });
 
 /**

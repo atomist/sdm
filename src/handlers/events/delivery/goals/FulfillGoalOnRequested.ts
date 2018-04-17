@@ -32,6 +32,7 @@ import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecut
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
+import { executeGoalForked } from "./forkGoal";
 
 /**
  * Handle an SDM request goal. Used for many implementation types.
@@ -90,15 +91,20 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const credentials = {token: params.githubToken};
         const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
 
-        return executeGoal({projectLoader: params.projectLoader},
-            goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
-            .then(async res => {
-                await progressLog.close();
-                return res;
-            }, async err => {
-                await progressLog.close();
-                throw err;
-            });
+        if (goal.definition.fork && !process.env.ATOMIST_FORKED) {
+            return executeGoalForked(sdmGoal, ctx, progressLog);
+        } else {
+            delete (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).id;
+            return executeGoal({projectLoader: params.projectLoader},
+                goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
+                .then(async res => {
+                    await progressLog.close();
+                    return res;
+                }, async err => {
+                    await progressLog.close();
+                    throw err;
+                });
+        }
     }
 }
 

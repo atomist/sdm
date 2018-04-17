@@ -17,6 +17,7 @@
 // tslint:disable:max-file-line-count
 
 import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
     ArtifactGoal,
@@ -37,6 +38,7 @@ import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetSta
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
+import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/forkGoal";
 import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -454,4 +456,26 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
 function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
+}
+
+export function configureForSdm(machine: SoftwareDeliveryMachine) {
+    return async config => {
+        const forked = process.env.ATOMIST_FORKED === "true";
+        if (forked) {
+            config.listeners.push(
+                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader));
+            config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
+        } else {
+            if (!config.commands) {
+                config.commands = [];
+            }
+            config.commands.push(...machine.commandHandlers);
+
+            if (!config.events) {
+                config.events = [];
+            }
+            config.events.push(...machine.eventHandlers);
+        }
+        return config;
+    };
 }
