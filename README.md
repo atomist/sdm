@@ -11,6 +11,8 @@ It automates all steps in the flow from commit to production (potentially via st
 
 The concept is explained in detail in Rod Johnson's blog [Why you need a Software Delivery Machine](https://the-composition.com/why-you-need-a-software-delivery-machine-85e8399cdfc0). This [video](https://vimeo.com/260496136) shows it in action.
 
+> Atomist is about developing your development experience by using your coding skills. Change the code, restart, and see your new automations and changed behavior across all your projects, within seconds. 
+
 
 ## Get Started
 
@@ -28,24 +30,24 @@ Once the Atomist bot is in your Slack team, type `@atomist create sdm` to have A
 
 SDM projects are Atomist automation clients, written in [TypeScript](https://www.typescriptlang.org) or JavaScript. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
 
-See [set up](./docs/Setup.md) for additional prerequisites depending on the projects you're building. 
+See [set up](./docs/Setup.md) for additional prerequisites depending on the projects you're building.
 
-> Atomist is about developing your development experience by using your coding skills. Change the code, restart, and see your new automations and changed behavior across all your projects, within seconds. 
+See the [sample-sdm project](https://github.com/atomist/sample-sdm) project for instructions on how to run an SDM instance.
 
 ## Concepts
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties.
 
-This framework is based on the goals of a typical delivery
-flow, but is flexible and extensible.
+This framework is based around the goals of a typical delivery
+flow (such as code analysis, build and deploy) but is flexible and extensible.
 
 An Atomist SDM can automate important tasks and improve your delivery flow. Specifically:
 
-- How Atomist **command handlers** can be used to create services
+- Atomist **command handlers** can be used to create services
 the right way every time, and help keep them up to date 
-- How Atomist **event handlers** can drive and improve a custom delivery experience, from commit through 
+- Atomist **event handlers** can drive and improve a custom delivery experience, from commit through 
 to deployment and testing
 
-It demonstrates Atomist as the *API for software*, exposing
+This project demonstrates Atomist as the *API for software*, exposing
 
 - *What we know*: The Atomist cortex, accessible through GraphQL queries and subscription joins
 - *What just happened*: An event, triggered by a GraphQL subscription, which is contextualized with the existing knowledge
@@ -79,9 +81,9 @@ with its previous knowledge, and invokes your event handlers with rich context. 
 - Driving deployments and promotion between environments
 - Performing custom actions on deployment, such as kicking off integration test suites.
 
-Its correlated event model also enables Atomist to provide you with visibility throughout the commit to deployment flow, in Slack or through the Atomist web dashboard.
+The Atomist correlated event model also enables Atomist to provide you with visibility throughout the commit to deployment flow, in Slack or through the Atomist web dashboard.
 
-Event handlers subscribe to events using GraphQL subscriptions. The following example subscribes to completed builds:
+Event handlers subscribe to events using [GraphQL](http://graphql.org) subscriptions. The following example subscribes to completed builds:
 
 ```graphql
 subscription OnBuildComplete {
@@ -131,7 +133,53 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
 > delivery flow. This enables dynamic and sophisticated delivery processes that are consistent across
 > multiple projects.
 
-## Events and Goals
+The underlying GraphQL/event handler infrastructure is generic and powerful. This project provides a framework above it that makes typical tasks far easier, while not preventing you from breaking out into lower level functionality. 
+
+## Core SDM Concepts: Goals, Listeners and Generators
+
+The core SDM functionality relates to what happens on a push to a repository. An SDM allows you to process a push in any way you choose, but typically you want it to initiate a delivery flow.
+
+An SDM allows you to set **goals** on push. Goals correspond to actions that should occur during delivery flow, such as build and deployment. Goals are not necessarily sequential--some may be executed in parallel--but certain goals, such as deployment, do have preconditions (goals that must have previously completed successfully).
+
+Goals are set using rules, which are typically expressed in a simple internal DSL. For example:
+
+```typescript
+whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
+    	ToPublicRepo, not(NamedSeedRepo), not(FromAtomist), IsDeployEnabled)
+    .itMeans("Spring Boot service to deploy")
+    .setGoals(HttpServiceGoals),
+whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
+    .itMeans("Spring Boot service local deploy")
+    .setGoals(LocalDeploymentGoals),
+```
+
+Goals are of the form:
+
+```typescript
+export const HttpServiceGoals = new Goals(
+    "HTTP Service",
+    FingerprintGoal,
+    AutofixGoal,
+    ReviewGoal,
+    CodeReactionGoal,
+    BuildGoal,
+    ArtifactGoal,
+    StagingDeploymentGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+    ProductionDeploymentGoal,
+    ProductionEndpointGoal);
+```
+
+It is possible to define new goals and implementations, so this approach is highly extensible.
+
+Goals drive the delivery process. **Listeners** help in goal implementation and also allow observation of process. For example:
+
+```typescript
+
+```
+
+## Key Events
 
 The key events handled in this repository are:
 
