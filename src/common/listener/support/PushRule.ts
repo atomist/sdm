@@ -47,7 +47,9 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
     }
 
     public async valueForPush(p: PushListenerInvocation): Promise<V | undefined> {
-        return this.staticValue;
+        if (await this.pushTest.valueForPush(p)) {
+            return this.staticValue
+        }
     }
 
     public verify(): this {
