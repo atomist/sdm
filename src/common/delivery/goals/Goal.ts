@@ -29,6 +29,8 @@ export interface GoalDefinition {
     workingDescription?: string;
     failedDescription?: string;
     waitingForApprovalDescription?: string;
+
+    fork?: boolean;
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";

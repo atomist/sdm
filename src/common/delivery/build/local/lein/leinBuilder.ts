@@ -21,7 +21,6 @@ import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import { DevelopmentEnvOptions } from "../npm/npmBuilder";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 
 export const RunBuild: SpawnCommand = asSpawnCommand("lein");
@@ -29,7 +28,7 @@ export const RunBuild: SpawnCommand = asSpawnCommand("lein");
 export function leinBuilder(projectLoader: ProjectLoader, ...commands: string[]) {
     return new SpawnBuilder(undefined,
         createEphemeralProgressLogWithConsole,
-        projectLoader, leinBuilderOptions(commands.map(cmd => asSpawnCommand(cmd))));
+        projectLoader, leinBuilderOptions(commands.map(asSpawnCommand)));
 }
 
 export const leinLogInterpreter: LogInterpreter = log => {
