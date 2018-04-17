@@ -142,6 +142,5 @@ export * from "./spi/deploy/Deployer";
 export * from "./spi/deploy/Deployment";
 export * from "./spi/log/InterpretedLog";
 export * from "./spi/log/ProgressLog";
-export * from "./typings/types.d";
 export * from "./typings/types";
 export * from "./util/test/SingleProjectLoader";
