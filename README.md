@@ -34,7 +34,7 @@ SDM projects are Atomist automation clients, written in [TypeScript](https://www
 
 See [set up](./docs/Setup.md) for additional prerequisites depending on the projects you're building.
 
-See the [sample-sdm project](https://github.com/atomist/sample-sdm) project for instructions on how to run an SDM instance.
+See the [sample-sdm project](https://github.com/atomist/sample-sdm) project for instructions on how to run an SDM instance, and description of the out of the box functionality.
 
 ## Core Concepts
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties. Because you're using a real programming language (not YAML or Bash), and you have access to a real ecosystem (Node), you can create a rich er delivery experience than you've even imagined.
@@ -64,7 +64,7 @@ GitHub Enterprise.
 ### Events
 The heart of Atomist is its event handling. As your code flows from commit
 through to deployment and beyond, Atomist receives events, correlates the incoming data
-with its previous knowledge, and invokes your event handlers with rich context. This enables you to perform tasks such as:
+with its previous knowledge, and invokes your event handlers with rich context. This enables your automations to perform tasks such as:
 
 - Scanning code for security or quality issues on every push
 - Driving deployments and promotion between environments
@@ -126,13 +126,13 @@ The underlying GraphQL/event handler infrastructure is generic and powerful. Thi
 
 ### Goals and Listeners
 
-The core SDM functionality relates to what happens on a push to a repository. An SDM allows you to process a push in any way you choose, but typically you want it to initiate a delivery flow.
+The most important SDM functionality relates to what happens on a push to a repository. An SDM allows you to process a push in any way you choose, but typically you want it to initiate a delivery flow.
 
 #### Goals
 
 An SDM allows you to set **goals** on push. Goals correspond to the actions that make up a delivery flow, such as build and deployment. Goals are not necessarily sequential--some may be executed in parallel--but certain goals, such as deployment, have preconditions (goals that must have previously completed successfully).
 
-Goals are set using **rules**, which are typically expressed in a simple internal DSL. For example:
+Goals are set using **rules**, which are typically expressed in a simple internal DSL. For example, the following rules use predicates such as `ToDefaultBranch` and `IsMaven` to determine what goals to set for incoming pushes:
 
 ```typescript
 whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
@@ -144,7 +144,15 @@ whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
     .setGoals(LocalDeploymentGoals),
 ```
 
-Goals are of the form:
+Predicates are easy to write using the Atomist API. For example:
+
+```typescript
+export const IsMaven: PredicatePushTest = predicatePushTest(
+    "Is Maven",
+    async p => !!(await p.getFile("pom.xml")));
+```
+
+Goals are defined as follows:
 
 ```typescript
 export const HttpServiceGoals = new Goals(
@@ -166,7 +174,7 @@ It is possible to define new goals with accompanying implementations, so this ap
 
 #### Listeners
 
-While goals drive the delivery process, **listeners** help in goal implementation and allow observation of the delivery process. Listener **registrations** allow listeners to be narrowed to being fired on particular pushes. A registratiion includes a name (for diagnostics) and a `PushTest`, narrowing on particular pushes.
+While the goals set drive the delivery process, domain specific **listeners** help in goal implementation and allow observation of the process as it unfolds. Listener **registrations** allow selective listener firing, on only particular pushes. A registratiion includes a name (for diagnostics) and a `PushTest`, narrowing on particular pushes.
 
 For example, the following listener registration causes an automatic fix to be made on every push to a Node project, adding a license file if none is found:
 
@@ -189,17 +197,14 @@ sdm.addBuildListeners(async br =>
         br.addressChannels(`Build of ${br.id.repo} has status ${br.build.status}`));
 ```
 
+> SDM listeners are a layer above GraphQL subscriptions and event handlers that simplify common scenarios, and enable most functionality to be naturally expressed in terms of the problem domain. Listener implementations are also easily testable.
+
 ##### Common Listener Context
 
 All listener invocations receive at least the following generally useful information:
 
 ```typescript
-export interface RepoListenerInvocation {
-
-    /**
-     * The repo this relates to
-     */
-    id: RemoteRepoRef;
+export interface SdmContext {
 
     /**
      * Context of the Atomist EventHandler invocation. Use to run GraphQL
@@ -209,9 +214,12 @@ export interface RepoListenerInvocation {
     context: HandlerContext;
 
     /**
-     * If available, provides a way to address the channel(s) related to this repo.
+     * If available, provides a way to address the channel(s) related to this event.
+     * This is usually, but not always, the channels linked to a
+     * In some cases, such as repo creation or a push to a repo where there is no linked channel,
+     * addressChannels will go to dev/null without error.
      */
-    addressChannels?: AddressChannels;
+    addressChannels: AddressChannels;
 
     /**
      * Credentials for use with source control hosts such as GitHub
@@ -220,8 +228,57 @@ export interface RepoListenerInvocation {
 
 }
 ```
+Most events concern a specific repository, and hence listener invocations extend `RepoContext`:
+
+
+```typescript
+export interface RepoContext extends SdmContext {
+
+    /**
+     * The repo this relates to
+     */
+    id: RemoteRepoRef;
+
+}
+```
+
+Many repo-specific listeners are given access to the repository source, via the `Project` abstraction. Atomist takes care of Git cloning:
+
+```typescript
+export interface ProjectListenerInvocation extends RepoListenerInvocation {
+
+    /**
+     * The project to which this event relates. It will have been cloned
+     * prior to this invocation. Modifications made during listener invocation will
+     * not be committed back to the project (although they are acceptable if necessary, for
+     * example to run particular commands against the project).
+     * As well as working with
+     * project files using the Project superinterface, we can use git-related
+     * functionality fro the GitProject subinterface: For example to check
+     * for previous shas.
+     * We can also easily run shell commands against the project using its baseDir.
+     */
+    project: GitProject;
+
+}
+
+```
+Push mappings also have access to the details of the relevant push:
+
+```typescript
+export interface PushListenerInvocation extends ProjectListenerInvocation {
+
+	 /**
+     * Information about the push, including repo and commit
+     */
+    readonly push: OnPushToAnyBranch.Push;
+
+}
+```
 
 ##### Available Listener Interfaces
+The following listener interfaces are available:
+
 - `ArtifactListener`: Invoked when a new binary has been created
 - `BuildListener`: Invoked when a build is complete. 
 - `ChannelLinkListenerInvocation`: Invoked when a channel is linked to a repo
@@ -273,10 +330,7 @@ export interface PushMapping<V> {
 }
 ```
 
-A `PushTest` is a `PushMapping` that returns boolean.
-
-The DSL
-
+A `PushTest` is simply a `PushMapping` that returns `boolean`.
 
 ## Code Examples
 
@@ -338,76 +392,6 @@ sdm.addNewRepoWithCodeActions(
       PublishNewRepo)
 ```
 
-### Push
-
-There are multiple domain-specific listeners associated with pushes.
-
-Most of the listeners use or extend `ProjectListener`, which listens to the following extension of `ListenerInvocation`:
-
-```typescript
-/**
- * Invocation for an event relating to a project for which we have source code
- */
-export interface ProjectListenerInvocation extends ListenerInvocation {
-
-    /**
-     * The project to which this event relates. It will have been cloned
-     * prior to this invocation. Modifications made during listener invocation will
-     * not be committed back to the project (although they are acceptable if necessary, for
-     * example to run particular commands against the project).
-     * As well as working with
-     * project files using the Project superinterface, we can use git-related
-     * functionality fro the GitProject subinterface: For example to check
-     * for previous shas.
-     * We can also easily run shell commands against the project using its baseDir.
-     */
-    project: GitProject;
-
-}
-```
-#### Goal Creation
-The first and most important reaction to a push is determining the set of *goals* that will be executed. 
-This will drive further behavior: For example, do we need a code review? 
-Does a push to this branch trigger a deployment? Typically goal setting depends both on the
- characteristics of the push (usually, its branch), and the characteristics of the project--for example, 
- does it have a Cloud Foundry manifest?
-
-The `GoalSetter` interface is thus a critical determinant of what happens next:
-
-```typescript
-export interface GoalSetter {
-
-    /**
-     * Test the push as to whether we should even think about creating goals for it.
-     * If we return false here, our chooseGoals method will never be
-     * called for this push
-     */
-    readonly guard?: PushTest;
-
-    /**
-     * Determine the goals that apply to this commit if the PushTest passes,
-     * or return undefined if this GoalSetter doesn't know what to do with it.
-     * The latter is not an error.
-     * @param {GoalSetterInvocation} pci
-     * @return {Promise<Goals>}
-     */
-    chooseGoals(pci: GoalSetterInvocation): Promise<Goals | undefined>;
-
-}
-```
-The available interface is:
-
-```typescript
-export interface GoalSetterInvocation extends ProjectListenerInvocation {
-
-    readonly push: OnPushToAnyBranch.Push;
-}
-```
-If all `GoalSetter` instances return `undefined` the commit will be tagged as "not material" 
-and no further action will be taken.
-
-#### Listener interfaces
-
 ##### ProjectReviewer
 `ProjectReviewer` is a type defined in `automation-client-ts`. It allows a structured review to be returned. The review comments can localize the file path, line and column if such information is available, and also optionally include a link to a "fix" command to autofix the problem.
 
@@ -422,7 +406,7 @@ export const logReview: ProjectReviewer = async (p: GitProject,
 
 ```
 
-Add in `atomist.config.ts` as follows:
+Add in an SDM definition as follows:
 
 ```typescript
 sdm.addProjectReviewers(logReview)
@@ -437,7 +421,7 @@ export async function listChangedFiles(i: CodeReactionInvocation): Promise<any> 
     return i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
 }
 ```
-Add in `atomist.config.ts` as follows:
+Add in an SDM definition as follows:
 
 ```typescript
 sdm.addCodeReactions(listChangedFiles)
@@ -485,6 +469,13 @@ export class PackageLockFingerprinter implements FingerprinterRegistration {
     }
 }
 ```
+
+Fingerprinters can be added as follows:
+
+```typescript
+sdm.addFingerprinterRegistrations(new PackageLockFingerprinter());
+```
+
 Fingerprinting will only occur if a `FingerprintGoal` is selected when goals are set.
 
 ## Generators
