@@ -34,7 +34,7 @@ const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
 };
 
 const fakeGoal = new Goal({
-    uniqueCamelCaseName: "HelloWorld",
+    uniqueName: "HelloWorld",
     environment: IndependentOfEnvironment, orderedName: "0-yo",
 });
 

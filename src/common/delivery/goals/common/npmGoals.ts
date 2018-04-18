@@ -34,7 +34,7 @@ import {
 } from "./commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "Publish",
+    uniqueName: "Publish",
     environment: IndependentOfEnvironment,
     orderedName: "2-publish",
     displayName: "publish",
@@ -44,7 +44,7 @@ export const NpmPublishGoal = new GoalWithPrecondition({
 }, BuildGoal);
 
 export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DeployToTest",
+    uniqueName: "DeployToTest",
     environment: StagingEnvironment,
     orderedName: "3-deploy",
     displayName: "deploy to Test",
@@ -54,7 +54,7 @@ export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
 }, DockerBuildGoal);
 
 export const ProductionDockerDeploymentGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DeployToProduction",
+    uniqueName: "DeployToProduction",
     environment: ProductionEnvironment,
     orderedName: "3-prod-deploy",
     displayName: "deploy to Prod",

@@ -26,14 +26,14 @@ import {
 import { Goals } from "../Goals";
 
 export const FingerprintGoal = new Goal({
-    uniqueCamelCaseName: "Fingerprint",
+    uniqueName: "Fingerprint",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-fingerprint",
     completedDescription: "Fingerprinted",
 });
 
 export const AutofixGoal = new Goal({
-    uniqueCamelCaseName: "Autofix",
+    uniqueName: "Autofix",
     environment: IndependentOfEnvironment,
     orderedName: "0.2-autofix",
     workingDescription: "Running autofixes...",
@@ -42,7 +42,7 @@ export const AutofixGoal = new Goal({
 });
 
 export const ReviewGoal = new Goal({
-    uniqueCamelCaseName: "Review",
+    uniqueName: "Review",
     environment: IndependentOfEnvironment,
     orderedName: "1-review",
     workingDescription: "Running code reviews...",
@@ -51,7 +51,7 @@ export const ReviewGoal = new Goal({
 });
 
 export const CodeReactionGoal = new Goal({
-    uniqueCamelCaseName: "CodeReaction",
+    uniqueName: "CodeReaction",
     environment: IndependentOfEnvironment,
     orderedName: "1.5-react",
     workingDescription: "Running code reactions...",
@@ -59,7 +59,7 @@ export const CodeReactionGoal = new Goal({
 });
 
 export const VersionGoal = new Goal({
-    uniqueCamelCaseName: "Version",
+    uniqueName: "Version",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-version",
     workingDescription: "Calculating project version...",
@@ -71,7 +71,7 @@ export const VersionGoal = new Goal({
  * @type {Goal}
  */
 export const JustBuildGoal = new Goal({
-    uniqueCamelCaseName: "JustBuild",
+    uniqueName: "JustBuild",
     environment: IndependentOfEnvironment,
     orderedName: "2-just-build ",
     displayName: "build",
@@ -81,7 +81,7 @@ export const JustBuildGoal = new Goal({
 });
 
 export const BuildGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "Build",
+    uniqueName: "Build",
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     displayName: "build",
@@ -91,7 +91,7 @@ export const BuildGoal = new GoalWithPrecondition({
 }, AutofixGoal);
 
 export const DockerBuildGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DockerBuild",
+    uniqueName: "DockerBuild",
     environment: IndependentOfEnvironment,
     orderedName: "3-docker",
     displayName: "docker build",
@@ -101,7 +101,7 @@ export const DockerBuildGoal = new GoalWithPrecondition({
 }, BuildGoal);
 
 export const TagGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "Tag",
+    uniqueName: "Tag",
     environment: IndependentOfEnvironment,
     orderedName: "4-tag",
     displayName: "tag",
@@ -113,7 +113,7 @@ export const TagGoal = new GoalWithPrecondition({
 // This one is actually satisfied in an ImageLinked event,
 // which happens to be a result of the build.
 export const ArtifactGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "Artifact",
+    uniqueName: "Artifact",
     environment: IndependentOfEnvironment,
     orderedName: "2.5-artifact",
     displayName: "store artifact",
@@ -121,7 +121,7 @@ export const ArtifactGoal = new GoalWithPrecondition({
 }, BuildGoal);
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DeployToTest",
+    uniqueName: "DeployToTest",
     environment: StagingEnvironment,
     orderedName: "3-deploy",
     displayName: "deploy to Test",
@@ -130,7 +130,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
 }, ArtifactGoal);
 
 export const StagingUndeploymentGoal = new Goal({
-    uniqueCamelCaseName: "UndeployFromTest",
+    uniqueName: "UndeployFromTest",
     environment: ProjectDisposalEnvironment,
     orderedName: "2-staging-undeploy",
     displayName: "undeploy from test",
@@ -142,7 +142,7 @@ export const StagingUndeploymentGoal = new Goal({
 // Setting the precondition lets FailDownstream know that this
 // one is never gonna succeed if the deploy failed.
 export const StagingEndpointGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "FindTestEndpoint",
+    uniqueName: "FindTestEndpoint",
     environment: StagingEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
@@ -151,7 +151,7 @@ export const StagingEndpointGoal = new GoalWithPrecondition({
 }, StagingDeploymentGoal);
 
 export const StagingVerifiedGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "VerifyTest",
+    uniqueName: "VerifyTest",
     environment: StagingEnvironment,
     orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
@@ -160,7 +160,7 @@ export const StagingVerifiedGoal = new GoalWithPrecondition({
 }, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
-        uniqueCamelCaseName: "DeployToProduction",
+        uniqueName: "DeployToProduction",
         environment: ProductionEnvironment,
         orderedName: "3-prod-deploy",
         displayName: "deploy to Prod",
@@ -169,7 +169,7 @@ export const ProductionDeploymentGoal = new GoalWithPrecondition({
     ArtifactGoal, StagingVerifiedGoal);
 
 export const ProductionUndeploymentGoal = new Goal({
-    uniqueCamelCaseName: "UndeployFromProduction",
+    uniqueName: "UndeployFromProduction",
     environment: ProjectDisposalEnvironment,
     orderedName: "3-prod-undeploy",
     displayName: "undeploy from Prod",
@@ -181,7 +181,7 @@ export const ProductionUndeploymentGoal = new Goal({
 // Setting the precondition lets FailDownstream know that this
 // one is never gonna succeed if the deploy failed.
 export const ProductionEndpointGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "FindProductionEndpoint",
+    uniqueName: "FindProductionEndpoint",
     environment: ProductionEnvironment,
     orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
@@ -189,14 +189,14 @@ export const ProductionEndpointGoal = new GoalWithPrecondition({
 }, ProductionDeploymentGoal);
 
 export const LocalDeploymentGoal = new Goal({
-    uniqueCamelCaseName: "DeployHere",
+    uniqueName: "DeployHere",
     environment: IndependentOfEnvironment,
     orderedName: "1-deploy-locally",
     completedDescription: "Deployed locally",
 });
 
 export const LocalUndeploymentGoal = new Goal({
-    uniqueCamelCaseName: "UndeployHere",
+    uniqueName: "UndeployHere",
     environment: ProjectDisposalEnvironment,
     orderedName: "1-undeploy-locally",
     failedDescription: "Failed at local undeploy",
@@ -204,14 +204,14 @@ export const LocalUndeploymentGoal = new Goal({
 });
 
 export const DeleteRepositoryGoal = new Goal({
-    uniqueCamelCaseName: "DeleteRepository",
+    uniqueName: "DeleteRepository",
     environment: ProjectDisposalEnvironment,
     orderedName: "8-delete-repo",
     completedDescription: "Offered to delete repository",
 });
 
 export const DeleteAfterUndeploysGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "DeleteRepositoryAfterUndeployed",
+    uniqueName: "DeleteRepositoryAfterUndeployed",
     environment: ProjectDisposalEnvironment,
     orderedName: "8-delete-repo",
     completedDescription: "Repository deleted",
@@ -219,7 +219,7 @@ export const DeleteAfterUndeploysGoal = new GoalWithPrecondition({
 
 // not an enforced precondition, but it's real enough to graph
 export const LocalEndpointGoal = new GoalWithPrecondition({
-    uniqueCamelCaseName: "FindLocalEndpoint",
+    uniqueName: "FindLocalEndpoint",
     environment: IndependentOfEnvironment,
     orderedName: "2-endpoint",
     displayName: "locate local service endpoint",
@@ -228,7 +228,7 @@ export const LocalEndpointGoal = new GoalWithPrecondition({
 }, LocalDeploymentGoal);
 
 export const NoGoal = new Goal({
-    uniqueCamelCaseName: "Nevermind",
+    uniqueName: "Nevermind",
     environment: IndependentOfEnvironment,
     orderedName: "1-immaterial",
     displayName: "immaterial",

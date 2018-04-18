@@ -105,7 +105,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         goalSet,
         goalSetId,
         name: goal.name,
-        uniqueName: goal.definition.uniqueCamelCaseName,
+        uniqueName: goal.definition.uniqueName,
 
         environment,
 

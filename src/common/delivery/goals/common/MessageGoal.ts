@@ -22,11 +22,11 @@ import { Goal } from "../Goal";
  */
 export class MessageGoal extends Goal {
 
-    constructor(uniqueCamelCaseName: string) {
+    constructor(uniqueName: string) {
         super({
-            uniqueCamelCaseName,
+            uniqueName,
             environment: IndependentOfEnvironment,
-            orderedName: `0-message-${uniqueCamelCaseName}`,
+            orderedName: `0-message-${uniqueName}`,
             completedDescription: "Sent",
         });
     }

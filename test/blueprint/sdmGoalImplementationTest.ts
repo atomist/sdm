@@ -79,7 +79,7 @@ describe("implementing goals in the SDM", () => {
     });
 
     const customGoal = new Goal({
-        uniqueCamelCaseName: "Jerry",
+        uniqueName: "Jerry",
         displayName: "Springer", environment: "1-staging/", orderedName: "1-springer",
     });
 
