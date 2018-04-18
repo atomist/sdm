@@ -27,6 +27,9 @@ export interface SdmGoalFulfillment {
     name: string;
 }
 
+/**
+ * Data persisted in the Atomist Cortex
+ */
 export interface SdmGoal extends SdmGoalKey {
     uniqueName: string;
     sha: string;
@@ -40,11 +43,18 @@ export interface SdmGoal extends SdmGoalKey {
 
     fulfillment: SdmGoalFulfillment;
 
+    /**
+     * Current description that goes with the current status
+     */
     description: string;
     url?: string;
     goalSet: string;
     goalSetId: string;
     state: SdmGoalState;
+
+    /**
+     * Timestamp
+     */
     ts: number;
 
     error?: string;
