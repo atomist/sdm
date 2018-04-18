@@ -95,6 +95,9 @@ export async function executeGoalForked(goal: OnAnyRequestedSdmGoal.SdmGoal,
             errorFinder: code => code !== 0,
         },
     );
+
+    // query kube to make sure the job got scheduled
+    // kubectl get job <jobname> -o json
 }
 
 export class GoalAutomationEventListener extends AutomationEventListenerSupport {
