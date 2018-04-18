@@ -26,6 +26,8 @@ Things work best if you install an org webhook, so that Atomist receives events 
 
 Once the Atomist bot is in your Slack team, type `@atomist create sdm` to have Atomist create a personalized SDM instance using this project. You can also clone the `sample-sdm` project.
 
+Once your SDM is running, type `@atomist show skills` in any channel to see a list of all available Atomist commands.
+
 ## Run Locally
 
 SDM projects are Atomist automation clients, written in [TypeScript](https://www.typescriptlang.org) or JavaScript. See [run an automation client](https://github.com/atomist/welcome/blob/master/runClient.md) for instructions on how to set up your environment and run it under Node.js. 
@@ -34,7 +36,7 @@ See [set up](./docs/Setup.md) for additional prerequisites depending on the proj
 
 See the [sample-sdm project](https://github.com/atomist/sample-sdm) project for instructions on how to run an SDM instance.
 
-## Concepts
+## Core Concepts
 Atomist is a flexible system, enabling you to build your own automations or use those provided by Atomist or third parties. Because you're using a real programming language (not YAML or Bash), and you have access to a real ecosystem (Node), you can create a rich er delivery experience than you've even imagined.
 
 The SDM framework is based around the goals of a typical delivery
@@ -58,21 +60,8 @@ This project builds on other Atomist core functionality available from global au
 Atomist is not tied to GitHub, but this repository focuses on using Atomist with GitHub.com or
 GitHub Enterprise.
 
-## Typical Functionality
-SDMs differ, but the 
-following functionality is typical and will be available out of the box when you run `sample-sdm` in your team:
 
-- *Project creation for Spring*. Atomist is not Spring specific, but we use Spring boot as an illustration here. Try `@atomist create spring`. The seed project used by default will be `spring-team/spring-rest-seed`. 
- - If you want to add or modify the content of generated projects, modify `CustomSpringBootGeneratorParameters.ts` to specify your own seed. Just about any Spring Boot project will work as the transformation of a seed project is quite forgiving, and parses the seed to find the location and name of the `@SpringBootApplication` class, rather than relying on hard coding. 
- - To perform sophisticated changes, such as dynamically computing content, modify the code in `springBootGenerator.ts`. 
-- *Delivery pipeline to either Kubernetes or Pivotal Cloud Foundry for Spring Boot projects*. This includes automatic local deployment of non-default branches on the same node as the automation client. The delivery pipeline is automatically triggered on pushes.
-- *Upgrading Spring Boot version* across one or many repositories. Try `@atomist try to upgrade spring boot`. This will create a branch upgrading to Spring Boot `1.5.9` and wait for the build to complete. If the build succeeds, a PR will be created; if it fails, an issue will be created linking to the failed build log and offending branch. To choose a specific Spring Boot version, or see what happens when a bogus version triggers a failure, try `@atomist try to upgrade spring boot desiredBootVersion=<version>`. If you run such a command in a channel linked to an Atomist repository, it will affect only that repository. If you run it in a channel that is not linked, it will affect all repositories by default. You can add a `targets.repos=<regex>` parameter to specify a regular expression to target a subset of repo names. For example: `@atomist try to upgrade spring boot targets.repos=test.*`.
-- Issue handling:
-	- `@atomist create issue`
-
-Type `@atomist show skills` in any channel to see a list of all available Atomist commands.
-
-## Events
+### Events
 The heart of Atomist is its event handling. As your code flows from commit
 through to deployment and beyond, Atomist receives events, correlates the incoming data
 with its previous knowledge, and invokes your event handlers with rich context. This enables you to perform tasks such as:
@@ -135,11 +124,11 @@ export class SetStatusOnBuildComplete implements HandleEvent<OnBuildComplete.Sub
 
 The underlying GraphQL/event handler infrastructure is generic and powerful. This project provides a framework above it that makes typical tasks far easier, while not preventing you from breaking out into lower level functionality. 
 
-## Core SDM Concepts: Goals and Listeners
+### Goals and Listeners
 
 The core SDM functionality relates to what happens on a push to a repository. An SDM allows you to process a push in any way you choose, but typically you want it to initiate a delivery flow.
 
-### Goals
+#### Goals
 
 An SDM allows you to set **goals** on push. Goals correspond to the actions that make up a delivery flow, such as build and deployment. Goals are not necessarily sequential--some may be executed in parallel--but certain goals, such as deployment, have preconditions (goals that must have previously completed successfully).
 
@@ -175,9 +164,9 @@ export const HttpServiceGoals = new Goals(
 
 It is possible to define new goals with accompanying implementations, so this approach is highly extensible.
 
-### Listeners
+#### Listeners
 
-While goals drive the delivery process, **listeners** help in goal implementation and allow observation of the delivery process. Listener **registrations** allow listeners to be narrowed to being fired on particular pushes.
+While goals drive the delivery process, **listeners** help in goal implementation and allow observation of the delivery process. Listener **registrations** allow listeners to be narrowed to being fired on particular pushes. A registratiion includes a name (for diagnostics) and a `PushTest`, narrowing on particular pushes.
 
 For example, the following listener registration causes an automatic fix to be made on every push to a Node project, adding a license file if none is found:
 
@@ -200,9 +189,61 @@ sdm.addBuildListeners(async br =>
         br.addressChannels(`Build of ${br.id.repo} has status ${br.build.status}`));
 ```
 
-## Core Concepts
+##### Common Listener Context
 
-### Push Mappings
+All listener invocations receive at least the following generally useful information:
+
+```typescript
+export interface RepoListenerInvocation {
+
+    /**
+     * The repo this relates to
+     */
+    id: RemoteRepoRef;
+
+    /**
+     * Context of the Atomist EventHandler invocation. Use to run GraphQL
+     * queries, use the messageClient directly and find
+     * the team and correlation id
+     */
+    context: HandlerContext;
+
+    /**
+     * If available, provides a way to address the channel(s) related to this repo.
+     */
+    addressChannels?: AddressChannels;
+
+    /**
+     * Credentials for use with source control hosts such as GitHub
+     */
+    credentials: ProjectOperationCredentials;
+
+}
+```
+
+##### Available Listener Interfaces
+- `ArtifactListener`: Invoked when a new binary has been created
+- `BuildListener`: Invoked when a build is complete. 
+- `ChannelLinkListenerInvocation`: Invoked when a channel is linked to a repo
+- `ClosedIssueListener`: Invoked when an issue is closed
+- `CodeReactionListener`: Invoked in response to a code change
+- `DeploymentListener`: Invoked when a deployment has succeeded
+- `FingerprintDifferenceListener`: Invoked when a fingerprint has changed
+- `GoalsSetListener`: Invoked when goals are set on a push
+- `Listener`: Superinterface for all listeners
+- `NewIssueListener`: Invoked when an issue has been created
+- `ProjectListener`: Superinterface for all listeners that relate to a project and make the cloned project available
+- `PullRequestListener`: Invoked when a pull request is raised
+- `PushListener`: Superinterface for listeners to push events
+- `RepoCreationListener`: Invoked when a repository has been created
+- `SupersededListener`: Invoked when a commit has been superseded by a subsequent commit
+- `TagListener`: Invoked when a repo is created
+- `UpdatedIssueListener`: Invoked when an issue has been updated
+- `UserJoiningChannelListener`: Invoked when a user joins a channel
+- `VerifiedDeploymentListener`: Invoked when an endpoint has been verified
+
+
+#### Push Mappings
 The core event that Atomist reacts to is a push.
 
 The `PushMapping` interface is used consistently to decide how to handle pushes.
@@ -235,71 +276,6 @@ export interface PushMapping<V> {
 A `PushTest` is a `PushMapping` that returns boolean.
 
 The DSL
-
-### Goal Setters
-When a push is set, **goals** are set.
-
-Goals correspond to necessary activities in the delivery process. They do not need to be sequential. They can run in parallel, but can specify preconditions (goals that must have succeeded for them to initiate).
-
-### Listeners
-
-Each of the delivery goals results in the triggering of domain specific
- listeners that are provided with the appropriate context to process the event: 
- For example, access to the project source code in the case of a code review, 
- or access to the reported URL for a deployed endpoint. 
- Certain properties are common to all events, enabling communication with users via Slack, 
- and providing credentials for calls to GitHub.
-
-All listener invocations receive at least the following generally useful information:
-
-```typescript
-export interface RepoListenerInvocation {
-
-    /**
-     * The repo this relates to
-     */
-    id: RemoteRepoRef;
-
-    /**
-     * Context of the Atomist EventHandler invocation. Use to run GraphQL
-     * queries, use the messageClient directly and find
-     * the team and correlation id
-     */
-    context: HandlerContext;
-
-    /**
-     * If available, provides a way to address the channel(s) related to this repo.
-     */
-    addressChannels?: AddressChannels;
-
-    /**
-     * Credentials for use with source control hosts such as GitHub
-     */
-    credentials: ProjectOperationCredentials;
-
-}
-```
-
-#### Available listeners
-- `ArtifactListener`: Invoked when a new binary has been created
-- `BuildListener`: Invoked when a build is complete. 
-- `ChannelLinkListenerInvocation`: Invoked when a channel is linked to a repo
-- `ClosedIssueListener`: Invoked when an issue is closed
-- `CodeReactionListener`: Invoked in response to a code change
-- `DeploymentListener`: Invoked when a deployment has succeeded
-- `FingerprintDifferenceListener`: Invoked when a fingerprint has changed
-- `GoalsSetListener`: Invoked when goals are set on a push
-- `Listener`: Superinterface for all listeners
-- `NewIssueListener`: Invoked when an issue has been created
-- `ProjectListener`: Superinterface for all listeners that relate to a project and make the cloned project available
-- `PullRequestListener`: Invoked when a pull request is raised
-- `PushListener`: Superinterface for listeners to push events
-- `RepoCreationListener`: Invoked when a repository has been created
-- `SupersededListener`: Invoked when a commit has been superseded by a subsequent commit
-- `TagListener`: Invoked when a repo is created
-- `UpdatedIssueListener`: Invoked when an issue has been updated
-- `UserJoiningChannelListener`: Invoked when a user joins a channel
-- `VerifiedDeploymentListener`: Invoked when an endpoint has been verified
 
 
 ## Code Examples
@@ -530,7 +506,7 @@ The `springBootGenerator` function used here is provided in `sample-sdm`, but it
 
 You can invoke such a generator from Slack, like this:
 
-<img src="./create_sample1.png"/>
+<img src="https://github.com/atomist/github-sdm/blob/master/docs/create_sample1.png?raw=true"/>
 
 Note how the repo was automatically tagged with GitHub topics after creation. This was the work of a listener, specified as follows:
 
@@ -542,7 +518,7 @@ sdm.addNewRepoWithCodeActions(
 
 You can then follow along in a linked channel like this:
 
-<img src="./sample1_channel.png"/>
+<img src="https://github.com/atomist/github-sdm/blob/master/docs/sample1_channel.png?raw=true"/>
 
 Note the suggestion to add a Cloud Foundry manifest. This is the work of another listener, which reacts to finding new code in a repo. Listeners and commands such as generators work hand in hand for Atomist.
 
@@ -598,6 +574,8 @@ export const tryToUpgradeSpringBootVersion: HandleCommand = dryRunEditor<Upgrade
     },
 );
 ```
+
+<img src="https://github.com/atomist/github-sdm/blob/master/docs/dry_run_upgrade.png?raw=true"/>
 
 Dry run editing is another example of how commands and events can work hand in hand with Atomist to provide a uniquely powerful solution.
 
