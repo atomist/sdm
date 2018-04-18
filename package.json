@@ -84,7 +84,7 @@
     "generate:barrels": "barrelsby --delete -d src --i '.*/listener/.*' --i 'blueprint/SoftwareDel.*' --i 'blueprint/FunctionalU.*' --i 'goalDsl' --i 'spi/.*' --i 'common/command' --i 'common/artifact' --i 'common/log' --i 'common/delivery' --i 'ProjectLoader' --i OnDryRunBuildComplete --i Config --i 'regexpReviewer' --i typings/.*",
     "git:info": "atomist git",
     "gql:copy": "copyfiles \"./src/**/*.graphql\" build",
-    "gql:gen": "atomist gql-gen \"src/graphql/**/*.graphql\"",
+    "gql:gen": "atomist gql-gen --no-install \"src/graphql/**/*.graphql\"",
     "lint": "npm-run-all lint:ts lint:gql",
     "lint:ts": "tslint --format verbose --project . --exclude \"{build,node_modules}/**\" \"**/*.ts\"",
     "lint:gql": "prettier --list-different \"src/graphql/**/*.graphql\"",
