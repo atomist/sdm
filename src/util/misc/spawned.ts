@@ -22,7 +22,22 @@ import { sprintf } from "sprintf-js";
 
 import * as strip_ansi from "strip-ansi";
 
+/**
+ * Type that can react to the exit of a spawned child process, after
+ * Node has terminated without reporting an error.
+ * This is necessary only for commands that can return
+ * a non-zero exit code on success.
+ * @return whether this result should be considered an error.
+ */
 export type ErrorFinder = (code: number, signal: string, log: ProgressLog) => boolean;
+
+/**
+ * Default ErrorFinder that regards return code 0 as success
+ * @param {number} code
+ * @return {boolean}
+ * @constructor
+ */
+export const SuccessIsReturn0ErrorFinder: ErrorFinder = code => code !== 0;
 
 export interface ChildProcessResult {
     error: boolean;
@@ -38,7 +53,7 @@ export interface SpawnWatchOptions {
 /**
  * Spawn a process and watch
  * @param {SpawnCommand} spawnCommand
- * @param {"child_process".SpawnOptions} options
+ * @param options options
  * @param {ProgressLog} log
  * @param {Partial<SpawnWatchOptions>} spOpts
  * @return {Promise<ChildProcessResult>}
@@ -55,8 +70,8 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
 /**
  * Handle the result of a spawned process, streaming back
  * output to log
- * @param {"child_process".ChildProcess} childProcess
- * @param {ProgressLog} log
+ * @param childProcess
+ * @param {ProgressLog} log to write stdout and stderr to
  * @param opts: Options for error parsing, ANSI code stripping etc.
  * @return {Promise<ChildProcessResult>}
  */
@@ -65,7 +80,7 @@ export function watchSpawned(childProcess: ChildProcess,
                              opts: Partial<SpawnWatchOptions> = {}): Promise<ChildProcessResult> {
     return new Promise<ChildProcessResult>((resolve, reject) => {
         const optsToUse = {
-            errorFinder: code => code !== 0,
+            errorFinder: SuccessIsReturn0ErrorFinder,
             stripAnsi: false,
             ...opts,
         };
@@ -80,7 +95,7 @@ export function watchSpawned(childProcess: ChildProcess,
         childProcess.addListener("exit", (code, signal) => {
             logger.info("Spawn exit (pid=%d): code=%d, signal=%s", childProcess.pid, code, signal);
             resolve({
-                error: opts.errorFinder(code, signal, log),
+                error: optsToUse.errorFinder(code, signal, log),
                 code,
             });
         });
@@ -93,7 +108,7 @@ export function watchSpawned(childProcess: ChildProcess,
 }
 
 /**
- * The first two arguments to spawn
+ * The first two arguments to Node spawn
  */
 export interface SpawnCommand {
 
@@ -102,6 +117,11 @@ export interface SpawnCommand {
     options?: any;
 }
 
+/**
+ * toString for a SpawnCommand. Used for logging.
+ * @param {SpawnCommand} sc
+ * @return {string}
+ */
 export function stringifySpawnCommand(sc: SpawnCommand): string {
     return sprintf("%s %s", sc.command, !!sc.args ? sc.args.join(" ") : "");
 }
@@ -110,9 +130,10 @@ export function stringifySpawnCommand(sc: SpawnCommand): string {
  * Convenient function to create a spawn command from a sentence such as "npm run compile"
  * Does not respect quoted arguments
  * @param {string} sentence
+ * @param options
  * @return {SpawnCommand}
  */
-export function asSpawnCommand(sentence: string, options: any = {}): SpawnCommand {
+export function asSpawnCommand(sentence: string, options: SpawnOptions = {}): SpawnCommand {
     const split = sentence.split(" ");
     return {
         command: split[0],

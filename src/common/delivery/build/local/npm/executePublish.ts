@@ -86,13 +86,12 @@ ${npmConfig.npmrc}`;
     }
 
     await fs.writeFile(npmrc, npm);
-
     return npmConfig;
 }
 
 async function deleteNpmrc() {
     const npmrc = p.join(process.env.HOME || process.env.USER_DIR, ".npmrc");
-    fs.unlink(npmrc);
+    return fs.unlink(npmrc);
 }
 
 interface NpmConfiguration {
@@ -100,4 +99,3 @@ interface NpmConfiguration {
     registry: string;
     access: string;
 }
-

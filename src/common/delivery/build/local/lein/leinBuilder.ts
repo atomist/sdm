@@ -26,7 +26,8 @@ export const RunBuild: SpawnCommand = asSpawnCommand("lein");
 
 export function leinBuilder(projectLoader: ProjectLoader, ...commands: string[]) {
     return new SpawnBuilder({
-        projectLoader, options: leinBuilderOptions(commands.map(asSpawnCommand)),
+        projectLoader, options: leinBuilderOptions(
+            commands.map(l => asSpawnCommand(l, {}))),
     });
 }
 
