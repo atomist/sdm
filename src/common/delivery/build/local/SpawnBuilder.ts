@@ -19,6 +19,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import { SpawnOptions } from "child_process";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
@@ -39,18 +40,35 @@ export interface SpawnBuilderOptions {
 
     name: string;
 
+    /**
+     * Commands we'll execute via Node spawn.
+     * Command execution will terminate on the first error.
+     */
     commands?: SpawnCommand[];
 
+    /**
+     * Alternative to commands. File containing a list of
+     * newline-separated commands. May contain blank lines
+     * or comments beginning with #.
+     */
     commandFile?: string;
 
-    errorFinder: ErrorFinder;
-
-    logInterpreter: LogInterpreter;
-
-    options?: any;
+    /**
+     * Error finder: Necessary only if a spawned process
+     * can return non-zero on success.
+     */
+    errorFinder?: ErrorFinder;
 
     /**
-     * Find artifact info
+     * Interpreter of command output
+     */
+    logInterpreter: LogInterpreter;
+
+    options?: SpawnOptions;
+
+    /**
+     * Find artifact info from the sources of this project,
+     * for example by parsing a package.json or Maven POM file.
      * @param {Project} p
      * @return {Promise<AppInfo>}
      */
@@ -156,7 +174,7 @@ async function loadCommandsFromFile(p: Project, path: string) {
     const commands = content.split("\n")
         .filter(l => !!l)
         .filter(l => !l.startsWith("#"))
-        .map(asSpawnCommand);
+        .map(l => asSpawnCommand(l, {}));
     logger.info("Found Atomist build file in project %j: Commands are %j", p.id,
         commands);
 
