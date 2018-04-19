@@ -95,9 +95,11 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
 
     private readonly options: SpawnBuilderOptions;
 
-    constructor(params: { artifactStore?: ArtifactStore,
-                projectLoader: ProjectLoader,
-                options: SpawnBuilderOptions}) {
+    constructor(params: {
+        artifactStore?: ArtifactStore,
+        projectLoader: ProjectLoader,
+        options: SpawnBuilderOptions,
+    }) {
         super(params.options.name, params.artifactStore, params.projectLoader);
         this.options = params.options;
         if (!this.options.commands && !this.options.commandFile) {
@@ -105,7 +107,9 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
         }
     }
 
-    public get logInterpreter(): LogInterpreter { return this.options.logInterpreter; }
+    public get logInterpreter(): LogInterpreter {
+        return this.options.logInterpreter;
+    }
 
     protected async startBuild(credentials: ProjectOperationCredentials,
                                id: RemoteRepoRef,
@@ -156,9 +160,12 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
                         return executeOne(buildCommand);
                     });
             }
+            buildResult = buildResult.then(br => {
+                logger.info("Build RETURN: %j", br);
+                return br;
+            });
             const b = new SpawnedBuild(appId, id, buildResult, team, log.url,
                 !!this.options.deploymentUnitFor ? await this.options.deploymentUnitFor(p, appId) : undefined);
-            logger.info("Build RETURN: %j", b.buildResult);
             return b;
         });
     }

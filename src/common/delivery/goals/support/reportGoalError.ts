@@ -17,7 +17,6 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { sprintf } from "sprintf-js";
 import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
@@ -55,8 +54,6 @@ export async function reportGoalError(parameters: {
         goal.name, implementationName, err.message);
     logger.error(err.stack);
     progressLog.write("ERROR: " + err.message + "\n");
-    progressLog.write(err.stack);
-    progressLog.write(sprintf("Full error object: [%j]", err));
 
     const retryButton = buttonForCommand({text: "Retry"},
         retryCommandNameFor(goal), {

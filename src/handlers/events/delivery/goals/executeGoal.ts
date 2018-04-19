@@ -27,6 +27,8 @@ import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
+import { sprintf } from "sprintf-js";
+
 /**
  * Central function to execute a goal with progress logging
  * @param {{projectLoader: ProjectLoader}} rules
@@ -57,11 +59,16 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         if (result.code === 0) {
             // execute the actual goal
             let goalResult = await execute(rwlc)
-                .catch(err =>
-                    reportGoalError({
-                        goal, implementationName, addressChannels, progressLog, id, logInterpreter,
-                    }, err)
-                        .then(() => Promise.reject(err)),
+                .catch(err => {
+                        progressLog.write("ERROR caught: " + err.message + "\n");
+                        progressLog.write(err.stack);
+                        progressLog.write(sprintf("Full error object: [%j]", err));
+
+                        return reportGoalError({
+                            goal, implementationName, addressChannels, progressLog, id, logInterpreter,
+                        }, err)
+                            .then(() => Promise.reject(err));
+                    },
                 );
             if (!goalResult) {
                 logger.error("Execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
