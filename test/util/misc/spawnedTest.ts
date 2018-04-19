@@ -32,11 +32,22 @@ describe("spawned", () => {
         }
     });
 
-    it("should handle valid command", async () => {
+    it("should handle valid command with no error finder", async () => {
         const sc: SpawnCommand = {command: "ls"};
         const r = await spawnAndWatch(sc, {},
             await createEphemeralProgressLog(),
             {});
+        assert.equal(r.error, false);
+        assert.equal(r.error, false);
+    });
+
+    it("should handle valid command with error finder", async () => {
+        const sc: SpawnCommand = {command: "ls"};
+        const r = await spawnAndWatch(sc, {},
+            await createEphemeralProgressLog(),
+            {
+                errorFinder: () => false,
+            });
         assert.equal(r.error, false);
         assert.equal(r.error, false);
     });
