@@ -84,6 +84,10 @@ export function watchSpawned(childProcess: ChildProcess,
             stripAnsi: false,
             ...opts,
         };
+        if (!optsToUse.errorFinder) {
+            // The caller specified undefined, which is an error. Ignore them, for they know not what they do.
+            optsToUse.errorFinder = SuccessIsReturn0ErrorFinder;
+        }
 
         function sendToLog(data) {
             const formatted = optsToUse.stripAnsi ? strip_ansi(data.toString()) : data.toString();

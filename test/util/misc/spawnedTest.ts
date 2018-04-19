@@ -41,6 +41,17 @@ describe("spawned", () => {
         assert.equal(r.error, false);
     });
 
+    it("should use default on attempt to pass in undefined error finder", async () => {
+        const sc: SpawnCommand = {command: "ls"};
+        const r = await spawnAndWatch(sc, {},
+            await createEphemeralProgressLog(),
+            {
+                errorFinder: undefined,
+            });
+        assert.equal(r.error, false);
+        assert.equal(r.error, false);
+    });
+
     it("should handle valid command with error finder", async () => {
         const sc: SpawnCommand = {command: "ls"};
         const r = await spawnAndWatch(sc, {},
