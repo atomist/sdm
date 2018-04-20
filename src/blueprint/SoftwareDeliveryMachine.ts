@@ -225,7 +225,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         return {
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
-                () => new RequestDownstreamGoalsOnGoalSuccess(),
+                () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
                 () => new CopyStatusApprovalToGoal(),
             ],
             commandHandlers: [],

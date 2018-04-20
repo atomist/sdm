@@ -37,6 +37,7 @@ export interface UpdateSdmGoalParams {
     url?: string;
     approved?: boolean;
     error?: Error;
+    data?: string;
 }
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
@@ -44,7 +45,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
     const sdmGoal = {
         ...before,
-        state: params.state,
+        state: params.state === "success" && before.approvalRequired ? "waiting_for_approval" : params.state,
         description,
         url: params.url,
         approval,
@@ -125,6 +126,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         url: disregardApproval(url), // when we use goals in lifecycle this can go
         externalKey: goal.context,
         ts: Date.now(),
+
+        approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,
 
         provenance: [constructProvenance(ctx)],
 

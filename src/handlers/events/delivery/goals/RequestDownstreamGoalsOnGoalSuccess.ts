@@ -14,14 +14,30 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import { preconditionsAreMet } from "../../../../common/delivery/goals/goalPreconditions";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
-import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../../typings/types";
+import {
+    goalKeyString,
+    SdmGoal,
+    SdmGoalKey,
+} from "../../../../ingesters/sdmGoalIngester";
+import {
+    OnAnySuccessfulSdmGoal,
+    ScmProvider,
+} from "../../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
@@ -30,6 +46,8 @@ import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 @EventHandler("Move downstream goals from 'planned' to 'success' when preconditions are met",
     subscription("OnAnySuccessfulSdmGoal"))
 export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessfulSdmGoal.Subscription> {
+
+    constructor(private readonly implementationMapper: SdmGoalImplementationMapper) {}
 
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
@@ -46,7 +64,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
-            .filter(expectToBeFulfilledAfterRequest)
+            //.filter(expectToBeFulfilledAfterRequest)
             .filter(shouldBePlannedOrSkipped)
             .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
 
@@ -62,10 +80,19 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
          * and pass them here for mapping from SdmGoalKey -> Goal. Then, we can use
          * the requestDescription defined on that Goal.
          */
-        await Promise.all(goalsToRequest.map(g => updateGoal(ctx, g, {
-            state: "requested",
-            description: `Ready to ` + g.name,
-        })));
+        await Promise.all(goalsToRequest.map(async g => {
+
+            const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(g);
+            for (const cb of cbs) {
+                g = await cb.goalCallback(g);
+            }
+
+            return updateGoal(ctx, g, {
+                state: "requested",
+                description: `Ready to ` + g.name,
+                data: g.data,
+            });
+        }));
 
         return Success;
     }

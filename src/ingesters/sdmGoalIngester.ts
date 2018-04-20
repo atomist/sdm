@@ -61,6 +61,7 @@ export interface SdmGoal extends SdmGoalKey {
     retryFeasible?: boolean;
 
     approval?: SdmProvenance;
+    approvalRequired?: boolean;
 
     provenance: SdmProvenance[];
 
