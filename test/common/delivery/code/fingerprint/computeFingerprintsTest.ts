@@ -17,11 +17,11 @@
 import { CodeReactionInvocation, MavenFingerprinter } from "../../../../../src";
 import { computeFingerprints } from "../../../../../src/common/delivery/code/fingerprint/computeFingerprints";
 
+import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { computeShaOf } from "../../../../../src/util/misc/sha";
-import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 
 describe("computeFingerprints", () => {
 
@@ -41,7 +41,7 @@ describe("computeFingerprints", () => {
         const cri: CodeReactionInvocation = {
             project: InMemoryProject.from(
                 new SimpleRepoId("a", "b"),
-                new InMemoryFile("thing", "1"))
+                new InMemoryFile("thing", "1")),
         } as any as CodeReactionInvocation;
         const r = await computeFingerprints(cri, [async i => ({
             name: "foo",
