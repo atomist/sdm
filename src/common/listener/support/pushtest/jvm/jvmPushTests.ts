@@ -17,7 +17,7 @@
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
-import { hasFile } from "../commonPushTests";
+import { hasFile, hasFileWithExtension } from "../commonPushTests";
 
 /**
  * Is this a Maven project
@@ -32,9 +32,6 @@ export const IsJava = predicatePushTest(
     async p =>
         fileExists(p, AllJavaFiles, () => true));
 
-export const IsClojure = predicatePushTest(
-    "Is Clojure",
-    async p =>
-        fileExists(p, "**/*.clj", () => true));
+export const IsClojure = hasFileWithExtension("clj");
 
 export const IsLein = hasFile("project.clj");

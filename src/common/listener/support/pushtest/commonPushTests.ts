@@ -18,6 +18,7 @@ import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/Gi
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { isPublicRepo } from "../../../../util/github/ghub";
 import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../PushTest";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
     p.push.branch === p.push.repo.defaultBranch);
@@ -76,4 +77,14 @@ export function hasFileContaining(path: string, pattern: RegExp): PredicatePushT
             const content = await f.getContent();
             return pattern.test(content);
         });
+}
+
+/**
+ * Is there at least one file with the given extension?
+ * @param {string} extension
+ * @return {PredicatePushTest}
+ */
+export function hasFileWithExtension(extension: string): PredicatePushTest {
+    return predicatePushTest(`HasFileWithExtension(${extension}})`,
+        async p => fileExists(p, `**/*.${extension}`, () => true));
 }

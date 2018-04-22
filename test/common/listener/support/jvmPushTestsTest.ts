@@ -19,6 +19,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/common/listener/PushListener";
 import { IsJava, IsMaven } from "../../../../src/common/listener/support/pushtest/jvm/jvmPushTests";
+import { IsClojure } from "../../../../src";
 
 describe("jvmPushTests", () => {
 
@@ -54,6 +55,29 @@ describe("jvmPushTests", () => {
         it("should not find Java in repo with no Java file", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
             const r = await IsJava.valueForPush({project} as any as PushListenerInvocation);
+            assert(!r);
+        });
+    });
+
+    describe("IsClojure", () => {
+
+        it("should not find Clojure in empty repo", async () => {
+            const project = InMemoryProject.of();
+            const r = await IsClojure.valueForPush({project} as any as PushListenerInvocation);
+            assert(!r);
+        });
+
+        it("should find Clojure in repo with Clojure file", async () => {
+            const project = InMemoryProject.of({ path: "src/main/java/Thing.clj", content: "(())"});
+            const r = await IsClojure.valueForPush({project} as any as PushListenerInvocation);
+            assert(r);
+            const r2 = await IsJava.valueForPush({project} as any as PushListenerInvocation);
+            assert(!r2);
+        });
+
+        it("should not find Clojure in repo with no Clojure file", async () => {
+            const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
+            const r = await IsClojure.valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
         });
     });
