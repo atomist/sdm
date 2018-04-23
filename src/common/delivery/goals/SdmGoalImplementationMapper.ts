@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import {
+    IsolatedGoalLauncher,
+    KubernetesIsolatedGoalLauncher,
+} from "../../../handlers/events/delivery/goals/forkGoal";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
+import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
-import { Goal } from "./Goal";
+import {
+    Goal,
+} from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
@@ -45,11 +53,22 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName && true;
 }
 
+/**
+ * Callback to allow changes to the goal before it gets fullfilled.
+ *
+ * This is useful to add goal specific information to the data field.
+ */
+export interface GoalFullfillmentCallback {
+    goalTest: (goal: SdmGoal) => boolean;
+    goalCallback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
+}
+
 export class SdmGoalImplementationMapper {
 
     private readonly implementations: GoalImplementation[] = [];
 
     private readonly sideEffects: GoalSideEffect[] = [];
+    private readonly callbacks: GoalFullfillmentCallback[] = [];
 
     public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>
@@ -74,6 +93,11 @@ export class SdmGoalImplementationMapper {
         return this;
     }
 
+    public addFullfillmentCallback(callback: GoalFullfillmentCallback): this {
+        this.callbacks.push(callback);
+        return this;
+    }
+
     public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
         const implementationsForGoal = this.implementations.filter(m => m.goal === goal);
         for (const implementation of implementationsForGoal) {
@@ -88,5 +112,17 @@ export class SdmGoalImplementationMapper {
             }
         }
         return undefined;
+    }
+
+    public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
+        return this.callbacks.filter(c => c.goalTest(g));
+    }
+
+    public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
+        if (process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes") {
+            return KubernetesIsolatedGoalLauncher;
+        } else {
+            return undefined;
+        }
     }
 }

@@ -17,12 +17,12 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { OnAnyRequestedSdmGoal } from "../../../../src";
-import { executeGoalForked } from "../../../../src/handlers/events/delivery/goals/forkGoal";
+import { KubernetesIsolatedGoalLauncher } from "../../../../src/handlers/events/delivery/goals/forkGoal";
 
 describe("executeGoalForked", () => {
 
-    it("should spawn container", async () => {
-        return executeGoalForked(
+    it.skip("should spawn container", async () => {
+        return KubernetesIsolatedGoalLauncher(
             {
                 id: guid(),
             } as any as OnAnyRequestedSdmGoal.SdmGoal,

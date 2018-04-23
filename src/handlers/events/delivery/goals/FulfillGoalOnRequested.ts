@@ -31,7 +31,6 @@ import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecut
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
-import { executeGoalForked } from "./forkGoal";
 
 export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
@@ -88,8 +87,10 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const credentials = {token: params.githubToken};
         const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
 
-        if (goal.definition.fork && !process.env.ATOMIST_FORKED) {
-            return executeGoalForked(sdmGoal, ctx, progressLog);
+        const isolatedGoalLauncher = this.implementationMapper.getIsolatedGoalLauncher();
+
+        if (goal.definition.isolated && !process.env.ATOMIST_ISOLATED_GOAL && isolatedGoalLauncher) {
+            return isolatedGoalLauncher(sdmGoal, ctx, progressLog);
         } else {
             delete (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).id;
             return executeGoal({projectLoader: params.projectLoader},

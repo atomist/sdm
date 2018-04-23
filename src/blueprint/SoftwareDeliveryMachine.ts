@@ -225,7 +225,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         return {
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
-                () => new RequestDownstreamGoalsOnGoalSuccess(),
+                () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
                 () => new CopyStatusApprovalToGoal(),
             ],
             commandHandlers: [],
@@ -458,7 +458,7 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
 
 export function configureForSdm(machine: SoftwareDeliveryMachine) {
     return async config => {
-        const forked = process.env.ATOMIST_FORKED === "true";
+        const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
                 new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader));

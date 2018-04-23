@@ -30,7 +30,11 @@ export interface GoalDefinition {
     failedDescription?: string;
     waitingForApprovalDescription?: string;
 
-    fork?: boolean;
+    // when set to true, this goal will execute in its own container/client
+    isolated?: boolean;
+
+    // when set to true, this goal requires approval before it is marked success
+    approvalRequired?: boolean;
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";

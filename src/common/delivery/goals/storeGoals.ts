@@ -37,11 +37,13 @@ export interface UpdateSdmGoalParams {
     url?: string;
     approved?: boolean;
     error?: Error;
+    data?: any;
 }
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
+    const data = params.data ? params.data : before.data;
     const sdmGoal = {
         ...before,
         state: params.state,
@@ -51,6 +53,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(before.provenance),
         error: _.get<string>(params, "error.message"),
+        data,
     };
     logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));

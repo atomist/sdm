@@ -14,14 +14,32 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import { preconditionsAreMet } from "../../../../common/delivery/goals/goalPreconditions";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
-import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../../typings/types";
+import {
+    goalKeyString,
+    SdmGoal,
+    SdmGoalKey,
+} from "../../../../ingesters/sdmGoalIngester";
+import {
+    OnAnySuccessfulSdmGoal,
+    ScmProvider,
+} from "../../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
@@ -31,10 +49,15 @@ import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
     subscription("OnAnySuccessfulSdmGoal"))
 export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessfulSdmGoal.Subscription> {
 
+    @Secret(Secrets.OrgToken)
+    public githubToken: string;
+
+    constructor(private readonly implementationMapper: SdmGoalImplementationMapper) {}
+
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
     public async handle(event: EventFired<OnAnySuccessfulSdmGoal.Subscription>,
-                        ctx: HandlerContext): Promise<HandlerResult> {
+                        context: HandlerContext): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
 
         if (sdmGoal.state !== "success") { // atomisthq/automation-api#395
@@ -42,11 +65,11 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
             return Promise.resolve(Success);
         }
 
-        const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(ctx, sdmGoal.repo.providerId));
-        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+        const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(context, sdmGoal.repo.providerId));
+        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
-            .filter(expectToBeFulfilledAfterRequest)
+            //.filter(expectToBeFulfilledAfterRequest)
             .filter(shouldBePlannedOrSkipped)
             .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
 
@@ -55,6 +78,10 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
                 goalsToRequest.map(goalKeyString).join(", "));
         }
 
+        // bug: automation-api#392
+        this.githubToken = process.env.GITHUB_TOKEN;
+        const credentials = {token: this.githubToken};
+
         /*
          * #294 Intention: for custom descriptions per goal, we need to look up the Goal.
          * This is the only reason to do that here.
@@ -62,10 +89,19 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
          * and pass them here for mapping from SdmGoalKey -> Goal. Then, we can use
          * the requestDescription defined on that Goal.
          */
-        await Promise.all(goalsToRequest.map(g => updateGoal(ctx, g, {
-            state: "requested",
-            description: `Ready to ` + g.name,
-        })));
+        await Promise.all(goalsToRequest.map(async g => {
+
+            const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(g);
+            for (const cb of cbs) {
+                g = await cb.goalCallback(g, {id, addressChannels: undefined, credentials, context});
+            }
+
+            return updateGoal(context, g, {
+                state: "requested",
+                description: `Ready to ` + g.name,
+                data: g.data,
+            });
+        }));
 
         return Success;
     }
