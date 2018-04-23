@@ -40,3 +40,22 @@ export interface ProgressLog {
 }
 
 export type LogFactory = () => Promise<ProgressLog>;
+
+export class StringCapturingProgressLog implements ProgressLog {
+
+    public log: string;
+    public url: string;
+
+    public close(): Promise<any> {
+        return Promise.resolve();
+    }
+
+    public flush(): Promise<any> {
+        return Promise.resolve();
+    }
+
+    public write(what: string): void {
+        this.log = this.log + what;
+    }
+
+}
