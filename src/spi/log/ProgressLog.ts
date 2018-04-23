@@ -43,7 +43,7 @@ export type LogFactory = () => Promise<ProgressLog>;
 
 export class StringCapturingProgressLog implements ProgressLog {
 
-    public log: string;
+    public log: string = "";
     public url: string;
 
     public close(): Promise<any> {
@@ -55,7 +55,11 @@ export class StringCapturingProgressLog implements ProgressLog {
     }
 
     public write(what: string): void {
-        this.log = this.log + what;
+        if (this.log) {
+            this.log += what;
+        } else {
+            this.log = what;
+        }
     }
 
 }

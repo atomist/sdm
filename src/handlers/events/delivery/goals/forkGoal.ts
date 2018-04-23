@@ -72,11 +72,12 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     }
 
     const jobSpec = JSON.parse(JobSpec);
-    const containerSpec = JSON.parse(log.log).spec.template.spec.containers[0];
-    jobSpec.spec.template.spec.containers.push(containerSpec);
+    const containerSpec = JSON.parse(log.log).spec.template.spec;
+    jobSpec.spec.template.spec = containerSpec;
 
     jobSpec.metadata.name = `${jobSpec.metadata.name}-${goal.uniqueName.toLocaleLowerCase()}-${goal.goalSetId}`;
     jobSpec.metadata.namespace = deploymentNamespace;
+    jobSpec.spec.template.spec.restartPolicy = "Never";
     jobSpec.spec.template.spec.containers[0].name = jobSpec.metadata.name;
     jobSpec.spec.template.spec.containers[0].env.push({
             name: "ATOMIST_GOAL_TEAM",
