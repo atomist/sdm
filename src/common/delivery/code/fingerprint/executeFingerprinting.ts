@@ -18,12 +18,12 @@ import { logger } from "@atomist/automation-client";
 import { Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import * as _ from "lodash";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
 import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
+import { computeFingerprints } from "./computeFingerprints";
 import { FingerprinterRegistration } from "./FingerprinterRegistration";
 
 /**
@@ -45,20 +45,9 @@ export function executeFingerprinting(projectLoader: ProjectLoader,
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
-            const fingerprints: Fingerprint[] = await Promise.all(
-                relevantFingerprinters.map(async fp => {
-                    logger.info("Using fingerprinter %s to fingerprint %j", fp.name, id);
-                    const f = await fp.action(cri);
-                    return isFingerprint(f) ? [f] : f;
-                }),
-            ).then(x2 => _.flatten(x2));
+            const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             fingerprints.map(fingerprint => sendFingerprint(id as GitHubRepoRef, fingerprint, context.teamId));
         });
         return Success;
     };
-}
-
-function isFingerprint(a: any): a is Fingerprint {
-    const fq = a as Fingerprint;
-    return !!fq.sha && !!fq.version;
 }

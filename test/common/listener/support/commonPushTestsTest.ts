@@ -19,6 +19,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/common/listener/PushListener";
 import { hasFile, hasFileContaining } from "../../../../src/common/listener/support/pushtest/commonPushTests";
+import { hasFileWithExtension } from "../../../../src";
 
 describe("commonPushTests", () => {
 
@@ -55,6 +56,23 @@ describe("commonPushTests", () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
             const r = await hasFileContaining("src/main/java/Thing.java", /xclass/).valueForPush({project} as any as PushListenerInvocation);
             assert(!r);
+        });
+    });
+
+    describe("hasFileWithExtension", () => {
+
+        it("should not find file in empty repo", async () => {
+            const project = InMemoryProject.of();
+            const r = await hasFileWithExtension("java").valueForPush({project} as any as PushListenerInvocation);
+            assert(!r);
+        });
+
+        it("should find one file", async () => {
+            const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
+            const r = await hasFileWithExtension("xml").valueForPush({project} as any as PushListenerInvocation);
+            assert(r);
+            const r2 = await hasFileWithExtension("java").valueForPush({project} as any as PushListenerInvocation);
+            assert(!r2);
         });
     });
 

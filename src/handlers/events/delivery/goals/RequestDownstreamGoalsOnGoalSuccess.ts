@@ -69,7 +69,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
-            //.filter(expectToBeFulfilledAfterRequest)
+            // .filter(expectToBeFulfilledAfterRequest)  <-- this has been taken out to allow fulfillment by other automations
             .filter(shouldBePlannedOrSkipped)
             .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
 
@@ -89,9 +89,9 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
          * and pass them here for mapping from SdmGoalKey -> Goal. Then, we can use
          * the requestDescription defined on that Goal.
          */
-        await Promise.all(goalsToRequest.map(async g => {
-
-            const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(g);
+        await Promise.all(goalsToRequest.map(async goal => {
+            const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(goal);
+            let g = goal;
             for (const cb of cbs) {
                 g = await cb.goalCallback(g, {id, addressChannels: undefined, credentials, context});
             }
@@ -102,7 +102,6 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
                 data: g.data,
             });
         }));
-
         return Success;
     }
 }
@@ -151,6 +150,7 @@ function shouldBePlannedOrSkipped(dependentGoal: SdmGoal) {
     return false;
 }
 
+// tslint:disable-next-line:no-unused-variable
 function expectToBeFulfilledAfterRequest(dependentGoal: SdmGoal) {
     switch (dependentGoal.fulfillment.method) {
         case "SDM fulfill on requested":
