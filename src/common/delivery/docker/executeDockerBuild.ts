@@ -45,10 +45,6 @@ export type DockerImageNameCreator = (p: GitProject,
                                       options: DockerOptions,
                                       ctx: HandlerContext) => Promise<{registry: string, name: string, version: string}>;
 
-export type DockerBuildPreparer = (p: GitProject,
-                                   rwlc: RunWithLogContext,
-                                   options: DockerOptions) => Promise<HandlerResult>;
-
 /**
  * Execute a Docker build for the project available from provided projectLoader
  * @param {ProjectLoader} projectLoader

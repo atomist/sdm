@@ -52,9 +52,7 @@ export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
     completedDescription: "Deployed to Test",
     failedDescription: "Test deployment failure",
     waitingForApprovalDescription: "Promote to Prod",
-
     approvalRequired: true,
-    
 }, DockerBuildGoal);
 
 export const ProductionDockerDeploymentGoal = new GoalWithPrecondition({
