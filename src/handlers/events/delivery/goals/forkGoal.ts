@@ -44,9 +44,14 @@ import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 import { FulfillGoalOnRequested } from "./FulfillGoalOnRequested";
 
-export async function executeGoalForked(goal: OnAnyRequestedSdmGoal.SdmGoal,
-                                        ctx: HandlerContext,
-                                        progressLog: ProgressLog): Promise<HandlerResult> {
+export type IsolatedGoalLauncher = (goal: OnAnyRequestedSdmGoal.SdmGoal,
+                                    ctx: HandlerContext,
+                                    progressLog: ProgressLog) => Promise<HandlerResult>;
+
+export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal.SdmGoal,
+                                                     ctx: HandlerContext,
+                                                     progressLog: ProgressLog): Promise<HandlerResult> => {
+
     const jobSpec = JSON.parse(JobSpec);
 
     // TODO CD the following code needs to be replace with proper job scheduling via k8-automation
@@ -78,7 +83,7 @@ export async function executeGoalForked(goal: OnAnyRequestedSdmGoal.SdmGoal,
             value: ctx.correlationId,
         },
         {
-            name: "ATOMIST_FORKED",
+            name: "ATOMIST_ISOLATED_GOAL",
             value: "true",
         });
 

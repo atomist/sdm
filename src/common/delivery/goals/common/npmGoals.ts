@@ -41,7 +41,7 @@ export const NpmPublishGoal = new GoalWithPrecondition({
     workingDescription: "Publishing...",
     completedDescription: "Published",
     failedDescription: "Published failed",
-    fork: true,
+    isolated: true,
 }, BuildGoal);
 
 export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
@@ -52,6 +52,9 @@ export const StagingDockerDeploymentGoal = new GoalWithPrecondition({
     completedDescription: "Deployed to Test",
     failedDescription: "Test deployment failure",
     waitingForApprovalDescription: "Promote to Prod",
+
+    approvalRequired: true,
+    
 }, DockerBuildGoal);
 
 export const ProductionDockerDeploymentGoal = new GoalWithPrecondition({

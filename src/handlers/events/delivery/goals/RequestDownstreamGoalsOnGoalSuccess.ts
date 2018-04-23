@@ -14,15 +14,32 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secret,
+    Secrets,
+    Success,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import { preconditionsAreMet } from "../../../../common/delivery/goals/goalPreconditions";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyString, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
-import { OnAnySuccessfulSdmGoal, ScmProvider } from "../../../../typings/types";
+import {
+    goalKeyString,
+    SdmGoal,
+    SdmGoalKey,
+} from "../../../../ingesters/sdmGoalIngester";
+import {
+    OnAnySuccessfulSdmGoal,
+    ScmProvider,
+} from "../../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
@@ -32,12 +49,15 @@ import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
     subscription("OnAnySuccessfulSdmGoal"))
 export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessfulSdmGoal.Subscription> {
 
-    constructor(private readonly implementationMapper: SdmGoalImplementationMapper) {}
+    @Secret(Secrets.OrgToken)
+    public githubToken: string;
+
+    constructor(private readonly implementationMapper: SdmGoalImplementationMapper) { }
 
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
     public async handle(event: EventFired<OnAnySuccessfulSdmGoal.Subscription>,
-                        ctx: HandlerContext): Promise<HandlerResult> {
+                        context: HandlerContext): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
 
         if (sdmGoal.state !== "success") { // atomisthq/automation-api#395
@@ -45,18 +65,22 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
             return Promise.resolve(Success);
         }
 
-        const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(ctx, sdmGoal.repo.providerId));
-        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(ctx, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+        const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(context, sdmGoal.repo.providerId));
+        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
             // .filter(expectToBeFulfilledAfterRequest)
             .filter(shouldBePlannedOrSkipped)
-            .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
+            .filter(g => preconditionsAreMet(g, { goalsForCommit: goals }));
 
         if (goalsToRequest.length > 0) {
             logger.info("because %s is successful, these goals are now ready: %s", goalKeyString(sdmGoal),
                 goalsToRequest.map(goalKeyString).join(", "));
         }
+
+        // bug: automation-api#392
+        this.githubToken = process.env.GITHUB_TOKEN;
+        const credentials = { token: this.githubToken };
 
         /*
          * #294 Intention: for custom descriptions per goal, we need to look up the Goal.
@@ -69,9 +93,10 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
             const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(goal);
             let g = goal;
             for (const cb of cbs) {
-                g = await cb.goalCallback(g);
+                g = await cb.goalCallback(g, { id, addressChannels: undefined, credentials, context });
             }
-            return updateGoal(ctx, g, {
+
+            return updateGoal(context, g, {
                 state: "requested",
                 description: `Ready to ` + g.name,
                 data: g.data,
@@ -102,7 +127,7 @@ function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
 
 async function fetchScmProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
     const result = await context.graphClient.query<ScmProvider.Query, ScmProvider.Variables>(
-        {name: "SCMProvider", variables: {providerId}});
+        { name: "SCMProvider", variables: { providerId } });
     if (!result || !result.SCMProvider || result.SCMProvider.length === 0) {
         throw new Error(`Provider not found: ${providerId}`);
     }
@@ -132,7 +157,7 @@ function expectToBeFulfilledAfterRequest(dependentGoal: SdmGoal) {
             return true;
         case "side-effect":
             return false;
-        case"other":
+        case "other":
             // legacy behavior
             return true;
     }

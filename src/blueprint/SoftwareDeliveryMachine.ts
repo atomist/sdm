@@ -460,7 +460,7 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
 
 export function configureForSdm(machine: SoftwareDeliveryMachine) {
     return async config => {
-        const forked = process.env.ATOMIST_FORKED === "true";
+        const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
                 new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader));

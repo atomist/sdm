@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
+import {
+    IsolatedGoalLauncher,
+    KubernetesIsolatedGoalLauncher,
+} from "../../../handlers/events/delivery/goals/forkGoal";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
+import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
 import {
@@ -47,9 +52,14 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName && true;
 }
 
+/**
+ * Callback to allow changes to the goal before it gets fullfilled.
+ *
+ * This is useful to add goal specific information to the data field.
+ */
 export interface GoalFullfillmentCallback {
     goalTest: (goal: SdmGoal) => boolean;
-    goalCallback: (goal: SdmGoal) => Promise<SdmGoal>;
+    goalCallback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
 }
 
 export class SdmGoalImplementationMapper {
@@ -102,7 +112,15 @@ export class SdmGoalImplementationMapper {
         return undefined;
     }
 
-    public findFullfillmentCallbackForGoal(goal: SdmGoal): GoalFullfillmentCallback[] {
-        return this.callbacks.filter(c => c.goalTest(goal));
+    public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
+        return this.callbacks.filter(c => c.goalTest(g));
+    }
+
+    public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
+        if (process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes") {
+            return KubernetesIsolatedGoalLauncher;
+        } else {
+            return undefined;
+        }
     }
 }

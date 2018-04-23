@@ -43,6 +43,7 @@ export interface UpdateSdmGoalParams {
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) : before.approval;
+    const data = params.data ? params.data : before.data;
     const sdmGoal = {
         ...before,
         state: params.state === "success" && before.approvalRequired ? "waiting_for_approval" : params.state,
@@ -52,6 +53,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(before.provenance),
         error: _.get<string>(params, "error.message"),
+        data,
     };
     logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
@@ -78,8 +80,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     url?: string,
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoal {
-    const {goalSet, goal, goalSetId, state, id, providerId, url} = parameters;
-    const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
+    const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
+    const fulfillment = parameters.fulfillment || { method: "other", name: "unspecified" };
 
     if (id.branch === null) {
         throw new Error(sprintf("Please provide a branch in the GitHubRepoRef %j", parameters));
@@ -153,16 +155,16 @@ function constructProvenance(ctx: HandlerContext): SdmProvenance {
 
 export function descriptionFromState(goal: Goal, state: SdmGoalState): string {
     switch (state) {
-        case  "planned" :
-        case "requested" :
+        case "planned":
+        case "requested":
             return goal.requestedDescription;
-        case "in_process" :
+        case "in_process":
             return goal.inProcessDescription;
-        case "waiting_for_approval" :
+        case "waiting_for_approval":
             return goal.waitingForApprovalDescription;
-        case "success" :
+        case "success":
             return goal.successDescription;
-        case "failure" :
+        case "failure":
             return goal.failureDescription;
         case "skipped":
             return "Skipped"; // you probably want to use something that describes the reason instead. but don't error.
