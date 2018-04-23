@@ -51,14 +51,14 @@ export type IsolatedGoalLauncher = (goal: OnAnyRequestedSdmGoal.SdmGoal,
 export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal.SdmGoal,
                                                      ctx: HandlerContext,
                                                      progressLog: ProgressLog): Promise<HandlerResult> => {
-    const podName = process.env.ATOMIST_POD_NAME || automationClientInstance().name;
-    const podNamespace = process.env.ATOMIST_POD_NAMESPACE || "default";
+    const deploymentName = process.env.ATOMIST_DEPLOYMENT_NAME || automationClientInstance().name;
+    const deploymentNamespace = process.env.ATOMIST_DEPLOYMENT_NAMESPACE || "default";
 
     const log = new StringCapturingProgressLog();
 
     const spec = await spawnAndWatch({
             command: "kubectl",
-            args: ["get", "pod", podName, "-n", podNamespace, "-o", "json"],
+            args: ["get", "deployment", deploymentName, "-n", deploymentNamespace, "-o", "json"],
         },
         {},
         log,
@@ -72,11 +72,11 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     }
 
     const jobSpec = JSON.parse(JobSpec);
-    const containerSpec = JSON.parse(log.log).spec.containers[0];
+    const containerSpec = JSON.parse(log.log).spec.template.spec.containers[0];
     jobSpec.spec.template.spec.containers.push(containerSpec);
 
     jobSpec.metadata.name = `${jobSpec.metadata.name}-${goal.uniqueName.toLocaleLowerCase()}-${goal.goalSetId}`;
-    jobSpec.metadata.namespace = podNamespace;
+    jobSpec.metadata.namespace = deploymentNamespace;
     jobSpec.spec.template.spec.containers[0].name = jobSpec.metadata.name;
     jobSpec.spec.template.spec.containers[0].env.push({
             name: "ATOMIST_GOAL_TEAM",
