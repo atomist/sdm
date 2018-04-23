@@ -52,3 +52,32 @@ export interface ProgressLog {
 }
 
 export type LogFactory = (name: string) => Promise<ProgressLog>;
+
+export class StringCapturingProgressLog implements ProgressLog {
+
+    public readonly name: string = "StringCapturingProgressLog";
+
+    public log: string = "";
+    public url: string;
+
+    public close(): Promise<any> {
+        return Promise.resolve();
+    }
+
+    public flush(): Promise<any> {
+        return Promise.resolve();
+    }
+
+    public write(what: string): void {
+        if (this.log) {
+            this.log += what;
+        } else {
+            this.log = what;
+        }
+    }
+
+    public isAvailable(): Promise<boolean> {
+        return Promise.resolve(true);
+    }
+
+}

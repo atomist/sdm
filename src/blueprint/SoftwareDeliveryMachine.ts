@@ -16,7 +16,12 @@
 
 // tslint:disable:max-file-line-count
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    Configuration,
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
@@ -459,12 +464,17 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
 }
 
 export function configureForSdm(machine: SoftwareDeliveryMachine) {
-    return async config => {
+    return async (config: Configuration) => {
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
                 new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader));
             config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
+            // force ephemeral policy and no handlers or ingesters
+            config.policy = "ephemeral";
+            config.commands = [];
+            config.events = [];
+            config.ingesters = [];
         } else {
             if (!config.commands) {
                 config.commands = [];
