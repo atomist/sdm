@@ -79,7 +79,7 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
             const image = `${imageName.registry}/${imageName.name}:${imageName.version}`;
             const dockerfilePath = await (options.dockerfileFinder ? options.dockerfileFinder(p) : "Dockerfile");
 
-            const regex = /^[A-Za-z0-9]/;
+            const regex = /[^A-Za-z0-9]/;
             const registry = regex.test(options.registry) ? options.registry : undefined;
 
             // 1. run docker login
