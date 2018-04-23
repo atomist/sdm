@@ -15,7 +15,6 @@
  */
 
 import { PushListenerInvocation } from "../PushListener";
-import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
 import { allSatisfied, memoize } from "./pushtest/pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
@@ -23,9 +22,13 @@ import { StaticPushMapping } from "./StaticPushMapping";
 /**
  * Generic DSL for returning an object on a push
  */
-export class PushRule<V = any> implements PushMapping<V> {
+export class PushRule<V = any> implements StaticPushMapping<V> {
 
-    public choice: StaticPushMapping<V>;
+    private staticValue: V;
+
+    get value() {
+        return this.staticValue;
+    }
 
     public get name(): string {
         return this.reason;
@@ -39,12 +42,14 @@ export class PushRule<V = any> implements PushMapping<V> {
 
     public set(value: V): this {
         this.verify();
-        this.choice = new StaticPushMapping<V>(this.name, value, this.guard1, ...this.guards);
+        this.staticValue = value;
         return this;
     }
 
-    public valueForPush(p: PushListenerInvocation): Promise<V | undefined> {
-        return this.choice.valueForPush(p);
+    public async valueForPush(p: PushListenerInvocation): Promise<V | undefined> {
+        if (await this.pushTest.valueForPush(p)) {
+            return this.staticValue;
+        }
     }
 
     public verify(): this {

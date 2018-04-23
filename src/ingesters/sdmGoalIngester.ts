@@ -27,6 +27,9 @@ export interface SdmGoalFulfillment {
     name: string;
 }
 
+/**
+ * Data persisted in the Atomist Cortex
+ */
 export interface SdmGoal extends SdmGoalKey {
     uniqueName: string;
     sha: string;
@@ -40,17 +43,25 @@ export interface SdmGoal extends SdmGoalKey {
 
     fulfillment: SdmGoalFulfillment;
 
+    /**
+     * Current description that goes with the current status
+     */
     description: string;
     url?: string;
     goalSet: string;
     goalSetId: string;
     state: SdmGoalState;
+
+    /**
+     * Timestamp
+     */
     ts: number;
 
     error?: string;
     retryFeasible?: boolean;
 
     approval?: SdmProvenance;
+    approvalRequired?: boolean;
 
     provenance: SdmProvenance[];
 
@@ -77,7 +88,7 @@ export interface SdmGoalKey {
     name: string;
 }
 
-export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {
+export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (k: SdmGoalKey) => T {
     return (keyToFind: SdmGoalKey) => {
         const found = goals.find(g => goalKeyEquals(g, keyToFind));
         return found;

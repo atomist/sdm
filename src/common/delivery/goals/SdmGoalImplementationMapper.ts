@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     IsolatedGoalLauncher,
     KubernetesIsolatedGoalLauncher,
@@ -24,9 +23,7 @@ import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
-import {
-    Goal,
-} from "./Goal";
+import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
@@ -66,7 +63,6 @@ export interface GoalFullfillmentCallback {
 export class SdmGoalImplementationMapper {
 
     private readonly implementations: GoalImplementation[] = [];
-
     private readonly sideEffects: GoalSideEffect[] = [];
     private readonly callbacks: GoalFullfillmentCallback[] = [];
 
@@ -114,15 +110,15 @@ export class SdmGoalImplementationMapper {
         return undefined;
     }
 
-    public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
-        return this.callbacks.filter(c => c.goalTest(g));
-    }
-
     public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
         if (process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes") {
             return KubernetesIsolatedGoalLauncher;
         } else {
             return undefined;
         }
+    }
+
+    public findFullfillmentCallbackForGoal(goal: SdmGoal): GoalFullfillmentCallback[] {
+        return this.callbacks.filter(c => c.goalTest(goal));
     }
 }

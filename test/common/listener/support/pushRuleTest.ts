@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { IndependentOfEnvironment } from "../gitHubContext";
-import { Goal } from "../Goal";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
-/**
- * Goal that sends a message
- */
-export class MessageGoal extends Goal {
+import * as assert from "power-assert";
+import { PushRule } from "../../../../src";
+import { TruePushTest } from "./pushTestUtilsTest";
 
-    constructor(uniqueName: string) {
-        super({
-            uniqueName,
-            environment: IndependentOfEnvironment,
-            orderedName: `0-message-${uniqueName}`,
-            completedDescription: "Sent",
-        });
-    }
+describe("PushRule", () => {
 
-}
+    it("should set literal value", async () => {
+        const pr = new PushRule<string>(TruePushTest, [], "reason");
+        pr.set("frogs");
+        assert.equal(await pr.valueForPush({
+            push: { id: new Date().getTime() + "_"},
+            id: new GitHubRepoRef("a", "b"),
+        } as any), "frogs");
+    });
+
+});

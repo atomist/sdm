@@ -196,12 +196,12 @@ async function fulfillment(rules: {
         return {method: "side-effect", name: plan.sideEffectName};
     }
 
-    logger.info("FYI, no implementation found for " + g.name);
+    logger.warn("FYI, no implementation found for '%s'", g.name);
     return {method: "other", name: "unspecified-yo"};
 }
 
 export const executeImmaterial: ExecuteGoalWithLog = async () => {
-    logger.debug("Nothing to do here");
+    logger.debug("Immaterial: Nothing to execute");
     return Success;
 };
 

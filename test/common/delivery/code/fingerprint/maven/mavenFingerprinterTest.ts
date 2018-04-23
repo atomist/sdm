@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-import { IndependentOfEnvironment } from "../gitHubContext";
-import { Goal } from "../Goal";
+import * as assert from "power-assert";
+import { MavenFingerprinter } from "../../../../../../src";
 
-/**
- * Goal that sends a message
- */
-export class MessageGoal extends Goal {
+describe("Maven fingerprinter", () => {
 
-    constructor(uniqueName: string) {
-        super({
-            uniqueName,
-            environment: IndependentOfEnvironment,
-            orderedName: `0-message-${uniqueName}`,
-            completedDescription: "Sent",
-        });
-    }
+    const fingerprinter = new MavenFingerprinter();
 
-}
+    it("should have name", async () => {
+        assert(!!fingerprinter.name);
+    });
+
+});

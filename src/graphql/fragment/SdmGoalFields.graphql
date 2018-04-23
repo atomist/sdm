@@ -30,6 +30,7 @@ fragment SdmGoalFields on SdmGoal {
     userId
     channelId
   }
+  approvalRequired
   provenance {
     correlationId
     registration

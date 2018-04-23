@@ -27,11 +27,13 @@ import {
     spawnAndWatch,
     SpawnCommand,
 } from "../../../../../util/misc/spawned";
-import { createEphemeralProgressLogWithConsole } from "../../../../log/EphemeralProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { branchFromCommit } from "../../executeBuild";
 import { readSdmVersion } from "../projectVersioner";
-import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
+import {
+    SpawnBuilder,
+    SpawnBuilderOptions,
+} from "../SpawnBuilder";
 import { NpmLogInterpreter } from "./npmLogInterpreter";
 
 /**
@@ -47,9 +49,9 @@ export const DevelopmentEnvOptions = {
 export const Install: SpawnCommand = asSpawnCommand("npm ci", DevelopmentEnvOptions);
 
 export function nodeBuilder(projectLoader: ProjectLoader, ...commands: string[]) {
-    return new SpawnBuilder(undefined,
-        createEphemeralProgressLogWithConsole,
-        projectLoader, npmBuilderOptions(commands.map(cmd => asSpawnCommand(cmd, DevelopmentEnvOptions))));
+    return new SpawnBuilder({
+        projectLoader,
+        options: npmBuilderOptions(commands.map(cmd => asSpawnCommand(cmd, DevelopmentEnvOptions)))});
 }
 
 function npmBuilderOptions(commands: SpawnCommand[]): SpawnBuilderOptions {

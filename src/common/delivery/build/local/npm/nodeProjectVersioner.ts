@@ -22,7 +22,7 @@ import { ProjectVersioner } from "../projectVersioner";
 export const NodeProjectVersioner: ProjectVersioner = async (status, p, log) => {
     const pjFile = await p.getFile("package.json");
     const pj = JSON.parse(await pjFile.getContent());
-    const branch = branchFromCommit(status.commit);
+    const branch = branchFromCommit(status.commit).split("/").join(".");
     const branchSuffix = branch !== status.commit.repo.defaultBranch ? `${branch}.` : "";
     const version = `${pj.version}-${branchSuffix}${df(new Date(), "yyyymmddHHMMss")}`;
 

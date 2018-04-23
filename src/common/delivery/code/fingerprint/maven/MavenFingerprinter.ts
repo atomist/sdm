@@ -28,7 +28,7 @@ import { extractEffectivePom } from "./effectivePomExtractor";
  */
 export class MavenFingerprinter implements FingerprinterRegistration {
 
-    public readonly name: "MavenFingerprinter";
+    public readonly name = "MavenFingerprinter";
 
     public async action(cri: CodeReactionInvocation): Promise<Fingerprint[]> {
         try {

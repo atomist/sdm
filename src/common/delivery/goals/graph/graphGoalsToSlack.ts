@@ -56,10 +56,10 @@ export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
         };
         return gsi.addressChannels(showGraphMessage);
     } catch (err) {
-        // do not fail anything
-        logger.error("ShowGraph: Unable to generate a cool graph of the goalSet: " + err.message);
-        logger.error("ShowGraph: URL: " + graphvizServiceUrl);
-        logger.error("ShowGraph: stack trace: " + err.stack);
+        // do not fail anything. The graphing service has an SLA of "good luck"
+        logger.warn("ShowGraph: Unable to generate a cool graph of the goalSet: " + err.message);
+        logger.warn("ShowGraph: URL: " + graphvizServiceUrl);
+        logger.warn("ShowGraph: stack trace: " + err.stack);
     }
 
 };

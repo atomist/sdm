@@ -24,6 +24,9 @@ import { ProjectListenerInvocation } from "./ProjectListener";
  */
 export interface PushListenerInvocation extends ProjectListenerInvocation {
 
+    /**
+     * Information about the push, including repo and commit
+     */
     readonly push: OnPushToAnyBranch.Push;
 
 }

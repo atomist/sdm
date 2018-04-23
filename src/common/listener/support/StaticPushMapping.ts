@@ -14,31 +14,19 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation } from "../PushListener";
 import { PushMapping } from "../PushMapping";
 import { PushTest } from "../PushTest";
-import { allSatisfied } from "./pushtest/pushTestUtils";
 
 /**
- * PushMapping implementation wholly driven by a PushTest instance.
- * Always returns the same value
+ * PushMapping that always returns the same value, guarded by a PushTest.
+ * Return undefined if the PushTest doesn't match.
  */
-export class StaticPushMapping<V> implements PushMapping<V> {
+export interface StaticPushMapping<V> extends PushMapping<V> {
 
-    public readonly guard: PushTest;
+    readonly pushTest: PushTest;
 
     /**
-     * Create a PushChoice that will always return the same goals if the guards
-     * match
-     * @param value value we are guarding
-     * @param {PushTest} guard1
-     * @param {PushTest} guards
+     * Value we always return
      */
-    constructor(public readonly name: string, public readonly value: V, guard1: PushTest, ...guards: PushTest[]) {
-        this.guard = allSatisfied(guard1, ...guards);
-    }
-
-    public async valueForPush(pi: PushListenerInvocation): Promise<V> {
-        return (await this.guard.valueForPush(pi)) ? this.value : undefined;
-    }
+    readonly value: V;
 }

@@ -20,8 +20,13 @@ import { requiresApproval } from "../../../handlers/events/delivery/verify/appro
 import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
 
 export interface GoalDefinition {
-    // must be unique among goals
-    uniqueCamelCaseName: string;
+
+    /**
+     * Must be unique among goals
+     * Should be camel case
+     */
+    uniqueName: string;
+
     environment: GoalEnvironment;
     orderedName: string;
     displayName?: string;
@@ -38,6 +43,8 @@ export interface GoalDefinition {
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";
+
+const ValidGoalName = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
 /**
  * Represents a delivery action, such as Build or Deploy.
@@ -78,6 +85,9 @@ export class Goal {
     }
 
     constructor(definition: GoalDefinition) {
+        if (!ValidGoalName.test(definition.uniqueName)) {
+            throw new Error(`${definition.uniqueName} is not a valid goal name: Must be camel case`);
+        }
         this.definition = definition;
 
         const numberAndName = /([0-9\.]+)-(.*)/;
@@ -90,7 +100,7 @@ export class Goal {
         this.name = definition.displayName || matchGoal[2];
         this.context = BaseContext + definition.environment + definition.orderedName;
 
-        this.uniqueCamelCaseName = definition.uniqueCamelCaseName;
+        this.uniqueCamelCaseName = definition.uniqueName;
     }
 
     // TODO decouple from github statuses

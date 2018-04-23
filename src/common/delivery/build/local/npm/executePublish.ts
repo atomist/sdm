@@ -76,6 +76,8 @@ export function executePublish(projectLoader: ProjectLoader,
                     });
                 result.targetUrl = url;
             }
+
+            await deleteNpmrc();
             return result;
         });
     };
@@ -95,8 +97,12 @@ ${npmConfig.npmrc}`;
     }
 
     await fs.writeFile(npmrc, npm);
-
     return npmConfig;
+}
+
+async function deleteNpmrc() {
+    const npmrc = p.join(process.env.HOME || process.env.USER_DIR, ".npmrc");
+    return fs.unlink(npmrc);
 }
 
 interface NpmConfiguration {
