@@ -99,7 +99,7 @@ export abstract class LocalBuilder implements Builder {
                     buildNo,
                     as,
                     context);
-                return br.error ? Failure : Success;
+                return br.error ? {code: 1, message: br.message} : Success;
             } catch (err) {
                 await this.onExit(
                     credentials,
