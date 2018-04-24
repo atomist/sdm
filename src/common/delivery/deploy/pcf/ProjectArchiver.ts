@@ -34,6 +34,8 @@ export class ProjectArchiver {
         } else {
             return new Promise<ReadStream>((resolve, reject) => {
                 this.log.write(`Creating archive for directory ${p.baseDir}`);
+                // tslint:disable-next-line:no-floating-promises
+                this.log.flush();
                 const packageFilePath = p.baseDir + "/cfpackage.zip";
                 const output = fs.createWriteStream(packageFilePath);
                 output.on("close", () => {

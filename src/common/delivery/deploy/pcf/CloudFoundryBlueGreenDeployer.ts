@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as yaml from "js-yaml";
 
@@ -53,9 +52,11 @@ export class CloudFoundryBlueGreenDeployer implements Deployer<CloudFoundryInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
                         team: string): Promise<CloudFoundryDeployment[]> {
-        logger.info("Deploying app [%j] to Cloud Foundry [%j]", da, {...cfi, password: "REDACTED"});
+        log.write(`Deploying ${da.id.url} to Cloud Foundry space '${cfi.space}'.`);
         if (!cfi.api || !cfi.username || !cfi.password || !cfi.space) {
-            throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
+            const msg = "Cloud Foundry authentication information missing. See CloudFoundryTarget.ts";
+            log.write(msg);
+            throw new Error(msg);
         }
         return this.projectLoader.doWithProject({credentials, id: da.id, readOnly: !da.cwd}, async project => {
             const archiver = new ProjectArchiver(log);
@@ -72,7 +73,19 @@ export class CloudFoundryBlueGreenDeployer implements Deployer<CloudFoundryInfo,
                 await bger.retireCurrentApp();
                 return deployment;
             });
-            return Promise.all(deployments);
+            const deploymentsPromise = Promise.all(deployments);
+            // tslint:disable-next-line:no-floating-promises
+            deploymentsPromise.then(ds => {
+                log.write(`Successfully deployed ${ds.map(d => d.appName).join(", ")}.`);
+                // tslint:disable-next-line:no-floating-promises
+                log.flush();
+            });
+            deploymentsPromise.catch(reason => {
+                log.write(`Failed to deploy: ${reason}`);
+                // tslint:disable-next-line:no-floating-promises
+                log.flush();
+            });
+            return deploymentsPromise;
         });
     }
 
@@ -108,9 +121,11 @@ export class CloudFoundryBlueGreenDeployer implements Deployer<CloudFoundryInfo,
     public async undeploy(cfi: CloudFoundryInfo,
                           deployment: CloudFoundryDeployment,
                           log: ProgressLog): Promise<any> {
-        logger.info(`Undeploying app ${cfi.space}:${deployment.appName} from Cloud Foundry ${cfi.description}`);
+        log.write(`Undeploying app ${cfi.space}:${deployment.appName} from Cloud Foundry ${cfi.description}`);
         if (!cfi.api || !cfi.org || !cfi.username || !cfi.password || !cfi.space) {
-            throw new Error("cloud foundry authentication information missing. See CloudFoundryTarget.ts");
+            const msg = "Cloud Foundry authentication information missing. See CloudFoundryTarget.ts";
+            log.write(msg);
+            throw new Error(msg);
         }
         const cfClient = await initializeCloudFoundry(cfi);
         const cfApi = new CloudFoundryApi(cfClient);
