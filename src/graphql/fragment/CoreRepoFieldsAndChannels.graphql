@@ -6,6 +6,7 @@ fragment CoreRepoFieldsAndChannels on Repo {
     ownerType
     provider {
       providerId
+      providerType
       apiUrl
       url
     }
