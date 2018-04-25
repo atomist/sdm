@@ -23,7 +23,7 @@ import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecuti
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { goalKeyString, SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
@@ -50,64 +50,85 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
     const implementationName = sdmGoal.fulfillment.name;
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 
-    await markGoalInProcess(ctx, sdmGoal, goal);
-    try {
-        // execute pre hook
-        let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
+    return dedup(sdmGoal, Success, async () => {
+        await markGoalInProcess(ctx, sdmGoal, goal);
+        try {
+            // execute pre hook
+            let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
 
-        // TODO CD is there a isSuccess(result) method somewhere
-        if (result.code === 0) {
-            // execute the actual goal
-            let goalResult = await execute(rwlc)
-                .catch(err => {
-                        progressLog.write("ERROR caught: " + err.message + "\n");
-                        progressLog.write(err.stack);
-                        progressLog.write(sprintf("Full error object: [%j]", err));
+            // TODO CD is there a isSuccess(result) method somewhere
+            if (result.code === 0) {
+                // execute the actual goal
+                let goalResult = await execute(rwlc)
+                    .catch(err => {
+                            progressLog.write("ERROR caught: " + err.message + "\n");
+                            progressLog.write(err.stack);
+                            progressLog.write(sprintf("Full error object: [%j]", err));
 
-                        return reportGoalError({
-                            goal, implementationName, addressChannels, progressLog, id, logInterpreter,
-                        }, err)
-                            .then(() => Promise.reject(err));
-                    },
-                );
-            if (!goalResult) {
-                logger.error("Execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
-                goalResult = Success;
+                            return reportGoalError({
+                                goal, implementationName, addressChannels, progressLog, id, logInterpreter,
+                            }, err)
+                                .then(() => Promise.reject(err));
+                        },
+                    );
+                if (!goalResult) {
+                    logger.error("Execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
+                    goalResult = Success;
+                }
+
+                if (goalResult.code !== 0) {
+                    await reportGoalError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
+                        new Error("Failure reported: " + goalResult.message));
+                }
+
+                result = {
+                    ...result,
+                    ...goalResult,
+                };
             }
 
-            if (goalResult.code !== 0) {
-                await reportGoalError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
-                    new Error("Failure reported: " + goalResult.message));
+            // execute post hook
+            if (result.code === 0) {
+                let hookResult = await executeHook(rules, rwlc, sdmGoal, "post");
+                if (!hookResult) {
+                    hookResult = Success;
+                }
+                result = {
+                    ...result,
+                    ...hookResult,
+                };
             }
 
-            result = {
-                ...result,
-                ...goalResult,
-            };
+            logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
+            await markStatus(ctx, sdmGoal, goal, result);
+            return Success;
+        } catch (err) {
+            logger.warn("Error executing %s on %s: %s",
+                implementationName, sdmGoal.sha, err.message);
+            logger.warn(err.stack);
+            await markStatus(ctx, sdmGoal, goal, {code: 1}, err);
+            return failure(err);
         }
+    });
+}
 
-        // execute post hook
-        if (result.code === 0) {
-            let hookResult = await executeHook(rules, rwlc, sdmGoal, "post");
-            if (!hookResult) {
-                hookResult = Success;
-            }
-            result = {
-                ...result,
-                ...hookResult,
-            };
-        }
+const alreadyRunning = [];
 
-        logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
-        await markStatus(ctx, sdmGoal, goal, result);
-        return Success;
-    } catch (err) {
-        logger.warn("Error executing %s on %s: %s",
-            implementationName, sdmGoal.sha, err.message);
-        logger.warn(err.stack);
-        await markStatus(ctx, sdmGoal, goal, {code: 1}, err);
-        return failure(err);
+function dedup<T>(key: SdmGoal, alternateReturnValue: T, f: () => Promise<T>): Promise<T> {
+
+    const keyString = `${key.sha}-${key.environment}-${key.name}`;
+    if (alreadyRunning[keyString]) {
+        logger.info("Skipping %s because it's already running", goalKeyString(key));
+        return Promise.resolve(alternateReturnValue);
     }
+
+    alreadyRunning.push(keyString);
+
+    return f().then(result => {
+        alreadyRunning.splice(alreadyRunning.indexOf(keyString), 1);
+        return result;
+    })
+
 }
 
 export async function executeHook(rules: { projectLoader: ProjectLoader },
