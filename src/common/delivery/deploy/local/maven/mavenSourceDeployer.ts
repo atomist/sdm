@@ -27,7 +27,7 @@ import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/goalExecution";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
-import { DefaultLocalDeployerOptions, LocalDeployerOptions } from "../LocalDeployerOptions";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment } from "../LocalDeployerOptions";
 
 /**
  * Managed deployments
@@ -67,7 +67,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
-                        team: string): Promise<Deployment[]> {
+                        team: string): Promise<SpawnedDeployment[]> {
         const id = da.id;
         if (!id.branch) {
             throw new Error(`Cannot locally deploy ${JSON.stringify(id)}: Branch must be set`);
@@ -89,7 +89,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                                 log: ProgressLog,
                                 project: LocalProject,
                                 port: number,
-                                atomistTeam: string): Promise<Deployment> {
+                                atomistTeam: string): Promise<SpawnedDeployment> {
         const branchId = ti.managedDeploymentKey;
         const startupInfo = {
             port,
@@ -97,7 +97,6 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
             contextRoot: `/${branchId.owner}/${branchId.repo}/${branchId.branch}`,
         };
 
-        // TODO switch to watchSpawned
         const childProcess = spawn("mvn",
             [
                 "spring-boot:run",
@@ -111,11 +110,11 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         }
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return new Promise<Deployment>((resolve, reject) => {
+        return new Promise<SpawnedDeployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", what => {
-                // TODO too Tomcat specific
-                if (!!what && what.toString().includes("Tomcat started on port")) {
+                if (!!what && this.opts.successPattern.test(what.toString())) {
                     const deployment = {
+                        childProcess,
                         endpoint: `${this.opts.baseUrl}:${port}/${startupInfo.contextRoot}`,
                     };
                     managedMavenDeployments.recordDeployment({
@@ -128,7 +127,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
                 }
             });
             childProcess.addListener("exit", () => {
-                reject(new Error("We should have found Tomcat endpoint by now!!"));
+                reject(new Error("We should have found success message pattern by now!!"));
             });
             childProcess.addListener("error", reject);
         });
