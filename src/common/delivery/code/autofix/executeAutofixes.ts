@@ -15,12 +15,12 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
@@ -47,7 +47,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 return Success;
             }
             const push = commit.pushes[0];
-            const editableRepoRef = new GitHubRepoRef(commit.repo.owner, commit.repo.name, push.branch);
+            const editableRepoRef = toRemoteRepoRef(commit.repo, push.branch);
             const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,

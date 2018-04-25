@@ -25,6 +25,7 @@ import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { PushFields, PushForCommit } from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 
@@ -73,7 +74,7 @@ function resetGoalsOnCommit(rules: {
     const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
-        const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});

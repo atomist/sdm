@@ -16,11 +16,11 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../common/listener/ChannelLinkListenerInvocation";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * A new channel has been linked to a repo
@@ -40,7 +40,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const repo = event.data.ChannelLink[0].repo;
-        const id = new GitHubRepoRef(repo.owner, repo.name);
+        const id = toRemoteRepoRef(repo);
         const credentials = {token: params.githubToken};
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);

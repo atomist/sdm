@@ -14,29 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
-import Status = OnSuccessStatus.Status;
-import {
-    VerifiedDeploymentInvocation,
-    VerifiedDeploymentListener,
-} from "../../../../common/listener/VerifiedDeploymentListener";
-import {
-    addressChannelsFor,
-} from "../../../../common/slack/addressChannels";
+import { VerifiedDeploymentInvocation, VerifiedDeploymentListener } from "../../../../common/listener/VerifiedDeploymentListener";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
+import Status = OnSuccessStatus.Status;
 
 /**
  * React to a verified deployment
@@ -71,7 +56,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
             return Success;
         }
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, commit.sha);
         const i: VerifiedDeploymentInvocation = {
             id,
             context,

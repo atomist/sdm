@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { DryRunContext } from "../../../common/command/editor/dry-run/dryRunEditor";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { createStatus } from "../../../util/github/ghub";
 
 /**
@@ -46,7 +37,9 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
                         params: this): Promise<HandlerResult> {
         const build = event.data.Build[0];
         const commit = build.commit;
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+
+        // TODO currently Github only
+        const id = toRemoteRepoRef(commit.repo, commit.sha) as GitHubRepoRef;
         const branch = build.commit.pushes[0].branch;
 
         logger.debug("Assessing dry run for %j: Statuses=%j", id, commit.statuses);

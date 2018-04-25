@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ClosedIssueInvocation,
-    ClosedIssueListener,
-} from "../../../common/listener/ClosedIssueListener";
+import { ClosedIssueInvocation, ClosedIssueListener } from "../../../common/listener/ClosedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * A new issue has been created.
@@ -52,7 +40,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
-        const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
+        const id = toRemoteRepoRef(issue.repo);
 
         const addressChannels = addressChannelsFor(issue.repo, context);
         const inv: ClosedIssueInvocation = {

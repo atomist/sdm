@@ -14,27 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import {
-    PushListener,
-    PushListenerInvocation,
-} from "../../../common/listener/PushListener";
+import { PushListener, PushListenerInvocation } from "../../../common/listener/PushListener";
 import { AddressChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * A new repo has been created, and it has some code in it.
@@ -66,7 +53,7 @@ export class OnFirstPushToRepo
 
         const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");
 
-        const id = new GitHubRepoRef(push.repo.owner, push.repo.name, push.after.sha);
+        const id = toRemoteRepoRef(push.repo, push.after.sha);
         const credentials = {token: params.githubToken};
 
         if (!screenName) {

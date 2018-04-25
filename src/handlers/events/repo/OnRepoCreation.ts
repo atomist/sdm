@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    RepoCreationInvocation,
-    RepoCreationListener,
-} from "../../../common/listener/RepoCreationListener";
+import { RepoCreationInvocation, RepoCreationListener } from "../../../common/listener/RepoCreationListener";
 import { AddressNoChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * A new repo has been created. We don't know if it has code.
@@ -52,7 +40,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
-        const id = new GitHubRepoRef(repo.owner, repo.name);
+        const id = toRemoteRepoRef(repo);
         const invocation: RepoCreationInvocation = {
             addressChannels: AddressNoChannels,
             id,

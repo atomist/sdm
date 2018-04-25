@@ -14,26 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../../common/delivery/goals/Goal";
 import { OnAParticularStatus } from "../../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../../util/git/repoRef";
 import { createStatus } from "../../../../../util/github/ghub";
-import {
-    k8AutomationDeployContext,
-    K8TargetBase,
-} from "./RequestK8sDeploys";
+import { k8AutomationDeployContext, K8TargetBase } from "./RequestK8sDeploys";
 
 // TODO parameterize once we can have multiple handlers
 
@@ -83,7 +71,8 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
 
         logger.info(`Recognized deploy result. ${status.state} status: ${status.context}: ${status.description}`);
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        // TODO this is Github only
+        const id = toRemoteRepoRef(commit.repo, commit.sha) as GitHubRepoRef;
         await createStatus(params.githubToken, id, {
             context: params.deployGoal.context,
             state: status.state,

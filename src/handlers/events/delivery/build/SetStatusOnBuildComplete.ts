@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
@@ -36,6 +27,7 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
 
 /**
@@ -53,7 +45,7 @@ export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subsc
         const build = event.data.Build[0];
         const commit: OnBuildComplete.Commit = build.commit;
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, commit.sha);
         params.buildGoals.forEach(async buildGoal => {
             const sdmGoal = await findSdmGoalOnCommit(ctx, id, commit.repo.org.provider.providerId, buildGoal);
             if (!sdmGoal) {
