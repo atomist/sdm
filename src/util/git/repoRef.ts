@@ -74,7 +74,10 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  * @return {RemoteRepoRef}
  */
 export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, sha?: string): RemoteRepoRef {
-    switch (repo.org.provider.providerType) {
+    const providerType = _.get<ProviderType>(repo, "repo.org.provider.providerType");
+    switch (providerType) {
+        case undefined :
+        case null :
         case ProviderType.github_com :
         case ProviderType.ghe :
             return new GitHubRepoRef(repo.owner, repo.name, sha);

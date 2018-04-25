@@ -16,8 +16,7 @@ subscription OnPushWithBefore {
       message
     }
     repo {
-      owner
-      name
+      ...CoreRepoFieldsAndChannels
     }
   }
 }

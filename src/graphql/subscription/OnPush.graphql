@@ -2,15 +2,7 @@ subscription OnPush($branch: String!) {
   Push(branch: $branch) {
     id
     repo {
-      owner
-      name
-      channels {
-        team {
-          id
-        }
-        name
-        id
-      }
+      ...CoreRepoFieldsAndChannels
     }
     commits {
       sha

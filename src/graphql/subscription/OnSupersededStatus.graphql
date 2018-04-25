@@ -9,15 +9,7 @@ subscription OnSupersededStatus {
         state
       }
       repo {
-        owner
-        name
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
+        ...CoreRepoFieldsAndChannels
       }
     }
     state

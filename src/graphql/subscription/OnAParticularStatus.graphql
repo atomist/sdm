@@ -10,20 +10,7 @@ subscription OnAParticularStatus($context: String!) {
         targetUrl
       }
       repo {
-        owner
-        name
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
-        org {
-          chatTeam {
-            id
-          }
-        }
+        ...CoreRepoFieldsAndChannels
       }
       pushes {
         branch

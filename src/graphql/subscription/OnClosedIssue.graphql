@@ -24,14 +24,7 @@ subscription OnClosedIssue {
     createdAt
     updatedAt
     repo {
-      owner
-      name
-      channels {
-        team {
-          id
-        }
-        name
-      }
+      ...CoreRepoFieldsAndChannels
     }
   }
 }

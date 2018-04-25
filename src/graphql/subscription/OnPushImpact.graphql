@@ -25,19 +25,7 @@ subscription OnPushImpact {
           data
         }
         repo {
-          owner
-          name
-          org {
-            owner
-            ownerType
-          }
-          channels {
-            team {
-              id
-            }
-            channelId
-            name
-          }
+            ...CoreRepoFieldsAndChannels
         }
       }
     }
