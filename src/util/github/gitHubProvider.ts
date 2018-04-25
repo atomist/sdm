@@ -20,7 +20,6 @@ import { ScmProvider } from "../../typings/types";
 export const GitHubDotComProviderId = "zjlmxjzwhurspem";
 
 export async function fetchProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
-
     const results = await context.graphClient.query<ScmProvider.Query, ScmProvider.Variables>(
         {name: "SCMProvider", variables: {providerId}});
 

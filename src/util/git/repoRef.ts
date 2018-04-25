@@ -19,6 +19,8 @@ import { OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typi
 
 import * as _ from "lodash";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ProviderType } from "../..";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     return GitHubRepoRef.from({
@@ -48,12 +50,18 @@ export function repoRefFromStatus(status: StatusForExecuteGoal.Fragment) {
     });
 }
 
-export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): GitHubRepoRef {
-    return GitHubRepoRef.from({
-        owner: sdmGoal.repo.owner,
-        repo: sdmGoal.repo.name,
-        sha: sdmGoal.sha,
-        branch: sdmGoal.branch,
-        rawApiBase: provider.apiUrl,
-    });
+export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef {
+    switch (provider.providerType) {
+        case ProviderType.github_com :
+        case ProviderType.ghe :
+            return GitHubRepoRef.from({
+                owner: sdmGoal.repo.owner,
+                repo: sdmGoal.repo.name,
+                sha: sdmGoal.sha,
+                branch: sdmGoal.branch,
+                rawApiBase: provider.apiUrl,
+            });
+        default:
+            throw new Error(`Provider ${provider.providerType} not currently supported in SDM`);
+    }
 }

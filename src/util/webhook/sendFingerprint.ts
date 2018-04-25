@@ -23,7 +23,7 @@ export function sendFingerprint(id: GitHubRepoRef, fingerprint: Fingerprint, tea
     const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${team}`;
     const payload = {
         commit: {
-            provider: "https://www.github.com",
+            provider: id.providerType,
             owner: id.owner,
             repo: id.repo,
             sha: id.sha,

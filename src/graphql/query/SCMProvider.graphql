@@ -1,5 +1,7 @@
 query SCMProvider($providerId: String!) {
   SCMProvider(providerId: $providerId) {
+    providerType
+    url
     providerId
     apiUrl
   }
