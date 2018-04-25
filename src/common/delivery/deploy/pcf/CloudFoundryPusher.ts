@@ -61,8 +61,12 @@ export class CloudFoundryPusher {
         const appGuid = app.metadata.guid;
         const appNameForLog = `${this.spaceName}:${manifestApp.name}`;
         log.write(`Uploading package for ${appNameForLog}...`);
+        // tslint:disable-next-line:no-floating-promises
+        log.flush();
         const packageUploadResult = await this.api.uploadPackage(appGuid, packageFile);
         log.write(`Building package for ${appNameForLog}...`);
+        // tslint:disable-next-line:no-floating-promises
+        log.flush();
         const buildResult = await this.api.buildDroplet(packageUploadResult.data.guid);
         const serviceNames = !manifestApp.services ? [] : manifestApp.services;
         const serviceModifications = await this.appServiceModifications(appGuid, serviceNames);
@@ -97,8 +101,11 @@ export class CloudFoundryPusher {
         log.write(`Updating app with manifest ${appNameForLog}.`);
         await this.api.updateAppWithManifest(appGuid, manifestApp);
         log.write(`Starting ${appNameForLog}...`);
+        // tslint:disable-next-line:no-floating-promises
+        log.flush();
         await this.api.startApp(appGuid);
         log.write(`Push complete for ${appNameForLog}.`);
+        log.flush();
         return {
             endpoint: !!hostName ? this.constructEndpoint(hostName) : undefined,
             appName: manifestApp.name,
