@@ -75,12 +75,20 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  */
 export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, sha?: string): RemoteRepoRef {
     const providerType = _.get<ProviderType>(repo, "repo.org.provider.providerType");
+    const apiUrl = _.get<string>(repo, "repo.org.provider.apiUrl");
+
     switch (providerType) {
         case undefined :
         case null :
         case ProviderType.github_com :
         case ProviderType.ghe :
-            return new GitHubRepoRef(repo.owner, repo.name, sha);
+            return GitHubRepoRef.from({
+                owner: repo.owner,
+                repo: repo.name,
+                sha,
+                branch: undefined,
+                rawApiBase: apiUrl,
+            });
         default:
             throw new Error(`Provider ${repo.org.provider.providerType} not currently supported in SDM`);
     }
