@@ -45,7 +45,7 @@ export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subsc
         const build = event.data.Build[0];
         const commit: OnBuildComplete.Commit = build.commit;
 
-        const id = toRemoteRepoRef(commit.repo, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
         params.buildGoals.forEach(async buildGoal => {
             const sdmGoal = await findSdmGoalOnCommit(ctx, id, commit.repo.org.provider.providerId, buildGoal);
             if (!sdmGoal) {

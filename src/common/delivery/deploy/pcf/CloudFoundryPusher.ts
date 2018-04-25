@@ -105,6 +105,7 @@ export class CloudFoundryPusher {
         log.flush();
         await this.api.startApp(appGuid);
         log.write(`Push complete for ${appNameForLog}.`);
+        // tslint:disable-next-line:no-floating-promises
         log.flush();
         return {
             endpoint: !!hostName ? this.constructEndpoint(hostName) : undefined,

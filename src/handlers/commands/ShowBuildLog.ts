@@ -50,7 +50,7 @@ function displayBuildLogForCommit(interpreter?: LogInterpretation) {
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo)); // TODO: use fetchDefaultBranchTip
 
-        const id = toRemoteRepoRef(params, sha);
+        const id = toRemoteRepoRef(params, {sha});
         const ac: AddressChannels = (msg, opts) => ctx.messageClient.respond(msg, opts);
         const build = await fetchBuildUrl(ctx, id);
 
@@ -63,7 +63,7 @@ function displayBuildLogForCommit(interpreter?: LogInterpretation) {
 async function fetchBuildUrl(context: HandlerContext, id: RemoteRepoRef): Promise<{ buildUrl?: string }> {
     const queryResult = await context.graphClient.query<BuildUrlBySha.Query, BuildUrlBySha.Variables>({
         name: "BuildUrlBySha",
-        variables: { sha: id.sha },
+        variables: {sha: id.sha},
     });
     const commit: BuildUrlBySha.Commit = _.get(queryResult, "Commit[0]");
     if (!commit) {

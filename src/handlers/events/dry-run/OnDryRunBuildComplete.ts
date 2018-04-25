@@ -39,7 +39,7 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
         const commit = build.commit;
 
         // TODO currently Github only
-        const id = toRemoteRepoRef(commit.repo, commit.sha) as GitHubRepoRef;
+        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
         const branch = build.commit.pushes[0].branch;
 
         logger.debug("Assessing dry run for %j: Statuses=%j", id, commit.statuses);

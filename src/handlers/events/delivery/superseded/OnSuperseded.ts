@@ -41,8 +41,7 @@ export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus
                         params: this): Promise<HandlerResult> {
         const status = event.data.Status[0];
         const commit = status.commit;
-
-        const id = toRemoteRepoRef(commit.repo, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
         const i: SupersededListenerInvocation = {
             id,
             context,

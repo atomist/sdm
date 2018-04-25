@@ -70,10 +70,10 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  * Convert GraphQL return to our remote repo ref, instantiating
  * the correct type based on provider
  * @param {CoreRepoFieldsAndChannels.Fragment} repo
- * @param {string} sha
+ * @param opts options - sha or branch
  * @return {RemoteRepoRef}
  */
-export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, sha?: string): RemoteRepoRef {
+export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string} = {}): RemoteRepoRef {
     const providerType = _.get<ProviderType>(repo, "repo.org.provider.providerType");
     const apiUrl = _.get<string>(repo, "repo.org.provider.apiUrl");
 
@@ -85,8 +85,8 @@ export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, sha?: 
             return GitHubRepoRef.from({
                 owner: repo.owner,
                 repo: repo.name,
-                sha,
-                branch: undefined,
+                sha: opts.sha,
+                branch: opts.branch,
                 rawApiBase: apiUrl,
             });
         default:

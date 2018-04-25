@@ -46,7 +46,7 @@ export class ReactToSemanticDiffsOnPushImpact
         const pushImpact = event.data.PushImpact[0];
 
         const after = pushImpact.push.after;
-        const id = toRemoteRepoRef(after.repo, after.sha);
+        const id = toRemoteRepoRef(after.repo, { sha: after.sha });
 
         const oldFingerprints = pushImpact.push.before.fingerprints;
         const newFingerprints = after.fingerprints;

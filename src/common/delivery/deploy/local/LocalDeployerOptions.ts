@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Deployment } from "../../../..";
 import { ChildProcess } from "child_process";
+import { Deployment } from "../../../..";
 
 export interface StartupInfo {
 

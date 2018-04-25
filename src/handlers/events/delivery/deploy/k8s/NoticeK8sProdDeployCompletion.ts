@@ -72,7 +72,7 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
         logger.info(`Recognized deploy result. ${status.state} status: ${status.context}: ${status.description}`);
 
         // TODO this is Github only
-        const id = toRemoteRepoRef(commit.repo, commit.sha) as GitHubRepoRef;
+        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
         await createStatus(params.githubToken, id, {
             context: params.deployGoal.context,
             state: status.state,

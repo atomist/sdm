@@ -56,16 +56,15 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
             return Success;
         }
 
-        const id = toRemoteRepoRef(commit.repo, commit.sha);
-        const i: VerifiedDeploymentInvocation = {
+        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const vdi: VerifiedDeploymentInvocation = {
             id,
             context,
             status,
             addressChannels: addressChannelsFor(commit.repo, context),
             credentials: {token: params.githubToken},
         };
-
-        await Promise.all(params.listeners.map(l => l(i)));
+        await Promise.all(params.listeners.map(l => l(vdi)));
         return Success;
     }
 }

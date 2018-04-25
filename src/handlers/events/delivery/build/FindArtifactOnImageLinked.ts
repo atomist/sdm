@@ -49,7 +49,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         const imageLinked = event.data.ImageLinked[0];
         const commit = imageLinked.commit;
         const image = imageLinked.image;
-        const id = toRemoteRepoRef(commit.repo, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
 
         const artifactSdmGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, params.goal);
         if (!artifactSdmGoal) {

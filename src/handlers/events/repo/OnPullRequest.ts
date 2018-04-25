@@ -41,12 +41,12 @@ export class OnPullRequest implements HandleEvent<schema.OnPullRequest.Subscript
                         params: this): Promise<HandlerResult> {
         const pullRequest = event.data.PullRequest[0];
         const repo = pullRequest.repo;
-        const id = toRemoteRepoRef(repo, pullRequest.head.sha);
+        const id = toRemoteRepoRef(repo, { sha: pullRequest.head.sha });
         const credentials = {token: params.githubToken};
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);
         await this.projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-            const invocation: PullRequestListenerInvocation = {
+            const prli: PullRequestListenerInvocation = {
                 id,
                 context,
                 addressChannels,
@@ -55,7 +55,7 @@ export class OnPullRequest implements HandleEvent<schema.OnPullRequest.Subscript
                 pullRequest,
             };
             await Promise.all(params.listeners
-                .map(l => l(invocation)),
+                .map(l => l(prli)),
             );
         });
         return Success;

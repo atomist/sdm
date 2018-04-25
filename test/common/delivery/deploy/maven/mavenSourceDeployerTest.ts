@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Project } from "@atomist/automation-client/project/Project";
 import { ConsoleProgressLog, mavenDeployer, SingleProjectLoader } from "../../../../../src";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
-import * as assert from "power-assert";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import * as assert from "power-assert";
 
 describe("mavenSourceDeployer", () => {
 

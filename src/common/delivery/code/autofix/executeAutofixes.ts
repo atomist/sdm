@@ -47,7 +47,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 return Success;
             }
             const push = commit.pushes[0];
-            const editableRepoRef = toRemoteRepoRef(commit.repo, push.branch);
+            const editableRepoRef = toRemoteRepoRef(commit.repo, {branch: push.branch});
             const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,
