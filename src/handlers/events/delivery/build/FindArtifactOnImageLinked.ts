@@ -14,29 +14,16 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import {
-    ArtifactInvocation,
-    ArtifactListener,
-} from "../../../../common/listener/ArtifactListener";
+import { ArtifactInvocation, ArtifactListener } from "../../../../common/listener/ArtifactListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
@@ -62,7 +49,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         const imageLinked = event.data.ImageLinked[0];
         const commit = imageLinked.commit;
         const image = imageLinked.image;
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, commit.sha);
 
         const artifactSdmGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, params.goal);
         if (!artifactSdmGoal) {

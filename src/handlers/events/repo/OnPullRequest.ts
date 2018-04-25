@@ -16,11 +16,11 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { PullRequestListener, PullRequestListenerInvocation } from "../../../common/listener/PullRequestListener";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * A pull request has been raised
@@ -41,7 +41,7 @@ export class OnPullRequest implements HandleEvent<schema.OnPullRequest.Subscript
                         params: this): Promise<HandlerResult> {
         const pullRequest = event.data.PullRequest[0];
         const repo = pullRequest.repo;
-        const id = new GitHubRepoRef(repo.owner, repo.name, pullRequest.head.sha);
+        const id = toRemoteRepoRef(repo, pullRequest.head.sha);
         const credentials = {token: params.githubToken};
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);

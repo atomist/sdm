@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { StagingDeploymentContext } from "../../../../common/delivery/goals/common/commonGoals";
-import {
-    DeploymentListener,
-    DeploymentListenerInvocation,
-} from "../../../../common/listener/DeploymentListener";
+import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 
 /**
  * React to a deployment.
@@ -67,7 +54,7 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
             return Success;
         }
         const addressChannels = addressChannelsFor(commit.repo, context);
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, commit.sha);
         const credentials = {token: params.githubToken};
 
         const dil: DeploymentListenerInvocation = {

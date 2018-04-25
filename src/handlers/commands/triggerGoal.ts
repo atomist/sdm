@@ -18,11 +18,13 @@ import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Param
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { updateGoal } from "../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { goalKeyString, SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { goalKeyString } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
+import { toRemoteRepoRef } from "../../util/git/repoRef";
 
 @Parameters()
 export class RetryGoalParameters {
@@ -63,7 +65,7 @@ export function retryCommandNameFor(goal: Goal) {
 function triggerGoalsOnCommit(goal: Goal) {
     return async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
         // figure out which commit
-        const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
 
@@ -86,7 +88,7 @@ function triggerGoalsOnCommit(goal: Goal) {
     };
 }
 
-export async function fetchDefaultBranchTip(ctx: HandlerContext, id: GitHubRepoRef, providerId: string) {
+export async function fetchDefaultBranchTip(ctx: HandlerContext, id: RemoteRepoRef, providerId: string) {
     const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(
         {name: "RepoBranchTips", variables: {name: id.repo, owner: id.owner}});
     if (!result || !result.Repo || result.Repo.length === 0) {

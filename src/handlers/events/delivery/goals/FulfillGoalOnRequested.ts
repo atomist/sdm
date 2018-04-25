@@ -32,6 +32,9 @@ import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
 
+/**
+ * Handle an SDM request goal. Used for many implementation types.
+ */
 export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal.Subscription>,
     EventHandlerMetadata {
 
@@ -56,7 +59,6 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public async handle(event: EventFired<OnAnyRequestedSdmGoal.Subscription>,
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
-
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
         const commit = await fetchCommitForSdmGoal(ctx, sdmGoal);
 

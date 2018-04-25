@@ -15,9 +15,11 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
+import { ProviderType } from "../..";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
@@ -48,12 +50,38 @@ export function repoRefFromStatus(status: StatusForExecuteGoal.Fragment) {
     });
 }
 
-export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): GitHubRepoRef {
-    return GitHubRepoRef.from({
-        owner: sdmGoal.repo.owner,
-        repo: sdmGoal.repo.name,
-        sha: sdmGoal.sha,
-        branch: sdmGoal.branch,
-        rawApiBase: provider.apiUrl,
-    });
+export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef {
+    switch (provider.providerType) {
+        case ProviderType.github_com :
+        case ProviderType.ghe :
+            return GitHubRepoRef.from({
+                owner: sdmGoal.repo.owner,
+                repo: sdmGoal.repo.name,
+                sha: sdmGoal.sha,
+                branch: sdmGoal.branch,
+                rawApiBase: provider.apiUrl,
+            });
+        default:
+            throw new Error(`Provider ${provider.providerType} not currently supported in SDM`);
+    }
+}
+
+/**
+ * Convert GraphQL return to our remote repo ref, instantiating
+ * the correct type based on provider
+ * @param {CoreRepoFieldsAndChannels.Fragment} repo
+ * @param {string} sha
+ * @return {RemoteRepoRef}
+ */
+export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, sha?: string): RemoteRepoRef {
+    const providerType = _.get<ProviderType>(repo, "repo.org.provider.providerType");
+    switch (providerType) {
+        case undefined :
+        case null :
+        case ProviderType.github_com :
+        case ProviderType.ghe :
+            return new GitHubRepoRef(repo.owner, repo.name, sha);
+        default:
+            throw new Error(`Provider ${repo.org.provider.providerType} not currently supported in SDM`);
+    }
 }

@@ -14,18 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as _ from "lodash";
 import {
     FingerprintDifference,
@@ -35,6 +25,7 @@ import {
 } from "../../../../common/listener/FingerprintDifferenceListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 
 /**
  * React to a PushImpact event to react to semantic diffs
@@ -55,7 +46,7 @@ export class ReactToSemanticDiffsOnPushImpact
         const pushImpact = event.data.PushImpact[0];
 
         const after = pushImpact.push.after;
-        const id = new GitHubRepoRef(after.repo.owner, after.repo.name, after.sha);
+        const id = toRemoteRepoRef(after.repo, after.sha);
 
         const oldFingerprints = pushImpact.push.before.fingerprints;
         const newFingerprints = after.fingerprints;

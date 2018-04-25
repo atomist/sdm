@@ -15,14 +15,7 @@ subscription OnIssueAction {
     createdAt
     updatedAt
     repo {
-      owner
-      name
-      channels {
-        team {
-          id
-        }
-        name
-      }
+      ...CoreRepoFieldsAndChannels
     }
   }
 }

@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    logger,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    UpdatedIssueInvocation,
-    UpdatedIssueListener,
-} from "../../../common/listener/UpdatedIssueListener";
+import { UpdatedIssueInvocation, UpdatedIssueListener } from "../../../common/listener/UpdatedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * An issue has been updated
@@ -54,7 +41,7 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
                         params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
-        const id = new GitHubRepoRef(issue.repo.owner, issue.repo.name);
+        const id = toRemoteRepoRef(issue.repo);
 
         if (issue.updatedAt === issue.createdAt) {
             logger.debug("Issue created, not updated: %s on %j", issue.number, id);

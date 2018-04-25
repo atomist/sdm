@@ -23,20 +23,7 @@ subscription OnDeployToProductionFingerprint {
         targetUrl
       }
       repo {
-        owner
-        name
-        channels {
-          team {
-            id
-          }
-          name
-          id
-        }
-        org {
-          chatTeam {
-            id
-          }
-        }
+        ...CoreRepoFieldsAndChannels
       }
     }
   }

@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    MappedParameter,
-    MappedParameters,
-    Parameter,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { HandleCommand, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
 import { HandlerContext } from "@atomist/automation-client/Handlers";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
@@ -32,6 +24,7 @@ import * as _ from "lodash";
 import { AddressChannels } from "../../common/slack/addressChannels";
 import { LogInterpretation } from "../../spi/log/InterpretedLog";
 import { BuildUrlBySha } from "../../typings/types";
+import { toRemoteRepoRef } from "../../util/git/repoRef";
 import { tipOfDefaultBranch } from "../../util/github/ghub";
 import { displayBuildLogFailure } from "../events/delivery/build/SetStatusOnBuildComplete";
 
@@ -57,8 +50,7 @@ function displayBuildLogForCommit(interpreter?: LogInterpretation) {
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo)); // TODO: use fetchDefaultBranchTip
 
-        const id = new GitHubRepoRef(params.owner, params.repo, sha);
-
+        const id = toRemoteRepoRef(params, sha);
         const ac: AddressChannels = (msg, opts) => ctx.messageClient.respond(msg, opts);
         const build = await fetchBuildUrl(ctx, id);
 

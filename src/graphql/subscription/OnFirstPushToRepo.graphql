@@ -16,9 +16,7 @@ subscription OnFirstPushToRepo {
       }
     }
     repo {
-      owner
-      name
-      defaultBranch
+      ...CoreRepoFieldsAndChannels
     }
   }
 }

@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    EventFired,
-    EventHandler,
-    HandleEvent,
-    HandlerContext,
-    HandlerResult,
-    Secret,
-    Secrets,
-    Success,
-} from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    SupersededListener,
-    SupersededListenerInvocation,
-} from "../../../../common/listener/SupersededListener";
+import { SupersededListener, SupersededListenerInvocation } from "../../../../common/listener/SupersededListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
+import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 
 /**
  * Respond to a superseded push
@@ -54,7 +42,7 @@ export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        const id = new GitHubRepoRef(commit.repo.owner, commit.repo.name, commit.sha);
+        const id = toRemoteRepoRef(commit.repo, commit.sha);
         const i: SupersededListenerInvocation = {
             id,
             context,

@@ -28,6 +28,7 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { toRemoteRepoRef } from "../../util/git/repoRef";
 import { fetchPushForCommit } from "../events/delivery/goals/resetGoals";
 import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../events/delivery/goals/SetGoalsOnPush";
 import { fetchDefaultBranchTip, tipOfBranch } from "./triggerGoal";
@@ -65,7 +66,7 @@ function disposeOfProject(rules: ChooseAndSetGoalsRules) {
             return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
                 .then(success);
         }
-        const repoData = await fetchDefaultBranchTip(ctx, new GitHubRepoRef(commandParams.owner, commandParams.repo), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
         const branch = repoData.defaultBranch;
         const sha = tipOfBranch(repoData, branch);
 

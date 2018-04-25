@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { UserJoiningChannelListener, UserJoiningChannelListenerInvocation } from "../../../common/listener/UserJoiningChannelListener";
 import * as schema from "../../../typings/types";
+import { toRemoteRepoRef } from "../../../util/git/repoRef";
 
 /**
  * A user joined a channel
@@ -37,7 +37,7 @@ export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningCha
                         params: this): Promise<HandlerResult> {
         const joinEvent = event.data.UserJoinedChannel[0];
         const repos = joinEvent.channel.repos.map(
-            repo => new GitHubRepoRef(repo.owner, repo.name));
+            repo => toRemoteRepoRef(repo, undefined));
         const credentials = {token: params.githubToken};
         const addressChannels = (msg, opts) => context.messageClient.addressChannels(msg, joinEvent.channel.name, opts);
         const invocation: UserJoiningChannelListenerInvocation = {
