@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { Deployment } from "../../../..";
+import { ChildProcess } from "child_process";
+
 export interface StartupInfo {
 
     port: number;
@@ -21,6 +24,11 @@ export interface StartupInfo {
     atomistTeam: string;
 
     contextRoot: string;
+}
+
+export interface SpawnedDeployment extends Deployment {
+
+    childProcess: ChildProcess;
 }
 
 export interface LocalDeployerOptions {
@@ -43,6 +51,12 @@ export interface LocalDeployerOptions {
      * @return {string[]}
      */
     commandLineArgumentsFor: (s: StartupInfo) => string[];
+
+    /**
+     * Pattern to find in output to indicate that the server has come up successfully.
+     * For example, matching something like "Started SpringRestSeedApplication in 3.931 seconds"
+     */
+    successPattern: RegExp;
 }
 
 export const DefaultLocalDeployerOptions: Partial<LocalDeployerOptions> = {

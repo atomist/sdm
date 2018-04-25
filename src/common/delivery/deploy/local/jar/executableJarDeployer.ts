@@ -24,7 +24,7 @@ import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { lastLinesLogInterpreter } from "../../../goals/support/logInterpreters";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
-import { DefaultLocalDeployerOptions, LocalDeployerOptions, StartupInfo } from "../LocalDeployerOptions";
+import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment, StartupInfo } from "../LocalDeployerOptions";
 
 /**
  * Managed deployments
@@ -83,7 +83,7 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
                         ti: ManagedDeploymentTargetInfo,
                         log: ProgressLog,
                         credentials: ProjectOperationCredentials,
-                        atomistTeam: string): Promise<Deployment[]> {
+                        atomistTeam: string): Promise<SpawnedDeployment[]> {
         if (!da.filename) {
             throw new Error("No filename in deployable artifact!");
         }
@@ -95,7 +95,6 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             contextRoot: this.contextRoot(da.id),
         };
         await managedExecutableJarDeployments.terminateIfRunning(ti.managedDeploymentKey);
-        // TODO switch to watchSpawned
         const childProcess = spawn("java",
             [
                 "-jar",
@@ -106,11 +105,11 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
-        return [await new Promise<Deployment>((resolve, reject) => {
+        return [await new Promise<SpawnedDeployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", async what => {
-                // TODO too Tomcat specific
-                if (!!what && what.toString().includes("Tomcat started on port")) {
+                if (!!what && this.opts.successPattern.test(what.toString())) {
                     const deployment = {
+                        childProcess,
                         endpoint: `${this.opts.baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
                     };
                     managedExecutableJarDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess, deployment});
@@ -118,7 +117,7 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
                 }
             });
             childProcess.addListener("exit", () => {
-                reject(new Error("ExecutableJarDeployer: We should have found Tomcat endpoint by now!!"));
+                reject(new Error("ExecutableJarDeployer: We should have found success message pattern by now!!"));
             });
             childProcess.addListener("error", reject);
         })];
