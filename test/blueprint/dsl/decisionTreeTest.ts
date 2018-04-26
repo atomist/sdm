@@ -22,7 +22,7 @@ import * as assert from "power-assert";
 
 const FrogPushMapping: PushMapping<string> = {name: "frog", valueForPush: async () => "frog"};
 
-function fakePush(): PushListenerInvocation {
+export function fakePush(): PushListenerInvocation {
     return {push: {id: new Date().getTime() + "_"}}as any as PushListenerInvocation;
 }
 
@@ -89,6 +89,23 @@ describe("given", () => {
                     whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
                     whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
                 ),
+            );
+        const mapped = await pm.valueForPush(fakePush());
+        assert.equal(mapped, HttpServiceGoals);
+    });
+
+    it("nested given with variable", async () => {
+        let count = 0;
+        const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
+            .init(() => count = 0)
+            .itMeans("no frogs coming")
+            .then(
+                given<Goals>(TruePushTest).itMeans("case1")
+                    .compute(() => count++)
+                    .then(
+                        whenPushSatisfies(count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
+                        whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
+                    ),
             );
         const mapped = await pm.valueForPush(fakePush());
         assert.equal(mapped, HttpServiceGoals);

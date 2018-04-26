@@ -19,6 +19,7 @@ import { Goals, isGoals } from "../../common/delivery/goals/Goals";
 import { PushTest } from "../../common/listener/PushTest";
 import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
+import { PushTestPredicate, toPushTest } from "./pushTestPredicate";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 
@@ -36,12 +37,13 @@ export class GoalSetterPushRule extends PushRule<Goals> {
 }
 
 /**
- * Simple GoalSetter DSL
+ * Simple GoalSetter DSL. Allows use of booleans and functions
+ * returning boolean in predicate expressions
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<GoalSetterPushRule> {
-    return new PushRuleExplanation(new GoalSetterPushRule(guard1, guards));
+export function whenPushSatisfies(guard1: PushTestPredicate, ...guards: PushTestPredicate[]): PushRuleExplanation<GoalSetterPushRule> {
+    return new PushRuleExplanation(new GoalSetterPushRule(toPushTest(guard1), guards.map(toPushTest)));
 }
 
 export const onAnyPush = new GoalSetterPushRule(AnyPush, [], "On any push");

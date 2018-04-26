@@ -22,27 +22,74 @@ import { allSatisfied, PushMapping, PushRules, PushTest } from "../..";
  * @return interim DSL structure
  */
 export function given<V>(...givenPushTests: PushTest[]) {
-    const givenPushTest = allSatisfied(...givenPushTests);
-    return {
-        itMeans(name: string) {
-            return {
-                set(value: V): PushMapping<V> {
-                    return {
-                        name,
-                        valueForPush: async () => value,
-                    };
-                },
-                then(...pushMappings: Array<PushMapping<V>>): PushMapping<V> {
-                    const rules = new PushRules<V>(name, pushMappings);
-                    return {
-                        name,
-                        valueForPush: async pli => {
-                            const eligible = await givenPushTest.valueForPush(pli);
-                            return eligible ? rules.valueForPush(pli) : undefined;
-                        },
-                    };
-                },
-            };
-        },
-    };
+    return new TreeContext<V>(givenPushTests);
+}
+
+export class TreeContext<V> {
+
+    constructor(private givenPushTests: PushTest[]) {}
+
+    /**
+     * Perform any computation necessary to initialize this branch:
+     * for example, setting variables in scope
+     * @param {(t: this) => any} f
+     * @return {any}
+     */
+    public init(f: (t: this) => any): any {
+        f(this);
+        return this;
+    }
+
+    public itMeans(name: string): GivenTree<V> {
+        const givenPushTest = allSatisfied(...this.givenPushTests);
+        return new GivenTree<V>(givenPushTest, name);
+    }
+}
+
+/**
+ * Tree. Can compute variables
+ */
+export class GivenTree<V> {
+
+    constructor(private givenPushTest: PushTest, private name: string) {}
+
+    /**
+     * Perform computation before continuing.
+     * Typically used to set values that will be used in predicate expressions.
+     * @param {(t: this) => any} f
+     * @return {any}
+     */
+    public compute(f: (t: this) => any): any {
+        f(this);
+        return this;
+    }
+
+    /**
+     * Set the resolution value of this tree
+     * @param {V} value
+     * @return {PushMapping<V>}
+     */
+    public set(value: V): PushMapping<V> {
+        return {
+            name: this.name,
+            valueForPush: async () => value,
+        };
+    }
+
+    /**
+     * Enter a subtree of a number of mappings. Can be use
+     * to nest trees to arbitrary depth.
+     * @param {PushMapping<V>} pushMappings
+     * @return {PushMapping<V>}
+     */
+    public then(...pushMappings: Array<PushMapping<V>>): PushMapping<V> {
+        const rules = new PushRules<V>(this.name, pushMappings);
+        return {
+            name: this.name,
+            valueForPush: async pli => {
+                const eligible = await this.givenPushTest.valueForPush(pli);
+                return eligible ? rules.valueForPush(pli) : undefined;
+            },
+        };
+    }
 }
