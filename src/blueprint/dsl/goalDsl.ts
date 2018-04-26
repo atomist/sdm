@@ -17,7 +17,7 @@
 import { Goal } from "../../common/delivery/goals/Goal";
 import { Goals, isGoals } from "../../common/delivery/goals/Goals";
 import { PushTest } from "../../common/listener/PushTest";
-import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
+import { PushRule } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
 import { PushTestPredicate, toPushTest } from "./pushTestPredicate";
 
@@ -42,8 +42,8 @@ export class GoalSetterPushRule extends PushRule<Goals> {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTestPredicate, ...guards: PushTestPredicate[]): PushRuleExplanation<GoalSetterPushRule> {
-    return new PushRuleExplanation(new GoalSetterPushRule(toPushTest(guard1), guards.map(toPushTest)));
+export function whenPushSatisfies(guard1: PushTestPredicate, ...guards: PushTestPredicate[]): GoalSetterPushRule {
+    return new GoalSetterPushRule(toPushTest(guard1), guards.map(toPushTest));
 }
 
 export const onAnyPush = new GoalSetterPushRule(AnyPush, [], "On any push");

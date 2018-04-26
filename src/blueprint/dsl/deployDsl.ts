@@ -17,7 +17,7 @@
 import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { PushTest } from "../../common/listener/PushTest";
-import { PushRule, PushRuleExplanation } from "../../common/listener/support/PushRule";
+import { PushRule } from "../../common/listener/support/PushRule";
 import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
 
 export class DeployPushRule extends PushRule<Target> {
@@ -43,6 +43,6 @@ export class DeployPushRule extends PushRule<Target> {
     }
 }
 
-export function when(guard1: PushTest, ...guards: PushTest[]): PushRuleExplanation<DeployPushRule> {
-    return new PushRuleExplanation(new DeployPushRule(guard1, guards));
+export function when(guard1: PushTest, ...guards: PushTest[]): DeployPushRule {
+    return new DeployPushRule(guard1, guards);
 }

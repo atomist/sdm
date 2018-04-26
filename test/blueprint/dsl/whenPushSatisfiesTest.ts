@@ -16,37 +16,53 @@
 
 import * as assert from "power-assert";
 import { HttpServiceGoals, whenPushSatisfies } from "../../../src";
+import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
 import { fakePush } from "./decisionTreeTest";
 
 describe("whenPushSatisfies", () => {
 
     it("should satisfy true", async () => {
-        const test = await whenPushSatisfies(true).itMeans("war").setGoals(HttpServiceGoals);
+        const test = whenPushSatisfies(true).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.valueForPush(fakePush()), HttpServiceGoals);
     });
 
     it("should not satisfy false", async () => {
-        const test = await whenPushSatisfies(false).itMeans("war").setGoals(HttpServiceGoals);
+        const test = whenPushSatisfies(false).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.valueForPush(fakePush()), undefined);
     });
 
     it("should satisfy function returning true", async () => {
-        const test = await whenPushSatisfies(() => true).itMeans("war").setGoals(HttpServiceGoals);
+        const test = whenPushSatisfies(() => true).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.valueForPush(fakePush()), HttpServiceGoals);
     });
 
     it("should not satisfy function returning false", async () => {
-        const test = await whenPushSatisfies(() => false).itMeans("war").setGoals(HttpServiceGoals);
+        const test = whenPushSatisfies(() => false).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.valueForPush(fakePush()), undefined);
     });
 
     it("should satisfy function returning promise true", async () => {
-        const test = await whenPushSatisfies(async () => true).itMeans("war").setGoals(HttpServiceGoals);
+        const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.valueForPush(fakePush()), HttpServiceGoals);
     });
 
     it("should not satisfy function returning promise false", async () => {
-        const test = await whenPushSatisfies(async () => false).itMeans("war").setGoals(HttpServiceGoals);
+        const test = whenPushSatisfies(async () => false).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.valueForPush(fakePush()), undefined);
+    });
+
+    it("should default name with one", async () => {
+        const test = whenPushSatisfies(TruePushTest).setGoals(HttpServiceGoals);
+        assert.equal(test.name, TruePushTest.name);
+    });
+
+    it("should override name with one", async () => {
+        const test = whenPushSatisfies(TruePushTest).itMeans("something").setGoals(HttpServiceGoals);
+        assert.equal(test.name, "something");
+    });
+
+    it("should default name with two", async () => {
+        const test = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(HttpServiceGoals);
+        assert.equal(test.name, TruePushTest.name + " && " + FalsePushTest.name);
     });
 });

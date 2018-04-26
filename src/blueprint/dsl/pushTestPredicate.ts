@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-
+import { isBoolean } from "util";
 import { PushTest } from "../../common/listener/PushTest";
 import { isPushMapping, pushTest } from "../../index";
-import { isBoolean } from "util";
 
 /**
  * Predicate that can be used in our PushTest DSL

@@ -36,12 +36,25 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
 
     public readonly pushTest: PushTest;
 
-    constructor(protected guard1: PushTest, protected guards: PushTest[], public reason?: string) {
+    private reason: string;
+
+    constructor(protected guard1: PushTest, protected guards: PushTest[], reason?: string) {
         this.pushTest = allSatisfied(memoize(guard1), ...guards.map(memoize));
+        this.reason = reason || this.pushTest.name;
+    }
+
+    /**
+     * Set an additional reason if we want to add information to that that's
+     * available from the push tests themselves
+     * @param {string} reason
+     * @return {this}
+     */
+    public itMeans(reason: string): this {
+        this.reason = reason;
+        return this;
     }
 
     public set(value: V): this {
-        this.verify();
         this.staticValue = value;
         return this;
     }
@@ -52,24 +65,4 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
         }
     }
 
-    public verify(): this {
-        if (!this.reason) {
-            throw new Error("Incomplete PushTest: Required reason");
-        }
-        return this;
-    }
-
-}
-
-/**
- * Interim DSL stage
- */
-export class PushRuleExplanation<N extends PushRule<any>> {
-
-    constructor(private readonly pushRule: N) {}
-
-    public itMeans(reason: string): N {
-        this.pushRule.reason = reason;
-        return this.pushRule.verify();
-    }
 }

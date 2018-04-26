@@ -27,7 +27,7 @@ export function given<V>(...givenPushTests: PushTest[]) {
 
 export class TreeContext<V> {
 
-    constructor(private givenPushTests: PushTest[]) {}
+    constructor(private readonly givenPushTests: PushTest[]) {}
 
     /**
      * Perform any computation necessary to initialize this branch:
@@ -51,7 +51,7 @@ export class TreeContext<V> {
  */
 export class GivenTree<V> {
 
-    constructor(private givenPushTest: PushTest, private name: string) {}
+    constructor(private readonly givenPushTest: PushTest, private readonly name: string) {}
 
     /**
      * Perform computation before continuing.

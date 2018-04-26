@@ -126,7 +126,6 @@ Goals are set using **rules**, which are typically expressed in a simple interna
 ```typescript
 whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest,
     	ToPublicRepo, not(NamedSeedRepo), not(FromAtomist), IsDeployEnabled)
-    .itMeans("Spring Boot service to deploy")
     .setGoals(HttpServiceGoals),
 whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
     .itMeans("Spring Boot service local deploy")
