@@ -19,7 +19,7 @@ import { PushRule } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
 import { Builder } from "../../spi/build/Builder";
 
-export function when(guard1: PushTest, ...guards: PushTest[]): PushRule<PushRule<Builder>> {
+export function when(guard1: PushTest, ...guards: PushTest[]): PushRule<Builder> {
     return new PushRule(guard1, guards);
 }
 
