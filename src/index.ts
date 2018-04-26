@@ -131,7 +131,7 @@ export * from "./common/listener/support/pushtest/node/tsPushTests";
 export * from "./common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
 export * from "./common/log/EphemeralProgressLog";
 export * from "./common/log/RolarProgressLog";
-export * from "./common/log/ConsoleProgressLog";
+export * from "./common/log/DebugProgressLog";
 export * from "./common/log/slackProgressLog";
 export * from "./common/repo/CachingProjectLoader";
 export * from "./common/repo/ProjectLoader";

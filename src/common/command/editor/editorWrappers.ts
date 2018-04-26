@@ -25,7 +25,7 @@ import { spawn, SpawnOptions } from "child_process";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { confirmEditedness } from "../../../util/git/confirmEditedness";
 import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
-import { ConsoleProgressLog } from "../../log/ConsoleProgressLog";
+import { DebugProgressLog } from "../../log/DebugProgressLog";
 
 /**
  * Decorate an editor factory to make editors it creates chatty, so they respond to
@@ -75,7 +75,7 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
  * @return {ProjectEditor}
  */
 export function localCommandsEditor(commands: SpawnCommand[],
-                                    log: ProgressLog = new ConsoleProgressLog("commands")): ProjectEditor {
+                                    log: ProgressLog = new DebugProgressLog("commands")): ProjectEditor {
     return async (p: GitProject) => {
         const opts: SpawnOptions = {
             cwd: p.baseDir,

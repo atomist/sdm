@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef, RepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { RunWithLogContext } from "../../common/delivery/goals/support/reportGoalError";
-import { ConsoleProgressLog } from "../../common/log/ConsoleProgressLog";
+import { DebugProgressLog } from "../../common/log/DebugProgressLog";
 import { StatusForExecuteGoal, StatusState } from "../../typings/types";
 import { fakeContext } from "./fakeContext";
 
@@ -35,7 +35,7 @@ export function fakeRunWithLogContext(id: RemoteRepoRef): RunWithLogContext {
             logger.info("channels > " + m);
         },
         status: fakeStatus(id),
-        progressLog: new ConsoleProgressLog("fake"),
+        progressLog: new DebugProgressLog("fake"),
     };
 }
 

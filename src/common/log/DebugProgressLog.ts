@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * Progress log to the console
  */
-export class ConsoleProgressLog implements ProgressLog {
+export class DebugProgressLog implements ProgressLog {
 
     public log: string = "";
 
@@ -27,8 +28,7 @@ export class ConsoleProgressLog implements ProgressLog {
 
     public write(what) {
         this.log += what;
-        // tslint:disable-next-line:no-console
-        console.log(what);
+        logger.debug(what);
     }
 
     public async isAvailable() { return true; }

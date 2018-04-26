@@ -16,7 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Project } from "@atomist/automation-client/project/Project";
-import { ConsoleProgressLog, mavenDeployer, SingleProjectLoader } from "../../../../../src";
+import { DebugProgressLog, mavenDeployer, SingleProjectLoader } from "../../../../../src";
 
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
@@ -39,7 +39,7 @@ describe("mavenSourceDeployer", () => {
                     name: "foo",
                     description: "whatever",
                     managedDeploymentKey: id,
-                }, new ConsoleProgressLog("test"), {token: process.env.GITHUB_TOKEN}, "T123");
+                }, new DebugProgressLog("test"), {token: process.env.GITHUB_TOKEN}, "T123");
             assert.fail("Should have failed");
         } catch (err) {
             // Ok
@@ -64,7 +64,7 @@ describe("mavenSourceDeployer", () => {
                 description: "whatever",
                 managedDeploymentKey: id,
             },
-            new ConsoleProgressLog("test"), credentials, "T123");
+            new DebugProgressLog("test"), credentials, "T123");
         assert(deployed.length === 1);
         await (deployed[0] as any).childProcess.kill();
     }).timeout(400000);

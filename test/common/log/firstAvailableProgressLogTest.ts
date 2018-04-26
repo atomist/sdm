@@ -1,12 +1,11 @@
-
 import * as assert from "power-assert";
+import { DebugProgressLog } from "../../../src";
 import { firstAvailableProgressLog } from "../../../src/common/log/firstAvailableProgressLog";
-import { ConsoleProgressLog } from "../../../src";
 
-const NeverAvailableProgressLog = new ConsoleProgressLog("neverAvailable");
+const NeverAvailableProgressLog = new DebugProgressLog("neverAvailable");
 NeverAvailableProgressLog.isAvailable = async () => false;
 
-const AvailableProgressLog = new ConsoleProgressLog("available");
+const AvailableProgressLog = new DebugProgressLog("available");
 
 describe("firstAvailable", () => {
 
@@ -30,13 +29,15 @@ describe("firstAvailable", () => {
     });
 
     it("should succeed with one unavailable and two available, picking first available", async () => {
-        const faLog = await firstAvailableProgressLog(NeverAvailableProgressLog, AvailableProgressLog, new ConsoleProgressLog("dontUseMe"));
+        const faLog = await firstAvailableProgressLog(NeverAvailableProgressLog, AvailableProgressLog, new DebugProgressLog("dontUseMe"));
         assert.equal(faLog, AvailableProgressLog);
     });
 
     it("should not ask availability after finding an available logger", async () => {
-        const dontAskMe = new ConsoleProgressLog("dontAsk");
-        dontAskMe.isAvailable = async () => { throw new Error("I said DON'T ASK")};
+        const dontAskMe = new DebugProgressLog("dontAsk");
+        dontAskMe.isAvailable = async () => {
+            throw new Error("I said DON'T ASK");
+        };
         const faLog = await firstAvailableProgressLog(AvailableProgressLog, dontAskMe);
         assert.equal(faLog, AvailableProgressLog);
     });
