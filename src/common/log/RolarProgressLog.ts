@@ -17,18 +17,36 @@
 import * as _ from "lodash";
 
 import axios from "axios";
-import { ProgressLog} from "../../spi/log/ProgressLog";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 import { logger } from "@atomist/automation-client";
-import {doWithRetry} from "@atomist/automation-client/util/retry";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 import os = require("os");
 
+/**
+ * Post log to Atomist Rolar service for it to persist
+ */
 export class RolarProgressLog implements ProgressLog {
 
     private localLogs: LogData[] = [];
 
     constructor(private readonly rolarBaseUrl: string, private readonly logPath: string[]) {
+    }
+
+    get name() {
+        return this.logPath.join("_");
+    }
+
+    public async isAvailable() {
+        const url = `${this.rolarBaseUrl}/api/logs`;
+        try {
+            axios.head(url);
+            logger.warn("Rolar logger is NOT available at %s", url);
+            return true;
+        } catch {
+            return false;
+        }
     }
 
     public write(what: string) {
@@ -56,7 +74,7 @@ export class RolarProgressLog implements ProgressLog {
                 host: os.hostname(),
                 content: postingLogs,
             }, {
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
             }),
             `post log to Rolar`).catch(e => {
             this.localLogs = postingLogs.concat(this.localLogs);

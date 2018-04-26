@@ -15,11 +15,17 @@
  */
 
 /**
- * Log abstraction for output of our activities.
+ * Log abstraction for output of a specific activity. Not intended as a long-running log
+ * but for a short-lived activity.
  * Not a technical log of this project but a log of meaningful activity
  * on behalf of users.
  */
 export interface ProgressLog {
+
+    /**
+     * Name. Should relate to the immediate activity we're logging.
+     */
+    readonly name: string;
 
     write(what: string): void;
 
@@ -37,6 +43,12 @@ export interface ProgressLog {
      * Return the url of the log if it is persisted
      */
     url?: string;
+
+    /**
+     * Is this logger available at this point in time?
+     * E.g. if it's backed by a service, is that service up?
+     */
+    isAvailable(): Promise<boolean>;
 }
 
-export type LogFactory = () => Promise<ProgressLog>;
+export type LogFactory = (name: string) => Promise<ProgressLog>;

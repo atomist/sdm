@@ -24,7 +24,7 @@ describe("spawned", () => {
         const sc: SpawnCommand = {command: "thisIsNonsense"};
         try {
             await spawnAndWatch(sc, {},
-                await createEphemeralProgressLog(),
+                await createEphemeralProgressLog("test"),
                 {});
             assert.fail("Should have thrown an exception");
         } catch (err) {
@@ -35,7 +35,7 @@ describe("spawned", () => {
     it("should handle valid command with no error finder", async () => {
         const sc: SpawnCommand = {command: "ls"};
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(),
+            await createEphemeralProgressLog("test"),
             {});
         assert.equal(r.error, false);
         assert.equal(r.error, false);
@@ -44,7 +44,7 @@ describe("spawned", () => {
     it("should use default on attempt to pass in undefined error finder", async () => {
         const sc: SpawnCommand = {command: "ls"};
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(),
+            await createEphemeralProgressLog("test"),
             {
                 errorFinder: undefined,
             });
@@ -55,7 +55,7 @@ describe("spawned", () => {
     it("should handle valid command with error finder", async () => {
         const sc: SpawnCommand = {command: "ls"};
         const r = await spawnAndWatch(sc, {},
-            await createEphemeralProgressLog(),
+            await createEphemeralProgressLog("test"),
             {
                 errorFinder: () => false,
             });

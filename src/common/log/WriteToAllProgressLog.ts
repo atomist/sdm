@@ -17,30 +17,19 @@
 import { logger } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
-export class ConsoleProgressLog implements ProgressLog {
-
-    public log: string = "";
-
-    public write(what) {
-        this.log += what;
-        // tslint:disable-next-line:no-console
-        console.log(what);
-    }
-
-    public flush() { return Promise.resolve(); }
-
-    public close() { return Promise.resolve(); }
-}
-
 /**
- * Write to multiple progress logs, exposing them as one
+ * Write to multiple progress logs, exposing them as one.
  */
-export class MultiProgressLog implements ProgressLog {
+export class WriteToAllProgressLog implements ProgressLog {
 
     private readonly logs: ProgressLog[];
 
-    constructor(log1: ProgressLog, log2: ProgressLog, ...others: ProgressLog[]) {
+    constructor(public name: string, log1: ProgressLog, log2: ProgressLog, ...others: ProgressLog[]) {
         this.logs = [log1, log2].concat(others);
+    }
+
+    public async isAvailable() {
+        return true;
     }
 
     public write(what: string) {

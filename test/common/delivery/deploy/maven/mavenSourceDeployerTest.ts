@@ -39,7 +39,7 @@ describe("mavenSourceDeployer", () => {
                     name: "foo",
                     description: "whatever",
                     managedDeploymentKey: id,
-                }, new ConsoleProgressLog(), {token: process.env.GITHUB_TOKEN}, "T123");
+                }, new ConsoleProgressLog("test"), {token: process.env.GITHUB_TOKEN}, "T123");
             assert.fail("Should have failed");
         } catch (err) {
             // Ok
@@ -64,7 +64,7 @@ describe("mavenSourceDeployer", () => {
                 description: "whatever",
                 managedDeploymentKey: id,
             },
-            new ConsoleProgressLog(), credentials, "T123");
+            new ConsoleProgressLog("test"), credentials, "T123");
         assert(deployed.length === 1);
         await (deployed[0] as any).childProcess.kill();
     }).timeout(400000);

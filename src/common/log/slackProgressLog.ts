@@ -21,13 +21,16 @@ import { addressChannelsFor, HasChannels } from "../slack/addressChannels";
 /**
  * Stream the ProgressLog output to any Slack channels associated
  * with the current model element (such a repo)
+ * @param name name for the log. Should relate to the activity we're logging
  * @param {HasChannels} hasChannels
  * @param {HandlerContext} ctx
  * @return {ProgressLog}
  */
-export function slackProgressLog(hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
+export function slackProgressLog(name: string, hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
     const add = addressChannelsFor(hasChannels, ctx);
     return {
+        name,
+        isAvailable: async () => !!hasChannels.channels && hasChannels.channels.length > 0,
         write(msg) {
             return add(msg);
         },

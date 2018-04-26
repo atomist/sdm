@@ -16,10 +16,9 @@
 
 import { logger } from "@atomist/automation-client";
 import { LogFactory, ProgressLog } from "../../spi/log/ProgressLog";
-import { ConsoleProgressLog, MultiProgressLog } from "./progressLogs";
 
 /**
- * Implementation of LinkableProgressLog log that returns
+ * Implementation of ProgressLog log that returns
  * an undefined link because it isn't actually persisted.
  * Used when we are not storing a local log.
  */
@@ -29,7 +28,9 @@ class EphemeralProgressLog implements ProgressLog {
 
     public url = undefined;
 
-    constructor(private readonly writeToLog: boolean = true) {}
+    constructor(public name: string, private readonly writeToLog: boolean = true) {}
+
+    public async isAvailable() { return true; }
 
     public flush() {
         return Promise.resolve();
@@ -49,7 +50,4 @@ class EphemeralProgressLog implements ProgressLog {
 
 }
 
-export const createEphemeralProgressLog: LogFactory = async () => new EphemeralProgressLog();
-
-export const createEphemeralProgressLogWithConsole: LogFactory =
-    async () => new MultiProgressLog(new ConsoleProgressLog(), new EphemeralProgressLog());
+export const createEphemeralProgressLog: LogFactory = async name => new EphemeralProgressLog(name);

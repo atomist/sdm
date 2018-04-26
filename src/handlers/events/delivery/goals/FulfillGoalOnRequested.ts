@@ -23,7 +23,7 @@ import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/S
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
-import { ConsoleProgressLog, MultiProgressLog } from "../../../../common/log/progressLogs";
+import { ConsoleProgressLog } from "../../../../common/log/ConsoleProgressLog";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
@@ -31,6 +31,7 @@ import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecut
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
+import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
 
 /**
  * Handle an SDM request goal. Used for many implementation types.
@@ -82,8 +83,8 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 
-        const log = await createEphemeralProgressLog();
-        const progressLog = new MultiProgressLog(new ConsoleProgressLog(), log);
+        const log = await createEphemeralProgressLog(sdmGoal.name);
+        const progressLog = new WriteToAllProgressLog(sdmGoal.name, new ConsoleProgressLog(sdmGoal.name), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
         const credentials = {token: params.githubToken};
