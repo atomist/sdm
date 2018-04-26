@@ -441,7 +441,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .addGoalImplementation("CodeReactions", CodeReactionGoal,
                 executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,
-                executeReview(this.opts.projectLoader, this.reviewerRegistrations))
+                executeReview(this.opts.projectLoader, this.reviewerRegistrations, this.reviewListeners))
             .addVerifyImplementation()
             .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
                 offerToDeleteRepository())

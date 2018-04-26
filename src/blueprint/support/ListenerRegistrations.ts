@@ -29,6 +29,7 @@ import { NewIssueListener } from "../../common/listener/NewIssueListener";
 import { PullRequestListener } from "../../common/listener/PullRequestListener";
 import { PushListener } from "../../common/listener/PushListener";
 import { RepoCreationListener } from "../../common/listener/RepoCreationListener";
+import { ReviewListener } from "../../common/listener/ReviewListener";
 import { SupersededListener } from "../../common/listener/SupersededListener";
 import { TagListener } from "../../common/listener/TagListener";
 import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
@@ -65,6 +66,8 @@ export class ListenerRegistrations {
     protected readonly goalsSetListeners: GoalsSetListener[] = [];
 
     protected readonly reviewerRegistrations: ReviewerRegistration[] = [];
+
+    protected readonly reviewListeners: ReviewListener[] = [];
 
     protected readonly codeReactionRegistrations: CodeActionRegistration[] = [];
 
@@ -143,6 +146,11 @@ export class ListenerRegistrations {
 
     public addReviewerRegistrations(...reviewers: ReviewerRegistration[]): this {
         this.reviewerRegistrations.push(...reviewers);
+        return this;
+    }
+
+    public addReviewListeners(...listeners: ReviewListener[]): this {
+        this.reviewListeners.push(...listeners);
         return this;
     }
 

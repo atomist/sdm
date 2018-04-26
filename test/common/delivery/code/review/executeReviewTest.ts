@@ -17,17 +17,23 @@
 import { DefaultReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { saveFromFiles } from "@atomist/automation-client/project/util/projectUtils";
 
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { executeReview, SingleProjectLoader } from "../../../../../src";
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
+import { ReviewInvocation, ReviewListener } from "../../../../../src/common/listener/ReviewListener";
+import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 
-/* tslint:disable */
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import * as assert from "power-assert";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
     pushTest: TruePushTest,
     action: async cri => ({
         repoId: cri.project.id,
-        comments: await saveFromFiles(cri.project, "**/*.*", f =>
+        comments: await saveFromFiles(cri.project, "**/*", f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {
@@ -39,12 +45,36 @@ const HatesTheWorld: ReviewerRegistration = {
     options: { considerOnlyChangedFiles: false},
 };
 
+function loggingReviewListener(saveTo: ReviewInvocation[]): ReviewListener {
+    return async re => saveTo.push(re);
+}
+
 describe("executeReview", () => {
 
-    // it("should be clean on empty", async () => {
-    //     const p = InMemoryProject.of();
-    //     const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld]);
-    //     await ge(null, null, null);
-    // });
+    it("should be clean on empty", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const p = InMemoryProject.from(id);
+        const reviewEvents: ReviewInvocation[] = [];
+        const l = loggingReviewListener(reviewEvents);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
+        const r = await ge(fakeRunWithLogContext(id));
+        assert(!r.requireApproval);
+        assert.equal(reviewEvents.length, 1);
+        assert.equal(reviewEvents[0].review.comments.length, 0);
+    });
+
+    it("should hate anything it finds", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
+        const reviewEvents: ReviewInvocation[] = [];
+        const l = loggingReviewListener(reviewEvents);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
+        const rwlc = fakeRunWithLogContext(id);
+        const r = await ge(rwlc);
+        assert(r.requireApproval);
+        assert.equal(reviewEvents.length, 1);
+        assert.equal(reviewEvents[0].review.comments.length, 1);
+        assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels)
+    });
 
 });

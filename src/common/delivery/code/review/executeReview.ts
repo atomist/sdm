@@ -18,15 +18,11 @@
 
 import * as _ from "lodash";
 
-import { failure, HandlerContext, logger, Success } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
+import { failure, logger } from "@atomist/automation-client";
+import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { Project } from "@atomist/automation-client/project/Project";
-import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { deepLink } from "@atomist/automation-client/util/gitHub";
-import * as slack from "@atomist/slack-messages";
-import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
+import { ReviewListener } from "../../../listener/ReviewListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
@@ -35,11 +31,18 @@ import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 import { ReviewerRegistration } from "./ReviewerRegistration";
 
+/**
+ * Execute reviews and route or react to results using review listeners
+ * @param {ProjectLoader} projectLoader
+ * @param {ReviewerRegistration[]} reviewerRegistrations
+ * @param {ReviewListener[]} reviewListeners
+ * @return {ExecuteGoalWithLog}
+ */
 export function executeReview(projectLoader: ProjectLoader,
-                              reviewerRegistrations: ReviewerRegistration[]): ExecuteGoalWithLog  {
+                              reviewerRegistrations: ReviewerRegistration[],
+                              reviewListeners: ReviewListener[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
-        const { credentials, id, addressChannels, context } = rwlc;
-
+        const {credentials, id, addressChannels} = rwlc;
         try {
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
@@ -64,15 +67,14 @@ export function executeReview(projectLoader: ProjectLoader,
 
                     const review = consolidate(reviews);
 
-                    if (review.comments.length === 0 && reviewerErrors.length === 0) {
-                        return {code: 0, requireApproval: false};
-                    } else {
-                        // TODO might want to raise issue
-                        // Fail it??
-                        await sendReviewToSlack("Review comments", review, context, addressChannels);
-                        sendErrorsToSlack(reviewerErrors, addressChannels);
-                        return {code: 0, requireApproval: true};
-                    }
+                    // TODO consider if we should fail: Let listeners choose?
+                    const rli = {
+                        ...cri,
+                        review,
+                    };
+                    sendErrorsToSlack(reviewerErrors, addressChannels);
+                    await Promise.all(reviewListeners.map(l => l(rli)));
+                    return {code: 0, requireApproval: review.comments.length > 0 || reviewerErrors.length > 0};
                 });
             } else {
                 // No reviewers
@@ -94,37 +96,8 @@ function consolidate(reviews: ProjectReview[]): ProjectReview {
     };
 }
 
-async function sendReviewToSlack(title: string,
-                                 pr: ProjectReview,
-                                 ctx: HandlerContext,
-                                 addressChannels: AddressChannels) {
-    const mesg: SlackMessage = {
-        text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
-        attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c)),
-    };
-    await addressChannels(mesg);
-    return Success;
-}
-
 function sendErrorsToSlack(errors: ReviewerError[], addressChannels: AddressChannels) {
     errors.forEach(async e => {
         await addressChannels(formatReviewerError(e));
     });
-}
-
-function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment): Attachment {
-    const link = rc.sourceLocation ? slack.url(deepLink(grr, rc.sourceLocation), "jump to") :
-        slack.url(grr.url + "/tree/" + grr.sha, "source");
-
-    return {
-        color: "#ff0000",
-        author_name: rc.category,
-        author_icon: "https://image.shutterstock.com/z/stock-vector-an-image-of-a-red-grunge-x-572409526.jpg",
-        text: `${link} ${rc.detail}`,
-        mrkdwn_in: ["text"],
-        fallback: "error",
-        actions: !!rc.fix ? [
-            buttonForCommand({text: "Fix"}, rc.fix.command, rc.fix.params),
-        ] : [],
-    };
 }
