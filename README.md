@@ -133,7 +133,7 @@ whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(FromAtomist))
     .setGoals(LocalDeploymentGoals),
 ```
 
-Such push test predicates are easy to write using the Atomist API. For example:
+Push test predicates are easy to write using the Atomist API. For example:
 
 ```typescript
 export const IsMaven: PredicatePushTest = predicatePushTest(
@@ -770,6 +770,38 @@ tbd
 Any tool that runs on code, such as Checkstyle, can easily be integrated.
 
 If the tool doesn't have a Node API (which Checkstyle doesn't as it's written in Java), you can invoke it via Node `spawn`, as Node excels at working with child processes.
+
+## Advanced Push Rules
+
+### Computed Values
+You can use computed `boolean` values or the results of synchronous or asynchronous functions returning `boolean` in the DSL, making it possible to bring in any state you wish. For example:
+
+```typescript
+whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, 
+	deploymentsToday < 25)
+    .itMeans("Not tired of deploying Spring apps yet")
+    .setGoals(LocalDeploymentGoals),
+```
+
+### Decision Trees
+You can write decision trees in push rules or other push mappings. These can be nested to arbitrary depth, and can use computed state. For example:
+
+```typescript
+let count = 0;
+const pm: PushMapping<Goals> = given<Goals>(IsNode)
+	// Compute a value we'll use later
+    .init(() => count = 0)	
+    .itMeans("node")
+    .then(
+        given<Goals>(IsExpress).itMeans("express")
+            .compute(() => count++)
+            // Go into tree branch rule set
+            .then(
+                whenPushSatisfies(count > 0).itMeans("nope").setGoals(NoGoals),
+				whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
+            ),
+    );
+```
 
 ## Roadmap
 
