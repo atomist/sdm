@@ -26,8 +26,19 @@ export interface ReviewInvocation extends RepoListenerInvocation {
 }
 
 /**
+ * A review response that drives an action:
+ * failing the current flow or requiring approval.
+ */
+export enum ActionReviewResponse {
+    fail = "fail",
+    requireApproval = "requireApproval",
+}
+
+export type ReviewResponse = void | ActionReviewResponse;
+
+/**
  * Listener invoked when a review has been completed.
  * Listeners will be invoked even in the case of a clean review,
  * without errors or comments.
  */
-export type ReviewListener = SdmListener<ReviewInvocation>;
+export type ReviewListener = SdmListener<ReviewInvocation, ReviewResponse>;

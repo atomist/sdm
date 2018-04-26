@@ -22,7 +22,7 @@ import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { Project } from "@atomist/automation-client/project/Project";
 import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
-import { ReviewListener } from "../../../listener/ReviewListener";
+import { ActionReviewResponse, ReviewListener } from "../../../listener/ReviewListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
@@ -67,14 +67,18 @@ export function executeReview(projectLoader: ProjectLoader,
 
                     const review = consolidate(reviews);
 
-                    // TODO consider if we should fail: Let listeners choose?
                     const rli = {
                         ...cri,
                         review,
                     };
                     sendErrorsToSlack(reviewerErrors, addressChannels);
-                    await Promise.all(reviewListeners.map(l => l(rli)));
-                    return {code: 0, requireApproval: review.comments.length > 0 || reviewerErrors.length > 0};
+                    const reviewResponses = await Promise.all(reviewListeners.map(l => l(rli)));
+                    const result = {
+                        code: reviewResponses.includes(ActionReviewResponse.fail) ? 1 : 0,
+                        requireApproval: reviewResponses.includes(ActionReviewResponse.requireApproval),
+                    };
+                    logger.info("Review responses are %j, result=%j", reviewResponses, result);
+                    return result;
                 });
             } else {
                 // No reviewers

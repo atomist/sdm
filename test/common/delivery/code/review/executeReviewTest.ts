@@ -21,7 +21,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { executeReview, SingleProjectLoader } from "../../../../../src";
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
-import { ReviewInvocation, ReviewListener } from "../../../../../src/common/listener/ReviewListener";
+import { ActionReviewResponse, ReviewInvocation, ReviewListener } from "../../../../../src/common/listener/ReviewListener";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 
@@ -46,7 +46,12 @@ const HatesTheWorld: ReviewerRegistration = {
 };
 
 function loggingReviewListener(saveTo: ReviewInvocation[]): ReviewListener {
-    return async re => saveTo.push(re);
+    return async re => {
+        saveTo.push(re);
+        if (re.review.comments.length > 0) {
+            return ActionReviewResponse.requireApproval;
+        }
+    };
 }
 
 describe("executeReview", () => {
@@ -58,6 +63,7 @@ describe("executeReview", () => {
         const l = loggingReviewListener(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
         const r = await ge(fakeRunWithLogContext(id));
+        assert.equal(r.code, 0);
         assert(!r.requireApproval);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 0);
@@ -71,10 +77,11 @@ describe("executeReview", () => {
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
         const rwlc = fakeRunWithLogContext(id);
         const r = await ge(rwlc);
-        assert(r.requireApproval);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
-        assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels)
+        assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
+        assert.equal(r.code, 0);
+        assert(r.requireApproval);
     });
 
 });
