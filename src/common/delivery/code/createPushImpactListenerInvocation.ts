@@ -39,7 +39,7 @@ export async function createPushImpactListenerInvocation(rwlc: RunWithLogContext
     const filesChanged = push.before ?
         await filesChangedSince(project, push.before.sha) :
         await filesChangedSinceParentCommit(project);
-    const impactedSubProject = !!filesChanged ? project : filteredView(project, path => filesChanged.includes(path));
+    const impactedSubProject = !filesChanged ? project : filteredView(project, path => filesChanged.includes(path));
     return {
         id,
         context: smartContext,
