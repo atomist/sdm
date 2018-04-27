@@ -51,22 +51,19 @@ export function executeReview(projectLoader: ProjectLoader,
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers", id, relevantCodeActions.length);
 
-                    // TODO should filter to support reviewOnlyChangedFiles
-                    // see https://github.com/atomist/github-sdm/issues/273
-                    const filteredCopy: Project = project; // await filtered(project, filesChanged);
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                         await Promise.all(relevantReviewers
-                            .map(reviewer =>
-                                reviewer.action(cri)
+                            .map(reviewer => {
+                                return reviewer.action(cri)
                                     .then(rvw => ({review: rvw}),
-                                        error => ({error}))));
+                                        error => ({error}));
+                            }));
                     const reviews = reviewsAndErrors.filter(r => !!r.review)
                         .map(r => r.review);
                     const reviewerErrors = reviewsAndErrors.filter(e => !!e.error)
                         .map(e => e.error);
 
                     const review = consolidate(reviews);
-
                     const rli = {
                         ...cri,
                         review,

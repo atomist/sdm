@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Project } from "@atomist/automation-client/project/Project";
 import { StatusForExecuteGoal } from "../../typings/types";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
@@ -29,6 +30,11 @@ export interface CodeReactionInvocation extends PushListenerInvocation {
     filesChanged: string[] | undefined;
 
     commit: StatusForExecuteGoal.Commit;
+
+    /**
+     * Project of affected file. May be the same as project, if we can't tell
+     */
+    impactedSubProject: Project;
 }
 
 export type CodeReactionListener = SdmListener<CodeReactionInvocation>;

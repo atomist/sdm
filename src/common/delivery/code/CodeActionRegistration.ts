@@ -17,6 +17,9 @@
 import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
 import { PushTest } from "../../listener/PushTest";
 
+/**
+ * Action on a code event
+ */
 export type CodeAction<R> = (i: CodeReactionInvocation) => Promise<R>;
 
 /**
