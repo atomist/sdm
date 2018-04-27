@@ -24,12 +24,12 @@ import {
 } from "../../../../../../src/common/delivery/code/autofix/AutofixRegistration";
 import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
 import { relevantCodeActions } from "../../../../../../src/common/delivery/code/CodeActionRegistration";
-import { CodeReactionInvocation } from "../../../../../../src/common/listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../../../../../src/common/listener/PushImpactListener";
 
 describe("relevantCodeActions", () => {
 
     it("should match action without push test", async () => {
-        const pti: CodeReactionInvocation = null;
+        const pti: PushImpactListenerInvocation = null;
         const autofixes: AutofixRegistration = editorAutofixRegistration({
             name: "License Fix",
             editor: async p => {
@@ -42,12 +42,12 @@ describe("relevantCodeActions", () => {
     });
 
     it("should ignore irrelevant", async () => {
-        const pti: CodeReactionInvocation = {
+        const pti: PushImpactListenerInvocation = {
             project: new InMemoryProject(),
             push: {
                 id: "x",
             },
-        } as any as CodeReactionInvocation;
+        } as any as PushImpactListenerInvocation;
         const relevant = await relevantCodeActions([tslintFix], pti);
         assert.equal(relevant.length, 0);
     });

@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { UpdatedIssueInvocation, UpdatedIssueListener } from "../../../common/listener/UpdatedIssueListener";
+import { UpdatedIssueListener, UpdatedIssueListenerInvocation } from "../../../common/listener/UpdatedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
@@ -48,7 +48,7 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
             return Success;
         }
 
-        const inv: UpdatedIssueInvocation = {
+        const inv: UpdatedIssueListenerInvocation = {
             id,
             addressChannels,
             context,

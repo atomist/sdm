@@ -32,7 +32,7 @@ export interface FingerprintDifference {
     newValue?: FingerprintValue;
 }
 
-export interface FingerprintDifferenceInvocation extends RepoListenerInvocation {
+export interface FingerprintDifferenceListenerInvocation extends RepoListenerInvocation {
 
     diffs: FingerprintDifference[];
 }
@@ -40,4 +40,4 @@ export interface FingerprintDifferenceInvocation extends RepoListenerInvocation 
 /**
  * React to a fingerprint diff
  */
-export type FingerprintDifferenceListener = SdmListener<FingerprintDifferenceInvocation>;
+export type FingerprintDifferenceListener = SdmListener<FingerprintDifferenceListenerInvocation>;

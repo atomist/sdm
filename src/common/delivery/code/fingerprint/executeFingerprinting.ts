@@ -22,7 +22,7 @@ import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
-import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
+import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { computeFingerprints } from "./computeFingerprints";
 import { FingerprinterRegistration } from "./FingerprinterRegistration";
 
@@ -41,7 +41,7 @@ export function executeFingerprinting(projectLoader: ProjectLoader,
 
         logger.debug("About to fingerprint %j using %d fingerprinters", id, fingerprinters.length);
         await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-            const cri = await createCodeReactionInvocation(rwlc, project);
+            const cri = await createPushImpactListenerInvocation(rwlc, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);

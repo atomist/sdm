@@ -20,7 +20,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { ReviewerRegistration } from "../../../../../../src/common/delivery/code/review/ReviewerRegistration";
 import { regexpReviewer } from "../../../../../../src/common/delivery/code/review/support/regexpReviewer";
-import { CodeReactionInvocation } from "../../../../../../src/common/listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../../../../../src/common/listener/PushImpactListener";
 
 describe("regexpReviewer", () => {
 
@@ -32,7 +32,7 @@ describe("regexpReviewer", () => {
                 shouldBe: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("a", "b"));
-        const rr = await rer.action({project} as any as CodeReactionInvocation);
+        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
         assert.equal(rr.comments.length, 0);
     });
 
@@ -44,7 +44,7 @@ describe("regexpReviewer", () => {
                 shouldBe: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
-        const rr = await rer.action({project} as any as CodeReactionInvocation);
+        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });

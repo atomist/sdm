@@ -18,9 +18,9 @@ import * as schema from "../../typings/types";
 
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface UpdatedIssueInvocation extends RepoListenerInvocation {
+export interface UpdatedIssueListenerInvocation extends RepoListenerInvocation {
 
     issue: schema.OnIssueAction.Issue;
 }
 
-export type UpdatedIssueListener = SdmListener<UpdatedIssueInvocation>;
+export type UpdatedIssueListener = SdmListener<UpdatedIssueListenerInvocation>;

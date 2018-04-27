@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { ClosedIssueInvocation, ClosedIssueListener } from "../../../common/listener/ClosedIssueListener";
+import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../common/listener/ClosedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
@@ -43,7 +43,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
         const id = toRemoteRepoRef(issue.repo);
 
         const addressChannels = addressChannelsFor(issue.repo, context);
-        const inv: ClosedIssueInvocation = {
+        const inv: ClosedIssueListenerInvocation = {
             id,
             addressChannels,
             context,

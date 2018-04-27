@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { RepoCreationInvocation, RepoCreationListener } from "../../../common/listener/RepoCreationListener";
+import { RepoCreationListener, RepoCreationListenerInvocation } from "../../../common/listener/RepoCreationListener";
 import { AddressNoChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
@@ -41,7 +41,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
                         params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
         const id = toRemoteRepoRef(repo);
-        const invocation: RepoCreationInvocation = {
+        const invocation: RepoCreationListenerInvocation = {
             addressChannels: AddressNoChannels,
             id,
             context,

@@ -26,7 +26,7 @@ import { AddressChannels } from "../../../../slack/addressChannels";
 
 /**
  * Route reviews to Slack in linked channels
- * @param {ReviewInvocation} ri
+ * @param {ReviewListenerInvocation} ri
  * @constructor
  */
 export const SlackReviewListener: ReviewListener = async ri => {

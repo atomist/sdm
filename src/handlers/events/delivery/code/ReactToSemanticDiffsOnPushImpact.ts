@@ -19,8 +19,8 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import {
     FingerprintDifference,
-    FingerprintDifferenceInvocation,
     FingerprintDifferenceListener,
+    FingerprintDifferenceListenerInvocation,
     FingerprintValue,
 } from "../../../../common/listener/FingerprintDifferenceListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -67,7 +67,7 @@ export class ReactToSemanticDiffsOnPushImpact
                 }))
                 .filter(fv => _.get<string>(fv, "oldValue.sha") !== _.get<string>(fv, "newValue.sha"));
 
-        const inv: FingerprintDifferenceInvocation = {
+        const inv: FingerprintDifferenceListenerInvocation = {
             id,
             context,
             credentials: { token: params.githubToken },

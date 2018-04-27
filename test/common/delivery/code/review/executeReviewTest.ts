@@ -21,7 +21,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { executeReview, SingleProjectLoader } from "../../../../../src";
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
-import { ActionReviewResponse, ReviewInvocation, ReviewListener } from "../../../../../src/common/listener/ReviewListener";
+import { ActionReviewResponse, ReviewListener, ReviewListenerInvocation } from "../../../../../src/common/listener/ReviewListener";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 
@@ -45,7 +45,7 @@ const HatesTheWorld: ReviewerRegistration = {
     options: { considerOnlyChangedFiles: false},
 };
 
-function loggingReviewListener(saveTo: ReviewInvocation[]): ReviewListener {
+function loggingReviewListener(saveTo: ReviewListenerInvocation[]): ReviewListener {
     return async re => {
         saveTo.push(re);
         if (re.review.comments.length > 0) {
@@ -59,7 +59,7 @@ describe("executeReview", () => {
     it("should be clean on empty", async () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
-        const reviewEvents: ReviewInvocation[] = [];
+        const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListener(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
         const r = await ge(fakeRunWithLogContext(id));
@@ -72,7 +72,7 @@ describe("executeReview", () => {
     it("should hate anything it finds", async () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
-        const reviewEvents: ReviewInvocation[] = [];
+        const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListener(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
         const rwlc = fakeRunWithLogContext(id);

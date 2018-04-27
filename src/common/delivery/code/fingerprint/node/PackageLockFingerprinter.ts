@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { IsNode, PushTest } from "../../../../..";
 import { computeShaOf } from "../../../../../util/misc/sha";
-import { CodeReactionInvocation } from "../../../../listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../../../listener/PushImpactListener";
 import { FingerprinterRegistration, FingerprinterResult } from "../FingerprinterRegistration";
 
 /**
@@ -31,7 +31,7 @@ export class PackageLockFingerprinter implements FingerprinterRegistration {
 
     public readonly pushTest: PushTest = IsNode;
 
-    public async action(cri: CodeReactionInvocation): Promise<FingerprinterResult> {
+    public async action(cri: PushImpactListenerInvocation): Promise<FingerprinterResult> {
         const lockFile = await cri.project.getFile("package-lock.json");
         if (!lockFile) {
             return [];

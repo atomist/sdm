@@ -39,7 +39,7 @@ import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from 
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/storeGoals";
 import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { GoalsSetInvocation, GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
+import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../common/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../../../common/listener/PushListener";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
@@ -120,7 +120,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 
     // Let GoalSetListeners know even if we determined no goals.
     // This is not an error
-    const gsi: GoalsSetInvocation = {
+    const gsi: GoalsSetListenerInvocation = {
         id,
         context,
         credentials,

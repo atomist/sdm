@@ -20,15 +20,19 @@ import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
 
 /**
- * Invocation object used by most listeners that react to code changes
+ * Invocation object used by most listeners that react to code changes.
+ * Provides fuller information about the impact of the push.
  */
-export interface CodeReactionInvocation extends PushListenerInvocation {
+export interface PushImpactListenerInvocation extends PushListenerInvocation {
 
     /**
      * Files changed in this push. Undefined if unknown how many files have changed
      */
     filesChanged: string[] | undefined;
 
+    /**
+     * Head commit on push
+     */
     commit: StatusForExecuteGoal.Commit;
 
     /**
@@ -37,4 +41,4 @@ export interface CodeReactionInvocation extends PushListenerInvocation {
     impactedSubProject: Project;
 }
 
-export type CodeReactionListener = SdmListener<CodeReactionInvocation>;
+export type PushImpactListener = SdmListener<PushImpactListenerInvocation>;

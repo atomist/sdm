@@ -21,13 +21,13 @@ import * as _ from "lodash";
 import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { Project } from "@atomist/automation-client/project/Project";
-import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
 import { ActionReviewResponse, ReviewListener } from "../../../listener/ReviewListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
-import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
+import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 import { ReviewerRegistration } from "./ReviewerRegistration";
 
@@ -47,7 +47,7 @@ export function executeReview(projectLoader: ProjectLoader,
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
                 return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-                    const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
+                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers", id, relevantCodeActions.length);
 

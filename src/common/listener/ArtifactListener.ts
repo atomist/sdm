@@ -17,10 +17,10 @@
 import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface ArtifactInvocation extends RepoListenerInvocation {
+export interface ArtifactListenerInvocation extends RepoListenerInvocation {
 
     deployableArtifact: DeployableArtifact;
 
 }
 
-export type ArtifactListener = SdmListener<ArtifactInvocation>;
+export type ArtifactListener = SdmListener<ArtifactListenerInvocation>;

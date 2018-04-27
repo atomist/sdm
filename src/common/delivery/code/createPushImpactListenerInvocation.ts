@@ -17,20 +17,20 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
 import { filteredView } from "../../../util/project/filteredView";
-import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
 import { messageDestinationsFor } from "../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../slack/contextMessageRouting";
 import { RunWithLogContext } from "../goals/support/reportGoalError";
 
 /**
- * Create a CodeReactionInvocation from the given context.
+ * Create a PushImpactListenerInvocation from the given context.
  * Includes both the complete project and the changed files.
  * @param {RunWithLogContext} rwlc
  * @param {GitProject} project
- * @return {Promise<CodeReactionInvocation>}
+ * @return {Promise<PushImpactListenerInvocation>}
  */
-export async function createCodeReactionInvocation(rwlc: RunWithLogContext,
-                                                   project: GitProject): Promise<CodeReactionInvocation> {
+export async function createPushImpactListenerInvocation(rwlc: RunWithLogContext,
+                                                         project: GitProject): Promise<PushImpactListenerInvocation> {
     const {status, credentials, id, context, addressChannels} = rwlc;
     const commit = status.commit;
     const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(commit.repo, context));

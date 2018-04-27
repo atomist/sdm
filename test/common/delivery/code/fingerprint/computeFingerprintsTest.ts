@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CodeReactionInvocation, MavenFingerprinter } from "../../../../../src";
+import { MavenFingerprinter, PushImpactListenerInvocation } from "../../../../../src";
 import { computeFingerprints } from "../../../../../src/common/delivery/code/fingerprint/computeFingerprints";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
@@ -26,23 +26,23 @@ import { computeShaOf } from "../../../../../src/util/misc/sha";
 describe("computeFingerprints", () => {
 
     it("should execute none", async () => {
-        const cri: CodeReactionInvocation = null;
+        const cri: PushImpactListenerInvocation = null;
         const r = await computeFingerprints(cri, []);
         assert.equal(r.length, 0);
     });
 
     it("should execute one against empty project", async () => {
-        const cri: CodeReactionInvocation = {project: InMemoryProject.of()} as any as CodeReactionInvocation;
+        const cri: PushImpactListenerInvocation = {project: InMemoryProject.of()} as any as PushImpactListenerInvocation;
         const r = await computeFingerprints(cri, [new MavenFingerprinter().action]);
         assert.equal(r.length, 0);
     });
 
     it("should fingerprint with one", async () => {
-        const cri: CodeReactionInvocation = {
+        const cri: PushImpactListenerInvocation = {
             project: InMemoryProject.from(
                 new SimpleRepoId("a", "b"),
                 new InMemoryFile("thing", "1")),
-        } as any as CodeReactionInvocation;
+        } as any as PushImpactListenerInvocation;
         const r = await computeFingerprints(cri, [async i => ({
             name: "foo",
             data: i.project.id.owner,

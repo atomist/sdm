@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
 import { PushTest } from "../../listener/PushTest";
 
 /**
  * Action on a code event
  */
-export type CodeAction<R> = (i: CodeReactionInvocation) => Promise<R>;
+export type CodeAction<R> = (i: PushImpactListenerInvocation) => Promise<R>;
 
 /**
  * Used to register actions on a push that can return any type.
@@ -50,7 +50,7 @@ export interface SelectiveCodeActionOptions {
  * Compute the relevant actions for this push
  */
 export function relevantCodeActions<R>(registrations: Array<CodeActionRegistration<R>>,
-                                       cri: CodeReactionInvocation): Promise<Array<CodeActionRegistration<R>>> {
+                                       cri: PushImpactListenerInvocation): Promise<Array<CodeActionRegistration<R>>> {
     return Promise.all(
         registrations.map(async t => (!t.pushTest || await t.pushTest.valueForPush(cri)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));

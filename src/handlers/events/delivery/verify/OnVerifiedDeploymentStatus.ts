@@ -17,7 +17,7 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
-import { VerifiedDeploymentInvocation, VerifiedDeploymentListener } from "../../../../common/listener/VerifiedDeploymentListener";
+import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../common/listener/VerifiedDeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
@@ -57,7 +57,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
         }
 
         const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
-        const vdi: VerifiedDeploymentInvocation = {
+        const vdi: VerifiedDeploymentListenerInvocation = {
             id,
             context,
             status,

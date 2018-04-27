@@ -26,8 +26,8 @@ export interface StatusInfo {
 /**
  * Represents a verified deployment
  */
-export interface VerifiedDeploymentInvocation extends RepoListenerInvocation {
+export interface VerifiedDeploymentListenerInvocation extends RepoListenerInvocation {
     status: StatusInfo;
 }
 
-export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentInvocation>;
+export type VerifiedDeploymentListener = SdmListener<VerifiedDeploymentListenerInvocation>;

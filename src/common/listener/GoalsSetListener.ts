@@ -17,8 +17,8 @@
 import { Goals } from "../delivery/goals/Goals";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface GoalsSetInvocation extends RepoListenerInvocation {
+export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
     goalSet: Goals | null;
 }
 
-export type GoalsSetListener = SdmListener<GoalsSetInvocation>;
+export type GoalsSetListener = SdmListener<GoalsSetListenerInvocation>;

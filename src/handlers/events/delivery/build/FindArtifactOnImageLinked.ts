@@ -19,7 +19,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { ArtifactInvocation, ArtifactListener } from "../../../../common/listener/ArtifactListener";
+import { ArtifactListener, ArtifactListenerInvocation } from "../../../../common/listener/ArtifactListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
@@ -62,7 +62,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
             logger.info("FindArtifactOnImageLinked: Scanning artifact for %j", id);
             const deployableArtifact = await params.artifactStore.checkout(image.imageName, id, credentials);
             const addressChannels = addressChannelsFor(commit.repo, context);
-            const ai: ArtifactInvocation = {
+            const ai: ArtifactListenerInvocation = {
                 id,
                 context,
                 addressChannels,

@@ -17,7 +17,10 @@
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface ReviewInvocation extends RepoListenerInvocation {
+/**
+ * Invocation on a completed review.
+ */
+export interface ReviewListenerInvocation extends RepoListenerInvocation {
 
     /**
      * Consolidated review
@@ -41,4 +44,4 @@ export type ReviewResponse = void | ActionReviewResponse;
  * Listeners will be invoked even in the case of a clean review,
  * without errors or comments.
  */
-export type ReviewListener = SdmListener<ReviewInvocation, ReviewResponse>;
+export type ReviewListener = SdmListener<ReviewListenerInvocation, ReviewResponse>;

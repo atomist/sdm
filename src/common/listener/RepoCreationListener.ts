@@ -17,7 +17,7 @@
 import * as schema from "../../typings/types";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export interface RepoCreationInvocation extends RepoListenerInvocation {
+export interface RepoCreationListenerInvocation extends RepoListenerInvocation {
 
     repo: schema.OnRepoCreation.Repo;
 }
@@ -27,4 +27,4 @@ export interface RepoCreationInvocation extends RepoListenerInvocation {
  * Note that it may not have code in it, so you may want to use
  * a PushListener! See SoftwareDeliveryMachine.addNewRepoWithCodeActions
  */
-export type RepoCreationListener = SdmListener<RepoCreationInvocation>;
+export type RepoCreationListener = SdmListener<RepoCreationListenerInvocation>;

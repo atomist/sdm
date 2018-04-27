@@ -15,11 +15,11 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
-import { CodeReactionInvocation } from "../../listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { CodeActionRegistration, relevantCodeActions } from "./CodeActionRegistration";
-import { createCodeReactionInvocation } from "./createCodeReactionInvocation";
+import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
 export function executeCodeReactions(projectLoader: ProjectLoader,
                                      registrations: CodeActionRegistration[]): ExecuteGoalWithLog {
@@ -30,7 +30,7 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
 
         const {credentials, id, context} = rwlc;
         await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-            const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
+            const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
             const relevantCodeReactions: CodeActionRegistration[] = await relevantCodeActions<CodeActionRegistration>(registrations, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j",
                 relevantCodeReactions.length, registrations.length, cri.id);

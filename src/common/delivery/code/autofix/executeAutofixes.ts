@@ -21,12 +21,12 @@ import { combineEditResults } from "@atomist/automation-client/operations/edit/p
 import * as _ from "lodash";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
-import { CodeReactionInvocation } from "../../../listener/CodeReactionListener";
+import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/goalExecution";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
-import { createCodeReactionInvocation } from "../createCodeReactionInvocation";
+import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { AutofixRegistration } from "./AutofixRegistration";
 
 /**
@@ -55,7 +55,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                     readOnly: false,
                 },
                 async project => {
-                    const cri: CodeReactionInvocation = await createCodeReactionInvocation(rwlc, project);
+                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
                     const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
                     logger.info("Will apply %d eligible autofixes of %d to %j",
                         relevantAutofixes.length, registrations.length, cri.id);
@@ -85,7 +85,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
     };
 }
 
-async function runOne(cri: CodeReactionInvocation, autofix: AutofixRegistration): Promise<EditResult> {
+async function runOne(cri: PushImpactListenerInvocation, autofix: AutofixRegistration): Promise<EditResult> {
     const project = cri.project;
     logger.info("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name);
     try {
