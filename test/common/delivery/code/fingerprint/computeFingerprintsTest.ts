@@ -28,13 +28,13 @@ describe("computeFingerprints", () => {
     it("should execute none", async () => {
         const cri: CodeReactionInvocation = null;
         const r = await computeFingerprints(cri, []);
-        assert(r.length === 0);
+        assert.equal(r.length, 0);
     });
 
     it("should execute one against empty project", async () => {
         const cri: CodeReactionInvocation = {project: InMemoryProject.of()} as any as CodeReactionInvocation;
         const r = await computeFingerprints(cri, [new MavenFingerprinter().action]);
-        assert(r.length === 0);
+        assert.equal(r.length, 0);
     });
 
     it("should fingerprint with one", async () => {
@@ -50,7 +50,7 @@ describe("computeFingerprints", () => {
             abbreviation: "xkc",
             version: "1.0",
         })]);
-        assert(r.length === 1);
+        assert.equal(r.length, 1);
         assert.equal(r[0].data, "a");
     });
 

@@ -18,7 +18,6 @@ import { FileStream, Project } from "@atomist/automation-client/project/Project"
 
 import { File } from "@atomist/automation-client/project/File";
 import { AbstractProject } from "@atomist/automation-client/project/support/AbstractProject";
-import * as minimatch from "minimatch";
 import * as stream from "stream";
 
 /**

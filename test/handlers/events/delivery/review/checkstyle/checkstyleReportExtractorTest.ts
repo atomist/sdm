@@ -23,10 +23,10 @@ describe("checkstyleReportExtractor", () => {
     it("should parse valid output", async () => {
         const report = await extract(xml2valid1);
         assert(!!report);
-        assert(report.files.length === 2);
+        assert.equal(report.files.length, 2);
         const file = report.files[0];
-        assert(file.name === "/Users/rodjohnson/tools/checkstyle-8.8/Test.java");
-        assert(file.errors.length === 2);
+        assert.equal(file.name, "/Users/rodjohnson/tools/checkstyle-8.8/Test.java");
+        assert.equal(file.errors.length, 2);
         file.errors.forEach(f => assert(!!f.message, "Message must be set"));
         file.errors.forEach(f => assert(!!f.severity, "Severity must be set"));
     });

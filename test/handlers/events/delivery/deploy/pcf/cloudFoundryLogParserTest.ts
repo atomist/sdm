@@ -21,7 +21,7 @@ describe("CloudFoundryProgressLog", () => {
 
     it("parses real log", () => {
         const endpoint = parseCloudFoundryLogForEndpoint(l1);
-        assert(endpoint === "http://losgatos1-cataphractic-brink.cfapps.io");
+        assert.equal(endpoint, "http://losgatos1-cataphractic-brink.cfapps.io");
     });
 
 });

@@ -48,7 +48,7 @@ const Fail1 = `to /tmp/tmp-5086mapRbHkXFZF6
 
       AssertionError [ERR_ASSERTION]:   # addHeaderFixTest.ts:55
   
-  assert(r.code === 0)
+  assert.equal(r.code, 0)
          | |    |     
          | 1    false 
          Object{code:1,message:"Edited"}

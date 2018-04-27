@@ -65,7 +65,7 @@ describe("mavenSourceDeployer", () => {
                 managedDeploymentKey: id,
             },
             new DebugProgressLog("test"), credentials, "T123");
-        assert(deployed.length === 1);
+        assert.equal(deployed.length, 1);
         await (deployed[0] as any).childProcess.kill();
     }).timeout(400000);
 

@@ -30,11 +30,11 @@ describe("checkstyleReportToReview", () => {
             report,
             "/Users/rodjohnson/tools/checkstyle-8.8/");
         assert(!!review);
-        assert(review.comments.length === 4);
-        assert(review.comments[0].sourceLocation.path === "Test.java");
-        assert(review.comments[0].severity === "error");
-        assert(review.comments[0].sourceLocation.lineFrom1 === 0);
-        assert(review.comments[2].sourceLocation.path === "src/main/java/thing/Test2.java");
+        assert.equal(review.comments.length, 4);
+        assert.equal(review.comments[0].sourceLocation.path, "Test.java");
+        assert.equal(review.comments[0].severity, "error");
+        assert.equal(review.comments[0].sourceLocation.lineFrom1, 0);
+        assert.equal(review.comments[2].sourceLocation.path, "src/main/java/thing/Test2.java");
     });
 
 });

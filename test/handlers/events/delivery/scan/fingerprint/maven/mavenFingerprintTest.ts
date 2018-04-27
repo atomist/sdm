@@ -29,7 +29,7 @@ describe("MavenFingerprinter", () => {
         const fp = await new MavenFingerprinter().action({ project: Seed} as CodeReactionInvocation);
         const f1 = JSON.parse(fp[0].data);
         assert(f1.length > 0);
-        f1.forEach(f => assert(f.groupId === "org.springframework.boot"));
+        f1.forEach(f => assert.equal(f.groupId, "org.springframework.boot"));
     }).timeout(40000);
 
 });

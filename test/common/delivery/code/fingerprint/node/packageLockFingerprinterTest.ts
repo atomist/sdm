@@ -29,7 +29,7 @@ describe("package-lock.json", () => {
         const project = InMemoryProject.of();
         const cri = {project} as any as CodeReactionInvocation;
         const fp = await fingerprinter.action(cri);
-        assert((fp as any[]).length === 0);
+        assert.equal((fp as any[]).length, 0);
     });
 
     it("should produce fingerprint when package-lock.json found", async () => {

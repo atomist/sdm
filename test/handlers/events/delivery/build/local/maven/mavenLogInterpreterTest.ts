@@ -56,7 +56,7 @@ describe("MavenLogInterpreter", () => {
         const r = MavenLogInterpreter(Success1);
         assert(!!r);
         assert.equal(r.relevantPart, "");
-        assert(r.data.timeMillis === 1640);
+        assert.equal(r.data.timeMillis, 1640);
     });
 
 });

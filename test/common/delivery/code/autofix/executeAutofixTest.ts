@@ -41,7 +41,7 @@ describe("executeAutofixes", () => {
         const id = new GitHubRepoRef("a", "b");
         const pl = new SingleProjectLoader({ id } as any);
         const r = await executeAutofixes(pl, [])(fakeRunWithLogContext(id));
-        assert(r.code === 0);
+        assert.equal(r.code, 0);
     });
 
     it("should execute header adder and find no match", async () => {
@@ -51,8 +51,8 @@ describe("executeAutofixes", () => {
         const p = InMemoryProject.from(id, f);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
-        assert(r.code === 0);
-        assert(p.findFileSync(f.path).getContentSync() === initialContent);
+        assert.equal(r.code, 0);
+        assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
 
     it("should execute header adder and find a match and add a header", async () => {
@@ -64,7 +64,7 @@ describe("executeAutofixes", () => {
         (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
-        assert(r.code === 0);
+        assert.equal(r.code, 0);
         assert.equal(p.findFileSync("thing").getContentSync(), "1");
     });
 

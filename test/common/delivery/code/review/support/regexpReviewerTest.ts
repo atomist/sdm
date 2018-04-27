@@ -33,7 +33,7 @@ describe("regexpReviewer", () => {
             });
         const project = InMemoryProject.of(new InMemoryFile("a", "b"));
         const rr = await rer.action({project} as any as CodeReactionInvocation);
-        assert(rr.comments.length === 0);
+        assert.equal(rr.comments.length, 0);
     });
 
     it("should find something", async () => {

@@ -70,12 +70,12 @@ describe("implementing goals in the SDM", () => {
 
         assert(determinedGoals.goals.includes(AutofixGoal));
 
-        assert(goalsToSave.length === 1);
+        assert.equal(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
 
         const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
 
-        assert(myImpl.implementationName === "Autofix");
+        assert.equal(myImpl.implementationName, "Autofix");
     });
 
     const customGoal = new Goal({
@@ -112,7 +112,7 @@ describe("implementing goals in the SDM", () => {
 
         assert(determinedGoals.goals.includes(customGoal));
 
-        assert(goalsToSave.length === 1);
+        assert.equal(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
 
         const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);

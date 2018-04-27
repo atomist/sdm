@@ -52,10 +52,10 @@ describe("GitHubReleaseArtifactStore", () => {
                 id,
                 {token: process.env.GITHUB_TOKEN})
                 .then(da => {
-                    assert(da.id.owner === id.owner);
-                    assert(da.id.repo === id.repo);
-                    assert(da.name === "fintan", "name should be 'fintan', not " + da.name);
-                    assert(da.version === "0.1.0-SNAPSHOT", "version should be '0.1.0-SNAPSHOT', not " + da.version);
+                    assert.equal(da.id.owner, id.owner);
+                    assert.equal(da.id.repo, id.repo);
+                    assert.equal(da.name, "fintan", "name should be 'fintan', not " + da.name);
+                    assert.equal(da.version, "0.1.0-SNAPSHOT", "version should be '0.1.0-SNAPSHOT', not " + da.version);
                 });
         }).timeout(60000);
     });

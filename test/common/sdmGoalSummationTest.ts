@@ -26,10 +26,10 @@ describe("Putting SdmGoal events together", () => {
        const result = sumSdmGoalEvents(queryResult.SdmGoal as any as SdmGoal[],
            [successfulSdmGoal]);
 
-       assert(result.length === queryResult.SdmGoal.length);
+       assert.equal(result.length, queryResult.SdmGoal.length);
        const statusOfInterest = result.filter(sg => goalKeyEquals(sg, successfulSdmGoal));
-       assert(statusOfInterest.length === 1);
-       assert(statusOfInterest[0].state === "success");
+       assert.equal(statusOfInterest.length, 1);
+       assert.equal(statusOfInterest[0].state, "success");
    });
 });
 
