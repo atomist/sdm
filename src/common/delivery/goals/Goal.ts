@@ -35,6 +35,10 @@ export interface GoalDefinition {
     failedDescription?: string;
     waitingForApprovalDescription?: string;
 
+    // when set to true, this goal will execute in its own container/client
+    isolated?: boolean;
+
+    // when set to true, this goal requires approval before it is marked success
     approvalRequired?: boolean;
 }
 
@@ -148,16 +152,16 @@ export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {
 function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {
     const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
     if (!detectedStatus) {
-        return {wait: "Did not find a status for " + pg.context};
+        return { wait: "Did not find a status for " + pg.context };
     }
     if (detectedStatus.state === "pending") {
-        return {wait: "Precondition '" + pg.name + "' not yet successful"};
+        return { wait: "Precondition '" + pg.name + "' not yet successful" };
     }
     if (detectedStatus.state !== "success") {
-        return {error: "Precondition '" + pg.name + `' in state [${detectedStatus.state}]`};
+        return { error: "Precondition '" + pg.name + `' in state [${detectedStatus.state}]` };
     }
     if (requiresApproval(detectedStatus)) {
-        return {wait: "Precondition '" + pg.name + "' requires approval"};
+        return { wait: "Precondition '" + pg.name + "' requires approval" };
     }
     return {};
 }

@@ -16,7 +16,13 @@
 
 // tslint:disable:max-file-line-count
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    Configuration,
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
+import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
     ArtifactGoal,
@@ -37,6 +43,8 @@ import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetSta
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
+import { KubernetesIsolatedGoalLauncher } from "../handlers/events/delivery/goals/k8s/launchGoalK8";
+import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/launchGoal";
 import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -132,7 +140,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     /*
      * Store all the implementations we know
      */
-    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(); // public for testing
+    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(
+        // For now we only support kube or in process
+        process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes" ? KubernetesIsolatedGoalLauncher : undefined); // public for testing
 
     private readonly goalRetryCommandMap: { [key: string]: Maker<HandleCommand<any>> } = {};
 
@@ -454,4 +464,31 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
 function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
+}
+
+export function configureForSdm(machine: SoftwareDeliveryMachine) {
+    return async (config: Configuration) => {
+        const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
+        if (forked) {
+            config.listeners.push(
+                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader));
+            config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
+            // force ephemeral policy and no handlers or ingesters
+            config.policy = "ephemeral";
+            config.commands = [];
+            config.events = [];
+            config.ingesters = [];
+        } else {
+            if (!config.commands) {
+                config.commands = [];
+            }
+            config.commands.push(...machine.commandHandlers);
+
+            if (!config.events) {
+                config.events = [];
+            }
+            config.events.push(...machine.eventHandlers);
+        }
+        return config;
+    };
 }

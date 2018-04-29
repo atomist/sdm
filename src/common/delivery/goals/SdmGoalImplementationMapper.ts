@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { IsolatedGoalLauncher } from "../../../handlers/events/delivery/goals/launchGoal";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
+import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
-import {
-    Goal,
-} from "./Goal";
+import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
@@ -47,9 +47,14 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName && true;
 }
 
+/**
+ * Callback to allow changes to the goal before it gets fullfilled.
+ *
+ * This is useful to add goal specific information to the data field.
+ */
 export interface GoalFullfillmentCallback {
     goalTest: (goal: SdmGoal) => boolean;
-    goalCallback: (goal: SdmGoal) => Promise<SdmGoal>;
+    goalCallback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
 }
 
 export class SdmGoalImplementationMapper {
@@ -57,6 +62,8 @@ export class SdmGoalImplementationMapper {
     private readonly implementations: GoalImplementation[] = [];
     private readonly sideEffects: GoalSideEffect[] = [];
     private readonly callbacks: GoalFullfillmentCallback[] = [];
+
+    constructor(private readonly goalLauncher: IsolatedGoalLauncher) {}
 
     public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>
@@ -102,7 +109,11 @@ export class SdmGoalImplementationMapper {
         return undefined;
     }
 
-    public findFullfillmentCallbackForGoal(goal: SdmGoal): GoalFullfillmentCallback[] {
-        return this.callbacks.filter(c => c.goalTest(goal));
+    public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
+        return this.callbacks.filter(c => c.goalTest(g));
+    }
+
+    public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
+        return this.goalLauncher;
     }
 }

@@ -88,6 +88,7 @@ export const BuildGoal = new GoalWithPrecondition({
     workingDescription: "Building...",
     completedDescription: "Build successful",
     failedDescription: "Build failed",
+    isolated: true,
 }, AutofixGoal);
 
 export const DockerBuildGoal = new GoalWithPrecondition({
@@ -98,6 +99,7 @@ export const DockerBuildGoal = new GoalWithPrecondition({
     workingDescription: "Running Docker build...",
     completedDescription: "Docker build successful",
     failedDescription: "Failed to build Docker image",
+    isolated: true,
 }, BuildGoal);
 
 export const TagGoal = new GoalWithPrecondition({

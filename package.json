@@ -18,7 +18,7 @@
     "url": "https://github.com/atomist/sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "https://r.atomist.com/HJ4JCevT3M",
+    "@atomist/automation-client": "^0.14.0",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/spring-automation": "https://r.atomist.com/Syrsy8R_9f",
     "archiver": "^2.1.1",
@@ -36,6 +36,7 @@
     "request": "^2.85.0",
     "sloc": "^0.2.0",
     "sprintf-js": "^1.1.1",
+    "tempfile": "^2.0.0",
     "tmp-promise": "^1.0.4",
     "xml2js": "^0.4.19"
   },
