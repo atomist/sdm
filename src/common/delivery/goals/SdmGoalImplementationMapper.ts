@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    IsolatedGoalLauncher,
-    KubernetesIsolatedGoalLauncher,
-} from "../../../handlers/events/delivery/goals/forkGoal";
+import { IsolatedGoalLauncher } from "../../../handlers/events/delivery/goals/launchGoal";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
 import { LogInterpreter } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
-import {
-    Goal,
-} from "./Goal";
+import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
@@ -67,6 +62,8 @@ export class SdmGoalImplementationMapper {
     private readonly implementations: GoalImplementation[] = [];
     private readonly sideEffects: GoalSideEffect[] = [];
     private readonly callbacks: GoalFullfillmentCallback[] = [];
+
+    constructor(private readonly goalLauncher: IsolatedGoalLauncher) {}
 
     public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>
@@ -117,10 +114,6 @@ export class SdmGoalImplementationMapper {
     }
 
     public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
-        if (process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes") {
-            return KubernetesIsolatedGoalLauncher;
-        } else {
-            return undefined;
-        }
+        return this.goalLauncher;
     }
 }

@@ -43,7 +43,8 @@ import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetSta
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
-import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/forkGoal";
+import { KubernetesIsolatedGoalLauncher } from "../handlers/events/delivery/goals/k8s/launchGoalK8";
+import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/launchGoal";
 import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
@@ -139,7 +140,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     /*
      * Store all the implementations we know
      */
-    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(); // public for testing
+    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(
+        // For now we only support kube or in process
+        process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes" ? KubernetesIsolatedGoalLauncher : undefined); // public for testing
 
     private readonly goalRetryCommandMap: { [key: string]: Maker<HandleCommand<any>> } = {};
 
