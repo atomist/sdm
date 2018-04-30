@@ -37,7 +37,7 @@ export enum ActionReviewResponse {
     requireApproval = "requireApproval",
 }
 
-export type ReviewResponse = void | ActionReviewResponse;
+export type ReviewResponse = undefined | ActionReviewResponse;
 
 /**
  * Listener invoked when a review has been completed.

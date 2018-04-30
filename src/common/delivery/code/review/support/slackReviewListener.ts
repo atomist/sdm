@@ -21,20 +21,22 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { ActionReviewResponse, ReviewListener } from "../../../../listener/ReviewListener";
+import { ReviewResponse } from "../../../../..";
+import { ReviewListener } from "../../../../listener/ReviewListener";
 import { AddressChannels } from "../../../../slack/addressChannels";
 
 /**
  * Route reviews to Slack in linked channels
- * @param {ReviewListenerInvocation} ri
  * @constructor
  */
-export const SlackReviewListener: ReviewListener = async ri => {
-    if (ri.review.comments.length > 0) {
-        await sendReviewToSlack("Review comments", ri.review, ri.context, ri.addressChannels);
-        return ActionReviewResponse.requireApproval;
-    }
-};
+export function slackReviewListener(rr?: ReviewResponse): ReviewListener {
+    return async ri => {
+        if (ri.review.comments.length > 0) {
+            await sendReviewToSlack("Review comments", ri.review, ri.context, ri.addressChannels);
+            return rr;
+        }
+    };
+}
 
 async function sendReviewToSlack(title: string,
                                  pr: ProjectReview,
