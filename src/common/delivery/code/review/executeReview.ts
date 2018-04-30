@@ -61,7 +61,7 @@ export function executeReview(projectLoader: ProjectLoader,
                         .map(e => e.error);
 
                     const review = consolidate(reviews);
-                    logger.info("Consolidated review of %j with has %s comments", id, review.comments.length);
+                    logger.info("Consolidated review of %j has %s comments", id, review.comments.length);
 
                     const rli = {
                         ...cri,
@@ -89,7 +89,6 @@ export function executeReview(projectLoader: ProjectLoader,
 }
 
 function consolidate(reviews: ProjectReview[]): ProjectReview {
-    // TODO check they are all the same id and that there's more than one
     return {
         repoId: reviews[0].repoId,
         comments: _.flatten(reviews.map(review => review.comments)),

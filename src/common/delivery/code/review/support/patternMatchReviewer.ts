@@ -20,15 +20,31 @@ import { doWithFiles } from "@atomist/automation-client/project/util/projectUtil
 import { PushTest } from "../../../../listener/PushTest";
 import { ReviewerRegistration } from "../ReviewerRegistration";
 
+import * as _ from "lodash";
+
+/**
+ * Antipattern we'll look for. Can be defined as a regex or a string.
+ */
 export interface AntiPattern {
-    antiPattern: RegExp;
-    shouldBe: string;
+    name: string;
+    antiPattern: RegExp | string;
+    comment: string;
 }
 
 export interface RegexpReviewerOptions {
+
+    /**
+     * PushTest to narrow review applicability
+     */
     pushTest?: PushTest;
+
+    /**
+     * Glob pattern for files to check
+     */
     globPattern: string;
+
     category?: string;
+
     severity?: Severity;
 }
 
@@ -39,29 +55,32 @@ export interface RegexpReviewerOptions {
  * @param {AntiPattern} antiPatterns
  * @return {ReviewerRegistration}
  */
-export function regexpReviewer(name: string,
-                               opts: RegexpReviewerOptions,
-                               ...antiPatterns: AntiPattern[]): ReviewerRegistration {
+export function patternMatchReviewer(name: string,
+                                     opts: RegexpReviewerOptions,
+                                     ...antiPatterns: AntiPattern[]): ReviewerRegistration {
     return {
         name,
         pushTest: opts.pushTest,
         action: async cri => {
-            logger.debug("Running TypeScript code review for '%s' on %s against %j", name, opts.globPattern, antiPatterns);
+            logger.debug("Running regexp review '%s' on %s against %j", name, opts.globPattern, antiPatterns);
             const project = cri.project;
             const result: ProjectReview = {repoId: project.id, comments: []};
             await doWithFiles(project, opts.globPattern, async f => {
                 const content = await f.getContent();
                 antiPatterns.forEach(problem => {
-                    if (problem.antiPattern.test(content)) {
-                        logger.info("%s: Antipattern found in %s", name, f.path);
+                    const rex = typeof problem.antiPattern === "string" ?
+                        new RegExp(_.escapeRegExp(problem.antiPattern)) :
+                        problem.antiPattern;
+                    if (rex.test(content)) {
+                        logger.info("%s: Antipattern %s found in %s", name, problem.antiPattern, f.path);
                         result.comments.push({
                             severity: opts.severity || "error",
-                            detail: "This: " + problem.antiPattern + " should be: " + problem.shouldBe,
+                            detail: problem.comment,
                             category: opts.category || name,
                             sourceLocation: {
                                 path: f.path,
                                 offset: undefined,
-                                lineFrom1: findLineNumber(content, problem.antiPattern),
+                                lineFrom1: findLineNumber(content, rex),
                             },
                         });
                     }
