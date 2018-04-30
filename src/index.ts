@@ -133,7 +133,7 @@ export * from "./common/listener/support/pushtest/jvm/jvmPushTests";
 export * from "./common/listener/support/pushtest/node/nodePushTests";
 export * from "./common/listener/support/pushtest/node/tsPushTests";
 export * from "./common/listener/support/pushtest/pcf/cloudFoundryManifestPushTest";
-export * from "./common/log/DebugProgressLog";
+export * from "./common/log/LoggingProgressLog";
 export * from "./common/log/EphemeralProgressLog";
 export * from "./common/log/RolarProgressLog";
 export * from "./common/log/StringCapturingProgressLog";

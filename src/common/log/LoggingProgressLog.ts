@@ -18,23 +18,37 @@ import { logger } from "@atomist/automation-client";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
- * Progress log to the console
+ * Progress log to logger
  */
-export class DebugProgressLog implements ProgressLog {
+export class LoggingProgressLog implements ProgressLog {
 
     public log: string = "";
 
-    constructor(public name: string) {}
+    constructor(public name: string, private readonly level: "debug" | "info" = "debug") {
+    }
 
     public write(what) {
         this.log += what;
-        logger.debug(what);
+        switch (this.level) {
+            case "info" :
+                logger.info(what);
+                break;
+            default:
+                logger.debug(what);
+                break;
+        }
     }
 
-    public async isAvailable() { return true; }
+    public async isAvailable() {
+        return true;
+    }
 
-    public flush() { return Promise.resolve(); }
+    public flush() {
+        return Promise.resolve();
+    }
 
-    public close() { return Promise.resolve(); }
+    public close() {
+        return Promise.resolve();
+    }
 
 }

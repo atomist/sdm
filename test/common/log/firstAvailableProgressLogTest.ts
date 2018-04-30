@@ -15,13 +15,13 @@
  */
 
 import * as assert from "power-assert";
-import { DebugProgressLog } from "../../../src";
+import { LoggingProgressLog } from "../../../src";
 import { firstAvailableProgressLog } from "../../../src/common/log/firstAvailableProgressLog";
 
-const NeverAvailableProgressLog = new DebugProgressLog("neverAvailable");
+const NeverAvailableProgressLog = new LoggingProgressLog("neverAvailable");
 NeverAvailableProgressLog.isAvailable = async () => false;
 
-const AvailableProgressLog = new DebugProgressLog("available");
+const AvailableProgressLog = new LoggingProgressLog("available");
 
 describe("firstAvailable", () => {
 
@@ -45,12 +45,12 @@ describe("firstAvailable", () => {
     });
 
     it("should succeed with one unavailable and two available, picking first available", async () => {
-        const faLog = await firstAvailableProgressLog(NeverAvailableProgressLog, AvailableProgressLog, new DebugProgressLog("dontUseMe"));
+        const faLog = await firstAvailableProgressLog(NeverAvailableProgressLog, AvailableProgressLog, new LoggingProgressLog("dontUseMe"));
         assert.equal(faLog, AvailableProgressLog);
     });
 
     it("should not ask availability after finding an available logger", async () => {
-        const dontAskMe = new DebugProgressLog("dontAsk");
+        const dontAskMe = new LoggingProgressLog("dontAsk");
         dontAskMe.isAvailable = async () => {
             throw new Error("I said DON'T ASK");
         };

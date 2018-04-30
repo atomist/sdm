@@ -23,7 +23,7 @@ import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goa
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { DebugProgressLog } from "../../../../common/log/DebugProgressLog";
+import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -85,7 +85,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 
         const log = await this.logFactory(sdmGoal.name);
-        const progressLog = new WriteToAllProgressLog(sdmGoal.name, new DebugProgressLog(sdmGoal.name), log);
+        const progressLog = new WriteToAllProgressLog(sdmGoal.name, new LoggingProgressLog(sdmGoal.name), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
         const credentials = {token: params.githubToken};
