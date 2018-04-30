@@ -74,7 +74,7 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  * @return {RemoteRepoRef}
  */
 export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string } = {}): RemoteRepoRef {
-    const providerType = _.get(repo, "repo.org.provider.providerType") as ProviderType;
+    const providerType = _.get(repo, "repo.org.provider.providerType");
     const apiUrl = _.get(repo, "repo.org.provider.apiUrl") as string;
 
     switch (providerType) {
