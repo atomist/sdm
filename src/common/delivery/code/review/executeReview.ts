@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-/* tslint:disable:no-unused-variable */
-
 import * as _ from "lodash";
 
 import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { Project } from "@atomist/automation-client/project/Project";
 import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
 import { ActionReviewResponse, ReviewListener } from "../../../listener/ReviewListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
@@ -64,6 +61,8 @@ export function executeReview(projectLoader: ProjectLoader,
                         .map(e => e.error);
 
                     const review = consolidate(reviews);
+                    logger.info("Consolidated review of %j with has %s comments", id, review.comments.length);
+
                     const rli = {
                         ...cri,
                         review,

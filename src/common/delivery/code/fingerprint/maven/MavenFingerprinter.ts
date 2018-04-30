@@ -33,8 +33,7 @@ export class MavenFingerprinter implements FingerprinterRegistration {
     public async action(cri: PushImpactListenerInvocation): Promise<Fingerprint[]> {
         try {
             await cri.project.findFile("pom.xml");
-            const epom = await
-            extractEffectivePom(cri.project);
+            const epom = await extractEffectivePom(cri.project);
             return Promise.all([
                 dependenciesFingerprintsFromParsedPom,
                 // TODO add other Maven POM fingerprints

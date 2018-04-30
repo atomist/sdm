@@ -127,9 +127,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         goalSet: determinedGoals,
         addressChannels: addressChannelsFor(push.repo, context),
     };
-    await
-        Promise.all(goalsListeners.map(l => l(gsi)));
-
+    await Promise.all(goalsListeners.map(l => l(gsi)));
     return determinedGoals;
 }
 
