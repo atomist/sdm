@@ -42,7 +42,24 @@ const HatesTheWorld: ReviewerRegistration = {
                     offset: -1,
                 })),
     }),
-    options: { considerOnlyChangedFiles: false},
+    options: {considerOnlyChangedFiles: false},
+};
+
+const JustTheOne: ReviewerRegistration = {
+    name: "justOne",
+    pushTest: TruePushTest,
+    action: async cri => ({
+        repoId: cri.project.id,
+        comments: [
+            new DefaultReviewComment("info", "justOne",
+                `One thing`,
+                {
+                    path: "whatever",
+                    lineFrom1: 1,
+                    offset: -1,
+                })],
+    }),
+    options: {considerOnlyChangedFiles: false},
 };
 
 function loggingReviewListener(saveTo: ReviewListenerInvocation[]): ReviewListener {
@@ -82,6 +99,20 @@ describe("executeReview", () => {
         assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
         assert.equal(r.code, 0);
         assert(r.requireApproval);
+    });
+
+    it("consolidate reviewers", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
+        const reviewEvents: ReviewListenerInvocation[] = [];
+        const l = loggingReviewListener(reviewEvents);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne], [l]);
+        const rwlc = fakeRunWithLogContext(id);
+        const r = await ge(rwlc);
+        assert.equal(reviewEvents.length, 1);
+        assert.equal(reviewEvents[0].review.comments.length, 2);
+        assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
+        assert.equal(r.code, 0);
     });
 
 });
