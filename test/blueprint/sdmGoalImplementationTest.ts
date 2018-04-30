@@ -21,7 +21,8 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
-import { SoftwareDeliveryMachine, SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachine } from "../../src/blueprint/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
 import { AutofixGoal } from "../../src/common/delivery/goals/common/commonGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
 import { Goals } from "../../src/common/delivery/goals/Goals";

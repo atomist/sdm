@@ -1,5 +1,6 @@
 export * from "./blueprint/FunctionalUnit";
 export * from "./blueprint/SoftwareDeliveryMachine";
+export * from "./blueprint/SoftwareDeliveryMachineOptions";
 export * from "./blueprint/dsl/goalDsl";
 export * from "./common/artifact/github/GitHubReleaseArtifactStore";
 export * from "./common/artifact/local/EphemeralLocalArtifactStore";
@@ -135,6 +136,7 @@ export * from "./common/listener/support/pushtest/pcf/cloudFoundryManifestPushTe
 export * from "./common/log/DebugProgressLog";
 export * from "./common/log/EphemeralProgressLog";
 export * from "./common/log/RolarProgressLog";
+export * from "./common/log/StringCapturingProgressLog";
 export * from "./common/log/WriteToAllProgressLog";
 export * from "./common/log/firstAvailableProgressLog";
 export * from "./common/log/slackProgressLog";

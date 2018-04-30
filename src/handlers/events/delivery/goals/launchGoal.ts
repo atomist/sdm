@@ -32,6 +32,7 @@ import { AutomationEventListenerSupport } from "@atomist/automation-client/serve
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
 import {
+    LogFactory,
     OnAnyRequestedSdmGoal,
     ProgressLog,
     SdmGoalById,
@@ -50,14 +51,15 @@ export type IsolatedGoalLauncher = (goal: OnAnyRequestedSdmGoal.SdmGoal,
 export class GoalAutomationEventListener extends AutomationEventListenerSupport {
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
-                private readonly projectLoader: ProjectLoader) {
+                private readonly projectLoader: ProjectLoader,
+                private readonly logFactory: LogFactory) {
         super();
     }
 
     public eventIncoming(payload: EventIncoming) {
         if (cluster.isWorker) {
             // Register event handler locally only
-            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader);
+            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.logFactory);
             automationClientInstance().withEventHandler(maker);
         }
     }
@@ -84,7 +86,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
             });
 
             // Register event handler locally only
-            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader);
+            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.logFactory);
             automationClientInstance().withEventHandler(maker);
 
             // Create event and run event handler

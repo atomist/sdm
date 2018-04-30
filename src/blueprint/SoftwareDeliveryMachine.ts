@@ -16,12 +16,7 @@
 
 // tslint:disable:max-file-line-count
 
-import {
-    Configuration,
-    HandleCommand,
-    HandleEvent,
-    logger,
-} from "@atomist/automation-client";
+import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import {
@@ -67,7 +62,6 @@ import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
-import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 
@@ -96,19 +90,10 @@ import { OnChannelLink } from "../handlers/events/repo/OnChannelLink";
 import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { OnTag } from "../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
-import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
+import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
-
-/**
- * Infrastructure options for a SoftwareDeliveryMachine
- */
-export interface SoftwareDeliveryMachineOptions {
-
-    artifactStore: ArtifactStore;
-    projectLoader: ProjectLoader;
-}
 
 // NEXT: store the implementation with the goal
 
@@ -303,7 +288,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader))
+            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader, this.opts.logFactory))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.userJoiningChannelListeners.length > 0 ? () => new OnUserJoiningChannel(this.userJoiningChannelListeners) : undefined,
@@ -471,7 +456,7 @@ export function configureForSdm(machine: SoftwareDeliveryMachine) {
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
-                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader));
+                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader, machine.opts.logFactory));
             config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
             // force ephemeral policy and no handlers or ingesters
             config.policy = "ephemeral";

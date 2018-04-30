@@ -108,21 +108,21 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
             throw new Error("Fatal error deploying using Maven--is `mvn` on your automation node path?\n" +
                 "Attempted to execute `mvn: spring-boot:run`");
         }
+        const deployment = {
+            childProcess,
+            endpoint: `${this.opts.baseUrl}:${port}/${startupInfo.contextRoot}`,
+        };
+        managedMavenDeployments.recordDeployment({
+            id: branchId,
+            port,
+            childProcess,
+            deployment,
+        });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
         return new Promise<SpawnedDeployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", what => {
-                if (!!what && this.opts.successPattern.test(what.toString())) {
-                    const deployment = {
-                        childProcess,
-                        endpoint: `${this.opts.baseUrl}:${port}/${startupInfo.contextRoot}`,
-                    };
-                    managedMavenDeployments.recordDeployment({
-                        id: branchId,
-                        port,
-                        childProcess,
-                        deployment,
-                    });
+                if (!!what && this.opts.successPatterns.some(successPattern => successPattern.test(what.toString()))) {
                     resolve(deployment);
                 }
             });

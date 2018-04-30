@@ -18,12 +18,12 @@ import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
+import { LogFactory } from "../../../..";
 import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { DebugProgressLog } from "../../../../common/log/DebugProgressLog";
-import { createEphemeralProgressLog } from "../../../../common/log/EphemeralProgressLog";
 import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
@@ -48,7 +48,8 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
-                private readonly projectLoader: ProjectLoader) {
+                private readonly projectLoader: ProjectLoader,
+                private readonly logFactory: LogFactory) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =
@@ -83,7 +84,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 
-        const log = await createEphemeralProgressLog(sdmGoal.name);
+        const log = await this.logFactory(sdmGoal.name);
         const progressLog = new WriteToAllProgressLog(sdmGoal.name, new DebugProgressLog(sdmGoal.name), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));

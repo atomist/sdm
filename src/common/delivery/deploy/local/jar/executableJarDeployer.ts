@@ -105,14 +105,16 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));
+
+        const deployment = {
+            childProcess,
+            endpoint: `${this.opts.baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
+        };
+        managedExecutableJarDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess, deployment});
+
         return [await new Promise<SpawnedDeployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", async what => {
-                if (!!what && this.opts.successPattern.test(what.toString())) {
-                    const deployment = {
-                        childProcess,
-                        endpoint: `${this.opts.baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
-                    };
-                    managedExecutableJarDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess, deployment});
+                if (!!what && this.opts.successPatterns.some(successPattern => successPattern.test(what.toString()))) {
                     resolve(deployment);
                 }
             });

@@ -89,7 +89,7 @@ export class ManagedDeployments {
     }
 
     public recordDeployment(da: DeployedApp) {
-        logger.info("Recording app [%j] on port [%d]", da.port);
+        logger.info("Recording app [%s:%s] on port [%d]", da.id.owner, da.id.repo, da.port);
         this.deployments.push(da);
     }
 

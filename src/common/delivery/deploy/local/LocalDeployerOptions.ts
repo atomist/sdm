@@ -56,7 +56,7 @@ export interface LocalDeployerOptions {
      * Pattern to find in output to indicate that the server has come up successfully.
      * For example, matching something like "Started SpringRestSeedApplication in 3.931 seconds"
      */
-    successPattern: RegExp;
+    successPatterns: RegExp[];
 }
 
 export const DefaultLocalDeployerOptions: Partial<LocalDeployerOptions> = {

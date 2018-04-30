@@ -30,7 +30,7 @@ describe("mavenSourceDeployer", () => {
         const deployer = mavenDeployer(new SingleProjectLoader(p), {
             baseUrl: "http://127.0.0.1",
             commandLineArgumentsFor: () => [],
-            successPattern: /Started [A-Za-z0-9_$]+ in [0-9].[0-9]+ seconds/,
+            successPatterns: [/Started [A-Za-z0-9_$]+ in [0-9].[0-9]+ seconds/],
         });
         try {
             await deployer.deploy(
@@ -54,7 +54,7 @@ describe("mavenSourceDeployer", () => {
             baseUrl: "http://127.0.0.1",
             lowerPort: 10000,
             commandLineArgumentsFor: () => [`-Dserver.port=10000`],
-            successPattern: /Started [A-Za-z0-9_$]+ in [0-9].[0-9]+ seconds/,
+            successPatterns: [/Started [A-Za-z0-9_$]+ in [0-9].[0-9]+ seconds/],
         });
 
         const deployed = await deployer.deploy(
