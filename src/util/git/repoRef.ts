@@ -52,8 +52,8 @@ export function repoRefFromStatus(status: StatusForExecuteGoal.Fragment) {
 
 export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef {
     switch (provider.providerType) {
-        case ProviderType.github_com :
-        case ProviderType.ghe :
+        case ProviderType.github_com:
+        case ProviderType.ghe:
             return GitHubRepoRef.from({
                 owner: sdmGoal.repo.owner,
                 repo: sdmGoal.repo.name,
@@ -73,15 +73,15 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  * @param opts options - sha or branch
  * @return {RemoteRepoRef}
  */
-export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string} = {}): RemoteRepoRef {
-    const providerType = _.get<ProviderType>(repo, "repo.org.provider.providerType");
-    const apiUrl = _.get<string>(repo, "repo.org.provider.apiUrl");
+export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string } = {}): RemoteRepoRef {
+    const providerType = _.get(repo, "repo.org.provider.providerType") as ProviderType;
+    const apiUrl = _.get(repo, "repo.org.provider.apiUrl") as string;
 
     switch (providerType) {
-        case undefined :
-        case null :
-        case ProviderType.github_com :
-        case ProviderType.ghe :
+        case undefined:
+        case null:
+        case ProviderType.github_com:
+        case ProviderType.ghe:
             return GitHubRepoRef.from({
                 owner: repo.owner,
                 repo: repo.name,

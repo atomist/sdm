@@ -36,7 +36,7 @@ import { reportFailureInterpretationToLinkedChannels } from "../../../../util/sl
 @EventHandler("Set build goal to successful on build complete, if it's side-effecting", subscription("OnBuildComplete"))
 export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
-    constructor(private readonly buildGoals: [Goal],
+    constructor(private readonly buildGoals: Goal[],
                 private readonly logInterpretation?: LogInterpretation) {
     }
 
@@ -84,7 +84,7 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
         // The deployer might have information about the failure; report it in the channels
         if (interpretation) {
             await reportFailureInterpretationToLinkedChannels("build", interpretation,
-                {log: buildLog, url: buildUrl}, id, addressChannels);
+                { log: buildLog, url: buildUrl }, id, addressChannels);
         } else {
             await addressChannels({
                 content: buildLog,
@@ -103,11 +103,11 @@ function linkToSha(id: RemoteRepoRef) {
 
 function buildStatusToSdmGoalState(buildStatus: BuildStatus): SdmGoalState {
     switch (buildStatus) {
-        case "passed" :
+        case "passed":
             return "success";
         case "broken":
         case "failed":
-        case "canceled" :
+        case "canceled":
             return "failure";
         default:
             return "in_process"; // in_process

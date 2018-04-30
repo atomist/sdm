@@ -52,7 +52,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         approval,
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(before.provenance),
-        error: _.get<string>(params, "error.message"),
+        error: _.get(params, "error.message") as string,
         data,
     };
     logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);

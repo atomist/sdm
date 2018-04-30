@@ -18,7 +18,7 @@
     "url": "https://github.com/atomist/sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "^0.14.0",
+    "@atomist/automation-client": "^0.14.1",
     "@atomist/slack-messages": "^0.12.1",
     "@atomist/spring-automation": "https://r.atomist.com/Syrsy8R_9f",
     "archiver": "^2.1.1",
@@ -30,7 +30,7 @@
     "form-data": "^2.3.2",
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
-    "lodash": "^4.17.5",
+    "lodash": "^4.17.10",
     "npm": "^5.8.0",
     "random-word": "^2.0.0",
     "request": "^2.85.0",
@@ -41,6 +41,7 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.108",
     "@types/mocha": "^2.2.48",
     "@types/node": "^8.9.5",
     "@types/power-assert": "^1.4.29",
@@ -58,9 +59,9 @@
     "supervisor": "^0.12.0",
     "ts-node": "^3.3.0",
     "tslint": "^5.9.1",
-    "typedoc": "^0.9.0",
-    "typescript": "2.6.1",
-    "typescript-formatter": "^7.0.1"
+    "typedoc": "^0.11.1",
+    "typescript": "^2.8.3",
+    "typescript-formatter": "^7.2.0"
   },
   "directories": {
     "test": "test"

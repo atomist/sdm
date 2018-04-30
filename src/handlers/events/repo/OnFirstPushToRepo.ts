@@ -51,10 +51,10 @@ export class OnFirstPushToRepo
             return Success;
         }
 
-        const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");
+        const screenName = _.get(push, "after.committer.person.chatId.screenName") as string;
 
         const id = toRemoteRepoRef(push.repo, { sha: push.after.sha });
-        const credentials = {token: params.githubToken};
+        const credentials = { token: params.githubToken };
 
         if (!screenName) {
             logger.warn("Warning: Cannot get screen name of committer for first push on %j", id);
