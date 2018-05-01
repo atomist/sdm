@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { BuildListener, BuildListenerInvocation } from "../../../../common/listener/BuildListener";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnBuildComplete } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
+import { CredentialsFactory } from "../../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
 
 /**
  * Invoke listeners on complete build. Not a part of our delivery flow:
@@ -28,10 +30,8 @@ import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 @EventHandler("Invoke listeners on build complete", subscription("OnBuildComplete"))
 export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    constructor(private readonly listeners: BuildListener[]) {
+    constructor(private readonly listeners: BuildListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>,
@@ -40,7 +40,7 @@ export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComple
         const build = event.data.Build[0];
         const repo = build.commit.repo;
         const id = toRemoteRepoRef(repo);
-        const credentials = {token: params.githubToken};
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);
         const bli: BuildListenerInvocation = {

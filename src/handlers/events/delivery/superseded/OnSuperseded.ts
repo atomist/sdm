@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { SupersededListener, SupersededListenerInvocation } from "../../../../common/listener/SupersededListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
+import { CredentialsFactory } from "../../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
 
 /**
  * Respond to a superseded push
@@ -27,14 +29,8 @@ import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 @EventHandler("React to a superseded push", subscription("OnSupersededStatus"))
 export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    private readonly listeners: SupersededListener[];
-
-    constructor(...listeners: SupersededListener[]) {
-        this.listeners = listeners;
-    }
+    constructor(private readonly listeners: SupersededListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
 
     public async handle(event: EventFired<schema.OnSupersededStatus.Subscription>,
                         context: HandlerContext,
@@ -42,12 +38,13 @@ export class OnSupersededStatus implements HandleEvent<schema.OnSupersededStatus
         const status = event.data.Status[0];
         const commit = status.commit;
         const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
         const i: SupersededListenerInvocation = {
             id,
             context,
             addressChannels: addressChannelsFor(commit.repo, context),
             status,
-            credentials: { token: params.githubToken},
+            credentials,
         };
 
         await Promise.all(params.listeners.map(l => l(i)));

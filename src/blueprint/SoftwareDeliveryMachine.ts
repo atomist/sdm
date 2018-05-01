@@ -212,7 +212,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     get onSuperseded(): Maker<OnSupersededStatus> {
         return this.supersededListeners.length > 0 ?
-            () => new OnSupersededStatus(...this.supersededListeners) :
+            () => new OnSupersededStatus(this.supersededListeners) :
             undefined;
     }
 
@@ -227,13 +227,14 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         };
     }
 
-    private readonly artifactFinder = () => new FindArtifactOnImageLinked(ArtifactGoal,
+    private readonly artifactFinder = () => new FindArtifactOnImageLinked(
+        ArtifactGoal,
         this.opts.artifactStore,
-        ...this.artifactListeners)
+        this.artifactListeners)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
-            () => new OnDeployStatus(...this.deploymentListeners) :
+            () => new OnDeployStatus(this.deploymentListeners) :
             undefined;
     }
 
@@ -250,7 +251,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
         return this.verifiedDeploymentListeners.length > 0 ?
-            () => new OnVerifiedDeploymentStatus(...this.verifiedDeploymentListeners) :
+            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners) :
             undefined;
     }
 

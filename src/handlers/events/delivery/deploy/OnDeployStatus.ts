@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { StagingDeploymentContext } from "../../../../common/delivery/goals/common/commonGoals";
 import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
+import { CredentialsFactory } from "../../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
 
 /**
  * React to a deployment.
@@ -35,14 +37,8 @@ import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 )
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    private readonly listeners: DeploymentListener[];
-
-    constructor(...listeners: DeploymentListener[]) {
-        this.listeners = listeners;
-    }
+    constructor(private readonly listeners: DeploymentListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
                         context: HandlerContext, params: this): Promise<HandlerResult> {
@@ -55,7 +51,7 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         }
         const addressChannels = addressChannelsFor(commit.repo, context);
         const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
-        const credentials = {token: params.githubToken};
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         const dil: DeploymentListenerInvocation = {
             context,

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../common/listener/VerifiedDeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
+import { CredentialsFactory } from "../../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
 import Status = OnSuccessStatus.Status;
 
 /**
@@ -36,14 +38,8 @@ import Status = OnSuccessStatus.Status;
 )
 export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    private readonly listeners: VerifiedDeploymentListener[];
-
-    constructor(...listeners: VerifiedDeploymentListener[]) {
-        this.listeners = listeners;
-    }
+    constructor(private readonly listeners: VerifiedDeploymentListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
                         context: HandlerContext,
@@ -57,12 +53,13 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
         }
 
         const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
         const vdi: VerifiedDeploymentListenerInvocation = {
             id,
             context,
             status,
             addressChannels: addressChannelsFor(commit.repo, context),
-            credentials: {token: params.githubToken},
+            credentials,
         };
         await Promise.all(params.listeners.map(l => l(vdi)));
         return Success;

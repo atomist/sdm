@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
@@ -24,14 +24,11 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
+import { CredentialsFactory } from "../../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
-
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    private readonly listeners: ArtifactListener[];
 
     /**
      * The goal to update when an artifact is linked.
@@ -39,9 +36,8 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
      */
     constructor(public goal: Goal,
                 private readonly artifactStore: ArtifactStore,
-                ...listeners: ArtifactListener[]) {
-        this.listeners = listeners;
-    }
+                private readonly listeners: ArtifactListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
 
     public async handle(event: EventFired<OnImageLinked.Subscription>,
                         context: HandlerContext,
@@ -58,7 +54,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         }
 
         if (params.listeners.length > 0) {
-            const credentials = {token: params.githubToken};
+            const credentials = this.credentialsFactory.eventHandlerCredentials(context);
             logger.info("FindArtifactOnImageLinked: Scanning artifact for %j", id);
             const deployableArtifact = await params.artifactStore.checkout(image.imageName, id, credentials);
             const addressChannels = addressChannelsFor(commit.repo, context);
