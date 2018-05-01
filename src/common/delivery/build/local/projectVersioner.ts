@@ -31,7 +31,7 @@ import {
     StatusForExecuteGoal,
 } from "../../../../typings/types";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { ExecuteGoalResult } from "../../goals/goalExecution";
+import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,
     RunWithLogContext,

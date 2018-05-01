@@ -18,8 +18,8 @@ import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomis
 import { jwtToken } from "@atomist/automation-client/globals";
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as path from "path";
+import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";

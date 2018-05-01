@@ -23,7 +23,7 @@ import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
-import { ExecuteGoalResult } from "../../goals/goalExecution";
+import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { relevantCodeActions } from "../CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";

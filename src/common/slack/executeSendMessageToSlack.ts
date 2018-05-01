@@ -16,7 +16,7 @@
 
 import { Success } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
-import { ExecuteGoalResult } from "../delivery/goals/goalExecution";
+import { ExecuteGoalResult } from "../delivery/goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../delivery/goals/support/reportGoalError";
 
 /***

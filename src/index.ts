@@ -83,7 +83,7 @@ export * from "./common/delivery/goals/Goal";
 export * from "./common/delivery/goals/Goals";
 export * from "./common/delivery/goals/SdmGoalImplementationMapper";
 export * from "./common/delivery/goals/gitHubContext";
-export * from "./common/delivery/goals/goalExecution";
+export * from "./common/delivery/goals/ExecuteGoalResult";
 export * from "./common/delivery/goals/goalPreconditions";
 export * from "./common/delivery/goals/storeGoals";
 export * from "./common/delivery/goals/common/MessageGoal";

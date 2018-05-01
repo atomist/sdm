@@ -15,8 +15,8 @@
  */
 
 import { sprintf } from "sprintf-js";
+import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/goalExecution";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { RepoListenerInvocation, SdmListener } from "../../../../common/listener/Listener";

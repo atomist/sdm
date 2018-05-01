@@ -25,7 +25,7 @@ import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import { ExecuteGoalResult } from "../../../goals/goalExecution";
+import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment } from "../LocalDeployerOptions";
 

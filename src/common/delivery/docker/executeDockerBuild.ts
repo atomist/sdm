@@ -24,7 +24,7 @@ import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { branchFromCommit } from "../build/executeBuild";
 import { readSdmVersion } from "../build/local/projectVersioner";
-import { ExecuteGoalResult } from "../goals/goalExecution";
+import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,
     PrepareForGoalExecution,

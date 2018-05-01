@@ -25,7 +25,7 @@ import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { identification } from "../../build/local/maven/pomParser";
-import { ExecuteGoalResult } from "../../goals/goalExecution";
+import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 

@@ -21,7 +21,7 @@ import * as p from "path";
 import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
-import { ExecuteGoalResult } from "../../../goals/goalExecution";
+import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,
     PrepareForGoalExecution,

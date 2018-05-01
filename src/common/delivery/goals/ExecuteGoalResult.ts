@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-import { HandlerContext, HandlerResult } from "@atomist/automation-client";
-import { StatusForExecuteGoal } from "../../../typings/types";
-import { Goal } from "./Goal";
-
-export interface ExecuteGoalInvocation {
-    implementationName: string;
-    githubToken: string;
-    goal: Goal;
-}
+import { HandlerResult } from "@atomist/automation-client";
 
 export interface ExecuteGoalResult extends HandlerResult {
     targetUrl?: string;
     requireApproval?: boolean;
 }
-
-export type GoalExecutor = (status: StatusForExecuteGoal.Fragment,
-                            ctx: HandlerContext,
-                            params: ExecuteGoalInvocation) => Promise<ExecuteGoalResult>;
