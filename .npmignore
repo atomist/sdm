@@ -5,6 +5,8 @@ test/
 tmp/
 build/
 release/
+.atomist/
+.nyc_output/
 .travis.yml
 tsconfig.*
 tslint.json
