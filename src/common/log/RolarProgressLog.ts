@@ -23,6 +23,13 @@ import { logger } from "@atomist/automation-client";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 import os = require("os");
+import {WrapOptions} from "retry";
+
+function* timestampGenerator() {
+    while (true) {
+        yield new Date();
+    }
+}
 
 /**
  * Post log to Atomist Rolar service for it to persist
@@ -31,20 +38,26 @@ export class RolarProgressLog implements ProgressLog {
 
     private localLogs: LogData[] = [];
 
-    constructor(private readonly rolarBaseUrl: string, private readonly logPath: string[]) {
+    constructor(private readonly rolarBaseUrl: string,
+                private readonly logPath: string[],
+                private readonly bufferSizeLimit: number = 10000,
+                private readonly timestamper: Iterator<Date> = timestampGenerator(),
+                private readonly retryOptions: WrapOptions = {}) {
     }
 
     get name() {
-        return this.logPath.join("_");
+        return this.logPath.join("/");
     }
 
     public async isAvailable() {
         const url = `${this.rolarBaseUrl}/api/logs`;
         try {
-            axios.head(url);
-            logger.warn("Rolar logger is NOT available at %s", url);
+            await doWithRetry(() => axios.head(url),
+                `check if Rolar service is available`,
+                this.retryOptions);
             return true;
-        } catch {
+        } catch (e) {
+            logger.warn(`Rolar logger is NOT available at ${url}: ${e}`);
             return false;
         }
     }
@@ -55,6 +68,11 @@ export class RolarProgressLog implements ProgressLog {
             message: what,
             timestamp: this.constructUtcTimestamp(),
         } as LogData);
+        const bufferSize = this.localLogs.reduce((acc, logData) => acc + logData.message.length, 0);
+        if (bufferSize > this.bufferSizeLimit) {
+            // tslint:disable-next-line:no-floating-promises
+            this.flush();
+        }
     }
 
     public flush(): Promise<any> {
@@ -76,19 +94,22 @@ export class RolarProgressLog implements ProgressLog {
             }, {
                 headers: {"Content-Type": "application/json"},
             }),
-            `post log to Rolar`).catch(e => {
-            this.localLogs = postingLogs.concat(this.localLogs);
-            logger.error(e);
-        });
+            `post log to Rolar`,
+            this.retryOptions).catch(e => {
+                this.localLogs = postingLogs.concat(this.localLogs);
+                logger.error(e);
+            },
+        );
         return result;
     }
 
     private constructUtcTimestamp() {
-        const now: Date = new Date();
-        const date = [now.getUTCMonth() + 1, now.getUTCDate(), now.getUTCFullYear()];
+        const now: Date = this.timestamper.next().value;
+        const date = [now.getUTCMonth() + 1, now.getUTCDate(), now.getUTCFullYear()]
+            .map(t => _.padStart(t.toString(), 2, "0"));
         const time = [now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds()]
-            .map(t => _.padStart(t.toString(), 2));
-        return `${date.join("/")} ${time.join(":")}.${_.padStart(now.getUTCMilliseconds().toString(), 3)}`;
+            .map(t => _.padStart(t.toString(), 2, "0"));
+        return `${date.join("/")} ${time.join(":")}.${_.padStart(now.getUTCMilliseconds().toString(), 3, "0")}`;
     }
 }
 
