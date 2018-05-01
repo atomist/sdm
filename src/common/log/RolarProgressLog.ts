@@ -51,6 +51,10 @@ export class RolarProgressLog implements ProgressLog {
         return this.logPath.join("/");
     }
 
+    get url() {
+        return `${this.rolarBaseUrl}/logs/${this.name}`;
+    }
+
     public async isAvailable() {
         const url = `${this.rolarBaseUrl}/api/logs`;
         try {
