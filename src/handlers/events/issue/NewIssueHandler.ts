@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { NewIssueListener, NewIssueListenerInvocation } from "../../../common/listener/NewIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * A new issue has been created.
@@ -27,12 +29,10 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 @EventHandler("On issue creation", subscription("OnNewIssue"))
 export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
     private readonly newIssueListeners: NewIssueListener[];
 
-    constructor(...newIssueListeners: NewIssueListener[]) {
+    constructor(newIssueListeners: NewIssueListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
         this.newIssueListeners = newIssueListeners;
     }
 
@@ -47,13 +47,14 @@ export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscri
             logger.debug("Issue updated, not created: %s on %j", issue.number, id);
             return Success;
         }
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         const inv: NewIssueListenerInvocation = {
             id,
             addressChannels,
             context,
             issue,
-            credentials: { token: params.githubToken },
+            credentials,
         };
         await Promise.all(params.newIssueListeners
             .map(l => l(inv)));

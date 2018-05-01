@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { UpdatedIssueListener, UpdatedIssueListenerInvocation } from "../../../common/listener/UpdatedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * An issue has been updated
@@ -27,12 +29,10 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 @EventHandler("On issue update", subscription("OnNewIssue"))
 export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
     private readonly updatedIssueListeners: UpdatedIssueListener[];
 
-    constructor(...updatedIssueListeners: UpdatedIssueListener[]) {
+    constructor(updatedIssueListeners: UpdatedIssueListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
         this.updatedIssueListeners = updatedIssueListeners;
     }
 
@@ -42,6 +42,7 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
         const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
         const id = toRemoteRepoRef(issue.repo);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         if (issue.updatedAt === issue.createdAt) {
             logger.debug("Issue created, not updated: %s on %j", issue.number, id);
@@ -53,7 +54,7 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
             addressChannels,
             context,
             issue,
-            credentials: { token: params.githubToken},
+            credentials,
         };
         await Promise.all(params.updatedIssueListeners
             .map(l => l(inv)));

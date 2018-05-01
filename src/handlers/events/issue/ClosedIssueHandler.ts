@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../common/listener/ClosedIssueListener";
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * A new issue has been created.
@@ -27,12 +29,10 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 @EventHandler("On an issue being closed", subscription("OnClosedIssue"))
 export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
     private readonly closedIssueListeners: ClosedIssueListener[];
 
-    constructor(...closedIssueListeners: ClosedIssueListener[]) {
+    constructor(closedIssueListeners: ClosedIssueListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
         this.closedIssueListeners = closedIssueListeners;
     }
 
@@ -41,6 +41,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
                         params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const id = toRemoteRepoRef(issue.repo);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         const addressChannels = addressChannelsFor(issue.repo, context);
         const inv: ClosedIssueListenerInvocation = {
@@ -48,7 +49,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
             addressChannels,
             context,
             issue,
-            credentials: { token: params.githubToken},
+            credentials,
         };
         await Promise.all(params.closedIssueListeners
             .map(l => l(inv)));
