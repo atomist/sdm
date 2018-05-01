@@ -22,9 +22,9 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import { logger } from "@atomist/automation-client";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 
+import {AxiosInstance} from "axios";
 import os = require("os");
 import {WrapOptions} from "retry";
-import {AxiosInstance} from "axios";
 
 function* timestampGenerator() {
     while (true) {

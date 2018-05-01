@@ -28,7 +28,6 @@ describe("RolarProgressLog", () => {
         }
     }
 
-
     it("should be available if returning http 200", async () => {
         const axiosInstance = axios.create();
         const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
