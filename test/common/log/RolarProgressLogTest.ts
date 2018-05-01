@@ -19,7 +19,7 @@ import MockAdapter from "axios-mock-adapter";
 import * as assert from "power-assert";
 import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
 
-/*describe("RolarProgressLog", () => {
+describe("RolarProgressLog", () => {
 
     function* fakeTimestampGenerator() {
         let index = 0;
@@ -28,19 +28,22 @@ import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
         }
     }
 
-    const mockAxios = new MockAdapter(axios);
 
     it("should be available if returning http 200", async () => {
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 });
-
+        const axiosInstance = axios.create();
+        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+            axiosInstance);
+        const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onHead("http://fakehost/api/logs").replyOnce(200);
 
         assert.equal(await log.isAvailable(), true);
     });
 
     it("should not be available if returning http 404", async () => {
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 });
-
+        const axiosInstance = axios.create();
+        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+            axiosInstance);
+        const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onHead("http://fakehost/api/logs").replyOnce(404);
 
         assert.equal(await log.isAvailable(), false);
@@ -67,7 +70,10 @@ import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
     });
 
     it("should flush logs", async () => {
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 });
+        const axiosInstance = axios.create();
+        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+            axiosInstance);
+        const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test")
             .replyOnce(config => {
             const expectedRequest = [
@@ -95,7 +101,10 @@ import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
     });
 
     it("should not clear logs if flush fails", async () => {
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 });
+        const axiosInstance = axios.create();
+        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+            axiosInstance);
+        const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test")
             .replyOnce(404);
 
@@ -118,7 +127,10 @@ import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
     });
 
     it("should close logs", async () => {
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 });
+        const axiosInstance = axios.create();
+        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+            axiosInstance);
+        const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test?closed=true")
             .replyOnce(config => {
                 const expectedRequest = [
@@ -140,7 +152,10 @@ import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
     });
 
     it("should flush logs automatically", async () => {
-        const smallBufferLog = new RolarProgressLog("http://fakehost", ["test"], 50, fakeTimestampGenerator(), { retries: 0 });
+        const axiosInstance = axios.create();
+        const smallBufferLog = new RolarProgressLog("http://fakehost", ["test"], 50, fakeTimestampGenerator(),
+            { retries: 0 }, axiosInstance);
+        const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test")
             .replyOnce(config => {
                 const expectedRequest = [
@@ -167,4 +182,4 @@ import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
         assert.deepEqual((smallBufferLog as any).localLogs, []);
     });
 
-}); */
+});

@@ -24,6 +24,7 @@ import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 import os = require("os");
 import {WrapOptions} from "retry";
+import {AxiosInstance} from "axios";
 
 function* timestampGenerator() {
     while (true) {
@@ -42,7 +43,8 @@ export class RolarProgressLog implements ProgressLog {
                 private readonly logPath: string[],
                 private readonly bufferSizeLimit: number = 10000,
                 private readonly timestamper: Iterator<Date> = timestampGenerator(),
-                private readonly retryOptions: WrapOptions = {}) {
+                private readonly retryOptions: WrapOptions = {},
+                private readonly axiosInstance: AxiosInstance = axios) {
     }
 
     get name() {
@@ -52,7 +54,7 @@ export class RolarProgressLog implements ProgressLog {
     public async isAvailable() {
         const url = `${this.rolarBaseUrl}/api/logs`;
         try {
-            await doWithRetry(() => axios.head(url),
+            await doWithRetry(() => this.axiosInstance.head(url),
                 `check if Rolar service is available`,
                 this.retryOptions);
             return true;
@@ -88,7 +90,7 @@ export class RolarProgressLog implements ProgressLog {
         const url = `${this.rolarBaseUrl}/api/logs/${this.logPath.join("/")}${closedRequestParam}`;
         const postingLogs = this.localLogs;
         this.localLogs = [];
-        const result = await doWithRetry(() => axios.post(url, {
+        const result = await doWithRetry(() => this.axiosInstance.post(url, {
                 host: os.hostname(),
                 content: postingLogs,
             }, {
