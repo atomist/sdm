@@ -28,6 +28,12 @@ export class LoggingProgressLog implements ProgressLog {
     }
 
     public write(what) {
+        if (what.endsWith("\n\r") || what.endsWith("\r\n")) {
+            what = what.slice(0, -2);
+        }
+        if (what.endsWith("\n")) {
+            what = what.slice(0, -1);
+        }
         this.log += what;
         switch (this.level) {
             case "info" :
