@@ -17,7 +17,7 @@
 import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
 
 /**
- * Generally useful LogInterpreter that takes the last 10 logs of the log
+ * Generally useful LogInterpreter that takes the last n logs of the log
  * @param {string} message
  * @param lines number of lines to take
  * @return {LogInterpreter}
