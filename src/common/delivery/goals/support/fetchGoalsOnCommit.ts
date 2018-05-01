@@ -50,7 +50,8 @@ export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef
 
 export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
     const result = await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
-        name: "SdmGoalsForCommit", variables: {
+        name: "SdmGoalsForCommit",
+        variables: {
             owner: id.owner,
             repo: id.repo,
             branch: id.branch,
