@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
@@ -22,6 +22,8 @@ import { PushListener, PushListenerInvocation } from "../../../common/listener/P
 import { AddressChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * A new repo has been created, and it has some code in it.
@@ -30,10 +32,8 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 export class OnFirstPushToRepo
     implements HandleEvent<schema.OnFirstPushToRepo.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    constructor(private readonly actions: PushListener[]) {
+    constructor(private readonly actions: PushListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
     }
 
     public async handle(event: EventFired<schema.OnFirstPushToRepo.Subscription>,
@@ -54,7 +54,7 @@ export class OnFirstPushToRepo
         const screenName = _.get(push, "after.committer.person.chatId.screenName");
 
         const id = toRemoteRepoRef(push.repo, { sha: push.after.sha });
-        const credentials = { token: params.githubToken };
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         if (!screenName) {
             logger.warn("Warning: Cannot get screen name of committer for first push on %j", id);

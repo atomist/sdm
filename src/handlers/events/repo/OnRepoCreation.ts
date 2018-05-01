@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { RepoCreationListener, RepoCreationListenerInvocation } from "../../../common/listener/RepoCreationListener";
 import { AddressNoChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * A new repo has been created. We don't know if it has code.
@@ -27,12 +29,10 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 @EventHandler("On repo creation", subscription("OnRepoCreation"))
 export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
     private readonly newRepoActions: RepoCreationListener[];
 
-    constructor(...newRepoActions: RepoCreationListener[]) {
+    constructor(newRepoActions: RepoCreationListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
         this.newRepoActions = newRepoActions;
     }
 
@@ -41,12 +41,13 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
                         params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
         const id = toRemoteRepoRef(repo);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
         const invocation: RepoCreationListenerInvocation = {
             addressChannels: AddressNoChannels,
             id,
             context,
             repo,
-            credentials: {token: params.githubToken},
+            credentials,
         };
         await Promise.all(params.newRepoActions.map(a => a(invocation)));
         return Success;

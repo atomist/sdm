@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../common/listener/ChannelLinkListenerInvocation";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * A new channel has been linked to a repo
@@ -28,12 +30,10 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 @EventHandler("On channel link", subscription("OnChannelLink"))
 export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
     constructor(
         private readonly projectLoader: ProjectLoader,
-        private readonly listeners: ChannelLinkListener[]) {
+        private readonly listeners: ChannelLinkListener[],
+        private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
     }
 
     public async handle(event: EventFired<schema.OnChannelLink.Subscription>,
@@ -41,7 +41,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
                         params: this): Promise<HandlerResult> {
         const repo = event.data.ChannelLink[0].repo;
         const id = toRemoteRepoRef(repo);
-        const credentials = {token: params.githubToken};
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);
         const newlyLinkedChannelName = event.data.ChannelLink[0].channel.name;

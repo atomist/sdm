@@ -175,7 +175,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
-            () => new OnRepoCreation(...this.repoCreationListeners) :
+            () => new OnRepoCreation(this.repoCreationListeners) :
             undefined;
     }
 

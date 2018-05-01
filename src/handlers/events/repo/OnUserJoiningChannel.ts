@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Secret, Secrets, Success } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { UserJoiningChannelListener, UserJoiningChannelListenerInvocation } from "../../../common/listener/UserJoiningChannelListener";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
+import { CredentialsFactory } from "../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
 
 /**
  * A user joined a channel
@@ -26,10 +28,8 @@ import { toRemoteRepoRef } from "../../../util/git/repoRef";
 @EventHandler("On user joining channel", subscription("OnUserJoiningChannel"))
 export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningChannel.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    constructor(private readonly listeners: UserJoiningChannelListener[]) {
+    constructor(private readonly listeners: UserJoiningChannelListener[],
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
     }
 
     public async handle(event: EventFired<schema.OnUserJoiningChannel.Subscription>,
@@ -38,7 +38,7 @@ export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningCha
         const joinEvent = event.data.UserJoinedChannel[0];
         const repos = joinEvent.channel.repos.map(
             repo => toRemoteRepoRef(repo, undefined));
-        const credentials = {token: params.githubToken};
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
         const addressChannels = (msg, opts) => context.messageClient.addressChannels(msg, joinEvent.channel.name, opts);
         const invocation: UserJoiningChannelListenerInvocation = {
             addressChannels,
