@@ -18,9 +18,26 @@ import { PushImpactListenerInvocation } from "../../listener/PushImpactListener"
 import { PushTest } from "../../listener/PushTest";
 
 /**
- * Action on a code event
+ * A code action response that affects delivery:
+ * failing the current flow or requiring approval.
  */
-export type CodeAction<R> = (i: PushImpactListenerInvocation) => Promise<R>;
+export enum CodeActionResponse {
+    failGoals = "fail",
+    requireApprovalToProceed = "requireApproval",
+}
+
+/**
+ * Optional CodeActionResponse included in return value.
+ */
+export interface HasCodeActionResponse {
+    response?: CodeActionResponse;
+}
+
+/**
+ * Action on a code event. Can optionally return a response that
+ * determines whether to ask for approval or terminate current delivery flow.
+ */
+export type CodeAction<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
 
 /**
  * Used to register actions on a push that can return any type.

@@ -19,9 +19,9 @@ import { saveFromFiles } from "@atomist/automation-client/project/util/projectUt
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { executeReview, SingleProjectLoader } from "../../../../../src";
+import { CodeActionResponse, executeReview, SingleProjectLoader } from "../../../../../src";
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
-import { ActionReviewResponse, ReviewListener, ReviewListenerInvocation } from "../../../../../src/common/listener/ReviewListener";
+import { ReviewListener, ReviewListenerInvocation } from "../../../../../src/common/listener/ReviewListener";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 
@@ -62,12 +62,18 @@ const JustTheOne: ReviewerRegistration = {
     options: {considerOnlyChangedFiles: false},
 };
 
-function loggingReviewListener(saveTo: ReviewListenerInvocation[]): ReviewListener {
+function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): ReviewListener {
     return async re => {
         saveTo.push(re);
         if (re.review.comments.length > 0) {
-            return ActionReviewResponse.requireApproval;
+            return CodeActionResponse.requireApprovalToProceed;
         }
+    };
+}
+
+function loggingReviewListenerWithoutApproval(saveTo: ReviewListenerInvocation[]): ReviewListener {
+    return async re => {
+        saveTo.push(re);
     };
 }
 
@@ -77,7 +83,7 @@ describe("executeReview", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const reviewEvents: ReviewListenerInvocation[] = [];
-        const l = loggingReviewListener(reviewEvents);
+        const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
         const r = await ge(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
@@ -90,7 +96,7 @@ describe("executeReview", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
-        const l = loggingReviewListener(reviewEvents);
+        const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
         const rwlc = fakeRunWithLogContext(id);
         const r = await ge(rwlc);
@@ -101,11 +107,26 @@ describe("executeReview", () => {
         assert(r.requireApproval);
     });
 
+    it("should hate anything it finds, without requiring approval", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
+        const reviewEvents: ReviewListenerInvocation[] = [];
+        const l = loggingReviewListenerWithoutApproval(reviewEvents);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
+        const rwlc = fakeRunWithLogContext(id);
+        const r = await ge(rwlc);
+        assert.equal(reviewEvents.length, 1);
+        assert.equal(reviewEvents[0].review.comments.length, 1);
+        assert.equal(reviewEvents[0].addressChannels, rwlc.addressChannels);
+        assert.equal(r.code, 0);
+        assert(!r.requireApproval);
+    });
+
     it("consolidate reviewers", async () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
-        const l = loggingReviewListener(reviewEvents);
+        const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne], [l]);
         const rwlc = fakeRunWithLogContext(id);
         const r = await ge(rwlc);

@@ -27,7 +27,8 @@ export class LoggingProgressLog implements ProgressLog {
     constructor(public name: string, private readonly level: "debug" | "info" = "debug") {
     }
 
-    public write(what) {
+    public write(pWhat: string) {
+        let what = pWhat;
         if (what.endsWith("\n\r") || what.endsWith("\r\n")) {
             what = what.slice(0, -2);
         }

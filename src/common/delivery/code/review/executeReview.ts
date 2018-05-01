@@ -19,11 +19,11 @@ import * as _ from "lodash";
 import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
-import { ActionReviewResponse, ReviewListener } from "../../../listener/ReviewListener";
+import { ReviewListener } from "../../../listener/ReviewListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
-import { relevantCodeActions } from "../CodeActionRegistration";
+import { CodeActionResponse, relevantCodeActions } from "../CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 import { ReviewerRegistration } from "./ReviewerRegistration";
@@ -70,8 +70,8 @@ export function executeReview(projectLoader: ProjectLoader,
                     sendErrorsToSlack(reviewerErrors, addressChannels);
                     const reviewResponses = await Promise.all(reviewListeners.map(l => l(rli)));
                     const result = {
-                        code: reviewResponses.includes(ActionReviewResponse.fail) ? 1 : 0,
-                        requireApproval: reviewResponses.includes(ActionReviewResponse.requireApproval),
+                        code: reviewResponses.some(rr => !!rr && rr === CodeActionResponse.failGoals) ? 1 : 0,
+                        requireApproval: reviewResponses.some(rr => !!rr && rr === CodeActionResponse.requireApprovalToProceed),
                     };
                     logger.info("Review responses are %j, result=%j", reviewResponses, result);
                     return result;

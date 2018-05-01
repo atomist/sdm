@@ -15,6 +15,7 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { CodeActionResponse } from "../..";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
 
@@ -30,24 +31,8 @@ export interface ReviewListenerInvocation extends PushListenerInvocation {
 }
 
 /**
- * A review response that drives an action:
- * failing the current flow or requiring approval.
- */
-export enum ActionReviewResponse {
-    fail = "fail",
-    requireApproval = "requireApproval",
-}
-
-/**
- * Response from a ReviewListener. void or undefined mean don't
- * set handling policies such as failing the present goals execution
- * or requiring approval to proceed to the next step.
- */
-export type ReviewResponse = void | undefined | ActionReviewResponse;
-
-/**
  * Listener invoked when a review has been completed.
  * Listeners will be invoked even in the case of a clean review,
  * without errors or comments.
  */
-export type ReviewListener = SdmListener<ReviewListenerInvocation, ReviewResponse>;
+export type ReviewListener = SdmListener<ReviewListenerInvocation, void | CodeActionResponse>;

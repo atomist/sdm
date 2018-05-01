@@ -18,9 +18,15 @@ import { logger, Success } from "@atomist/automation-client";
 import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
-import { CodeActionRegistration, relevantCodeActions } from "./CodeActionRegistration";
+import { CodeActionRegistration, CodeActionResponse, relevantCodeActions } from "./CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
+/**
+ * Execute arbitrary code reactions against a codebase
+ * @param {ProjectLoader} projectLoader
+ * @param {CodeActionRegistration[]} registrations
+ * @return {ExecuteGoalWithLog}
+ */
 export function executeCodeReactions(projectLoader: ProjectLoader,
                                      registrations: CodeActionRegistration[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
@@ -29,16 +35,19 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
         }
 
         const {credentials, id, context} = rwlc;
-        await projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
+        return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
             const relevantCodeReactions: CodeActionRegistration[] = await relevantCodeActions<CodeActionRegistration>(registrations, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j",
                 relevantCodeReactions.length, registrations.length, cri.id);
-            const allReactions: Promise<any> =
-                Promise.all(relevantCodeReactions
-                    .map(reactionReg => reactionReg.action(cri)));
-            await allReactions;
+            const allReactions: any[] = await Promise.all(relevantCodeReactions
+                .map(reactionReg => reactionReg.action(cri)));
+            const result = {
+                code: allReactions.includes(CodeActionResponse.failGoals) ? 1 : 0,
+                requireApproval: allReactions.includes(CodeActionResponse.requireApprovalToProceed),
+            };
+            logger.info("Code reaction responses are %j, result=%j", allReactions, result);
+            return result;
         });
-        return Success;
     };
 }
