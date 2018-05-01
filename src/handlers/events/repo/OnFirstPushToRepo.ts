@@ -51,7 +51,7 @@ export class OnFirstPushToRepo
             return Success;
         }
 
-        const screenName = _.get<string>(push, "after.committer.person.chatId.screenName");
+        const screenName = _.get(push, "after.committer.person.chatId.screenName");
 
         const id = toRemoteRepoRef(push.repo, { sha: push.after.sha });
         const credentials = { token: params.githubToken };
