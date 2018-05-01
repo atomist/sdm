@@ -15,12 +15,13 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import { SdmListener } from "./Listener";
+import { PushListenerInvocation } from "./PushListener";
 
 /**
  * Invocation on a completed review.
  */
-export interface ReviewListenerInvocation extends RepoListenerInvocation {
+export interface ReviewListenerInvocation extends PushListenerInvocation {
 
     /**
      * Consolidated review
