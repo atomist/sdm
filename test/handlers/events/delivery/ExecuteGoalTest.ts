@@ -47,7 +47,7 @@ describe("executing the goal", () => {
     it("calls a pre-hook and sends output to the log", done => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
 
-        createEphemeralProgressLog("test").then(progressLog => {
+        createEphemeralProgressLog({ name: "test"} as SdmGoal).then(progressLog => {
             const fakeRWLC = {
                 context: fakeContext(),
                 progressLog,
