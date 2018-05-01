@@ -5,6 +5,7 @@ fragment PushFields on Push {
     sha
     message
     committer {
+      login
       person {
         chatId {
           screenName
