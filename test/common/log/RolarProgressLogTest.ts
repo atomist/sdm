@@ -160,7 +160,7 @@ describe("RolarProgressLog", () => {
                 const expectedRequest = [
                     {
                         level: "info",
-                        message: "He cuts down trees, he eat his lunch",
+                        message: "He cuts down trees, he eats his lunch",
                         timestamp: "01/01/1970 00:00:00.000",
                     },
                     {
@@ -174,11 +174,17 @@ describe("RolarProgressLog", () => {
                 return [200];
             });
 
-        smallBufferLog.write("He cuts down trees, he eat his lunch");
+        smallBufferLog.write("He cuts down trees, he eats his lunch");
         smallBufferLog.write("He goes to the lavatory");
         smallBufferLog.write("On Wednesdays he goes shopping and has buttered scones for tea");
 
         assert.deepEqual((smallBufferLog as any).localLogs, []);
+    });
+
+    it("should provide a link to the log", async () => {
+        const log = new RolarProgressLog("http://fakehost", ["test", "it"], 10000, fakeTimestampGenerator());
+
+        assert.equal(log.url, "http://fakehost/logs/test/it");
     });
 
 });
