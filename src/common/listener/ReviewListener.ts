@@ -37,7 +37,12 @@ export enum ActionReviewResponse {
     requireApproval = "requireApproval",
 }
 
-export type ReviewResponse = undefined | ActionReviewResponse;
+/**
+ * Response from a ReviewListener. void or undefined mean don't
+ * set handling policies such as failing the present goals execution
+ * or requiring approval to proceed to the next step.
+ */
+export type ReviewResponse = void | undefined | ActionReviewResponse;
 
 /**
  * Listener invoked when a review has been completed.
