@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+
 /**
  * Log abstraction for output of a specific activity. Not intended as a long-running log
  * but for a short-lived activity.
@@ -23,7 +25,8 @@
 export interface ProgressLog {
 
     /**
-     * Name. Should relate to the immediate activity we're logging.
+     * Name. Should relate to the immediate activity wegs
+     * 're logging.
      */
     readonly name: string;
 
@@ -51,4 +54,4 @@ export interface ProgressLog {
     isAvailable(): Promise<boolean>;
 }
 
-export type LogFactory = (name: string) => Promise<ProgressLog>;
+export type LogFactory = (sdmGoal: SdmGoal) => Promise<ProgressLog>;

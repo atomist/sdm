@@ -84,7 +84,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 
-        const log = await this.logFactory(sdmGoal.name);
+        const log = await this.logFactory(sdmGoal);
         const progressLog = new WriteToAllProgressLog(sdmGoal.name, new LoggingProgressLog(sdmGoal.name, "debug"), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
@@ -96,7 +96,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         if (goal.definition.isolated && !process.env.ATOMIST_ISOLATED_GOAL && isolatedGoalLauncher) {
             return isolatedGoalLauncher(sdmGoal, ctx, progressLog);
         } else {
-            delete (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).id;
+            delete (sdmGoal as any).id;
             return executeGoal({projectLoader: params.projectLoader},
                 goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
                 .then(async res => {
