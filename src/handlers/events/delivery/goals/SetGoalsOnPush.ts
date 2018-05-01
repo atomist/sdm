@@ -47,6 +47,8 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
+import { CredentialsFactory } from "../../../common/CredentialsFactory";
+import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -54,20 +56,19 @@ import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRe
 @EventHandler("Set up goalSet", subscription("OnPushToAnyBranch"))
 export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscription> {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
     /**
      * Configure goal setting
      * @param projectLoader use to load projects
      * @param goalSetters first GoalSetter that returns goalSet wins
      * @param goalsListeners listener to goals set
      * @param implementationMapping
+     * @param credentialsFactory credentials factory
      */
     constructor(private readonly projectLoader,
                 private readonly goalSetters: GoalSetter[],
                 public readonly goalsListeners: GoalsSetListener[],
-                private readonly implementationMapping: SdmGoalImplementationMapper) {
+                private readonly implementationMapping: SdmGoalImplementationMapper,
+                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
 
     }
 
@@ -75,8 +76,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
-
-        const credentials = {token: params.githubToken};
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
 
         await chooseAndSetGoals({
             projectLoader: params.projectLoader,
