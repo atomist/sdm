@@ -31,7 +31,7 @@ export interface AntiPattern {
     comment: string;
 }
 
-export interface RegexpReviewerOptions {
+export interface PatternMatchReviewerOptions {
 
     /**
      * PushTest to narrow review applicability
@@ -56,7 +56,7 @@ export interface RegexpReviewerOptions {
  * @return {ReviewerRegistration}
  */
 export function patternMatchReviewer(name: string,
-                                     opts: RegexpReviewerOptions,
+                                     opts: PatternMatchReviewerOptions,
                                      ...antiPatterns: AntiPattern[]): ReviewerRegistration {
     return {
         name,
