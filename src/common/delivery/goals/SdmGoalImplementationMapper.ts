@@ -94,13 +94,13 @@ export class SdmGoalImplementationMapper {
     }
 
     public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
-        const implementationsForGoal = this.implementations.filter(m => m.goal === goal);
+        const implementationsForGoal = this.implementations.filter(m => m.goal.name === goal.name);
         for (const implementation of implementationsForGoal) {
             if (await implementation.pushTest.valueForPush(inv)) {
                 return implementation;
             }
         }
-        const knownSideEffects = this.sideEffects.filter(m => m.goal === goal);
+        const knownSideEffects = this.sideEffects.filter(m => m.goal.name === goal.name);
         for (const sideEffect of knownSideEffects) {
             if (await sideEffect.pushTest.valueForPush(inv)) {
                 return sideEffect;
