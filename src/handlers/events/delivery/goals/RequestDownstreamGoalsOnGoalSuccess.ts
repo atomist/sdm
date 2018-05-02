@@ -90,10 +90,10 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
          * the requestDescription defined on that Goal.
          */
         await Promise.all(goalsToRequest.map(async goal => {
-            const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(goal);
+            const cbs = await this.implementationMapper.findFullfillmentCallbackForGoal(goal);
             let g = goal;
             for (const cb of cbs) {
-                g = await cb.goalCallback(g, { id, addressChannels: undefined, credentials, context });
+                g = await cb.callback(g, { id, addressChannels: undefined, credentials, context });
             }
 
             return updateGoal(context, g, {

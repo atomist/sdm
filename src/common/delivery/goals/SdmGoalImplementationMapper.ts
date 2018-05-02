@@ -53,8 +53,8 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
  * This is useful to add goal specific information to the data field.
  */
 export interface GoalFullfillmentCallback {
-    goalTest: (goal: SdmGoal) => boolean;
-    goalCallback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
+    goal: Goal;
+    callback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
 }
 
 export class SdmGoalImplementationMapper {
@@ -110,7 +110,7 @@ export class SdmGoalImplementationMapper {
     }
 
     public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
-        return this.callbacks.filter(c => c.goalTest(g));
+        return this.callbacks.filter(c => c.goal.name === g.name && c.goal.environment === g.environment);
     }
 
     public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
