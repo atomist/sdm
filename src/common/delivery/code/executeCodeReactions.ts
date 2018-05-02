@@ -38,8 +38,10 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
         return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
             const relevantCodeReactions: CodeActionRegistration[] = await relevantCodeActions<CodeActionRegistration>(registrations, cri);
-            logger.info("Will invoke %d eligible code reactions of %d to %j",
-                relevantCodeReactions.length, registrations.length, cri.id);
+            logger.info("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",
+                relevantCodeReactions.length, registrations.length, cri.id,
+                relevantCodeReactions.map(a => a.name).join(),
+                registrations.map(a => a.name).join());
             const allReactions: any[] = await Promise.all(relevantCodeReactions
                 .map(reactionReg => reactionReg.action(cri)));
             const result = {

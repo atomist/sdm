@@ -46,7 +46,10 @@ export function executeReview(projectLoader: ProjectLoader,
                 return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
-                    logger.info("Executing review of %j with %d relevant reviewers", id, relevantCodeActions.length);
+                    logger.info("Executing review of %j with %d relevant reviewers: [%s] of [%s]",
+                        id, relevantReviewers.length,
+                        relevantReviewers.map(a => a.name).join(),
+                        reviewerRegistrations.map(a => a.name).join());
 
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                         await Promise.all(relevantReviewers

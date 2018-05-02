@@ -57,8 +57,10 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
                     const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
-                    logger.info("Will apply %d eligible autofixes of %d to %j",
-                        relevantAutofixes.length, registrations.length, cri.id);
+                    logger.info("Will apply %d relevant autofixes of %d to %j: [%s] of [%s]",
+                        relevantAutofixes.length, registrations.length, cri.id,
+                        relevantAutofixes.map(a => a.name).join(),
+                        registrations.map(a => a.name).join());
                     let cumulativeResult: EditResult = {
                         target: cri.project,
                         success: true,
