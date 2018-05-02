@@ -66,7 +66,8 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     const containerSpec = JSON.parse(log.log).spec.template.spec;
     jobSpec.spec.template.spec = containerSpec;
 
-    jobSpec.metadata.name = `${jobSpec.metadata.name}-${goal.uniqueName.toLocaleLowerCase()}-${goal.goalSetId}`;
+    jobSpec.metadata.name =
+        `${jobSpec.metadata.name}-${goal.uniqueName.toLocaleLowerCase()}-${goal.goalSetId.slice(0, 7)}`;
     jobSpec.metadata.namespace = deploymentNamespace;
     jobSpec.spec.template.spec.restartPolicy = "Never";
     jobSpec.spec.template.spec.containers[0].name = jobSpec.metadata.name;
@@ -97,7 +98,7 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     // TODO CD the following code needs to be replaced with proper job scheduling via k8-automation
     return spawnAndWatch({
             command: "kubectl",
-            args: ["create", "-f", tempfile],
+            args: ["apply", "-f", tempfile],
         },
         {},
         progressLog,
