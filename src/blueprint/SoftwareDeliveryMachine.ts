@@ -464,6 +464,9 @@ export function configureForSdm(machine: SoftwareDeliveryMachine) {
             config.commands = [];
             config.events = [];
             config.ingesters = [];
+
+            // Disable app events for forked clients
+            config.applicationEvents.enabled = false;
         } else {
             if (!config.commands) {
                 config.commands = [];

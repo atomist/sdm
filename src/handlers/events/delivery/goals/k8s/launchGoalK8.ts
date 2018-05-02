@@ -72,6 +72,10 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     jobSpec.spec.template.spec.restartPolicy = "Never";
     jobSpec.spec.template.spec.containers[0].name = jobSpec.metadata.name;
     jobSpec.spec.template.spec.containers[0].env.push({
+            name: "ATOMIST_JOB_NAME",
+            value: jobSpec.metadata.name,
+        },
+        {
             name: "ATOMIST_GOAL_TEAM",
             value: ctx.teamId,
         },
