@@ -18,8 +18,8 @@ import { HandleCommand, HandlerContext, Success } from "@atomist/automation-clie
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { EmptyParameters } from "../../common/command/EmptyParameters";
-import { DeployedApp, ManagedDeployments } from "../../common/delivery/deploy/local/appManagement";
 import { managedExecutableJarDeployments } from "../../common/delivery/deploy/local/jar/executableJarDeployer";
+import { DeployedApp, ManagedDeployments } from "../../common/delivery/deploy/local/ManagedDeployments";
 import { managedMavenDeployments } from "../../common/delivery/deploy/local/maven/mavenSourceDeployer";
 
 /**

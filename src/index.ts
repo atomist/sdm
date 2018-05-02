@@ -63,7 +63,7 @@ export * from "./common/delivery/deploy/deploy";
 export * from "./common/delivery/deploy/executeDeploy";
 export * from "./common/delivery/deploy/executeUndeploy";
 export * from "./common/delivery/deploy/local/LocalDeployerOptions";
-export * from "./common/delivery/deploy/local/appManagement";
+export * from "./common/delivery/deploy/local/ManagedDeployments";
 export * from "./common/delivery/deploy/local/jar/executableJarDeployer";
 export * from "./common/delivery/deploy/local/maven/mavenSourceDeployer";
 export * from "./common/delivery/deploy/pcf/CloudFoundryApi";

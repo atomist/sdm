@@ -23,8 +23,8 @@ import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { lastLinesLogInterpreter } from "../../../goals/support/logInterpreters";
-import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../appManagement";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment, StartupInfo } from "../LocalDeployerOptions";
+import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
 
 /**
  * Managed deployments

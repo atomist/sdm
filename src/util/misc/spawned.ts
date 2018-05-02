@@ -145,3 +145,16 @@ export function asSpawnCommand(sentence: string, options: SpawnOptions = {}): Sp
         options,
     };
 }
+
+/**
+ * Kill the child process and wait for it to shut down. This can take a while as child processes
+ * may have shut down hooks.
+ * @param {module:child_process.ChildProcess} childProcess
+ * @return {Promise<any>}
+ */
+export function poisonAndWait(childProcess: ChildProcess): Promise<any> {
+    childProcess.kill();
+    return new Promise((resolve, reject) => childProcess.on("close", () => {
+        resolve();
+    }));
+}

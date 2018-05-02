@@ -20,6 +20,7 @@ import axios from "axios";
 import { ChildProcess } from "child_process";
 import * as https from "https";
 import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
+import { poisonAndWait } from "../../../../util/misc/spawned";
 import { Targeter } from "../deploy";
 
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
@@ -74,17 +75,13 @@ export class ManagedDeployments {
     }
 
     /**
-     * Find a new port for this app
+     * Find the appropriate port for this app
      * @param {RemoteRepoRef} id
      * @param host it will be on. Check for ports not in use
      * @return {number}
      */
     public async findPort(id: RemoteRepoRef, host: string): Promise<number> {
-        const running = !!id.branch ?
-            this.deployments
-                .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch) :
-            this.deployments
-                .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
+        const running = this.findDeployment(id);
         return !!running ? running.port : this.nextFreePort(host);
     }
 
@@ -94,8 +91,15 @@ export class ManagedDeployments {
     }
 
     public findDeployment(id: RemoteRepoRef): DeployedApp {
-        return this.deployments.find(d => d.id.sha === id.sha ||
-            (d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch));
+        if (!!id.sha) {
+            // Probability of a sha collision is tiny
+            return this.deployments.find(d => d.id.sha === id.sha);
+        }
+        return !!id.branch ?
+            this.deployments
+                .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch) :
+            this.deployments
+                .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
     }
 
     /**
@@ -121,7 +125,8 @@ export class ManagedDeployments {
         while (true) {
             if (this.deployments.some(d => d.port === port)) {
                 port++;
-            } else if (await isAlreadyServingOn(host, port)) {
+            } else if (await portIsInUse(host, port)) {
+                // Skip this port, too
                 logger.warn("Unexpected: %s is serving on port %d", host, port);
                 port++;
             } else {
@@ -133,7 +138,7 @@ export class ManagedDeployments {
 
 }
 
-async function isAlreadyServingOn(host: string, port: number) {
+async function portIsInUse(host: string, port: number) {
     const agent = new https.Agent({
         rejectUnauthorized: false,
     });
@@ -143,11 +148,4 @@ async function isAlreadyServingOn(host: string, port: number) {
     } catch {
         return false;
     }
-}
-
-function poisonAndWait(childProcess: ChildProcess): Promise<any> {
-    childProcess.kill();
-    return new Promise((resolve, reject) => childProcess.on("close", () => {
-        resolve();
-    }));
 }
