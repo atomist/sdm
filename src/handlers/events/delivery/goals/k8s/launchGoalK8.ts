@@ -20,12 +20,15 @@ import {
     HandlerResult,
 } from "@atomist/automation-client";
 import { automationClientInstance } from "@atomist/automation-client/automationClient";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs-extra";
+import * as path from "path";
 import { StringCapturingProgressLog } from "../../../../../common/log/StringCapturingProgressLog";
 import {
     OnAnyRequestedSdmGoal,
     ProgressLog,
 } from "../../../../../index";
+import { SdmGoal } from "../../../../../ingesters/sdmGoalIngester";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
 
 /**
@@ -91,7 +94,7 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     const tempfile = require("tempfile")(".json");
     await fs.writeFile(tempfile, JSON.stringify(jobSpec, null, 2));
 
-    // TODO CD the following code needs to be replace with proper job scheduling via k8-automation
+    // TODO CD the following code needs to be replaced with proper job scheduling via k8-automation
     return spawnAndWatch({
             command: "kubectl",
             args: ["create", "-f", tempfile],
@@ -122,3 +125,39 @@ const JobSpec = `{
       }
     }
   }`;
+
+export interface KubernetesOptions {
+    name: string;
+    environment: string;
+
+    ns?: string;
+    imagePullSecret?: string;
+    port?: number;
+    path?: string;
+    host?: string;
+    protocol?: string;
+}
+
+export async function createKubernetesData(goal: SdmGoal, options: KubernetesOptions, p: GitProject): Promise<SdmGoal> {
+    const deploymentSpec = await readKubernetesSpec(p, "deployment.json");
+    const serviceSpec = await readKubernetesSpec(p, "service.json");
+    return {
+        ...goal,
+        data: JSON.stringify({
+            kubernetes: {
+                ...options,
+                deploymentSpec,
+                serviceSpec,
+            },
+        }),
+    };
+}
+
+async function readKubernetesSpec(p: GitProject, name: string): Promise<string> {
+    const specPath = path.join(".atomist", "kubernetes", name);
+    if (p.fileExistsSync(specPath)) {
+        return (await p.getFile(specPath)).getContent();
+    } else {
+        return undefined;
+    }
+}
