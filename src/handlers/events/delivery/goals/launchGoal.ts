@@ -106,7 +106,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
             await eventHandler.processEvent(event, async results => {
                 const resolved = await results;
                 logger.info("Processing goal completed with results %j", resolved);
-                process.exit(0);
+                setTimeout(() => process.exit(0), 10000);
             });
         }
     }
