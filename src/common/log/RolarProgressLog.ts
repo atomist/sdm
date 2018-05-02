@@ -39,9 +39,13 @@ export class RolarProgressLog implements ProgressLog {
 
     private localLogs: LogData[] = [];
 
+    private lineBuffer = "";
+
     constructor(private readonly rolarBaseUrl: string,
                 private readonly logPath: string[],
+                private readonly lineDelimiter: string = null,
                 private readonly bufferSizeLimit: number = 10000,
+                private readonly logLevel: string = "info",
                 private readonly timestamper: Iterator<Date> = timestampGenerator(),
                 private readonly retryOptions: WrapOptions = {},
                 private readonly axiosInstance: AxiosInstance = axios) {
@@ -69,9 +73,17 @@ export class RolarProgressLog implements ProgressLog {
     }
 
     public write(what: string) {
+        let line = what;
+        if (this.lineDelimiter) {
+            this.lineBuffer += what;
+            if (!this.lineBuffer.endsWith(this.lineDelimiter)) {
+                return;
+            }
+            line = this.lineBuffer.slice(0, - this.lineDelimiter.length);
+        }
         this.localLogs.push({
-            level: "info",
-            message: what,
+            level: this.logLevel,
+            message: line,
             timestamp: this.constructUtcTimestamp(),
         } as LogData);
         const bufferSize = this.localLogs.reduce((acc, logData) => acc + logData.message.length, 0);
@@ -109,7 +121,8 @@ export class RolarProgressLog implements ProgressLog {
         return result;
     }
 
-    private constructUtcTimestamp() {
+    private constructUtcTimestamp(): string {
+        if (!this.timestamper) { return ""; }
         const now: Date = this.timestamper.next().value;
         const date = [now.getUTCMonth() + 1, now.getUTCDate(), now.getUTCFullYear()]
             .map(t => _.padStart(t.toString(), 2, "0"));
