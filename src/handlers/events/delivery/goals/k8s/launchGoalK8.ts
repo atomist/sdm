@@ -139,6 +139,13 @@ export interface KubernetesOptions {
     protocol?: string;
 }
 
+/**
+ * Sets kubernetes deployment specific data to an SdmGoal
+ * @param {SdmGoal} goal
+ * @param {KubernetesOptions} options
+ * @param {GitProject} p
+ * @returns {Promise<SdmGoal>}
+ */
 export async function createKubernetesData(goal: SdmGoal, options: KubernetesOptions, p: GitProject): Promise<SdmGoal> {
     const deploymentSpec = await readKubernetesSpec(p, "deployment.json");
     const serviceSpec = await readKubernetesSpec(p, "service.json");
