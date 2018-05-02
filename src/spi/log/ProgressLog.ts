@@ -15,6 +15,7 @@
  */
 
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { HandlerContext } from "@atomist/automation-client";
 
 /**
  * Log abstraction for output of a specific activity. Not intended as a long-running log
@@ -54,4 +55,4 @@ export interface ProgressLog {
     isAvailable(): Promise<boolean>;
 }
 
-export type LogFactory = (sdmGoal: SdmGoal) => Promise<ProgressLog>;
+export type LogFactory = (context: HandlerContext, sdmGoal: SdmGoal) => Promise<ProgressLog>;

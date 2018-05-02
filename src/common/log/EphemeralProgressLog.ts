@@ -50,4 +50,4 @@ class EphemeralProgressLog implements ProgressLog {
 
 }
 
-export const createEphemeralProgressLog: LogFactory = async sdmGoal => new EphemeralProgressLog(sdmGoal.name);
+export const createEphemeralProgressLog: LogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);
