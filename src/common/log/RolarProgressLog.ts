@@ -17,14 +17,17 @@
 import * as _ from "lodash";
 
 import axios from "axios";
-import { ProgressLog } from "../../spi/log/ProgressLog";
+import {LogFactory, ProgressLog} from "../../spi/log/ProgressLog";
 
-import { logger } from "@atomist/automation-client";
+import {HandlerContext, logger} from "@atomist/automation-client";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 import {AxiosInstance} from "axios";
 import os = require("os");
 import {WrapOptions} from "retry";
+import {firstAvailableProgressLog} from "./firstAvailableProgressLog";
+import {LoggingProgressLog} from "./LoggingProgressLog";
+import {SdmGoal} from "../../ingesters/sdmGoalIngester";
 
 function* timestampGenerator() {
     while (true) {
@@ -123,4 +126,25 @@ interface LogData {
     level: string;
     message: string;
     timestamp: string;
+}
+
+export function rolarProgressLogFactory(rolarBaseServiceUrl: string,
+                                 fallback: ProgressLog = new LoggingProgressLog("Rolar is down!", "info")): LogFactory {
+    return async (context, sdmGoal) => {
+        return firstAvailableProgressLog(new RolarProgressLog(rolarBaseServiceUrl,
+            logPath(context, sdmGoal)), fallback);
+    };
+}
+
+function logPath(context: HandlerContext, sdmGoal: SdmGoal): string[] {
+    return [
+        context.teamId,
+        sdmGoal.repo.owner,
+        sdmGoal.repo.name,
+        sdmGoal.sha,
+        sdmGoal.environment,
+        sdmGoal.name,
+        sdmGoal.goalSetId,
+        context.correlationId,
+    ];
 }
