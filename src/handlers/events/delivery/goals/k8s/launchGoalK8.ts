@@ -67,7 +67,7 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     jobSpec.spec.template.spec = containerSpec;
 
     jobSpec.metadata.name =
-        `${jobSpec.metadata.name}-${goal.goalSetId.slice(0, 7)}-${goal.uniqueName.toLocaleLowerCase()}`;
+        `${deploymentName}-job-${goal.goalSetId.slice(0, 7)}-${goal.uniqueName.toLocaleLowerCase()}`;
     jobSpec.metadata.namespace = deploymentNamespace;
     jobSpec.spec.template.spec.restartPolicy = "Never";
     jobSpec.spec.template.spec.containers[0].name = jobSpec.metadata.name;
