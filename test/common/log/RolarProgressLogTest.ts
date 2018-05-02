@@ -30,7 +30,7 @@ describe("RolarProgressLog", () => {
 
     it("should be available if returning http 200", async () => {
         const axiosInstance = axios.create();
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "info", fakeTimestampGenerator(), { retries: 0 },
             axiosInstance);
         const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onHead("http://fakehost/api/logs").replyOnce(200);
@@ -40,7 +40,7 @@ describe("RolarProgressLog", () => {
 
     it("should not be available if returning http 404", async () => {
         const axiosInstance = axios.create();
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "info", fakeTimestampGenerator(), { retries: 0 },
             axiosInstance);
         const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onHead("http://fakehost/api/logs").replyOnce(404);
@@ -49,7 +49,7 @@ describe("RolarProgressLog", () => {
     });
 
     it("should write logs to memory", async () => {
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 });
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "info", fakeTimestampGenerator());
 
         log.write("I'm a lumberjack and I'm OK");
         log.write("I sleep all night and I work all day");
@@ -70,7 +70,7 @@ describe("RolarProgressLog", () => {
 
     it("should flush logs", async () => {
         const axiosInstance = axios.create();
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "info", fakeTimestampGenerator(), { retries: 0 },
             axiosInstance);
         const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test")
@@ -101,7 +101,7 @@ describe("RolarProgressLog", () => {
 
     it("should not clear logs if flush fails", async () => {
         const axiosInstance = axios.create();
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "info", fakeTimestampGenerator(), { retries: 0 },
             axiosInstance);
         const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test")
@@ -127,7 +127,7 @@ describe("RolarProgressLog", () => {
 
     it("should close logs", async () => {
         const axiosInstance = axios.create();
-        const log = new RolarProgressLog("http://fakehost", ["test"], 10000, fakeTimestampGenerator(), { retries: 0 },
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "info", fakeTimestampGenerator(), { retries: 0 },
             axiosInstance);
         const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test?closed=true")
@@ -152,7 +152,7 @@ describe("RolarProgressLog", () => {
 
     it("should flush logs automatically", async () => {
         const axiosInstance = axios.create();
-        const smallBufferLog = new RolarProgressLog("http://fakehost", ["test"], 50, fakeTimestampGenerator(),
+        const smallBufferLog = new RolarProgressLog("http://fakehost", ["test"], null, 50, "info", fakeTimestampGenerator(),
             { retries: 0 }, axiosInstance);
         const mockAxios = new MockAdapter(axiosInstance);
         mockAxios.onPost("http://fakehost/api/logs/test")
@@ -160,7 +160,7 @@ describe("RolarProgressLog", () => {
                 const expectedRequest = [
                     {
                         level: "info",
-                        message: "He cuts down trees, he eat his lunch",
+                        message: "He cuts down trees, he eats his lunch",
                         timestamp: "01/01/1970 00:00:00.000",
                     },
                     {
@@ -174,11 +174,73 @@ describe("RolarProgressLog", () => {
                 return [200];
             });
 
-        smallBufferLog.write("He cuts down trees, he eat his lunch");
+        smallBufferLog.write("He cuts down trees, he eats his lunch");
         smallBufferLog.write("He goes to the lavatory");
         smallBufferLog.write("On Wednesdays he goes shopping and has buttered scones for tea");
 
         assert.deepEqual((smallBufferLog as any).localLogs, []);
+    });
+
+    it("should provide a link to the log", async () => {
+        const log = new RolarProgressLog("http://fakehost", ["test", "it"], null, 10000, "info", fakeTimestampGenerator());
+
+        assert.equal(log.url, "http://fakehost/logs/test/it");
+    });
+
+    it("should log as debug", async () => {
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "debug", fakeTimestampGenerator());
+
+        log.write("I'm a lumberjack and I'm OK");
+        log.write("I sleep all night and I work all day");
+
+        assert.deepEqual((log as any).localLogs, [
+            {
+                level: "debug",
+                message: "I'm a lumberjack and I'm OK",
+                timestamp: "01/01/1970 00:00:00.000",
+            },
+            {
+                level: "debug",
+                message: "I sleep all night and I work all day",
+                timestamp: "01/01/1970 00:00:00.001",
+            },
+        ]);
+    });
+
+    it("should log without timestamp", async () => {
+        const log = new RolarProgressLog("http://fakehost", ["test"], null, 10000, "", null);
+
+        log.write("I'm a lumberjack and I'm OK");
+        log.write("I sleep all night and I work all day");
+
+        assert.deepEqual((log as any).localLogs, [
+            {
+                level: "",
+                message: "I'm a lumberjack and I'm OK",
+                timestamp: "",
+            },
+            {
+                level: "",
+                message: "I sleep all night and I work all day",
+                timestamp: "",
+            },
+        ]);
+    });
+
+    it("should not complete line until newline", async () => {
+        const log = new RolarProgressLog("http://fakehost", ["test"], "\n", 10000, "", null);
+
+        log.write("I'm a lumberjack");
+        log.write(" and I'm");
+        log.write(" OK\n");
+
+        assert.deepEqual((log as any).localLogs, [
+            {
+                level: "",
+                message: "I'm a lumberjack and I'm OK",
+                timestamp: "",
+            },
+        ]);
     });
 
 });
