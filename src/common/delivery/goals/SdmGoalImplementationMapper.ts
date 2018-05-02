@@ -110,7 +110,11 @@ export class SdmGoalImplementationMapper {
     }
 
     public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
-        return this.callbacks.filter(c => c.goal.name === g.name && c.goal.environment === g.environment);
+        return this.callbacks.filter(c =>
+            c.goal.name === g.name &&
+            // This slice is required because environment is suffixed with /
+            (c.goal.definition.environment.slice(0, -1) === g.environment
+                || c.goal.definition.environment === g.environment));
     }
 
     public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
