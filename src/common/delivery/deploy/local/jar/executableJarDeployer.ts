@@ -24,7 +24,7 @@ import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { lastLinesLogInterpreter } from "../../../goals/support/logInterpreters";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment, StartupInfo } from "../LocalDeployerOptions";
-import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
+import { LookupStrategy, ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
 
 /**
  * Managed deployments
@@ -34,6 +34,7 @@ export let managedExecutableJarDeployments: ManagedDeployments;
 /**
  * Start up an executable Jar on the same node as the automation client.
  * Not intended as a Paas, but for use during demos and development.
+ * Always uses the same URL, whatever the branch and sha.
  * @param opts options
  */
 export function executableJarDeployer(opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
@@ -60,11 +61,11 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
     }
 
     public async undeploy(id: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<any> {
-        return managedExecutableJarDeployments.terminateIfRunning(id.managedDeploymentKey);
+        return managedExecutableJarDeployments.terminateIfRunning(id.managedDeploymentKey, LookupStrategy.service);
     }
 
     private deploymentFor(ti: ManagedDeploymentTargetInfo): Deployment {
-        const managed = managedExecutableJarDeployments.findDeployment(ti.managedDeploymentKey);
+        const managed = managedExecutableJarDeployments.findDeployment(ti.managedDeploymentKey, LookupStrategy.service);
         if (!managed) {
             return undefined;
         }
@@ -87,14 +88,14 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
         if (!da.filename) {
             throw new Error("No filename in deployable artifact!");
         }
-        const port = await managedExecutableJarDeployments.findPort(ti.managedDeploymentKey, this.opts.baseUrl);
+        const port = await managedExecutableJarDeployments.findPort(ti.managedDeploymentKey, LookupStrategy.service, this.opts.baseUrl);
         logger.info("Deploying app [%j] on port [%d] for team %s", da, port, atomistTeam);
         const startupInfo: StartupInfo = {
             port,
             atomistTeam,
             contextRoot: this.contextRoot(da.id),
         };
-        await managedExecutableJarDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        await managedExecutableJarDeployments.terminateIfRunning(ti.managedDeploymentKey, LookupStrategy.service);
         const childProcess = spawn("java",
             [
                 "-jar",
@@ -110,7 +111,13 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             childProcess,
             endpoint: `${this.opts.baseUrl}:${port}/${this.contextRoot(ti.managedDeploymentKey)}`,
         };
-        managedExecutableJarDeployments.recordDeployment({id: ti.managedDeploymentKey, port, childProcess, deployment});
+        managedExecutableJarDeployments.recordDeployment({
+            id: ti.managedDeploymentKey,
+            port,
+            childProcess,
+            deployment,
+            lookupStrategy: LookupStrategy.service,
+        });
 
         return [await new Promise<SpawnedDeployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", async what => {

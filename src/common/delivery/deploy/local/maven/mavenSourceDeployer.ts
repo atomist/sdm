@@ -27,7 +27,7 @@ import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment } from "../LocalDeployerOptions";
-import { ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
+import { LookupStrategy, ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
 
 /**
  * Managed deployments
@@ -56,7 +56,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
     }
 
     public async findDeployments(id: RemoteRepoRef, ti: ManagedDeploymentTargetInfo, creds: ProjectOperationCredentials): Promise<Deployment[]> {
-        const deployedApp = managedMavenDeployments.findDeployment(ti.managedDeploymentKey);
+        const deployedApp = managedMavenDeployments.findDeployment(ti.managedDeploymentKey, LookupStrategy.branch);
         if (!deployedApp) {
             return [];
         }
@@ -72,16 +72,16 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
         if (!id.branch) {
             throw new Error(`Cannot locally deploy ${JSON.stringify(id)}: Branch must be set`);
         }
-        const port = await managedMavenDeployments.findPort(ti.managedDeploymentKey, this.opts.baseUrl);
+        const port = await managedMavenDeployments.findPort(ti.managedDeploymentKey, LookupStrategy.branch, this.opts.baseUrl);
         logger.info("MavenSourceDeployer: Deploying app [%j],branch=%s on port [%d] for team %s", id, ti.managedDeploymentKey.branch, port, team);
-        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey, LookupStrategy.branch);
         return [await this.projectLoader.doWithProject({credentials, id, readOnly: true},
                 project => this.deployProject(ti, log, project, port, team))];
 
     }
 
     public async undeploy(ti: ManagedDeploymentTargetInfo, deployment: Deployment, log: ProgressLog): Promise<ExecuteGoalResult> {
-        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey);
+        await managedMavenDeployments.terminateIfRunning(ti.managedDeploymentKey, LookupStrategy.branch);
         return Success;
     }
 
@@ -117,6 +117,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
             port,
             childProcess,
             deployment,
+            lookupStrategy: LookupStrategy.branch,
         });
         childProcess.stdout.on("data", what => log.write(what.toString()));
         childProcess.stderr.on("data", what => log.write(what.toString()));

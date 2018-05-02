@@ -48,6 +48,15 @@ export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTa
 }
 
 /**
+ * Strategy for looking up a service
+ */
+export enum LookupStrategy {
+    service = "service",
+    branch = "branch",
+    sha = "sha",
+}
+
+/**
  * Ports will be reused for the same app
  */
 export interface DeployedApp {
@@ -60,6 +69,8 @@ export interface DeployedApp {
     childProcess: ChildProcess;
 
     deployment: Deployment;
+
+    lookupStrategy: LookupStrategy;
 }
 
 /**
@@ -77,11 +88,12 @@ export class ManagedDeployments {
     /**
      * Find the appropriate port for this app
      * @param {RemoteRepoRef} id
+     * @param lookupStrategy strategy for looking up the instance
      * @param host it will be on. Check for ports not in use
      * @return {number}
      */
-    public async findPort(id: RemoteRepoRef, host: string): Promise<number> {
-        const running = this.findDeployment(id);
+    public async findPort(id: RemoteRepoRef, lookupStrategy: LookupStrategy, host: string): Promise<number> {
+        const running = this.findDeployment(id, lookupStrategy);
         return !!running ? running.port : this.nextFreePort(host);
     }
 
@@ -90,25 +102,34 @@ export class ManagedDeployments {
         this.deployments.push(da);
     }
 
-    public findDeployment(id: RemoteRepoRef): DeployedApp {
-        if (!!id.sha) {
-            // Probability of a sha collision is tiny
-            return this.deployments.find(d => d.id.sha === id.sha);
+    public findDeployment(id: RemoteRepoRef, lookupStrategy: LookupStrategy): DeployedApp {
+        switch (lookupStrategy) {
+            case  LookupStrategy.sha :
+                if (!id.sha) {
+                    throw new Error("Sha should have been set to use 'sha' LookupStrategy");
+                }
+                // Probability of a sha collision is tiny
+                return this.deployments.find(d => d.id.sha === id.sha);
+            case LookupStrategy.branch :
+                if (!id.branch) {
+                    throw new Error("Branch should have been set to use 'branch' LookupStrategy");
+                }
+                return this.deployments
+                    .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch);
+            case LookupStrategy.service:
+                this.deployments
+                    .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
         }
-        return !!id.branch ?
-            this.deployments
-                .find(d => d.id.owner === id.owner && d.id.repo === id.repo && d.id.branch === id.branch) :
-            this.deployments
-                .find(d => d.id.owner === id.owner && d.id.repo === id.repo);
     }
 
     /**
      * Terminate any process we're managing on behalf of this id
      * @param {RemoteRepoRef} id
+     * @param lookupStrategy strategy for finding the instance
      * @return {Promise<any>}
      */
-    public async terminateIfRunning(id: RemoteRepoRef): Promise<any> {
-        const victim = this.findDeployment(id);
+    public async terminateIfRunning(id: RemoteRepoRef, lookupStrategy: LookupStrategy): Promise<any> {
+        const victim = this.findDeployment(id, lookupStrategy);
         if (!!victim && !!victim.childProcess) {
             await poisonAndWait(victim.childProcess);
             // Keep the port but deallocate the process
