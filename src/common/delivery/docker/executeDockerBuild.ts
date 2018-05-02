@@ -42,7 +42,7 @@ export interface DockerOptions {
 export type DockerImageNameCreator = (p: GitProject,
                                       status: StatusForExecuteGoal.Fragment,
                                       options: DockerOptions,
-                                      ctx: HandlerContext) => Promise<{registry: string, name: string, version: string}>;
+                                      ctx: HandlerContext) => Promise<{ registry: string, name: string, version: string }>;
 
 /**
  * Execute a Docker build for the project available from provided projectLoader
@@ -79,14 +79,16 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
             const image = `${imageName.registry}/${imageName.name}:${imageName.version}`;
             const dockerfilePath = await (options.dockerfileFinder ? options.dockerfileFinder(p) : "Dockerfile");
 
-            const regex = /[^A-Za-z0-9]/;
-            const registry = regex.test(options.registry) ? options.registry : undefined;
+            const loginArgs: string[] = ["login", "--username", options.user, "--password", options.password];
+            if (/[^A-Za-z0-9]/.test(options.registry)) {
+                loginArgs.push(options.registry);
+            }
 
             // 1. run docker login
             let result = await spawnAndWatch(
                 {
                     command: "docker",
-                    args: ["login", "--username", options.user, "--password", options.password, registry],
+                    args: loginArgs,
                 },
                 opts,
                 progressLog,
@@ -126,14 +128,14 @@ export function executeDockerBuild(projectLoader: ProjectLoader,
 
             // 4. create image link
             if (await postLinkImageWebhook(
-                    status.commit.repo.owner,
-                    status.commit.repo.name,
-                    status.commit.sha,
-                    image,
-                    context.teamId)) {
+                status.commit.repo.owner,
+                status.commit.repo.name,
+                status.commit.sha,
+                image,
+                context.teamId)) {
                 return result;
             } else {
-                return { code: 1, message: "Image link failed"};
+                return { code: 1, message: "Image link failed" };
             }
         });
     };
