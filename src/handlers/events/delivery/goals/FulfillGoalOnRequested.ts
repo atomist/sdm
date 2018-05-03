@@ -18,7 +18,7 @@ import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
-import { LogFactory } from "../../../..";
+import { ProgressLogFactory } from "../../../..";
 import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
@@ -49,7 +49,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
-                private readonly logFactory: LogFactory) {
+                private readonly logFactory: ProgressLogFactory) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { LogFactory } from "..";
+import { ProgressLogFactory } from "..";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
 import { CredentialsResolver } from "../handlers/common/CredentialsResolver";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
@@ -26,7 +26,7 @@ export interface SoftwareDeliveryMachineOptions {
 
     artifactStore: ArtifactStore;
     projectLoader: ProjectLoader;
-    logFactory: LogFactory;
+    logFactory: ProgressLogFactory;
 
     /**
      * Strategy for resolving credentials from a handler invocation

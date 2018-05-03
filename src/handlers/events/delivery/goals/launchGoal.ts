@@ -32,9 +32,9 @@ import { AutomationEventListenerSupport } from "@atomist/automation-client/serve
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
 import {
-    LogFactory,
     OnAnyRequestedSdmGoal,
     ProgressLog,
+    ProgressLogFactory,
     SdmGoalById,
 } from "../../../..";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
@@ -52,7 +52,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
-                private readonly logFactory: LogFactory) {
+                private readonly logFactory: ProgressLogFactory) {
         super();
     }
 

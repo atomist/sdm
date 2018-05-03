@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { LogFactory, ProgressLog } from "../../spi/log/ProgressLog";
+import { ProgressLog, ProgressLogFactory } from "../../spi/log/ProgressLog";
 
 /**
  * Implementation of ProgressLog log that returns
@@ -50,4 +50,4 @@ class EphemeralProgressLog implements ProgressLog {
 
 }
 
-export const createEphemeralProgressLog: LogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);
+export const createEphemeralProgressLog: ProgressLogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);

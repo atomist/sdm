@@ -54,4 +54,7 @@ export interface ProgressLog {
     isAvailable(): Promise<boolean>;
 }
 
-export type LogFactory = (context: HandlerContext, sdmGoal: SdmGoal) => Promise<ProgressLog>;
+/**
+ * Function to create a ProgressLog for a given goal execution
+ */
+export type ProgressLogFactory = (context: HandlerContext, sdmGoal: SdmGoal) => Promise<ProgressLog>;
