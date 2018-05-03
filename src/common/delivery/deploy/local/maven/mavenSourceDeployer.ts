@@ -24,6 +24,7 @@ import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
+import {DelimitedWriteProgressLogDecorator} from "../../../../log/DelimitedWriteProgressLogDecorator";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment } from "../LocalDeployerOptions";
@@ -119,8 +120,9 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
             deployment,
             lookupStrategy: LookupStrategy.branch,
         });
-        childProcess.stdout.on("data", what => log.write(what.toString()));
-        childProcess.stderr.on("data", what => log.write(what.toString()));
+        const newLineDelimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
+        childProcess.stdout.on("data", what => newLineDelimitedLog.write(what.toString()));
+        childProcess.stderr.on("data", what => newLineDelimitedLog.write(what.toString()));
         return new Promise<SpawnedDeployment>((resolve, reject) => {
             childProcess.stdout.addListener("data", what => {
                 if (!!what && this.opts.successPatterns.some(successPattern => successPattern.test(what.toString()))) {

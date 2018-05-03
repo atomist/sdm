@@ -22,6 +22,7 @@ import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
+import {DelimitedWriteProgressLogDecorator} from "../../../../log/DelimitedWriteProgressLogDecorator";
 import { lastLinesLogInterpreter } from "../../../goals/support/logInterpreters";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment, StartupInfo } from "../LocalDeployerOptions";
 import { LookupStrategy, ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
@@ -104,8 +105,9 @@ class ExecutableJarDeployer implements Deployer<ManagedDeploymentTargetInfo, Dep
             {
                 cwd: da.cwd,
             });
-        childProcess.stdout.on("data", what => log.write(what.toString()));
-        childProcess.stderr.on("data", what => log.write(what.toString()));
+        const newLineDelimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
+        childProcess.stdout.on("data", what => newLineDelimitedLog.write(what.toString()));
+        childProcess.stderr.on("data", what => newLineDelimitedLog.write(what.toString()));
 
         const deployment = {
             childProcess,
