@@ -38,7 +38,7 @@ export interface UpdateSdmGoalParams {
     approved?: boolean;
     error?: Error;
     data?: string;
-}                        http://www.apache.org/licenses/LICENSE-2.0
+}
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
