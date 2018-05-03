@@ -71,7 +71,7 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         ]);
     });
 
-    it("should write remainder on flush", async () => {
+    it("should write remainder of logs on flush", async () => {
         const delegateLog = new ListProgressLog();
         const log = new DelimitedWriteProgressLogDecorator(delegateLog, "\n");
 
