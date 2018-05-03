@@ -40,11 +40,8 @@ export class RolarProgressLog implements ProgressLog {
 
     private localLogs: LogData[] = [];
 
-    private lineBuffer = "";
-
     constructor(private readonly rolarBaseUrl: string,
                 private readonly logPath: string[],
-                private readonly lineDelimiter: string = null,
                 private readonly bufferSizeLimit: number = 10000,
                 private readonly logLevel: string = "info",
                 private readonly timestamper: Iterator<Date> = timestampGenerator(),
@@ -74,15 +71,7 @@ export class RolarProgressLog implements ProgressLog {
     }
 
     public write(what: string) {
-        let line = what;
-        if (this.lineDelimiter) {
-            this.lineBuffer += what;
-            if (!this.lineBuffer.endsWith(this.lineDelimiter)) {
-                return;
-            }
-            line = this.lineBuffer.slice(0, - this.lineDelimiter.length);
-            this.lineBuffer = "";
-        }
+        const line = what;
         this.localLogs.push({
             level: this.logLevel,
             message: line,

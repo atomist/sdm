@@ -23,6 +23,7 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
+import {DelimitedWriteProgressLogDecorator} from "../../../log/DelimitedWriteProgressLogDecorator";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { identification } from "../../build/local/maven/pomParser";
 import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
@@ -79,8 +80,9 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
 
             logger.info("About to issue Cloud Foundry command %s: options=%j", stringifySpawnCommand(spawnCommand), opts);
             const childProcess = spawn(spawnCommand.command, spawnCommand.args, opts);
-            childProcess.stdout.on("data", what => log.write(what.toString()));
-            childProcess.stderr.on("data", what => log.write(what.toString()));
+            const newLineDelimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
+            childProcess.stdout.on("data", what => newLineDelimitedLog.write(what.toString()));
+            childProcess.stderr.on("data", what => newLineDelimitedLog.write(what.toString()));
             return [await new Promise<CloudFoundryDeployment>((resolve, reject) => {
                 childProcess.addListener("exit", (code, signal) => {
                     if (code !== 0) {
