@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { HandlerContext } from "@atomist/automation-client";
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 /**
  * Log abstraction for output of a specific activity. Not intended as a long-running log
