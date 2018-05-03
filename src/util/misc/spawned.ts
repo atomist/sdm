@@ -21,6 +21,7 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import { sprintf } from "sprintf-js";
 
 import * as strip_ansi from "strip-ansi";
+import {DelimitedWriteProgressLogDecorator} from "../../common/log/DelimitedWriteProgressLogDecorator";
 
 /**
  * Type that can react to the exit of a spawned child process, after
@@ -89,9 +90,10 @@ export function watchSpawned(childProcess: ChildProcess,
             optsToUse.errorFinder = SuccessIsReturn0ErrorFinder;
         }
 
+        const newLineDelimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
         function sendToLog(data) {
             const formatted = optsToUse.stripAnsi ? strip_ansi(data.toString()) : data.toString();
-            return log.write(formatted);
+            return newLineDelimitedLog.write(formatted);
         }
 
         childProcess.stdout.on("data", sendToLog);
