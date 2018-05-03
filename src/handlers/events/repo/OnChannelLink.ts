@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,7 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new channel has been linked to a repo
@@ -33,7 +32,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
     constructor(
         private readonly projectLoader: ProjectLoader,
         private readonly listeners: ChannelLinkListener[],
-        private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+        private readonly credentialsFactory: CredentialsResolver) {
     }
 
     public async handle(event: EventFired<schema.OnChannelLink.Subscription>,

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,7 @@ import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../com
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new issue has been created.
@@ -32,7 +31,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
     private readonly closedIssueListeners: ClosedIssueListener[];
 
     constructor(closedIssueListeners: ClosedIssueListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver) {
         this.closedIssueListeners = closedIssueListeners;
     }
 

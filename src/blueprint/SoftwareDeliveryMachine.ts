@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -175,13 +175,13 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
-            () => new OnRepoCreation(this.repoCreationListeners) :
+            () => new OnRepoCreation(this.repoCreationListeners, this.opts.credentialsResolver) :
             undefined;
     }
 
     private get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
         return this.newRepoWithCodeActions.length > 0 ?
-            () => new OnFirstPushToRepo(this.newRepoWithCodeActions) :
+            () => new OnFirstPushToRepo(this.newRepoWithCodeActions, this.opts.credentialsResolver) :
             undefined;
     }
 
@@ -292,14 +292,24 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader, this.opts.logFactory))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
-                this.userJoiningChannelListeners.length > 0 ? () => new OnUserJoiningChannel(this.userJoiningChannelListeners) : undefined,
+                this.userJoiningChannelListeners.length > 0 ?
+                    () => new OnUserJoiningChannel(this.userJoiningChannelListeners, this.opts.credentialsResolver) :
+                    undefined,
                 this.buildListeners.length > 0 ? () => new InvokeListenersOnBuildComplete(this.buildListeners) : undefined,
-                this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners) : undefined,
-                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners) : undefined,
-                this.updatedIssueListeners.length > 0 ? () => new UpdatedIssueHandler(this.updatedIssueListeners) : undefined,
-                this.closedIssueListeners.length > 0 ? () => new ClosedIssueHandler(this.closedIssueListeners) : undefined,
-                this.channelLinkListeners.length > 0 ? () => new OnChannelLink(this.opts.projectLoader, this.channelLinkListeners) : undefined,
-                this.pullRequestListeners.length > 0 ? () => new OnPullRequest(this.opts.projectLoader, this.pullRequestListeners) : undefined,
+                this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners, this.opts.credentialsResolver) : undefined,
+                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners, this.opts.credentialsResolver) : undefined,
+                this.updatedIssueListeners.length > 0 ?
+                    () => new UpdatedIssueHandler(this.updatedIssueListeners, this.opts.credentialsResolver) :
+                    undefined,
+                this.closedIssueListeners.length > 0 ?
+                    () => new ClosedIssueHandler(this.closedIssueListeners, this.opts.credentialsResolver) :
+                    undefined,
+                this.channelLinkListeners.length > 0 ?
+                    () => new OnChannelLink(this.opts.projectLoader, this.channelLinkListeners, this.opts.credentialsResolver) :
+                    undefined,
+                this.pullRequestListeners.length > 0 ?
+                    () => new OnPullRequest(this.opts.projectLoader, this.pullRequestListeners,
+                        this.opts.credentialsResolver) : undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,

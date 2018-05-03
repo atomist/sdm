@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,8 @@ import { DeploymentListener, DeploymentListenerInvocation } from "../../../../co
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
-import { CredentialsFactory } from "../../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../../common/CredentialsResolver";
+import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 /**
  * React to a deployment.
@@ -38,7 +38,7 @@ import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFacto
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     constructor(private readonly listeners: DeploymentListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
+                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {}
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
                         context: HandlerContext, params: this): Promise<HandlerResult> {

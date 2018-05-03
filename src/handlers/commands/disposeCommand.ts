@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,7 +28,6 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { toRemoteRepoRef } from "../../util/git/repoRef";
 import { fetchPushForCommit } from "../events/delivery/goals/resetGoals";
 import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../events/delivery/goals/SetGoalsOnPush";
 import { fetchDefaultBranchTip, tipOfBranch } from "./triggerGoal";
@@ -66,7 +65,7 @@ function disposeOfProject(rules: ChooseAndSetGoalsRules) {
             return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
                 .then(success);
         }
-        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, commandParams);
         const branch = repoData.defaultBranch;
         const sha = tipOfBranch(repoData, branch);
 

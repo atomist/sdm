@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,13 +18,11 @@ import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Param
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { updateGoal } from "../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyString } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
-import { toRemoteRepoRef } from "../../util/git/repoRef";
 
 @Parameters()
 export class RetryGoalParameters {
@@ -65,7 +63,7 @@ export function retryCommandNameFor(goal: Goal) {
 function triggerGoalsOnCommit(goal: Goal) {
     return async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
         // figure out which commit
-        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, commandParams);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
 
@@ -88,15 +86,15 @@ function triggerGoalsOnCommit(goal: Goal) {
     };
 }
 
-export async function fetchDefaultBranchTip(ctx: HandlerContext, id: RemoteRepoRef, providerId: string) {
+export async function fetchDefaultBranchTip(ctx: HandlerContext, repositoryId: {repo: string, owner: string, providerId: string}) {
     const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(
-        {name: "RepoBranchTips", variables: {name: id.repo, owner: id.owner}});
+        {name: "RepoBranchTips", variables: {name: repositoryId.repo, owner: repositoryId.owner}});
     if (!result || !result.Repo || result.Repo.length === 0) {
-        throw new Error(`Repository not found: ${id.owner}/${id.repo}`);
+        throw new Error(`Repository not found: ${repositoryId.owner}/${repositoryId.repo}`);
     }
-    const repo = result.Repo.find(r => r.org.provider.providerId === providerId);
+    const repo = result.Repo.find(r => r.org.provider.providerId === repositoryId.providerId);
     if (!repo) {
-        throw new Error(`Repository not found: ${id.owner}/${id.repo} provider ${providerId}`);
+        throw new Error(`Repository not found: ${repositoryId.owner}/${repositoryId.repo} provider ${repositoryId.providerId}`);
     }
     return repo;
 }

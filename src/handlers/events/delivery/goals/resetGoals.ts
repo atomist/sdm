@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,6 @@ import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { PushFields, PushForCommit } from "../../../../typings/types";
-import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 
@@ -74,7 +73,7 @@ function resetGoalsOnCommit(rules: {
     const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
-        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, commandParams);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});

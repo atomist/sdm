@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-import { Secret, Secrets } from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { CredentialsFactory } from "./CredentialsFactory";
 
-export class GitHubCredentialsFactory implements CredentialsFactory {
+/**
+ * Strategy interface to resolve credentials from a handler invocation.
+ */
+export interface CredentialsResolver {
 
-    @Secret(Secrets.OrgToken)
-    private readonly githubToken: string;
-
-    public eventHandlerCredentials(): ProjectOperationCredentials {
-        if (!this.githubToken) {
-            throw new Error("githubToken has not been injected");
-        }
-        return {token: this.githubToken};
-    }
-
+    eventHandlerCredentials(context: HandlerContext): ProjectOperationCredentials;
 }

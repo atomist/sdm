@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,6 +28,8 @@ import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 import { sprintf } from "sprintf-js";
+
+import * as stringify from "json-stringify-safe";
 
 /**
  * Central function to execute a goal with progress logging
@@ -62,7 +64,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                 .catch(err => {
                         progressLog.write("ERROR caught: " + err.message + "\n");
                         progressLog.write(err.stack);
-                        progressLog.write(sprintf("Full error object: [%j]", err));
+                        progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
 
                         return reportGoalError({
                             goal, implementationName, addressChannels, progressLog, id, logInterpreter,

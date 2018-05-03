@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +20,7 @@ import { RepoCreationListener, RepoCreationListenerInvocation } from "../../../c
 import { AddressNoChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new repo has been created. We don't know if it has code.
@@ -32,7 +31,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
     private readonly newRepoActions: RepoCreationListener[];
 
     constructor(newRepoActions: RepoCreationListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver) {
         this.newRepoActions = newRepoActions;
     }
 

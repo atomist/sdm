@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { LogFactory, ProgressLog } from "../../spi/log/ProgressLog";
+import { ProgressLog, ProgressLogFactory } from "../../spi/log/ProgressLog";
 
 /**
  * Implementation of ProgressLog log that returns
@@ -50,4 +50,4 @@ class EphemeralProgressLog implements ProgressLog {
 
 }
 
-export const createEphemeralProgressLog: LogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);
+export const createEphemeralProgressLog: ProgressLogFactory = async (context, sdmGoal) => new EphemeralProgressLog(sdmGoal.name);

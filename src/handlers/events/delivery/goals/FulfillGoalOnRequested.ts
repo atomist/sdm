@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,7 @@ import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
-import { LogFactory } from "../../../..";
+import { ProgressLogFactory } from "../../../..";
 import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
@@ -49,7 +49,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
-                private readonly logFactory: LogFactory) {
+                private readonly logFactory: ProgressLogFactory) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =

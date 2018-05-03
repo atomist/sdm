@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,8 +24,8 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
-import { CredentialsFactory } from "../../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../../common/CredentialsResolver";
+import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
@@ -37,7 +37,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
     constructor(public goal: Goal,
                 private readonly artifactStore: ArtifactStore,
                 private readonly listeners: ArtifactListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
+                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {}
 
     public async handle(event: EventFired<OnImageLinked.Subscription>,
                         context: HandlerContext,

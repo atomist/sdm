@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,7 +19,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
-import { LogFactory, ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { ProgressLog, ProgressLogFactory } from "../../../../../spi/log/ProgressLog";
 import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../../slack/addressChannels";
@@ -38,7 +38,7 @@ import { identification } from "./pomParser";
 export class MavenBuilder extends LocalBuilder implements LogInterpretation {
 
     constructor(artifactStore: ArtifactStore,
-                logFactory: LogFactory,
+                logFactory: ProgressLogFactory,
                 projectLoader: ProjectLoader,
                 private readonly skipTests: boolean = true) {
         super("MavenBuilder", artifactStore, projectLoader);
