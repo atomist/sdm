@@ -141,6 +141,7 @@ export interface KubernetesOptions {
     path?: string;
     host?: string;
     protocol?: string;
+    replicas?: string;
 }
 
 /**
