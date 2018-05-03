@@ -20,8 +20,7 @@ import { UpdatedIssueListener, UpdatedIssueListenerInvocation } from "../../../c
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * An issue has been updated
@@ -32,7 +31,7 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
     private readonly updatedIssueListeners: UpdatedIssueListener[];
 
     constructor(updatedIssueListeners: UpdatedIssueListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver) {
         this.updatedIssueListeners = updatedIssueListeners;
     }
 

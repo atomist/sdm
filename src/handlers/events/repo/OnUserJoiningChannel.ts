@@ -19,8 +19,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { UserJoiningChannelListener, UserJoiningChannelListenerInvocation } from "../../../common/listener/UserJoiningChannelListener";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A user joined a channel
@@ -29,7 +28,7 @@ import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory"
 export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningChannel.Subscription> {
 
     constructor(private readonly listeners: UserJoiningChannelListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver) {
     }
 
     public async handle(event: EventFired<schema.OnUserJoiningChannel.Subscription>,

@@ -16,9 +16,9 @@
 
 import { Secret, Secrets } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { CredentialsFactory } from "./CredentialsFactory";
+import { CredentialsResolver } from "./CredentialsResolver";
 
-export class GitHubCredentialsFactory implements CredentialsFactory {
+export class GitHubCredentialsResolver implements CredentialsResolver {
 
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;

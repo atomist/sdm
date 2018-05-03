@@ -20,8 +20,7 @@ import { NewIssueListener, NewIssueListenerInvocation } from "../../../common/li
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new issue has been created.
@@ -32,7 +31,7 @@ export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscri
     private readonly newIssueListeners: NewIssueListener[];
 
     constructor(newIssueListeners: NewIssueListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver) {
         this.newIssueListeners = newIssueListeners;
     }
 

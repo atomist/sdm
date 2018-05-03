@@ -25,7 +25,6 @@ import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { PushFields, PushForCommit } from "../../../../typings/types";
-import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 

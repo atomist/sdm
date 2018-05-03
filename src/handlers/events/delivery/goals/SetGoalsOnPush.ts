@@ -47,8 +47,8 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
-import { CredentialsFactory } from "../../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../../common/CredentialsResolver";
+import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -68,7 +68,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                 private readonly goalSetters: GoalSetter[],
                 public readonly goalsListeners: GoalsSetListener[],
                 private readonly implementationMapping: SdmGoalImplementationMapper,
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {
 
     }
 

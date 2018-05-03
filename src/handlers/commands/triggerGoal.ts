@@ -18,13 +18,11 @@ import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Param
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { updateGoal } from "../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyString } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
-import { toRemoteRepoRef } from "../../util/git/repoRef";
 
 @Parameters()
 export class RetryGoalParameters {

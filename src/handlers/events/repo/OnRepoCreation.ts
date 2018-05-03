@@ -20,8 +20,7 @@ import { RepoCreationListener, RepoCreationListenerInvocation } from "../../../c
 import { AddressNoChannels } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new repo has been created. We don't know if it has code.
@@ -32,7 +31,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
     private readonly newRepoActions: RepoCreationListener[];
 
     constructor(newRepoActions: RepoCreationListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+                private readonly credentialsFactory: CredentialsResolver) {
         this.newRepoActions = newRepoActions;
     }
 

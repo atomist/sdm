@@ -21,8 +21,7 @@ import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new channel has been linked to a repo
@@ -33,7 +32,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
     constructor(
         private readonly projectLoader: ProjectLoader,
         private readonly listeners: ChannelLinkListener[],
-        private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {
+        private readonly credentialsFactory: CredentialsResolver) {
     }
 
     public async handle(event: EventFired<schema.OnChannelLink.Subscription>,

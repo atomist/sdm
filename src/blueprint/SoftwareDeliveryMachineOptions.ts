@@ -16,6 +16,7 @@
 
 import { LogFactory } from "..";
 import { ProjectLoader } from "../common/repo/ProjectLoader";
+import { CredentialsResolver } from "../handlers/common/CredentialsResolver";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 
 /**
@@ -26,4 +27,9 @@ export interface SoftwareDeliveryMachineOptions {
     artifactStore: ArtifactStore;
     projectLoader: ProjectLoader;
     logFactory: LogFactory;
+
+    /**
+     * Strategy for resolving credentials from a handler invocation
+     */
+    credentialsResolver: CredentialsResolver;
 }

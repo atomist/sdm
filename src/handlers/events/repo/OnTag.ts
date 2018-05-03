@@ -20,8 +20,7 @@ import { TagListener, TagListenerInvocation } from "../../../common/listener/Tag
 import { addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
-import { CredentialsFactory } from "../../common/CredentialsFactory";
-import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory";
+import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new tag has been created
@@ -30,7 +29,7 @@ import { GitHubCredentialsFactory } from "../../common/GitHubCredentialsFactory"
 export class OnTag implements HandleEvent<schema.OnTag.Subscription> {
 
     constructor(private readonly listeners: TagListener[],
-                private readonly credentialsFactory: CredentialsFactory = new GitHubCredentialsFactory()) {}
+                private readonly credentialsFactory: CredentialsResolver) {}
 
     public async handle(event: EventFired<schema.OnTag.Subscription>,
                         context: HandlerContext,
