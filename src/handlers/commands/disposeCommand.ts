@@ -66,7 +66,7 @@ function disposeOfProject(rules: ChooseAndSetGoalsRules) {
             return ctx.messageClient.respond("You didn't say 'yes' to 'are you sure?' so I won't do anything.")
                 .then(success);
         }
-        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, commandParams);
         const branch = repoData.defaultBranch;
         const sha = tipOfBranch(repoData, branch);
 
