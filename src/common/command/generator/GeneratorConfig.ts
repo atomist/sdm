@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 /*
  * Copyright © 2018 Atomist, Inc.
  *
