@@ -26,8 +26,7 @@ import { HandlerContext } from "@atomist/automation-client";
 export interface ProgressLog {
 
     /**
-     * Name. Should relate to the immediate activity wegs
-     * 're logging.
+     * Name. Should relate to the immediate activity we're logging.
      */
     readonly name: string;
 

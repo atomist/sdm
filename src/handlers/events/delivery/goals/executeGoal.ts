@@ -165,9 +165,12 @@ export function markStatus(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, 
     let {ctx, sdmGoal, goal, result, error, progressLogUrl} = parameters;
     const newState = result.code !== 0 ? "failure" :
         result.requireApproval ? "waiting_for_approval" : "success";
+    // Currently, the goals tend to have a single url so it seems safe to use whichever of these we have.
+    // Going forward it may make sense to have both a logging and a result URL.
+    const url = result.targetUrl || progressLogUrl;
     return updateGoal(ctx, sdmGoal,
         {
-            url: result.targetUrl || progressLogUrl, // should we send both?
+            url,
             state: newState,
             description: descriptionFromState(goal, newState),
             error,
