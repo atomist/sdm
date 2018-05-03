@@ -29,6 +29,8 @@ import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 import { sprintf } from "sprintf-js";
 
+import * as stringify from "json-stringify-safe";
+
 /**
  * Central function to execute a goal with progress logging
  * @param {{projectLoader: ProjectLoader}} rules
@@ -62,7 +64,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                 .catch(err => {
                         progressLog.write("ERROR caught: " + err.message + "\n");
                         progressLog.write(err.stack);
-                        progressLog.write(sprintf("Full error object: [%j]", err));
+                        progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
 
                         return reportGoalError({
                             goal, implementationName, addressChannels, progressLog, id, logInterpreter,
