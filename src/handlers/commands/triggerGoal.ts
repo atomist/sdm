@@ -65,7 +65,7 @@ export function retryCommandNameFor(goal: Goal) {
 function triggerGoalsOnCommit(goal: Goal) {
     return async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
         // figure out which commit
-        const repoData = await fetchDefaultBranchTip(ctx, toRemoteRepoRef(commandParams), commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, commandParams, commandParams.providerId);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
 
@@ -88,7 +88,7 @@ function triggerGoalsOnCommit(goal: Goal) {
     };
 }
 
-export async function fetchDefaultBranchTip(ctx: HandlerContext, id: RemoteRepoRef, providerId: string) {
+export async function fetchDefaultBranchTip(ctx: HandlerContext, id: {repo: string, owner: string, providerId: string}, providerId: string) {
     const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(
         {name: "RepoBranchTips", variables: {name: id.repo, owner: id.owner}});
     if (!result || !result.Repo || result.Repo.length === 0) {
