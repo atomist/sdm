@@ -74,7 +74,7 @@ function resetGoalsOnCommit(rules: {
     const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
-        const repoData = await fetchDefaultBranchTip(ctx, commandParams, commandParams.providerId);
+        const repoData = await fetchDefaultBranchTip(ctx, commandParams);
         const branch = commandParams.branch || repoData.defaultBranch;
         const sha = commandParams.sha || tipOfBranch(repoData, branch);
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
