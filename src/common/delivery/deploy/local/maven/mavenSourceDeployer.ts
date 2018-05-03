@@ -176,7 +176,6 @@ const springBootRunLogInterpreter: LogInterpreter = (log: string) => {
         return {
             relevantPart: maybeMavenErrors,
             message: "Maven errors",
-            includeFullLog: true,
         };
     }
 

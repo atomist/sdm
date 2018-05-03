@@ -28,6 +28,5 @@ export const NpmLogInterpreter: LogInterpreter = log => {
     return {
         relevantPart,
         message: "npm errors",
-        includeFullLog: true,
     };
 };

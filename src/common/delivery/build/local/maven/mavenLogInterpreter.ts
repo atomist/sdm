@@ -74,7 +74,6 @@ export const MavenLogInterpreter: LogInterpreter<MavenInfo> = log => {
     return {
         relevantPart: "",
         message: "Unknown error",
-        includeFullLog: true,
         data,
     };
 };

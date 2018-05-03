@@ -27,7 +27,6 @@ export function lastLinesLogInterpreter(message: string, lines: number = 10): Lo
         return {
             relevantPart: log.split("\n").slice(-lines).join("\n"),
             message,
-            includeFullLog: true,
         };
     };
 }

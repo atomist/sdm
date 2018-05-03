@@ -36,7 +36,6 @@ export const leinLogInterpreter: LogInterpreter = log => {
         // We don't yet know how to interpret clojure logs
         relevantPart: undefined,
         message: "lein errors",
-        includeFullLog: true,
     };
 };
 
