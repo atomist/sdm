@@ -50,7 +50,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
     const implementationName = sdmGoal.fulfillment.name;
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 
-    await markGoalInProcess(ctx, sdmGoal, goal);
+    await markGoalInProcess({ctx, sdmGoal, goal, progressLogUrl: progressLog.url});
     try {
         // execute pre hook
         let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
@@ -99,13 +99,13 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         }
 
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
-        await markStatus(ctx, sdmGoal, goal, result);
+        await markStatus({ctx, sdmGoal, goal, result, progressLogUrl: progressLog.url});
         return Success;
     } catch (err) {
         logger.warn("Error executing %s on %s: %s",
             implementationName, sdmGoal.sha, err.message);
         logger.warn(err.stack);
-        await markStatus(ctx, sdmGoal, goal, {code: 1}, err);
+        await markStatus({ctx, sdmGoal, goal, result: {code: 1}, error: err, progressLogUrl: progressLog.url} );
         return failure(err);
     }
 }
@@ -161,20 +161,27 @@ function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
     return `${prefix}-${sdmGoal.environment.slice(2)}-${sdmGoal.name}`;
 }
 
-export function markStatus(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult, error?: Error) {
+export function markStatus(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
+        error?: Error, progressLogUrl: string }) {
+    const {ctx, sdmGoal, goal, result, error, progressLogUrl} = parameters;
     const newState = result.code !== 0 ? "failure" :
         result.requireApproval ? "waiting_for_approval" : "success";
+    // Currently, the goals tend to have a single url so it seems safe to use whichever of these we have.
+    // Going forward it may make sense to have both a logging and a result URL.
+    const url = result.targetUrl || progressLogUrl;
     return updateGoal(ctx, sdmGoal,
         {
-            url: result.targetUrl,
+            url,
             state: newState,
             description: descriptionFromState(goal, newState),
             error,
         });
 }
 
-function markGoalInProcess(ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal) {
+function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, progressLogUrl: string }) {
+    const {ctx, sdmGoal, goal, progressLogUrl} = parameters;
     return updateGoal(ctx, sdmGoal, {
+        url: progressLogUrl,
         description: goal.inProcessDescription,
         state: "in_process",
     }).catch(err =>
