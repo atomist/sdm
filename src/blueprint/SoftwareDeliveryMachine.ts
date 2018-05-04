@@ -16,9 +16,32 @@
 
 // tslint:disable:max-file-line-count
 
-import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    Configuration,
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import * as _ from "lodash";
+import {
+    CachingProjectLoader,
+    EphemeralLocalArtifactStore,
+} from "..";
+import { createRepoHandler } from "../common/command/generator/createRepo";
+import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
+import { executeBuild } from "../common/delivery/build/executeBuild";
+import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
+import { executePushReactions } from "../common/delivery/code/executePushReactions";
+import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
+import { executeReview } from "../common/delivery/code/review/executeReview";
+import { Target } from "../common/delivery/deploy/deploy";
+import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
+import {
+    executeUndeploy,
+    offerToDeleteRepository,
+} from "../common/delivery/deploy/executeUndeploy";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -33,67 +56,76 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
-import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
-import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
-import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
-import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
-import { KubernetesIsolatedGoalLauncher } from "../handlers/events/delivery/goals/k8s/launchGoalK8";
-import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/launchGoal";
-import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
-import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
-import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
-import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
-import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
-import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
-
-import * as _ from "lodash";
-import { executeBuild } from "../common/delivery/build/executeBuild";
-import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
-import { executePushReactions } from "../common/delivery/code/executePushReactions";
-import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
-import { executeReview } from "../common/delivery/code/review/executeReview";
-import { Target } from "../common/delivery/deploy/deploy";
-import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import {
+    lastLinesLogInterpreter,
+    LogSuppressor,
+} from "../common/delivery/goals/support/logInterpreters";
+import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
+import { PushRule } from "../common/listener/support/PushRule";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
-import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
-import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-
-import { createRepoHandler } from "../common/command/generator/createRepo";
-import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
-import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
-import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
-import { PushRule } from "../common/listener/support/PushRule";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
-import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
-
-import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
+import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
+import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
+import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
+import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
+import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
+import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
+import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
+import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
+import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
+import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
+import { KubernetesIsolatedGoalLauncher } from "../handlers/events/delivery/goals/k8s/launchGoalK8";
+import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/launchGoal";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
-import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import {
+    executeImmaterial,
+    SetGoalsOnPush,
+} from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import {
+    executeVerifyEndpoint,
+    SdmVerification,
+} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
 import { OnChannelLink } from "../handlers/events/repo/OnChannelLink";
+import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
+import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
 import { OnTag } from "../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../spi/build/Builder";
 import { InterpretLog } from "../spi/log/InterpretedLog";
+import { logFactory } from "../spi/log/logFactory";
+import {
+    EmptyFunctionalUnit,
+    FunctionalUnit,
+} from "./FunctionalUnit";
+import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
 // NEXT: store the implementation with the goal
+
+export function softwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineOptions {
+    return {
+        artifactStore: new EphemeralLocalArtifactStore(),
+        projectLoader: new CachingProjectLoader(),
+        logFactory: logFactory(_.get(configuration, "custom.sdm.rolar.url")),
+        credentialsResolver: new GitHubCredentialsResolver(),
+    };
+}
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -462,8 +494,12 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
-export function configureForSdm(machine: SoftwareDeliveryMachine) {
+export function configureForSdm(
+    machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine) {
     return async (config: Configuration) => {
+        const sdmOptions = softwareDeliveryMachineOptions(config);
+        const machine = machineMaker(sdmOptions, config);
+
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
