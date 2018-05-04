@@ -31,7 +31,6 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
@@ -48,6 +47,7 @@ import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngest
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -134,7 +134,8 @@ export async function determineGoals(rules: {
                                          implementationMapping: SdmGoalImplementationMapper,
                                      },
                                      circumstances: {
-                                         credentials: ProjectOperationCredentials, id: GitHubRepoRef,
+                                         credentials: ProjectOperationCredentials,
+                                         id: RemoteRepoRef,
                                          context: HandlerContext,
                                          push: PushFields.Fragment,
                                          addressChannels: AddressChannels,
