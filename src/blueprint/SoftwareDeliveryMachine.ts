@@ -198,8 +198,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             return EmptyFunctionalUnit;
         }
         return {
-            eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader, this.goalSetters, this.goalsSetListeners,
-                this.goalFulfillmentMapper)],
+            eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader,
+                this.goalSetters, this.goalsSetListeners,
+                this.goalFulfillmentMapper, this.opts.credentialsResolver)],
             commandHandlers: [() => resetGoalsCommand({
                 projectLoader: this.opts.projectLoader,
                 goalsListeners: this.goalsSetListeners,
@@ -231,7 +232,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
         this.opts.artifactStore,
-        this.artifactListeners)
+        this.artifactListeners);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -271,7 +272,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal]);
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {

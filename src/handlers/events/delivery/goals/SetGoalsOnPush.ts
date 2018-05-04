@@ -48,7 +48,6 @@ import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngest
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
@@ -64,13 +63,11 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * @param implementationMapping
      * @param credentialsFactory credentials factory
      */
-    constructor(private readonly projectLoader,
+    constructor(private readonly projectLoader: ProjectLoader,
                 private readonly goalSetters: GoalSetter[],
                 public readonly goalsListeners: GoalsSetListener[],
                 private readonly implementationMapping: SdmGoalImplementationMapper,
-                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {
-
-    }
+                private readonly credentialsFactory: CredentialsResolver) {}
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>,
                         context: HandlerContext,
