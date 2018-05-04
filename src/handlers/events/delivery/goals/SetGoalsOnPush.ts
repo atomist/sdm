@@ -32,6 +32,7 @@ import { Parameters } from "@atomist/automation-client/decorators";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
 import { Goals } from "../../../../common/delivery/goals/Goals";
 import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
@@ -47,7 +48,6 @@ import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngest
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).
