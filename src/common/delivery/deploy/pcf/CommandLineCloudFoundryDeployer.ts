@@ -123,7 +123,6 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
         return {
             relevantPart: "",
             message: "Deploy failed",
-            includeFullLog: true,
         };
     }
 

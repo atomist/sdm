@@ -122,7 +122,6 @@ export class CloudFoundryPushDeployer implements Deployer<CloudFoundryInfo, Clou
         return {
             relevantPart: log.split("\n").slice(-10).join("\n"),
             message: "Oh no!",
-            includeFullLog: true,
         };
    }
 }

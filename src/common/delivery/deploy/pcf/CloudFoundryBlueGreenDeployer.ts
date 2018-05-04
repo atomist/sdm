@@ -141,7 +141,6 @@ export class CloudFoundryBlueGreenDeployer implements Deployer<CloudFoundryInfo,
         return {
             relevantPart: log.split("\n").slice(-10).join("\n"),
             message: "Oh no!",
-            includeFullLog: true,
         };
    }
 }

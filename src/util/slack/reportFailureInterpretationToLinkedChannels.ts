@@ -26,7 +26,7 @@ export async function reportFailureInterpretationToLinkedChannels(stepName: stri
                                                                   addressChannels: AddressChannels,
                                                                   retryButton?: slack.Action) {
     await addressChannels({
-        text: `Failed ${stepName} of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 6))}`,
+        text: `Failed ${stepName} of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 7))}`,
         attachments: [{
             title: interpretation.message || "Failure",
             title_link: fullLog.url,
@@ -36,7 +36,9 @@ export async function reportFailureInterpretationToLinkedChannels(stepName: stri
             actions: retryButton ? [retryButton] : [],
         }],
     });
-    if (interpretation.includeFullLog) {
+    const includeFullLogByDefault = !fullLog.url; // if there is no link, include it by default
+    const shouldIncludeFullLog = "includeFullLog" in interpretation ? interpretation.includeFullLog : includeFullLogByDefault;
+    if (shouldIncludeFullLog) {
         await addressChannels({
             content: fullLog.log,
             fileType: "text",
