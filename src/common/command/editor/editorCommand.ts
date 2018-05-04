@@ -30,6 +30,8 @@ import * as assert from "power-assert";
 import { EmptyParameters } from "../EmptyParameters";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
+import { CachingProjectLoader } from "../../..";
+import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
@@ -52,7 +54,7 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         intent: `edit ${name}`,
         repoFinder: allReposInTeam(),
         repoLoader:
-            p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
+        p => projectLoaderRepoLoader(new CachingProjectLoader(), p.targets.credentials),
         editMode: ((params: PARAMS) => new PullRequest(
             (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
             (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),
