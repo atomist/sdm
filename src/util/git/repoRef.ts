@@ -21,15 +21,36 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as _ from "lodash";
 import { ProviderType } from "../..";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
+import { BasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
-    return GitHubRepoRef.from({
-        owner: push.repo.owner,
-        repo: push.repo.name,
-        sha: push.after.sha,
-        rawApiBase: push.repo.org.provider.apiUrl,
-        branch: push.branch,
-    });
+    const providerType = push.repo.org.provider.providerType;
+    switch (providerType) {
+        case ProviderType.github_com:
+        case ProviderType.ghe:
+            return GitHubRepoRef.from({
+                owner: push.repo.owner,
+                repo: push.repo.name,
+                sha: push.after.sha,
+                rawApiBase: push.repo.org.provider.apiUrl,
+                branch: push.branch,
+            });
+        case ProviderType.bitbucket :
+            const url = push.repo.org.provider.url.replace("http://", "");
+            const id = new BitBucketServerRepoRef(
+                url,
+                push.repo.owner,
+                push.repo.name,
+            );
+            id.cloneUrl = (creds: BasicAuthCredentials) =>
+             `http://${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${id.remoteBase}${id.pathComponent}.git`;
+            return id;
+        case ProviderType.bitbucket_cloud :
+            throw new Error("BitBucket Cloud not yet supported");
+        default:
+            throw new Error(`Provider ${providerType} not currently supported in SDM`);
+    }
 }
 
 export function providerIdFromPush(push: OnPushToAnyBranch.Push) {
