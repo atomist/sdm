@@ -232,7 +232,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
         this.opts.artifactStore,
-        this.artifactListeners);
+        this.artifactListeners)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -272,7 +272,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal]);
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {

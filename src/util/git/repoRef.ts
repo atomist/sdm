@@ -17,12 +17,12 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
+import { BasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { ProviderType } from "../..";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
-import { BasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     const providerType = push.repo.org.provider.providerType;
