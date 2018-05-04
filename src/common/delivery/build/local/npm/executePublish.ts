@@ -39,7 +39,8 @@ import { NpmPreparations } from "./npmBuilder";
  */
 export function executePublish(projectLoader: ProjectLoader,
                                projectIdentifier: ProjectIdentifier,
-                               preparations: PrepareForGoalExecution[] = NpmPreparations): ExecuteGoalWithLog {
+                               preparations: PrepareForGoalExecution[] = NpmPreparations,
+                               options: NpmOptions): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
         return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async project => {
@@ -50,14 +51,14 @@ export function executePublish(projectLoader: ProjectLoader,
                 }
             }
 
-            const npmConfig = await configure();
+            await configure(options);
 
             const result: ExecuteGoalResult = await spawnAndWatch({
                     command: "bash",
                     args: [p.join(__dirname, "..", "..", "..", "..", "..", "scripts", "npm-publish.bash"),
-                        `--registry=${npmConfig.registry}`,
+                        `--registry=${options.registry}`,
                         "--access",
-                        npmConfig.access ? npmConfig.access : "restricted"],
+                        options.access ? options.access : "restricted"],
                 },
                 {
                     cwd: project.baseDir,
@@ -69,7 +70,7 @@ export function executePublish(projectLoader: ProjectLoader,
 
             if (result.code === 0) {
                 const pi = await projectIdentifier(project);
-                const url = `${npmConfig.registry}/${pi.name}/-/${pi.name}-${pi.version}.tgz`;
+                const url = `${options.registry}/${pi.name}/-/${pi.name}-${pi.version}.tgz`;
                 await createStatus(
                     (credentials as TokenCredentials).token,
                     id as GitHubRepoRef,
@@ -88,21 +89,20 @@ export function executePublish(projectLoader: ProjectLoader,
     };
 }
 
-async function configure(): Promise<NpmConfiguration> {
-    const npmConfig = JSON.parse(process.env.ATOMIST_NPM || "{}") as NpmConfiguration;
+async function configure(options: NpmOptions): Promise<NpmOptions> {
     const npmrc = p.join(process.env.HOME || process.env.USER_DIR, ".npmrc");
     let npm = "";
     if (fs.existsSync(npmrc))  {
         npm = fs.readFileSync(npmrc).toString();
     }
 
-    if (!npm.includes(npmConfig.npmrc)) {
+    if (!npm.includes(options.npmrc)) {
         npm = `${npm}
-${npmConfig.npmrc}`;
+${options.npmrc}`;
     }
 
     await fs.writeFile(npmrc, npm);
-    return npmConfig;
+    return options;
 }
 
 async function deleteNpmrc() {
@@ -110,7 +110,7 @@ async function deleteNpmrc() {
     return fs.unlink(npmrc);
 }
 
-interface NpmConfiguration {
+export interface NpmOptions {
     npmrc: string;
     registry: string;
     access: string;
