@@ -46,7 +46,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
     const data = params.data ? params.data : before.data;
     const sdmGoal = {
         ...before,
-        state: params.state === "success" && before.approvalRequired ? "waiting_for_approval" : params.state,
+            state: params.state === "success" && before.approvalRequired ? "waiting_for_approval" : params.state,
         description,
         url: params.url,
         approval,
