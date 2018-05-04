@@ -92,6 +92,7 @@ import { OnTag } from "../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../spi/build/Builder";
 import { LogInterpreter } from "../spi/log/InterpretedLog";
+import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
@@ -416,6 +417,24 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             goal,
             sideEffectName, pushTest,
         });
+    }
+
+    /**
+     * Add the given capabilities from these configurers
+     * @param {SoftwareDeliveryMachineConfigurer} configurers
+     * @return {this}
+     */
+    public addCapabilities(...configurers: SoftwareDeliveryMachineConfigurer[]): this {
+        for (const configurer of configurers) {
+            this.configure(configurer);
+        }
+        return this;
+    }
+
+    public configure(configurer: SoftwareDeliveryMachineConfigurer): this {
+        logger.info("Adding capabilities from configurer '%s'", configurer.name);
+        configurer.configure(this);
+        return this;
     }
 
     /**
