@@ -16,9 +16,10 @@
 
 import * as schema from "../../typings/types";
 
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import { IssueListenerInvocation } from "./IssueListenerInvocation";
+import { SdmListener } from "./Listener";
 
-export interface NewIssueListenerInvocation extends RepoListenerInvocation {
+export interface NewIssueListenerInvocation extends IssueListenerInvocation {
 
     issue: schema.OnIssueAction.Issue;
 }
