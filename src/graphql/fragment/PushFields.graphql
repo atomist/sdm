@@ -7,9 +7,7 @@ fragment PushFields on Push {
     committer {
       login
       person {
-        chatId {
-          screenName
-        }
+        ...PersonFields
       }
     }
   }
@@ -17,10 +15,9 @@ fragment PushFields on Push {
     sha
     message
     committer {
+      login
       person {
-        chatId {
-          screenName
-        }
+        ...PersonFields
       }
     }
   }
