@@ -8,4 +8,7 @@ fragment PersonFields on Person {
   gitHubId {
     login
   }
+  chatId {
+    screenName
+  }
 }

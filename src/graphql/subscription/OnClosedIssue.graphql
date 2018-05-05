@@ -6,25 +6,24 @@ subscription OnClosedIssue {
     openedBy {
       login
       person {
-        name
-        chatId {
-          screenName
-        }
+        ...PersonFields
       }
     }
     closedBy {
       login
       person {
-        name
-        chatId {
-          screenName
-        }
+        ...PersonFields
       }
     }
     createdAt
     updatedAt
     repo {
       ...CoreRepoFieldsAndChannels
+    }
+    assignees {
+      person {
+        ...PersonFields
+      }
     }
   }
 }

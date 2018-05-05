@@ -2,20 +2,23 @@ subscription OnIssueAction {
   Issue {
     number
     title
+    state
     body
     openedBy {
       login
       person {
-        name
-        chatId {
-          screenName
-        }
+        ...PersonFields
       }
     }
     createdAt
     updatedAt
     repo {
       ...CoreRepoFieldsAndChannels
+    }
+    assignees {
+      person {
+        ...PersonFields
+      }
     }
   }
 }
