@@ -23,4 +23,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 export interface CredentialsResolver {
 
     eventHandlerCredentials(context: HandlerContext): ProjectOperationCredentials;
+
+    commandHandlerCredentials(context: HandlerContext): ProjectOperationCredentials;
+
 }

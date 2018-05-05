@@ -68,6 +68,8 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         detailsToUse);
 }
 
+// TODO compute targets and pass in for a separate instance? Or get it from SDM?
+
 /**
  * Return a parameters maker that is targeting aware
  * @param {Maker<PARAMS>} paramsMaker
