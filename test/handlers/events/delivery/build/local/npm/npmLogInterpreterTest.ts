@@ -32,10 +32,16 @@ describe("NpmLogInterpreter", () => {
         assert(!r.data, "there should be no data");
     });
 
-    it("should handle short failure log 2", () => {
+    it("should handle test failure", () => {
         const r = NpmLogInterpreter(Fail2);
         assert.equal(r.message, "Tests: 1 failing");
         assert.equal(r.relevantPart, RelevantPart2);
+    });
+
+    it("should handle general npm run failure", () => {
+        const r = NpmLogInterpreter(Fail3);
+        assert.equal(r.message, "ERROR: \"compile\" exited with 1.");
+        assert.equal(r.relevantPart, RelevantPart3);
     });
 
 });
@@ -333,3 +339,54 @@ const RelevantPart2 = `  1 failing
 Cloning into '/var/folders/gl/d94_8f5n00d17l6fdx37yzxm0000gn/T/tmp-17866wR6ybfinglvw'...
 fatal: unable to access 'https://null:x-oauth-basic@github.com/spring-team/spring-rest-seed.git/': Could not resolve host: github.com
  \`git clone --depth 1 https://null:x-oauth-basic@github.com/spring-team/spring-rest-seed.git /var/folders/gl/d94_8f5n00d17l6fdx37yzxm0000gn/T/tmp-17866wR6ybfinglvw\` (exited with error code 128)`;
+
+const Fail3 = `> @atomist/sample-sdm@0.5.1 gql:copy /Users/jessitron/code/atomist/sample-sdm
+> copyfiles "./src/**/*.graphql" build
+
+
+> @atomist/sample-sdm@0.5.1 compile:ts /Users/jessitron/code/atomist/sample-sdm
+> tsc --project .
+
+src/machines/cloudFoundryMachine.ts(124,40): error TS1005: ',' expected.
+npm ERR! code ELIFECYCLE
+npm ERR! errno 2
+npm ERR! @atomist/sample-sdm@0.5.1 compile:ts: \`tsc --project .\`
+npm ERR! Exit status 2
+npm ERR!
+npm ERR! Failed at the @atomist/sample-sdm@0.5.1 compile:ts script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/jessitron/.npm/_logs/2018-05-05T14_43_01_982Z-debug.log
+ERROR: "compile:ts" exited with 2.
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! @atomist/sample-sdm@0.5.1 compile: \`npm-run-all git:info compile:gql compile:ts\`
+npm ERR! Exit status 1
+npm ERR!
+npm ERR! Failed at the @atomist/sample-sdm@0.5.1 compile script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/jessitron/.npm/_logs/2018-05-05T14_43_02_017Z-debug.log
+ERROR: "compile" exited with 1.
+npm ERR! code ELIFECYCLE
+npm ERR! errno 1
+npm ERR! @atomist/sample-sdm@0.5.1 build: \`npm-run-all compile test\`
+npm ERR! Exit status 1
+npm ERR!
+npm ERR! Failed at the @atomist/sample-sdm@0.5.1 build script.
+npm ERR! This is probably not a problem with npm. There is likely additional logging output above.
+
+npm ERR! A complete log of this run can be found in:
+npm ERR!     /Users/jessitron/.npm/_logs/2018-05-05T14_43_02_065Z-debug.log
+`;
+
+const RelevantPart3 = `> @atomist/sample-sdm@0.5.1 compile:ts /Users/jessitron/code/atomist/sample-sdm
+> tsc --project .
+
+src/machines/cloudFoundryMachine.ts(124,40): error TS1005: ',' expected.
+
+ERROR: "compile:ts" exited with 2.
+
+ERROR: "compile" exited with 1.`;
