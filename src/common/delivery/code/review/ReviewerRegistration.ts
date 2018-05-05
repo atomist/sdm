@@ -15,11 +15,11 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { CodeActionRegistration, SelectiveCodeActionOptions } from "../CodeActionRegistration";
+import { PushReactionRegistration, SelectiveCodeActionOptions } from "../PushReactionRegistration";
 
 export type ReviewerRegistrationOptions = SelectiveCodeActionOptions;
 
-export interface ReviewerRegistration extends CodeActionRegistration<ProjectReview> {
+export interface ReviewerRegistration extends PushReactionRegistration<ProjectReview> {
 
     options?: ReviewerRegistrationOptions;
 }

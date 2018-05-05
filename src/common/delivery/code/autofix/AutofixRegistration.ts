@@ -17,14 +17,14 @@
 import { logger } from "@atomist/automation-client";
 import { AnyProjectEditor, EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { PushTest } from "../../../listener/PushTest";
-import { CodeActionRegistration, SelectiveCodeActionOptions } from "../CodeActionRegistration";
+import { PushReactionRegistration, SelectiveCodeActionOptions } from "../PushReactionRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
 
     ignoreFailure: boolean;
 }
 
-export interface AutofixRegistration extends CodeActionRegistration<EditResult> {
+export interface AutofixRegistration extends PushReactionRegistration<EditResult> {
 
     options?: AutofixRegistrationOptions;
 

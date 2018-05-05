@@ -15,7 +15,7 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { CodeActionResponse } from "../..";
+import { PushReactionResponse } from "../..";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
 
@@ -35,4 +35,4 @@ export interface ReviewListenerInvocation extends PushListenerInvocation {
  * Listeners will be invoked even in the case of a clean review,
  * without errors or comments.
  */
-export type ReviewListener = SdmListener<ReviewListenerInvocation, void | CodeActionResponse>;
+export type ReviewListener = SdmListener<ReviewListenerInvocation, void | PushReactionResponse>;

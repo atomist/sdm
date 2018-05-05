@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-import * as assert from "power-assert";
-import { AddressChannels } from "../../../src/common/slack/addressChannels";
-import { SlackMessage } from "@atomist/slack-messages";
-import { reportFailureInterpretationToLinkedChannels } from "../../../src/util/slack/reportFailureInterpretationToLinkedChannels";
-import { InterpretedLog } from "../../../src";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { SlackMessage } from "@atomist/slack-messages";
+import * as assert from "power-assert";
+import { InterpretedLog } from "../../../src";
+import { AddressChannels } from "../../../src/common/slack/addressChannels";
+import { reportFailureInterpretationToLinkedChannels } from "../../../src/util/slack/reportFailureInterpretationToLinkedChannels";
 
 describe("Reporting failure interpretation", () => {
 
     interface AddressChannelsSpy {
-        messagesSent: SlackMessage[],
-        sentFullLog: boolean
+        messagesSent: SlackMessage[];
+        sentFullLog: boolean;
     }
 
     function fakeAddressChannels(): [AddressChannels, AddressChannelsSpy] {
         const spy: AddressChannelsSpy = {
             messagesSent: [],
             get sentFullLog() {
-                return !!this.messagesSent.find(m => m.fileType === "text")
+                // tslint:disable:no-invalid-this
+                return !!this.messagesSent.find(m => m.fileType === "text");
             },
         };
         const ac = async (msg, opts) => {

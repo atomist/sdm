@@ -18,17 +18,17 @@ import { logger, Success } from "@atomist/automation-client";
 import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
-import { CodeActionRegistration, CodeActionResponse, relevantCodeActions } from "./CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
+import { PushReactionRegistration, PushReactionResponse, relevantCodeActions } from "./PushReactionRegistration";
 
 /**
  * Execute arbitrary code reactions against a codebase
  * @param {ProjectLoader} projectLoader
- * @param {CodeActionRegistration[]} registrations
+ * @param {PushReactionRegistration[]} registrations
  * @return {ExecuteGoalWithLog}
  */
-export function executeCodeReactions(projectLoader: ProjectLoader,
-                                     registrations: CodeActionRegistration[]): ExecuteGoalWithLog {
+export function executePushReactions(projectLoader: ProjectLoader,
+                                     registrations: PushReactionRegistration[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         if (registrations.length === 0) {
             return Success;
@@ -37,7 +37,7 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
         const {credentials, id, context} = rwlc;
         return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
-            const relevantCodeReactions: CodeActionRegistration[] = await relevantCodeActions<CodeActionRegistration>(registrations, cri);
+            const relevantCodeReactions: PushReactionRegistration[] = await relevantCodeActions<PushReactionRegistration>(registrations, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",
                 relevantCodeReactions.length, registrations.length, cri.id,
                 relevantCodeReactions.map(a => a.name).join(),
@@ -45,8 +45,8 @@ export function executeCodeReactions(projectLoader: ProjectLoader,
             const allReactions: any[] = await Promise.all(relevantCodeReactions
                 .map(reactionReg => reactionReg.action(cri)));
             const result = {
-                code: allReactions.includes(CodeActionResponse.failGoals) ? 1 : 0,
-                requireApproval: allReactions.includes(CodeActionResponse.requireApprovalToProceed),
+                code: allReactions.includes(PushReactionResponse.failGoals) ? 1 : 0,
+                requireApproval: allReactions.includes(PushReactionResponse.requireApprovalToProceed),
             };
             logger.info("Code reaction responses are %j, result=%j", allReactions, result);
             return result;

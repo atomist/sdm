@@ -25,8 +25,8 @@ import { PushImpactListenerInvocation } from "../../../listener/PushImpactListen
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
-import { relevantCodeActions } from "../CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
+import { relevantCodeActions } from "../PushReactionRegistration";
 import { AutofixRegistration } from "./AutofixRegistration";
 
 /**

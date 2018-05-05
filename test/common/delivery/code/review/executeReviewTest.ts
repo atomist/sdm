@@ -19,7 +19,7 @@ import { saveFromFiles } from "@atomist/automation-client/project/util/projectUt
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { CodeActionResponse, executeReview, SingleProjectLoader } from "../../../../../src";
+import { executeReview, PushReactionResponse, SingleProjectLoader } from "../../../../../src";
 import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
 import { ReviewListener, ReviewListenerInvocation } from "../../../../../src/common/listener/ReviewListener";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
@@ -66,7 +66,7 @@ function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): 
     return async re => {
         saveTo.push(re);
         if (re.review.comments.length > 0) {
-            return CodeActionResponse.requireApprovalToProceed;
+            return PushReactionResponse.requireApprovalToProceed;
         }
     };
 }
