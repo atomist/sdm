@@ -156,12 +156,13 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             logInterpreter: lastLinesLogInterpreter(implementationName, 10),
             ...options,
         };
-        this.goalFulfillmentMapper.addImplementation({
+        const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: optsToUse.pushTest,
             logInterpreter: optsToUse.logInterpreter,
-        });
-        this.goalRetryCommandMap[goal.uniqueCamelCaseName] = () => triggerGoal(goal.uniqueCamelCaseName, goal);
+        };
+        this.goalFulfillmentMapper.addImplementation(implementation);
+        this.goalRetryCommandMap[goal.uniqueCamelCaseName] = () => triggerGoal(goal.uniqueCamelCaseName, goal, implementation);
         return this;
     }
 
