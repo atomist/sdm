@@ -17,19 +17,7 @@ query CommitForSdmGoal(
       ...CoreRepoFieldsAndChannels
     }
     pushes(branch: $branch) {
-      before {
-        sha
-        message
-      }
-      commits {
-        sha
-        message
-      }
-      branch
-      id
-      repo {
-        ...CoreRepoFieldsAndChannels
-      }
+      ...PushFields
     }
     image {
       image
