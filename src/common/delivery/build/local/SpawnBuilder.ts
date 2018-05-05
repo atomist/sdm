@@ -23,7 +23,7 @@ import { SpawnOptions } from "child_process";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { LogInterpretation, InterpretLog } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import {
     asSpawnCommand,

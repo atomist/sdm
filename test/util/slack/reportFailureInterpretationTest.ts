@@ -15,31 +15,27 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
 import { InterpretedLog } from "../../../src";
 import { AddressChannels } from "../../../src/common/slack/addressChannels";
+import { SlackMessage } from "@atomist/slack-messages";
+
 import { reportFailureInterpretationToLinkedChannels } from "../../../src/util/slack/reportFailureInterpretationToLinkedChannels";
 
 describe("Reporting failure interpretation", () => {
 
-    interface AddressChannelsSpy {
-        messagesSent: SlackMessage[];
-        sentFullLog: boolean;
+    class AddressChannelsSpy {
+        public messagesSent: SlackMessage[] = [];
+        get sentFullLog() {
+            return !!this.messagesSent.find(m => (m as any).fileType === "text");
+        }
     }
 
     function fakeAddressChannels(): [AddressChannels, AddressChannelsSpy] {
-        const spy: AddressChannelsSpy = {
-            messagesSent: [],
-            get sentFullLog() {
-                // tslint:disable:no-invalid-this
-                return !!this.messagesSent.find(m => m.fileType === "text");
-            },
-        };
+        const spy = new AddressChannelsSpy();
         const ac = async (msg, opts) => {
             spy.messagesSent.push(msg);
         };
-
         return [ac, spy];
     }
 
@@ -59,7 +55,7 @@ describe("Reporting failure interpretation", () => {
         assert(spy.sentFullLog);
     });
 
-    it("Does not the full log if specifically unrequested", async () => {
+    it("Does not send the full log if specifically unrequested", async () => {
 
         const [ac, spy] = fakeAddressChannels();
 
