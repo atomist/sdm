@@ -27,7 +27,7 @@ import { PushReactionRegistration, PushReactionResponse, relevantCodeActions } f
  * @param {PushReactionRegistration[]} registrations
  * @return {ExecuteGoalWithLog}
  */
-export function executeCodeReactions(projectLoader: ProjectLoader,
+export function executePushReactions(projectLoader: ProjectLoader,
                                      registrations: PushReactionRegistration[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         if (registrations.length === 0) {

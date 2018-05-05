@@ -50,7 +50,7 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import * as _ from "lodash";
 import { executeBuild } from "../common/delivery/build/executeBuild";
 import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
-import { executeCodeReactions } from "../common/delivery/code/executeCodeReactions";
+import { executePushReactions } from "../common/delivery/code/executePushReactions";
 import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
@@ -465,7 +465,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
                 executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
             .addGoalImplementation("CodeReactions", CodeReactionGoal,
-                executeCodeReactions(this.opts.projectLoader, this.codeReactionRegistrations))
+                executePushReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,
                 executeReview(this.opts.projectLoader, this.reviewerRegistrations, this.reviewListeners))
             .addVerifyImplementation()

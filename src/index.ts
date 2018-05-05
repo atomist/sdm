@@ -38,7 +38,7 @@ export * from "./common/delivery/build/local/npm/npmBuilder";
 export * from "./common/delivery/build/local/npm/npmLogInterpreter";
 export * from "./common/delivery/code/PushReactionRegistration";
 export * from "./common/delivery/code/createPushImpactListenerInvocation";
-export * from "./common/delivery/code/executeCodeReactions";
+export * from "./common/delivery/code/executePushReactions";
 export * from "./common/delivery/code/autofix/AutofixRegistration";
 export * from "./common/delivery/code/autofix/executeAutofixes";
 export * from "./common/delivery/code/autofix/spawnedCommandAutofix";

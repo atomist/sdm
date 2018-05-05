@@ -16,7 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { executeCodeReactions, PushListenerInvocation, PushReactionRegistration, PushReactionResponse, SingleProjectLoader } from "../../../../src";
+import { executePushReactions, PushListenerInvocation, PushReactionRegistration, PushReactionResponse, SingleProjectLoader } from "../../../../src";
 import { fakeRunWithLogContext } from "../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../listener/support/pushTestUtilsTest";
 
@@ -35,13 +35,13 @@ function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): Pu
     };
 }
 
-describe("executeCodeReactions", () => {
+describe("executePushReactions", () => {
 
     it("stops the world", async () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
-        const ge = executeCodeReactions(new SingleProjectLoader(p), [react(invocations, true)]);
+        const ge = executePushReactions(new SingleProjectLoader(p), [react(invocations, true)]);
         const r = await ge(fakeRunWithLogContext(id));
         assert.equal(invocations.length, 1);
         assert(!r.requireApproval);
@@ -52,7 +52,7 @@ describe("executeCodeReactions", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
-        const ge = executeCodeReactions(new SingleProjectLoader(p), [react(invocations, false)]);
+        const ge = executePushReactions(new SingleProjectLoader(p), [react(invocations, false)]);
         const r = await ge(fakeRunWithLogContext(id));
         assert.equal(invocations.length, 1);
         assert.equal(r.code, 0);
