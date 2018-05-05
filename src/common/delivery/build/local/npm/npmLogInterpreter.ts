@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
 import { logger } from "@atomist/automation-client";
 import * as strip_ansi from "strip-ansi";
+import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
 
 export const NpmLogInterpreter: InterpretLog = log => {
     if (!log) {
@@ -25,7 +25,7 @@ export const NpmLogInterpreter: InterpretLog = log => {
     const lines = removeBlanksFromEnd(
         removeNpmFooter(
         log.split("\n")
-        .map(s => strip_ansi(s))
+        .map(strip_ansi)
         .map(stripLogPrefix)));
 
     const defaultMessage = lastOccurrenceOf(/^ERROR:/, lines) || "Error";
@@ -49,7 +49,7 @@ const NpmFooterPrefix = /^npm ERR!/;
 const StackTraceLine = /^\W*at /;
 const BeginMochaFailingTests = /^\W*\d* failing$/;
 
-type RecognizedLog = { message?: string, relevantLines?: string[] };
+interface RecognizedLog { message?: string; relevantLines?: string[]; }
 
 function recognizeNpmRunError(lines: string[]): RecognizedLog {
     const reversedLines = lines.slice().reverse();
@@ -57,7 +57,7 @@ function recognizeNpmRunError(lines: string[]): RecognizedLog {
     if (lastBreakBeforeCommand < 0) {
         return undefined;
     }
-    return { relevantLines: lines.slice(- lastBreakBeforeCommand)}
+    return { relevantLines: lines.slice(- lastBreakBeforeCommand)};
 }
 
 function recognizeMochaTest(lines: string[]): RecognizedLog {
@@ -73,18 +73,18 @@ function recognizeMochaTest(lines: string[]): RecognizedLog {
     const fromFailingCountToTwoBlankLines = fromBeginning.slice(0, end);
     return {
         message: "Tests: " + lines[begin].trim(),
-        relevantLines: fromFailingCountToTwoBlankLines.filter(s => !StackTraceLine.test(s))
+        relevantLines: fromFailingCountToTwoBlankLines.filter(s => !StackTraceLine.test(s)),
     };
 }
 
 function stripLogPrefix(line: string): string {
-    return line.replace(LogPrefix, "")
+    return line.replace(LogPrefix, "");
 }
 
 function removeNpmFooter(lines: string[]) {
     if (lines.includes("npm ERR! This is probably not a problem with npm. There is likely additional logging output above.")) {
         logger.info("Filtering npm error footer");
-        return lines.filter(s => !NpmFooterPrefix.test(s))
+        return lines.filter(s => !NpmFooterPrefix.test(s));
     }
     return lines;
 }
@@ -100,7 +100,7 @@ function lastOccurrenceOf(re: RegExp, lines: string[]) {
 
 function removeBlanksFromEnd(lines: string[]) {
     let w = lines.length - 1;
-    while(lines[w].trim() === "") {
+    while (lines[w].trim() === "") {
         w--;
     }
     return lines.slice(0, w + 1);
