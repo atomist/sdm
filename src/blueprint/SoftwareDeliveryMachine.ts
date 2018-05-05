@@ -91,7 +91,7 @@ import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { OnTag } from "../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../spi/build/Builder";
-import { LogInterpreter } from "../spi/log/InterpretedLog";
+import { InterpretLog } from "../spi/log/InterpretedLog";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
@@ -140,7 +140,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
      * @param {string} implementationName
      * @param {Goal} goal
      * @param {ExecuteGoalWithLog} goalExecutor
-     * @param options PushTest to narrow matching & LogInterpreter that can handle
+     * @param options PushTest to narrow matching & InterpretLog that can handle
      * the log from the goalExecutor function
      * @return {this}
      */
@@ -149,7 +149,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                                  goalExecutor: ExecuteGoalWithLog,
                                  options?: Partial<{
                                      pushTest: PushTest,
-                                     logInterpreter: LogInterpreter,
+                                     logInterpreter: InterpretLog,
                                  }>): this {
         const optsToUse = {
             pushTest: AnyPush,

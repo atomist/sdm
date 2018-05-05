@@ -17,7 +17,7 @@
 import { Project } from "@atomist/automation-client/project/Project";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
@@ -31,7 +31,7 @@ export function leinBuilder(projectLoader: ProjectLoader, ...commands: string[])
     });
 }
 
-export const leinLogInterpreter: LogInterpreter = log => {
+export const leinLogInterpreter: InterpretLog = log => {
     return {
         // We don't yet know how to interpret clojure logs
         relevantPart: undefined,

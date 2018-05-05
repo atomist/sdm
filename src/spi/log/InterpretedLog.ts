@@ -48,12 +48,12 @@ export interface InterpretedLog<D = any> {
  * Function that can try to interpret a log for display to a user.
  * Return undefined if the log cannot be interpreted.
  */
-export type LogInterpreter<D = any> = (log: string) => InterpretedLog<D> | undefined;
+export type InterpretLog<D = any> = (log: string) => InterpretedLog<D> | undefined;
 
 /**
  * Implemented by types that have the ability to interpret the logs they generate
  */
 export interface LogInterpretation {
 
-    logInterpreter: LogInterpreter;
+    logInterpreter: InterpretLog;
 }

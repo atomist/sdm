@@ -16,7 +16,7 @@
 
 import { IsolatedGoalLauncher } from "../../../handlers/events/delivery/goals/launchGoal";
 import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
-import { LogInterpreter } from "../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../listener/PushTest";
@@ -30,7 +30,7 @@ export interface GoalImplementation {
     goal: Goal;
     goalExecutor: ExecuteGoalWithLog;
     pushTest: PushTest;
-    logInterpreter: LogInterpreter;
+    logInterpreter: InterpretLog;
 }
 
 export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {
