@@ -22,17 +22,19 @@ export const NpmLogInterpreter: LogInterpreter = log => {
     if (!log) {
         return undefined;
     }
-    const lines = removeNpmFooter(
+    const lines = removeBlanksFromEnd(
+        removeNpmFooter(
         log.split("\n")
         .map(s => strip_ansi(s))
-        .map(stripLogPrefix));
-    console.log("Log is %d lines", lines.length);
-    console.log(lines.join("\n - "));
+        .map(stripLogPrefix)));
 
     const defaultMessage = lastOccurrenceOf(/^ERROR:/, lines) || "Error";
     const defaultLines = lines.slice(-15);
 
-    const recognizedInterpretation: RecognizedLog = recognizeMochaTest(lines) || {};
+    const recognizedInterpretation: RecognizedLog =
+        recognizeMochaTest(lines) ||
+        recognizeNpmRunError(lines) ||
+        {};
 
     const relevantLines: string[] = recognizedInterpretation.relevantLines || defaultLines;
 
@@ -48,6 +50,15 @@ const StackTraceLine = /^\W*at /;
 const BeginMochaFailingTests = /^\W*\d* failing$/;
 
 type RecognizedLog = { message?: string, relevantLines?: string[] };
+
+function recognizeNpmRunError(lines: string[]): RecognizedLog {
+    const reversedLines = lines.slice().reverse();
+    const lastBreakBeforeCommand = findTwoBlankLinesIndex(reversedLines);
+    if (lastBreakBeforeCommand < 0) {
+        return undefined;
+    }
+    return { relevantLines: lines.slice(- lastBreakBeforeCommand)}
+}
 
 function recognizeMochaTest(lines: string[]): RecognizedLog {
     const begin = lines.findIndex(s => BeginMochaFailingTests.test(s));
@@ -85,4 +96,12 @@ function findTwoBlankLinesIndex(lines: string[]) {
 function lastOccurrenceOf(re: RegExp, lines: string[]) {
     const reversedLines = lines.slice().reverse(); // is there a better way tto make a copy? reverse() is in-place. >:-(
     return reversedLines.find(s => re.test(s));
+}
+
+function removeBlanksFromEnd(lines: string[]) {
+    let w = lines.length - 1;
+    while(lines[w].trim() === "") {
+        w--;
+    }
+    return lines.slice(0, w + 1);
 }
