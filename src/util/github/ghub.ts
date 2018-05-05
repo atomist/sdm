@@ -16,10 +16,12 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Issue } from "@atomist/automation-client/util/gitHub";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
+import { toToken } from "../credentials/toToken";
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -183,12 +185,14 @@ export function isPublicRepo(token: string, rr: GitHubRepoRef): Promise<boolean>
 }
 
 // TODO move to client
-export function updateIssue(token: string, rr: RemoteRepoRef,
-                            issueNumber: number, issue: Issue): AxiosPromise {
+export function updateIssue(creds: string | ProjectOperationCredentials,
+                            rr: RemoteRepoRef,
+                            issueNumber: number,
+                            issue: Issue): AxiosPromise {
     const grr = isGitHubRepoRef(rr) ? rr : new GitHubRepoRef(rr.owner, rr.repo, rr.sha);
     const url = `${grr.apiBase}/repos/${grr.owner}/${grr.repo}/issues/${issueNumber}`;
     logger.debug(`Request to '${url}' to update issue`);
-    return axios.patch(url, issue, authHeaders(token));
+    return axios.patch(url, issue, authHeaders(toToken(creds)));
 }
 
 export async function listTopics(token: string, rr: RemoteRepoRef): Promise<string[]> {
