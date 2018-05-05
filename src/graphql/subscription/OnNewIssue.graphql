@@ -16,6 +16,7 @@ subscription OnIssueAction {
       ...CoreRepoFieldsAndChannels
     }
     assignees {
+      login
       person {
         ...PersonFields
       }
