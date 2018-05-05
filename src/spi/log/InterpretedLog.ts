@@ -57,7 +57,3 @@ export interface LogInterpretation {
 
     logInterpreter: LogInterpreter;
 }
-
-export function hasLogInterpretation(b: any): b is LogInterpretation {
-    return b.logInterpreter && typeof b.logInterpreter === "function";
-}
