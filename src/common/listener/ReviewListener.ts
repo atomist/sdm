@@ -15,7 +15,7 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { PushReactionResponse } from "../..";
+import { PushReactionResponse } from "../delivery/code/PushReactionRegistration";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
 

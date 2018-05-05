@@ -21,9 +21,9 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
-import { PushReactionResponse } from "../../../../..";
 import { ReviewListener } from "../../../../listener/ReviewListener";
 import { AddressChannels } from "../../../../slack/addressChannels";
+import { PushReactionResponse } from "../../PushReactionRegistration";
 
 /**
  * Route reviews to Slack in linked channels
