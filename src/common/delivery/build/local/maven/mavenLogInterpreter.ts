@@ -17,10 +17,10 @@
 import { logger } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { Float, Integer } from "@atomist/microgrammar/Primitives";
-import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
 import { BuildInfo, TestStatus } from "../../BuildInfo";
 
-export const MavenLogInterpreter: LogInterpreter<MavenInfo> = log => {
+export const MavenLogInterpreter: InterpretLog<MavenInfo> = log => {
     const timingInfo = timingGrammar.firstMatch(log);
     const data: MavenInfo = {
         timeMillis: timingInfo ? timingInfo.seconds * 1000 : undefined,

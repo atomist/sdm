@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
 import { logger } from "@atomist/automation-client";
 import * as strip_ansi from "strip-ansi";
 
-export const NpmLogInterpreter: LogInterpreter = log => {
+export const NpmLogInterpreter: InterpretLog = log => {
     if (!log) {
         return undefined;
     }
