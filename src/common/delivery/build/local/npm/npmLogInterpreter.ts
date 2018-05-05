@@ -16,12 +16,18 @@
 
 import { LogInterpreter } from "../../../../../spi/log/InterpretedLog";
 import { logger } from "@atomist/automation-client";
+import * as strip_ansi from "strip-ansi";
 
 export const NpmLogInterpreter: LogInterpreter = log => {
     if (!log) {
         return undefined;
     }
-    const lines = stripLogPrefix(removeNpmFooter(log.split("\n")));
+    const lines = removeNpmFooter(
+        log.split("\n")
+        .map(s => strip_ansi(s))
+        .map(stripLogPrefix));
+    console.log("Log is %d lines", lines.length);
+    console.log(lines.join("\n - "));
 
     const defaultMessage = lastOccurrenceOf(/^ERROR:/, lines) || "Error";
     const defaultLines = lines.slice(-15);
@@ -60,8 +66,8 @@ function recognizeMochaTest(lines: string[]): RecognizedLog {
     };
 }
 
-function stripLogPrefix(lines: string[]): string[] {
-    return lines.map(s => s.replace(LogPrefix, ""))
+function stripLogPrefix(line: string): string {
+    return line.replace(LogPrefix, "")
 }
 
 function removeNpmFooter(lines: string[]) {
