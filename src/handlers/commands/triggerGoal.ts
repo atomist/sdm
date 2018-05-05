@@ -16,10 +16,13 @@
 
 import { HandleCommand, HandlerContext, MappedParameter, MappedParameters, Parameter, Secret, Secrets, Success } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
+import { guid } from "@atomist/automation-client/internal/util/string";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Goal } from "../../common/delivery/goals/Goal";
-import { updateGoal } from "../../common/delivery/goals/storeGoals";
+import { GoalImplementation } from "../../common/delivery/goals/SdmGoalImplementationMapper";
+import { constructSdmGoal, constructSdmGoalImplementation, storeGoal, updateGoal } from "../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyString } from "../../ingesters/sdmGoalIngester";
 import { RepoBranchTips } from "../../typings/types";
@@ -49,8 +52,8 @@ export class RetryGoalParameters {
     public goalSet: string;
 }
 
-export function triggerGoal(implementationName: string, goal: Goal): HandleCommand {
-    return commandHandlerFrom(triggerGoalsOnCommit(goal),
+export function triggerGoal(implementationName: string, goal: Goal, implementation: GoalImplementation): HandleCommand {
+    return commandHandlerFrom(triggerGoalsOnCommit(goal, implementation),
         RetryGoalParameters,
         retryCommandNameFor(goal),
         "Retry an execution of " + goal.name, goal.retryIntent);
@@ -60,7 +63,7 @@ export function retryCommandNameFor(goal: Goal) {
     return "Retry" + goal.uniqueCamelCaseName;
 }
 
-function triggerGoalsOnCommit(goal: Goal) {
+function triggerGoalsOnCommit(goal: Goal, implementation: GoalImplementation) {
     return async (ctx: HandlerContext, commandParams: RetryGoalParameters) => {
         // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, commandParams);
@@ -71,22 +74,43 @@ function triggerGoalsOnCommit(goal: Goal) {
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, sha, branch});
         const thisGoal = await findSdmGoalOnCommit(ctx, id, commandParams.providerId, goal);
         if (!thisGoal) {
-                await ctx.messageClient.respond(`The goal '${goalKeyString(goal)}' does not exist on ${
-                    sha.substr(0, 7)}. Ask Jess to implement this`);
-                return {code: 0};
-            }
-
-        // do the thing
-        await updateGoal(ctx, thisGoal,
-            {
-                state: "requested",
-                description: "Manually reset",
-            });
+            await ctx.messageClient.respond(`Triggering '${goalKeyString(goal)}' for the first time on ${
+                sha.substr(0, 7)}.`);
+            await triggerNewGoal({context: ctx, goal, id, providerId: commandParams.providerId, implementation});
+        } else {
+            await ctx.messageClient.respond(`Requesting re-exectution of '${goalKeyString(goal)}' on ${
+                sha.substr(0, 7)}.`);
+            // do the thing
+            await updateGoal(ctx, thisGoal,
+                {
+                    state: "requested",
+                    description: "Manually reset",
+                });
+        }
         return Success;
     };
 }
 
-export async function fetchDefaultBranchTip(ctx: HandlerContext, repositoryId: {repo: string, owner: string, providerId: string}) {
+async function triggerNewGoal(params: {
+    context: HandlerContext, goal: Goal, id: RemoteRepoRef, providerId: string,
+    implementation: GoalImplementation,
+}) {
+    const goalSet = "manual-trigger";
+    const goalSetId = guid();
+    const {context, id, goal, providerId, implementation} = params;
+    const fulfillment = constructSdmGoalImplementation(implementation);
+    return storeGoal(context, constructSdmGoal(context, {
+        goalSet,
+        goalSetId,
+        goal,
+        state: "requested",
+        id,
+        providerId,
+        fulfillment,
+    }));
+}
+
+export async function fetchDefaultBranchTip(ctx: HandlerContext, repositoryId: { repo: string, owner: string, providerId: string }) {
     const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(
         {name: "RepoBranchTips", variables: {name: repositoryId.repo, owner: repositoryId.owner}});
     if (!result || !result.Repo || result.Repo.length === 0) {
