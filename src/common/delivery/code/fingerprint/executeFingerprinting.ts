@@ -21,8 +21,8 @@ import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fing
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
-import { relevantCodeActions } from "../CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
+import { relevantCodeActions } from "../PushReactionRegistration";
 import { computeFingerprints } from "./computeFingerprints";
 import { FingerprinterRegistration } from "./FingerprinterRegistration";
 

@@ -15,8 +15,8 @@
  */
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { CodeActionRegistration } from "../CodeActionRegistration";
+import { PushReactionRegistration } from "../PushReactionRegistration";
 
 export type FingerprinterResult = Fingerprint | Fingerprint[];
 
-export type FingerprinterRegistration = CodeActionRegistration<FingerprinterResult>;
+export type FingerprinterRegistration = PushReactionRegistration<FingerprinterResult>;

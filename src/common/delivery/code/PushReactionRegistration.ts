@@ -21,35 +21,36 @@ import { PushTest } from "../../listener/PushTest";
  * A code action response that affects delivery:
  * failing the current flow or requiring approval.
  */
-export enum CodeActionResponse {
+export enum PushReactionResponse {
     failGoals = "fail",
     requireApprovalToProceed = "requireApproval",
 }
 
 /**
- * Optional CodeActionResponse included in return value.
+ * Optional PushReactionResponse included in a return value.
  */
 export interface HasCodeActionResponse {
-    response?: CodeActionResponse;
+    response?: PushReactionResponse;
 }
 
 /**
- * Action on a code event. Can optionally return a response that
+ * Reaction on a push, with the code available.
+ * Can optionally return a response that
  * determines whether to ask for approval or terminate current delivery flow.
  */
-export type CodeAction<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
+export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
 
 /**
  * Used to register actions on a push that can return any type.
  * Use ReviewerRegistration if you want to return a structured type.
  */
-export interface CodeActionRegistration<R = any> {
+export interface PushReactionRegistration<R = any> {
 
     name: string;
 
     pushTest?: PushTest;
 
-    action: CodeAction<R>;
+    action: PushReaction<R>;
 }
 
 /**
@@ -66,8 +67,8 @@ export interface SelectiveCodeActionOptions {
 /**
  * Compute the relevant actions for this push
  */
-export function relevantCodeActions<R>(registrations: Array<CodeActionRegistration<R>>,
-                                       cri: PushImpactListenerInvocation): Promise<Array<CodeActionRegistration<R>>> {
+export function relevantCodeActions<R>(registrations: Array<PushReactionRegistration<R>>,
+                                       cri: PushImpactListenerInvocation): Promise<Array<PushReactionRegistration<R>>> {
     return Promise.all(
         registrations.map(async t => (!t.pushTest || await t.pushTest.valueForPush(cri)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));

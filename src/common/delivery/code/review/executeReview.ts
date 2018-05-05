@@ -23,8 +23,8 @@ import { ReviewListener } from "../../../listener/ReviewListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
-import { CodeActionResponse, relevantCodeActions } from "../CodeActionRegistration";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
+import { PushReactionResponse, relevantCodeActions } from "../PushReactionRegistration";
 import { formatReviewerError, ReviewerError } from "./ReviewerError";
 import { ReviewerRegistration } from "./ReviewerRegistration";
 
@@ -73,8 +73,8 @@ export function executeReview(projectLoader: ProjectLoader,
                     sendErrorsToSlack(reviewerErrors, addressChannels);
                     const reviewResponses = await Promise.all(reviewListeners.map(l => l(rli)));
                     const result = {
-                        code: reviewResponses.some(rr => !!rr && rr === CodeActionResponse.failGoals) ? 1 : 0,
-                        requireApproval: reviewResponses.some(rr => !!rr && rr === CodeActionResponse.requireApprovalToProceed),
+                        code: reviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
+                        requireApproval: reviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed),
                     };
                     logger.info("Review responses are %j, result=%j", reviewResponses, result);
                     return result;

@@ -15,8 +15,8 @@
  */
 
 import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
-import { CodeActionRegistration } from "../../common/delivery/code/CodeActionRegistration";
 import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
+import { PushReactionRegistration } from "../../common/delivery/code/PushReactionRegistration";
 import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
 import { ArtifactListener } from "../../common/listener/ArtifactListener";
 import { BuildListener } from "../../common/listener/BuildListener";
@@ -69,7 +69,7 @@ export class ListenerRegistrations {
 
     protected readonly reviewListeners: ReviewListener[] = [];
 
-    protected readonly codeReactionRegistrations: CodeActionRegistration[] = [];
+    protected readonly codeReactionRegistrations: PushReactionRegistration[] = [];
 
     protected readonly autofixRegistrations: AutofixRegistration[] = [];
 
@@ -154,7 +154,12 @@ export class ListenerRegistrations {
         return this;
     }
 
-    public addCodeReactions(...crrs: CodeActionRegistration[]): this {
+    /**
+     * Add reactions to a push
+     * @param {PushReactionRegistration} crrs
+     * @return {this}
+     */
+    public addPushReactions(...crrs: PushReactionRegistration[]): this {
         this.codeReactionRegistrations.push(...crrs);
         return this;
     }

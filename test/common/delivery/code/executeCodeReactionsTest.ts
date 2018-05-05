@@ -16,20 +16,20 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { CodeActionRegistration, CodeActionResponse, executeCodeReactions, PushListenerInvocation, SingleProjectLoader } from "../../../../src";
+import { executeCodeReactions, PushListenerInvocation, PushReactionRegistration, PushReactionResponse, SingleProjectLoader } from "../../../../src";
 import { fakeRunWithLogContext } from "../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../listener/support/pushTestUtilsTest";
 
 import * as assert from "power-assert";
 
-function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): CodeActionRegistration {
+function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushReactionRegistration {
     return {
         name: "hatred",
         pushTest: TruePushTest,
         action: async cri => {
             invocations.push(cri);
             if (stopTheWorld) {
-                return CodeActionResponse.failGoals;
+                return PushReactionResponse.failGoals;
             }
         },
     };

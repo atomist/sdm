@@ -36,7 +36,7 @@ export * from "./common/delivery/build/local/npm/nodeProjectIdentifier";
 export * from "./common/delivery/build/local/npm/nodeProjectVersioner";
 export * from "./common/delivery/build/local/npm/npmBuilder";
 export * from "./common/delivery/build/local/npm/npmLogInterpreter";
-export * from "./common/delivery/code/CodeActionRegistration";
+export * from "./common/delivery/code/PushReactionRegistration";
 export * from "./common/delivery/code/createPushImpactListenerInvocation";
 export * from "./common/delivery/code/executeCodeReactions";
 export * from "./common/delivery/code/autofix/AutofixRegistration";

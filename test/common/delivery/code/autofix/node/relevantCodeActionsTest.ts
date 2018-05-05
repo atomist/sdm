@@ -23,7 +23,7 @@ import {
     editorAutofixRegistration,
 } from "../../../../../../src/common/delivery/code/autofix/AutofixRegistration";
 import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
-import { relevantCodeActions } from "../../../../../../src/common/delivery/code/CodeActionRegistration";
+import { relevantCodeActions } from "../../../../../../src/common/delivery/code/PushReactionRegistration";
 import { PushImpactListenerInvocation } from "../../../../../../src/common/listener/PushImpactListener";
 
 describe("relevantCodeActions", () => {
