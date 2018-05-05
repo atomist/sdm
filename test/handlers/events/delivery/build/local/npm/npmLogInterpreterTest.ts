@@ -26,10 +26,10 @@ describe("NpmLogInterpreter", () => {
 
     it("should handle short failure log", () => {
         const r = NpmLogInterpreter(Fail1);
-        assert(!!r);
-        assert(r.relevantPart.length > 30);
-        assert(r.relevantPart.includes("Failed at the @atomist/github-sdm@0.4.0-20180412055619 test script"), r.relevantPart);
-        assert(!r.data);
+        assert(!!r, "interpretation expected");
+        assert.equal(r.message, "Tests: 1 failing");
+        assert.equal(r.relevantPart, RelevantPart1);
+        assert(!r.data, "there should be no data");
     });
 
 });
@@ -103,3 +103,26 @@ npm ERR! A complete log of this run can be found in:
 npm ERR!     /root/.npm/_logs/2018-04-12T06_00_32_340Z-debug.log
 Stopping build commands due to error on npm run buildERROR: Failure reported: undefined
 Error: Failure reported: undefined`;
+
+const RelevantPart1 = `  1 failing
+
+  1) addHeaderFix
+       should lint and make fixes:
+
+      AssertionError [ERR_ASSERTION]:   # addHeaderFixTest.ts:55
+  
+  assert.equal(r.code, 0)
+         | |    |     
+         | 1    false 
+         Object{code:1,message:"Edited"}
+  
+  [number] 0
+  => 0
+  [number] r.code
+  => 1
+  
+      + expected - actual
+
+      -false
+      +true
+      `;
