@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { InterpretedLog, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { InterpretedLog, InterpretLog } from "../../../../spi/log/InterpretedLog";
 
 /**
- * Generally useful LogInterpreter that takes the last n logs of the log
+ * Generally useful InterpretLog that takes the last n logs of the log
  * @param {string} message
  * @param lines number of lines to take
- * @return {LogInterpreter}
+ * @return {InterpretLog}
  */
-export function lastLinesLogInterpreter(message: string, lines: number = 10): LogInterpreter {
+export function lastLinesLogInterpreter(message: string, lines: number = 10): InterpretLog {
     return (log: string): InterpretedLog => {
         return {
             relevantPart: log.split("\n").slice(-lines).join("\n"),
@@ -37,7 +37,7 @@ export function lastLinesLogInterpreter(message: string, lines: number = 10): Lo
  * @return {InterpretedLog}
  * @constructor
  */
-export const LogSuppressor: LogInterpreter = () => {
+export const LogSuppressor: InterpretLog = () => {
     return {
         relevantPart: "",
         message: "Do not report to user",
