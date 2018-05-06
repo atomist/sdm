@@ -19,6 +19,8 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
+import { sprintf } from "sprintf-js";
+import { ProgressLog } from "../../../..";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
@@ -28,8 +30,6 @@ import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/repor
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { relevantCodeActions } from "../PushReactionRegistration";
 import { AutofixRegistration } from "./AutofixRegistration";
-import { sprintf } from "sprintf-js";
-import { ProgressLog } from "../../../..";
 
 /**
  * Execute autofixes against this push
