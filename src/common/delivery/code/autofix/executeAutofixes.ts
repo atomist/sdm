@@ -28,6 +28,8 @@ import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/repor
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { relevantCodeActions } from "../PushReactionRegistration";
 import { AutofixRegistration } from "./AutofixRegistration";
+import { sprintf } from "sprintf-js";
+import { ProgressLog } from "../../../..";
 
 /**
  * Execute autofixes against this push
@@ -39,8 +41,8 @@ import { AutofixRegistration } from "./AutofixRegistration";
 export function executeAutofixes(projectLoader: ProjectLoader,
                                  registrations: AutofixRegistration[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const {credentials, context, status} = rwlc;
-        logger.info("Executing %d autofixes", registrations.length);
+        const {credentials, context, status, progressLog } = rwlc;
+        progressLog.write(sprintf("Executing %d autofixes", registrations.length));
         try {
             const commit = status.commit;
             if (registrations.length === 0) {
@@ -57,17 +59,17 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
                     const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
-                    logger.info("Will apply %d relevant autofixes of %d to %j: [%s] of [%s]",
+                    progressLog.write(sprintf("Will apply %d relevant autofixes of %d to %j: [%s] of [%s]",
                         relevantAutofixes.length, registrations.length, cri.id,
                         relevantAutofixes.map(a => a.name).join(),
-                        registrations.map(a => a.name).join());
+                        registrations.map(a => a.name).join()));
                     let cumulativeResult: EditResult = {
                         target: cri.project,
                         success: true,
                         edited: false,
                     };
                     for (const autofix of _.flatten(relevantAutofixes)) {
-                        const thisEdit = await runOne(cri, autofix);
+                        const thisEdit = await runOne(cri, autofix, progressLog);
                         cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
                     }
                     if (cumulativeResult.edited) {
@@ -82,14 +84,17 @@ export function executeAutofixes(projectLoader: ProjectLoader,
             return Success;
         } catch (err) {
             logger.warn("Autofixes failed with %s: Ignoring failure", err.message);
+            progressLog.write(sprintf("Autofixes failed with %s: Ignoring failure", err.message));
             return Success;
         }
     };
 }
 
-async function runOne(cri: PushImpactListenerInvocation, autofix: AutofixRegistration): Promise<EditResult> {
+async function runOne(cri: PushImpactListenerInvocation,
+                      autofix: AutofixRegistration,
+                      progressLog: ProgressLog): Promise<EditResult> {
     const project = cri.project;
-    logger.info("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name);
+    progressLog.write(sprintf("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name));
     try {
         const tentativeEditResult = await autofix.action(cri);
         const editResult = await confirmEditedness(tentativeEditResult);
@@ -98,6 +103,8 @@ async function runOne(cri: PushImpactListenerInvocation, autofix: AutofixRegistr
             await project.revert();
             logger.warn("Edited %s with autofix %s and success=false, edited=%d",
                 (project.id as RemoteRepoRef).url, autofix.name, editResult.edited);
+            progressLog.write(sprintf("Edited %s with autofix %s and success=false, edited=%d",
+                (project.id as RemoteRepoRef).url, autofix.name, editResult.edited));
             if (!!autofix.options && autofix.options.ignoreFailure) {
                 // Say we didn't edit and can keep going
                 return {target: project, edited: false, success: false};
@@ -115,6 +122,8 @@ async function runOne(cri: PushImpactListenerInvocation, autofix: AutofixRegistr
         await project.revert();
         logger.warn("Ignoring editor failure %s on %s with autofix %s",
             err.message, (project.id as RemoteRepoRef).url, autofix.name);
+        progressLog.write(sprintf("Ignoring editor failure %s on %s with autofix %s",
+            err.message, (project.id as RemoteRepoRef).url, autofix.name));
         return {target: project, success: false, edited: false};
     }
 }
