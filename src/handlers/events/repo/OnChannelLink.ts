@@ -40,7 +40,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
                         params: this): Promise<HandlerResult> {
         const repo = event.data.ChannelLink[0].repo;
         const id = toRemoteRepoRef(repo);
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);
         const newlyLinkedChannelName = event.data.ChannelLink[0].channel.name;

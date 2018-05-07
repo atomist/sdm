@@ -51,7 +51,7 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         }
         const addressChannels = addressChannelsFor(commit.repo, context);
         const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const dil: DeploymentListenerInvocation = {
             context,

@@ -54,7 +54,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         }
 
         if (params.listeners.length > 0) {
-            const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+            const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
             logger.info("FindArtifactOnImageLinked: Scanning artifact for %j", id);
             const deployableArtifact = await params.artifactStore.checkout(image.imageName, id, credentials);
             const addressChannels = addressChannelsFor(commit.repo, context);

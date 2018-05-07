@@ -46,7 +46,7 @@ export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscri
             logger.debug("Issue updated, not created: %s on %j", issue.number, id);
             return Success;
         }
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const inv: NewIssueListenerInvocation = {
             id,

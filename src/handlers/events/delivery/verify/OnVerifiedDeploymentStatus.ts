@@ -53,7 +53,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
         }
 
         const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const vdi: VerifiedDeploymentListenerInvocation = {
             id,
             context,

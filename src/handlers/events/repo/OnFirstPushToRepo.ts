@@ -51,9 +51,8 @@ export class OnFirstPushToRepo
         }
 
         const screenName = _.get(push, "after.committer.person.chatId.screenName");
-
         const id = toRemoteRepoRef(push.repo, { sha: push.after.sha });
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         if (!screenName) {
             logger.warn("Warning: Cannot get screen name of committer for first push on %j", id);

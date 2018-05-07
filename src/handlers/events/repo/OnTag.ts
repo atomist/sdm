@@ -37,7 +37,7 @@ export class OnTag implements HandleEvent<schema.OnTag.Subscription> {
         const tag = event.data.Tag[0];
         const repo = tag.commit.repo;
         const id = toRemoteRepoRef(repo);
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const addressChannels = addressChannelsFor(repo, context);
         const invocation: TagListenerInvocation = {
             addressChannels,

@@ -41,7 +41,7 @@ export class OnPullRequest implements HandleEvent<schema.OnPullRequest.Subscript
         const pullRequest = event.data.PullRequest[0];
         const repo = pullRequest.repo;
         const id = toRemoteRepoRef(repo, { sha: pullRequest.head.sha });
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);
         await this.projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
