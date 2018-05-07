@@ -15,10 +15,10 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
 import { InterpretedLog } from "../../../src";
 import { AddressChannels } from "../../../src/common/slack/addressChannels";
-import { SlackMessage } from "@atomist/slack-messages";
 
 import { reportFailureInterpretationToLinkedChannels } from "../../../src/util/slack/reportFailureInterpretationToLinkedChannels";
 
