@@ -81,8 +81,6 @@ import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/buil
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
-import { OnSupersededStatus } from "../handlers/events/delivery/superseded/OnSuperseded";
-import { SetSupersededStatus } from "../handlers/events/delivery/superseded/SetSupersededStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
 import { UpdatedIssueHandler } from "../handlers/events/issue/UpdatedIssueHandler";
@@ -210,14 +208,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         };
     }
 
-    private readonly oldPushSuperseder: Maker<SetSupersededStatus> = SetSupersededStatus;
-
-    get onSuperseded(): Maker<OnSupersededStatus> {
-        return this.supersededListeners.length > 0 ?
-            () => new OnSupersededStatus(this.supersededListeners) :
-            undefined;
-    }
-
     private get goalConsequences(): FunctionalUnit {
         return {
             eventHandlers: [
@@ -315,8 +305,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,
-                this.oldPushSuperseder,
-                this.onSuperseded,
                 this.onBuildComplete,
                 this.notifyOnDeploy,
                 this.onVerifiedStatus,
