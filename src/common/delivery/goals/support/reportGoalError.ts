@@ -18,7 +18,6 @@ import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
 import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../../../typings/types";
@@ -58,21 +57,13 @@ export async function reportGoalError(parameters: {
     logger.error(err.stack);
     progressLog.write("ERROR: " + err.message + "\n");
 
-    const retryButton = buttonForCommand({text: "Retry"},
-        retryCommandNameFor(goal), {
-            repo: id.repo,
-            owner: id.owner,
-            sha: id.sha,
-            branch: id.branch,
-        });
-
     const interpretation = logInterpreter(progressLog.log);
     // The executor might have information about the failure; report it in the channels
     if (interpretation) {
         if (!interpretation.doNotReportToUser) {
             await reportFailureInterpretationToLinkedChannels(implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},
-                id, addressChannels, retryButton);
+                id, addressChannels);
         }
     } else {
         // We don't have an interpretation available. Just report
