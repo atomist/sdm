@@ -18,26 +18,10 @@ import { logger, Success } from "@atomist/automation-client";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
 import { Goal } from "../goals/Goal";
-import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target, Targeter } from "./deploy";
+import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target } from "./deploy";
 
 import * as _ from "lodash";
-import { Deployer } from "../../../spi/deploy/Deployer";
-import { TargetInfo } from "../../../spi/deploy/Deployment";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
-
-export interface DeploySpec<T extends TargetInfo> {
-    implementationName: string;
-    deployGoal: Goal;
-    endpointGoal: Goal;
-    artifactStore?: ArtifactStore;
-    deployer: Deployer<T>;
-    targeter: Targeter<T>;
-    undeploy?: {
-        goal: Goal;
-        implementationName: string;
-    };
-    undeployOnSuperseded?: boolean;
-}
 
 /**
  * Execute deploy with the supplied deployer and target

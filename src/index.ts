@@ -113,7 +113,6 @@ export * from "./common/listener/PushMapping";
 export * from "./common/listener/PushTest";
 export * from "./common/listener/RepoCreationListener";
 export * from "./common/listener/ReviewListener";
-export * from "./common/listener/SupersededListener";
 export * from "./common/listener/TagListener";
 export * from "./common/listener/UpdatedIssueListener";
 export * from "./common/listener/UserJoiningChannelListener";

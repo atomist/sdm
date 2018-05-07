@@ -36,17 +36,6 @@ export const ManagedDeploymentTargeter: Targeter<ManagedDeploymentTargetInfo> = 
     };
 };
 
-// this is currently used in shutdown
-// because Superseded should be per-branch, but isn't yet.
-// At least this makes it explicit we don't have it quite right yet
-export function targetInfoForAllBranches(id: RemoteRepoRef): ManagedDeploymentTargetInfo {
-    return {
-        managedDeploymentKey: id,
-        name: "Run alongside this automation",
-        description: `Locally run ${id.sha} from an unknown branch`,
-    };
-}
-
 /**
  * Strategy for looking up a service
  */

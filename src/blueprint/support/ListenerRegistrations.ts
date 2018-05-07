@@ -30,7 +30,6 @@ import { PullRequestListener } from "../../common/listener/PullRequestListener";
 import { PushListener } from "../../common/listener/PushListener";
 import { RepoCreationListener } from "../../common/listener/RepoCreationListener";
 import { ReviewListener } from "../../common/listener/ReviewListener";
-import { SupersededListener } from "../../common/listener/SupersededListener";
 import { TagListener } from "../../common/listener/TagListener";
 import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../common/listener/UserJoiningChannelListener";
@@ -76,8 +75,6 @@ export class ListenerRegistrations {
     protected readonly artifactListeners: ArtifactListener[] = [];
 
     protected readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
-
-    protected readonly supersededListeners: SupersededListener[] = [];
 
     protected readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
@@ -181,11 +178,6 @@ export class ListenerRegistrations {
 
     public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
         this.fingerprinterRegistrations.push(...f);
-        return this;
-    }
-
-    public addSupersededListeners(...l: SupersededListener[]): this {
-        this.supersededListeners.push(...l);
         return this;
     }
 
