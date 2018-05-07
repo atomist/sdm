@@ -21,7 +21,6 @@ import { AddressChannels, addressChannelsFor } from "../../../../common/slack/ad
 import { OnBuildComplete } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 /**
  * Invoke listeners on complete build. Not a part of our delivery flow:
@@ -31,7 +30,7 @@ import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsReso
 export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     constructor(private readonly listeners: BuildListener[],
-                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {
+                private readonly credentialsFactory: CredentialsResolver) {
     }
 
     public async handle(event: EventFired<OnBuildComplete.Subscription>,

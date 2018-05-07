@@ -27,7 +27,6 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 /**
  * React to a PushImpact event to react to semantic diffs
@@ -37,7 +36,7 @@ export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
     constructor(private readonly differenceListeners: FingerprintDifferenceListener[],
-                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {
+                private readonly credentialsFactory: CredentialsResolver) {
     }
 
     public async handle(event: EventFired<schema.OnPushImpact.Subscription>,

@@ -179,7 +179,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
         return this.fingerprintDifferenceListeners.length > 0 ?
-            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners) :
+            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners, this.opts.credentialsResolver) :
             undefined;
     }
 
@@ -221,7 +221,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
-            () => new OnDeployStatus(this.deploymentListeners) :
+            () => new OnDeployStatus(this.deploymentListeners, this.opts.credentialsResolver) :
             undefined;
     }
 
@@ -238,7 +238,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
         return this.verifiedDeploymentListeners.length > 0 ?
-            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners) :
+            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners, this.opts.credentialsResolver) :
             undefined;
     }
 
@@ -282,7 +282,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 this.userJoiningChannelListeners.length > 0 ?
                     () => new OnUserJoiningChannel(this.userJoiningChannelListeners, this.opts.credentialsResolver) :
                     undefined,
-                this.buildListeners.length > 0 ? () => new InvokeListenersOnBuildComplete(this.buildListeners) : undefined,
+                this.buildListeners.length > 0 ?
+                    () => new InvokeListenersOnBuildComplete(this.buildListeners, this.opts.credentialsResolver) :
+                    undefined,
                 this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners, this.opts.credentialsResolver) : undefined,
                 this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners, this.opts.credentialsResolver) : undefined,
                 this.updatedIssueListeners.length > 0 ?

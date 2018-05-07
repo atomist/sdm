@@ -22,7 +22,6 @@ import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 /**
  * React to a deployment.
@@ -38,7 +37,7 @@ import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsReso
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     constructor(private readonly listeners: DeploymentListener[],
-                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {}
+                private readonly credentialsFactory: CredentialsResolver) {}
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
                         context: HandlerContext, params: this): Promise<HandlerResult> {
