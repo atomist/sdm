@@ -15,7 +15,7 @@
  */
 
 import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
-import { PushTest } from "../../listener/PushTest";
+import { PushRegistration } from "../../listener/PushRegistration";
 
 /**
  * A code action response that affects delivery:
@@ -44,14 +44,7 @@ export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & H
  * Used to register actions on a push that can return any type.
  * Use ReviewerRegistration if you want to return a structured type.
  */
-export interface PushReactionRegistration<R = any> {
-
-    name: string;
-
-    pushTest?: PushTest;
-
-    action: PushReaction<R>;
-}
+export type PushReactionRegistration<R = any> = PushRegistration<PushReaction<R>>;
 
 /**
  * Base options object for registrations that process selective files

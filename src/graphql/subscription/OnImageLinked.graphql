@@ -1,6 +1,9 @@
 subscription OnImageLinked {
   ImageLinked {
     commit {
+      pushes {
+        ...PushFields
+      }
       sha
       message
       author {

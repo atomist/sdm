@@ -30,14 +30,19 @@ import {
 import { ProjectIdentifier } from "../projectIdentifier";
 import { NpmPreparations } from "./npmBuilder";
 
+/**
+ * Execute npm publish
+ * @param {ProjectLoader} projectLoader
+ * @param {ProjectIdentifier} projectIdentifier
+ * @param {PrepareForGoalExecution[]} preparations
+ * @return {ExecuteGoalWithLog}
+ */
 export function executePublish(projectLoader: ProjectLoader,
                                projectIdentifier: ProjectIdentifier,
                                preparations: PrepareForGoalExecution[] = NpmPreparations): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
-
         return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async project => {
-
             for (const preparation of preparations) {
                 const pResult = await preparation(project, rwlc);
                 if (pResult.code !== 0) {

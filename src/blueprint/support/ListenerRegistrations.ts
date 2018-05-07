@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { ArtifactListenerRegisterable } from "../..";
 import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
 import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
 import { PushReactionRegistration } from "../../common/delivery/code/PushReactionRegistration";
 import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
-import { ArtifactListener } from "../../common/listener/ArtifactListener";
 import { BuildListener } from "../../common/listener/BuildListener";
 import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
@@ -72,7 +72,7 @@ export class ListenerRegistrations {
 
     protected readonly autofixRegistrations: AutofixRegistration[] = [];
 
-    protected readonly artifactListeners: ArtifactListener[] = [];
+    protected readonly artifactListenerRegistrations: ArtifactListenerRegisterable[] = [];
 
     protected readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
 
@@ -153,16 +153,16 @@ export class ListenerRegistrations {
 
     /**
      * Add reactions to a push
-     * @param {PushReactionRegistration} crrs
+     * @param {PushReactionRegistration} prrs
      * @return {this}
      */
-    public addPushReactions(...crrs: PushReactionRegistration[]): this {
-        this.codeReactionRegistrations.push(...crrs);
+    public addPushReactions(...prrs: PushReactionRegistration[]): this {
+        this.codeReactionRegistrations.push(...prrs);
         return this;
     }
 
-    public addArtifactListeners(...pls: ArtifactListener[]): this {
-        this.artifactListeners.push(...pls);
+    public addArtifactListeners(...alrs: ArtifactListenerRegisterable[]): this {
+        this.artifactListenerRegistrations.push(...alrs);
         return this;
     }
 

@@ -19,13 +19,13 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { ArtifactListener, ArtifactListenerInvocation } from "../../../../common/listener/ArtifactListener";
+import { ArtifactListenerInvocation } from "../../../../common/listener/ArtifactListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { ArtifactListenerRegisterable, ProjectLoader, PushListenerInvocation, toArtifactListenerRegistration } from "../../../../index";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { GitHubCredentialsResolver } from "../../../common/GitHubCredentialsResolver";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {
@@ -36,8 +36,9 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
      */
     constructor(public goal: Goal,
                 private readonly artifactStore: ArtifactStore,
-                private readonly listeners: ArtifactListener[],
-                private readonly credentialsFactory: CredentialsResolver = new GitHubCredentialsResolver()) {}
+                private readonly registrations: ArtifactListenerRegisterable[],
+                private readonly projectLoader: ProjectLoader,
+                private readonly credentialsResolver: CredentialsResolver) {}
 
     public async handle(event: EventFired<OnImageLinked.Subscription>,
                         context: HandlerContext,
@@ -53,26 +54,41 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
             return Success;
         }
 
-        if (params.listeners.length > 0) {
-            const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
+        if (params.registrations.length > 0) {
+            const credentials = this.credentialsResolver.eventHandlerCredentials(context, id);
             logger.info("FindArtifactOnImageLinked: Scanning artifact for %j", id);
             const deployableArtifact = await params.artifactStore.checkout(image.imageName, id, credentials);
             const addressChannels = addressChannelsFor(commit.repo, context);
-            const ai: ArtifactListenerInvocation = {
-                id,
-                context,
-                addressChannels,
-                deployableArtifact,
-                credentials,
-            };
-            await Promise.all(params.listeners.map(l => l(ai)));
+
+            await this.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
+                // TODO only handles first push
+                const pli: PushListenerInvocation = {
+                    id,
+                    context,
+                    credentials,
+                    addressChannels,
+                    push: commit.pushes[0],
+                    project,
+                };
+                const ai: ArtifactListenerInvocation = {
+                    id,
+                    context,
+                    addressChannels,
+                    deployableArtifact,
+                    credentials,
+                };
+                await Promise.all(params.registrations
+                    .map(toArtifactListenerRegistration)
+                    .filter(async arl => !arl.pushTest || !!(await arl.pushTest.valueForPush(pli)))
+                    .map(l => l.action(ai)));
+                await updateGoal(context, artifactSdmGoal, {
+                    state: "success",
+                    description: params.goal.successDescription,
+                    url: image.imageName,
+                });
+            });
         }
 
-        await updateGoal(context, artifactSdmGoal, {
-            state: "success",
-            description: params.goal.successDescription,
-            url: image.imageName,
-        });
         return Success;
     }
 }

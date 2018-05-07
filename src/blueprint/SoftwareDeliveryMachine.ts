@@ -215,7 +215,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
         this.opts.artifactStore,
-        this.artifactListeners)
+        this.artifactListenerRegistrations,
+        this.opts.projectLoader,
+        this.opts.credentialsResolver)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?

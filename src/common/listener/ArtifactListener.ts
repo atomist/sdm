@@ -16,6 +16,7 @@
 
 import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
+import { PushRegistration } from "./PushRegistration";
 
 export interface ArtifactListenerInvocation extends RepoListenerInvocation {
 
@@ -24,3 +25,21 @@ export interface ArtifactListenerInvocation extends RepoListenerInvocation {
 }
 
 export type ArtifactListener = SdmListener<ArtifactListenerInvocation>;
+
+export type ArtifactListenerRegistration = PushRegistration<ArtifactListener>;
+
+export type ArtifactListenerRegisterable = ArtifactListener | ArtifactListenerRegistration;
+
+export function toArtifactListenerRegistration(alr: ArtifactListenerRegisterable): ArtifactListenerRegistration {
+    return isArtifactListenerRegistration(alr) ?
+        alr :
+        {
+            name: "auto",
+            action: alr,
+        };
+}
+
+function isArtifactListenerRegistration(a: ArtifactListenerRegisterable): a is ArtifactListenerRegistration {
+    const maybeAlr = a as ArtifactListenerRegistration;
+    return !!maybeAlr.action && !!maybeAlr.name;
+}
