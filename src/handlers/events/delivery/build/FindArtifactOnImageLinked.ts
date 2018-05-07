@@ -77,18 +77,20 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
                     deployableArtifact,
                     credentials,
                 };
+                logger.info("About to invoke %d ArtifactListener registrations", params.registrations.length);
                 await Promise.all(params.registrations
                     .map(toArtifactListenerRegistration)
                     .filter(async arl => !arl.pushTest || !!(await arl.pushTest.valueForPush(pli)))
                     .map(l => l.action(ai)));
-                await updateGoal(context, artifactSdmGoal, {
-                    state: "success",
-                    description: params.goal.successDescription,
-                    url: image.imageName,
-                });
             });
         }
 
+        await updateGoal(context, artifactSdmGoal, {
+            state: "success",
+            description: params.goal.successDescription,
+            url: image.imageName,
+        });
+        logger.info("Updated artifact goal '%s'", artifactSdmGoal.name);
         return Success;
     }
 }

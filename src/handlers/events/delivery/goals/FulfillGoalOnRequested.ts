@@ -68,16 +68,16 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         // this should not happen but it does: automation-api#395
         if (sdmGoal.state !== "requested") {
-            logger.warn(`Received '${sdmGoal.state}' on ${status.context}, while looking for 'requested'`);
+            logger.warn(`Goal ${sdmGoal.name}: Received '${sdmGoal.state}' on ${status.context}, while looking for 'requested'`);
             return Success;
         }
 
         if (sdmGoal.fulfillment.method !== "SDM fulfill on requested") {
-            logger.info("Implementation method is " + sdmGoal.fulfillment.method + "; not fulfilling");
+            logger.info("Goal %s: Implementation method is '%s'; not fulfilling", sdmGoal.name, sdmGoal.fulfillment.method);
             return Success;
         }
 
-        logger.info("Really executing FulfillGoalOnRequested with " + sdmGoal.fulfillment.name); // take this out when automation-api#395 is fixed
+        logger.info("Executing FulfillGoalOnRequested with '%s'", sdmGoal.fulfillment.name); // take this out when automation-api#395 is fixed
 
         // bug: automation-api#392
         params.githubToken = process.env.GITHUB_TOKEN;
