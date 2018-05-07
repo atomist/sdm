@@ -37,7 +37,7 @@ export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningCha
         const joinEvent = event.data.UserJoinedChannel[0];
         const repos = joinEvent.channel.repos.map(
             repo => toRemoteRepoRef(repo, undefined));
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, repos[0]);
         const addressChannels = (msg, opts) => context.messageClient.addressChannels(msg, joinEvent.channel.name, opts);
         const invocation: UserJoiningChannelListenerInvocation = {
             addressChannels,

@@ -37,7 +37,7 @@ import {
     PushThatTriggersBuild,
 } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { SdmBuildIdentifierForRepo } from "../../../../typings/types";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
@@ -129,7 +129,7 @@ export abstract class LocalBuilder implements Builder {
      * @param {string} log
      * @return {InterpretedLog}
      */
-    public abstract logInterpreter: LogInterpreter;
+    public abstract logInterpreter: InterpretLog;
 
     protected abstract startBuild(credentials: ProjectOperationCredentials,
                                   id: RemoteRepoRef,

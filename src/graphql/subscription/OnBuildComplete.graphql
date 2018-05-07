@@ -8,6 +8,9 @@ subscription OnBuildComplete {
     jobId
     startedAt
     timestamp
+    push {
+      ...PushFields
+    }
     commit {
       sha
       message

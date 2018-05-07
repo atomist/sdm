@@ -46,7 +46,7 @@ import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
-import { providerIdFromPush, repoRefFromPush } from "../../../../util/git/repoRef";
+import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**
@@ -73,7 +73,8 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const id: RemoteRepoRef = toRemoteRepoRef(push.repo);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         await chooseAndSetGoals({
             projectLoader: params.projectLoader,

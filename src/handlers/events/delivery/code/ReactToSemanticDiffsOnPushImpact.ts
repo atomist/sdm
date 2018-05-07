@@ -67,7 +67,7 @@ export class ReactToSemanticDiffsOnPushImpact
                 }))
                 .filter(fv => _.get(fv, "oldValue.sha") !== _.get(fv, "newValue.sha"));
 
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const inv: FingerprintDifferenceListenerInvocation = {
             id,
             context,

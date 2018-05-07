@@ -41,7 +41,7 @@ export class UpdatedIssueHandler implements HandleEvent<schema.OnIssueAction.Sub
         const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
         const id = toRemoteRepoRef(issue.repo);
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         if (issue.updatedAt === issue.createdAt) {
             logger.debug("Issue created, not updated: %s on %j", issue.number, id);

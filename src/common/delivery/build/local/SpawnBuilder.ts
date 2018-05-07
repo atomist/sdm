@@ -23,7 +23,7 @@ import { SpawnOptions } from "child_process";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { LogInterpretation, LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import {
     asSpawnCommand,
@@ -62,7 +62,7 @@ export interface SpawnBuilderOptions {
     /**
      * Interpreter of command output
      */
-    logInterpreter: LogInterpreter;
+    logInterpreter: InterpretLog;
 
     options?: SpawnOptions;
 
@@ -107,7 +107,7 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
         }
     }
 
-    public get logInterpreter(): LogInterpreter {
+    public get logInterpreter(): InterpretLog {
         return this.options.logInterpreter;
     }
 

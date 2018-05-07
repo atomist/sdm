@@ -18,7 +18,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import { LogInterpretation, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { InterpretLog, LogInterpretation } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog, ProgressLogFactory } from "../../../../../spi/log/ProgressLog";
 import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
@@ -72,7 +72,7 @@ export class MavenBuilder extends LocalBuilder implements LogInterpretation {
         });
     }
 
-    public logInterpreter: LogInterpreter = MavenLogInterpreter;
+    public logInterpreter: InterpretLog = MavenLogInterpreter;
 
 }
 

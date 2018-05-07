@@ -40,7 +40,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
                         params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
         const id = toRemoteRepoRef(repo);
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const invocation: RepoCreationListenerInvocation = {
             addressChannels: AddressNoChannels,
             id,

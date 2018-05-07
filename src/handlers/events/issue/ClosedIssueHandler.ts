@@ -40,7 +40,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
                         params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const id = toRemoteRepoRef(issue.repo);
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels = addressChannelsFor(issue.repo, context);
         const inv: ClosedIssueListenerInvocation = {

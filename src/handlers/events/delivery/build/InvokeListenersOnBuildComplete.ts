@@ -40,7 +40,7 @@ export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComple
         const build = event.data.Build[0];
         const repo = build.commit.repo;
         const id = toRemoteRepoRef(repo);
-        const credentials = this.credentialsFactory.eventHandlerCredentials(context);
+        const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);
         const bli: BuildListenerInvocation = {
