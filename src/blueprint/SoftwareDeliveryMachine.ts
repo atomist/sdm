@@ -122,7 +122,7 @@ export function softwareDeliveryMachineOptions(configuration: Configuration): So
     return {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
-        logFactory: logFactory(_.get(configuration, "custom.sdm.rolar.url")),
+        logFactory: logFactory(_.get(configuration, "sdm.rolar.url")),
         credentialsResolver: new GitHubCredentialsResolver(),
     };
 }
