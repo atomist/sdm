@@ -12,6 +12,9 @@ subscription OnBuildComplete {
       sha
       message
       timestamp
+      push {
+        ...PushFields
+      }
       repo {
         ...CoreRepoFieldsAndChannels
       }
