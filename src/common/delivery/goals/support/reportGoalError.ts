@@ -17,8 +17,6 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../../../typings/types";
