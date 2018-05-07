@@ -19,7 +19,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { retryCommandNameFor } from "../../../../handlers/commands/triggerGoal";
-import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../../../typings/types";
 import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
@@ -49,7 +49,7 @@ export async function reportGoalError(parameters: {
                                       addressChannels: AddressChannels,
                                       progressLog: ProgressLog,
                                       id: RemoteRepoRef,
-                                      logInterpreter: LogInterpreter,
+                                      logInterpreter: InterpretLog,
                                   },
                                       err: Error) {
     const {goal, implementationName, addressChannels, progressLog, id, logInterpreter} = parameters;

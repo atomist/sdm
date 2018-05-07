@@ -22,7 +22,7 @@ import { spawn } from "child_process";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
-import { InterpretedLog, LogInterpreter } from "../../../../../spi/log/InterpretedLog";
+import { InterpretedLog, InterpretLog } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import {DelimitedWriteProgressLogDecorator} from "../../../../log/DelimitedWriteProgressLogDecorator";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
@@ -142,7 +142,7 @@ class MavenSourceDeployer implements Deployer<ManagedDeploymentTargetInfo> {
 
 }
 
-const shortLogInterpreter: LogInterpreter = (log: string) => {
+const shortLogInterpreter: InterpretLog = (log: string) => {
     if (log.length < 200) {
         return {
             relevantPart: log,
@@ -152,7 +152,7 @@ const shortLogInterpreter: LogInterpreter = (log: string) => {
     }
 };
 
-const springBootRunLogInterpreter: LogInterpreter = (log: string) => {
+const springBootRunLogInterpreter: InterpretLog = (log: string) => {
     logger.debug("Interpreting log");
 
     if (!log) {

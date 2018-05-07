@@ -24,7 +24,7 @@ import { descriptionFromState, updateGoal } from "../../../../common/delivery/go
 import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { LogInterpreter } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 import { sprintf } from "sprintf-js";
@@ -38,7 +38,7 @@ import * as stringify from "json-stringify-safe";
  * @param {RunWithLogContext} rwlc
  * @param {SdmGoal} sdmGoal
  * @param {Goal} goal
- * @param {LogInterpreter} logInterpreter
+ * @param {InterpretLog} logInterpreter
  * @return {Promise<ExecuteGoalResult>}
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
@@ -46,7 +46,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                                   rwlc: RunWithLogContext,
                                   sdmGoal: SdmGoal,
                                   goal: Goal,
-                                  logInterpreter: LogInterpreter): Promise<ExecuteGoalResult> {
+                                  logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
     const ctx = rwlc.context;
     const {addressChannels, progressLog, id} = rwlc;
     const implementationName = sdmGoal.fulfillment.name;
