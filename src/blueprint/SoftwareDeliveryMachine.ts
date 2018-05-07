@@ -76,7 +76,6 @@ import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/Fulfil
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
-import { triggerGoal } from "../handlers/commands/triggerGoal";
 import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
@@ -128,8 +127,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         // For now we only support kube or in process
         process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes" ? KubernetesIsolatedGoalLauncher : undefined); // public for testing
 
-    private readonly goalRetryCommandMap: { [key: string]: Maker<HandleCommand<any>> } = {};
-
     /**
      * Provide the implementation for a goal.
      * The SDM will run it as soon as the goal is ready (all preconditions are met).
@@ -154,17 +151,13 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             logInterpreter: lastLinesLogInterpreter(implementationName, 10),
             ...options,
         };
-        this.goalFulfillmentMapper.addImplementation({
+        const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: optsToUse.pushTest,
             logInterpreter: optsToUse.logInterpreter,
-        });
-        this.goalRetryCommandMap[goal.uniqueCamelCaseName] = () => triggerGoal(goal.uniqueCamelCaseName, goal);
+        };
+        this.goalFulfillmentMapper.addImplementation(implementation);
         return this;
-    }
-
-    private get goalRetryCommands(): Array<Maker<HandleCommand<any>>> {
-        return Object.keys(this.goalRetryCommandMap).map(k => this.goalRetryCommandMap[k]);
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {
@@ -315,7 +308,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     get commandHandlers(): Array<Maker<HandleCommand>> {
         return this.generators
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.commandHandlers)))
-            .concat(this.goalRetryCommands)
             .concat(this.editors)
             .concat(this.supportingCommands)
             .concat([this.showBuildLog])

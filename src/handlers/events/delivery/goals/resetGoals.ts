@@ -24,8 +24,7 @@ import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/S
 import { GoalSetter } from "../../../../common/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { PushFields, PushForCommit } from "../../../../typings/types";
-import { fetchDefaultBranchTip, tipOfBranch } from "../../../commands/triggerGoal";
+import { PushFields, PushForCommit, RepoBranchTips } from "../../../../typings/types";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 
 @Parameters()
@@ -118,4 +117,26 @@ export async function fetchPushForCommit(context: HandlerContext, id: RemoteRepo
         throw new Error("Could not find push for " + stringify(id));
     }
     return commit.pushes[0];
+}
+
+
+export async function fetchDefaultBranchTip(ctx: HandlerContext, repositoryId: { repo: string, owner: string, providerId: string }) {
+    const result = await ctx.graphClient.query<RepoBranchTips.Query, RepoBranchTips.Variables>(
+        {name: "RepoBranchTips", variables: {name: repositoryId.repo, owner: repositoryId.owner}});
+    if (!result || !result.Repo || result.Repo.length === 0) {
+        throw new Error(`Repository not found: ${repositoryId.owner}/${repositoryId.repo}`);
+    }
+    const repo = result.Repo.find(r => r.org.provider.providerId === repositoryId.providerId);
+    if (!repo) {
+        throw new Error(`Repository not found: ${repositoryId.owner}/${repositoryId.repo} provider ${repositoryId.providerId}`);
+    }
+    return repo;
+}
+
+export function tipOfBranch(repo: RepoBranchTips.Repo, branchName: string) {
+    const branchData = repo.branches.find(b => b.name === branchName);
+    if (!branchData) {
+        throw new Error("Branch not found: " + branchName);
+    }
+    return branchData.commit.sha;
 }
