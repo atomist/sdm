@@ -8,13 +8,13 @@ subscription OnBuildComplete {
     jobId
     startedAt
     timestamp
+    push {
+      ...PushFields
+    }
     commit {
       sha
       message
       timestamp
-      push {
-        ...PushFields
-      }
       repo {
         ...CoreRepoFieldsAndChannels
       }
