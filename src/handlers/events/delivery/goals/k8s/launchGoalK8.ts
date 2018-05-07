@@ -19,7 +19,7 @@ import {
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client";
-import { automationClientInstance } from "@atomist/automation-client/automationClient";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -42,7 +42,7 @@ import { spawnAndWatch } from "../../../../../util/misc/spawned";
 export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal.SdmGoal,
                                                      ctx: HandlerContext,
                                                      progressLog: ProgressLog): Promise<HandlerResult> => {
-    const deploymentName = process.env.ATOMIST_DEPLOYMENT_NAME || automationClientInstance().configuration.name;
+    const deploymentName = process.env.ATOMIST_DEPLOYMENT_NAME || configurationValue<string>("name");
     const deploymentNamespace = process.env.ATOMIST_DEPLOYMENT_NAMESPACE || "default";
 
     const log = new StringCapturingProgressLog();

@@ -15,12 +15,12 @@
  */
 
 import {
+    automationClientInstance,
     HandlerContext,
     HandlerResult,
     logger,
     Secrets,
 } from "@atomist/automation-client";
-import { automationClientInstance } from "@atomist/automation-client/automationClient";
 import { ApolloGraphClient } from "@atomist/automation-client/graph/ApolloGraphClient";
 import {
     EventIncoming,
