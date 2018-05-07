@@ -42,7 +42,10 @@ export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
                 url,
                 push.repo.owner,
                 push.repo.name,
+                true,
+                push.after.sha,
             );
+            id.branch = push.branch;
             id.cloneUrl = (creds: BasicAuthCredentials) =>
              `http://${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${id.remoteBase}${id.pathComponent}.git`;
             return id;
@@ -82,6 +85,19 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
                 branch: sdmGoal.branch,
                 rawApiBase: provider.apiUrl,
             });
+        case ProviderType.bitbucket :
+            const url = provider.url.replace("http://", "");
+            const id = new BitBucketServerRepoRef(
+                url,
+                sdmGoal.repo.owner,
+                sdmGoal.repo.name,
+                true,
+                sdmGoal.sha,
+            );
+            id.branch = sdmGoal.branch;
+            id.cloneUrl = (creds: BasicAuthCredentials) =>
+                `http://${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${id.remoteBase}${id.pathComponent}.git`;
+            return id;
         default:
             throw new Error(`Provider ${provider.providerType} not currently supported in SDM`);
     }

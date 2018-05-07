@@ -83,19 +83,16 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
     const fulfillment = parameters.fulfillment || { method: "other", name: "unspecified" };
 
-    if (id.branch === null) {
-        throw new Error(sprintf("Please provide a branch in the GitHubRepoRef %j", parameters));
+    if (!id.branch) {
+        throw new Error(sprintf("Please provide a branch in the RemoteRepoRef %j", parameters));
     }
-    if (id.sha === null) {
-        throw new Error(sprintf("Please provide a sha in the GitHubRepoRef %j", parameters));
+    if (!id.sha) {
+        throw new Error(sprintf("Please provide a sha in the RemoteRepoRef %j", parameters));
     }
 
     const preConditions: SdmGoalKey[] = [];
-
     const description = descriptionFromState(goal, state);
-
     const environment = environmentFromGoal(goal);
-
     if (hasPreconditions(goal)) {
         preConditions.push(...goal.dependsOn.map(d => ({
             goalSet,
@@ -109,36 +106,28 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         goalSetId,
         name: goal.name,
         uniqueName: goal.definition.uniqueName,
-
         environment,
-
         fulfillment,
-
         sha: id.sha,
         branch: id.branch,
-
         repo: {
             name: id.repo,
             owner: id.owner,
             providerId,
         },
-
         state,
         description,
         url: disregardApproval(url), // when we use goals in lifecycle this can go
         externalKey: goal.context,
         ts: Date.now(),
-
         approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,
-
         provenance: [constructProvenance(ctx)],
-
         preConditions,
     };
 }
 
 export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoal) {
-    logger.debug("Storing goal: %j", sdmGoal);
+    logger.info("Storing goal: %j", sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);
 }
