@@ -44,7 +44,7 @@ export function createStatus(tokenSource: string | ProjectOperationCredentials, 
     return doWithRetry(() =>
         axios.post(url, saferStatus, config).catch(err => {
             if (err.response.status === 401) {
-               logger.debug("WTF is with a 401. Token is '%s'", token)
+               logger.debug("WTF is with a 401. Token is '%s'", token);
             }
             throw err;
         }).catch(err =>
