@@ -46,6 +46,20 @@ export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & H
  */
 export type PushReactionRegistration<R = any> = PushRegistration<PushReaction<R>>;
 
+export type PushReactionRegisterable<R = any> = PushReactionRegistration | PushReaction<R>;
+
+function isPushReactionRegistration<R>(a: PushReactionRegisterable<any>): a is PushReactionRegistration {
+    const maybe = a as PushRegistration<any>;
+    return !!maybe.name && !!maybe.action;
+}
+
+export function toPushReactionRegistration(prr: PushReactionRegisterable<any>): PushReactionRegistration {
+    return isPushReactionRegistration(prr) ? prr : {
+        name: "Raw push reaction",
+        action: prr,
+    };
+}
+
 /**
  * Base options object for registrations that process selective files
  */

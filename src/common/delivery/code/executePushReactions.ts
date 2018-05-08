@@ -19,7 +19,13 @@ import { PushImpactListenerInvocation } from "../../listener/PushImpactListener"
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
-import { PushReactionRegistration, PushReactionResponse, relevantCodeActions } from "./PushReactionRegistration";
+import {
+    PushReactionRegisterable,
+    PushReactionRegistration,
+    PushReactionResponse,
+    relevantCodeActions,
+    toPushReactionRegistration,
+} from "./PushReactionRegistration";
 
 /**
  * Execute arbitrary code reactions against a codebase
@@ -28,7 +34,7 @@ import { PushReactionRegistration, PushReactionResponse, relevantCodeActions } f
  * @return {ExecuteGoalWithLog}
  */
 export function executePushReactions(projectLoader: ProjectLoader,
-                                     registrations: PushReactionRegistration[]): ExecuteGoalWithLog {
+                                     registrations: PushReactionRegisterable[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         if (registrations.length === 0) {
             return Success;
@@ -37,11 +43,12 @@ export function executePushReactions(projectLoader: ProjectLoader,
         const {credentials, id, context} = rwlc;
         return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
-            const relevantCodeReactions: PushReactionRegistration[] = await relevantCodeActions<PushReactionRegistration>(registrations, cri);
+            const regs = registrations.map(toPushReactionRegistration);
+            const relevantCodeReactions: PushReactionRegistration[] = await relevantCodeActions<PushReactionRegistration>(regs, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",
                 relevantCodeReactions.length, registrations.length, cri.id,
                 relevantCodeReactions.map(a => a.name).join(),
-                registrations.map(a => a.name).join());
+                regs.map(a => a.name).join());
             const allReactions: any[] = await Promise.all(relevantCodeReactions
                 .map(reactionReg => reactionReg.action(cri)));
             const result = {

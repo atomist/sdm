@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { ArtifactListenerRegisterable } from "../..";
+import { ArtifactListenerRegisterable, PushReactionRegisterable } from "../..";
 import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
 import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
-import { PushReactionRegistration } from "../../common/delivery/code/PushReactionRegistration";
 import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
 import { BuildListener } from "../../common/listener/BuildListener";
 import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
@@ -68,7 +67,7 @@ export class ListenerRegistrations {
 
     protected readonly reviewListeners: ReviewListener[] = [];
 
-    protected readonly codeReactionRegistrations: PushReactionRegistration[] = [];
+    protected readonly pushReactionRegistrations: PushReactionRegisterable[] = [];
 
     protected readonly autofixRegistrations: AutofixRegistration[] = [];
 
@@ -156,8 +155,8 @@ export class ListenerRegistrations {
      * @param {PushReactionRegistration} prrs
      * @return {this}
      */
-    public addPushReactions(...prrs: PushReactionRegistration[]): this {
-        this.codeReactionRegistrations.push(...prrs);
+    public addPushReactions(...prrs: PushReactionRegisterable[]): this {
+        this.pushReactionRegistrations.push(...prrs);
         return this;
     }
 

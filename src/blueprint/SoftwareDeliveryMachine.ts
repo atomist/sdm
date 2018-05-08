@@ -449,7 +449,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
                 executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
             .addGoalImplementation("CodeReactions", PushReactionGoal,
-                executePushReactions(this.opts.projectLoader, this.codeReactionRegistrations))
+                executePushReactions(this.opts.projectLoader, this.pushReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,
                 executeReview(this.opts.projectLoader, this.reviewerRegistrations, this.reviewListeners))
             .addVerifyImplementation()
