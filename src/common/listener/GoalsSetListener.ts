@@ -16,6 +16,7 @@
 
 import { Goals } from "../delivery/goals/Goals";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
     goalSet: Goals | null;
@@ -23,3 +24,10 @@ export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
 }
 
 export type GoalsSetListener = SdmListener<GoalsSetListenerInvocation>;
+
+export interface GoalFailureListenerInvocation extends RepoListenerInvocation {
+    failedGoal: SdmGoal;
+    goalSet: SdmGoal[];
+}
+
+export type GoalFailureListener = SdmListener<GoalFailureListenerInvocation>;

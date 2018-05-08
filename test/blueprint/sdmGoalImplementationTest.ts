@@ -66,6 +66,7 @@ describe("implementing goals in the SDM", () => {
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 addressChannels: () => Promise.resolve({}),
+                goalSetId: "hi",
             },
         );
 
@@ -108,6 +109,7 @@ describe("implementing goals in the SDM", () => {
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 addressChannels: () => Promise.resolve({}),
+                goalSetId: "hi",
             },
         );
 
