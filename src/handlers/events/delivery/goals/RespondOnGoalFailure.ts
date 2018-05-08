@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success, } from "@atomist/automation-client";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { GoalFailureListener, GoalFailureListenerInvocation } from "../../../../common/listener/GoalsSetListener";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
 import { repoRefFromPush } from "../../../../util/git/repoRef";
-import { GoalFailureListener, GoalFailureListenerInvocation } from "../../../../common/listener/GoalsSetListener";
-import { sumSdmGoalEvents } from "./RequestDownstreamGoalsOnGoalSuccess";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
+import { sumSdmGoalEvents } from "./RequestDownstreamGoalsOnGoalSuccess";
 
 /**
  * Respond to a failure status by running listeners
@@ -62,4 +62,3 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
         return Success;
     }
 }
-

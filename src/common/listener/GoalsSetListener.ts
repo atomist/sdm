@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { Goals } from "../delivery/goals/Goals";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
     goalSet: Goals | null;
