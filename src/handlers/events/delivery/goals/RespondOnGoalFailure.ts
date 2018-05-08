@@ -15,7 +15,7 @@
  */
 
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { sumSdmGoalEvents } from "./RequestDownstreamGoalsOnGoalSuccess";
+import { sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
@@ -52,7 +52,7 @@ export class RespondOnCompletedSdmGoal implements HandleEvent<OnAnyCompletedSdmG
         const commit = await fetchCommitForSdmGoal(context, sdmGoal);
         const push = commit.pushes[0];
         const id = repoRefFromPush(push);
-        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const gsi: GoalCompletionListenerInvocation = {
             id,
