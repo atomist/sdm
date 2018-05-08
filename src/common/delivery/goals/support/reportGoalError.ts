@@ -25,7 +25,6 @@ import { RepoContext } from "../../../context/SdmContext";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalResult } from "../ExecuteGoalResult";
 import { Goal } from "../Goal";
-import {SdmGoal} from "../../../../ingesters/sdmGoalIngester";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
@@ -33,7 +32,7 @@ export type PrepareForGoalExecution = (p: GitProject, r: RunWithLogContext) => P
 
 export interface RunWithLogContext extends RepoContext {
 
-    sdmGoal: SdmGoal;
+    status: StatusForExecuteGoal.Fragment;
     progressLog: ProgressLog;
 
 }

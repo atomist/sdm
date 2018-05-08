@@ -55,7 +55,6 @@ import { executeFingerprinting } from "../common/delivery/code/fingerprint/execu
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
-import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { GoalSetter } from "../common/listener/GoalSetter";
@@ -92,6 +91,7 @@ import { InterpretLog } from "../spi/log/InterpretedLog";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
+import {summarizeGoalsInGitHubStatus} from "./support/githubStatusSummarySupport";
 
 // NEXT: store the implementation with the goal
 
@@ -433,7 +433,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);
-        addGitHubSupport(this);
+        summarizeGoalsInGitHubStatus(this);
         this.addSupportingCommands(
             selfDescribeHandler(this),
             listGeneratorsHandler(this),
@@ -460,10 +460,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
-}
-
-function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
-    sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
 export function configureForSdm(machine: SoftwareDeliveryMachine) {

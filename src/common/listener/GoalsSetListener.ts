@@ -25,9 +25,9 @@ export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
 
 export type GoalsSetListener = SdmListener<GoalsSetListenerInvocation>;
 
-export interface GoalFailureListenerInvocation extends RepoListenerInvocation {
-    failedGoal: SdmGoal;
+export interface GoalCompletionListenerInvocation extends RepoListenerInvocation {
+    completedGoal: SdmGoal;
     goalSet: SdmGoal[];
 }
 
-export type GoalFailureListener = SdmListener<GoalFailureListenerInvocation>;
+export type GoalCompletionListener = SdmListener<GoalCompletionListenerInvocation>;
