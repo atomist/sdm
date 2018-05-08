@@ -50,7 +50,11 @@ export const ReviewGoal = new Goal({
     waitingForApprovalDescription: "Manual approval needed",
 });
 
-export const CodeReactionGoal = new Goal({
+/**
+ * Goal that runs PushReactionRegistrations
+ * @type {Goal}
+ */
+export const PushReactionGoal = new Goal({
     uniqueName: "CodeReaction",
     environment: IndependentOfEnvironment,
     orderedName: "1.5-react",

@@ -16,11 +16,11 @@
 
 import { Goals } from "../Goals";
 import {
-    ArtifactGoal, AutofixGoal, BuildGoal, CodeReactionGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal, FingerprintGoal, LocalDeploymentGoal,
-    LocalEndpointGoal,
+    ArtifactGoal, AutofixGoal, BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal,
     LocalUndeploymentGoal,
     ProductionDeploymentGoal,
-    ProductionEndpointGoal, ProductionUndeploymentGoal, ReviewGoal,
+    ProductionEndpointGoal,
+    ProductionUndeploymentGoal, PushReactionGoal, ReviewGoal,
     StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal, StagingVerifiedGoal,
 } from "./commonGoals";
 
@@ -33,7 +33,7 @@ export const HttpServiceGoals = new Goals(
     FingerprintGoal,
     AutofixGoal,
     ReviewGoal,
-    CodeReactionGoal,
+    PushReactionGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,
@@ -44,7 +44,7 @@ export const HttpServiceGoals = new Goals(
 
 export const LocalDeploymentGoals = new Goals(
     "Local Deployment",
-    CodeReactionGoal,
+    PushReactionGoal,
     LocalDeploymentGoal,
     LocalEndpointGoal);
 

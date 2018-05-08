@@ -23,12 +23,12 @@ import {
     ArtifactGoal,
     AutofixGoal,
     BuildGoal,
-    CodeReactionGoal,
     DeleteAfterUndeploysGoal,
     DeleteRepositoryGoal,
     FingerprintGoal,
     JustBuildGoal,
     NoGoal,
+    PushReactionGoal,
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
@@ -448,7 +448,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
             .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
                 executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
-            .addGoalImplementation("CodeReactions", CodeReactionGoal,
+            .addGoalImplementation("CodeReactions", PushReactionGoal,
                 executePushReactions(this.opts.projectLoader, this.codeReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,
                 executeReview(this.opts.projectLoader, this.reviewerRegistrations, this.reviewListeners))
