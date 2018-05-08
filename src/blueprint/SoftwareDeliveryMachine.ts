@@ -77,6 +77,7 @@ import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
+import { RespondOnCompletedSdmGoal } from "../handlers/events/delivery/goals/RespondOnGoalFailure";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
@@ -89,9 +90,8 @@ import { Builder } from "../spi/build/Builder";
 import { InterpretLog } from "../spi/log/InterpretedLog";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
-import { ListenerRegistrations } from "./support/ListenerRegistrations";
 import { summarizeGoalsInGitHubStatus } from "./support/githubStatusSummarySupport";
-import { RespondOnCompletedSdmGoal } from "../handlers/events/delivery/goals/RespondOnGoalFailure";
+import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -215,7 +215,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         this.opts.artifactStore,
         this.artifactListenerRegistrations,
         this.opts.projectLoader,
-        this.opts.credentialsResolver);
+        this.opts.credentialsResolver)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -255,7 +255,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal]);
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {

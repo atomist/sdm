@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { createStatus } from "../../../util/github/ghub";
 import { GoalCompletionListener, GoalCompletionListenerInvocation, GoalsSetListener, GoalsSetListenerInvocation, StatusState } from "../../..";
 import { CredentialsResolver } from "../../../handlers/common/CredentialsResolver";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
-import { logger } from "@atomist/automation-client";
+import { createStatus } from "../../../util/github/ghub";
 
 export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {
