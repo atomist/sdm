@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Issue } from "@atomist/automation-client/util/gitHub";
-import { doWithRetry } from "@atomist/automation-client/util/retry";
-import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
-import { toToken } from "../credentials/toToken";
+import {logger} from "@atomist/automation-client";
+import {GitHubRepoRef, isGitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    isTokenCredentials,
+    ProjectOperationCredentials,
+    TokenCredentials
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
+import {Issue} from "@atomist/automation-client/util/gitHub";
+import {doWithRetry} from "@atomist/automation-client/util/retry";
+import axios, {AxiosPromise, AxiosRequestConfig} from "axios";
+import {toToken} from "../credentials/toToken";
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -32,7 +36,8 @@ export interface Status {
     context?: string;
 }
 
-export function createStatus(token: string, rr: GitHubRepoRef, inputStatus: Status): AxiosPromise {
+export function createStatus(tokenSource: string | ProjectOperationCredentials, rr: GitHubRepoRef, inputStatus: Status): AxiosPromise {
+    const token = isTokenCredentials(tokenSource) ? tokenSource.token : tokenSource as string;
     const config = authHeaders(token);
     const saferStatus = ensureValidUrl(inputStatus);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
@@ -99,7 +104,7 @@ export function createTagReference(token: string, rr: GitHubRepoRef, tag: Tag): 
     const config = authHeaders(token);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/refs`;
     logger.info("Creating github reference: %s to %j", url, tag);
-    return doWithRetry(() => axios.post(url, { ref: `refs/tags/${tag.tag}`, sha: tag.object }, config)
+    return doWithRetry(() => axios.post(url, {ref: `refs/tags/${tag.tag}`, sha: tag.object}, config)
         .catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set tag ${JSON.stringify(tag)}: ${err.message}`)),
         ), `Updating github tag: ${url} to ${JSON.stringify(tag)}`, {});
