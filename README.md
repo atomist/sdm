@@ -148,7 +148,7 @@ export const HttpServiceGoals = new Goals(
     FingerprintGoal,
     AutofixGoal,
     ReviewGoal,
-    CodeReactionGoal,
+    PushReactionGoal,
     BuildGoal,
     ArtifactGoal,
     StagingDeploymentGoal,
@@ -274,7 +274,7 @@ The following listener interfaces are available:
 - `BuildListener`: Invoked when a build is complete. 
 - `ChannelLinkListenerInvocation`: Invoked when a channel is linked to a repo
 - `ClosedIssueListener`: Invoked when an issue is closed
-- `CodeReactionListener`: Invoked in response to a code change
+- `PushReactionListener`: Invoked in response to a code change
 - `DeploymentListener`: Invoked when a deployment has succeeded
 - `FingerprintDifferenceListener`: Invoked when a fingerprint has changed
 - `GoalsSetListener`: Invoked when goals are set on a push
@@ -466,21 +466,30 @@ sdm.addAutofixes(
 This registration allows you to react to the code, with information about the changes in the given push:
 
 For example, the following function lists changed files to any linked Slack channels for the repo:
+
 ```typescript
-export const listChangedFiles: CodeActionRegistration = {
-    action(i: CodeReactionInvocation) {
+export const listChangedFiles: PushReactionRegistration = {
+    action(i: PushImpactListenerInvocation) {
         return i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
     },
     name: "List files changed",
 };
+```
+
+If you don't have a custom name or PushTest, you can use the following shorthand:
+
+
+```typescript
+export const listChangedFiles = i => i.addressChannels(`Files changed:\n${i.filesChanged.map(n => "- `" + n + "`").join("\n")}`);
 
 ```
+
 Add in an SDM definition as follows:
 
 ```typescript
-sdm.addCodeReactions(listChangedFiles)
+sdm.addPushReactions(listChangedFiles)
 ```
-> If your reaction is essentially a review--for example, it's associated with a known problem in a particular file location--use a `ReviewerRegistration` rather than a `CodeActionRegistration`.
+> If your reaction is essentially a review--for example, it's associated with a known problem in a particular file location--use a `ReviewerRegistration` rather than a `PushReactionRegistration`.
 
 #### Fingerprints
 A special kind of push listener relates to **fingerprints**.
@@ -499,7 +508,7 @@ export class PackageLockFingerprinter implements FingerprinterRegistration {
 
     public readonly pushTest: PushTest = IsNode;
 
-    public async action(cri: CodeReactionInvocation): Promise<FingerprinterResult> {
+    public async action(cri: PushImpactListenerInvocation): Promise<FingerprinterResult> {
         const lockFile = await cri.project.getFile("package-lock.json");
         if (!lockFile) {
             return [];
@@ -706,7 +715,7 @@ For example:
             suggestAddingCloudFoundryManifest,
             PublishNewRepo)
         .addProjectReviewers(logReview)
-        .addCodeReactions(listChangedFiles)
+        .addPushReactions(listChangedFiles)
         .addFingerprinters(mavenFingerprinter)
         .addDeploymentListeners(PostToDeploymentsChannel)
         .addEndpointVerificationListeners(LookFor200OnEndpointRootGet)
