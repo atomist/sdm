@@ -19,6 +19,7 @@ import {subscription} from "@atomist/automation-client/graph/graphQL";
 import {EventHandlerMetadata} from "@atomist/automation-client/metadata/automationMetadata";
 
 import {ProgressLogFactory} from "../../../..";
+import {sdmGoalStateToGitHubStatusState} from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import {SdmGoalImplementationMapper} from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import {fetchCommitForSdmGoal} from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import {RunWithLogContext} from "../../../../common/delivery/goals/support/reportGoalError";
@@ -63,9 +64,11 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
         const commit = await fetchCommitForSdmGoal(ctx, sdmGoal);
 
+        const status: StatusForExecuteGoal.Fragment = convertForNow(sdmGoal, commit);
+
         // this should not happen but it does: automation-api#395
         if (sdmGoal.state !== "requested") {
-            logger.warn(`Goal ${sdmGoal.name}: Received '${sdmGoal.state}' on ${sdmGoal.externalKey}, while looking for 'requested'`);
+            logger.warn(`Goal ${sdmGoal.name}: Received '${sdmGoal.state}' on ${status.context}, while looking for 'requested'`);
             return Success;
         }
 
@@ -86,7 +89,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
         const credentials = {token: params.githubToken};
-        const rwlc: RunWithLogContext = {sdmGoal, progressLog, context: ctx, addressChannels, id, credentials};
+        const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
 
         const isolatedGoalLauncher = this.implementationMapper.getIsolatedGoalLauncher();
 
@@ -105,4 +108,14 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
                 });
         }
     }
+}
+
+function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal.Commit): StatusForExecuteGoal.Fragment {
+    return {
+        commit,
+        state: sdmGoalStateToGitHubStatusState(sdmGoal.state as SdmGoalState),
+        targetUrl: sdmGoal.url, // not handling approval weirdness
+        context: sdmGoal.externalKey,
+        description: sdmGoal.description,
+    };
 }
