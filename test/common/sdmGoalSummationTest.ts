@@ -17,13 +17,13 @@
 // tslint:disable:max-file-line-count
 
 import * as assert from "power-assert";
-import { sumSdmGoalEvents } from "../../src/handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
+import { sumSdmGoalEventsByOverride } from "../../src/handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { goalKeyEquals, SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 
 describe("Putting SdmGoal events together", () => {
    it("Lets the event we just received override out-of-date query results", () => {
        const successfulSdmGoal = successEvent.data.SdmGoal[0] as SdmGoal;
-       const result = sumSdmGoalEvents(queryResult.SdmGoal as any as SdmGoal[],
+       const result = sumSdmGoalEventsByOverride(queryResult.SdmGoal as any as SdmGoal[],
            [successfulSdmGoal]);
 
        assert.equal(result.length, queryResult.SdmGoal.length);
