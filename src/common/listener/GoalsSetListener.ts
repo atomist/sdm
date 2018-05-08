@@ -19,6 +19,7 @@ import { RepoListenerInvocation, SdmListener } from "./Listener";
 
 export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
     goalSet: Goals | null;
+    goalSetId: string;
 }
 
 export type GoalsSetListener = SdmListener<GoalsSetListenerInvocation>;
