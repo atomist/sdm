@@ -48,6 +48,21 @@ export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef
     return matches[0];
 }
 
+export async function fetchCommitForSdmGoal(ctx: HandlerContext,
+                                            goal: SdmGoalFields.Fragment & SdmGoalRepo.Fragment): Promise<CommitForSdmGoal.Commit> {
+    const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
+    const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
+        {
+            options: QueryNoCacheOptions,
+            name: "CommitForSdmGoal",
+            variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch},
+        });
+    if (!result || !result.Commit || result.Commit.length === 0) {
+        throw new Error("No commit found for goal " + stringify(variables));
+    }
+    return result.Commit[0];
+}
+
 export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
     const result = await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
         name: "SdmGoalsForCommit",
@@ -76,27 +91,25 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
     }
 
     // only maintain latest version of SdmGoals
-    const goals: SdmGoalsForCommit.SdmGoal[] = [];
-    _.forEach(_.groupBy(result.SdmGoal, g => `${g.environment}-${g.name}`), v => {
-        // using the ts property might not be good enough but let's see
-        goals.push(_.maxBy(v, "ts"));
-    });
+    const goals: SdmGoalsForCommit.SdmGoal[] = sumSdmGoalEvents(result.SdmGoal as SdmGoal[]);
     logger.debug("summed goals: ", stringify(goals));
 
     return goals;
 }
 
-export async function fetchCommitForSdmGoal(ctx: HandlerContext,
-                                            goal: SdmGoalFields.Fragment & SdmGoalRepo.Fragment): Promise<CommitForSdmGoal.Commit> {
-    const variables = {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch};
-    const result = await ctx.graphClient.query<CommitForSdmGoal.Query, CommitForSdmGoal.Variables>(
-        {
-            options: QueryNoCacheOptions,
-            name: "CommitForSdmGoal",
-            variables: {sha: goal.sha, repo: goal.repo.name, owner: goal.repo.owner, branch: goal.branch},
-        });
-    if (!result || !result.Commit || result.Commit.length === 0) {
-        throw new Error("No commit found for goal " + stringify(variables));
+export function sumSdmGoalEvents(some: SdmGoal[]): SdmGoal[] {
+    // For some reason this won't compile with the obvious fix
+    // tslint:disable-next-line:no-unnecessary-callback-wrapper
+    const byKey = _.groupBy(some, sg => goalKeyString(sg));
+    const summedGoals = Object.keys(byKey).map(k => sumEventsForOneSdmGoal(byKey[k]));
+    return summedGoals;
+}
+
+function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
+    if (events.length === 1) {
+        return events[0];
     }
-    return result.Commit[0];
+    // SUCCESS OVERRIDES ALL
+    const success = events.find(e => e.state === "success");
+    return success || _.maxBy(events, e => e.ts);
 }

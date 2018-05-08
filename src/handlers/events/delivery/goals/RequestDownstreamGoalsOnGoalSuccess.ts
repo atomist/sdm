@@ -66,7 +66,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         }
 
         const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(context, sdmGoal.repo.providerId));
-        const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
             // .filter(expectToBeFulfilledAfterRequest)
@@ -106,7 +106,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
     }
 }
 
-export function sumSdmGoalEvents(some: SdmGoal[], more: SdmGoal[]): SdmGoal[] {
+export function sumSdmGoalEventsByOverride(some: SdmGoal[], more: SdmGoal[]): SdmGoal[] {
     // For some reason this won't compile with the obvious fix
     // tslint:disable-next-line:no-unnecessary-callback-wrapper
     const byKey = _.groupBy(some.concat(more), sg => goalKeyString(sg));
