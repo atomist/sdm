@@ -125,7 +125,7 @@ function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
     return events[events.length - 1];
 }
 
-async function fetchScmProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
+export async function fetchScmProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
     const result = await context.graphClient.query<ScmProvider.Query, ScmProvider.Variables>(
         { name: "SCMProvider", variables: { providerId } });
     if (!result || !result.SCMProvider || result.SCMProvider.length === 0) {

@@ -148,7 +148,7 @@ export async function determineGoals(rules: {
     goalsToSave: SdmGoal[],
 }> {
     const {projectLoader, goalSetters, implementationMapping} = rules;
-    const {credentials, id, context, push, addressChannels} = circumstances;
+    const {credentials, id, context, push, addressChannels, goalSetId } = circumstances;
     return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
         const pli: PushListenerInvocation = {
             project,
