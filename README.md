@@ -490,6 +490,8 @@ Add in an SDM definition as follows:
 sdm.addPushReactions(listChangedFiles)
 ```
 > If your reaction is essentially a review--for example, it's associated with a known problem in a particular file location--use a `ReviewerRegistration` rather than a `PushReactionRegistration`.
+> 
+> Important note: You must have set a `PushReactionGoal` for push reactions to be invoked
 
 #### Fingerprints
 A special kind of push listener relates to **fingerprints**.
