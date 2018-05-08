@@ -494,7 +494,7 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
-export function configureForSdm(
+export function configureSdm(
     machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine) {
     return async (config: Configuration) => {
         const sdmOptions = softwareDeliveryMachineOptions(config);
