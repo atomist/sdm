@@ -79,7 +79,7 @@ export * from "./common/delivery/deploy/pcf/EnvironmentCloudFoundryTarget";
 export * from "./common/delivery/deploy/pcf/ProjectArchiver";
 export * from "./common/delivery/deploy/pcf/cloudFoundryLogParser";
 export * from "./common/delivery/docker/executeDockerBuild";
-export * from "./common/delivery/goals/CopyGoalToGitHubStatus";
+export * from "./common/delivery/goals/summarizeGoalsInGitHubStatus";
 export * from "./common/delivery/goals/ExecuteGoalResult";
 export * from "./common/delivery/goals/Goal";
 export * from "./common/delivery/goals/Goals";
