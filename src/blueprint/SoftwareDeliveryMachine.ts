@@ -217,7 +217,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         this.opts.artifactStore,
         this.artifactListenerRegistrations,
         this.opts.projectLoader,
-        this.opts.credentialsResolver)
+        this.opts.credentialsResolver);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
