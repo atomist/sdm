@@ -16,12 +16,13 @@
 
 import {GitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {createStatus} from "../../../util/github/ghub";
-import {GoalsSetListener, GoalsSetListenerInvocation} from "../../..";
+import {GoalsSetListener, GoalsSetListenerInvocation, StatusState} from "../../..";
 import {CredentialsResolver} from "../../../handlers/common/CredentialsResolver";
+import {SdmGoalState} from "../../../ingesters/sdmGoalIngester";
 
 export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {
-        const { context, id} = inv;
+        const {context, id} = inv;
         const credentials = credentialsFactory.eventHandlerCredentials(context, id);
         return createStatus(credentials, id as GitHubRepoRef, {
             context: "atomist/sdm/" + inv.goalSetId,
@@ -30,4 +31,21 @@ export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: Credentia
             state: "pending",
         });
     };
+}
+
+export function sdmGoalStateToGitHubStatusState(goalState: SdmGoalState): StatusState {
+    switch (goalState) {
+        case "planned":
+        case "requested":
+        case "in_process":
+            return "pending" as StatusState;
+        case "waiting_for_approval":
+        case "success":
+            return "success" as StatusState;
+        case "failure":
+        case "skipped":
+            return "failure" as StatusState;
+        default:
+            throw new Error("Unknown goal state " + goalState);
+    }
 }

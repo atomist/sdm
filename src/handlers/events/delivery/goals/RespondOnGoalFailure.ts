@@ -1,3 +1,4 @@
+///<reference path="../../../../../node_modules/@atomist/automation-client/graph/graphQL.d.ts"/>
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -14,33 +15,38 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { GoalFailureListener, GoalFailureListenerInvocation } from "../../../../common/listener/GoalsSetListener";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { OnAnyFailedSdmGoal } from "../../../../typings/types";
-import { repoRefFromPush } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 import { sumSdmGoalEvents } from "./RequestDownstreamGoalsOnGoalSuccess";
 
+import {
+    fetchCommitForSdmGoal,
+    fetchGoalsForCommit,
+    GoalCompletionListener,
+    GoalCompletionListenerInvocation,
+    OnAnyCompletedSdmGoal
+} from "../../../..";
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { repoRefFromPush } from "../../../../util/git/repoRef";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+
 /**
- * Respond to a failure status by running listeners
+ * Respond to a failure or success status by running listeners
  */
-@EventHandler("Run a listener on goal failure", subscription("OnAnyFailedSdmGoal"))
-export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailedSdmGoal.Subscription> {
+@EventHandler("Run a listener on goal failure or success", subscription("OnAnyCompletedSdmGoal"))
+export class RespondOnCompletedSdmGoal implements HandleEvent<OnAnyCompletedSdmGoal.Subscription> {
 
     constructor(private readonly credentialsFactory: CredentialsResolver,
-                private readonly goalFailureListeners: GoalFailureListener[]) {
+                private readonly goalCompletionListeners: GoalCompletionListener[]) {
     }
 
-    public async handle(event: EventFired<OnAnyFailedSdmGoal.Subscription>,
+    public async handle(event: EventFired<OnAnyCompletedSdmGoal.Subscription>,
                         context: HandlerContext): Promise<HandlerResult> {
         const sdmGoal: SdmGoal = event.data.SdmGoal[0] as SdmGoal;
 
-        if (sdmGoal.state !== "failure") { // atomisthq/automation-api#395
-            logger.debug(`********* failure reported when the state was=[${sdmGoal.state}]`);
+        if (sdmGoal.state !== "failure" && sdmGoal.state !== "success") { // atomisthq/automation-api#395
+            logger.debug(`********* completion reported when the state was=[${sdmGoal.state}]`);
             return Promise.resolve(Success);
         }
 
@@ -49,16 +55,16 @@ export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
         const id = repoRefFromPush(push);
         const goals: SdmGoal[] = sumSdmGoalEvents(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
-        const gsi: GoalFailureListenerInvocation = {
+        const gsi: GoalCompletionListenerInvocation = {
             id,
             context,
             credentials: this.credentialsFactory.eventHandlerCredentials(context, id),
             addressChannels: addressChannelsFor(push.repo, context),
             goalSet: goals.filter(g => g.goalSetId === sdmGoal.goalSetId),
-            failedGoal: sdmGoal,
+            completedGoal: sdmGoal,
         };
 
-        await Promise.all(this.goalFailureListeners.map(l => l(gsi)));
+        await Promise.all(this.goalCompletionListeners.map(l => l(gsi)));
         return Success;
     }
 }
