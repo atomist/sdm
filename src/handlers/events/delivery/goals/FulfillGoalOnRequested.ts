@@ -19,7 +19,7 @@ import {subscription} from "@atomist/automation-client/graph/graphQL";
 import {EventHandlerMetadata} from "@atomist/automation-client/metadata/automationMetadata";
 
 import {ProgressLogFactory} from "../../../..";
-import {sdmGoalStateToGitHubStatusState} from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
+import {sdmGoalStateToGitHubStatusState} from "../../../../common/delivery/goals/summarizeGoalsInGitHubStatus";
 import {SdmGoalImplementationMapper} from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import {fetchCommitForSdmGoal} from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import {RunWithLogContext} from "../../../../common/delivery/goals/support/reportGoalError";

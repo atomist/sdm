@@ -81,6 +81,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
         // using the ts property might not be good enough but let's see
         goals.push(_.maxBy(v, "ts"));
     });
+    logger.debug("summed goals: ", stringify(goals));
 
     return goals;
 }

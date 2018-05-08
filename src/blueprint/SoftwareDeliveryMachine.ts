@@ -69,7 +69,6 @@ import { listGeneratorsHandler } from "../common/command/generator/listGenerator
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { PushRule } from "../common/listener/support/PushRule";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
@@ -91,9 +90,8 @@ import { InterpretLog } from "../spi/log/InterpretedLog";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
-import {summarizeGoalsInGitHubStatus} from "./support/githubStatusSummarySupport";
-
-// NEXT: store the implementation with the goal
+import { summarizeGoalsInGitHubStatus } from "./support/githubStatusSummarySupport";
+import { RespondOnCompletedSdmGoal } from "../handlers/events/delivery/goals/RespondOnGoalFailure";
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -206,8 +204,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
-                () => new CopyStatusApprovalToGoal(),
-            ],
+                () => new RespondOnCompletedSdmGoal(this.opts.credentialsResolver,
+                    this.goalCompletionListeners)],
             commandHandlers: [],
         };
     }
@@ -217,7 +215,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         this.opts.artifactStore,
         this.artifactListenerRegistrations,
         this.opts.projectLoader,
-        this.opts.credentialsResolver)
+        this.opts.credentialsResolver);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -257,7 +255,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal]);
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {
