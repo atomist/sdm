@@ -108,10 +108,11 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
     const {context, credentials, push} = parameters;
     const id = repoRefFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
+    const goalSetId = guid();
 
     const {determinedGoals, goalsToSave} = await determineGoals(
         {projectLoader, goalSetters, implementationMapping}, {
-            credentials, id, context, push, addressChannels,
+            credentials, id, context, push, addressChannels, goalSetId,
         });
 
     await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
@@ -122,8 +123,9 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         id,
         context,
         credentials,
-        goalSet: determinedGoals,
         addressChannels: addressChannelsFor(push.repo, context),
+        goalSetId,
+        goalSet: determinedGoals,
     };
     await Promise.all(goalsListeners.map(l => l(gsi)));
     return determinedGoals;
@@ -140,6 +142,7 @@ export async function determineGoals(rules: {
                                          context: HandlerContext,
                                          push: PushFields.Fragment,
                                          addressChannels: AddressChannels,
+                                         goalSetId: string,
                                      }): Promise<{
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoal[],
@@ -159,7 +162,7 @@ export async function determineGoals(rules: {
         if (!determinedGoals) {
             return {determinedGoals: undefined, goalsToSave: []};
         }
-        const goalsToSave = await sdmGoalsFromGoals(implementationMapping, pli, determinedGoals);
+        const goalsToSave = await sdmGoalsFromGoals(implementationMapping, pli, determinedGoals, goalSetId);
         return {determinedGoals, goalsToSave};
     });
 
@@ -167,8 +170,8 @@ export async function determineGoals(rules: {
 
 async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMapper,
                                  pli: PushListenerInvocation,
-                                 determinedGoals: Goals) {
-    const goalSetId = guid();
+                                 determinedGoals: Goals,
+                                 goalSetId: string) {
     return Promise.all(determinedGoals.goals.map(async g =>
         constructSdmGoal(pli.context, {
             goalSet: determinedGoals.name,
