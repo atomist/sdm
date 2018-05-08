@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import {logger} from "@atomist/automation-client";
-import {GitHubRepoRef, isGitHubRepoRef} from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { logger } from "@atomist/automation-client";
+import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     isTokenCredentials,
     ProjectOperationCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
-import {Issue} from "@atomist/automation-client/util/gitHub";
-import {doWithRetry} from "@atomist/automation-client/util/retry";
-import axios, {AxiosPromise, AxiosRequestConfig} from "axios";
-import {toToken} from "../credentials/toToken";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { Issue } from "@atomist/automation-client/util/gitHub";
+import { doWithRetry } from "@atomist/automation-client/util/retry";
+import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
+import { toToken } from "../credentials/toToken";
 
 export type State = "error" | "failure" | "pending" | "success";
 
@@ -41,8 +41,13 @@ export function createStatus(tokenSource: string | ProjectOperationCredentials, 
     const saferStatus = ensureValidUrl(inputStatus);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
     logger.info("Updating github status: %s to %j", url, saferStatus);
-    return doWithRetry(() => axios.post(url, saferStatus, config)
-        .catch(err =>
+    return doWithRetry(() =>
+        axios.post(url, saferStatus, config).catch(err => {
+            if (err.response.status === 401) {
+               logger.debug("WTF is with a 401. Token is '%s'", token)
+            }
+            throw err;
+        }).catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(saferStatus)}: ${err.message}`)),
         ), `Updating github status: ${url} to ${JSON.stringify(saferStatus)}`, {});
 }
