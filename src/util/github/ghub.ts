@@ -19,7 +19,6 @@ import {GitHubRepoRef, isGitHubRepoRef} from "@atomist/automation-client/operati
 import {
     isTokenCredentials,
     ProjectOperationCredentials,
-    TokenCredentials
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import {RemoteRepoRef} from "@atomist/automation-client/operations/common/RepoId";
 import {Issue} from "@atomist/automation-client/util/gitHub";

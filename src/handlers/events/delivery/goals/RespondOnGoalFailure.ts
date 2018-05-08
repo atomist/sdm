@@ -1,4 +1,3 @@
-///<reference path="../../../../../node_modules/@atomist/automation-client/graph/graphQL.d.ts"/>
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -18,18 +17,18 @@
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 import { sumSdmGoalEvents } from "./RequestDownstreamGoalsOnGoalSuccess";
 
+import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import {
     fetchCommitForSdmGoal,
     fetchGoalsForCommit,
     GoalCompletionListener,
     GoalCompletionListenerInvocation,
-    OnAnyCompletedSdmGoal
+    OnAnyCompletedSdmGoal,
 } from "../../../..";
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { repoRefFromPush } from "../../../../util/git/repoRef";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 
 /**
  * Respond to a failure or success status by running listeners
