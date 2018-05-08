@@ -42,16 +42,19 @@ export interface UpdateSdmGoalParams {
 
 export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
     const description = params.description;
-    const approval = params.approved ? constructProvenance(ctx) : before.approval;
-    const data = params.data ? params.data : before.data;
+    const approval = params.approved ? constructProvenance(ctx) :
+        !!before ? before.approval : undefined;
+    const data = params.data ?
+        params.data :
+        !!before ? before.data : undefined;
     const sdmGoal = {
         ...before,
-        state: params.state === "success" && before.approvalRequired ? "waiting_for_approval" : params.state,
+        state: params.state === "success" && !!before && before.approvalRequired ? "waiting_for_approval" : params.state,
         description,
         url: params.url,
         approval,
         ts: Date.now(),
-        provenance: [constructProvenance(ctx)].concat(before.provenance),
+        provenance: [constructProvenance(ctx)].concat(!!before ? before.provenance : []),
         error: _.get(params, "error.message"),
         data,
     };
@@ -80,8 +83,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     url?: string,
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoal {
-    const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
-    const fulfillment = parameters.fulfillment || { method: "other", name: "unspecified" };
+    const {goalSet, goal, goalSetId, state, id, providerId, url} = parameters;
+    const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
 
     if (!id.branch) {
         throw new Error(sprintf("Please provide a branch in the RemoteRepoRef %j", parameters));
