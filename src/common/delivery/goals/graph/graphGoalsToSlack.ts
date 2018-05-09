@@ -27,7 +27,7 @@ import { Goals } from "../Goals";
 
 export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     // This is an easter egg
-    const graphvizServiceUrl = configurationValue<string>("graphviz.url");
+    const graphvizServiceUrl = configurationValue<string>("sdm.graphviz.url");
     if (!graphvizServiceUrl) {
         return;
     }
