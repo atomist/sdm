@@ -24,13 +24,13 @@ import { CloudFoundryInfo, PivotalWebServices } from "./CloudFoundryTarget";
  */
 export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
 
-    public api = configurationValue<CloudfoundryOptions>("cloudfoundry").api || PivotalWebServices.api;
+    public api = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").api || PivotalWebServices.api;
 
-    public username = configurationValue<CloudfoundryOptions>("cloudfoundry").user;
+    public username = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").user;
 
-    public password = configurationValue<CloudfoundryOptions>("cloudfoundry").password;
+    public password = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").password;
 
-    public org = configurationValue<CloudfoundryOptions>("cloudfoundry").org;
+    public org = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").org;
 
     /**
      * Logical name for the space
@@ -40,7 +40,7 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
     }
 
     get space() {
-        const space = configurationValue<CloudfoundryOptions>(`cloudfoundry`).spaces[this.environmentName];
+        const space = configurationValue<CloudfoundryOptions>(`sdm.cloudfoundry`).spaces[this.environmentName];
         logger.info("PCF space for environment [%s] is [%s]", this.environmentName, space);
         if (!space) {
             throw new Error(`Please set environment key cloudfoundry.spaces.${

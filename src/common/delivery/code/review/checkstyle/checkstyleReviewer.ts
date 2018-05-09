@@ -78,7 +78,7 @@ export function checkstyleReviewerRegistration(considerOnlyChangedFiles: boolean
     return {
         pushTest: IsJava,
         name: "Checkstyle",
-        action: async cri => checkstyleReviewer(configurationValue<string>("checkstyle.path"))(cri.project, cri.context),
+        action: async cri => checkstyleReviewer(configurationValue<string>("sdm.checkstyle.path"))(cri.project, cri.context),
         options: {considerOnlyChangedFiles},
     };
 }
