@@ -89,5 +89,5 @@ export function CompositeGoalExecutor(...goalImplementations: ExecuteGoalWithLog
             }
         }
         return overallResult;
-    }
+    };
 }

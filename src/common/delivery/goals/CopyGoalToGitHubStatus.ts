@@ -38,7 +38,7 @@ export class CopyGoalToGitHubStatus implements HandleEvent<OnAnyGoal.Subscriptio
 
     // @Secret(Secrets.OrgToken)
     @Value("token")
-    private readonly githubToken: string
+    private readonly githubToken: string;
 
     public async handle(event: EventFired<OnAnyGoal.Subscription>, context: HandlerContext, params: this): Promise<HandlerResult> {
         const goal = event.data.SdmGoal[0];
