@@ -18,7 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GoalCompletionListener, GoalCompletionListenerInvocation, GoalsSetListener, GoalsSetListenerInvocation, StatusState } from "../../..";
 import { CredentialsResolver } from "../../../handlers/common/CredentialsResolver";
-import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
+import { goalKeyString, SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { createStatus } from "../../../util/github/ghub";
 
 export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
@@ -38,6 +38,9 @@ export function SetGitHubStatusOnGoalCompletion(credentialsFactory: CredentialsR
     return async (inv: GoalCompletionListenerInvocation) => {
         const {context, id, completedGoal, goalSet} = inv;
         const credentials = credentialsFactory.eventHandlerCredentials(context, id);
+        logger.info("Completed goal: %s with %s", goalKeyString(completedGoal), completedGoal.state);
+        goalSet.forEach(g => logger.info(" goal %s is %s", goalKeyString(g), g.state));
+
         if (completedGoal.state === "failure") {
             logger.info("Setting GitHub status to failed on %s" + id.sha);
             return createStatus(credentials, id as GitHubRepoRef, {

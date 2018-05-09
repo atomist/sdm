@@ -34,7 +34,7 @@ import { repoRefFromPush } from "../../../../util/git/repoRef";
  * Respond to a failure or success status by running listeners
  */
 @EventHandler("Run a listener on goal failure or success", subscription("OnAnyCompletedSdmGoal"))
-export class RespondOnCompletedSdmGoal implements HandleEvent<OnAnyCompletedSdmGoal.Subscription> {
+export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoal.Subscription> {
 
     constructor(private readonly credentialsFactory: CredentialsResolver,
                 private readonly goalCompletionListeners: GoalCompletionListener[]) {
