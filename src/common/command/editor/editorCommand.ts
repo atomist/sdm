@@ -101,8 +101,6 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
                     } else {
                         creds = {token: this.githubToken};
                     }
-                    console.warn("THE TARGETS IS " + JSON.stringify(targets));
-                    console.warn("sdm:APIREF will return " + JSON.stringify(creds));
                     return creds;
                 },
             });

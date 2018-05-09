@@ -1,8 +1,8 @@
 import { MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { BitBucketServerRepoRef } from "./BitBucketServerRepoRef";
 
 /**
  * Base parameters for working with GitHub repo(s).
@@ -40,7 +40,11 @@ export class BitBucketTargetsParams extends TargetsParams {
      */
     get repoRef(): BitBucketServerRepoRef {
         return (!!this.owner && !!this.repo && !this.usesRegex) ?
-            new BitBucketServerRepoRef(this.apiUrl, this.owner, this.repo, false, this.sha) :
+            new BitBucketServerRepoRef(
+                this.apiUrl,
+                this.owner, this.repo,
+                true,
+                this.sha) :
             undefined;
     }
 
