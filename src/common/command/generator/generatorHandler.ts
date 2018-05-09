@@ -6,34 +6,32 @@
  * @param {string} details object allowing customization beyond reasonable defaults
  * @return {HandleCommand}
  */
-import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/BaseSeedDrivenGeneratorParameters";
-import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { HandleCommand, HandlerContext, RedirectResult } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { allReposInTeam } from "../editor/allReposInTeam";
-import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
-import { CachingProjectLoader } from "../../repo/CachingProjectLoader";
+import { BaseSeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/BaseSeedDrivenGeneratorParameters";
+import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
+import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { RemoteGitProjectPersister } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { Project } from "@atomist/automation-client/project/Project";
+import { CachingProjectLoader } from "../../repo/CachingProjectLoader";
+import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
+import { allReposInTeam } from "../editor/allReposInTeam";
 
-function defaultDetails<P extends BaseSeedDrivenGeneratorParameters>(name: string): GeneratorCommandDetails<P> {
-    return {
-        description: name,
-        repoFinder: allReposInTeam(),
-        repoLoader: (p: P) => projectLoaderRepoLoader(new CachingProjectLoader(), p.target.credentials),
-        projectPersister: RemoteGitProjectPersister,
-        redirecter: () => undefined,
-    };
-}
-
+/**
+ * Create a generator handler
+ * @param {EditorFactory<P extends BaseSeedDrivenGeneratorParameters>} editorFactory to create editor to perform transformation
+ * @param {Maker<P extends BaseSeedDrivenGeneratorParameters>} factory
+ * @param {string} name
+ * @param {Partial<GeneratorCommandDetails<P extends BaseSeedDrivenGeneratorParameters>>} details
+ * @return {HandleCommand}
+ */
 export function generatorHandler<P extends BaseSeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
                                                                               factory: Maker<P>,
                                                                               name: string,
@@ -55,49 +53,36 @@ function handleGenerate<P extends BaseSeedDrivenGeneratorParameters>(editorFacto
     };
 }
 
-function handle<P extends BaseSeedDrivenGeneratorParameters>(ctx: HandlerContext,
-                                                             editorFactory: EditorFactory<P>,
-                                                             params: P,
-                                                             details: GeneratorCommandDetails<P>): Promise<RedirectResult> {
-
-    return ctx.messageClient.respond(`Starting project generation for ${params.target.owner}/${params.target.repo}`)
-        .then(() => {
-            return generate(
-                startingPoint(params, ctx, details.repoLoader(params), details)
-                    .then(p => {
-                        return ctx.messageClient.respond(`Cloned seed project from \`${params.source.owner}/${params.source.repo}\``)
-                            .then(() => p);
-                    }),
-                ctx,
-                params.target.credentials,
-                editorFactory(params, ctx),
-                details.projectPersister,
-                params.target.repoRef,
-                params,
-                details.afterAction,
-            )
-                .then(r => ctx.messageClient.respond(`Created and pushed new project`)
-                    .then(() => r));
-        })
-        .then(r => {
-            if (isGitHubRepoRef(r.target.id)) {
-                return hasOrgWebhook(params.target.owner, ctx)
-                    .then(webhookInstalled => {
-                        if (!webhookInstalled) {
-                            return addAtomistWebhook((r.target as GitProject), params);
-                        } else {
-                            return Promise.resolve(r);
-                        }
-                    });
-            }
-            return Promise.resolve(r);
-        })
-        .then(r => ctx.messageClient.respond(`Successfully created new project`).then(() => r))
-        .then(r => ({
-            code: 0,
-            // Redirect to our local project page
-            redirect: details.redirecter(params.target),
-        }));
+async function handle<P extends BaseSeedDrivenGeneratorParameters>(ctx: HandlerContext,
+                                                                   editorFactory: EditorFactory<P>,
+                                                                   params: P,
+                                                                   details: GeneratorCommandDetails<P>): Promise<RedirectResult> {
+    const r = await generate(
+        startingPoint(params, ctx, details.repoLoader(params), details)
+            .then(p => {
+                return ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`)
+                    .then(() => p);
+            }),
+        ctx,
+        params.target.credentials,
+        editorFactory(params, ctx),
+        details.projectPersister,
+        params.target.repoRef,
+        params,
+        details.afterAction,
+    );
+    await ctx.messageClient.respond(`Created and pushed new project ${params.target.repoRef.url}`);
+    if (isGitHubRepoRef(r.target.id)) {
+        const webhookInstalled = await hasOrgWebhook(params.target.owner, ctx);
+        if (!webhookInstalled) {
+            await addAtomistWebhook((r.target as GitProject), params);
+        }
+    }
+    return {
+        code: 0,
+        // Redirect to local project page
+        redirect: details.redirecter(params.target),
+    };
 }
 
 const OrgWebhookQuery = `query OrgWebhook($owner: String!) {
@@ -134,4 +119,14 @@ function startingPoint<P extends BaseSeedDrivenGeneratorParameters>(params: P,
                                                                     details: GeneratorCommandDetails<any>): Promise<Project> {
 
     return repoLoader(params.source.repoRef);
+}
+
+function defaultDetails<P extends BaseSeedDrivenGeneratorParameters>(name: string): GeneratorCommandDetails<P> {
+    return {
+        description: name,
+        repoFinder: allReposInTeam(),
+        repoLoader: (p: P) => projectLoaderRepoLoader(new CachingProjectLoader(), p.target.credentials),
+        projectPersister: RemoteGitProjectPersister,
+        redirecter: () => undefined,
+    };
 }

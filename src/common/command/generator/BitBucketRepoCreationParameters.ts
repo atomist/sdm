@@ -1,8 +1,8 @@
-import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
 import { MappedParameter, MappedParameters, Secret, Secrets } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { BitBucketServerRepoRef } from "../BitBucketServerRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
+import { BitBucketServerRepoRef } from "../BitBucketServerRepoRef";
 
 // TODO could this be universal
 export class BitBucketRepoCreationParameters extends NewRepoCreationParameters {
@@ -19,7 +19,7 @@ export class BitBucketRepoCreationParameters extends NewRepoCreationParameters {
     get credentials(): ProjectOperationCredentials {
         let creds: ProjectOperationCredentials;
        // if (!this.githubToken || this.githubToken === "null") {
-            creds = {
+        creds = {
                 username: "rod",
                 password: "atomist",
             };

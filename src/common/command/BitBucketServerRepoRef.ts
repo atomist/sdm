@@ -1,17 +1,20 @@
-import { ProviderType } from "@atomist/automation-client/operations/common/RepoId";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { logger } from "@atomist/automation-client";
 import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProviderType } from "@atomist/automation-client/operations/common/RepoId";
 
-import axios from "axios";
-import { Configurable } from "@atomist/automation-client/project/git/Configurable";
 import { isBasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
+import { Configurable } from "@atomist/automation-client/project/git/Configurable";
+import axios from "axios";
 import { encode } from "../../util/misc/base64";
 import { AbstractRemoteRepoRef } from "./AbstractRemoteRepoRef";
 
+/**
+ * RemoteRepoRef implementation for BitBucket server (not BitBucket Cloud)
+ */
 export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
 
-    private readonly ownerType: string;
+    public readonly ownerType: "projects" | "users";
 
     /**
      * Construct a new BitBucketServerRepoRef
@@ -25,7 +28,7 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
     constructor(remoteBase: string,
                 owner: string,
                 repo: string,
-                private isProject: boolean = true,
+                private readonly isProject: boolean = true,
                 sha: string = "master",
                 path?: string) {
         super(ProviderType.bitbucket, remoteBase, owner, repo, sha, path);
@@ -105,9 +108,9 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
     }
 
     get url() {
-        let url: string = `projects/${this.owner}/repos/`;
+        let url: string = `projects/${this.owner}/repos`;
         if (!this.isProject) {
-            url = `users/${this.owner}/repos/`;
+            url = `users/${this.owner}/repos`;
         }
         return `${this.scheme}${this.remoteBase}/${url}/${this.repo}`;
     }

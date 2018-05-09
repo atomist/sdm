@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { ProviderType } from "../..";
+import { BitBucketServerRepoRef } from "../../common/command/BitBucketServerRepoRef";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
-import { logger } from "@atomist/automation-client";
-import { BitBucketServerRepoRef } from "../../common/command/BitBucketServerRepoRef";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     const providerType = push.repo.org.provider.providerType;

@@ -1,9 +1,13 @@
-import { ProviderType, RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { isTokenCredentials, ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { isBasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
 import { ActionResult } from "@atomist/automation-client/action/ActionResult";
+import { isBasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
+import { isTokenCredentials, ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProviderType, RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Configurable } from "@atomist/automation-client/project/git/Configurable";
 
+/**
+ * Superclass for RemoteRepoRef implementations.
+ * Handles parsing remote base
+ */
 export abstract class AbstractRemoteRepoRef implements RemoteRepoRef {
 
     public branch?: string;
@@ -49,7 +53,8 @@ export abstract class AbstractRemoteRepoRef implements RemoteRepoRef {
 
     public cloneUrl(creds: ProjectOperationCredentials) {
         if (isBasicAuthCredentials(creds)) {
-            return `${this.scheme}${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${this.remoteBase}/${this.pathComponent}.git`;
+            return `${this.scheme}${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@` +
+                `${this.remoteBase}/${this.pathComponent}.git`;
         }
         if (!isTokenCredentials(creds)) {
             throw new Error("Only token or basic auth supported");
