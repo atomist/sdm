@@ -52,7 +52,6 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
-import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import {
@@ -74,13 +73,13 @@ import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/buil
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
 import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 import { KubernetesIsolatedGoalLauncher } from "../handlers/events/delivery/goals/k8s/launchGoalK8";
 import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/launchGoal";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
+import { RespondOnGoalCompletion } from "../handlers/events/delivery/goals/RespondOnGoalCompletion";
 import {
     executeImmaterial,
     SetGoalsOnPush,
@@ -109,9 +108,8 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import { softwareDeliveryMachineOptions } from "./sdmOptions";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { summarizeGoalsInGitHubStatus } from "./support/githubStatusSummarySupport";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
-
-// NEXT: store the implementation with the goal
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -224,8 +222,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
-                () => new CopyStatusApprovalToGoal(),
-            ],
+                () => new RespondOnGoalCompletion(this.opts.credentialsResolver,
+                    this.goalCompletionListeners)],
             commandHandlers: [],
         };
     }
@@ -451,7 +449,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);
-        addGitHubSupport(this);
+        summarizeGoalsInGitHubStatus(this);
         this.addSupportingCommands(
             selfDescribeHandler(this),
             listGeneratorsHandler(this),
@@ -478,10 +476,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
-}
-
-function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
-    sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
 export interface ConfigureOptions {

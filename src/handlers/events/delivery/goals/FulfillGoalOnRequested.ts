@@ -26,18 +26,25 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-
 import { ProgressLogFactory } from "../../../..";
-import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/CopyGoalToGitHubStatus";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/summarizeGoalsInGitHubStatus";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
-import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../../typings/types";
+import {
+    SdmGoal,
+    SdmGoalState,
+} from "../../../../ingesters/sdmGoalIngester";
+import {
+    CommitForSdmGoal,
+    OnAnyRequestedSdmGoal,
+    SdmGoalFields,
+    StatusForExecuteGoal,
+} from "../../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
