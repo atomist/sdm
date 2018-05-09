@@ -15,10 +15,10 @@
  */
 
 import { HandleCommand } from "@atomist/automation-client";
-import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
-import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
+import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
@@ -27,10 +27,11 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 import * as assert from "power-assert";
 import { CachingProjectLoader } from "../../repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
+import { BitBucketTargetsParams } from "../BitBucketTargetsParams";
 import { EmptyParameters } from "../EmptyParameters";
+import { allReposInTeam } from "./allReposInTeam";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
@@ -67,6 +68,8 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         detailsToUse);
 }
 
+type FallbackParams = TargetsParams & { repos: string };
+
 /**
  * Return a parameters maker that is targeting aware
  * @param {Maker<PARAMS>} paramsMaker
@@ -79,13 +82,16 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
             const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-            const targets = new GitHubFallbackReposParameters();
+            const targets: FallbackParams =
+                new BitBucketTargetsParams();
+               // new GitHubFallbackReposParameters();
             allParms.targets = targets;
             allParms.bindAndValidate = () => {
                 validate(targets);
             };
+            /* tslint:disable:no-invalid-this */
             Object.defineProperty(targets, "credentials", {
-                get: function () {
+                get() {
                     let creds: ProjectOperationCredentials;
                     if (!this.githubToken || this.githubToken === "null") {
                         creds = {
@@ -108,7 +114,7 @@ function isEditorOrReviewerParameters(p: any): p is EditorOrReviewerParameters {
     return !!(p as EditorOrReviewerParameters).targets;
 }
 
-function validate(targets: GitHubFallbackReposParameters) {
+function validate(targets: FallbackParams) {
     if (!targets.repo) {
         assert(!!targets.repos, "Must set repos or repo");
         targets.repo = targets.repos;
