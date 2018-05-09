@@ -43,7 +43,8 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
         const space = configurationValue<CloudfoundryOptions>(`cloudfoundry`).spaces[this.environmentName];
         logger.info("PCF space for environment [%s] is [%s]", this.environmentName, space);
         if (!space) {
-            throw new Error(`Please set environment key cloudfoundry.spaces.${this.environmentName} to deploy to Cloud Foundry environment ${this.environmentName}`);
+            throw new Error(`Please set environment key cloudfoundry.spaces.${
+                this.environmentName} to deploy to Cloud Foundry environment ${this.environmentName}`);
         }
         return space;
     }
@@ -65,6 +66,6 @@ export interface CloudfoundryOptions {
     org: string;
     spaces: {
         [key: string]: string;
-    }
+    };
 
 }

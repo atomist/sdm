@@ -21,8 +21,6 @@ import {
     HandlerContext,
     HandlerResult,
     logger,
-    Secret,
-    Secrets,
     Success,
     Value,
 } from "@atomist/automation-client";

@@ -494,10 +494,15 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
+export interface ConfigureOptions extends SoftwareDeliveryMachineOptions {
+    requiredValues?: string[];
+}
+
 export function configureSdm(
-    machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine) {
+    machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
+    options?: ConfigureOptions) {
     return async (config: Configuration) => {
-        const sdmOptions = softwareDeliveryMachineOptions(config);
+        const sdmOptions = options ? options : softwareDeliveryMachineOptions(config);
         const machine = machineMaker(sdmOptions, config);
 
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
@@ -514,6 +519,17 @@ export function configureSdm(
             // Disable app events for forked clients
             config.applicationEvents.enabled = false;
         } else {
+            const missingValues = [];
+            (options.requiredValues || []).forEach(v => {
+                if (!_.get(config, v)) {
+                   missingValues.push(v);
+                }
+            });
+            if (missingValues.length > 0) {
+                throw new Error(
+                    `Missing configuration values. Please add the following values to your client configuration: '${missingValues.join(", ")}'`);
+            }
+
             if (!config.commands) {
                 config.commands = [];
             }
