@@ -21,9 +21,8 @@ import {
     HandlerContext,
     HandlerResult,
     logger,
-    Secret,
-    Secrets,
     Success,
+    Value,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
@@ -49,7 +48,7 @@ import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
     subscription("OnAnySuccessfulSdmGoal"))
 export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuccessfulSdmGoal.Subscription> {
 
-    @Secret(Secrets.OrgToken)
+    @Value("token")
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper) { }
@@ -78,8 +77,6 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
                 goalsToRequest.map(goalKeyString).join(", "));
         }
 
-        // bug: automation-api#392
-        this.githubToken = process.env.GITHUB_TOKEN;
         const credentials = { token: this.githubToken };
 
         /*

@@ -15,12 +15,13 @@
  */
 
 import {
+    automationClientInstance,
     HandlerContext,
     HandlerResult,
     logger,
     Secrets,
 } from "@atomist/automation-client";
-import { automationClientInstance } from "@atomist/automation-client/automationClient";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import { ApolloGraphClient } from "@atomist/automation-client/graph/ApolloGraphClient";
 import {
     EventIncoming,
@@ -100,7 +101,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
                 },
                 secrets: [{
                     uri: Secrets.OrgToken,
-                    value: process.env.GITHUB_TOKEN,
+                    value: configurationValue<string>("token"),
                 }],
             };
             await eventHandler.processEvent(event, async results => {

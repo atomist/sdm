@@ -15,6 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import { CloudFoundryInfo, PivotalWebServices } from "./CloudFoundryTarget";
 
 /**
@@ -23,13 +24,13 @@ import { CloudFoundryInfo, PivotalWebServices } from "./CloudFoundryTarget";
  */
 export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
 
-    public api = process.env.PCF_API || PivotalWebServices.api;
+    public api = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").api || PivotalWebServices.api;
 
-    public username = process.env.PIVOTAL_USER;
+    public username = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").user;
 
-    public password = process.env.PIVOTAL_PASSWORD;
+    public password = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").password;
 
-    public org = process.env.PCF_ORG;
+    public org = configurationValue<CloudfoundryOptions>("sdm.cloudfoundry").org;
 
     /**
      * Logical name for the space
@@ -39,11 +40,11 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
     }
 
     get space() {
-        const envKey = "PCF_SPACE_" + this.environmentName.toUpperCase();
-        const space = process.env[envKey];
+        const space = configurationValue<CloudfoundryOptions>(`sdm.cloudfoundry`).spaces[this.environmentName];
         logger.info("PCF space for environment [%s] is [%s]", this.environmentName, space);
         if (!space) {
-            throw new Error(`Please set environment key ${envKey} to deploy to Cloud Foundry environment ${this.environmentName}`);
+            throw new Error(`Please set environment key cloudfoundry.spaces.${
+                this.environmentName} to deploy to Cloud Foundry environment ${this.environmentName}`);
         }
         return space;
     }
@@ -55,4 +56,16 @@ export class EnvironmentCloudFoundryTarget implements CloudFoundryInfo {
     get description() {
         return `PCF ${this.api};org=${this.org};space=${this.space};user=${this.username}`;
     }
+}
+
+export interface CloudfoundryOptions {
+
+    api: string;
+    user: string;
+    password: string;
+    org: string;
+    spaces: {
+        [key: string]: string;
+    };
+
 }

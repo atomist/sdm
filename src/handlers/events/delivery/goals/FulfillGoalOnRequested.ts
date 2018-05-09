@@ -14,24 +14,40 @@
  * limitations under the License.
  */
 
-import {EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success} from "@atomist/automation-client";
-import {subscription} from "@atomist/automation-client/graph/graphQL";
-import {EventHandlerMetadata} from "@atomist/automation-client/metadata/automationMetadata";
-
-import {ProgressLogFactory} from "../../../..";
-import {SdmGoalImplementationMapper} from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
-import {sdmGoalStateToGitHubStatusState} from "../../../../common/delivery/goals/summarizeGoalsInGitHubStatus";
-import {fetchCommitForSdmGoal} from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import {RunWithLogContext} from "../../../../common/delivery/goals/support/reportGoalError";
-import {LoggingProgressLog} from "../../../../common/log/LoggingProgressLog";
-import {WriteToAllProgressLog} from "../../../../common/log/WriteToAllProgressLog";
-import {ProjectLoader} from "../../../../common/repo/ProjectLoader";
-import {addressChannelsFor} from "../../../../common/slack/addressChannels";
-import {SdmGoal, SdmGoalState} from "../../../../ingesters/sdmGoalIngester";
-import {CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal} from "../../../../typings/types";
-import {repoRefFromSdmGoal} from "../../../../util/git/repoRef";
-import {fetchProvider} from "../../../../util/github/gitHubProvider";
-import {executeGoal} from "./executeGoal";
+import {
+    EventFired,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secrets,
+    Success,
+    Value,
+} from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
+import { ProgressLogFactory } from "../../../..";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/summarizeGoalsInGitHubStatus";
+import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
+import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
+import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import {
+    SdmGoal,
+    SdmGoalState,
+} from "../../../../ingesters/sdmGoalIngester";
+import {
+    CommitForSdmGoal,
+    OnAnyRequestedSdmGoal,
+    SdmGoalFields,
+    StatusForExecuteGoal,
+} from "../../../../typings/types";
+import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
+import { fetchProvider } from "../../../../util/github/gitHubProvider";
+import { executeGoal } from "./executeGoal";
 
 /**
  * Handle an SDM request goal. Used for many implementation types.
@@ -45,6 +61,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public description: string;
     public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
+    @Value("name")
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
@@ -78,9 +95,6 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         }
 
         logger.info("Executing FulfillGoalOnRequested with '%s'", sdmGoal.fulfillment.name); // take this out when automation-api#395 is fixed
-
-        // bug: automation-api#392
-        params.githubToken = process.env.GITHUB_TOKEN;
 
         const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 

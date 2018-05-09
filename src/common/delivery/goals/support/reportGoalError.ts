@@ -69,3 +69,25 @@ export async function reportGoalError(parameters: {
         await addressChannels("Failure executing goal: " + err.message);
     }
 }
+
+export function CompositeGoalExecutor(...goalImplementations: ExecuteGoalWithLog[]): ExecuteGoalWithLog {
+    return async (r: RunWithLogContext) => {
+        let overallResult: ExecuteGoalResult = {
+            code: 0,
+        };
+
+        for (const goalImplementation of goalImplementations) {
+            const result = await goalImplementation(r);
+            if (result.code !== 0) {
+                return result;
+            } else {
+                overallResult = {
+                    code: result.code,
+                    requireApproval: result.requireApproval ? result.requireApproval : overallResult.requireApproval,
+                    message: result.message ? `${overallResult.message}\n${result.message}` : overallResult.message,
+                };
+            }
+        }
+        return overallResult;
+    };
+}
