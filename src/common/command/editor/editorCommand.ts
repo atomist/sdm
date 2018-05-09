@@ -16,17 +16,17 @@
 
 import { HandleCommand } from "@atomist/automation-client";
 import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
-import { gitHubRepoLoader } from "@atomist/automation-client/operations/common/gitHubRepoLoader";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
 import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
+import { CachingProjectLoader } from "../../../index";
+import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../EmptyParameters";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
@@ -52,7 +52,7 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
         intent: `edit ${name}`,
         repoFinder: allReposInTeam(),
         repoLoader:
-            p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
+            p => projectLoaderRepoLoader(new CachingProjectLoader(), p.targets.credentials),
         editMode: ((params: PARAMS) => new PullRequest(
             (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
             (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),

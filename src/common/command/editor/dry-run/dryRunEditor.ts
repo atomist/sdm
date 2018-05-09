@@ -16,14 +16,14 @@
 
 import { HandleCommand, logger } from "@atomist/automation-client";
 import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
-import { gitHubRepoLoader } from "@atomist/automation-client/operations/common/gitHubRepoLoader";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { DefaultDirectoryManager } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { CachingProjectLoader } from "../../../../index";
 import { Status } from "../../../../util/github/ghub";
+import { projectLoaderRepoLoader } from "../../../repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../../EmptyParameters";
 import { EditModeSuggestion } from "../EditModeSuggestion";
 import { toEditorOrReviewerParametersMaker } from "../editorCommand";
@@ -56,7 +56,7 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
         intent: `try edit ${name}`,
         repoFinder: allReposInTeam(),
         repoLoader:
-            p => gitHubRepoLoader(p.targets.credentials, DefaultDirectoryManager),
+            p => projectLoaderRepoLoader(new CachingProjectLoader(), p.targets.credentials),
         editMode: ((params: PARAMS & EditorOrReviewerParameters) => {
             logger.info("About to create edit mode for dry run editor: params=%j", params);
             const description = (params as any as EditModeSuggestion).desiredPullRequestTitle || details.description || name;
