@@ -49,7 +49,7 @@ export function executeVersioner(projectLoader: ProjectLoader,
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { status, credentials, id, context, progressLog } = rwlc;
 
-        return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
+        return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async p => {
             const version = await projectVersioner(status, p, progressLog);
             const sdmVersion: SdmVersion = {
                 sha: status.commit.sha,
