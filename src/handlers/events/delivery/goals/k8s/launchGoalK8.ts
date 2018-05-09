@@ -15,11 +15,11 @@
  */
 
 import {
+    automationClientInstance,
     AutomationContextAware,
     HandlerContext,
     HandlerResult,
 } from "@atomist/automation-client";
-import { automationClientInstance } from "@atomist/automation-client/automationClient";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs-extra";
 import * as path from "path";
