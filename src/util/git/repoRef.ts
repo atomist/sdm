@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { ProviderType } from "../..";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
+import { logger } from "@atomist/automation-client";
+import { BitBucketServerRepoRef } from "../../common/command/BitBucketServerRepoRef";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     const providerType = push.repo.org.provider.providerType;
@@ -35,7 +36,7 @@ export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
                 branch: push.branch,
             });
         case ProviderType.bitbucket :
-            const providerUrl = push.repo.org.provider.url.replace("http://", "");
+            const providerUrl = push.repo.org.provider.url;
             return toBitBucketServerRepoRef({
                 providerUrl,
                 owner: push.repo.owner,
@@ -57,7 +58,7 @@ export function toBitBucketServerRepoRef(params: {
     sha: string,
     branch?: string,
 }): BitBucketServerRepoRef {
-    const url = params.providerUrl.replace("http://", "");
+    const url = params.providerUrl;
     const id = new BitBucketServerRepoRef(
         url,
         params.owner,
@@ -101,7 +102,7 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
                 rawApiBase: provider.apiUrl,
             });
         case ProviderType.bitbucket :
-            const providerUrl = provider.url.replace("http://", "");
+            const providerUrl = provider.url;
             return toBitBucketServerRepoRef({
                 providerUrl,
                 owner: sdmGoal.repo.owner,
@@ -125,6 +126,7 @@ export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: 
     const providerType = _.get(repo, "repo.org.provider.providerType");
     const apiUrl = _.get(repo, "repo.org.provider.apiUrl");
 
+    logger.info("toRemoteRepoRef with GraphQL-sourced repo: %j", repo);
     switch (providerType) {
         case undefined:
         case null:
