@@ -3,6 +3,6 @@ import { CreatePendingGitHubStatusOnGoalSet, SetGitHubStatusOnGoalCompletion } f
 
 export function summarizeGoalsInGitHubStatus(sdm: SoftwareDeliveryMachine): SoftwareDeliveryMachine {
     sdm.addGoalsSetListeners(CreatePendingGitHubStatusOnGoalSet(sdm.opts.credentialsResolver));
-    sdm.addGoalCompletionListeners(SetGitHubStatusOnGoalCompletion(sdm.opts.credentialsResolver));
+    sdm.addGoalCompletionListeners(SetGitHubStatusOnGoalCompletion());
     return sdm;
 }

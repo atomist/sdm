@@ -34,10 +34,10 @@ export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: Credentia
     };
 }
 
-export function SetGitHubStatusOnGoalCompletion(credentialsFactory: CredentialsResolver): GoalCompletionListener {
+export function SetGitHubStatusOnGoalCompletion(): GoalCompletionListener {
     return async (inv: GoalCompletionListenerInvocation) => {
         const {context, id, completedGoal, allGoals} = inv;
-        const credentials = credentialsFactory.eventHandlerCredentials(context, id);
+        const credentials = { token: process.env.GITHUB_TOKEN };
         logger.info("Completed goal: %s with %s in set %s", goalKeyString(completedGoal), completedGoal.state, completedGoal.goalSetId);
         allGoals.forEach(g => logger.info(" goal %s is %s", goalKeyString(g), g.state));
 
