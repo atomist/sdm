@@ -36,10 +36,10 @@ export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: Credentia
 
 export function SetGitHubStatusOnGoalCompletion(credentialsFactory: CredentialsResolver): GoalCompletionListener {
     return async (inv: GoalCompletionListenerInvocation) => {
-        const {context, id, completedGoal, goalSet} = inv;
+        const {context, id, completedGoal, allGoals} = inv;
         const credentials = credentialsFactory.eventHandlerCredentials(context, id);
-        logger.info("Completed goal: %s with %s", goalKeyString(completedGoal), completedGoal.state);
-        goalSet.forEach(g => logger.info(" goal %s is %s", goalKeyString(g), g.state));
+        logger.info("Completed goal: %s with %s in set %s", goalKeyString(completedGoal), completedGoal.state, completedGoal.goalSetId);
+        allGoals.forEach(g => logger.info(" goal %s is %s", goalKeyString(g), g.state));
 
         if (completedGoal.state === "failure") {
             logger.info("Setting GitHub status to failed on %s" + id.sha);
@@ -50,7 +50,7 @@ export function SetGitHubStatusOnGoalCompletion(credentialsFactory: CredentialsR
                 state: "failure",
             });
         }
-        if (allSuccessful(goalSet)) {
+        if (allSuccessful(allGoals)) {
             logger.info("Setting GitHub status to success on %s", id.sha);
             return createStatus(credentials, id as GitHubRepoRef, {
                 context: "atomist/sdm/" + completedGoal.goalSetId,

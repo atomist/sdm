@@ -42,12 +42,7 @@ export function createStatus(tokenSource: string | ProjectOperationCredentials, 
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
     logger.info("Updating github status: %s to %j", url, saferStatus);
     return doWithRetry(() =>
-        axios.post(url, saferStatus, config).catch(err => {
-            if (err.response.status === 401) {
-               logger.debug("WTF is with a 401. Token is '%s'", token);
-            }
-            throw err;
-        }).catch(err =>
+        axios.post(url, saferStatus, config).catch(err =>
             Promise.reject(new Error(`Error hitting ${url} to set status ${JSON.stringify(saferStatus)}: ${err.message}`)),
         ), `Updating github status: ${url} to ${JSON.stringify(saferStatus)}`, {});
 }

@@ -19,16 +19,12 @@ import { sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSucces
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import {
-    fetchCommitForSdmGoal,
-    fetchGoalsForCommit,
-    GoalCompletionListener,
-    GoalCompletionListenerInvocation,
-    OnAnyCompletedSdmGoal,
-} from "../../../..";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { repoRefFromPush } from "../../../../util/git/repoRef";
+import { OnAnyCompletedSdmGoal } from "../../../../typings/types";
+import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../common/listener/GoalsSetListener";
+import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 
 /**
  * Respond to a failure or success status by running listeners
@@ -52,14 +48,14 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
         const commit = await fetchCommitForSdmGoal(context, sdmGoal);
         const push = commit.pushes[0];
         const id = repoRefFromPush(push);
-        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+        const allGoals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const gsi: GoalCompletionListenerInvocation = {
             id,
             context,
             credentials: this.credentialsFactory.eventHandlerCredentials(context, id),
             addressChannels: addressChannelsFor(push.repo, context),
-            goalSet: goals.filter(g => g.goalSetId === sdmGoal.goalSetId),
+            allGoals,
             completedGoal: sdmGoal,
         };
 
