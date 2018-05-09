@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Secrets, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Secrets,
+    Success,
+    Value,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
@@ -45,6 +54,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public description: string;
     public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
+    @Value("name")
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
@@ -78,9 +88,6 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         }
 
         logger.info("Executing FulfillGoalOnRequested with '%s'", sdmGoal.fulfillment.name); // take this out when automation-api#395 is fixed
-
-        // bug: automation-api#392
-        params.githubToken = process.env.GITHUB_TOKEN;
 
         const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
 

@@ -18,6 +18,7 @@ import {
     HandlerContext,
     logger,
 } from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
@@ -77,7 +78,7 @@ export function checkstyleReviewerRegistration(considerOnlyChangedFiles: boolean
     return {
         pushTest: IsJava,
         name: "Checkstyle",
-        action: async cri => checkstyleReviewer(process.env.CHECKSTYLE_PATH)(cri.project, cri.context),
+        action: async cri => checkstyleReviewer(configurationValue<string>("checkstyle.path"))(cri.project, cri.context),
         options: {considerOnlyChangedFiles},
     };
 }
