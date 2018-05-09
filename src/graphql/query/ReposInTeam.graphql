@@ -1,0 +1,9 @@
+query ReposInTeam($teamId: ID!, $offset: Int!) {
+  ChatTeam(id: $teamId) {
+    orgs {
+      repo(first: 100, offset: $offset) {
+        ...CoreRepoFieldsAndChannels
+      }
+    }
+  }
+}
