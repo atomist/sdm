@@ -494,15 +494,16 @@ function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
     sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
-export interface ConfigureOptions extends SoftwareDeliveryMachineOptions {
-    requiredValues?: string[];
+export interface ConfigureOptions {
+    sdmOptions?: SoftwareDeliveryMachineOptions;
+    requiredConfigurationValues?: string[];
 }
 
 export function configureSdm(
     machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
-    options?: ConfigureOptions) {
+    options: ConfigureOptions = {}) {
     return async (config: Configuration) => {
-        const sdmOptions = options ? options : softwareDeliveryMachineOptions(config);
+        const sdmOptions = options.sdmOptions ? options.sdmOptions : softwareDeliveryMachineOptions(config);
         const machine = machineMaker(sdmOptions, config);
 
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
