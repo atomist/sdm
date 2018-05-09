@@ -77,7 +77,7 @@ import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
-import { RespondOnCompletedSdmGoal } from "../handlers/events/delivery/goals/RespondOnGoalFailure";
+import { RespondOnGoalCompletion } from "../handlers/events/delivery/goals/RespondOnGoalCompletion";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
@@ -204,7 +204,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
-                () => new RespondOnCompletedSdmGoal(this.opts.credentialsResolver,
+                () => new RespondOnGoalCompletion(this.opts.credentialsResolver,
                     this.goalCompletionListeners)],
             commandHandlers: [],
         };
