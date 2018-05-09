@@ -24,4 +24,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 export interface CredentialsResolver {
 
     eventHandlerCredentials(context: HandlerContext, id: RemoteRepoRef): ProjectOperationCredentials;
+
+    commandHandlerCredentials(context: HandlerContext, id: RemoteRepoRef): ProjectOperationCredentials;
+
 }

@@ -30,4 +30,11 @@ export class GitHubCredentialsResolver implements CredentialsResolver {
         return {token: this.githubToken};
     }
 
+    public commandHandlerCredentials(): ProjectOperationCredentials {
+        if (!this.githubToken) {
+            throw new Error("githubToken has not been injected");
+        }
+        return {token: this.githubToken};
+    }
+
 }

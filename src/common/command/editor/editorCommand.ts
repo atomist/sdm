@@ -25,7 +25,7 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
-import { CachingProjectLoader } from "../../../index";
+import { CachingProjectLoader } from "../../repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../EmptyParameters";
 import { EditModeSuggestion } from "./EditModeSuggestion";
