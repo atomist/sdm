@@ -30,6 +30,7 @@ import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../EmptyParameters";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.
@@ -83,6 +84,22 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
             allParms.bindAndValidate = () => {
                 validate(targets);
             };
+            Object.defineProperty(targets, "credentials", {
+                get: function () {
+                    let creds: ProjectOperationCredentials;
+                    if (!this.githubToken || this.githubToken === "null") {
+                        creds = {
+                            username: "rod",
+                            password: "atomist",
+                        };
+                    } else {
+                        creds = {token: this.githubToken};
+                    }
+                    console.warn("THE TARGETS IS " + JSON.stringify(targets));
+                    console.warn("sdm:APIREF will return " + JSON.stringify(creds));
+                    return creds;
+                },
+            });
             return allParms;
         };
 }
