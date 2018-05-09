@@ -525,7 +525,7 @@ export function configureSdm(
             config.applicationEvents.enabled = false;
         } else {
             const missingValues = [];
-            (options.requiredValues || []).forEach(v => {
+            (options.requiredConfigurationValues || []).forEach(v => {
                 if (!_.get(config, v)) {
                    missingValues.push(v);
                 }
