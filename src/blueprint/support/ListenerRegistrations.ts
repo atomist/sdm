@@ -16,7 +16,9 @@
 
 import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
 import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../../common/delivery/code/PushReactionRegistration";
 import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
+import { ArtifactListenerRegisterable } from "../../common/listener/ArtifactListener";
 import { BuildListener } from "../../common/listener/BuildListener";
 import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
@@ -33,8 +35,6 @@ import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener
 import { UserJoiningChannelListener } from "../../common/listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
-import { PushReactionRegisterable } from "../../common/delivery/code/PushReactionRegistration";
-import { ArtifactListenerRegisterable } from "../../common/listener/ArtifactListener";
 
 /**
  * Simple listener management offering a fluent builder pattern registrations.
