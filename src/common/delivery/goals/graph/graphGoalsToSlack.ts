@@ -15,6 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as https from "https";
@@ -26,7 +27,7 @@ import { Goals } from "../Goals";
 
 export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
     // This is an easter egg
-    const graphvizServiceUrl = process.env.GRAPHVIZ_SERVICE_URL;
+    const graphvizServiceUrl = configurationValue<string>("graphviz.url");
     if (!graphvizServiceUrl) {
         return;
     }
