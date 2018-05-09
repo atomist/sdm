@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { ArtifactListenerRegisterable, PushReactionRegisterable } from "../..";
 import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
 import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../../common/delivery/code/PushReactionRegistration";
 import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
+import { ArtifactListenerRegisterable } from "../../common/listener/ArtifactListener";
 import { BuildListener } from "../../common/listener/BuildListener";
 import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
 import { DeploymentListener } from "../../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../../common/listener/FingerprintDifferenceListener";
-import { GoalsSetListener } from "../../common/listener/GoalsSetListener";
+import { GoalCompletionListener, GoalsSetListener } from "../../common/listener/GoalsSetListener";
 import { NewIssueListener } from "../../common/listener/NewIssueListener";
 import { PullRequestListener } from "../../common/listener/PullRequestListener";
 import { PushListener } from "../../common/listener/PushListener";
@@ -83,6 +84,8 @@ export class ListenerRegistrations {
 
     protected readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
+    protected readonly goalCompletionListeners: GoalCompletionListener[] = [];
+
     public addNewIssueListeners(...e: NewIssueListener[]): this {
         this.newIssueListeners.push(...e);
         return this;
@@ -90,6 +93,16 @@ export class ListenerRegistrations {
 
     public addUpdatedIssueListeners(...e: UpdatedIssueListener[]): this {
         this.updatedIssueListeners.push(...e);
+        return this;
+    }
+
+    /**
+     * These are invoked when a goal reaches status "failure" or "success"
+     * @param {GoalCompletionListener} e
+     * @returns {this}
+     */
+    public addGoalCompletionListeners(...e: GoalCompletionListener[]): this {
+        this.goalCompletionListeners.push(...e);
         return this;
     }
 

@@ -55,7 +55,6 @@ import { executeFingerprinting } from "../common/delivery/code/fingerprint/execu
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
-import { CopyGoalToGitHubStatus } from "../common/delivery/goals/CopyGoalToGitHubStatus";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { GoalSetter } from "../common/listener/GoalSetter";
@@ -70,7 +69,6 @@ import { listGeneratorsHandler } from "../common/command/generator/listGenerator
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { PushRule } from "../common/listener/support/PushRule";
-import { CopyStatusApprovalToGoal } from "../handlers/events/delivery/goals/CopyStatusApprovalToGoal";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
@@ -79,6 +77,7 @@ import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
+import { RespondOnGoalCompletion } from "../handlers/events/delivery/goals/RespondOnGoalCompletion";
 import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
@@ -91,9 +90,8 @@ import { Builder } from "../spi/build/Builder";
 import { InterpretLog } from "../spi/log/InterpretedLog";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { summarizeGoalsInGitHubStatus } from "./support/githubStatusSummarySupport";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
-
-// NEXT: store the implementation with the goal
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
@@ -206,8 +204,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             eventHandlers: [
                 () => new FailDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
-                () => new CopyStatusApprovalToGoal(),
-            ],
+                () => new RespondOnGoalCompletion(this.opts.credentialsResolver,
+                    this.goalCompletionListeners)],
             commandHandlers: [],
         };
     }
@@ -433,7 +431,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);
-        addGitHubSupport(this);
+        summarizeGoalsInGitHubStatus(this);
         this.addSupportingCommands(
             selfDescribeHandler(this),
             listGeneratorsHandler(this),
@@ -460,10 +458,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
         this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
-}
-
-function addGitHubSupport(sdm: SoftwareDeliveryMachine) {
-    sdm.addSupportingEvents(CopyGoalToGitHubStatus);
 }
 
 export function configureForSdm(machine: SoftwareDeliveryMachine) {
