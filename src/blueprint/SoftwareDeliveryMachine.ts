@@ -25,10 +25,6 @@ import {
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import {
-    CachingProjectLoader,
-    EphemeralLocalArtifactStore,
-} from "..";
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { executeBuild } from "../common/delivery/build/executeBuild";
@@ -73,7 +69,6 @@ import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
 import { disposeCommand } from "../handlers/commands/disposeCommand";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { FindArtifactOnImageLinked } from "../handlers/events/delivery/build/FindArtifactOnImageLinked";
 import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/build/InvokeListenersOnBuildComplete";
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
@@ -106,26 +101,17 @@ import { OnTag } from "../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../spi/build/Builder";
 import { InterpretLog } from "../spi/log/InterpretedLog";
-import { logFactory } from "../spi/log/logFactory";
 import {
     EmptyFunctionalUnit,
     FunctionalUnit,
 } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
+import { softwareDeliveryMachineOptions } from "./sdmOptions";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
 // NEXT: store the implementation with the goal
-
-export function softwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineOptions {
-    return {
-        artifactStore: new EphemeralLocalArtifactStore(),
-        projectLoader: new CachingProjectLoader(),
-        logFactory: logFactory(_.get(configuration, "sdm.rolar.url")),
-        credentialsResolver: new GitHubCredentialsResolver(),
-    };
-}
 
 /**
  * Core entry point for constructing a Software Delivery Machine.
