@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+
 /**
  * Basic config for all parameter creation
  */
 export interface GeneratorConfig {
 
-    seedOwner: string;
-
-    seedRepo: string;
+    /**
+     * The seed repo
+     */
+    seed: RemoteRepoRef;
 
     intent: string;
 
