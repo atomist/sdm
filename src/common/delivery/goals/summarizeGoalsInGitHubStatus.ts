@@ -23,8 +23,7 @@ import { createStatus } from "../../../util/github/ghub";
 
 export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {
-        const {context, id} = inv;
-        const credentials = credentialsFactory.eventHandlerCredentials(context, id);
+        const {id, credentials} = inv;
         return createStatus(credentials, id as GitHubRepoRef, {
             context: "atomist/sdm/" + inv.goalSetId,
             description: "Atomist SDM Goals in progress",
@@ -36,8 +35,7 @@ export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: Credentia
 
 export function SetGitHubStatusOnGoalCompletion(): GoalCompletionListener {
     return async (inv: GoalCompletionListenerInvocation) => {
-        const {id, completedGoal, allGoals} = inv;
-        const credentials = { token: process.env.GITHUB_TOKEN };
+        const {id, completedGoal, allGoals, credentials} = inv;
         logger.info("Completed goal: %s with %s in set %s", goalKeyString(completedGoal), completedGoal.state, completedGoal.goalSetId);
         allGoals.forEach(g => logger.info(" goal %s is %s", goalKeyString(g), g.state));
 

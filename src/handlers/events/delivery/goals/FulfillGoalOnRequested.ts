@@ -61,7 +61,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public description: string;
     public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
 
-    @Value("name")
+    @Value("token")
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,

@@ -41,7 +41,7 @@ import { repoRefFromPush } from "../../../../util/git/repoRef";
 @EventHandler("Run a listener on goal failure or success", subscription("OnAnyCompletedSdmGoal"))
 export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoal.Subscription> {
 
-    @Value("name")
+    @Value("token")
     public token: string;
 
     constructor(private readonly credentialsFactory: CredentialsResolver,
