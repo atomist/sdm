@@ -40,7 +40,7 @@ export let managedExecutableJarDeployments: ManagedDeployments;
  */
 export function executableJarDeployer(opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
     if (!managedExecutableJarDeployments) {
-        logger.info("Created new deployments record");
+        logger.debug("Created new deployments record");
         managedExecutableJarDeployments = new ManagedDeployments(opts.lowerPort);
     }
     return new ExecutableJarDeployer({
