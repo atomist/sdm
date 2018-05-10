@@ -27,7 +27,7 @@ import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithL
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
 const AddThingAutofix: AutofixRegistration = {
-    name: "thinger",
+    name: "AddThing",
     pushTest: IsTypeScript,
     action: async cri => {
         await cri.project.addFile("thing", "1");
@@ -65,7 +65,10 @@ describe("executeAutofixes", () => {
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
-        assert.equal(p.findFileSync("thing").getContentSync(), "1");
+        assert(!!p);
+        const foundFile = await p.findFileSync("thing");
+        assert(!!foundFile);
+        assert.equal(foundFile, "1");
     });
 
 });
