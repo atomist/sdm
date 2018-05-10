@@ -11,6 +11,8 @@ import { AbstractRemoteRepoRef } from "./AbstractRemoteRepoRef";
 
 /**
  * RemoteRepoRef implementation for BitBucket server (not BitBucket Cloud)
+ *
+ * This should ultimately move to automation-client-ts
  */
 export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
 

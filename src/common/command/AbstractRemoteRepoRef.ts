@@ -7,6 +7,8 @@ import { Configurable } from "@atomist/automation-client/project/git/Configurabl
 /**
  * Superclass for RemoteRepoRef implementations.
  * Handles parsing remote base
+ *
+ * This should ultimately move down to automation-client-ts and replace AbstractRepoRef.
  */
 export abstract class AbstractRemoteRepoRef implements RemoteRepoRef {
 
