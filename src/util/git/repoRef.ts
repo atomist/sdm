@@ -123,8 +123,8 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  * @return {RemoteRepoRef}
  */
 export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string } = {}): RemoteRepoRef {
-    const providerType = repo.org.provider.providerType;
-    const apiUrl = repo.org.provider.apiUrl;
+    const providerType = _.get(repo, "org.provider.providerType");
+    const apiUrl = _.get(repo, "org.provider.apiUrl");
 
     logger.info("toRemoteRepoRef with GraphQL-sourced repo: %j", repo);
     switch (providerType) {

@@ -66,9 +66,9 @@ describe("executeAutofixes", () => {
         const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
         assert(!!p);
-        const foundFile = await p.findFileSync("thing");
+        const foundFile = p.findFileSync("thing");
         assert(!!foundFile);
-        assert.equal(foundFile, "1");
+        assert.equal(foundFile.getContentSync(), "1");
     });
 
 });
