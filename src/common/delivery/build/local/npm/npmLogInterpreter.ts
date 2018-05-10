@@ -40,7 +40,7 @@ export const NpmLogInterpreter: InterpretLog = log => {
 
     return {
         message: recognizedInterpretation.message || defaultMessage,
-        relevantPart: relevantLines.join("\n"),
+        relevantPart: "```" + relevantLines.join("\n") + "```",
     };
 };
 

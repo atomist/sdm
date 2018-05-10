@@ -18,13 +18,27 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels } from "../../common/slack/addressChannels";
 import { InterpretedLog } from "../../spi/log/InterpretedLog";
+import { logger } from "@atomist/automation-client";
 
 export async function reportFailureInterpretationToLinkedChannels(stepName: string,
-                                                                  interpretation: InterpretedLog,
+                                                                  interpretation: InterpretedLog | undefined,
                                                                   fullLog: { url?: string, log: string },
                                                                   id: RemoteRepoRef,
                                                                   addressChannels: AddressChannels,
                                                                   retryButton?: slack.Action) {
+    if (!interpretation) {
+        if (fullLog.url) {
+            logger.info("No log interpretation. Log available at: " + fullLog.url);
+            return;
+        }
+        logger.info("No log interpretation, no log URL. Sending full log to Slack");
+        await addressChannels({
+            content: fullLog.log,
+            fileType: "text",
+            fileName: `${stepName}-failure-${id.sha}.log`,
+        } as any);
+        return;
+    }
     await addressChannels({
         text: `Failed ${stepName} of ${slack.url(`${id.url}/tree/${id.sha}`, id.sha.substr(0, 7))}`,
         attachments: [{
@@ -39,6 +53,7 @@ export async function reportFailureInterpretationToLinkedChannels(stepName: stri
     const includeFullLogByDefault = !fullLog.url; // if there is no link, include it by default
     const shouldIncludeFullLog = "includeFullLog" in interpretation ? interpretation.includeFullLog : includeFullLogByDefault;
     if (shouldIncludeFullLog) {
+        logger.debug("sending full log to slack. url is %s, includeFullLog is %s", fullLog.url, interpretation.includeFullLog);
         await addressChannels({
             content: fullLog.log,
             fileType: "text",
