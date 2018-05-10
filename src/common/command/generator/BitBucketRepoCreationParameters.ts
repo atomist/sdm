@@ -17,16 +17,7 @@ export class BitBucketRepoCreationParameters extends NewRepoCreationParameters {
     public apiUrl: string;
 
     get credentials(): ProjectOperationCredentials {
-        let creds: ProjectOperationCredentials;
-       // if (!this.githubToken || this.githubToken === "null") {
-        creds = {
-                username: "rod",
-                password: "atomist",
-            };
-        // } else {
-        //     creds = {token: this.githubToken};
-        // }
-        return creds;
+        throw new Error("Override this");
     }
 
     /**
