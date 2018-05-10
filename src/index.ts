@@ -20,7 +20,6 @@ export * from "./common/command/editor/dry-run/NewBranchWithStatus";
 export * from "./common/command/editor/dry-run/dryRunEditor";
 export * from "./common/command/generator/BitBucketRepoCreationParameters";
 export * from "./common/command/generator/GeneratorConfig";
-export * from "./common/command/generator/SeedDrivenGeneratorParameters";
 export * from "./common/command/generator/createRepo";
 export * from "./common/command/generator/generatorHandler";
 export * from "./common/command/generator/listGenerators";
