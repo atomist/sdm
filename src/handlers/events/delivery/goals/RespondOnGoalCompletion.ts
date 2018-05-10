@@ -17,7 +17,16 @@
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 import { sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success,
+    Value,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../common/listener/GoalsSetListener";
@@ -31,6 +40,9 @@ import { repoRefFromPush } from "../../../../util/git/repoRef";
  */
 @EventHandler("Run a listener on goal failure or success", subscription("OnAnyCompletedSdmGoal"))
 export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoal.Subscription> {
+
+    @Value("name")
+    public token: string;
 
     constructor(private readonly credentialsFactory: CredentialsResolver,
                 private readonly goalCompletionListeners: GoalCompletionListener[]) {
@@ -50,6 +62,8 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
         const id = repoRefFromPush(push);
         const allGoals: SdmGoal[] = sumSdmGoalEventsByOverride(
             await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+
+        (this.credentialsFactory as any).githubToken = this.token;
 
         const gsi: GoalCompletionListenerInvocation = {
             id,
