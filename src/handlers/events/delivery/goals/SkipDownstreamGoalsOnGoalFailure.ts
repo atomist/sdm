@@ -16,7 +16,7 @@
 
 import {
     EventFired,
-    EventHandler, Failure,
+    EventHandler,
     HandleEvent,
     HandlerContext,
     HandlerResult,
@@ -27,59 +27,45 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
-import { OnFailureStatus, OnSuccessStatus, StatusForExecuteGoal } from "../../../../typings/types";
-import Status = OnSuccessStatus.Status;
-import { providerIdFromStatus, repoRefFromStatus } from "../../../../util/git/repoRef";
+import { OnAnyFailedSdmGoal } from "../../../../typings/types";
+import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
+import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals
  */
-@EventHandler("Fail downstream goals on a goal failure", subscription("OnFailureStatus"))
-export class FailDownstreamGoalsOnGoalFailure implements HandleEvent<OnFailureStatus.Subscription> {
+@EventHandler("Fail downstream goals on a goal failure", subscription("OnAnyFailedSdmGoal"))
+export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailedSdmGoal.Subscription> {
 
     // #98: GitHub Status->SdmGoal: We still have to respond to failure on status,
     // until we change all the failure updates to happen on SdmGoal.
     // but we can update the SdmGoals, and let that propagate to the statuses.
     // we can count on all of the statuses we need to update to exist as SdmGoals.
     // however, we can't count on the SdmGoal to have the latest state, so check the Status for that.
-    public async handle(event: EventFired<OnFailureStatus.Subscription>,
-                        ctx: HandlerContext): Promise<HandlerResult> {
-        const status: Status = event.data.Status[0];
+    public async handle(event: EventFired<OnAnyFailedSdmGoal.Subscription>,
+                        context: HandlerContext): Promise<HandlerResult> {
 
-        if (status.state !== "failure") { // atomisthq/automation-api#395 (probably not an issue for Status but will be again for SdmGoal)
-            logger.debug(`********* failure reported when the state was=[${status.state}]`);
+        const failedGoal = event.data.SdmGoal[0] as SdmGoal;
+
+        if (failedGoal.state !== "failure") { // atomisthq/automation-api#395
+            logger.debug(`Nevermind: failure reported when the state was=[${failedGoal.state}]`);
             return Promise.resolve(Success);
         }
 
-        if (status.description.startsWith("Skip")) {
-            logger.debug("not relevant, because I set this status to failure in an earlier invocation of myself.");
-            logger.debug(`context: ${status.context} description: ${status.description}`);
-            return Promise.resolve(Success);
-        }
+        const id = repoRefFromSdmGoal(failedGoal, await fetchScmProvider(context, failedGoal.repo.providerId));
+        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, failedGoal.repo.providerId) as SdmGoal[],
+            [failedGoal]);
 
-        const id = repoRefFromStatus(status);
-        const goals = await fetchGoalsForCommit(ctx, id, providerIdFromStatus(status));
-        const failedGoal = goals.find(g => g.externalKey === status.context) as SdmGoal;
-        if (!failedGoal) {
-            logger.warn("Could not identify %s among %j", status.context, goals.map(g => g.externalKey));
-            return Failure;
-        }
-        const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals as SdmGoal[])))
-            .filter(g => stillWaitingForPreconditions(status, g as SdmGoal));
+        const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals)))
+            .filter(g => g.state === "planned");
 
-        await Promise.all(goalsToSkip.map(g => updateGoal(ctx, g as SdmGoal, {
+        await Promise.all(goalsToSkip.map(g => updateGoal(context, g as SdmGoal, {
             state: "skipped",
             description: `Skipped ${g.name} because ${failedGoal.name} failed`,
         })));
 
         return Success;
     }
-}
-
-// in the future this will be trivial but right now we need to look at GH Statuses
-function stillWaitingForPreconditions(status: StatusForExecuteGoal.Fragment, sdmGoal: SdmGoal): boolean {
-    const correspondingStatus = status.commit.statuses.find(s => s.context === sdmGoal.externalKey);
-    return correspondingStatus.state === "pending";
 }
 
 function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (SdmGoalKey) => T {

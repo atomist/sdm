@@ -73,7 +73,7 @@ import { InvokeListenersOnBuildComplete } from "../handlers/events/delivery/buil
 import { SetGoalOnBuildComplete } from "../handlers/events/delivery/build/SetStatusOnBuildComplete";
 import { ReactToSemanticDiffsOnPushImpact } from "../handlers/events/delivery/code/ReactToSemanticDiffsOnPushImpact";
 import { OnDeployStatus } from "../handlers/events/delivery/deploy/OnDeployStatus";
-import { FailDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/FailDownstreamGoalsOnGoalFailure";
+import { SkipDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/SkipDownstreamGoalsOnGoalFailure";
 import { FulfillGoalOnRequested } from "../handlers/events/delivery/goals/FulfillGoalOnRequested";
 import { KubernetesIsolatedGoalLauncher } from "../handlers/events/delivery/goals/k8s/launchGoalK8";
 import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/launchGoal";
@@ -220,7 +220,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     private get goalConsequences(): FunctionalUnit {
         return {
             eventHandlers: [
-                () => new FailDownstreamGoalsOnGoalFailure(),
+                () => new SkipDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
                 () => new RespondOnGoalCompletion(this.opts.credentialsResolver,
                     this.goalCompletionListeners)],
