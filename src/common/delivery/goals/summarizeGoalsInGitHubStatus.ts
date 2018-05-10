@@ -25,7 +25,7 @@ export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: Credentia
     return async (inv: GoalsSetListenerInvocation) => {
         const {id, credentials} = inv;
         return createStatus(credentials, id as GitHubRepoRef, {
-            context: "atomist/sdm/" + inv.goalSetId,
+            context: "sdm/atomist",
             description: "Atomist SDM Goals in progress",
             target_url: "https://app.atomist.com", // TODO: deep link!
             state: "pending",
@@ -42,7 +42,7 @@ export function SetGitHubStatusOnGoalCompletion(): GoalCompletionListener {
         if (completedGoal.state === "failure") {
             logger.info("Setting GitHub status to failed on %s" + id.sha);
             return createStatus(credentials, id as GitHubRepoRef, {
-                context: "atomist/sdm/" + inv.completedGoal.goalSetId,
+                context: "sdm/atomist",
                 description: `Atomist SDM Goals: ${completedGoal.description}`,
                 target_url: "https://app.atomist.com", // TODO: deep link!
                 state: "failure",
@@ -51,7 +51,7 @@ export function SetGitHubStatusOnGoalCompletion(): GoalCompletionListener {
         if (allSuccessful(allGoals)) {
             logger.info("Setting GitHub status to success on %s", id.sha);
             return createStatus(credentials, id as GitHubRepoRef, {
-                context: "atomist/sdm/" + completedGoal.goalSetId,
+                context: "sdm/atomist",
                 description: `Atomist SDM Goals: all succeeded`,
                 target_url: "https://app.atomist.com", // TODO: deep link!
                 state: "success",
@@ -62,7 +62,7 @@ export function SetGitHubStatusOnGoalCompletion(): GoalCompletionListener {
 
 function allSuccessful(goals: SdmGoal[]): boolean {
     goals.forEach(g => logger.debug("goal %s is %s", g.name, g.state));
-    return !goals.find(g => g.state !== "success");
+    return !goals.some(g => g.state !== "success");
 }
 
 export function sdmGoalStateToGitHubStatusState(goalState: SdmGoalState): StatusState {
