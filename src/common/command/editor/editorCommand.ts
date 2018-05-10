@@ -86,21 +86,6 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
             allParms.bindAndValidate = () => {
                 validate(targets);
             };
-            /* tslint:disable:no-invalid-this */
-            // Object.defineProperty(targets, "credentials", {
-            //     get() {
-            //         let creds: ProjectOperationCredentials;
-            //         if (!this.githubToken || this.githubToken === "null") {
-            //             creds = {
-            //                 username: "rod",
-            //                 password: "atomist",
-            //             };
-            //         } else {
-            //             creds = {token: this.githubToken};
-            //         }
-            //         return creds;
-            //     },
-            // });
             return allParms;
         };
 }
