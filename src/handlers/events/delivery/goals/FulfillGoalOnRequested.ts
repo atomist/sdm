@@ -20,9 +20,7 @@ import {
     HandlerContext,
     HandlerResult,
     logger,
-    Secrets,
     Success,
-    Value,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import {

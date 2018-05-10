@@ -28,8 +28,8 @@ import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
-import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
+import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
 /**
  * Respond to a failure status by failing downstream goals
@@ -56,10 +56,10 @@ export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
         const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, failedGoal.repo.providerId) as SdmGoal[],
             [failedGoal]);
 
-        const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g as SdmGoal, mapKeyToGoal(goals)))
+        const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g, mapKeyToGoal(goals)))
             .filter(g => g.state === "planned");
 
-        await Promise.all(goalsToSkip.map(g => updateGoal(context, g as SdmGoal, {
+        await Promise.all(goalsToSkip.map(g => updateGoal(context, g, {
             state: "skipped",
             description: `Skipped ${g.name} because ${failedGoal.name} failed`,
         })));

@@ -81,7 +81,7 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
         logger.debug("Do we have a log interpretation? " + !!logInterpretation);
         const interpretation = logInterpretation && logInterpretation.logInterpreter(buildLog);
         logger.debug("What did it say? " + stringify(interpretation));
-            await reportFailureInterpretationToLinkedChannels("external-build", interpretation,
+        await reportFailureInterpretationToLinkedChannels("external-build", interpretation,
                 { log: buildLog, url: buildUrl }, id, addressChannels);
 
     } else {

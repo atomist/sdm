@@ -163,7 +163,7 @@ function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
 
 export function markStatus(parameters: {
     ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
-    error?: Error, progressLogUrl: string
+    error?: Error, progressLogUrl: string,
 }) {
     const {ctx, sdmGoal, goal, result, error, progressLogUrl} = parameters;
     const newState = result.code !== 0 ? "failure" :
