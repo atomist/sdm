@@ -116,7 +116,8 @@ npm ERR!     /root/.npm/_logs/2018-04-12T06_00_32_340Z-debug.log
 Stopping build commands due to error on npm run buildERROR: Failure reported: undefined
 Error: Failure reported: undefined`;
 
-const RelevantPart1 = `  1 failing
+const RelevantPart1 = `\`\`\`
+  1 failing
 
   1) addHeaderFix
        should lint and make fixes:
@@ -137,7 +138,8 @@ const RelevantPart1 = `  1 failing
 
       -false
       +true
-      `;
+      
+\`\`\``;
 
 const Fail2 = `
 > @atomist/sample-sdm@0.5.1 build /Users/jessitron/code/atomist/sample-sdm
@@ -330,7 +332,8 @@ fatal: unable to access 'https://null:x-oauth-basic@github.com/spring-team/sprin
 2018-05-05T12:48:44.350Z [m:17866] [info ] Shutdown initiated. Calling shutdown hooks
 `;
 
-const RelevantPart2 = `  1 failing
+const RelevantPart2 = `\`\`\`
+  1 failing
 
   1) springBootGenerator
        run end to end
@@ -338,7 +341,8 @@ const RelevantPart2 = `  1 failing
      ChildProcessError: Command failed: git clone --depth 1 https://null:x-oauth-basic@github.com/spring-team/spring-rest-seed.git /var/folders/gl/d94_8f5n00d17l6fdx37yzxm0000gn/T/tmp-17866wR6ybfinglvw
 Cloning into '/var/folders/gl/d94_8f5n00d17l6fdx37yzxm0000gn/T/tmp-17866wR6ybfinglvw'...
 fatal: unable to access 'https://null:x-oauth-basic@github.com/spring-team/spring-rest-seed.git/': Could not resolve host: github.com
- \`git clone --depth 1 https://null:x-oauth-basic@github.com/spring-team/spring-rest-seed.git /var/folders/gl/d94_8f5n00d17l6fdx37yzxm0000gn/T/tmp-17866wR6ybfinglvw\` (exited with error code 128)`;
+ \`git clone --depth 1 https://null:x-oauth-basic@github.com/spring-team/spring-rest-seed.git /var/folders/gl/d94_8f5n00d17l6fdx37yzxm0000gn/T/tmp-17866wR6ybfinglvw\` (exited with error code 128)
+\`\`\``;
 
 const Fail3 = `> @atomist/sample-sdm@0.5.1 gql:copy /Users/jessitron/code/atomist/sample-sdm
 > copyfiles "./src/**/*.graphql" build
@@ -382,11 +386,13 @@ npm ERR! A complete log of this run can be found in:
 npm ERR!     /Users/jessitron/.npm/_logs/2018-05-05T14_43_02_065Z-debug.log
 `;
 
-const RelevantPart3 = `> @atomist/sample-sdm@0.5.1 compile:ts /Users/jessitron/code/atomist/sample-sdm
+const RelevantPart3 = `\`\`\`
+> @atomist/sample-sdm@0.5.1 compile:ts /Users/jessitron/code/atomist/sample-sdm
 > tsc --project .
 
 src/machines/cloudFoundryMachine.ts(124,40): error TS1005: ',' expected.
 
 ERROR: "compile:ts" exited with 2.
 
-ERROR: "compile" exited with 1.`;
+ERROR: "compile" exited with 1.
+\`\`\``;
