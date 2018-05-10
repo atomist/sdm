@@ -40,7 +40,7 @@ export const NpmLogInterpreter: InterpretLog = log => {
 
     return {
         message: recognizedInterpretation.message || defaultMessage,
-        relevantPart: "```" + relevantLines.join("\n") + "```",
+        relevantPart: "```\n" + relevantLines.join("\n") + "\n```",
     };
 };
 
@@ -57,7 +57,7 @@ function recognizeNpmRunError(lines: string[]): RecognizedLog {
     if (lastBreakBeforeCommand < 0) {
         return undefined;
     }
-    return { relevantLines: lines.slice(- lastBreakBeforeCommand)};
+    return { relevantLines: lines.slice(- Math.min(lastBreakBeforeCommand, 20))};
 }
 
 function recognizeMochaTest(lines: string[]): RecognizedLog {
