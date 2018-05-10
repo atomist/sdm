@@ -77,11 +77,6 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                 goalResult = Success;
             }
 
-            if (goalResult.code !== 0) {
-                await reportGoalError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
-                    new Error("Failure reported: " + goalResult.message));
-            }
-
             result = {
                 ...result,
                 ...goalResult,
@@ -98,6 +93,9 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                 ...result,
                 ...hookResult,
             };
+        } else {
+            await reportGoalError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
+                new Error("Failure reported: " + result.message));
         }
 
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
@@ -107,7 +105,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         logger.warn("Error executing %s on %s: %s",
             implementationName, sdmGoal.sha, err.message);
         logger.warn(err.stack);
-        await markStatus({ctx, sdmGoal, goal, result: {code: 1}, error: err, progressLogUrl: progressLog.url} );
+        await markStatus({ctx, sdmGoal, goal, result: {code: 1}, error: err, progressLogUrl: progressLog.url});
         return failure(err);
     }
 }
@@ -163,8 +161,10 @@ function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
     return `${prefix}-${sdmGoal.environment.slice(2)}-${sdmGoal.name}`;
 }
 
-export function markStatus(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
-        error?: Error, progressLogUrl: string }) {
+export function markStatus(parameters: {
+    ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
+    error?: Error, progressLogUrl: string
+}) {
     const {ctx, sdmGoal, goal, result, error, progressLogUrl} = parameters;
     const newState = result.code !== 0 ? "failure" :
         result.requireApproval ? "waiting_for_approval" : "success";

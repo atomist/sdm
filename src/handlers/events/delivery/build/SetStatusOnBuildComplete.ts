@@ -81,17 +81,9 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
         logger.debug("Do we have a log interpretation? " + !!logInterpretation);
         const interpretation = logInterpretation && logInterpretation.logInterpreter(buildLog);
         logger.debug("What did it say? " + stringify(interpretation));
-        // The deployer might have information about the failure; report it in the channels
-        if (interpretation) {
-            await reportFailureInterpretationToLinkedChannels("build", interpretation,
+            await reportFailureInterpretationToLinkedChannels("external-build", interpretation,
                 { log: buildLog, url: buildUrl }, id, addressChannels);
-        } else {
-            await addressChannels({
-                content: buildLog,
-                fileType: "text",
-                fileName: `build-${build.status}-${id.sha}.log`,
-            } as any);
-        }
+
     } else {
         return addressChannels("No build log detected for " + linkToSha(id));
     }
