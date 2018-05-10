@@ -25,7 +25,10 @@ import {
     Value,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { EventHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
+import {
+    EventHandlerMetadata,
+    ValueDeclaration,
+} from "@atomist/automation-client/metadata/automationMetadata";
 import { ProgressLogFactory } from "../../../..";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/summarizeGoalsInGitHubStatus";
@@ -59,9 +62,9 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public subscription: string;
     public name: string;
     public description: string;
-    public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
+    // public secrets = [{name: "githubToken", uri: Secrets.OrgToken}];
+    public values = [{ path: "token", name: "githubToken", required: true }] as any[] as ValueDeclaration[];
 
-    @Value("token")
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
