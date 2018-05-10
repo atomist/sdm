@@ -15,9 +15,9 @@
  */
 
 import { HandleCommand } from "@atomist/automation-client";
-import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
+import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
@@ -28,6 +28,7 @@ import * as assert from "power-assert";
 import { CachingProjectLoader } from "../../repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../EmptyParameters";
+import { allReposInTeam } from "./allReposInTeam";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
 
@@ -78,7 +79,9 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
             const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-            const targets = new GitHubFallbackReposParameters();
+            const targets: FallbackParams =
+                // new BitBucketTargetsParams();
+               new GitHubFallbackReposParameters();
             allParms.targets = targets;
             allParms.bindAndValidate = () => {
                 validate(targets);
@@ -91,7 +94,7 @@ function isEditorOrReviewerParameters(p: any): p is EditorOrReviewerParameters {
     return !!(p as EditorOrReviewerParameters).targets;
 }
 
-function validate(targets: GitHubFallbackReposParameters) {
+function validate(targets: FallbackParams) {
     if (!targets.repo) {
         assert(!!targets.repos, "Must set repos or repo");
         targets.repo = targets.repos;

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
-
-import { BasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { ProviderType } from "../..";
+import { BitBucketServerRepoRef } from "../../common/command/BitBucketServerRepoRef";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
 export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
     const providerType = push.repo.org.provider.providerType;
@@ -37,23 +36,40 @@ export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
                 branch: push.branch,
             });
         case ProviderType.bitbucket :
-            const url = push.repo.org.provider.url.replace("http://", "");
-            const id = new BitBucketServerRepoRef(
-                url,
-                push.repo.owner,
-                push.repo.name,
-                true,
-                push.after.sha,
-            );
-            id.branch = push.branch;
-            id.cloneUrl = (creds: BasicAuthCredentials) =>
-             `http://${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${id.remoteBase}${id.pathComponent}.git`;
-            return id;
+            const providerUrl = push.repo.org.provider.url;
+            return toBitBucketServerRepoRef({
+                providerUrl,
+                owner: push.repo.owner,
+                name: push.repo.name,
+                sha: push.after.sha,
+                branch: push.branch,
+            });
         case ProviderType.bitbucket_cloud :
             throw new Error("BitBucket Cloud not yet supported");
         default:
             throw new Error(`Provider ${providerType} not currently supported in SDM`);
     }
+}
+
+export function toBitBucketServerRepoRef(params: {
+    providerUrl: string,
+    owner: string,
+    name: string,
+    sha: string,
+    branch?: string,
+}): BitBucketServerRepoRef {
+    const url = params.providerUrl;
+    const id = new BitBucketServerRepoRef(
+        url,
+        params.owner,
+        params.name,
+        true,
+        params.sha,
+    );
+    id.branch = params.branch;
+    // id.cloneUrl = (creds: BasicAuthCredentials) =>
+    //     `http://${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${id.remoteBase}${id.pathComponent}.git`;
+    return id;
 }
 
 export function providerIdFromPush(push: OnPushToAnyBranch.Push) {
@@ -86,18 +102,14 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
                 rawApiBase: provider.apiUrl,
             });
         case ProviderType.bitbucket :
-            const url = provider.url.replace("http://", "");
-            const id = new BitBucketServerRepoRef(
-                url,
-                sdmGoal.repo.owner,
-                sdmGoal.repo.name,
-                true,
-                sdmGoal.sha,
-            );
-            id.branch = sdmGoal.branch;
-            id.cloneUrl = (creds: BasicAuthCredentials) =>
-                `http://${encodeURIComponent(creds.username)}:${encodeURIComponent(creds.password)}@${id.remoteBase}${id.pathComponent}.git`;
-            return id;
+            const providerUrl = provider.url;
+            return toBitBucketServerRepoRef({
+                providerUrl,
+                owner: sdmGoal.repo.owner,
+                name: sdmGoal.repo.name,
+                sha: sdmGoal.sha,
+                branch: sdmGoal.branch,
+            });
         default:
             throw new Error(`Provider ${provider.providerType} not currently supported in SDM`);
     }
@@ -111,9 +123,10 @@ export function repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmPr
  * @return {RemoteRepoRef}
  */
 export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string } = {}): RemoteRepoRef {
-    const providerType = _.get(repo, "repo.org.provider.providerType");
-    const apiUrl = _.get(repo, "repo.org.provider.apiUrl");
+    const providerType = repo.org.provider.providerType;
+    const apiUrl = repo.org.provider.apiUrl;
 
+    logger.info("toRemoteRepoRef with GraphQL-sourced repo: %j", repo);
     switch (providerType) {
         case undefined:
         case null:
@@ -125,6 +138,14 @@ export function toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: 
                 sha: opts.sha,
                 branch: opts.branch,
                 rawApiBase: apiUrl,
+            });
+        case ProviderType.bitbucket :
+            return toBitBucketServerRepoRef({
+                owner: repo.owner,
+                name: repo.name,
+                sha: opts.sha,
+                branch: opts.branch,
+                providerUrl: apiUrl,
             });
         default:
             throw new Error(`Provider ${repo.org.provider.providerType} not currently supported in SDM`);
