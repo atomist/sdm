@@ -13,6 +13,7 @@ import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoa
 import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { RemoteGitProjectPersister } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
@@ -22,7 +23,6 @@ import * as _ from "lodash";
 import { CachingProjectLoader } from "../../repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 import { allReposInTeam } from "../editor/allReposInTeam";
-import { SeedDrivenGeneratorParameters } from "./SeedDrivenGeneratorParameters";
 
 /**
  * Create a generator handler
@@ -73,7 +73,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
     );
     await ctx.messageClient.respond(`Created and pushed new project ${params.target.repoRef.url}`);
     if (isGitHubRepoRef(r.target.id)) {
-        const webhookInstalled = await hasOrgWebhook(params.target.owner, ctx);
+        const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
         if (!webhookInstalled) {
             await addAtomistWebhook((r.target as GitProject), params);
         }
@@ -81,7 +81,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
     return {
         code: 0,
         // Redirect to local project page
-        redirect: details.redirecter(params.target),
+        redirect: details.redirecter(params.target.repoRef),
     };
 }
 
