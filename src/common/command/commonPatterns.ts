@@ -19,7 +19,8 @@ import { BaseParameter } from "@atomist/automation-client/internal/metadata/deco
 export const SemVerRegExp: Partial<BaseParameter> = {
     displayName: "Version",
     description: "initial version of the project, e.g., 1.2.3-SNAPSHOT",
-    pattern: /^.*$/,
+    // tslint:disable-next-line:max-line-length
+    pattern: /^v?(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-(?:[1-9]\d*|\d*[-A-Za-z][-A-Za-z\d]*)(?:\.(?:[1-9]\d*|\d*[-A-Za-z][-A-Za-z\d]*))*)?(?:\+[-A-Za-z\d]+(?:\.[-A-Za-z\d]+)*)?$/,
     validInput: "a valid semantic version, http://semver.org",
     minLength: 1,
     maxLength: 50,
