@@ -37,7 +37,7 @@ export function executeUndeploy(target: Target): ExecuteGoalWithLog {
             return Success;
         }
 
-        logger.info("Detected deployments: %s", deployments.map(stringify).join(", "));
+        logger.info("Detected deployments: %s", deployments.map(s => stringify(s)).join(", "));
 
         deployments.forEach(async d =>
             target.deployer.undeploy(
