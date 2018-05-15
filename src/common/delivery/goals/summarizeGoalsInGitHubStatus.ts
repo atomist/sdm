@@ -24,20 +24,26 @@ import { createStatus } from "../../../util/github/ghub";
 export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {
         const {id, credentials} = inv;
-        return createStatus(credentials, id as GitHubRepoRef, {
-            context: "sdm/atomist",
-            description: "Atomist SDM Goals in progress",
-            target_url: "https://app.atomist.com", // TODO: deep link!
-            state: "pending",
-        });
+        if (inv.goalSet && inv.goalSet.goals && inv.goalSet.goals.length > 0) {
+            logger.info("Created goal set '%s'. Creating in progress GitHub status", inv.goalSetId);
+            return createStatus(credentials, id as GitHubRepoRef, {
+                context: "sdm/atomist",
+                description: "Atomist SDM Goals in progress",
+                target_url: "https://app.atomist.com", // TODO: deep link!
+                state: "pending",
+            });
+        } else {
+            logger.info("No goals planned. Not creating in progress GitHub status");
+            return Promise.resolve();
+        }
     };
 }
 
 export function SetGitHubStatusOnGoalCompletion(): GoalCompletionListener {
     return async (inv: GoalCompletionListenerInvocation) => {
         const {id, completedGoal, allGoals, credentials} = inv;
-        logger.info("Completed goal: %s with %s in set %s", goalKeyString(completedGoal), completedGoal.state, completedGoal.goalSetId);
-        allGoals.forEach(g => logger.info(" goal %s is %s", goalKeyString(g), g.state));
+        logger.info("Completed goal: '%s' with '%s' in set '%s'",
+            goalKeyString(completedGoal), completedGoal.state, completedGoal.goalSetId);
 
         if (completedGoal.state === "failure") {
             logger.info("Setting GitHub status to failed on %s" + id.sha);
