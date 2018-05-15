@@ -16,12 +16,7 @@
 
 // tslint:disable:max-file-line-count
 
-import {
-    Configuration,
-    HandleCommand,
-    HandleEvent,
-    logger,
-} from "@atomist/automation-client";
+import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
@@ -34,10 +29,7 @@ import { executeFingerprinting } from "../common/delivery/code/fingerprint/execu
 import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
-import {
-    executeUndeploy,
-    offerToDeleteRepository,
-} from "../common/delivery/deploy/executeUndeploy";
+import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -54,10 +46,7 @@ import {
 } from "../common/delivery/goals/common/commonGoals";
 import { Goal } from "../common/delivery/goals/Goal";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
-import {
-    lastLinesLogInterpreter,
-    LogSuppressor,
-} from "../common/delivery/goals/support/logInterpreters";
+import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushTest } from "../common/listener/PushTest";
@@ -79,15 +68,9 @@ import { GoalAutomationEventListener } from "../handlers/events/delivery/goals/l
 import { RequestDownstreamGoalsOnGoalSuccess } from "../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../handlers/events/delivery/goals/resetGoals";
 import { RespondOnGoalCompletion } from "../handlers/events/delivery/goals/RespondOnGoalCompletion";
-import {
-    executeImmaterial,
-    SetGoalsOnPush,
-} from "../handlers/events/delivery/goals/SetGoalsOnPush";
+import { executeImmaterial, SetGoalsOnPush } from "../handlers/events/delivery/goals/SetGoalsOnPush";
 import { SkipDownstreamGoalsOnGoalFailure } from "../handlers/events/delivery/goals/SkipDownstreamGoalsOnGoalFailure";
-import {
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { executeVerifyEndpoint, SdmVerification } from "../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
 import { ClosedIssueHandler } from "../handlers/events/issue/ClosedIssueHandler";
 import { NewIssueHandler } from "../handlers/events/issue/NewIssueHandler";
@@ -96,14 +79,12 @@ import { OnChannelLink } from "../handlers/events/repo/OnChannelLink";
 import { OnFirstPushToRepo } from "../handlers/events/repo/OnFirstPushToRepo";
 import { OnPullRequest } from "../handlers/events/repo/OnPullRequest";
 import { OnRepoCreation } from "../handlers/events/repo/OnRepoCreation";
+import { OnRepoOnboarded } from "../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../spi/build/Builder";
 import { InterpretLog } from "../spi/log/InterpretedLog";
-import {
-    EmptyFunctionalUnit,
-    FunctionalUnit,
-} from "./FunctionalUnit";
+import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
 import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import { softwareDeliveryMachineOptions } from "./sdmOptions";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
@@ -315,6 +296,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 this.pullRequestListeners.length > 0 ?
                     () => new OnPullRequest(this.opts.projectLoader, this.pullRequestListeners,
                         this.opts.credentialsResolver) : undefined,
+                this.repoOnboardingListeners.length > 0 ?
+                    () => new OnRepoOnboarded(this.repoOnboardingListeners, this.opts.credentialsResolver) :
+                    undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
                 this.semanticDiffReactor,
@@ -507,7 +491,7 @@ export function configureSdm(
             const missingValues = [];
             (options.requiredConfigurationValues || []).forEach(v => {
                 if (!_.get(config, v)) {
-                   missingValues.push(v);
+                    missingValues.push(v);
                 }
             });
             if (missingValues.length > 0) {

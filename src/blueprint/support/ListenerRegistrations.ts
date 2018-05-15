@@ -26,6 +26,7 @@ import { DeploymentListener } from "../../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../../common/listener/FingerprintDifferenceListener";
 import { GoalCompletionListener, GoalsSetListener } from "../../common/listener/GoalsSetListener";
 import { NewIssueListener } from "../../common/listener/NewIssueListener";
+import { ProjectListener } from "../../common/listener/ProjectListener";
 import { PullRequestListener } from "../../common/listener/PullRequestListener";
 import { PushListener } from "../../common/listener/PushListener";
 import { RepoCreationListener } from "../../common/listener/RepoCreationListener";
@@ -55,6 +56,8 @@ export class ListenerRegistrations {
     protected readonly closedIssueListeners: ClosedIssueListener[] = [];
 
     protected readonly repoCreationListeners: RepoCreationListener[] = [];
+
+    protected readonly repoOnboardingListeners: ProjectListener[] = [];
 
     protected readonly pullRequestListeners: PullRequestListener[] = [];
 
@@ -135,6 +138,11 @@ export class ListenerRegistrations {
      */
     public addRepoCreationListeners(...rcls: RepoCreationListener[]): this {
         this.repoCreationListeners.push(...rcls);
+        return this;
+    }
+
+    public addRepoOnboardingListeners(...rols: ProjectListener[]): this {
+        this.repoOnboardingListeners.push(...rols);
         return this;
     }
 
