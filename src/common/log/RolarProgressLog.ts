@@ -19,13 +19,12 @@ import * as _ from "lodash";
 import axios from "axios";
 import {ProgressLog} from "../../spi/log/ProgressLog";
 
-import {HandlerContext, logger} from "@atomist/automation-client";
+import {logger} from "@atomist/automation-client";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 
 import {AxiosInstance} from "axios";
 import os = require("os");
 import {WrapOptions} from "retry";
-import {SdmGoal} from "../../ingesters/sdmGoalIngester";
 
 function* timestampGenerator() {
     while (true) {
@@ -127,17 +126,4 @@ interface LogData {
     level: string;
     message: string;
     timestamp: string;
-}
-
-export function constructLogPath(context: HandlerContext, sdmGoal: SdmGoal): string[] {
-    return [
-        context.teamId,
-        sdmGoal.repo.owner,
-        sdmGoal.repo.name,
-        sdmGoal.sha,
-        sdmGoal.environment,
-        sdmGoal.name,
-        sdmGoal.goalSetId,
-        context.correlationId,
-    ];
 }
