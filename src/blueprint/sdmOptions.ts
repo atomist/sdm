@@ -28,7 +28,8 @@ export function softwareDeliveryMachineOptions(configuration: Configuration): So
     return {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
-        logFactory: logFactory(_.get(configuration, "sdm.rolar.url")),
+        logFactory: logFactory(_.get(configuration, "sdm.rolar.url"),
+            _.get(configuration, "sdm.dashboard.url")),
         credentialsResolver: new GitHubCredentialsResolver(),
     };
 }
