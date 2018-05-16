@@ -463,7 +463,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 }
 
 export interface ConfigureOptions {
-    sdmOptions?: SoftwareDeliveryMachineOptions;
+    sdmOptions?: Partial<SoftwareDeliveryMachineOptions>;
     requiredConfigurationValues?: string[];
 }
 
@@ -471,7 +471,10 @@ export function configureSdm(
     machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
     options: ConfigureOptions = {}) {
     return async (config: Configuration) => {
-        const sdmOptions = options.sdmOptions ? options.sdmOptions : softwareDeliveryMachineOptions(config);
+        const sdmOptions = {
+            ...softwareDeliveryMachineOptions(config),
+            ...(options.sdmOptions ? options.sdmOptions : {}),
+        };
         const machine = machineMaker(sdmOptions, config);
 
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
