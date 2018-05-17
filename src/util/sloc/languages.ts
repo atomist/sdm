@@ -20,6 +20,9 @@ export const JavaLanguage: Language = {name: "Java", extensions: ["java"]};
 export const KotlinLanguage: Language = {name: "Kotlin", extensions: ["kt"]};
 export const ClojureLanguage: Language = {name: "Clojure", extensions: ["clj"]};
 export const ScalaLanguage: Language = {name: "Scala", extensions: ["scala"]};
+export const PythonLanguage: Language = {name: "Python", extensions: ["py"]};
+export const RustLanguage: Language = {name: "Rust", extensions: ["rs"]};
+export const GoLanguage: Language = {name: "Go", extensions: ["go"]};
 
 export const TypeScriptLanguage: Language = {name: "TypeScript", extensions: ["ts"]};
 export const JavaScriptLanguage: Language = {name: "JavaScript", extensions: ["js"]};
@@ -27,4 +30,6 @@ export const JavaScriptLanguage: Language = {name: "JavaScript", extensions: ["j
 export const AllLanguages = [
     JavaLanguage, KotlinLanguage, ClojureLanguage, ScalaLanguage,
     TypeScriptLanguage, JavaScriptLanguage,
+    PythonLanguage, RustLanguage,
+    GoLanguage,
 ];
