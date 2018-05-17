@@ -15,7 +15,8 @@
  */
 
 import * as assert from "power-assert";
-import { HttpServiceGoals, whenPushSatisfies } from "../../../src";
+import { whenPushSatisfies } from "../../../src/blueprint/dsl/goalDsl";
+import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
 import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
 import { fakePush } from "./decisionTreeTest";
 
@@ -64,5 +65,15 @@ describe("whenPushSatisfies", () => {
     it("should default name with two", async () => {
         const test = whenPushSatisfies(TruePushTest, FalsePushTest).setGoals(HttpServiceGoals);
         assert.equal(test.name, TruePushTest.name + " && " + FalsePushTest.name);
+    });
+
+    it("should allow simple function", async () => {
+        const test = whenPushSatisfies(async p => true).setGoals(HttpServiceGoals);
+        assert.equal(await test.valueForPush(fakePush()), HttpServiceGoals);
+    });
+
+    it("should allow simple function returning false", async () => {
+        const test = whenPushSatisfies(async p => p.push.id === "notThis").setGoals(HttpServiceGoals);
+        assert.equal(await test.valueForPush(fakePush()), undefined);
     });
 });
