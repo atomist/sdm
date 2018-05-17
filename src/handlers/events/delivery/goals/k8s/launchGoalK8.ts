@@ -47,7 +47,7 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
 
     const log = new StringCapturingProgressLog();
 
-    const spec = await spawnAndWatch({
+    let result = await spawnAndWatch({
             command: "kubectl",
             args: ["get", "deployment", deploymentName, "-n", deploymentNamespace, "-o", "json"],
         },
@@ -58,8 +58,8 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
         },
     );
 
-    if (spec.code !== 0) {
-        return spec;
+    if (result.code !== 0) {
+        return result;
     }
 
     const jobSpec = JSON.parse(JobSpec);
@@ -99,10 +99,10 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     const tempfile = require("tempfile")(".json");
     await fs.writeFile(tempfile, JSON.stringify(jobSpec, null, 2));
 
-    // TODO CD the following code needs to be replaced with proper job scheduling via k8-automation
-    return spawnAndWatch({
+    // Check if this job was previously launched
+    result = await spawnAndWatch({
             command: "kubectl",
-            args: ["apply", "-f", tempfile],
+            args: ["get", "job", jobSpec.metadata.name, "-n", deploymentNamespace],
         },
         {},
         progressLog,
@@ -111,6 +111,29 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
         },
     );
 
+    if (result.code !== 0) {
+        return spawnAndWatch({
+                command: "kubectl",
+                args: ["apply", "-f", tempfile],
+            },
+            {},
+            progressLog,
+            {
+                errorFinder: code => code !== 0,
+            },
+        );
+    } else {
+        return spawnAndWatch({
+                command: "kubectl",
+                args: ["replace", "--force", "-f", tempfile],
+            },
+            {},
+            progressLog,
+            {
+                errorFinder: code => code !== 0,
+            },
+        );
+    }
     // query kube to make sure the job got scheduled
     // kubectl get job <jobname> -o json
 };
