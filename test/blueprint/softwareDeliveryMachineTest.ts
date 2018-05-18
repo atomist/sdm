@@ -24,9 +24,13 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
+import { when } from "../../src/blueprint/dsl/buildDsl";
+import { npmCustomBuilder } from "../../src/common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { HttpServiceGoals } from "../../src/common/delivery/goals/common/httpServiceGoals";
 import { GoalsSetListener } from "../../src/common/listener/GoalsSetListener";
+import { HasAtomistBuildFile } from "../../src/common/listener/support/pushtest/node/nodePushTests";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
+import { AddThingAutofix } from "../common/delivery/code/autofix/executeAutofixesTest";
 import { fakePush } from "./dsl/decisionTreeTest";
 
 describe("SDM handler creation", () => {
@@ -89,6 +93,40 @@ describe("SDM handler creation", () => {
             const p = fakePush(project);
             assert.equal(await sdm.pushMapping.valueForPush(p), HttpServiceGoals);
         });
+    });
+
+    describe("observesOnly", () => {
+
+        it("cannot mutate", async () => {
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
+                    .setGoals(HttpServiceGoals));
+            assert(sdm.observesOnly);
+        });
+
+        it("has an autofix", async () => {
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
+                    .setGoals(HttpServiceGoals));
+            sdm.addAutofixes(AddThingAutofix);
+            assert(!sdm.observesOnly);
+        });
+
+        it("has a build", async () => {
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
+                    .setGoals(HttpServiceGoals));
+            sdm.addBuildRules(when(HasAtomistBuildFile)
+                .itMeans("Custom build script")
+                .set(npmCustomBuilder(sdm.opts.artifactStore, sdm.opts.projectLoader)));
+            assert(!sdm.observesOnly);
+        });
+
+        // tslint:disable:no-unused-expression
+        it("has a deployment").pending;
     });
 
 });

@@ -120,6 +120,9 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
 
     private readonly disposalGoalSetters: GoalSetter[] = [];
 
+    // Maintained depending on whether this SDM might mutate
+    private mightMutate: boolean = false;
+
     /**
      * Return the PushMapping that will be used on pushes.
      * Useful in testing goal setting.
@@ -127,6 +130,19 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
      */
     get pushMapping(): PushMapping<Goals> {
         return new PushRules("Goal setter", this.goalSetters);
+    }
+
+    /**
+     * Return if this SDM purely observes, rather than changes an org.
+     * Note that this cannot be 100% reliable, as arbitrary event handlers
+     * could be making commits, initiating deployments etc.
+     * @return {boolean}
+     */
+    get observesOnly(): boolean {
+        if (this.mightMutate) {
+            return false;
+        }
+        return this.autofixRegistrations.length === 0;
     }
 
     /*
@@ -356,6 +372,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     public addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this {
+        this.mightMutate = rules.length > 0;
         _.flatten(rules).forEach(r =>
             this.addGoalImplementation(r.name, BuildGoal,
                 executeBuild(this.opts.projectLoader, r.value),
@@ -375,6 +392,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     }
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this {
+        this.mightMutate = rules.length > 0;
         _.flatten(rules).forEach(r => {
             // deploy
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,

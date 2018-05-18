@@ -26,7 +26,7 @@ import { IsTypeScript } from "../../../../../src/common/listener/support/pushtes
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
-const AddThingAutofix: AutofixRegistration = {
+export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
     pushTest: IsTypeScript,
     action: async cri => {
