@@ -20,10 +20,14 @@ import { NoGoals } from "../../src/common/delivery/goals/common/commonGoals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
 import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest";
 
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
+import { HttpServiceGoals } from "../../src/common/delivery/goals/common/httpServiceGoals";
 import { GoalsSetListener } from "../../src/common/listener/GoalsSetListener";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
+import { fakePush } from "./dsl/decisionTreeTest";
 
 describe("SDM handler creation", () => {
 
@@ -54,4 +58,37 @@ describe("SDM handler creation", () => {
         });
 
     });
+
+    describe("can test goal setting", () => {
+
+        it("sets no goals", async () => {
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(AnyPush)
+                    .itMeans("do nothing")
+                    .setGoals(null));
+            const p = fakePush();
+            assert.equal(await sdm.pushMapping.valueForPush(p), undefined);
+        });
+
+        it("sets goals on any push", async () => {
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(AnyPush)
+                    .setGoals(HttpServiceGoals));
+            const p = fakePush();
+            assert.equal(await sdm.pushMapping.valueForPush(p), HttpServiceGoals);
+        });
+
+        it("sets goals on particular push", async () => {
+            const project = InMemoryProject.of(new InMemoryFile("thing", "1"));
+            const sdm = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
+                    .setGoals(HttpServiceGoals));
+            const p = fakePush(project);
+            assert.equal(await sdm.pushMapping.valueForPush(p), HttpServiceGoals);
+        });
+    });
+
 });

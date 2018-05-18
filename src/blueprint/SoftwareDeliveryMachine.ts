@@ -45,12 +45,15 @@ import {
     StagingVerifiedGoal,
 } from "../common/delivery/goals/common/commonGoals";
 import { Goal } from "../common/delivery/goals/Goal";
+import { Goals } from "../common/delivery/goals/Goals";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../common/listener/GoalSetter";
+import { PushMapping } from "../common/listener/PushMapping";
 import { PushTest } from "../common/listener/PushTest";
 import { PushRule } from "../common/listener/support/PushRule";
+import { PushRules } from "../common/listener/support/PushRules";
 import { AnyPush } from "../common/listener/support/pushtest/commonPushTests";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { deleteRepositoryCommand } from "../handlers/commands/deleteRepository";
@@ -116,6 +119,15 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
     public readonly goalSetters: GoalSetter[] = [];
 
     private readonly disposalGoalSetters: GoalSetter[] = [];
+
+    /**
+     * Return the PushMapping that will be used on pushes.
+     * Useful in testing goal setting.
+     * @return {PushMapping<Goals>}
+     */
+    get pushMapping(): PushMapping<Goals> {
+        return new PushRules("Goal setter", this.goalSetters);
+    }
 
     /*
      * Store all the implementations we know

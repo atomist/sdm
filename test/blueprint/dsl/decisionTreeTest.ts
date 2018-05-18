@@ -18,12 +18,16 @@ import { Goals, HttpServiceGoals, NoGoals, PushListenerInvocation, PushMapping, 
 import { given } from "../../../src/blueprint/dsl/decisionTree";
 import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
 
+import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
 
 const FrogPushMapping: PushMapping<string> = {name: "frog", valueForPush: async () => "frog"};
 
-export function fakePush(): PushListenerInvocation {
-    return {push: {id: new Date().getTime() + "_"}}as any as PushListenerInvocation;
+export function fakePush(project?: Project): PushListenerInvocation {
+    return {
+        push: {id: new Date().getTime() + "_"},
+        project,
+    } as any as PushListenerInvocation;
 }
 
 describe("given", () => {
