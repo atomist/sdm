@@ -39,14 +39,16 @@ import { chattyEditorFactory } from "./editorWrappers";
  * @param edd function to make a fresh editor instance from the params
  * @param name editor name
  * @param paramsMaker parameters factory, typically the name of a class with a no arg constructor
+ * @param targets targets parameters. Allows targeting to other source control systems
  * @param details optional details to customize behavior
  * Add intent "edit <name>"
  */
 export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
                                                         name: string,
                                                         paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
-                                                        details: Partial<EditorCommandDetails> = {}): HandleCommand<EditOneOrAllParameters> {
-
+                                                        details: Partial<EditorCommandDetails> = {},
+                                                        targets: FallbackParams =
+                                                            new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
     const description = details.description || name;
     const detailsToUse: EditorCommandDetails = {
         description,
@@ -62,7 +64,7 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
 
     return editorHandler(
         chattyEditorFactory(name, edd) as any,
-        toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker),
+        toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker, targets),
         name,
         detailsToUse);
 }
@@ -70,18 +72,17 @@ export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) =>
 /**
  * Return a parameters maker that is targeting aware
  * @param {Maker<PARAMS>} paramsMaker
+ * @param targets targets parameters to set if necessary
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
-export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>): Maker<EditorOrReviewerParameters & PARAMS> {
+export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
+                                                          targets: FallbackParams): Maker<EditorOrReviewerParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isEditorOrReviewerParameters(sampleParams) ?
         paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
             const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-            const targets: FallbackParams =
-                // new BitBucketTargetsParams();
-               new GitHubFallbackReposParameters();
             allParms.targets = targets;
             allParms.bindAndValidate = () => {
                 validate(targets);
