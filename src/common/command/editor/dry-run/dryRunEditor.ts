@@ -18,6 +18,8 @@ import { HandleCommand, logger } from "@atomist/automation-client";
 import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
+import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
+import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
@@ -42,12 +44,15 @@ export const DryRunContext = "atomist-dry-run";
  * @param name editor name
  * @param paramsMaker parameters factory, typically the name of a class with a no arg constructor
  * @param details optional details to customize behavior
+ * @param targets targets parameters. Allows targeting to other source control systems
  * Add intent "try edit <name>"
  */
 export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
                                                        paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
                                                        name: string,
-                                                       details: Partial<EditorCommandDetails<PARAMS>> = {}): HandleCommand<EditOneOrAllParameters> {
+                                                       details: Partial<EditorCommandDetails<PARAMS>> = {},
+                                                       targets: FallbackParams =
+                                                           new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
     if (!!details.editMode) {
         throw new Error("Cannot set editMode for dryRunEditor");
     }
@@ -76,7 +81,7 @@ export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => 
     };
     return editorHandler(
         chattyEditorFactory(name, edd) as any,
-        toEditorOrReviewerParametersMaker(paramsMaker),
+        toEditorOrReviewerParametersMaker(paramsMaker, targets),
         name,
         detailsToUse);
 }
