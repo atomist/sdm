@@ -44,7 +44,7 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
     }
 
     /**
-     * Set an additional reason if we want to add information to that that's
+     * Set an additional reason if we want to add information to that which is
      * available from the push tests themselves
      * @param {string} reason
      * @return {this}
