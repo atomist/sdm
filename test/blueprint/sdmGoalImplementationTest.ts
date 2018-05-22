@@ -30,6 +30,8 @@ import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTe
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
+import { GoalImplementation } from "../../src";
+import { SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",
@@ -40,14 +42,14 @@ const favoriteRepoRef = GitHubRepoRef.from({
 
 export const fakeSoftwareDeliveryMachineOptions = {
     projectLoader: new SingleProjectLoader(InMemoryProject.from(favoriteRepoRef,
-        {path: "README.md", content: "read sometthing else"})),
+        { path: "README.md", content: "read sometthing else" })),
 } as any as SoftwareDeliveryMachineOptions;
 
-const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
+const credentials: ProjectOperationCredentials = { token: "ab123bbbaaa" };
 
-const fakeContext = {context: {name: "my favorite context "}} as any as HandlerContext;
+const fakeContext = { context: { name: "my favorite context " } } as any as HandlerContext;
 
-const aPush = {repo: {org: {provider: {providerId: "myProviderId"}}}} as PushFields.Fragment;
+const aPush = { repo: { org: { provider: { providerId: "myProviderId" } } } } as PushFields.Fragment;
 
 describe("implementing goals in the SDM", () => {
 
@@ -59,11 +61,11 @@ describe("implementing goals in the SDM", () => {
                 .itMeans("autofix the crap out of that thing")
                 .setGoals(new Goals("Autofix only", AutofixGoal)));
 
-        const {determinedGoals, goalsToSave} = await determineGoals({
-                projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
-                goalSetters: mySDM.goalSetters,
-                implementationMapping: mySDM.goalFulfillmentMapper,
-            }, {
+        const { determinedGoals, goalsToSave } = await determineGoals({
+            projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
+            goalSetters: mySDM.goalSetters,
+            implementationMapping: mySDM.goalFulfillmentMapper,
+        }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 addressChannels: () => Promise.resolve({}),
                 goalSetId: "hi",
@@ -75,11 +77,10 @@ describe("implementing goals in the SDM", () => {
         assert.equal(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
 
-        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
+        const myImpl = mySDM.goalFulfillmentMapper.findFulfillmentBySdmGoal(onlyGoal) as GoalImplementation;
 
         assert.equal(myImpl.implementationName, "Autofix");
     });
-
     const customGoal = new Goal({
         uniqueName: "Jerry",
         displayName: "Springer", environment: "1-staging/", orderedName: "1-springer",
@@ -100,13 +101,13 @@ describe("implementing goals in the SDM", () => {
             .addGoalImplementation("Cornelius",
                 customGoal,
                 goalExecutor,
-            );
+        );
 
-        const {determinedGoals, goalsToSave} = await determineGoals({
-                projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
-                goalSetters: mySDM.goalSetters,
-                implementationMapping: mySDM.goalFulfillmentMapper,
-            }, {
+        const { determinedGoals, goalsToSave } = await determineGoals({
+            projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
+            goalSetters: mySDM.goalSetters,
+            implementationMapping: mySDM.goalFulfillmentMapper,
+        }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
                 addressChannels: () => Promise.resolve({}),
                 goalSetId: "hi",
@@ -118,11 +119,29 @@ describe("implementing goals in the SDM", () => {
         assert.equal(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
 
-        const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
+        const myImpl = mySDM.goalFulfillmentMapper.findFulfillmentBySdmGoal(onlyGoal) as GoalImplementation;
 
         assert.equal(myImpl.implementationName, "Cornelius");
         await myImpl.goalExecutor(undefined);
         assert(executed);
     });
+
+    describe("finding the fulfillment by goal", () => {
+        it("returns a friendly error when it is not found", async () => {
+            const mySDM = new SoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions);
+            mySDM.addGoalImplementation("Cornelius",
+                customGoal,
+                async () => { return Success },
+            );
+
+            const onlyGoal = { name: "foo", fulfillment: { } } as SdmGoal;
+
+            const myImpl = mySDM.goalFulfillmentMapper.findFulfillmentBySdmGoal(onlyGoal) as GoalImplementation;
+
+            assert.equal(myImpl.implementationName, "Cornelius");
+
+        });
+    })
 
 });

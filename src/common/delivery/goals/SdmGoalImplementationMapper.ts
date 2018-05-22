@@ -23,7 +23,7 @@ import { PushTest } from "../../listener/PushTest";
 import { Goal } from "./Goal";
 import { ExecuteGoalWithLog } from "./support/reportGoalError";
 
-export type GoalFulfillment = GoalImplementation | GoalSideEffect;
+export type GoalFulfillment = GoalImplementation | GoalSideEffect | NoFulfillmentFound;
 
 export interface GoalImplementation {
     implementationName: string;
@@ -33,8 +33,20 @@ export interface GoalImplementation {
     logInterpreter: InterpretLog;
 }
 
+export type NoFulfillmentFound = string;
+
 export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {
     return !!f && !!(f as GoalImplementation).implementationName && true;
+}
+
+export function goalFulfillmentToString(gf: GoalFulfillment): string {
+    if (isGoalImplementation(gf)) {
+        return "Implementation: " + gf.implementationName;
+    }
+    if (isSideEffect(gf)) {
+        return "Side effect expected: " + gf.sideEffectName;
+    }
+    else return gf;
 }
 
 export interface GoalSideEffect {
@@ -65,7 +77,7 @@ export class SdmGoalImplementationMapper {
 
     constructor(private readonly goalLauncher: IsolatedGoalLauncher) {}
 
-    public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
+    public findFulfillmentBySdmGoal(goal: SdmGoal): GoalFulfillment {
         const matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
             m.goal.context === goal.externalKey);
