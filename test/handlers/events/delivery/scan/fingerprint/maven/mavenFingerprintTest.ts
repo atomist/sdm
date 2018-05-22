@@ -23,13 +23,17 @@ import { PushImpactListenerInvocation } from "../../../../../../../src/common/li
 
 describe("MavenFingerprinter", () => {
 
+    it("should have name", () => {
+        assert(!!new MavenFingerprinter().name);
+    });
+
     it("should find some dependencies", async () => {
         const Seed = await GitCommandGitProject.cloned({token: null},
             new GitHubRepoRef("atomist-seeds", "spring-rest-seed"));
         const fp = await new MavenFingerprinter().action({ project: Seed} as PushImpactListenerInvocation);
         const f1 = JSON.parse(fp[0].data);
         assert(f1.length > 0);
-        f1.forEach(f => assert.equal(f.groupId, "org.springframework.boot"));
+        f1.forEach(f => assert.equal(f.group, "org.springframework.boot"));
     }).timeout(40000);
 
 });

@@ -24,8 +24,8 @@ import {
 import { Tagger, Tags } from "@atomist/automation-client/operations/tagger/Tagger";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
-import { GitHubTagRouter } from "@atomist/spring-automation/commands/tag/gitHubTagRouter";
 import { listTopics } from "../../util/github/ghub";
+import { GitHubTagRouter } from "../../util/github/gitHubTagRouter";
 import { AddressChannels } from "../slack/addressChannels";
 
 /**

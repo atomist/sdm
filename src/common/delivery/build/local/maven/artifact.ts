@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { VersionedArtifact } from "@atomist/spring-automation/commands/generator/java/JavaProjectParameters";
+import { VersionedArtifact } from "./VersionedArtifact";
 
 export function coordinates(va: VersionedArtifact): string {
-    let coords = `${va.groupId}:${va.artifactId}`;
+    let coords = `${va.group}:${va.artifact}`;
     if (va.version) {
         coords += `:${va.version}`;
     }
@@ -31,8 +31,8 @@ export function coordinates(va: VersionedArtifact): string {
  */
 export function toVersionedArtifact(raw: any): VersionedArtifact {
     return {
-        groupId: raw.groupId[0],
-        artifactId: raw.artifactId[0],
+        group: raw.groupId[0],
+        artifact: raw.artifactId[0],
         version: raw.version[0],
         description: !!raw.description ? raw.description[0] : undefined,
     };

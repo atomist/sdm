@@ -15,7 +15,6 @@
  */
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { AllJavaFiles } from "@atomist/spring-automation/commands/generator/java/javaProjectUtils";
 import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
 import { hasFile, hasFileWithExtension } from "../commonPushTests";
 
@@ -30,7 +29,7 @@ export const IsMaven: PredicatePushTest = predicatePushTest(
 export const IsJava = predicatePushTest(
     "Is Java",
     async p =>
-        fileExists(p, AllJavaFiles, () => true));
+        fileExists(p, "**/*.java", () => true));
 
 export const IsClojure = hasFileWithExtension("clj");
 

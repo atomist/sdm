@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import {ProgressLog} from "@atomist/spring-automation/commands/editor/pcf/addManifestEditor";
 import * as assert from "power-assert";
 import {DelimitedWriteProgressLogDecorator} from "../../../src/common/log/DelimitedWriteProgressLogDecorator";
+import { ProgressLog } from "../../../src/spi/log/ProgressLog";
 
 class ListProgressLog implements ProgressLog {
 
