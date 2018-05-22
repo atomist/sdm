@@ -27,8 +27,9 @@ import {
     EventHandlerMetadata,
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
+
 import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/gitHubStatusSetters";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper, isGoalImplementation, goalFulfillmentToString } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
@@ -66,19 +67,19 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
-                private readonly projectLoader: ProjectLoader,
-                private readonly logFactory: ProgressLogFactory) {
+        private readonly projectLoader: ProjectLoader,
+        private readonly logFactory: ProgressLogFactory) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
         this.subscription =
-            subscription({name: "OnAnyRequestedSdmGoal"});
+            subscription({ name: "OnAnyRequestedSdmGoal" });
         this.name = implementationName + "OnAnyRequestedSdmGoal";
         this.description = `Fulfill a goal when it reaches 'requested' state`;
     }
 
     public async handle(event: EventFired<OnAnyRequestedSdmGoal.Subscription>,
-                        ctx: HandlerContext,
-                        params: this): Promise<HandlerResult> {
+        ctx: HandlerContext,
+        params: this): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
         const commit = await fetchCommitForSdmGoal(ctx, sdmGoal);
 
@@ -97,14 +98,20 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         logger.info("Executing FulfillGoalOnRequested with '%s'", sdmGoal.fulfillment.name); // take this out when automation-api#395 is fixed
 
-        const {goal, goalExecutor, logInterpreter} = this.implementationMapper.findImplementationBySdmGoal(sdmGoal);
+        const goalFulfillment = this.implementationMapper.findFulfillmentBySdmGoal(sdmGoal);
+        if (!isGoalImplementation(goalFulfillment)) {
+            logger.info("I do not have an implementation for this goal: %s", goalFulfillmentToString(goalFulfillment));
+            return { code: 0, message: "No implementation found" }
+        }
+
+        const { goal, goalExecutor, logInterpreter } = goalFulfillment;
 
         const log = await this.logFactory(ctx, sdmGoal);
         const progressLog = new WriteToAllProgressLog(sdmGoal.name, new LoggingProgressLog(sdmGoal.name, "debug"), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
-        const credentials = {token: params.githubToken};
-        const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
+        const credentials = { token: params.githubToken };
+        const rwlc: RunWithLogContext = { status, progressLog, context: ctx, addressChannels, id, credentials };
 
         const isolatedGoalLauncher = this.implementationMapper.getIsolatedGoalLauncher();
 
@@ -112,7 +119,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
             return isolatedGoalLauncher(sdmGoal, ctx, progressLog);
         } else {
             delete (sdmGoal as any).id;
-            return executeGoal({projectLoader: params.projectLoader},
+            return executeGoal({ projectLoader: params.projectLoader },
                 goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
                 .then(async res => {
                     await progressLog.close();
