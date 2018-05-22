@@ -47,6 +47,6 @@ describe("tsLintFix", () => {
         const fileNow = p.findFileSync(f.path);
         assert(!!fileNow);
         assert(fileNow.getContentSync().startsWith("const foo;"));
-    }).timeout(40000);
+    }).timeout(90000);
 
 });
