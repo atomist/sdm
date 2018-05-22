@@ -54,6 +54,11 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
         return this;
     }
 
+    /**
+     * Set the value that will be resolved from this rule
+     * @param {V} value
+     * @return {this}
+     */
     public set(value: V): this {
         this.staticValue = value;
         return this;
