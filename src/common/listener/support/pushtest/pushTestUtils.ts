@@ -16,8 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
+import { isMapping } from "../../Mapping";
 import { PushListenerInvocation } from "../../PushListener";
-import { isPushMapping } from "../../PushMapping";
 import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
 
 /**
@@ -26,7 +26,7 @@ import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
  * @return {PushTest}
  */
 export function not(t: PushTest): PushTest {
-    return pushTest(`not (${t.name})`, async pi => !(await t.valueForPush(pi)));
+    return pushTest(`not (${t.name})`, async pi => !(await t.mapping(pi)));
 }
 
 export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
@@ -42,7 +42,7 @@ export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
         async pci => {
             const allResults: boolean[] = await Promise.all(
                 pushTests.map(async pt => {
-                    const result = isPushMapping(pt) ? await pt.valueForPush(pci) : await pt(pci.project);
+                    const result = isMapping(pt) ? await pt.mapping(pci) : await pt(pci.project);
                     logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
                     return result;
                 }),
@@ -62,7 +62,7 @@ export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
         async pci => {
             const allResults: boolean[] = await Promise.all(
                 pushTests.map(async pt => {
-                    const result = isPushMapping(pt) ? await pt.valueForPush(pci) : await pt(pci.project);
+                    const result = isMapping(pt) ? await pt.mapping(pci) : await pt(pci.project);
                     logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
                     return result;
                 }),
@@ -81,11 +81,11 @@ const pushTestResultMemory = new LruCache<boolean>(1000);
 export function memoize(pt: PushTest): PushTest {
     return {
         name: pt.name,
-        valueForPush: async pti => {
+        mapping: async pti => {
             const key = ptCacheKey(pt, pti);
             let result = pushTestResultMemory.get(key);
             if (result === undefined) {
-                result = await pt.valueForPush(pti);
+                result = await pt.mapping(pti);
                 logger.info(`Evaluated push test [%s] to ${result}: cache stats=%j`, pt.name, pushTestResultMemory.stats);
                 pushTestResultMemory.put(key, result);
             }

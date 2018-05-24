@@ -36,12 +36,12 @@ describe("pushTestUtilsTest", () => {
     describe("not", () => {
 
         it("should handle one true", async () => {
-            const r = await not(TruePushTest).valueForPush({id} as any as PushListenerInvocation);
+            const r = await not(TruePushTest).mapping({id} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should handle one false", async () => {
-            const r = await not(FalsePushTest).valueForPush({id} as any as PushListenerInvocation);
+            const r = await not(FalsePushTest).mapping({id} as any as PushListenerInvocation);
             assert(r);
         });
 
@@ -52,17 +52,17 @@ describe("pushTestUtilsTest", () => {
         describe("with PushTest", () => {
 
             it("should handle one true", async () => {
-                const r = await allSatisfied(TruePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TruePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two true", async () => {
-                const r = await allSatisfied(TruePushTest, TruePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TruePushTest, TruePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle one true and one false", async () => {
-                const r = await allSatisfied(TruePushTest, FalsePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TruePushTest, FalsePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(!r);
             });
         });
@@ -70,17 +70,17 @@ describe("pushTestUtilsTest", () => {
         describe("with ProjectPredicate", () => {
 
             it("should handle one true", async () => {
-                const r = await allSatisfied(TrueProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TrueProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two true", async () => {
-                const r = await allSatisfied(TrueProjectPredicate, TrueProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TrueProjectPredicate, TrueProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle one true and one false", async () => {
-                const r = await allSatisfied(TrueProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await allSatisfied(TrueProjectPredicate, FalseProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(!r);
             });
         });
@@ -92,22 +92,22 @@ describe("pushTestUtilsTest", () => {
         describe("with PushTest", () => {
 
             it("should handle one true", async () => {
-                const r = await anySatisfied(TruePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TruePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two true", async () => {
-                const r = await anySatisfied(TruePushTest, TruePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TruePushTest, TruePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle one true and one false", async () => {
-                const r = await anySatisfied(TruePushTest, FalsePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TruePushTest, FalsePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two false", async () => {
-                const r = await anySatisfied(FalsePushTest, FalsePushTest).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(FalsePushTest, FalsePushTest).mapping({id} as any as PushListenerInvocation);
                 assert(!r);
             });
 
@@ -116,22 +116,22 @@ describe("pushTestUtilsTest", () => {
         describe("with ProjectPredicate", () => {
 
             it("should handle one true", async () => {
-                const r = await anySatisfied(TrueProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TrueProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two true", async () => {
-                const r = await anySatisfied(TrueProjectPredicate, TrueProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TrueProjectPredicate, TrueProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle one true and one false", async () => {
-                const r = await anySatisfied(TrueProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(TrueProjectPredicate, FalseProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(r);
             });
 
             it("should handle two false", async () => {
-                const r = await anySatisfied(FalseProjectPredicate, FalseProjectPredicate).valueForPush({id} as any as PushListenerInvocation);
+                const r = await anySatisfied(FalseProjectPredicate, FalseProjectPredicate).mapping({id} as any as PushListenerInvocation);
                 assert(!r);
             });
 

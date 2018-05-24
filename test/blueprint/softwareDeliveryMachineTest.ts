@@ -72,7 +72,7 @@ describe("SDM handler creation", () => {
                     .itMeans("do nothing")
                     .setGoals(null));
             const p = fakePush();
-            assert.equal(await sdm.pushMapping.valueForPush(p), undefined);
+            assert.equal(await sdm.pushMapping.mapping(p), undefined);
         });
 
         it("sets goals on any push", async () => {
@@ -81,7 +81,7 @@ describe("SDM handler creation", () => {
                 whenPushSatisfies(AnyPush)
                     .setGoals(HttpServiceGoals));
             const p = fakePush();
-            assert.equal(await sdm.pushMapping.valueForPush(p), HttpServiceGoals);
+            assert.equal(await sdm.pushMapping.mapping(p), HttpServiceGoals);
         });
 
         it("sets goals on particular push", async () => {
@@ -91,7 +91,7 @@ describe("SDM handler creation", () => {
                 whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals));
             const p = fakePush(project);
-            assert.equal(await sdm.pushMapping.valueForPush(p), HttpServiceGoals);
+            assert.equal(await sdm.pushMapping.mapping(p), HttpServiceGoals);
         });
     });
 

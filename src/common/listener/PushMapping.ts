@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
+import { Mapping, NeverMatch } from "./Mapping";
 import { PushListenerInvocation } from "./PushListener";
-import { XMapping } from "./Mapping";
-
-export type NeverMatch = null;
 
 /**
  * Constant to indicate we should never match
@@ -26,12 +24,7 @@ export type NeverMatch = null;
 export const DoNotSetAnyGoals: NeverMatch = null;
 
 /**
- * Mapping from push to value, id it can be resolved.
+ * Mapper from push to value, id it can be resolved.
  * This is a central interface used throughout the SDM.
  */
-export type PushMapping<V> = XMapping<PushListenerInvocation, V>;
-
-export function isPushMapping(a: any): a is PushMapping<any> {
-    const maybe = a as PushMapping<any>;
-    return !!maybe.name && !!maybe.valueForPush;
-}
+export type PushMapping<V> = Mapping<PushListenerInvocation, V>;

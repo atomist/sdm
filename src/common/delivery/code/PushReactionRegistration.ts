@@ -77,6 +77,6 @@ export interface SelectiveCodeActionOptions {
 export function relevantCodeActions<R>(registrations: Array<PushReactionRegistration<R>>,
                                        cri: PushImpactListenerInvocation): Promise<Array<PushReactionRegistration<R>>> {
     return Promise.all(
-        registrations.map(async t => (!t.pushTest || await t.pushTest.valueForPush(cri)) ? t : undefined))
+        registrations.map(async t => (!t.pushTest || await t.pushTest.mapping(cri)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));
 }

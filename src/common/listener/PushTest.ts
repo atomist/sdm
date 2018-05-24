@@ -33,13 +33,13 @@ export type ProjectPredicate = (p: Project) => Promise<boolean>;
 /**
  * Convenient factory function for PushTest instances
  * @param {string} name
- * @param valueForPush test function
+ * @param mapping test function
  * @return {PushTest}
  */
-export function pushTest(name: string, valueForPush: (p: PushListenerInvocation) => Promise<boolean>): PushTest {
+export function pushTest(name: string, mapping: (p: PushListenerInvocation) => Promise<boolean>): PushTest {
     return {
         name,
-        valueForPush,
+        mapping,
     };
 }
 
@@ -61,7 +61,7 @@ export interface PredicatePushTest extends PushTest {
 export function predicatePushTest(name: string, predicate: ProjectPredicate): PredicatePushTest {
     return {
         name,
-        valueForPush: pli => predicate(pli.project),
+        mapping: pli => predicate(pli.project),
         predicate,
     };
 }

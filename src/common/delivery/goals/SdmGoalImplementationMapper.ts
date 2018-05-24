@@ -97,14 +97,14 @@ export class SdmGoalImplementationMapper {
         const implementationsForGoal = this.implementations.filter(m => m.goal.name === goal.name
             && m.goal.environment === goal.environment);
         for (const implementation of implementationsForGoal) {
-            if (await implementation.pushTest.valueForPush(inv)) {
+            if (await implementation.pushTest.mapping(inv)) {
                 return implementation;
             }
         }
         const knownSideEffects = this.sideEffects.filter(m => m.goal.name === goal.name
             && m.goal.environment === goal.environment);
         for (const sideEffect of knownSideEffects) {
-            if (await sideEffect.pushTest.valueForPush(inv)) {
+            if (await sideEffect.pushTest.mapping(inv)) {
                 return sideEffect;
             }
         }

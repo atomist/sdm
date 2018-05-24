@@ -25,7 +25,7 @@ describe("PushRule", () => {
     it("should set literal value", async () => {
         const pr = new PushRule<string>(TruePushTest, [], "reason");
         pr.set("frogs");
-        assert.equal(await pr.valueForPush({
+        assert.equal(await pr.mapping({
             push: { id: new Date().getTime() + "_"},
             id: new GitHubRepoRef("a", "b"),
         } as any), "frogs");

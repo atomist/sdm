@@ -72,7 +72,7 @@ export class GivenTree<V> {
     public set(value: V): PushMapping<V> {
         return {
             name: this.name,
-            valueForPush: async () => value,
+            mapping: async () => value,
         };
     }
 
@@ -86,9 +86,9 @@ export class GivenTree<V> {
         const rules = new PushRules<V>(this.name, pushMappings);
         return {
             name: this.name,
-            valueForPush: async pli => {
-                const eligible = await this.givenPushTest.valueForPush(pli);
-                return eligible ? rules.valueForPush(pli) : undefined;
+            mapping: async pli => {
+                const eligible = await this.givenPushTest.mapping(pli);
+                return eligible ? rules.mapping(pli) : undefined;
             },
         };
     }

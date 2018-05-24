@@ -27,13 +27,13 @@ describe("commonPushTests", () => {
 
         it("should not find file in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await hasFile("whatever").valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFile("whatever").mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find file", async () => {
             const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
-            const r = await hasFile("pom.xml").valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFile("pom.xml").mapping({project} as any as PushListenerInvocation);
             assert(r);
         });
     });
@@ -42,19 +42,19 @@ describe("commonPushTests", () => {
 
         it("should not find in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await hasFileContaining("x", /y/).valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFileContaining("x", /y/).mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find containing", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.java", content: "public class Thing {}"});
-            const r = await hasFileContaining("src/main/java/Thing.java", /class/).valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFileContaining("src/main/java/Thing.java", /class/).mapping({project} as any as PushListenerInvocation);
             assert(r);
         });
 
         it("should not find whe file does not contain", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
-            const r = await hasFileContaining("src/main/java/Thing.java", /xclass/).valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFileContaining("src/main/java/Thing.java", /xclass/).mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
     });
@@ -63,15 +63,15 @@ describe("commonPushTests", () => {
 
         it("should not find file in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await hasFileWithExtension("java").valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFileWithExtension("java").mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find one file", async () => {
             const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
-            const r = await hasFileWithExtension("xml").valueForPush({project} as any as PushListenerInvocation);
+            const r = await hasFileWithExtension("xml").mapping({project} as any as PushListenerInvocation);
             assert(r);
-            const r2 = await hasFileWithExtension("java").valueForPush({project} as any as PushListenerInvocation);
+            const r2 = await hasFileWithExtension("java").mapping({project} as any as PushListenerInvocation);
             assert(!r2);
         });
     });

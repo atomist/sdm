@@ -28,7 +28,7 @@ describe("Construction of PushRules", () => {
         const project = InMemoryProject.from({owner: "yes", repo: "no"},
             {path: "package.json", content: "{}"});
         const fakePush = {id: "test1"};
-        const result = await rule.valueForPush({project, push: fakePush} as any as PushListenerInvocation);
+        const result = await rule.mapping({project, push: fakePush} as any as PushListenerInvocation);
 
         assert(!result);
 
@@ -42,7 +42,7 @@ describe("Construction of PushRules", () => {
         const project = InMemoryProject.from({owner: "yes", repo: "no"},
             {path: "project.clj", content: "{}"});
         const fakePush = {id: "ttest2"};
-        const result = await rule.valueForPush({project, push: fakePush} as any as PushListenerInvocation);
+        const result = await rule.mapping({project, push: fakePush} as any as PushListenerInvocation);
 
         assert(result);
 
