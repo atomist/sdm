@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { PushToValue } from "../../common/listener/PushMapping";
+import { Mapping } from "../../common/listener/Mapping";
 import { PushTest } from "../../common/listener/PushTest";
 import { isPushMapping, pushTest } from "../../index";
+import { PushListenerInvocation } from "../../common/listener/PushListener";
 
 /**
  * Predicate that can be used in our PushTest DSL.
  * Can be a PushTest, a function or computed boolean
  */
-export type PushTestPredicate = PushTest | PushToValue<boolean> | boolean | (() => (boolean | Promise<boolean>));
+export type PushTestPredicate = PushTest | Mapping<PushListenerInvocation, boolean> | boolean | (() => (boolean | Promise<boolean>));
 
 export function toPushTest(p: PushTestPredicate): PushTest {
     if (isPushMapping(p)) {
