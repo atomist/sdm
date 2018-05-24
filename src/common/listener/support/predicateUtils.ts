@@ -20,7 +20,7 @@ import { PredicateMapping } from "../Mapping";
 /**
  * Return the opposite of this predicate mapping
  */
-export function not<F>(t: PredicateMapping<F>): PredicateMapping<F> {
+export function whenNot<F>(t: PredicateMapping<F>): PredicateMapping<F> {
     return {
         name: `not (${t.name})`,
         mapping: async pi => !(await t.mapping(pi)),
@@ -28,12 +28,12 @@ export function not<F>(t: PredicateMapping<F>): PredicateMapping<F> {
 }
 
 /**
- * Wrap all these PushTests or ProjectPredicates in a single PushTest
+ * Wrap all these predicates in a single predicate
  * AND: Return true if all are satisfied
  * @param {PredicateMapping} predicates
  * @return {PredicateMapping}
  */
-export function allSatisfied<F>(...predicates: Array<PredicateMapping<F>>): PredicateMapping<F> {
+export function all<F>(...predicates: Array<PredicateMapping<F>>): PredicateMapping<F> {
     return {
         name: predicates.map(g => g.name).join(" && "),
         mapping: async pci => {
@@ -50,12 +50,12 @@ export function allSatisfied<F>(...predicates: Array<PredicateMapping<F>>): Pred
 }
 
 /**
- * Wrap all these PushTests or ProjectPredicates in a single PushTest
+ * Wrap all these predicates in a single predicate
  * OR: Return true if any is satisfied
  * @param {PredicateMapping} predicates
  * @return {PredicateMapping}
  */
-export function anySatisfied<F>(...predicates: Array<PredicateMapping<F>>): PredicateMapping<F> {
+export function any<F>(...predicates: Array<PredicateMapping<F>>): PredicateMapping<F> {
     return {
         name: predicates.map(g => g.name).join(" || "),
         mapping: async pci => {

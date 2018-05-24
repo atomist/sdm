@@ -25,7 +25,7 @@ import * as pred from "../predicateUtils";
 /**
  * Return the opposite of this push test
  */
-export const not = pred.not;
+export const not = pred.whenNot;
 
 export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
 
@@ -37,7 +37,7 @@ export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
  */
 export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
     const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
-    return pred.allSatisfied(...asPushTests);
+    return pred.all(...asPushTests);
 }
 
 /**
@@ -48,7 +48,7 @@ export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
  */
 export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
     const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
-    return pred.anySatisfied(...asPushTests);
+    return pred.any(...asPushTests);
 }
 
 const pushTestResultMemory = new LruCache<boolean>(1000);
