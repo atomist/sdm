@@ -126,22 +126,5 @@ describe("implementing goals in the SDM", () => {
         assert(executed);
     });
 
-    describe("finding the fulfillment by goal", () => {
-        it("returns a friendly error when it is not found", async () => {
-            const mySDM = new SoftwareDeliveryMachine("Gustave",
-                fakeSoftwareDeliveryMachineOptions);
-            mySDM.addGoalImplementation("Cornelius",
-                customGoal,
-                async () => { return Success },
-            );
-
-            const onlyGoal = { name: "foo", fulfillment: { } } as SdmGoal;
-
-            const myImpl = mySDM.goalFulfillmentMapper.findFulfillmentBySdmGoal(onlyGoal) as GoalImplementation;
-
-            assert.equal(myImpl.implementationName, "Cornelius");
-
-        });
-    })
 
 });
