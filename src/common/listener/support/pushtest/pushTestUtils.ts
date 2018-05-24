@@ -18,16 +18,14 @@ import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
 import { isMapping } from "../../Mapping";
 import { PushListenerInvocation } from "../../PushListener";
-import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
+import { predicatePushTest, ProjectPredicate, PushTest } from "../../PushTest";
+
+import * as pred from "../predicateUtils";
 
 /**
  * Return the opposite of this push test
- * @param {PushTest} t
- * @return {PushTest}
  */
-export function not(t: PushTest): PushTest {
-    return pushTest(`not (${t.name})`, async pi => !(await t.mapping(pi)));
-}
+export const not = pred.not;
 
 export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
 
@@ -38,17 +36,8 @@ export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
  * @return {PushTest}
  */
 export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
-    return pushTest(pushTests.map(g => g.name).join(" && "),
-        async pci => {
-            const allResults: boolean[] = await Promise.all(
-                pushTests.map(async pt => {
-                    const result = isMapping(pt) ? await pt.mapping(pci) : await pt(pci.project);
-                    logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
-                    return result;
-                }),
-            );
-            return !allResults.includes(false);
-        });
+    const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
+    return pred.allSatisfied(...asPushTests);
 }
 
 /**
@@ -58,17 +47,8 @@ export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
  * @return {PushTest}
  */
 export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
-    return pushTest(pushTests.map(g => g.name).join(" || "),
-        async pci => {
-            const allResults: boolean[] = await Promise.all(
-                pushTests.map(async pt => {
-                    const result = isMapping(pt) ? await pt.mapping(pci) : await pt(pci.project);
-                    logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
-                    return result;
-                }),
-            );
-            return allResults.includes(true);
-        });
+    const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
+    return pred.anySatisfied(...asPushTests);
 }
 
 const pushTestResultMemory = new LruCache<boolean>(1000);
