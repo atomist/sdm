@@ -477,7 +477,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
             })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
             .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
-                executeFingerprinting(this.opts.projectLoader, ...this.fingerprinterRegistrations))
+                executeFingerprinting(this.opts.projectLoader, this.fingerprinterRegistrations, this.fingerprintListeners))
             .addGoalImplementation("CodeReactions", PushReactionGoal,
                 executePushReactions(this.opts.projectLoader, this.pushReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,

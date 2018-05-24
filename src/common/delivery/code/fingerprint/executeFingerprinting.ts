@@ -19,6 +19,7 @@ import { Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
+import { FingerprintListener } from "../../../listener/FingerprintListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
@@ -30,11 +31,13 @@ import { FingerprinterRegistration } from "./FingerprinterRegistration";
  * Execute fingerprinting
  * @param projectLoader project loader
  * @param {FingerprinterRegistration} fingerprinters
+ * @param listeners listeners to fingerprints
  */
 export function executeFingerprinting(projectLoader: ProjectLoader,
-                                      ...fingerprinters: FingerprinterRegistration[]): ExecuteGoalWithLog {
+                                      fingerprinters: FingerprinterRegistration[],
+                                      listeners: FingerprintListener[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
-        const { id, credentials, context } = rwlc;
+        const {id, credentials, context} = rwlc;
         if (fingerprinters.length === 0) {
             return Success;
         }
@@ -47,6 +50,13 @@ export function executeFingerprinting(projectLoader: ProjectLoader,
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
             const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             fingerprints.map(fingerprint => sendFingerprint(id as GitHubRepoRef, fingerprint, context.teamId));
+            await Promise.all(listeners.map(l => Promise.all(fingerprints.map(fingerprint => l({
+                id,
+                context,
+                credentials,
+                addressChannels: cri.addressChannels,
+                fingerprint,
+            })))));
         });
         return Success;
     };

@@ -24,6 +24,7 @@ import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerIn
 import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
 import { DeploymentListener } from "../../common/listener/DeploymentListener";
 import { FingerprintDifferenceListener } from "../../common/listener/FingerprintDifferenceListener";
+import { FingerprintListener } from "../../common/listener/FingerprintListener";
 import { GoalCompletionListener, GoalsSetListener } from "../../common/listener/GoalsSetListener";
 import { NewIssueListener } from "../../common/listener/NewIssueListener";
 import { ProjectListener } from "../../common/listener/ProjectListener";
@@ -78,6 +79,8 @@ export class ListenerRegistrations {
     protected readonly artifactListenerRegistrations: ArtifactListenerRegisterable[] = [];
 
     protected readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
+
+    protected readonly fingerprintListeners: FingerprintListener[] = [];
 
     protected readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
@@ -198,6 +201,11 @@ export class ListenerRegistrations {
 
     public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
         this.fingerprinterRegistrations.push(...f);
+        return this;
+    }
+
+    public addFingerprintListeners(...l: FingerprintListener[]): this {
+        this.fingerprintListeners.push(...l);
         return this;
     }
 
