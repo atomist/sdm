@@ -19,7 +19,7 @@ export type Mapper<F, V> = (from: F) => MappingResult<V>;
 export interface Mapping<F, V> {
 
     /**
-     * Name of the PushMapping. Must be unique
+     * Name of the Mapping. Must be unique
      */
     readonly name: string;
 
