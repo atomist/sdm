@@ -212,7 +212,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetters: GoalSetter[] },
 
     try {
         const pushRules = new PushRules("Goal setter", goalSetters);
-        const determinedGoals: Goals = await pushRules.valueForPush(pi);
+        const determinedGoals: Goals = await pushRules.mapping(pi);
         if (!determinedGoals) {
             logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
         } else {

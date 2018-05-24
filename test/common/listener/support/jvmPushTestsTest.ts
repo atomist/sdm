@@ -27,13 +27,13 @@ describe("jvmPushTests", () => {
 
         it("should not find maven in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await IsMaven.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsMaven.mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find maven in repo with named pom", async () => {
             const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
-            const r = await IsMaven.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsMaven.mapping({project} as any as PushListenerInvocation);
             assert(r);
         });
     });
@@ -42,19 +42,19 @@ describe("jvmPushTests", () => {
 
         it("should not find Java in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await IsJava.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsJava.mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find Java in repo with Java file", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.java", content: "public class Thing {}"});
-            const r = await IsJava.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsJava.mapping({project} as any as PushListenerInvocation);
             assert(r);
         });
 
         it("should not find Java in repo with no Java file", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
-            const r = await IsJava.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsJava.mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
     });
@@ -63,21 +63,21 @@ describe("jvmPushTests", () => {
 
         it("should not find Clojure in empty repo", async () => {
             const project = InMemoryProject.of();
-            const r = await IsClojure.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsClojure.mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
 
         it("should find Clojure in repo with Clojure file", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.clj", content: "(())"});
-            const r = await IsClojure.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsClojure.mapping({project} as any as PushListenerInvocation);
             assert(r);
-            const r2 = await IsJava.valueForPush({project} as any as PushListenerInvocation);
+            const r2 = await IsJava.mapping({project} as any as PushListenerInvocation);
             assert(!r2);
         });
 
         it("should not find Clojure in repo with no Clojure file", async () => {
             const project = InMemoryProject.of({ path: "src/main/java/Thing.kt", content: "public class Thing {}"});
-            const r = await IsClojure.valueForPush({project} as any as PushListenerInvocation);
+            const r = await IsClojure.mapping({project} as any as PushListenerInvocation);
             assert(!r);
         });
     });

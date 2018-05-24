@@ -46,7 +46,7 @@ describe("deployPushTests tests thing", () => {
                  },
                  id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
              };
-             const result = await IsDeployEnabled.valueForPush(pi as any as PushListenerInvocation);
+             const result = await IsDeployEnabled.mapping(pi as any as PushListenerInvocation);
              assert(!result);
         });
 
@@ -76,7 +76,7 @@ describe("deployPushTests tests thing", () => {
                 id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
 
             };
-            const result = await IsDeployEnabled.valueForPush(pi as any as PushListenerInvocation);
+            const result = await IsDeployEnabled.mapping(pi as any as PushListenerInvocation);
             assert(result);
         });
 
@@ -105,7 +105,7 @@ describe("deployPushTests tests thing", () => {
                 },
                 id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
             };
-            const result = await IsDeployEnabled.valueForPush(pi as any as PushListenerInvocation);
+            const result = await IsDeployEnabled.mapping(pi as any as PushListenerInvocation);
             assert(!result);
         });
     });

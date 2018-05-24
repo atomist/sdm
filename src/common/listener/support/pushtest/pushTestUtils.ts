@@ -16,18 +16,16 @@
 
 import { logger } from "@atomist/automation-client";
 import { LruCache } from "../../../../util/misc/LruCache";
+import { isMapping } from "../../Mapping";
 import { PushListenerInvocation } from "../../PushListener";
-import { isPushMapping } from "../../PushMapping";
-import { ProjectPredicate, PushTest, pushTest } from "../../PushTest";
+import { predicatePushTest, ProjectPredicate, PushTest } from "../../PushTest";
+
+import * as pred from "../predicateUtils";
 
 /**
  * Return the opposite of this push test
- * @param {PushTest} t
- * @return {PushTest}
  */
-export function not(t: PushTest): PushTest {
-    return pushTest(`not (${t.name})`, async pi => !(await t.valueForPush(pi)));
-}
+export const not = pred.whenNot;
 
 export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
 
@@ -38,17 +36,8 @@ export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
  * @return {PushTest}
  */
 export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
-    return pushTest(pushTests.map(g => g.name).join(" && "),
-        async pci => {
-            const allResults: boolean[] = await Promise.all(
-                pushTests.map(async pt => {
-                    const result = isPushMapping(pt) ? await pt.valueForPush(pci) : await pt(pci.project);
-                    logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
-                    return result;
-                }),
-            );
-            return !allResults.includes(false);
-        });
+    const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
+    return pred.all(...asPushTests);
 }
 
 /**
@@ -58,17 +47,8 @@ export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
  * @return {PushTest}
  */
 export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
-    return pushTest(pushTests.map(g => g.name).join(" || "),
-        async pci => {
-            const allResults: boolean[] = await Promise.all(
-                pushTests.map(async pt => {
-                    const result = isPushMapping(pt) ? await pt.valueForPush(pci) : await pt(pci.project);
-                    logger.debug(`Result of PushTest '${pt.name}' was ${result}`);
-                    return result;
-                }),
-            );
-            return allResults.includes(true);
-        });
+    const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
+    return pred.any(...asPushTests);
 }
 
 const pushTestResultMemory = new LruCache<boolean>(1000);
@@ -81,11 +61,11 @@ const pushTestResultMemory = new LruCache<boolean>(1000);
 export function memoize(pt: PushTest): PushTest {
     return {
         name: pt.name,
-        valueForPush: async pti => {
+        mapping: async pti => {
             const key = ptCacheKey(pt, pti);
             let result = pushTestResultMemory.get(key);
             if (result === undefined) {
-                result = await pt.valueForPush(pti);
+                result = await pt.mapping(pti);
                 logger.info(`Evaluated push test [%s] to ${result}: cache stats=%j`, pt.name, pushTestResultMemory.stats);
                 pushTestResultMemory.put(key, result);
             }

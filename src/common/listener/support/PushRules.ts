@@ -52,10 +52,10 @@ export class PushRules<V> implements PushMapping<V> {
         this.choices = this.choices.concat(rules);
     }
 
-    public async valueForPush(pi: PushListenerInvocation): Promise<V> {
+    public async mapping(pi: PushListenerInvocation): Promise<V> {
         const results: V[] = await Promise.all(this.choices
             .map(async pc => {
-                const found = await pc.valueForPush(pi);
+                const found = await pc.mapping(pi);
                 logger.debug("Eligible PushRule named %s returned choice %j", pc.name, found);
                 return found;
             }));

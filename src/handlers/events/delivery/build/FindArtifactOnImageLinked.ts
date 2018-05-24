@@ -80,7 +80,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
                 logger.info("About to invoke %d ArtifactListener registrations", params.registrations.length);
                 await Promise.all(params.registrations
                     .map(toArtifactListenerRegistration)
-                    .filter(async arl => !arl.pushTest || !!(await arl.pushTest.valueForPush(pli)))
+                    .filter(async arl => !arl.pushTest || !!(await arl.pushTest.mapping(pli)))
                     .map(l => l.action(ai)));
             });
         }

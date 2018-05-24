@@ -63,7 +63,7 @@ export const checkstyleReviewer: (checkstylePath: string) =>
                 reject(err);
             });
             childProcess.on("exit", (code, signal) => {
-                logger.info("Checkstyle ran on %j, code=%d, stdout=\n%s\nstderr=%s", p.id, code, stdout, stderr);
+                logger.debug("Checkstyle ran on %j, code=%d, stdout=\n%s\nstderr=%s", p.id, code, stdout, stderr);
                 if (code !== 0 && stdout === "") {
                     reject(new ReviewerError("CheckStyle", `Process returned ${code}: ${stderr}`, stderr));
                 }

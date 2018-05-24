@@ -21,7 +21,10 @@ import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushT
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
 
-const FrogPushMapping: PushMapping<string> = {name: "frog", valueForPush: async () => "frog"};
+const FrogPushMapping: PushMapping<string> = {
+    name: "frog",
+    mapping: async () => "frog",
+};
 
 export function fakePush(project?: Project): PushListenerInvocation {
     return {
@@ -36,7 +39,7 @@ describe("given", () => {
         const pm: PushMapping<any> = given(TruePushTest)
             .itMeans("frogs coming")
             .then(FrogPushMapping);
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, "frog");
     });
 
@@ -44,7 +47,7 @@ describe("given", () => {
         const pm: PushMapping<any> = given(FalsePushTest)
             .itMeans("no frogs coming")
             .then(FrogPushMapping);
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, undefined);
     });
 
@@ -52,7 +55,7 @@ describe("given", () => {
         const pm: PushMapping<string> = given<string>(TruePushTest, TruePushTest)
             .itMeans("frogs coming")
             .then(FrogPushMapping);
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, "frog");
     });
 
@@ -60,7 +63,7 @@ describe("given", () => {
         const pm: PushMapping<string> = given<string>(TruePushTest)
             .itMeans("frogs coming")
             .set("frogs");
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, "frogs");
     });
 
@@ -70,7 +73,7 @@ describe("given", () => {
             .then(
                 whenPushSatisfies(TruePushTest).itMeans("http").setGoals(HttpServiceGoals),
             );
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, HttpServiceGoals);
     });
 
@@ -81,7 +84,7 @@ describe("given", () => {
                 whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
                 whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
             );
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, HttpServiceGoals);
     });
 
@@ -94,7 +97,7 @@ describe("given", () => {
                     whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
                 ),
             );
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, HttpServiceGoals);
     });
 
@@ -111,7 +114,7 @@ describe("given", () => {
                         whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
                     ),
             );
-        const mapped = await pm.valueForPush(fakePush());
+        const mapped = await pm.mapping(fakePush());
         assert.equal(mapped, HttpServiceGoals);
     });
 });
