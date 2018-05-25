@@ -35,9 +35,9 @@ describe("commonPushTests", () => {
                     branch: "master",
                     repo: {
                         defaultBranch: "master",
-                    }
-                }
-            }
+                    },
+                },
+            };
 
             const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
             assert(r);
@@ -50,9 +50,9 @@ describe("commonPushTests", () => {
                     branch: "master",
                     repo: {
                         defaultBranch: "",
-                    }
-                }
-            }
+                    },
+                },
+            };
 
             const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
             assert(r);
@@ -65,9 +65,9 @@ describe("commonPushTests", () => {
                     branch: "master",
                     repo: {
                         defaultBranch: null,
-                    }
-                }
-            }
+                    },
+                },
+            };
 
             const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
             assert(r);
@@ -80,9 +80,9 @@ describe("commonPushTests", () => {
                     branch: "some-feature",
                     repo: {
                         defaultBranch: "master",
-                    }
-                }
-            }
+                    },
+                },
+            };
 
             const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
             assert(!r);
