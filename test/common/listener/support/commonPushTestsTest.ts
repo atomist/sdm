@@ -39,7 +39,7 @@ describe("commonPushTests", () => {
                 },
             };
 
-            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            const r = await ToDefaultBranch.mapping(pli as any as PushListenerInvocation);
             assert(r);
         });
 
@@ -54,7 +54,7 @@ describe("commonPushTests", () => {
                 },
             };
 
-            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            const r = await ToDefaultBranch.mapping(pli as any as PushListenerInvocation);
             assert(r);
         });
 
@@ -69,7 +69,7 @@ describe("commonPushTests", () => {
                 },
             };
 
-            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            const r = await ToDefaultBranch.mapping(pli as any as PushListenerInvocation);
             assert(r);
         });
 
@@ -84,7 +84,7 @@ describe("commonPushTests", () => {
                 },
             };
 
-            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            const r = await ToDefaultBranch.mapping(pli as any as PushListenerInvocation);
             assert(!r);
         });
 
