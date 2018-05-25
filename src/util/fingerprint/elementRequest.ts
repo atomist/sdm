@@ -24,6 +24,9 @@ import { CFamilyLangHelper } from "@atomist/microgrammar/matchers/lang/cfamily/C
 import { computeShaOf } from "../misc/sha";
 import { JavaScriptElementRequest } from "./JavaScriptElementRequest";
 
+/**
+ * Request for language elements: For example, function declarations
+ */
 export interface ElementRequest {
 
     /**
