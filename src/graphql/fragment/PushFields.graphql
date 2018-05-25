@@ -1,5 +1,6 @@
 fragment PushFields on Push {
   id
+  timestamp
   branch
   before {
     sha
