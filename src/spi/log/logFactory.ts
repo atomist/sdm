@@ -16,11 +16,11 @@
 
 import { logger } from "@atomist/automation-client";
 import {DashboardDisplayProgressLog} from "../../common/log/DashboardDisplayProgressLog";
-import { ProgressLogFactory } from "./ProgressLog";
-import { firstAvailableProgressLog } from "../../common/log/firstAvailableProgressLog";
-import { WriteToAllProgressLog } from "../../common/log/WriteToAllProgressLog";
-import { LoggingProgressLog } from "../../common/log/LoggingProgressLog";
 import { createEphemeralProgressLog } from "../../common/log/EphemeralProgressLog";
+import { firstAvailableProgressLog } from "../../common/log/firstAvailableProgressLog";
+import { LoggingProgressLog } from "../../common/log/LoggingProgressLog";
+import { WriteToAllProgressLog } from "../../common/log/WriteToAllProgressLog";
+import { ProgressLogFactory } from "./ProgressLog";
 
 /**
  * Create a progress log that will use Rolar logging service if available,

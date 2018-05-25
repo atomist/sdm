@@ -26,7 +26,7 @@ import { LruCache } from "../../util/misc/LruCache";
 import { SimpleCache } from "../../util/misc/SimpleCache";
 
 /**
- * Simple caching implementation of ProjectLoader
+ * Caching implementation of ProjectLoader
  */
 export class CachingProjectLoader implements ProjectLoader {
 

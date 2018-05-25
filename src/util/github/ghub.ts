@@ -16,10 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    isTokenCredentials,
-    ProjectOperationCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Issue } from "@atomist/automation-client/util/gitHub";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
@@ -35,9 +32,8 @@ export interface Status {
     context?: string;
 }
 
-export function createStatus(tokenSource: string | ProjectOperationCredentials, rr: GitHubRepoRef, inputStatus: Status): AxiosPromise {
-    const token = isTokenCredentials(tokenSource) ? tokenSource.token : tokenSource as string;
-    const config = authHeaders(token);
+export function createStatus(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef, inputStatus: Status): AxiosPromise {
+    const config = authHeaders(toToken(creds));
     const saferStatus = ensureValidUrl(inputStatus);
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/statuses/${rr.sha}`;
     logger.info("Updating github status: %s to %j", url, saferStatus);
@@ -89,8 +85,8 @@ export interface Tag {
     };
 }
 
-export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosPromise {
-    const config = authHeaders(token);
+export function createTag(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef, tag: Tag): AxiosPromise {
+    const config = authHeaders(toToken(creds));
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/tags`;
     logger.info("Updating github tag: %s to %j", url, tag);
     return doWithRetry(() => axios.post(url, tag, config)
@@ -99,8 +95,8 @@ export function createTag(token: string, rr: GitHubRepoRef, tag: Tag): AxiosProm
         ), `Updating github tag: ${url} to ${JSON.stringify(tag)}`, {});
 }
 
-export function createTagReference(token: string, rr: GitHubRepoRef, tag: Tag): AxiosPromise {
-    const config = authHeaders(token);
+export function createTagReference(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef, tag: Tag): AxiosPromise {
+    const config = authHeaders(toToken(creds));
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/git/refs`;
     logger.info("Creating github reference: %s to %j", url, tag);
     return doWithRetry(() => axios.post(url, {ref: `refs/tags/${tag.tag}`, sha: tag.object}, config)
@@ -109,8 +105,8 @@ export function createTagReference(token: string, rr: GitHubRepoRef, tag: Tag): 
         ), `Updating github tag: ${url} to ${JSON.stringify(tag)}`, {});
 }
 
-export function deleteRepository(token: string, rr: GitHubRepoRef): AxiosPromise {
-    const config = authHeaders(token);
+export function deleteRepository(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef): AxiosPromise {
+    const config = authHeaders(toToken(creds));
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
     logger.info("Deleting repository: %s", url);
     return axios.delete(url, config)
@@ -131,8 +127,8 @@ export interface Release {
     prerelease?: boolean;
 }
 
-export function createRelease(token: string, rr: GitHubRepoRef, release: Release): AxiosPromise {
-    const config = authHeaders(token);
+export function createRelease(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef, release: Release): AxiosPromise {
+    const config = authHeaders(toToken(creds));
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/releases`;
     logger.info("Updating github release: %s to %j", url, release);
     return doWithRetry(() => axios.post(url, release, config)
@@ -149,9 +145,20 @@ export interface GitHubCommitsBetween {
     }>;
 }
 
-export function listCommitsBetween(token: string, rr: GitHubRepoRef, startSha: string, end: string): Promise<GitHubCommitsBetween> {
-    const config = authHeaders(token);
-    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/compare/${startSha}...${end}`;
+/**
+ * List commits between these shas
+ * @param {string | ProjectOperationCredentials} creds
+ * @param {GitHubRepoRef} rr
+ * @param {string} startSha
+ * @param {string} endSha
+ * @return {Promise<GitHubCommitsBetween>}
+ */
+export function listCommitsBetween(creds: string | ProjectOperationCredentials,
+                                   rr: GitHubRepoRef,
+                                   startSha: string,
+                                   endSha: string): Promise<GitHubCommitsBetween> {
+    const config = authHeaders(toToken(creds));
+    const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/compare/${startSha}...${endSha}`;
     return axios.get(url, config)
         .then(ap => ap.data);
 }
@@ -165,16 +172,16 @@ export function authHeaders(token: string): AxiosRequestConfig {
         : {};
 }
 
-export function tipOfDefaultBranch(token: string, rr: GitHubRepoRef): Promise<string> {
+export function tipOfDefaultBranch(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef): Promise<string> {
     // TODO: use real default branch
-    const config = authHeaders(token);
+    const config = authHeaders(toToken(creds));
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}/branches/master`;
     return axios.get(url, config)
         .then(ap => ap.data.commit.sha);
 }
 
-export function isPublicRepo(token: string, rr: GitHubRepoRef): Promise<boolean> {
-    const config = authHeaders(token);
+export function isPublicRepo(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef): Promise<boolean> {
+    const config = authHeaders(toToken(creds));
     const url = `${rr.apiBase}/repos/${rr.owner}/${rr.repo}`;
     return axios.get(url, config)
         .then(ap => {
@@ -199,10 +206,10 @@ export function updateIssue(creds: string | ProjectOperationCredentials,
     return axios.patch(url, issue, authHeaders(toToken(creds)));
 }
 
-export async function listTopics(token: string, rr: RemoteRepoRef): Promise<string[]> {
+export async function listTopics(creds: string | ProjectOperationCredentials, rr: RemoteRepoRef): Promise<string[]> {
     const headers = {
         headers: {
-            ...authHeaders(token).headers,
+            ...authHeaders(toToken(creds)).headers,
             Accept: "application/vnd.github.mercy-preview+json",
         },
     };

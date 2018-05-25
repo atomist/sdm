@@ -18,7 +18,6 @@ import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import {
     ProjectOperationCredentials,
-    TokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { BranchCommit } from "@atomist/automation-client/operations/edit/editModes";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
@@ -45,7 +44,7 @@ export class NewBranchWithStatus implements BranchCommit {
                 throw new Error("Sha is not available");
             }
             logger.info("Setting status %j on sha %s for %j", this.status, sha, p.id);
-            return createStatus((this.creds as TokenCredentials).token, {
+            return createStatus(this.creds, {
                     ...p.id,
                     sha,
                 } as GitHubRepoRef,

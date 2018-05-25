@@ -15,18 +15,13 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as fs from "fs-extra";
 import * as p from "path";
 import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
 import { ProjectLoader } from "../../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
-import {
-    ExecuteGoalWithLog,
-    PrepareForGoalExecution,
-    RunWithLogContext,
-} from "../../../goals/support/reportGoalError";
+import { ExecuteGoalWithLog, PrepareForGoalExecution, RunWithLogContext } from "../../../goals/support/reportGoalError";
 import { ProjectIdentifier } from "../projectIdentifier";
 import { NpmPreparations } from "./npmBuilder";
 
@@ -72,7 +67,7 @@ export function executePublish(projectLoader: ProjectLoader,
                 const pi = await projectIdentifier(project);
                 const url = `${options.registry}/${pi.name}/-/${pi.name}-${pi.version}.tgz`;
                 await createStatus(
-                    (credentials as TokenCredentials).token,
+                    credentials,
                     id as GitHubRepoRef,
                     {
                         context: "npm/atomist/package",

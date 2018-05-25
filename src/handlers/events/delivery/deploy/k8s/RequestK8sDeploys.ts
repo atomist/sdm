@@ -16,7 +16,7 @@
 
 import { failure, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../common/delivery/goals/support/reportGoalError";
 import { createStatus } from "../../../../../util/github/ghub";
@@ -42,7 +42,7 @@ export function requestDeployToK8s(target: K8Target): ExecuteGoalWithLog {
 
         logger.info(`Requesting deploy. Triggered by ${status.state} status: ${status.context}: ${status.description}`);
         // we want this to communicate via the status directly.
-        await createStatus((credentials as TokenCredentials).token, id as GitHubRepoRef, {
+        await createStatus(credentials, id as GitHubRepoRef, {
             context: k8AutomationDeployContext(target),
             state: "pending",
             description: "Requested deploy by k8-automation",
@@ -55,7 +55,7 @@ export async function undeployFromK8s(creds: ProjectOperationCredentials,
                                       id: RemoteRepoRef,
                                       env: string) {
     const undeployContext = "undeploy/atomist/k8s/" + env;
-    await createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
+    await createStatus(creds, id as GitHubRepoRef, {
         context: undeployContext,
         state: "pending",
         description: `Requested undeploy from ${env} by k8-automation`,

@@ -16,10 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import * as GitHubApi from "@octokit/rest";
@@ -31,6 +28,7 @@ import * as URL from "url";
 import { promisify } from "util";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../spi/deploy/Deployment";
+import { toToken } from "../../../util/credentials/toToken";
 import { authHeaders, createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
 
 /**
@@ -39,8 +37,7 @@ import { authHeaders, createRelease, createTag, Release, Tag } from "../../../ut
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 
     public async storeFile(appInfo: AppInfo, localFile: string, creds: ProjectOperationCredentials): Promise<string> {
-        const token = (creds as TokenCredentials).token;
-
+        const token = toToken(creds);
         const tagName = appInfo.version + new Date().getMilliseconds();
         const tag: Tag = {
             tag: tagName,
@@ -85,7 +82,7 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         // return github.repos.getAsset({owner: id.owner, repo: id.repo, id: url});
 
         logger.info("Attempting to download url %s to %s", url, outputPath);
-        await downloadFileAs((creds as TokenCredentials).token, url, outputPath);
+        await downloadFileAs(creds, url, outputPath);
         logger.info("Successfully download url %s to %s", url, outputPath);
         return {
             cwd,
@@ -99,12 +96,13 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
 
 /**
  * Download the file to local disk
- * @param {string} token
+ * @param creds credentials
  * @param {string} url
  * @param {string} outputFilename
  * @return {Promise<any>}
  */
-function downloadFileAs(token: string, url: string, outputFilename: string): Promise<any> {
+function downloadFileAs(creds: ProjectOperationCredentials, url: string, outputFilename: string): Promise<any> {
+    const token = toToken(creds);
     return doWithRetry(() => axios.get(url, {
         ...authHeaders(token),
         headers: {
