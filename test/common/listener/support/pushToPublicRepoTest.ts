@@ -25,7 +25,7 @@ const credentials = { token: process.env.GITHUB_TOKEN};
 describe("pushToPublicRepo", () => {
 
     it("should work against public repo", async () => {
-        const id = new GitHubRepoRef("atomist", "github-sdm");
+        const id = new GitHubRepoRef("atomist", "sdm");
         const r = await ToPublicRepo.mapping({id, credentials} as any as PushListenerInvocation);
         assert(r);
     }).timeout(5000);
