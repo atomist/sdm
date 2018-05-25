@@ -4,8 +4,7 @@ import { SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 
 import * as assert from "power-assert";
 import { Goal } from "../../src/common/delivery/goals/Goal";
-
-console.log("THis file was loadeed")
+ import { GoalImplementation } from "../../src/common/delivery/goals/SdmGoalImplementationMapper";
 
 const customGoal = new Goal({
     uniqueName: "Jerry",
@@ -14,6 +13,7 @@ const customGoal = new Goal({
 
 describe("finding the fulfillment by goal", () => {
     it("returns a friendly error when it is not found", async () => {
+
         const mySDM = new SoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions);
         mySDM.addGoalImplementation("Cornelius",
