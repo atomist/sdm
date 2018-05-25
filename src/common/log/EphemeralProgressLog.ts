@@ -21,6 +21,7 @@ import { ProgressLog, ProgressLogFactory } from "../../spi/log/ProgressLog";
  * Implementation of ProgressLog log that returns
  * an undefined link because it isn't actually persisted.
  * Used when we are not storing a local log.
+ * Writes to logger at info level.
  */
 class EphemeralProgressLog implements ProgressLog {
 

@@ -16,7 +16,6 @@
 
 import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import * as path from "path";
 import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
 import { Goal } from "../../../../common/delivery/goals/Goal";
@@ -30,6 +29,7 @@ import { spawnAndWatch } from "../../../../util/misc/spawned";
 import { sprintf } from "sprintf-js";
 
 import * as stringify from "json-stringify-safe";
+import { toToken } from "../../../../util/credentials/toToken";
 
 /**
  * Central function to execute a goal with progress logging
@@ -131,7 +131,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                     // can be done.
                     // This is an interface that is easy to expand and very hard to contract.
                     // plus, this is secure information; must we provide it to a script in any repo?
-                    GITHUB_TOKEN: (credentials as TokenCredentials).token,
+                    GITHUB_TOKEN: toToken(credentials),
                     ATOMIST_TEAM: context.teamId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
                     ATOMIST_JWT: jwtToken(),

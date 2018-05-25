@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    success,
-} from "@atomist/automation-client";
+import { HandlerContext, success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    Builder,
-    PushThatTriggersBuild,
-} from "../../../../spi/build/Builder";
-import {
-    InterpretedLog,
-    LogInterpretation,
-} from "../../../../spi/log/InterpretedLog";
+import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
+import { InterpretedLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { createStatus } from "../../../../util/github/ghub";
 import { AddressChannels } from "../../../slack/addressChannels";
@@ -58,7 +46,7 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
                          log: ProgressLog,
                          context: HandlerContext): Promise<any> {
             // someday we will do this with a "requested" build node but use a status for now.
-        return createStatus((creds as TokenCredentials).token, id as GitHubRepoRef, {
+        return createStatus(creds, id as GitHubRepoRef, {
             context: K8AutomationBuildContext + "/" + push.branch,
             state: "pending",
             description: "Requested build in k8-automation",

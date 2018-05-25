@@ -15,7 +15,6 @@
  */
 
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { isPublicRepo } from "../../../../util/github/ghub";
 import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../PushTest";
@@ -48,7 +47,7 @@ export const AnyPush: PushTest = pushTest("Any push", async p => true);
  */
 export const ToPublicRepo = pushTest("To public repo", async p =>
     // Ask GitHub if the repo is public as we do not have this information in our model
-    isGitHubRepoRef(p.id) && (isPublicRepo((p.credentials as TokenCredentials).token, p.id)),
+    isGitHubRepoRef(p.id) && isPublicRepo(p.credentials, p.id),
 );
 
 /**

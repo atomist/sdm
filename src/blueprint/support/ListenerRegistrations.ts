@@ -39,7 +39,7 @@ import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploy
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
 
 /**
- * Simple listener management offering a fluent builder pattern registrations.
+ * Listener management offering a fluent builder pattern for registrations.
  * This class is purely a registration store, and has no other behavior.
  */
 export class ListenerRegistrations {

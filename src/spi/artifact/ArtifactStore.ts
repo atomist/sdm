@@ -19,7 +19,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { AppInfo } from "../deploy/Deployment";
 
 /**
- * Abstraction for saving and retrieving artifact files from local disk
+ * Abstraction for saving and retrieving artifact files
  */
 export interface ArtifactStore {
 

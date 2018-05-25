@@ -88,7 +88,6 @@ import { OnUserJoiningChannel } from "../handlers/events/repo/OnUserJoiningChann
 import { Builder } from "../spi/build/Builder";
 import { InterpretLog } from "../spi/log/InterpretedLog";
 import { EmptyFunctionalUnit, FunctionalUnit } from "./FunctionalUnit";
-import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import { softwareDeliveryMachineOptions } from "./sdmOptions";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
@@ -103,7 +102,7 @@ import { ListenerRegistrations } from "./support/ListenerRegistrations";
  * Driven by Goals
  * Uses the builder pattern.
  */
-export class SoftwareDeliveryMachine extends ListenerRegistrations implements ReferenceDeliveryBlueprint {
+export class SoftwareDeliveryMachine extends ListenerRegistrations {
 
     public generators: Array<Maker<HandleCommand>> = [];
 

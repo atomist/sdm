@@ -17,7 +17,8 @@
 import { allSatisfied, PushMapping, PushRules, PushTest } from "../..";
 
 /**
- * Simple DSL to create a decision tree
+ * Simple DSL to create a decision tree.
+ * Trees and subtrees can compute variables as interim values for future use.
  * @param givenPushTests PushTests
  * @return interim DSL structure
  */

@@ -38,7 +38,7 @@ export interface ProgressLog {
 
     /**
      * Some implementations expose their log as a string.
-     * Otherwise may not, as it could be too long etc.
+     * Others may not, as it could be too long etc.
      */
     log?: string;
 

@@ -25,7 +25,6 @@ export class StringCapturingProgressLog implements ProgressLog {
     public readonly name: string = "StringCapturingProgressLog";
 
     public log: string = "";
-    public url: string;
 
     public close(): Promise<any> {
         return Promise.resolve();

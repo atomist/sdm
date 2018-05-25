@@ -18,11 +18,10 @@ import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 import { successOn } from "@atomist/automation-client/action/ActionResult";
-import axios, { AxiosRequestConfig } from "axios";
-
-import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { TagRouter } from "@atomist/automation-client/operations/tagger/Tagger";
+import axios, { AxiosRequestConfig } from "axios";
 import * as _ from "lodash";
+import { toToken } from "../credentials/toToken";
 
 /**
  * Persist tags to GitHub
@@ -40,7 +39,7 @@ export const GitHubTagRouter: TagRouter = (tags, params) => {
         // Mix in custom media type for
         {
             headers: {
-                ...authHeaders((params.targets.credentials as TokenCredentials).token).headers,
+                ...authHeaders(toToken(params.targets.credentials)).headers,
                 Accept: "application/vnd.github.mercy-preview+json",
             },
         },

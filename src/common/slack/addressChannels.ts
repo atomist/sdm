@@ -34,10 +34,20 @@ export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions
  */
 export const AddressNoChannels: AddressChannels = async () => undefined;
 
+/**
+ * Interface for anything, like a repo, that has associated chat channel information
+ */
 export interface HasChannels {
     channels?: Array<{ name?: string, id?: string, team?: { id?: string }}>;
 }
 
+/**
+ * Address the chat channels associated with this object.
+ * Typically used to address channels associated with a repo.
+ * @param {HasChannels} hasChannels
+ * @param {HandlerContext} ctx
+ * @return {AddressChannels}
+ */
 export function addressChannelsFor(hasChannels: HasChannels, ctx: HandlerContext): AddressChannels {
     if (hasChannels.channels && hasChannels.channels.length > 0) {
         return addressDestinations(ctx, ...messageDestinationsFor(hasChannels, ctx));

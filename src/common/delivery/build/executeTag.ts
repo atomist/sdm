@@ -16,22 +16,12 @@
 
 import { Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import {
-    ProjectOperationCredentials,
-    TokenCredentials,
-} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    createTag,
-    createTagReference,
-    Tag,
-} from "../../../util/github/ghub";
+import { createTag, createTagReference, Tag } from "../../../util/github/ghub";
 import { ProjectLoader } from "../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
-import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../goals/support/reportGoalError";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { readSdmVersion } from "./local/projectVersioner";
 
 export function executeTag(projectLoader: ProjectLoader): ExecuteGoalWithLog {
@@ -67,6 +57,6 @@ export async function createTagForStatus(id: RemoteRepoRef,
         },
     };
 
-    await createTag((credentials as TokenCredentials).token, id as GitHubRepoRef, tag);
-    await createTagReference((credentials as TokenCredentials).token, id as GitHubRepoRef, tag);
+    await createTag(credentials, id as GitHubRepoRef, tag);
+    await createTagReference(credentials, id as GitHubRepoRef, tag);
 }
