@@ -92,7 +92,6 @@ import { ReferenceDeliveryBlueprint } from "./ReferenceDeliveryBlueprint";
 import { softwareDeliveryMachineOptions } from "./sdmOptions";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
-import { summarizeGoalsInGitHubStatus } from "./support/githubStatusSummarySupport";
 import { ListenerRegistrations } from "./support/ListenerRegistrations";
 
 /**
@@ -463,7 +462,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Re
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);
-        summarizeGoalsInGitHubStatus(this);
         this.addSupportingCommands(
             selfDescribeHandler(this),
             listGeneratorsHandler(this),
