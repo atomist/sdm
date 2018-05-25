@@ -20,7 +20,8 @@ import { isPublicRepo } from "../../../../util/github/ghub";
 import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../PushTest";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
-    p.push.branch === p.push.repo.defaultBranch);
+    p.push.branch === p.push.repo.defaultBranch ||
+    ((!p.push.repo.defaultBranch || p.push.repo.defaultBranch.length === 0) && p.push.branch === "master"));
 
 /**
  * Is this a push originated by Atomist? Note that we can't look at the committer,

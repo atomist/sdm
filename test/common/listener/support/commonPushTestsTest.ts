@@ -17,11 +17,78 @@
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { hasFileWithExtension } from "../../../../src";
+import {
+    hasFileWithExtension,
+    ToDefaultBranch,
+} from "../../../../src";
 import { PushListenerInvocation } from "../../../../src/common/listener/PushListener";
 import { hasFile, hasFileContaining } from "../../../../src/common/listener/support/pushtest/commonPushTests";
 
 describe("commonPushTests", () => {
+
+    describe("toDefaultBranch", () => {
+
+        it("should pass for default branch", async () => {
+            const pli = {
+                project: InMemoryProject.of(),
+                push: {
+                    branch: "master",
+                    repo: {
+                        defaultBranch: "master",
+                    }
+                }
+            }
+
+            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            assert(r);
+        });
+
+        it("should pass for empty default branch", async () => {
+            const pli = {
+                project: InMemoryProject.of(),
+                push: {
+                    branch: "master",
+                    repo: {
+                        defaultBranch: "",
+                    }
+                }
+            }
+
+            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            assert(r);
+        });
+
+        it("should pass for null default branch", async () => {
+            const pli = {
+                project: InMemoryProject.of(),
+                push: {
+                    branch: "master",
+                    repo: {
+                        defaultBranch: null,
+                    }
+                }
+            }
+
+            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            assert(r);
+        });
+
+        it("should not pass for non default branch", async () => {
+            const pli = {
+                project: InMemoryProject.of(),
+                push: {
+                    branch: "some-feature",
+                    repo: {
+                        defaultBranch: "master",
+                    }
+                }
+            }
+
+            const r = await ToDefaultBranch.valueForPush(pli as any as PushListenerInvocation);
+            assert(!r);
+        });
+
+    });
 
     describe("hasFile", () => {
 
