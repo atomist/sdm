@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { CreatePendingGitHubStatusOnGoalSet, SetGitHubStatusOnGoalCompletion } from "../../common/delivery/goals/summarizeGoalsInGitHubStatus";
-import {SoftwareDeliveryMachine} from "../SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachine } from "../../../../blueprint/SoftwareDeliveryMachine";
+import { CreatePendingGitHubStatusOnGoalSet, SetGitHubStatusOnGoalCompletion } from "../gitHubStatusSetters";
 
 export function summarizeGoalsInGitHubStatus(sdm: SoftwareDeliveryMachine): SoftwareDeliveryMachine {
     sdm.addGoalsSetListeners(CreatePendingGitHubStatusOnGoalSet(sdm.opts.credentialsResolver));

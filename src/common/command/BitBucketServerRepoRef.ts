@@ -100,7 +100,7 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
 
     public raisePullRequest(credentials: ProjectOperationCredentials,
                             title: string, body: string, head: string, base: string): Promise<ActionResult<this>> {
-        const url = `${this.apiBase}${this.apiPathComponent}/pull-requests`;
+        const url = `${this.scheme}${this.apiBase}/${this.apiPathComponent}/pull-requests`;
         logger.debug(`Making request to '${url}' to raise PR`);
         return axios.post(url, {
             title,
