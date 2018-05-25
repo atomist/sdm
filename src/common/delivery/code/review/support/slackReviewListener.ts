@@ -16,9 +16,11 @@
 
 import { HandlerContext, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { SourceLocation } from "@atomist/automation-client/operations/common/SourceLocation";
 import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { deepLink } from "@atomist/automation-client/util/gitHub";
+import { deepLink as githubDeepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { ReviewListener } from "../../../../listener/ReviewListener";
@@ -26,14 +28,27 @@ import { AddressChannels } from "../../../../slack/addressChannels";
 import { PushReactionResponse } from "../../PushReactionRegistration";
 
 /**
- * Route reviews to Slack in linked channels
- * @constructor
+ * Strategy for deep linking to a source control system.
  */
-export function slackReviewListener(rr?: PushReactionResponse): ReviewListener {
+export type DeepLink = (grr: RemoteRepoRef, sourceLocation: SourceLocation) => string;
+
+export interface SlackReviewRoutingParams {
+    pushReactionResponse?: PushReactionResponse;
+    deepLink: DeepLink;
+}
+
+/**
+ * Route reviews to Slack in linked channels
+ */
+export function slackReviewListener(opts: Partial<SlackReviewRoutingParams> = {}): ReviewListener {
+    const paramsToUse = {
+        pushReactionResponse: opts.pushReactionResponse,
+        deepLink: opts.deepLink || githubDeepLink,
+    };
     return async ri => {
         if (ri.review.comments.length > 0) {
-            await sendReviewToSlack("Review comments", ri.review, ri.context, ri.addressChannels);
-            return rr;
+            await sendReviewToSlack("Review comments", ri.review, ri.context, ri.addressChannels, paramsToUse.deepLink);
+            return paramsToUse.pushReactionResponse;
         }
     };
 }
@@ -41,16 +56,17 @@ export function slackReviewListener(rr?: PushReactionResponse): ReviewListener {
 async function sendReviewToSlack(title: string,
                                  pr: ProjectReview,
                                  ctx: HandlerContext,
-                                 addressChannels: AddressChannels) {
+                                 addressChannels: AddressChannels,
+                                 deepLink: DeepLink) {
     const mesg: SlackMessage = {
         text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
-        attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c)),
+        attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c, deepLink)),
     };
     await addressChannels(mesg);
     return Success;
 }
 
-function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment): Attachment {
+function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLink: DeepLink): Attachment {
     const link = rc.sourceLocation ? slack.url(deepLink(grr, rc.sourceLocation), "jump to") :
         slack.url(grr.url + "/tree/" + grr.sha, "source");
 
