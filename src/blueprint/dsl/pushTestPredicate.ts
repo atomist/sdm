@@ -19,7 +19,7 @@ import { PushListenerInvocation } from "../../common/listener/PushListener";
 import { pushTest, PushTest } from "../../common/listener/PushTest";
 
 /**
- * Predicate that can be used in our PushTest DSL.
+ * Predicate that can be used in PushTest DSL.
  * Can be a PushTest, a function or computed boolean
  */
 export type PushTestPredicate = PushTest | Mapper<PushListenerInvocation, boolean> | boolean | (() => (boolean | Promise<boolean>));

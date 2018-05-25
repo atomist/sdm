@@ -34,7 +34,7 @@ import { AppInfo } from "../../../spi/deploy/Deployment";
 import { authHeaders, createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
 
 /**
- * Implement ArtifactStore to store artifacts as GitHub releases
+ * Implement ArtifactStore interface to store artifacts as GitHub releases
  */
 export class GitHubReleaseArtifactStore implements ArtifactStore {
 
