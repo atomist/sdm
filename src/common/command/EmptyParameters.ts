@@ -17,7 +17,7 @@
 import { Parameters } from "@atomist/automation-client";
 
 /**
- * Convenient empty parameters class
+ * Convenient empty parameters class for use in commands.
  */
 @Parameters()
 // tslint:disable-next-line:no-unnecessary-class

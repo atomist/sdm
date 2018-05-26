@@ -25,7 +25,10 @@ import {
 } from "./commonGoals";
 
 /**
- * Goals for an Http service
+ * Goals for an Http service, mirroring a typical flow through
+ * staging to production.
+ * Goal sets are normally user defined, so this is largely
+ * an illustration.
  * @type {Goals}
  */
 export const HttpServiceGoals = new Goals(

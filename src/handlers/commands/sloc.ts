@@ -23,7 +23,7 @@ import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 
 /**
  * Commmand to display lines of code in current project
- * to Slack
+ * to Slack, across understood languages.
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
 export const slocCommand: HandleCommand = editorCommand<EmptyParameters>(

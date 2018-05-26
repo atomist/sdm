@@ -20,6 +20,10 @@ import {
     ReviewGoal,
 } from "./commonGoals";
 
+/**
+ * Flow to build a library
+ * @type {Goals}
+ */
 export const LibraryGoals = new Goals(
     "Library",
     ReviewGoal,

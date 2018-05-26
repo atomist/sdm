@@ -46,6 +46,11 @@ export class SetDeployEnablementParameters {
 
 }
 
+/**
+ * Command to set deploy enablement on the currently mapped repo
+ * @param {boolean} enable
+ * @return {(ctx: HandlerContext, params: SetDeployEnablementParameters) => Promise<HandlerResult>}
+ */
 export function setDeployEnablement(enable: boolean) {
     return (ctx: HandlerContext, params: SetDeployEnablementParameters): Promise<HandlerResult> => {
         const deployEnablement: SdmDeployEnablement = {
