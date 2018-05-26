@@ -32,6 +32,9 @@ export interface FingerprintDifference {
     newValue?: FingerprintValue;
 }
 
+/**
+ * Invoked on changes in fingeprints vs the previous commit
+ */
 export interface FingerprintDifferenceListenerInvocation extends RepoListenerInvocation {
 
     diffs: FingerprintDifference[];

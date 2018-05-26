@@ -22,7 +22,7 @@ import { RemoteLocator } from "@atomist/automation-client/operations/common/para
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
-import { SemVerRegExp } from "../commonPatterns";
+import { SemVerRegExp } from "../support/commonPatterns";
 import { GeneratorConfig } from "./GeneratorConfig";
 
 /**
@@ -71,6 +71,10 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
         return this.target.description;
     }
 
+    /**
+     * Resolve the seed repo
+     * @return {RemoteLocator}
+     */
     get source(): RemoteLocator {
         const repoRef = this.config.seed;
         repoRef.repo = this.seed || repoRef.repo;

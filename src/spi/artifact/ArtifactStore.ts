@@ -43,6 +43,9 @@ export interface ArtifactStore {
     checkout(url: string, id: RemoteRepoRef, creds: ProjectOperationCredentials): Promise<DeployableArtifact>;
 }
 
+/**
+ * Information about a stored artifact.
+ */
 export interface StoredArtifact {
 
     appInfo: AppInfo;

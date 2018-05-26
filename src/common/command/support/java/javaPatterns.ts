@@ -16,6 +16,10 @@
 
 import { BaseParameter } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 
+/**
+ * Validation pattern for Java identifiers
+ * @type {{description: string; pattern: RegExp; validInput: string; minLength: number; maxLength: number}}
+ */
 export const JavaIdentifierRegExp: Partial<BaseParameter> = {
     description: "valid Java identifier name",
     pattern: /^([$a-zA-Z_][\w$]*)*$/,

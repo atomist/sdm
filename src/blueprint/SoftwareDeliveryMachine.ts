@@ -127,7 +127,7 @@ import { ListenerRegistrations } from "./support/ListenerRegistrations";
  *    .add...;
  * ```
  */
-export class SoftwareDeliveryMachine extends ListenerRegistrations {
+export class SoftwareDeliveryMachine extends ListenerRegistrations implements FunctionalUnit {
 
     public generators: Array<Maker<HandleCommand>> = [];
 

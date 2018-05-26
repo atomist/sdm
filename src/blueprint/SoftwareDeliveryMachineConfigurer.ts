@@ -22,6 +22,16 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  * For example, a Node module can export a configurer.
  */
 export interface SoftwareDeliveryMachineConfigurer {
+
+    /**
+     * Name of this configurer
+     */
     name: string;
+
+    /**
+     * Function to configure the given SDM
+     * @param {SoftwareDeliveryMachine} sdm
+     */
     configure(sdm: SoftwareDeliveryMachine): void;
+
 }

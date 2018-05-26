@@ -19,12 +19,15 @@ import { RepoListenerInvocation, SdmListener } from "./Listener";
 import Build = OnBuildComplete.Build;
 
 /**
- * Invocation for a build on a project. Not a part of our delivery control:
+ * Invocation for a build on a project. Not a part of delivery control:
  * Purely for observational purposes, such as determining the time
  * a build took.
  */
 export interface BuildListenerInvocation extends RepoListenerInvocation {
 
+    /**
+     * Build that has just completed.
+     */
    build: Build;
 
 }

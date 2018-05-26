@@ -20,6 +20,7 @@ import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../.
 
 /**
  * ProjectLoader that can only return one project.
+ * Normally used in testing.
  */
 export class SingleProjectLoader implements ProjectLoader {
 

@@ -26,7 +26,6 @@ export async function fetchProvider(context: HandlerContext, providerId: string)
     if (!results || !results.SCMProvider || results.SCMProvider.length === 0) {
         throw new Error("Provider not found: " + providerId);
     }
-
     return results.SCMProvider[0];
 
 }

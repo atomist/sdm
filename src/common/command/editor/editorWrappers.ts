@@ -29,7 +29,7 @@ import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 
 /**
  * Decorate an editor factory to make editors it creates chatty, so they respond to
- * Slack if there's nothing to do
+ * Slack if there's nothing for them to do
  * @param editorName name of the editor
  * @param {(params: PARAMS) => AnyProjectEditor} f
  * @return {(params: PARAMS) => AnyProjectEditor}
@@ -69,7 +69,7 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
 
 /**
  * Create a project editor wrapping spawned local commands
- * run on the project
+ * run on the project. For example, allows use of tslint as an editor.
  * @param {SpawnCommand[]} commands to execute
  * @param log progress log (optional, stream to console if not passed in)
  * @return {ProjectEditor}

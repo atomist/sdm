@@ -17,8 +17,8 @@
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { JavaLanguage, ScalaLanguage, TypeScriptLanguage } from "../../sloc/languages";
-import { reportForLanguage, reportForLanguages } from "../../sloc/slocReport";
+import { JavaLanguage, ScalaLanguage, TypeScriptLanguage } from "../../src/util/sloc/languages";
+import { reportForLanguage, reportForLanguages } from "../../src/util/sloc/slocReport";
 
 describe("reportForLanguage", () => {
 

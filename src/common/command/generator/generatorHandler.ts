@@ -25,7 +25,7 @@ import { projectLoaderRepoLoader } from "../../repo/projectLoaderRepoLoader";
 import { allReposInTeam } from "../editor/allReposInTeam";
 
 /**
- * Create a generator handler
+ * Create a command handler for project generation
  * @param {EditorFactory<P extends SeedDrivenGeneratorParameters>} editorFactory to create editor to perform transformation
  * @param {Maker<P extends SeedDrivenGeneratorParameters>} factory
  * @param {string} name

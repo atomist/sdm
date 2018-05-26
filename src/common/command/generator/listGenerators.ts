@@ -18,11 +18,12 @@ import { HandleCommand, Success } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { SoftwareDeliveryMachine } from "../../../blueprint/SoftwareDeliveryMachine";
-import { commandHandlersWithTag } from "../commandSearch";
 import { EmptyParameters } from "../EmptyParameters";
+import { commandHandlersWithTag } from "../support/commandSearch";
 
 /**
- * Return a command handler that can list generators
+ * Return a command handler that can list generators in the current SDM.
+ * Will not identify generators in other projects.
  * @param {SoftwareDeliveryMachine} sdm
  * @return {HandleCommand<EmptyParameters>}
  */

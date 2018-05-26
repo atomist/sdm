@@ -19,7 +19,7 @@ import { RepoListenerInvocation, SdmListener } from "./Listener";
 import Tag = OnTag.Tag;
 
 /**
- * Invocation when a tag has been created
+ * Invocation when a tag has been created on a repo
  */
 export interface TagListenerInvocation extends RepoListenerInvocation {
 

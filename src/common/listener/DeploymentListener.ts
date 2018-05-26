@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-/**
- * React to a successful deployment
- */
 import { OnSuccessStatus } from "../../typings/types";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 import Status = OnSuccessStatus.Status;
 
+/**
+ * Invoked on a successful deployment
+ */
 export interface DeploymentListenerInvocation extends RepoListenerInvocation {
 
     status: Status;

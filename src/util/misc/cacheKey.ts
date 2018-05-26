@@ -18,6 +18,11 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 
 import { sprintf } from "sprintf-js";
 
+/**
+ * Compute a cache key from the given remote repo ref and sha
+ * @param {RemoteRepoRef} id
+ * @return {any}
+ */
 export function cacheKeyForSha(id: RemoteRepoRef) {
     return sprintf("%s:%s:%s@%s", id.owner, id.repo, id.sha, id.url);
 }

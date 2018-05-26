@@ -19,6 +19,12 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as stringify from "json-stringify-safe";
 
+/**
+ * Try to work out whether a project was edited, looking at git status
+ * if we can't find out from the edit result
+ * @param {EditResult} editResult
+ * @return {Promise<EditResult>}
+ */
 export async function confirmEditedness(editResult: EditResult): Promise<EditResult> {
     if (editResult.edited === undefined) {
         const gs = await (editResult.target as GitProject).gitStatus();

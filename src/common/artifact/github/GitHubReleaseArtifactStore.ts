@@ -76,11 +76,6 @@ export class GitHubReleaseArtifactStore implements ArtifactStore {
         const version = match[2].replace(/.jar$/, "");
 
         const outputPath = cwd + "/" + filename;
-
-        // const token = (creds as TokenCredentials).token;
-        // const github = api(token);
-        // return github.repos.getAsset({owner: id.owner, repo: id.repo, id: url});
-
         logger.info("Attempting to download url %s to %s", url, outputPath);
         await downloadFileAs(creds, url, outputPath);
         logger.info("Successfully download url %s to %s", url, outputPath);

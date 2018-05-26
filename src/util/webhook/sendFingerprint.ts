@@ -15,11 +15,18 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import axios from "axios";
 
-export function sendFingerprint(id: GitHubRepoRef, fingerprint: Fingerprint, team: string): Promise<any> {
+/**
+ * Publish the given fingerprint to Atomist in the given team
+ * @param {GitHubRepoRef} id id of repo the fingerprint applies to
+ * @param {Fingerprint} fingerprint fingerprint to publish
+ * @param {string} team team to which this fingerprint applies
+ * @return {Promise<any>}
+ */
+export function sendFingerprint(id: RemoteRepoRef, fingerprint: Fingerprint, team: string): Promise<any> {
     const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${team}`;
     const payload = {
         commit: {
@@ -30,7 +37,7 @@ export function sendFingerprint(id: GitHubRepoRef, fingerprint: Fingerprint, tea
         },
         fingerprints: [fingerprint],
     };
-    logger.info(`Sending up fingerprint to ${url}: ${JSON.stringify(payload)}`);
+    logger.info("Sending up fingerprint to %s: %j", url, payload);
     return axios.post(url, payload)
         .catch(err => {
             return Promise.reject(`Axios error calling ${url}: ${err.message}`);

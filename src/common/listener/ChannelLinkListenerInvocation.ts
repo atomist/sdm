@@ -18,6 +18,9 @@ import { AddressChannels } from "../slack/addressChannels";
 import { SdmListener } from "./Listener";
 import { ProjectListenerInvocation } from "./ProjectListener";
 
+/**
+ * Listener invoked when a repo has been linked to a channel
+ */
 export interface ChannelLinkListenerInvocation extends ProjectListenerInvocation {
 
     newlyLinkedChannelName: string;

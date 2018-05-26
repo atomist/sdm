@@ -17,6 +17,12 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 
+/**
+ * Convenient function to allow creating fake contexts.
+ * Useful for testing
+ * @param {string} teamId
+ * @return {any}
+ */
 export function fakeContext(teamId: string = "T123") {
     return {
         teamId,

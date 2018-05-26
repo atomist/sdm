@@ -26,6 +26,9 @@ export interface GeneratorConfig {
      */
     seed: RemoteRepoRef;
 
+    /**
+     * Command intent
+     */
     intent: string;
 
     /**

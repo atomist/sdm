@@ -16,6 +16,10 @@
 
 import { BaseParameter } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 
+/**
+ * Validation pattern for semantic versions
+ * @type {{displayName: string; description: string; pattern: RegExp; validInput: string; minLength: number; maxLength: number}}
+ */
 export const SemVerRegExp: Partial<BaseParameter> = {
     displayName: "Version",
     description: "initial version of the project, e.g., 1.2.3-SNAPSHOT",

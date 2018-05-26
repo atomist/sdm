@@ -25,6 +25,9 @@ import { toToken } from "../credentials/toToken";
 
 export type State = "error" | "failure" | "pending" | "success";
 
+/**
+ * GitHub status
+ */
 export interface Status {
     state: State;
     target_url?: string;
@@ -32,6 +35,13 @@ export interface Status {
     context?: string;
 }
 
+/**
+ * Create a GitHub status
+ * @param {string | ProjectOperationCredentials} creds
+ * @param {GitHubRepoRef} rr
+ * @param {Status} inputStatus
+ * @return {AxiosPromise}
+ */
 export function createStatus(creds: string | ProjectOperationCredentials, rr: GitHubRepoRef, inputStatus: Status): AxiosPromise {
     const config = authHeaders(toToken(creds));
     const saferStatus = ensureValidUrl(inputStatus);

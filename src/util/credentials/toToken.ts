@@ -18,6 +18,7 @@ import { isTokenCredentials, ProjectOperationCredentials } from "@atomist/automa
 
 /**
  * Convert the given credentials or token string to a token string
+ * if possible. Otherwise throw an exception.
  * @param {ProjectOperationCredentials | string} credentials
  * @return {string}
  */

@@ -16,15 +16,24 @@
 
 import * as base64 from "base64-js";
 
+/**
+ * Base 64 encode the given string
+ * @param {string} str
+ * @return {string}
+ */
 export function encode(str: string): string {
     const arr: number[] = [];
     for (let i = 0; i < str.length; i++) {
         arr.push(str.charCodeAt(i));
     }
-    const coded = base64.fromByteArray(arr);
-    return coded;
+    return base64.fromByteArray(arr);
 }
 
+/**
+ * Decode the given Base 64 string
+ * @param {string} coded
+ * @return {string}
+ */
 export function decode(coded: string): string {
     const decoded = base64.toByteArray(coded);
     return String.fromCharCode.apply(null, decoded);

@@ -23,7 +23,13 @@ import { BitBucketServerRepoRef } from "../../common/command/BitBucketServerRepo
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
-export function repoRefFromPush(push: OnPushToAnyBranch.Push) {
+/**
+ * Obtain a RemoteRepoRef from the given push, correctly
+ * resolving provider.
+ * @param {OnPushToAnyBranch.Push} push
+ * @return {any}
+ */
+export function repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef {
     const providerType = push.repo.org.provider.providerType;
     switch (providerType) {
         case ProviderType.github_com:
@@ -80,7 +86,7 @@ export function providerIdFromStatus(status: StatusForExecuteGoal.Fragment) {
     return status.commit.repo.org.provider.providerId;
 }
 
-export function repoRefFromStatus(status: StatusForExecuteGoal.Fragment) {
+export function repoRefFromStatus(status: StatusForExecuteGoal.Fragment): GitHubRepoRef {
     return GitHubRepoRef.from({
         owner: status.commit.repo.owner,
         repo: status.commit.repo.name,

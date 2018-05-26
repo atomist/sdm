@@ -44,6 +44,9 @@ export interface FileReport {
 
 }
 
+/**
+ * Report about a project's files in a given language
+ */
 export class LanguageReport {
 
     constructor(public language: Language, public fileReports: FileReport[]) {

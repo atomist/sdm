@@ -24,9 +24,9 @@ import * as _ from "lodash";
 import { toToken } from "../credentials/toToken";
 
 /**
- * Persist tags to GitHub
+ * Persist tags to GitHub topics
  * @param {Tags} tags
- * @param {PARAMS} params
+ * @param params params to this command
  * @return {Promise<ActionResult<Tags>>}
  * @constructor
  */

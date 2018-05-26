@@ -15,7 +15,8 @@
  */
 
 /**
- * Can be implemented by editor parameters that can suggest EditMode to present them
+ * Interface that can be implemented by editor parameters that can suggest EditMode to present them
+ * to users.
  */
 export interface EditModeSuggestion {
 
