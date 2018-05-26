@@ -43,6 +43,7 @@ import {
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
+    ArtifactGoalSideEffect,
 } from "../common/delivery/goals/common/commonGoals";
 import { Goal } from "../common/delivery/goals/Goal";
 import { Goals } from "../common/delivery/goals/Goals";
@@ -188,12 +189,12 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
      * @return {this}
      */
     public addGoalImplementation(implementationName: string,
-                                 goal: Goal,
-                                 goalExecutor: ExecuteGoalWithLog,
-                                 options?: Partial<{
-                                     pushTest: PushTest,
-                                     logInterpreter: InterpretLog,
-                                 }>): this {
+        goal: Goal,
+        goalExecutor: ExecuteGoalWithLog,
+        options?: Partial<{
+            pushTest: PushTest,
+            logInterpreter: InterpretLog,
+        }>): this {
         const optsToUse = {
             pushTest: AnyPush,
             logInterpreter: lastLinesLogInterpreter(implementationName, 10),
@@ -250,6 +251,12 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
     }
 
     private get goalConsequences(): FunctionalUnit {
+        if (this.goalSetters.length === 0) {
+            logger.info("This SDM does not set any goals, so we won't update goals")
+            return EmptyFunctionalUnit;
+        }
+        // These belong in sdm-automation. the callbacks used in RequestDownstream can change
+        // to a goalRequestedListener, I hope
         return {
             eventHandlers: [
                 () => new SkipDownstreamGoalsOnGoalFailure(),
@@ -260,12 +267,17 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
         };
     }
 
-    private readonly artifactFinder = () => new FindArtifactOnImageLinked(
-        ArtifactGoal,
-        this.opts.artifactStore,
-        this.artifactListenerRegistrations,
-        this.opts.projectLoader,
-        this.opts.credentialsResolver)
+    private get artifactFinder() {
+        if (this.goalFulfillmentMapper.hasSideEffect(ArtifactGoalSideEffect)) {
+            return () => new FindArtifactOnImageLinked(
+                ArtifactGoal,
+                this.opts.artifactStore,
+                this.artifactListenerRegistrations,
+                this.opts.projectLoader,
+                this.opts.credentialsResolver)
+        }
+        // if no goals expect that side effect fulfilled, we can skip this
+    }
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -322,9 +334,17 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
             ]);
     }
 
+    private get goalFulfillmentHandlers(): Array<Maker<HandleEvent<any>>> {
+        if (this.goalFulfillmentMapper.implementations.length === 0) {
+            logger.info("I won't respond to requested goals, because I have no implementations.")
+            return [];
+        }
+        return [() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader, this.opts.logFactory)]
+    }
+
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader, this.opts.logFactory))
+            .concat(this.goalFulfillmentHandlers)
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.userJoiningChannelListeners.length > 0 ?
@@ -408,13 +428,14 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
                     {
                         pushTest: r.pushTest,
                         logInterpreter:
-                        r.value.logInterpreter,
+                            r.value.logInterpreter,
                     },
-                ));
+            ));
         return this;
     }
 
     public addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this {
+        this.knownSideEffect(ArtifactGoal, ArtifactGoalSideEffect); // executeDeploy will update an ArtifactGoal
         this.mightMutate = rules.length > 0;
         _.flatten(rules).forEach(r => {
             // deploy
@@ -450,7 +471,7 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
      * @param {PushTest} pushTest
      */
     public knownSideEffect(goal: Goal, sideEffectName: string,
-                           pushTest: PushTest = AnyPush) {
+        pushTest: PushTest = AnyPush) {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
             sideEffectName, pushTest,
@@ -482,8 +503,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
      * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
      */
     constructor(public readonly name: string,
-                public readonly opts: SoftwareDeliveryMachineOptions,
-                ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
+        public readonly opts: SoftwareDeliveryMachineOptions,
+        ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);
         this.addSupportingCommands(
@@ -509,7 +530,6 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
                 offerToDeleteRepository())
             .addGoalImplementation("OfferToDeleteRepoAfterUndeploys", DeleteAfterUndeploysGoal,
                 offerToDeleteRepository());
-        this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
 }

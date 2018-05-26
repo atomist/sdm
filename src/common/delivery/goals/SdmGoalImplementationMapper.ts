@@ -71,13 +71,14 @@ export interface GoalFullfillmentCallback {
 
 export class SdmGoalImplementationMapper {
 
-    private readonly implementations: GoalImplementation[] = [];
-    private readonly sideEffects: GoalSideEffect[] = [];
+    public readonly implementations: GoalImplementation[] = [];
+    public readonly sideEffects: GoalSideEffect[] = [];
     private readonly callbacks: GoalFullfillmentCallback[] = [];
 
     constructor(private readonly goalLauncher: IsolatedGoalLauncher) {}
 
     public findFulfillmentBySdmGoal(goal: SdmGoal): GoalFulfillment {
+        // note: this doesn't find side effects because we haven't needed it to yet
         const matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
             m.goal.context === goal.externalKey);
@@ -85,7 +86,7 @@ export class SdmGoalImplementationMapper {
             throw new Error("Multiple mappings for name " + goal.fulfillment.name);
         }
         if (matchedNames.length === 0) {
-            throw new Error("No implementation found with name " + goal.fulfillment.name);
+            return("No implementation found with name " + goal.name);
         }
         return matchedNames[0];
     }
@@ -96,8 +97,13 @@ export class SdmGoalImplementationMapper {
     }
 
     public addSideEffect(sideEffect: GoalSideEffect): this {
+        // dedup? or let duplicates eixst? it's probably fine
         this.sideEffects.push(sideEffect);
         return this;
+    }
+
+    public hasSideEffect(name: string): boolean {
+        return this.sideEffects.map(s => s.sideEffectName).includes(name);
     }
 
     public addFullfillmentCallback(callback: GoalFullfillmentCallback): this {

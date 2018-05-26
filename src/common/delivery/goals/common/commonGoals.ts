@@ -118,6 +118,7 @@ export const TagGoal = new GoalWithPrecondition({
 
 // This one is actually satisfied in an ImageLinked event,
 // which happens to be a result of the build.
+export const ArtifactGoalSideEffect = "from ImageLinked"
 export const ArtifactGoal = new GoalWithPrecondition({
     uniqueName: "Artifact",
     environment: IndependentOfEnvironment,

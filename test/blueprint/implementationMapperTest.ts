@@ -3,8 +3,9 @@ import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest"
 import { SdmGoal } from "../../src/ingesters/sdmGoalIngester";
 
 import * as assert from "power-assert";
+import * as stringify from "json-stringify-safe";
 import { Goal } from "../../src/common/delivery/goals/Goal";
- import { GoalImplementation } from "../../src/common/delivery/goals/SdmGoalImplementationMapper";
+ import { GoalImplementation, NoFulfillmentFound } from "../../src/common/delivery/goals/SdmGoalImplementationMapper";
 
 const customGoal = new Goal({
     uniqueName: "Jerry",
@@ -23,9 +24,9 @@ describe("finding the fulfillment by goal", () => {
 
         const onlyGoal = { name: "foo", fulfillment: {} } as SdmGoal;
 
-        const myImpl = mySDM.goalFulfillmentMapper.findFulfillmentBySdmGoal(onlyGoal) as GoalImplementation;
+        const myImpl = mySDM.goalFulfillmentMapper.findFulfillmentBySdmGoal(onlyGoal);
 
-        assert.equal(myImpl.implementationName, "Cornelius");
+        assert((myImpl as NoFulfillmentFound).includes("foo"), stringify(myImpl));
 
     });
 })
