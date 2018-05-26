@@ -36,7 +36,8 @@ export interface PushImpactListenerInvocation extends PushListenerInvocation {
     commit: StatusForExecuteGoal.Commit;
 
     /**
-     * Project of affected file. May be the same as project, if we can't tell
+     * Project of affected files. May be the same as project, if we can't tell
+     * which files were affected.
      */
     impactedSubProject: Project;
 }

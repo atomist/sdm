@@ -22,7 +22,15 @@ import { PushRegistration } from "../../listener/PushRegistration";
  * failing the current flow or requiring approval.
  */
 export enum PushReactionResponse {
+
+    /**
+     * Fail execution of the present goalset. Any downstream goals will stop.
+     */
     failGoals = "fail",
+
+    /**
+     * Require approval to proceed to downstream goals in the present goalset.
+     */
     requireApprovalToProceed = "requireApproval",
 }
 
@@ -30,6 +38,10 @@ export enum PushReactionResponse {
  * Optional PushReactionResponse included in a return value.
  */
 export interface HasCodeActionResponse {
+
+    /**
+     * Response affecting further execution of the current goalset.
+     */
     response?: PushReactionResponse;
 }
 
@@ -46,6 +58,9 @@ export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & H
  */
 export type PushReactionRegistration<R = any> = PushRegistration<PushReaction<R>>;
 
+/**
+ * Something we can register as a push reaction
+ */
 export type PushReactionRegisterable<R = any> = PushReactionRegistration | PushReaction<R>;
 
 function isPushReactionRegistration<R>(a: PushReactionRegisterable<any>): a is PushReactionRegistration {
@@ -53,6 +68,11 @@ function isPushReactionRegistration<R>(a: PushReactionRegisterable<any>): a is P
     return !!maybe.name && !!maybe.action;
 }
 
+/**
+ * Convert an action function to a PushReaction if necessary
+ * @param {PushReactionRegisterable<any>} prr
+ * @return {PushReactionRegistration}
+ */
 export function toPushReactionRegistration(prr: PushReactionRegisterable<any>): PushReactionRegistration {
     return isPushReactionRegistration(prr) ? prr : {
         name: "Raw push reaction",
@@ -72,11 +92,12 @@ export interface SelectiveCodeActionOptions {
 }
 
 /**
- * Compute the relevant actions for this push
+ * Compute the relevant actions for this push. Some may be filtered out
+ * by their push tests.
  */
 export function relevantCodeActions<R>(registrations: Array<PushReactionRegistration<R>>,
-                                       cri: PushImpactListenerInvocation): Promise<Array<PushReactionRegistration<R>>> {
+                                       pli: PushImpactListenerInvocation): Promise<Array<PushReactionRegistration<R>>> {
     return Promise.all(
-        registrations.map(async t => (!t.pushTest || await t.pushTest.mapping(cri)) ? t : undefined))
+        registrations.map(async t => (!t.pushTest || await t.pushTest.mapping(pli)) ? t : undefined))
         .then(elts => elts.filter(x => !!x));
 }

@@ -86,7 +86,6 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
             credentials,
             push,
         });
-
         return Success;
     }
 }
