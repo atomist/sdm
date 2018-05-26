@@ -16,12 +16,18 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { GoalCompletionListener, GoalCompletionListenerInvocation, GoalsSetListener, GoalsSetListenerInvocation, StatusState } from "../../..";
 import { CredentialsResolver } from "../../../handlers/common/CredentialsResolver";
 import { goalKeyString, SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
+import { StatusState } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
+import {
+    GoalCompletionListener,
+    GoalCompletionListenerInvocation,
+    GoalsSetListener,
+    GoalsSetListenerInvocation,
+} from "../../listener/GoalsSetListener";
 
-export function CreatePendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
+export function createPendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {
         const {id, credentials} = inv;
         if (inv.goalSet && inv.goalSet.goals && inv.goalSet.goals.length > 0) {

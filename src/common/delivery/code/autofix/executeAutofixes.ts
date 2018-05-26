@@ -20,7 +20,7 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { ProgressLog } from "../../../..";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";

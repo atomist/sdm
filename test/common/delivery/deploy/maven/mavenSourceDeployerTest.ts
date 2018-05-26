@@ -16,11 +16,13 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Project } from "@atomist/automation-client/project/Project";
-import { LoggingProgressLog, mavenDeployer, SingleProjectLoader } from "../../../../../src";
 
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
+import { mavenDeployer } from "../../../../../src/common/delivery/deploy/local/maven/mavenSourceDeployer";
+import { LoggingProgressLog } from "../../../../../src/common/log/LoggingProgressLog";
+import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
 describe("mavenSourceDeployer", () => {
 

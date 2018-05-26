@@ -15,7 +15,7 @@
  */
 
 import { ChildProcess } from "child_process";
-import { Deployment } from "../../../..";
+import { Deployment } from "../../../../spi/deploy/Deployment";
 
 export interface StartupInfo {
 

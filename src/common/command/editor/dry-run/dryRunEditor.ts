@@ -23,8 +23,8 @@ import { GitHubFallbackReposParameters } from "@atomist/automation-client/operat
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { CachingProjectLoader } from "../../../../index";
 import { Status } from "../../../../util/github/ghub";
+import { CachingProjectLoader } from "../../../repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../../repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../../EmptyParameters";
 import { EditModeSuggestion } from "../EditModeSuggestion";

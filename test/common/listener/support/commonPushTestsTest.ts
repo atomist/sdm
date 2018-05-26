@@ -17,12 +17,8 @@
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import {
-    hasFileWithExtension,
-    ToDefaultBranch,
-} from "../../../../src";
 import { PushListenerInvocation } from "../../../../src/common/listener/PushListener";
-import { hasFile, hasFileContaining } from "../../../../src/common/listener/support/pushtest/commonPushTests";
+import { hasFile, hasFileContaining, hasFileWithExtension, ToDefaultBranch } from "../../../../src/common/listener/support/pushtest/commonPushTests";
 
 describe("commonPushTests", () => {
 
@@ -38,7 +34,6 @@ describe("commonPushTests", () => {
                     },
                 },
             };
-
             const r = await ToDefaultBranch.mapping(pli as any as PushListenerInvocation);
             assert(r);
         });

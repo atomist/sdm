@@ -24,11 +24,9 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { StringCapturingProgressLog } from "../../../../../common/log/StringCapturingProgressLog";
-import {
-    OnAnyRequestedSdmGoal,
-    ProgressLog,
-} from "../../../../../index";
 import { SdmGoal } from "../../../../../ingesters/sdmGoalIngester";
+import { ProgressLog } from "../../../../../spi/log/ProgressLog";
+import { OnAnyRequestedSdmGoal } from "../../../../../typings/types";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
 
 /**

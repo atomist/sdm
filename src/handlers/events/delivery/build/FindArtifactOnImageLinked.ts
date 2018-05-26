@@ -19,9 +19,14 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { Goal } from "../../../../common/delivery/goals/Goal";
 import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { ArtifactListenerInvocation } from "../../../../common/listener/ArtifactListener";
+import {
+    ArtifactListenerInvocation,
+    ArtifactListenerRegisterable,
+    toArtifactListenerRegistration,
+} from "../../../../common/listener/ArtifactListener";
+import { PushListenerInvocation } from "../../../../common/listener/PushListener";
+import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
-import { ArtifactListenerRegisterable, ProjectLoader, PushListenerInvocation, toArtifactListenerRegistration } from "../../../../index";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";

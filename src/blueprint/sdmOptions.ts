@@ -16,11 +16,9 @@
 
 import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
+import { EphemeralLocalArtifactStore } from "../common/artifact/local/EphemeralLocalArtifactStore";
+import { CachingProjectLoader } from "../common/repo/CachingProjectLoader";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
-import {
-    CachingProjectLoader,
-    EphemeralLocalArtifactStore,
-} from "../index";
 import { logFactory } from "../spi/log/logFactory";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 

@@ -17,16 +17,22 @@
 import { logger } from "@atomist/automation-client";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import * as _ from "lodash";
-import { PushImpactListenerInvocation } from "../../../..";
+import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
 import { PushReaction } from "../PushReactionRegistration";
 import { FingerprinterResult } from "./FingerprinterRegistration";
 
-export async function computeFingerprints(cri: PushImpactListenerInvocation,
+/**
+ * Compute fingerprints on this invocation with the given fingerprinters
+ * @param {PushImpactListenerInvocation} pli
+ * @param {Array<PushReaction<FingerprinterResult>>} fingerprinters
+ * @return {Promise<Fingerprint[]>}
+ */
+export async function computeFingerprints(pli: PushImpactListenerInvocation,
                                           fingerprinters: Array<PushReaction<FingerprinterResult>>): Promise<Fingerprint[]> {
     const results: Fingerprint[][] = await Promise.all(
         fingerprinters.map(async fp => {
-            logger.info("Using fingerprinter %s to fingerprint %j", fp.name, cri.id);
-            const f = await fp(cri);
+            logger.info("Using fingerprinter %s to fingerprint %j", fp.name, pli.id);
+            const f = await fp(pli);
             return isFingerprint(f) ? [f] : f;
         }),
     );

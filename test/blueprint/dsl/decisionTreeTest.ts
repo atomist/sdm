@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import { Goals, HttpServiceGoals, NoGoals, PushListenerInvocation, PushMapping, whenPushSatisfies } from "../../../src";
 import { given } from "../../../src/blueprint/dsl/decisionTree";
 import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
 
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
+import { whenPushSatisfies } from "../../../src/blueprint/dsl/goalDsl";
+import { NoGoals } from "../../../src/common/delivery/goals/common/commonGoals";
+import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
+import { Goals } from "../../../src/common/delivery/goals/Goals";
+import { PushListenerInvocation } from "../../../src/common/listener/PushListener";
+import { PushMapping } from "../../../src/common/listener/PushMapping";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",

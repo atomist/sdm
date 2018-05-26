@@ -15,9 +15,10 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { IsNode, PushTest } from "../../../../..";
 import { computeShaOf } from "../../../../../util/misc/sha";
 import { PushImpactListenerInvocation } from "../../../../listener/PushImpactListener";
+import { PushTest } from "../../../../listener/PushTest";
+import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
 import { FingerprinterRegistration, FingerprinterResult } from "../FingerprinterRegistration";
 
 /**
