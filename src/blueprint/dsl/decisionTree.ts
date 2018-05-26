@@ -14,11 +14,31 @@
  * limitations under the License.
  */
 
-import { allSatisfied, PushMapping, PushRules, PushTest } from "../..";
+import { PushMapping } from "../../common/listener/PushMapping";
+import { PushTest } from "../../common/listener/PushTest";
+import { PushRules } from "../../common/listener/support/PushRules";
+import { allSatisfied } from "../../common/listener/support/pushtest/pushTestUtils";
 
 /**
  * Simple DSL to create a decision tree.
  * Trees and subtrees can compute variables as interim values for future use.
+ * Example usage, showing computed state:
+ *
+ * ```
+ * let count = 0;  // Initialize a counter we'll use later
+ * const pm: PushMapping<Goals> = given<Goals>(TruePushTest, ...) // Use any push tests
+ *    .init(() => count = 0) // Init to set state
+ *    .itMeans("no frogs coming")
+ *    .then(
+ *        given<Goals>(TruePushTest, ...).itMeans("case1")
+ *           .compute(() => count++)   // Increment the counter for this branch
+ *           .then(
+ *              // Compute terminal rules
+ *              whenPushSatisfies(count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
+ *              whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
+ *           ),
+ *       );
+ * ```
  * @param givenPushTests PushTests
  * @return interim DSL structure
  */

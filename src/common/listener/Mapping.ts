@@ -37,8 +37,6 @@ export interface Mapping<F, V> {
     mapping: Mapper<F, V>;
 }
 
-export type PredicateMapping<F> = Mapping<F, boolean>;
-
 export function isMapping(a: any): a is Mapping<any, any> {
     const maybe = a as Mapping<any, any>;
     return !!maybe.name && !!maybe.mapping;

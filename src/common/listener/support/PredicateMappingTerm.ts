@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-import { isMapping, Mapper } from "../../common/listener/Mapping";
-import { PushListenerInvocation } from "../../common/listener/PushListener";
-import { pushTest, PushTest } from "../../common/listener/PushTest";
+import { isMapping, Mapper } from "../Mapping";
+import { PredicateMapping } from "../PredicateMapping";
 
 /**
- * Predicate that can be used in PushTest DSL.
- * Can be a PushTest, a function or computed boolean
+ * Predicate that can be used in predicate DSL.
+ * Can be a PredicateMapping, a function or computed boolean
  */
-export type PushTestPredicate = PushTest | Mapper<PushListenerInvocation, boolean> | boolean | (() => (boolean | Promise<boolean>));
+export type PredicateMappingTerm<F> =
+    PredicateMapping<F> |
+    Mapper<F, boolean> |
+    boolean |
+    (() => (boolean | Promise<boolean>));
 
-export function toPushTest(p: PushTestPredicate): PushTest {
+/**
+ * Convert a PredicateMapping term to a PredicateMapping
+ * @param {PredicateMappingTerm<F>} p
+ * @return {PredicateMapping<F>}
+ */
+export function toPredicateMapping<F>(p: PredicateMappingTerm<F>): PredicateMapping<F> {
     if (isMapping(p)) {
         return p;
     }
     if (typeof p === "boolean") {
-        return pushTest(p + "", async () => p);
+        return {name: p + "", mapping: async () => p};
     }
-    return pushTest(p + "", p as any);
+    return {name: p + "", mapping: p as any};
 }

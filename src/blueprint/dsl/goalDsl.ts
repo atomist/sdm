@@ -16,10 +16,11 @@
 
 import { Goal } from "../../common/delivery/goals/Goal";
 import { Goals, isGoals } from "../../common/delivery/goals/Goals";
+import { PushListenerInvocation } from "../../common/listener/PushListener";
 import { PushTest } from "../../common/listener/PushTest";
+import { PredicateMappingTerm, toPredicateMapping } from "../../common/listener/support/PredicateMappingTerm";
 import { PushRule } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
-import { PushTestPredicate, toPushTest } from "./pushTestPredicate";
 
 export class GoalSetterPushRule extends PushRule<Goals> {
 
@@ -42,8 +43,14 @@ export class GoalSetterPushRule extends PushRule<Goals> {
  * @param {PushTest} guard1
  * @param {PushTest} guards
  */
-export function whenPushSatisfies(guard1: PushTestPredicate, ...guards: PushTestPredicate[]): GoalSetterPushRule {
-    return new GoalSetterPushRule(toPushTest(guard1), guards.map(toPushTest));
+export function whenPushSatisfies(
+    guard1: PredicateMappingTerm<PushListenerInvocation>,
+    ...guards: Array<PredicateMappingTerm<PushListenerInvocation>>): GoalSetterPushRule {
+    return new GoalSetterPushRule(toPredicateMapping(guard1), guards.map(toPredicateMapping));
 }
 
+/**
+ * PushRule that matches every push
+ * @type {GoalSetterPushRule}
+ */
 export const onAnyPush = new GoalSetterPushRule(AnyPush, [], "On any push");

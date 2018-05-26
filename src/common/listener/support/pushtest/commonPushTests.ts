@@ -30,7 +30,7 @@ export const ToDefaultBranch: PushTest = pushTest("Push to default branch", asyn
  * @return {boolean}
  * @constructor
  */
-export const FromAtomist = pushTest("Push from Atomist", async p =>
+export const FromAtomist: PushTest = pushTest("Push from Atomist", async p =>
     p.push.after.message.includes("[atomist]"));
 
 /**
@@ -46,7 +46,7 @@ export const AnyPush: PushTest = pushTest("Any push", async p => true);
  * @return {Promise<boolean>}
  * @constructor
  */
-export const ToPublicRepo = pushTest("To public repo", async p =>
+export const ToPublicRepo: PushTest = pushTest("To public repo", async p =>
     // Ask GitHub if the repo is public as we do not have this information in our model
     isGitHubRepoRef(p.id) && isPublicRepo(p.credentials, p.id),
 );
