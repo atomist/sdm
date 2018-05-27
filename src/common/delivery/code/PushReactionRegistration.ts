@@ -19,17 +19,19 @@ import { PushRegistration } from "../../listener/PushRegistration";
 
 /**
  * A code action response that affects delivery:
- * failing the current flow or requiring approval.
+ * failing the current goal or requiring approval,
+ * causing dependent goals to fail or wait.
  */
 export enum PushReactionResponse {
 
     /**
-     * Fail execution of the present goalset. Any downstream goals will stop.
+     * Fail execution of the present goalset. Any dependent goals will stop.
+     * Will not stop execution of non-dependent goals.
      */
     failGoals = "fail",
 
     /**
-     * Require approval to proceed to downstream goals in the present goalset.
+     * Require approval to proceed to dependent goals in the present goalset.
      */
     requireApprovalToProceed = "requireApproval",
 }
@@ -53,8 +55,10 @@ export interface HasCodeActionResponse {
 export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
 
 /**
- * Used to register actions on a push that can return any type.
- * Use ReviewerRegistration if you want to return a structured type.
+ * Used to register actions on a push that can potentially
+ * influence downstream goals. Will be invoked if a PushReactionGoal has
+ * been set for the given push.
+ * Use ReviewerRegistration if you want to return a structured review.
  */
 export type PushReactionRegistration<R = any> = PushRegistration<PushReaction<R>>;
 
