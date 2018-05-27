@@ -172,6 +172,5 @@ export * from "./spi/deploy/Deployment";
 export * from "./spi/log/InterpretedLog";
 export * from "./spi/log/ProgressLog";
 export * from "./spi/log/logFactory";
-export * from "./typings/json-stringify-safe.d";
 export * from "./typings/types";
 export * from "./util/test/SingleProjectLoader";
