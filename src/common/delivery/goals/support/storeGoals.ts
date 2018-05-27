@@ -19,12 +19,12 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { disregardApproval } from "../../../handlers/events/delivery/verify/approvalGate";
+import { disregardApproval } from "../../../../handlers/events/delivery/verify/approvalGate";
 import {
     GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey, SdmGoalState,
     SdmProvenance,
-} from "../../../ingesters/sdmGoalIngester";
-import { Goal, hasPreconditions } from "./Goal";
+} from "../../../../ingesters/sdmGoalIngester";
+import { Goal, hasPreconditions } from "../Goal";
 import { GoalImplementation } from "./SdmGoalImplementationMapper";
 
 export function environmentFromGoal(goal: Goal) {

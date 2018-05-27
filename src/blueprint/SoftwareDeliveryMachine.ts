@@ -20,6 +20,18 @@ import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/auto
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import {
+    ArtifactGoal,
+    AutofixGoal,
+    BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
+    FingerprintGoal,
+    JustBuildGoal,
+    NoGoal,
+    PushReactionGoal,
+    ReviewGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../blueprint/wellKnownGoals";
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { executeBuild } from "../common/delivery/build/executeBuild";
@@ -30,25 +42,11 @@ import { executeReview } from "../common/delivery/code/review/executeReview";
 import { Target } from "../common/delivery/deploy/deploy";
 import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
 import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
-import {
-    ArtifactGoal,
-    AutofixGoal,
-    BuildGoal,
-    DeleteAfterUndeploysGoal,
-    DeleteRepositoryGoal,
-    FingerprintGoal,
-    JustBuildGoal,
-    NoGoal,
-    PushReactionGoal,
-    ReviewGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../common/delivery/goals/common/commonGoals";
 import { Goal } from "../common/delivery/goals/Goal";
 import { Goals } from "../common/delivery/goals/Goals";
-import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
+import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushMapping } from "../common/listener/PushMapping";
 import { PushTest } from "../common/listener/PushTest";
@@ -97,7 +95,11 @@ import { ListenerRegistrations } from "./support/ListenerRegistrations";
  * Class instantiated to create a **Software Delivery Machine**.
  * Combines commands and delivery event handling using _goals_.
  *
- * Includes built in support for a delivery process spanning
+ * Goals and goal "implementations" can be defined by users.
+ * However, certain well known goals are built into the SoftwareDeliveryMachine
+ * for convenience, with their own associated listeners.
+ *
+ * Well known goal support is based around a delivery process spanning
  * common goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment.

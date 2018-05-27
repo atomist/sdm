@@ -21,9 +21,9 @@ import axios from "axios";
 import * as https from "https";
 import * as _ from "lodash";
 import { GoalsSetListener } from "../../../listener/GoalsSetListener";
-import { splitContext } from "../gitHubContext";
 import { Goal, GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
+import { splitContext } from "../support/github/gitHubContext";
 
 /**
  * Display a graph of the goals that have just been set to Slack
@@ -32,7 +32,6 @@ import { Goals } from "../Goals";
  * @constructor
  */
 export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
-    // This is an easter egg
     const graphvizServiceUrl = configurationValue<string>("sdm.graphviz.url", null);
     if (!graphvizServiceUrl) {
         return;
@@ -83,8 +82,7 @@ async function askForGraph(generateGraphUrl: string, graphDefinition: string) {
     return generateGraphResponse.data;
 }
 
-export function goalsToDot(goals: Goals) {
-
+export function goalsToDot(goals: Goals): string {
     const nodeAttributes = goals.goals.map(g =>
         `${validDotName(g)} [label="${g.name}"]`);
 

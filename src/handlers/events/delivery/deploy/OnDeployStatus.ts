@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { StagingDeploymentContext } from "../../../../common/delivery/goals/common/commonGoals";
+import { StagingDeploymentGoal } from "../../../../blueprint/wellKnownGoals";
 import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
@@ -30,7 +30,7 @@ import { CredentialsResolver } from "../../../common/CredentialsResolver";
     subscription({
         name: "OnSuccessStatus",
         variables: {
-            context: StagingDeploymentContext,
+            context: StagingDeploymentGoal.context,
         },
     }),
 )
@@ -44,7 +44,7 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
         const status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== StagingDeploymentContext) {
+        if (status.context !== StagingDeploymentGoal.context) {
             logger.debug(`********* OnDeploy got called with status context=[${status.context}]`);
             return Success;
         }

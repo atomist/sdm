@@ -169,13 +169,19 @@ export class ListenerRegistrations {
         return this;
     }
 
+    /**
+     * Add review listeners. Will be invoked during a ReviewGoal
+     * @param {ReviewListener} listeners
+     * @return {this}
+     */
     public addReviewListeners(...listeners: ReviewListener[]): this {
         this.reviewListeners.push(...listeners);
         return this;
     }
 
     /**
-     * Add reactions to a push
+     * Add reactions to a push: That is, functions that run during execution of a
+     * PushReaction goal.
      * @param {PushReactionRegistration} prrs
      * @return {this}
      */

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
+import {
+    ArtifactGoal,
+    AutofixGoal,
+    BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
+    FingerprintGoal, LocalDeploymentGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
+    ProductionUndeploymentGoal,
+    PushReactionGoal, ReviewGoal,
+    StagingDeploymentGoal, StagingEndpointGoal, StagingVerifiedGoal,
+} from "../../../../blueprint/wellKnownGoals";
 import { Goals } from "../Goals";
 import {
-    ArtifactGoal, AutofixGoal, BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal,
-    LocalUndeploymentGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
-    ProductionUndeploymentGoal, PushReactionGoal, ReviewGoal,
-    StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal, StagingVerifiedGoal,
+    LocalEndpointGoal, LocalUndeploymentGoal,
+    StagingUndeploymentGoal,
 } from "./commonGoals";
 
 /**

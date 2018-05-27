@@ -24,8 +24,8 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
 import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";

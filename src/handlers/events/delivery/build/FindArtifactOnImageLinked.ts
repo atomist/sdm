@@ -17,8 +17,8 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import {
     ArtifactListenerInvocation,
     ArtifactListenerRegisterable,

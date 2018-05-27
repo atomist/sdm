@@ -23,7 +23,7 @@ import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
 import { SoftwareDeliveryMachine } from "../../src/blueprint/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
-import { AutofixGoal } from "../../src/common/delivery/goals/common/commonGoals";
+import { AutofixGoal } from "../../src/blueprint/wellKnownGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
 import { Goals } from "../../src/common/delivery/goals/Goals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";

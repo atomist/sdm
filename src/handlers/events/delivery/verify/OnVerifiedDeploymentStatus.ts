@@ -16,13 +16,13 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
+import { StagingVerifiedGoal } from "../../../../blueprint/wellKnownGoals";
+import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../common/listener/VerifiedDeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import Status = OnSuccessStatus.Status;
 
 /**
  * React to a verified deployment
@@ -31,7 +31,7 @@ import Status = OnSuccessStatus.Status;
     subscription({
         name: "OnSuccessStatus",
         variables: {
-            context: StagingVerifiedContext,
+            context: StagingVerifiedGoal.context,
         },
     }),
 )
@@ -46,7 +46,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
         const status: Status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== StagingVerifiedContext) {
+        if (status.context !== StagingVerifiedGoal.context) {
             logger.debug(`********* onVerifiedStatus got called with status context=[${status.context}]`);
             return Success;
         }

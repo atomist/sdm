@@ -15,8 +15,8 @@
  */
 
 import * as assert from "power-assert";
-import { PushListenerInvocation } from "../../../src";
 import { allOf } from "../../../src/blueprint/dsl/allOf";
+import { PushListenerInvocation } from "../../../src/common/listener/PushListener";
 import { fakePush } from "./decisionTreeTest";
 
 describe("allOf", () => {
