@@ -15,6 +15,7 @@
  */
 
 import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../blueprint/wellKnownGoals";
+import { StagingDeploymentGoal } from "../../../../blueprint/wellKnownGoals";
 import { GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
 import {
@@ -22,7 +23,7 @@ import {
     ProductionEnvironment,
     StagingEnvironment,
 } from "../support/github/gitHubContext";
-import { DockerBuildGoal, StagingDeploymentGoal, TagGoal, VersionGoal } from "./commonGoals";
+import { DockerBuildGoal, TagGoal, VersionGoal } from "./commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({
     uniqueName: "Publish",

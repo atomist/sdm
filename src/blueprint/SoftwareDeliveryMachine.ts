@@ -95,7 +95,11 @@ import { ListenerRegistrations } from "./support/ListenerRegistrations";
  * Class instantiated to create a **Software Delivery Machine**.
  * Combines commands and delivery event handling using _goals_.
  *
- * Includes built in support for a delivery process spanning
+ * Goals and goal "implementations" can be defined by users.
+ * However, certain well known goals are built into the SoftwareDeliveryMachine
+ * for convenience, with their own associated listeners.
+ *
+ * Well known goal support is based around a delivery process spanning
  * common goals of fingerprinting, reacting to fingerprint diffs,
  * code review, build, deployment, endpoint verification and
  * promotion to a production environment.

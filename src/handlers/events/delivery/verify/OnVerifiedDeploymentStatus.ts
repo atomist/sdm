@@ -16,8 +16,8 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { StagingVerifiedGoal } from "../../../..";
 import Status = OnSuccessStatus.Status;
-import { StagingVerifiedContext } from "../../../../blueprint/wellKnownGoals";
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../common/listener/VerifiedDeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
@@ -31,7 +31,7 @@ import { CredentialsResolver } from "../../../common/CredentialsResolver";
     subscription({
         name: "OnSuccessStatus",
         variables: {
-            context: StagingVerifiedContext,
+            context: StagingVerifiedGoal.context,
         },
     }),
 )
@@ -46,7 +46,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
         const status: Status = event.data.Status[0];
         const commit = status.commit;
 
-        if (status.context !== StagingVerifiedContext) {
+        if (status.context !== StagingVerifiedGoal.context) {
             logger.debug(`********* onVerifiedStatus got called with status context=[${status.context}]`);
             return Success;
         }

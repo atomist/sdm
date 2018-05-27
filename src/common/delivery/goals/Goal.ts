@@ -92,18 +92,18 @@ export class Goal {
             throw new Error(`${definition.uniqueName} is not a valid goal name: Must be camel case`);
         }
         this.definition = definition;
+        this.context = BaseContext + definition.environment + definition.orderedName;
+
+        this.uniqueCamelCaseName = definition.uniqueName;
 
         const numberAndName = /([0-9\.]+)-(.*)/;
         const matchGoal = definition.orderedName.match(numberAndName);
         if (!matchGoal) {
-            logger.debug(`Ordered name must be '#-name'. Did not find number and name in ${definition.orderedName}`);
-            return;
+            logger.debug(`Ordered name was not '#-name'. Did not find number and name in ${definition.orderedName}`);
         }
 
-        this.name = definition.displayName || matchGoal[2];
-        this.context = BaseContext + definition.environment + definition.orderedName;
+        this.name = definition.displayName || (matchGoal && matchGoal[2]) || definition.orderedName;
 
-        this.uniqueCamelCaseName = definition.uniqueName;
     }
 
     // TODO decouple from github statuses

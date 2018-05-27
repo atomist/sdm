@@ -14,17 +14,10 @@
  * limitations under the License.
  */
 
-import {
-    ArtifactGoal,
-    BuildGoal,
-    LocalDeploymentGoal, NoGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
-    ReviewGoal,
-} from "../../../../blueprint/wellKnownGoals";
+import { BuildGoal, LocalDeploymentGoal, NoGoal } from "../../../../blueprint/wellKnownGoals";
 import { Goal, GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
-import { IndependentOfEnvironment, ProjectDisposalEnvironment, StagingEnvironment } from "../support/github/gitHubContext";
+import { IndependentOfEnvironment, ProjectDisposalEnvironment } from "../support/github/gitHubContext";
 
 export const VersionGoal = new Goal({
     uniqueName: "Version",
@@ -55,29 +48,12 @@ export const TagGoal = new GoalWithPrecondition({
     failedDescription: "Failed to create Tag",
 }, DockerBuildGoal, BuildGoal);
 
-export const StagingDeploymentGoal = new GoalWithPrecondition({
-    uniqueName: "DeployToTest",
-    environment: StagingEnvironment,
-    orderedName: "3-deploy",
-    displayName: "deploy to Test",
-    completedDescription: "Deployed to Test",
-    failedDescription: "Test deployment failure",
-}, ArtifactGoal);
-
 export const StagingUndeploymentGoal = new Goal({
     uniqueName: "UndeployFromTest",
     environment: ProjectDisposalEnvironment,
     orderedName: "2-staging-undeploy",
     displayName: "undeploy from test",
     completedDescription: "not deployed in test",
-});
-
-export const ProductionUndeploymentGoal = new Goal({
-    uniqueName: "UndeployFromProduction",
-    environment: ProjectDisposalEnvironment,
-    orderedName: "3-prod-undeploy",
-    displayName: "undeploy from Prod",
-    completedDescription: "not deployed in Prod",
 });
 
 export const LocalUndeploymentGoal = new Goal({
@@ -97,12 +73,6 @@ export const LocalEndpointGoal = new GoalWithPrecondition({
     completedDescription: "Here is the local service endpoint",
 
 }, LocalDeploymentGoal);
-
-export const StagingDeploymentContext = StagingDeploymentGoal.context;
-export const ProductionDeploymentContext = ProductionDeploymentGoal.context;
-export const ProductionEndpointContext = ProductionEndpointGoal.context;
-export const ReviewContext = ReviewGoal.context;
-export const BuildContext = BuildGoal.context;
 
 /**
  * Special Goals object to be returned if changes are immaterial.

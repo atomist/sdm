@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { ProductionUndeploymentGoal, StagingDeploymentGoal } from "../common/delivery/goals/common/commonGoals";
 import { Goal, GoalWithPrecondition } from "../common/delivery/goals/Goal";
 import {
     IndependentOfEnvironment,
@@ -128,6 +127,15 @@ export const LocalDeploymentGoal = new Goal({
     completedDescription: "Deployed locally",
 });
 
+export const StagingDeploymentGoal = new GoalWithPrecondition({
+    uniqueName: "DeployToTest",
+    environment: StagingEnvironment,
+    orderedName: "3-deploy",
+    displayName: "deploy to Test",
+    completedDescription: "Deployed to Test",
+    failedDescription: "Test deployment failure",
+}, ArtifactGoal);
+
 // this one won't be set up to trigger on its precondition;
 // rather, the deploy goal also sets this one, currently.
 // Setting the precondition lets FailDownstream know that this
@@ -171,6 +179,14 @@ export const ProductionEndpointGoal = new GoalWithPrecondition({
     completedDescription: "Here is the service endpoint in Prod",
 }, ProductionDeploymentGoal);
 
+export const ProductionUndeploymentGoal = new Goal({
+    uniqueName: "UndeployFromProduction",
+    environment: ProjectDisposalEnvironment,
+    orderedName: "3-prod-undeploy",
+    displayName: "undeploy from Prod",
+    completedDescription: "not deployed in Prod",
+});
+
 export const DeleteAfterUndeploysGoal = new GoalWithPrecondition({
     uniqueName: "DeleteRepositoryAfterUndeployed",
     environment: ProjectDisposalEnvironment,
@@ -184,6 +200,3 @@ export const DeleteRepositoryGoal = new Goal({
     orderedName: "8-delete-repo",
     completedDescription: "Offered to delete repository",
 });
-
-export const StagingEndpointContext = StagingEndpointGoal.context;
-export const StagingVerifiedContext = StagingVerifiedGoal.context;
