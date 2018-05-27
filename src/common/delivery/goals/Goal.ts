@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { requiresApproval } from "../../../handlers/events/delivery/verify/approvalGate";
-import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext, GoalEnvironment } from "./gitHubContext";
+import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext, GoalEnvironment } from "./support/github/gitHubContext";
 
 /**
  * Core data for a goal

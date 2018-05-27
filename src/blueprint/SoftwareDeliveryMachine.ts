@@ -33,9 +33,7 @@ import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/dep
 import {
     ArtifactGoal,
     AutofixGoal,
-    BuildGoal,
-    DeleteAfterUndeploysGoal,
-    DeleteRepositoryGoal,
+    BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
     FingerprintGoal,
     JustBuildGoal,
     NoGoal,
@@ -43,10 +41,10 @@ import {
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
-} from "../common/delivery/goals/common/commonGoals";
+} from "../blueprint/wellKnownGoals";
 import { Goal } from "../common/delivery/goals/Goal";
 import { Goals } from "../common/delivery/goals/Goals";
-import { SdmGoalImplementationMapper } from "../common/delivery/goals/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { GoalSetter } from "../common/listener/GoalSetter";

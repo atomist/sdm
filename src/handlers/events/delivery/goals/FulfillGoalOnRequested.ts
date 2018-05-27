@@ -27,8 +27,8 @@ import {
     EventHandlerMetadata,
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
-import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/gitHubStatusSetters";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/SdmGoalImplementationMapper";
+import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/support/github/gitHubStatusSetters";
+import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";

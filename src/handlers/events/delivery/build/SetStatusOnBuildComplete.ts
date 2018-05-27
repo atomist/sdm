@@ -21,7 +21,7 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";

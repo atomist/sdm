@@ -24,7 +24,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";

@@ -18,20 +18,11 @@ import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
-} from "../gitHubContext";
+} from "../support/github/gitHubContext";
 import { GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
-import {
-    ArtifactGoal,
-    AutofixGoal,
-    BuildGoal,
-    DockerBuildGoal,
-    ReviewGoal,
-    StagingDeploymentGoal,
-    StagingEndpointGoal,
-    TagGoal,
-    VersionGoal,
-} from "./commonGoals";
+import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../blueprint/wellKnownGoals";
+import { DockerBuildGoal, StagingDeploymentGoal, TagGoal, VersionGoal } from "./commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({
     uniqueName: "Publish",

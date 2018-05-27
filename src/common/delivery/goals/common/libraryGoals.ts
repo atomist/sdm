@@ -15,10 +15,7 @@
  */
 
 import { Goals } from "../Goals";
-import {
-    JustBuildGoal,
-    ReviewGoal,
-} from "./commonGoals";
+import { JustBuildGoal, ReviewGoal } from "../../../../blueprint/wellKnownGoals";
 
 /**
  * Flow to build a library

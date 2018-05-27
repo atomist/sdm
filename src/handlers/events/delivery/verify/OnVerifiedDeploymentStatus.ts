@@ -16,13 +16,13 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { StagingVerifiedContext } from "../../../../common/delivery/goals/common/commonGoals";
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../common/listener/VerifiedDeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 import Status = OnSuccessStatus.Status;
+import { StagingVerifiedContext } from "../../../../blueprint/wellKnownGoals";
 
 /**
  * React to a verified deployment

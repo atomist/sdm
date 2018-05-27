@@ -16,12 +16,18 @@
 
 import { Goals } from "../Goals";
 import {
-    ArtifactGoal, AutofixGoal, BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal, FingerprintGoal, LocalDeploymentGoal, LocalEndpointGoal,
-    LocalUndeploymentGoal,
-    ProductionDeploymentGoal,
-    ProductionEndpointGoal,
-    ProductionUndeploymentGoal, PushReactionGoal, ReviewGoal,
-    StagingDeploymentGoal, StagingEndpointGoal, StagingUndeploymentGoal, StagingVerifiedGoal,
+    ArtifactGoal,
+    AutofixGoal,
+    BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
+    FingerprintGoal, LocalDeploymentGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
+    PushReactionGoal,
+    ReviewGoal, StagingEndpointGoal, StagingVerifiedGoal
+} from "../../../../blueprint/wellKnownGoals";
+import {
+    LocalEndpointGoal, LocalUndeploymentGoal,
+    ProductionUndeploymentGoal,
+    StagingDeploymentGoal,
+    StagingUndeploymentGoal,
 } from "./commonGoals";
 
 /**

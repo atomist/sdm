@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { IsolatedGoalLauncher } from "../../../handlers/events/delivery/goals/launchGoal";
-import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
-import { InterpretLog } from "../../../spi/log/InterpretedLog";
-import { RepoContext } from "../../context/SdmContext";
-import { PushListenerInvocation } from "../../listener/PushListener";
-import { PushTest } from "../../listener/PushTest";
-import { Goal } from "./Goal";
-import { ExecuteGoalWithLog } from "./support/reportGoalError";
+import { IsolatedGoalLauncher } from "../../../../handlers/events/delivery/goals/launchGoal";
+import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { InterpretLog } from "../../../../spi/log/InterpretedLog";
+import { RepoContext } from "../../../context/SdmContext";
+import { PushListenerInvocation } from "../../../listener/PushListener";
+import { PushTest } from "../../../listener/PushTest";
+import { Goal } from "../Goal";
+import { ExecuteGoalWithLog } from "./reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
 

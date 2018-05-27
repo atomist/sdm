@@ -24,7 +24,7 @@ import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
 import { Goal } from "../goals/Goal";
-import { descriptionFromState, updateGoal } from "../goals/storeGoals";
+import { descriptionFromState, updateGoal } from "../goals/support/storeGoals";
 import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../goals/support/reportGoalError";
 

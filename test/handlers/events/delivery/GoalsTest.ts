@@ -18,9 +18,9 @@ import * as assert from "power-assert";
 import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ReviewContext, StagingDeploymentContext,
-    StagingEndpointContext,
 } from "../../../../src/common/delivery/goals/common/commonGoals";
-import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/delivery/goals/gitHubContext";
+import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/delivery/goals/support/github/gitHubContext";
+import { StagingEndpointContext } from "../../../../src/blueprint/wellKnownGoals";
 
 describe("Goal handling", () => {
 

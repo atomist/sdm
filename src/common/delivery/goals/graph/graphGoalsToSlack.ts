@@ -21,7 +21,7 @@ import axios from "axios";
 import * as https from "https";
 import * as _ from "lodash";
 import { GoalsSetListener } from "../../../listener/GoalsSetListener";
-import { splitContext } from "../gitHubContext";
+import { splitContext } from "../support/github/gitHubContext";
 import { Goal, GoalWithPrecondition } from "../Goal";
 import { Goals } from "../Goals";
 

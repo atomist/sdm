@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { StatusState } from "../../../typings/types";
+import { StatusState } from "../../../../../typings/types";
 
 // convention: "sdm/atomist/#-env/#-goal" (the numbers are for ordering)
 export type GitHubStatusContext = string;

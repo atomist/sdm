@@ -19,7 +19,7 @@ import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
 import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
 import { Goal } from "../../../../common/delivery/goals/Goal";
-import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/storeGoals";
+import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
