@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-import { Goal } from "../../common/delivery/goals/Goal";
-import { Goals, isGoals } from "../../common/delivery/goals/Goals";
+import { Goals } from "../../common/delivery/goals/Goals";
 import { PushListenerInvocation } from "../../common/listener/PushListener";
 import { PushTest } from "../../common/listener/PushTest";
 import { PredicateMappingTerm, toPredicateMapping } from "../../common/listener/support/PredicateMappingTerm";
 import { PushRule } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
+import { GoalComponent, toGoals } from "./GoalComponent";
 
-export class GoalSetterPushRule extends PushRule<Goals> {
+export class GoalSetterMapping extends PushRule<Goals> {
 
     constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
         super(guard1, guards, reason);
     }
 
-    public setGoals(goals: Goals | Goal): this {
+    public setGoals(goals: GoalComponent): this {
         if (!goals) {
             return this.set(goals as Goals);
         }
-        return this.set(isGoals(goals) ? goals : new Goals("Solely " + goals.name, goals));
+        return this.set(toGoals(goals));
     }
 
 }
@@ -45,12 +45,12 @@ export class GoalSetterPushRule extends PushRule<Goals> {
  */
 export function whenPushSatisfies(
     guard1: PredicateMappingTerm<PushListenerInvocation>,
-    ...guards: Array<PredicateMappingTerm<PushListenerInvocation>>): GoalSetterPushRule {
-    return new GoalSetterPushRule(toPredicateMapping(guard1), guards.map(toPredicateMapping));
+    ...guards: Array<PredicateMappingTerm<PushListenerInvocation>>): GoalSetterMapping {
+    return new GoalSetterMapping(toPredicateMapping(guard1), guards.map(toPredicateMapping));
 }
 
 /**
  * PushRule that matches every push
- * @type {GoalSetterPushRule}
+ * @type {GoalSetterMapping}
  */
-export const onAnyPush = new GoalSetterPushRule(AnyPush, [], "On any push");
+export const onAnyPush = new GoalSetterMapping(AnyPush, [], "On any push");

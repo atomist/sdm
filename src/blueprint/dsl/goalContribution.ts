@@ -2,11 +2,12 @@ import { logger } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { SdmContext } from "../../common/context/SdmContext";
 import { Goal } from "../../common/delivery/goals/Goal";
-import { Goals, isGoals } from "../../common/delivery/goals/Goals";
+import { Goals } from "../../common/delivery/goals/Goals";
 import { Mapping, NeverMatch } from "../../common/listener/Mapping";
 import { PushListenerInvocation } from "../../common/listener/PushListener";
+import { GoalComponent, toGoals } from "./GoalComponent";
 
-export type GoalContribution<F> = Mapping<F, Goal | Goal[] | Goals>;
+export type GoalContribution<F> = Mapping<F, GoalComponent>;
 
 /**
  * An additive goal setter assembles the goals contributed by all the contributors.
@@ -23,8 +24,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
                 if (!r) {
                     return r as any;
                 }
-                return (isGoals(r)) ? r.goals :
-                    Array.isArray(r) ? r : [r];
+                return toGoals(r).goals;
             },
         }));
     }

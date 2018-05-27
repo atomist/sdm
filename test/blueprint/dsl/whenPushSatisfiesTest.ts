@@ -47,6 +47,11 @@ describe("whenPushSatisfies", () => {
         assert.equal(await test.mapping(fakePush()), HttpServiceGoals);
     });
 
+    it("should allow setting array of goals", async () => {
+        const test = whenPushSatisfies(async () => true).itMeans("war").setGoals(HttpServiceGoals.goals);
+        assert.deepEqual((await test.mapping(fakePush())).goals, HttpServiceGoals.goals);
+    });
+
     it("should not satisfy function returning promise false", async () => {
         const test = whenPushSatisfies(async () => false).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.mapping(fakePush()), undefined);
