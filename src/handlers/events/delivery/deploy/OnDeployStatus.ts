@@ -16,12 +16,12 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { StagingDeploymentGoal } from "../../../../blueprint/wellKnownGoals";
 import { DeploymentListener, DeploymentListenerInvocation } from "../../../../common/listener/DeploymentListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
-import { StagingDeploymentGoal } from "../../../../blueprint/wellKnownGoals";
 
 /**
  * React to a deployment.
