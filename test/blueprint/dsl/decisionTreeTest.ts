@@ -25,6 +25,7 @@ import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/http
 import { Goals } from "../../../src/common/delivery/goals/Goals";
 import { PushListenerInvocation } from "../../../src/common/listener/PushListener";
 import { PushMapping } from "../../../src/common/listener/PushMapping";
+import { fakeContext } from "../../../src/util/test/fakeContext";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",
@@ -35,6 +36,7 @@ export function fakePush(project?: Project): PushListenerInvocation {
     return {
         push: {id: new Date().getTime() + "_"},
         project,
+        context: fakeContext(),
     } as any as PushListenerInvocation;
 }
 

@@ -10,6 +10,9 @@ export type NeverMatch = null;
  */
 export type MappingResult<V> = Promise<V | undefined | NeverMatch>;
 
+/**
+ * Mapping function from F to V
+ */
 export type Mapper<F, V> = (from: F) => MappingResult<V>;
 
 /**

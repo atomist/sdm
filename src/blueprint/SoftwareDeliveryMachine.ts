@@ -478,7 +478,8 @@ export class SoftwareDeliveryMachine extends ListenerRegistrations implements Fu
     }
 
     /**
-     *
+     * Construct a new software delivery machine, with zero or
+     * more goal setters.
      * @param {string} name
      * @param {SoftwareDeliveryMachineOptions} opts
      * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"

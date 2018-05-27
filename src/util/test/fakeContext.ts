@@ -23,7 +23,7 @@ import * as stringify from "json-stringify-safe";
  * @param {string} teamId
  * @return {any}
  */
-export function fakeContext(teamId: string = "T123") {
+export function fakeContext(teamId: string = "T123"): HandlerContext {
     return {
         teamId,
         messageClient: {
@@ -36,7 +36,7 @@ export function fakeContext(teamId: string = "T123") {
                 return Promise.resolve({});
             },
         },
-
+        correlationId: "foo",
         context: {name: "fakeContextName", version: "v0.0", operation: "fakeOperation" },
     } as any as HandlerContext;
 }
