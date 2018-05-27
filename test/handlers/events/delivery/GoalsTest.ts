@@ -15,12 +15,12 @@
  */
 
 import * as assert from "power-assert";
+import { StagingEndpointContext } from "../../../../src/blueprint/wellKnownGoals";
 import {
     BuildContext,
     ProductionDeploymentContext, ProductionEndpointContext, ReviewContext, StagingDeploymentContext,
 } from "../../../../src/common/delivery/goals/common/commonGoals";
 import {BaseContext, contextIsAfter, splitContext} from "../../../../src/common/delivery/goals/support/github/gitHubContext";
-import { StagingEndpointContext } from "../../../../src/blueprint/wellKnownGoals";
 
 describe("Goal handling", () => {
 

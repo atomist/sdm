@@ -26,10 +26,10 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
+import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { preconditionsAreMet } from "../../../../common/delivery/goals/support/goalPreconditions";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import {
     goalKeyString,
     SdmGoal,

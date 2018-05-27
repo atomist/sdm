@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { IndependentOfEnvironment } from "../support/github/gitHubContext";
 import { Goal } from "../Goal";
+import { IndependentOfEnvironment } from "../support/github/gitHubContext";
 
 /**
  * Goal that sends a message

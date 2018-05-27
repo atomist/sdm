@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
+import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../blueprint/wellKnownGoals";
+import { GoalWithPrecondition } from "../Goal";
+import { Goals } from "../Goals";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
 } from "../support/github/gitHubContext";
-import { GoalWithPrecondition } from "../Goal";
-import { Goals } from "../Goals";
-import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../blueprint/wellKnownGoals";
 import { DockerBuildGoal, StagingDeploymentGoal, TagGoal, VersionGoal } from "./commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({

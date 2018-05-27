@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Goals } from "../Goals";
 import { JustBuildGoal, ReviewGoal } from "../../../../blueprint/wellKnownGoals";
+import { Goals } from "../Goals";
 
 /**
  * Flow to build a library

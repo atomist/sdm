@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { Goal, GoalWithPrecondition, } from "../Goal";
-import { Goals } from "../Goals";
 import {
     ArtifactGoal,
     BuildGoal,
     LocalDeploymentGoal, NoGoal,
     ProductionDeploymentGoal,
     ProductionEndpointGoal,
-    ReviewGoal
+    ReviewGoal,
 } from "../../../../blueprint/wellKnownGoals";
+import { Goal, GoalWithPrecondition } from "../Goal";
+import { Goals } from "../Goals";
 import { IndependentOfEnvironment, ProjectDisposalEnvironment, StagingEnvironment } from "../support/github/gitHubContext";
 
 export const VersionGoal = new Goal({
@@ -54,7 +54,6 @@ export const TagGoal = new GoalWithPrecondition({
     completedDescription: "Tagged",
     failedDescription: "Failed to create Tag",
 }, DockerBuildGoal, BuildGoal);
-
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
     uniqueName: "DeployToTest",
@@ -98,7 +97,6 @@ export const LocalEndpointGoal = new GoalWithPrecondition({
     completedDescription: "Here is the local service endpoint",
 
 }, LocalDeploymentGoal);
-
 
 export const StagingDeploymentContext = StagingDeploymentGoal.context;
 export const ProductionDeploymentContext = ProductionDeploymentGoal.context;

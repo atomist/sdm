@@ -20,16 +20,6 @@ import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/auto
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { createRepoHandler } from "../common/command/generator/createRepo";
-import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
-import { executeBuild } from "../common/delivery/build/executeBuild";
-import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
-import { executePushReactions } from "../common/delivery/code/executePushReactions";
-import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
-import { executeReview } from "../common/delivery/code/review/executeReview";
-import { Target } from "../common/delivery/deploy/deploy";
-import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
-import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -42,11 +32,21 @@ import {
     StagingEndpointGoal,
     StagingVerifiedGoal,
 } from "../blueprint/wellKnownGoals";
+import { createRepoHandler } from "../common/command/generator/createRepo";
+import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
+import { executeBuild } from "../common/delivery/build/executeBuild";
+import { executeAutofixes } from "../common/delivery/code/autofix/executeAutofixes";
+import { executePushReactions } from "../common/delivery/code/executePushReactions";
+import { executeFingerprinting } from "../common/delivery/code/fingerprint/executeFingerprinting";
+import { executeReview } from "../common/delivery/code/review/executeReview";
+import { Target } from "../common/delivery/deploy/deploy";
+import { executeDeploy } from "../common/delivery/deploy/executeDeploy";
+import { executeUndeploy, offerToDeleteRepository } from "../common/delivery/deploy/executeUndeploy";
 import { Goal } from "../common/delivery/goals/Goal";
 import { Goals } from "../common/delivery/goals/Goals";
-import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { lastLinesLogInterpreter, LogSuppressor } from "../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
+import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushMapping } from "../common/listener/PushMapping";
 import { PushTest } from "../common/listener/PushTest";

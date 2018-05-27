@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Goals } from "../Goals";
 import {
     ArtifactGoal,
     AutofixGoal,
     BuildGoal, DeleteAfterUndeploysGoal, DeleteRepositoryGoal,
     FingerprintGoal, LocalDeploymentGoal, ProductionDeploymentGoal, ProductionEndpointGoal,
     PushReactionGoal,
-    ReviewGoal, StagingEndpointGoal, StagingVerifiedGoal
+    ReviewGoal, StagingEndpointGoal, StagingVerifiedGoal,
 } from "../../../../blueprint/wellKnownGoals";
+import { Goals } from "../Goals";
 import {
     LocalEndpointGoal, LocalUndeploymentGoal,
     ProductionUndeploymentGoal,
