@@ -27,7 +27,8 @@ import * as stream from "stream";
  * @param filter function to filter file paths
  * @return {Promise<LocalProject>}
  */
-export function filteredView(p: Project, filter: (path: string) => boolean): Project {
+export function filteredView<P extends Project = Project>(p: Project,
+                                                          filter: (path: string) => boolean): P {
     // Use an ES6 proxy to bring back memories of Spring AOP
     const handler = {
         get: (target, prop) => {
