@@ -67,7 +67,7 @@ export type PushReactionRegistration<R = any> = PushRegistration<PushReaction<R>
  */
 export type PushReactionRegisterable<R = any> = PushReactionRegistration | PushReaction<R>;
 
-function isPushReactionRegistration<R>(a: PushReactionRegisterable<any>): a is PushReactionRegistration {
+function isPushReactionRegistration(a: PushReactionRegisterable<any>): a is PushReactionRegistration {
     const maybe = a as PushRegistration<any>;
     return !!maybe.name && !!maybe.action;
 }

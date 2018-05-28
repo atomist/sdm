@@ -53,7 +53,7 @@ export function splitContext(context: GitHubStatusContext) {
 
         const matchWhole = context.match(wholeContext);
         if (!matchWhole) {
-            return;
+            return undefined;
         }
 
         const goalPart = matchWhole[2];
@@ -61,7 +61,7 @@ export function splitContext(context: GitHubStatusContext) {
         const matchGoal = goalPart.match(numberAndName);
         if (!matchGoal || !matchEnv) {
             logger.debug(`Did not find number and name in ${matchWhole[1]} or ${matchWhole[2]}`);
-            return;
+            return undefined;
         }
         const name = matchGoal[2];
         const goalOrder = +matchGoal[1];

@@ -60,11 +60,11 @@ function recognizeNpmRunError(lines: string[]): RecognizedLog {
     return { relevantLines: lines.slice(- Math.min(lastBreakBeforeCommand, 20))};
 }
 
-function recognizeMochaTest(lines: string[]): RecognizedLog {
+function recognizeMochaTest(lines: string[]): RecognizedLog | undefined {
     const begin = lines.findIndex(s => BeginMochaFailingTests.test(s));
     if (begin < 0) {
         logger.debug("No mocha test detected");
-        return;
+        return undefined;
     }
     logger.debug("Mocha test detected, beginning at %d: %s", begin, lines[begin]);
     const fromBeginning = lines.slice(begin);

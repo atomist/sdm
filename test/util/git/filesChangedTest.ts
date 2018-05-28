@@ -61,6 +61,7 @@ describe("filesChanged", () => {
 
 /* tslint:disable */
 
+/*
 const diff = `M       .gitignore
 M       README.md
 M       package-lock.json
@@ -92,3 +93,4 @@ M       src/common/listener/support/pushtest/jvm/springPushTests.ts
 M       src/common/listener/support/pushtest/node/materialChangeToNodeRepo.ts
 A       src/graphql/fragment/PushFIelds.graphql
 `;
+*/

@@ -96,7 +96,7 @@ function mavenErrors(log: string): string | undefined {
         .map(l => l.replace("[ERROR] ", ""))
         .join("\n");
     if (!relevantPart) {
-        return;
+        return undefined;
     }
     return relevantPart;
 }
