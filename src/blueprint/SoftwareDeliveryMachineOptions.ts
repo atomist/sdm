@@ -20,7 +20,7 @@ import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { ProgressLogFactory } from "../spi/log/ProgressLog";
 
 /**
- * Infrastructure options for a SoftwareDeliveryMachine.
+ * Infrastructure options for a DefaultSoftwareDeliveryMachine.
  * Can be used to control the behavior of an SDM, and
  * also to facilitate testing.
  */

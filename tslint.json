@@ -23,7 +23,7 @@
     "max-classes-per-file": 7,
     "max-file-line-count": [
       true,
-      400
+      450
     ],
     "object-literal-sort-keys": false,
     "member-ordering": false,

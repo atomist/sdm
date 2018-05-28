@@ -37,12 +37,13 @@ import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener
 import { UserJoiningChannelListener } from "../../common/listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
 import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { ListenerRegistration } from "../ListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
  * This class is purely a registration store, and has no other behavior.
  */
-export class ListenerRegistrations {
+export class ListenerRegistrationSupport implements ListenerRegistration {
 
     protected readonly buildListeners: BuildListener[] = [];
 

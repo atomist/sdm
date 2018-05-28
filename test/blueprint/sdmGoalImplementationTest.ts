@@ -20,8 +20,8 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
+import { DefaultSoftwareDeliveryMachine } from "../../src/blueprint/DefaultSoftwareDeliveryMachine";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
-import { SoftwareDeliveryMachine } from "../../src/blueprint/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
 import { AutofixGoal } from "../../src/blueprint/wellKnownGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
@@ -53,7 +53,7 @@ describe("implementing goals in the SDM", () => {
 
     it("I can ask it to do an autofix", async () => {
 
-        const mySDM = new SoftwareDeliveryMachine("Gustave",
+        const mySDM = new DefaultSoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
@@ -92,7 +92,7 @@ describe("implementing goals in the SDM", () => {
             return Success;
         };
 
-        const mySDM = new SoftwareDeliveryMachine("Gustave",
+        const mySDM = new DefaultSoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")

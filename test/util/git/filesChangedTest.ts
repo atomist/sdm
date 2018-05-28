@@ -67,7 +67,7 @@ M       README.md
 M       package-lock.json
 M       package.json
 M       src/atomist.config.ts
-M       src/blueprint/SoftwareDeliveryMachine.ts
+M       src/blueprint/DefaultSoftwareDeliveryMachine.tshine.ts
 R100    src/software-delivery-machine/commands/generators/java/commonPatterns.ts        src/common/command/commonPatterns.ts
 R088    src/software-delivery-machine/commands/generators/java/javaPatterns.ts  src/common/command/javaPatterns.ts
 M       src/common/delivery/code/codeActionRegistrations.ts

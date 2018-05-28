@@ -23,7 +23,7 @@ import { commandHandlersWithTag } from "../support/commandSearch";
 
 /**
  * Return a command handler that can create a repo using generators in this SDM
- * @param {SoftwareDeliveryMachine} sdm
+ * @param sdm
  * @return {HandleCommand<EmptyParameters>}
  */
 export function createRepoHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
