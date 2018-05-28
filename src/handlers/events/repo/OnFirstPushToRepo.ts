@@ -19,7 +19,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
 import { PushListener, PushListenerInvocation } from "../../../common/listener/PushListener";
-import { AddressChannels } from "../../../common/slack/addressChannels";
+import {AddressChannels, AddressNoChannels} from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
@@ -54,12 +54,13 @@ export class OnFirstPushToRepo
         const id = toRemoteRepoRef(push.repo, { sha: push.after.sha });
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
+        let addressChannels: AddressChannels;
         if (!screenName) {
             logger.warn("Warning: Cannot get screen name of committer for first push on %j", id);
-            return Success;
+            addressChannels = AddressNoChannels;
+        } else {
+            addressChannels = m => context.messageClient.addressUsers(m, screenName);
         }
-
-        const addressChannels: AddressChannels = m => context.messageClient.addressUsers(m, screenName);
 
         const project = await GitCommandGitProject.cloned(credentials, id);
         const invocation: PushListenerInvocation = {
