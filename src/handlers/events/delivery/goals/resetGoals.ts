@@ -20,10 +20,10 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { GoalSetter } from "../../../../api/listener/GoalSetter";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
 import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
+import { GoalSetter } from "../../../../api/mapping/GoalSetter";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { PushFields, PushForCommit, RepoBranchTips } from "../../../../typings/types";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 

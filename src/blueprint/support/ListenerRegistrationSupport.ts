@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
-import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
 import { BuildListener } from "../../api/listener/BuildListener";
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../../api/listener/ClosedIssueListener";
 import { DeploymentListener } from "../../api/listener/DeploymentListener";
+import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import { GoalCompletionListener, GoalsSetListener } from "../../api/listener/GoalsSetListener";
@@ -37,7 +34,10 @@ import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistration } from "../../api/machine/ListenerRegistration";
-import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
+import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
+import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.

@@ -15,7 +15,7 @@
  */
 
 import { PushListenerInvocation } from "../../listener/PushListener";
-import { PushTest } from "../../listener/PushTest";
+import { PushTest } from "../PushTest";
 import { allSatisfied, memoize } from "./pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
 

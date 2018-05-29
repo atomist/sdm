@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { JustBuildGoal, ReviewGoal } from "../../../../api/machine/wellKnownGoals";
 import { Goals } from "../../../../api/goal/Goals";
+import { JustBuildGoal, ReviewGoal } from "../../../../api/machine/wellKnownGoals";
 
 /**
  * Flow to build a library

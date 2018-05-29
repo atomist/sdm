@@ -20,9 +20,9 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { CachingProjectLoader } from "../../../spi/repo/CachingProjectLoader";
+import { projectLoaderRepoLoader } from "../../../spi/repo/projectLoaderRepoLoader";
 import { allReposInTeam } from "../editor/allReposInTeam";
-import { projectLoaderRepoLoader } from "../../../common/repo/projectLoaderRepoLoader";
-import { CachingProjectLoader } from "../../../common/repo/CachingProjectLoader";
 
 /**
  * Create a command handler for project generation

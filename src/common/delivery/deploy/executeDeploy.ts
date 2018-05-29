@@ -15,13 +15,13 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
+import { Goal } from "../../../api/goal/Goal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
 import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
-import { Goal } from "../../../api/goal/Goal";
 import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target } from "./deploy";
 
 import * as _ from "lodash";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 
 /**
  * Execute deploy with the supplied deployer and target

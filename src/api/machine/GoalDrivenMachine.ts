@@ -15,13 +15,13 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
+import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
-import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
-import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../goal/SdmGoalImplementationMapper";
 import { PushMapping } from "../mapping/PushMapping";
-import { PushTest } from "../listener/PushTest";
-import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
 
 /**

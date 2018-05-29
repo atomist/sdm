@@ -16,26 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../../../api/goal/Goal";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { StatusForExecuteGoal } from "../../../../typings/types";
 import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
-import { RepoContext } from "../../../../api/context/SdmContext";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalResult } from "../ExecuteGoalResult";
-import { Goal } from "../../../../api/goal/Goal";
-
-export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
-
-export type PrepareForGoalExecution = (p: GitProject, r: RunWithLogContext) => Promise<ExecuteGoalResult>;
-
-export interface RunWithLogContext extends RepoContext {
-
-    status: StatusForExecuteGoal.Fragment;
-    progressLog: ProgressLog;
-
-}
 
 /**
  * Report an error executing a goal and present a retry button

@@ -22,6 +22,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
+import { Goal } from "../../../../api/goal/Goal";
 import {
     goalKeyString,
     SdmGoal,
@@ -32,7 +33,6 @@ import {
     SdmGoalRepo,
     SdmGoalsForCommit,
 } from "../../../../typings/types";
-import { Goal } from "../../../../api/goal/Goal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {

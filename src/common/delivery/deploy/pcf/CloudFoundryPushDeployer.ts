@@ -26,7 +26,7 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { InterpretedLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
 import { Manifest } from "./CloudFoundryManifest";
 import { CloudFoundryPusher } from "./CloudFoundryPusher";

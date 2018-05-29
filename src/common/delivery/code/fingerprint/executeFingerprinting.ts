@@ -18,14 +18,14 @@ import { logger } from "@atomist/automation-client";
 import { Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
-import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
-import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
-import { computeFingerprints } from "./computeFingerprints";
 import { FingerprinterRegistration } from "../../../../api/registration/FingerprinterRegistration";
+import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
+import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
+import { computeFingerprints } from "./computeFingerprints";
 
 /**
  * Execute fingerprinting

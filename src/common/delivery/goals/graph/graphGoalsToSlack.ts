@@ -20,9 +20,9 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as https from "https";
 import * as _ from "lodash";
-import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
 import { Goal, GoalWithPrecondition } from "../../../../api/goal/Goal";
 import { Goals } from "../../../../api/goal/Goals";
+import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
 import { splitContext } from "../support/github/gitHubContext";
 
 /**

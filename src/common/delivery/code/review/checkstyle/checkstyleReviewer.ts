@@ -23,9 +23,9 @@ import { ProjectReview } from "@atomist/automation-client/operations/review/Revi
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
-import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
 import { ReviewerError } from "../../../../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../../../../api/registration/ReviewerRegistration";
+import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
 

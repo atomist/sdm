@@ -1,10 +1,10 @@
-import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
 import { logger } from "@atomist/automation-client";
-import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { spawn, SpawnOptions } from "child_process";
+import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
+import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 
 /**
  * Create a project editor wrapping spawned local commands

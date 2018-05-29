@@ -15,18 +15,18 @@
  */
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { Project } from "@atomist/automation-client/project/Project";
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/repo/ProjectLoader";
+import { ExecuteGoalResult } from "../../common/delivery/goals/ExecuteGoalResult";
+import { ProgressLog } from "../../spi/log/ProgressLog";
+import { StatusForExecuteGoal } from "../../typings/types";
+import { RepoContext } from "../context/SdmContext";
 
-/**
- * ProjectLoader that can only return one project.
- * Normally used in testing.
- */
-export class SingleProjectLoader implements ProjectLoader {
+export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-    constructor(private readonly project: Project) {}
+export type PrepareForGoalExecution = (p: GitProject, r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 
-    public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
-        return action(this.project as GitProject);
-    }
+export interface RunWithLogContext extends RepoContext {
+
+    status: StatusForExecuteGoal.Fragment;
+    progressLog: ProgressLog;
+
 }

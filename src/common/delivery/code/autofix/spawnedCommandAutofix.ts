@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { SpawnCommand } from "../../../../util/misc/spawned";
-import { PushTest } from "../../../../api/listener/PushTest";
+import { PushTest } from "../../../../api/mapping/PushTest";
 import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../../../api/registration/AutofixRegistration";
+import { SpawnCommand } from "../../../../util/misc/spawned";
 import { localCommandsEditor } from "../../../command/support/localCommandsEditor";
 
 /**

@@ -15,12 +15,12 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ProviderType, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 
 /**
  * Obtain a RemoteRepoRef from the given push, correctly

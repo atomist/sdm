@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { asSpawnCommand } from "../../../../../util/misc/spawned";
 import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
+import { allSatisfied } from "../../../../../api/mapping/support/pushTestUtils";
+import { AutofixRegistration } from "../../../../../api/registration/AutofixRegistration";
+import { asSpawnCommand } from "../../../../../util/misc/spawned";
 import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushTests";
-import { allSatisfied } from "../../../../../api/mapping/support/pushTestUtils";
 import {
     DevelopmentEnvOptions,
     Install,
 } from "../../../build/local/npm/npmBuilder";
-import { AutofixRegistration } from "../../../../../api/registration/AutofixRegistration";
 import { spawnedCommandAutofix } from "../spawnedCommandAutofix";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(

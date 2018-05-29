@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { BuildGoal, LocalDeploymentGoal, NoGoal } from "../../../../api/machine/wellKnownGoals";
 import { Goal, GoalWithPrecondition } from "../../../../api/goal/Goal";
 import { Goals } from "../../../../api/goal/Goals";
+import { BuildGoal, LocalDeploymentGoal, NoGoal } from "../../../../api/machine/wellKnownGoals";
 import { IndependentOfEnvironment, ProjectDisposalEnvironment } from "../support/github/gitHubContext";
 
 export const VersionGoal = new Goal({

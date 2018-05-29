@@ -15,7 +15,7 @@
  */
 
 import { PushMapping } from "../mapping/PushMapping";
-import { PushTest } from "../listener/PushTest";
+import { PushTest } from "../mapping/PushTest";
 import { PushRules } from "../mapping/support/PushRules";
 import { allSatisfied } from "../mapping/support/pushTestUtils";
 

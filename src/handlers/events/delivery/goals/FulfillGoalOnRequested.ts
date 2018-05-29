@@ -27,19 +27,19 @@ import {
     EventHandlerMetadata,
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
+import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/support/github/gitHubStatusSetters";
-import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import {
     SdmGoal,
     SdmGoalState,
 } from "../../../../ingesters/sdmGoalIngester";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import {
     CommitForSdmGoal,
     OnAnyRequestedSdmGoal,

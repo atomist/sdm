@@ -26,9 +26,9 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { preconditionsAreMet } from "../../../../common/delivery/goals/support/goalPreconditions";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import {
     goalKeyString,

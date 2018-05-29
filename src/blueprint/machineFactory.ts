@@ -1,11 +1,11 @@
-import { GoalSetter } from "../api/listener/GoalSetter";
-import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
+import { listGeneratorsHandler } from "../api/command/generator/listGenerators";
 import { MachineConfiguration } from "../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
-import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
-import { listGeneratorsHandler } from "../api/command/generator/listGenerators";
+import { GoalSetter } from "../api/mapping/GoalSetter";
 import { createRepoHandler } from "../common/command/createRepo";
+import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
+import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
 
 /**
  * Create a **Software Delivery MachineConfiguration** with default predefined goals.
@@ -46,6 +46,7 @@ import { createRepoHandler } from "../common/command/createRepo";
  * ```
  */
 export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineOptions>,
+                                              // tslint:disable-next-line:max-line-length
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<SoftwareDeliveryMachineOptions> {
     const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration,
         goalSetters);

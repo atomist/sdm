@@ -16,10 +16,10 @@
 
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
-import { PushTest } from "../listener/PushTest";
+import { PushTest } from "../mapping/PushTest";
+import { AnyPush } from "../mapping/support/commonPushTests";
 import { PredicateMappingTerm, toPredicateMapping } from "../mapping/support/PredicateMappingTerm";
 import { PushRule } from "../mapping/support/PushRule";
-import { AnyPush } from "../mapping/support/commonPushTests";
 import { GoalComponent, toGoals } from "./GoalComponent";
 
 export class GoalSetterMapping extends PushRule<Goals> {

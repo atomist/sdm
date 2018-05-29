@@ -17,15 +17,15 @@
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import { RunWithLogContext } from "../../../../../api/goal/ExecuteGoalWithLog";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
+import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
 import {
     asSpawnCommand,
     spawnAndWatch,
     SpawnCommand,
 } from "../../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
-import { RunWithLogContext } from "../../../goals/support/reportGoalError";
 import { branchFromCommit } from "../../executeBuild";
 import { readSdmVersion } from "../projectVersioner";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";

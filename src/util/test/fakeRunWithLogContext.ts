@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef, RepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { RunWithLogContext } from "../../common/delivery/goals/support/reportGoalError";
+import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { LoggingProgressLog } from "../../common/log/LoggingProgressLog";
 import { StatusForExecuteGoal, StatusState } from "../../typings/types";
 import { fakeContext } from "./fakeContext";

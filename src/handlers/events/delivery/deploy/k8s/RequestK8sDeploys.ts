@@ -18,7 +18,7 @@ import { failure, logger, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../common/delivery/goals/support/reportGoalError";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../../api/goal/ExecuteGoalWithLog";
 import { createStatus } from "../../../../../util/github/ghub";
 
 export type K8Target = "testing" | "production";

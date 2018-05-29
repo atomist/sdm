@@ -15,10 +15,8 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../../api/listener/PushImpactListener";
-import { ProjectLoader } from "../../../spi/ProjectLoader";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
-import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import {
     PushReactionRegisterable,
     PushReactionRegistration,
@@ -26,6 +24,8 @@ import {
     relevantCodeActions,
     toPushReactionRegistration,
 } from "../../../api/registration/PushReactionRegistration";
+import { ProjectLoader } from "../../../spi/repo/ProjectLoader";
+import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
 /**
  * Execute arbitrary code reactions against a codebase

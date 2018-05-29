@@ -17,15 +17,15 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../../api/goal/Goal";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
-import { Goal } from "../../../api/goal/Goal";
 import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
-import { RunWithLogContext } from "../goals/support/reportGoalError";
 import { descriptionFromState, updateGoal } from "../goals/support/storeGoals";
 
 export type Targeter<T extends TargetInfo> = (id: RemoteRepoRef, branch: string) => T;

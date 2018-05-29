@@ -15,7 +15,7 @@
  */
 
 import { PushMapping } from "../PushMapping";
-import { PushTest } from "../../listener/PushTest";
+import { PushTest } from "../PushTest";
 
 /**
  * PushMapping that always returns the same value, guarded by a PushTest.

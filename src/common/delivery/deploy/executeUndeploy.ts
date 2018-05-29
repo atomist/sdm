@@ -18,9 +18,9 @@ import { logger, Success } from "@atomist/automation-client";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import * as stringify from "json-stringify-safe";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
 import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { Target } from "./deploy";
 
 export function executeUndeploy(target: Target): ExecuteGoalWithLog {

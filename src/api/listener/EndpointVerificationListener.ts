@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { sprintf } from "sprintf-js";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
 export interface EndpointVerificationInvocation extends RepoListenerInvocation {
@@ -26,4 +25,3 @@ export interface EndpointVerificationInvocation extends RepoListenerInvocation {
 }
 
 export type EndpointVerificationListener = SdmListener<EndpointVerificationInvocation>;
-

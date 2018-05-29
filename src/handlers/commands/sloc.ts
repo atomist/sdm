@@ -17,9 +17,9 @@
 import { HandleCommand, HandlerContext } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
-import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 import { editorCommand } from "../../api/command/editor/editorCommand";
 import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 
 /**
  * Commmand to display lines of code in current project

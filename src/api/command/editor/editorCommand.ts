@@ -25,12 +25,12 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
+import { CachingProjectLoader } from "../../../spi/repo/CachingProjectLoader";
+import { projectLoaderRepoLoader } from "../../../spi/repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../EmptyParameters";
 import { allReposInTeam } from "./allReposInTeam";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { chattyEditorFactory } from "./editorWrappers";
-import { projectLoaderRepoLoader } from "../../../common/repo/projectLoaderRepoLoader";
-import { CachingProjectLoader } from "../../../common/repo/CachingProjectLoader";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.

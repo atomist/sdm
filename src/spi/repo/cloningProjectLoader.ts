@@ -15,7 +15,7 @@
  */
 
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { ProjectLoader } from "../../spi/ProjectLoader";
+import { ProjectLoader } from "./ProjectLoader";
 
 /**
  * Non caching ProjectLoader that uses a separate clone for each project accessed

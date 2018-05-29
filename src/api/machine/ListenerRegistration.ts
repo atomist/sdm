@@ -1,12 +1,9 @@
-import { AutofixRegistration } from "../registration/AutofixRegistration";
-import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../registration/PushReactionRegistration";
-import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 import { ArtifactListenerRegisterable } from "../listener/ArtifactListener";
 import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";
 import { ClosedIssueListener } from "../listener/ClosedIssueListener";
 import { DeploymentListener } from "../listener/DeploymentListener";
+import { EndpointVerificationListener } from "../listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
 import { GoalCompletionListener, GoalsSetListener } from "../listener/GoalsSetListener";
@@ -20,7 +17,10 @@ import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../listener/VerifiedDeploymentListener";
-import { EndpointVerificationListener } from "../listener/EndpointVerificationListener";
+import { AutofixRegistration } from "../registration/AutofixRegistration";
+import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../registration/PushReactionRegistration";
+import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.

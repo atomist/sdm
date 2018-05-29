@@ -18,15 +18,15 @@ import * as _ from "lodash";
 
 import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../../../api/listener/PushImpactListener";
 import { ReviewListener } from "../../../../api/listener/ReviewListener";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
-import { AddressChannels } from "../../../slack/addressChannels";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
-import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { PushReactionResponse, relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
 import { formatReviewerError, ReviewerError } from "../../../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../../../api/registration/ReviewerRegistration";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { AddressChannels } from "../../../slack/addressChannels";
+import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 
 /**
  * Execute reviews and route or react to results using review listeners

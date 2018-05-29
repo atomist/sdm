@@ -17,7 +17,7 @@
 import {
     predicatePushTest,
     PredicatePushTest,
-} from "../../../../../api/listener/PushTest";
+} from "../../../../../api/mapping/PushTest";
 import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
 
 /**

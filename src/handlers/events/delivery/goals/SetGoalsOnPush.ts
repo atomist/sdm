@@ -33,22 +33,22 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ExecuteGoalWithLog } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
 import { Goals } from "../../../../api/goal/Goals";
-import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
 import {
     isGoalImplementation,
     isSideEffect,
     SdmGoalImplementationMapper,
-} from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { GoalSetter } from "../../../../api/listener/GoalSetter";
+} from "../../../../api/goal/SdmGoalImplementationMapper";
 import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
+import { GoalSetter } from "../../../../api/mapping/GoalSetter";
 import { PushRules } from "../../../../api/mapping/support/PushRules";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
+import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";

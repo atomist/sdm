@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushTest } from "./PushTest";
+import { PushTest } from "../mapping/PushTest";
 
 /**
  * Superclass for registering actions or listeners associated with a push

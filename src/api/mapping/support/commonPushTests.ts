@@ -17,7 +17,7 @@
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { isPublicRepo } from "../../../util/github/ghub";
-import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../../listener/PushTest";
+import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../PushTest";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
     p.push.branch === p.push.repo.defaultBranch ||

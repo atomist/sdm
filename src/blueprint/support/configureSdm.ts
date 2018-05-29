@@ -1,9 +1,9 @@
 import { Configuration } from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import * as _ from "lodash";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
 import { softwareDeliveryMachineOptions } from "../sdmOptions";
-import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
 
 export interface ConfigureOptions {

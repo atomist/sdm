@@ -22,7 +22,7 @@ import {
 import {
     pushTest,
     PushTest,
-} from "../../listener/PushTest";
+} from "../PushTest";
 
 // TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `

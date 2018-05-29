@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Mapping, NeverMatch } from "./Mapping";
 import { PushListenerInvocation } from "../listener/PushListener";
+import { Mapping, NeverMatch } from "./Mapping";
 
 /**
  * Constant to indicate we should never match

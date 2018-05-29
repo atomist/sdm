@@ -17,18 +17,19 @@
 import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
-import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
+import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 import { sprintf } from "sprintf-js";
 
 import * as stringify from "json-stringify-safe";
+import { reportGoalError } from "../../../../common/delivery/goals/support/reportGoalError";
 import { toToken } from "../../../../util/credentials/toToken";
 
 /**

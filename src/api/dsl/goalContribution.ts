@@ -3,8 +3,8 @@ import * as _ from "lodash";
 import { SdmContext } from "../context/SdmContext";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
-import { Mapping, NeverMatch } from "../mapping/Mapping";
 import { PushListenerInvocation } from "../listener/PushListener";
+import { Mapping, NeverMatch } from "../mapping/Mapping";
 import { GoalComponent, toGoals } from "./GoalComponent";
 
 export type GoalContribution<F> = Mapping<F, GoalComponent>;

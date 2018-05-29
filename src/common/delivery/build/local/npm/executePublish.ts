@@ -17,11 +17,11 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import * as fs from "fs-extra";
 import * as p from "path";
+import { ExecuteGoalWithLog, PrepareForGoalExecution, RunWithLogContext } from "../../../../../api/goal/ExecuteGoalWithLog";
+import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
 import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
-import { ExecuteGoalWithLog, PrepareForGoalExecution, RunWithLogContext } from "../../../goals/support/reportGoalError";
 import { ProjectIdentifier } from "../projectIdentifier";
 import { NpmPreparations } from "./npmBuilder";
 

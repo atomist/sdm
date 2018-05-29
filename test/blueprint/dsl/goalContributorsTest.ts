@@ -4,8 +4,8 @@ import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/http
 import { fakePush } from "./decisionTreeTest";
 
 import * as assert from "power-assert";
-import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
 import { Goals } from "../../../src/api/goal/Goals";
+import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
 
 describe("goalContributors", () => {
 

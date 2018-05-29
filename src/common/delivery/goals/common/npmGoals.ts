@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../api/machine/wellKnownGoals";
-import { StagingDeploymentGoal } from "../../../../api/machine/wellKnownGoals";
 import { GoalWithPrecondition } from "../../../../api/goal/Goal";
 import { Goals } from "../../../../api/goal/Goals";
+import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../api/machine/wellKnownGoals";
+import { StagingDeploymentGoal } from "../../../../api/machine/wellKnownGoals";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,

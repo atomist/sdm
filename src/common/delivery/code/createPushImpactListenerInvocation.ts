@@ -15,12 +15,12 @@
  */
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
+import { PushImpactListenerInvocation } from "../../../api/listener/PushImpactListener";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
 import { filteredView } from "../../../util/project/filteredView";
-import { PushImpactListenerInvocation } from "../../../api/listener/PushImpactListener";
 import { messageDestinationsFor } from "../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../slack/contextMessageRouting";
-import { RunWithLogContext } from "../goals/support/reportGoalError";
 
 /**
  * Create a PushImpactListenerInvocation from the given context.

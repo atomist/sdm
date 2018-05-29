@@ -25,6 +25,7 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import {
     asSpawnCommand,
     ChildProcessResult,
@@ -33,7 +34,6 @@ import {
     SpawnCommand,
     stringifySpawnCommand,
 } from "../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
 
 export interface SpawnBuilderOptions {

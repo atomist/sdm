@@ -17,6 +17,34 @@
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../api/goal/Goal";
+import { Goals } from "../../api/goal/Goals";
+import { SdmGoalImplementationMapper } from "../../api/goal/SdmGoalImplementationMapper";
+import { ExtensionPack } from "../../api/machine/ExtensionPack";
+import { EmptyFunctionalUnit, FunctionalUnit } from "../../api/machine/FunctionalUnit";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import {
+    ArtifactGoal,
+    AutofixGoal,
+    BuildGoal,
+    DeleteAfterUndeploysGoal,
+    DeleteRepositoryGoal,
+    FingerprintGoal,
+    JustBuildGoal,
+    NoGoal,
+    PushReactionGoal,
+    ReviewGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../../api/machine/wellKnownGoals";
+import { GoalSetter } from "../../api/mapping/GoalSetter";
+import { PushMapping } from "../../api/mapping/PushMapping";
+import { PushTest } from "../../api/mapping/PushTest";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
+import { PushRule } from "../../api/mapping/support/PushRule";
+import { PushRules } from "../../api/mapping/support/PushRules";
+import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { executeBuild } from "../../common/delivery/build/executeBuild";
 import { executeAutofixes } from "../../common/delivery/code/autofix/executeAutofixes";
 import { executePushReactions } from "../../common/delivery/code/executePushReactions";
@@ -25,18 +53,7 @@ import { executeReview } from "../../common/delivery/code/review/executeReview";
 import { Target } from "../../common/delivery/deploy/deploy";
 import { executeDeploy } from "../../common/delivery/deploy/executeDeploy";
 import { executeUndeploy, offerToDeleteRepository } from "../../common/delivery/deploy/executeUndeploy";
-import { Goal } from "../../api/goal/Goal";
-import { Goals } from "../../api/goal/Goals";
 import { lastLinesLogInterpreter, LogSuppressor } from "../../common/delivery/goals/support/logInterpreters";
-import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
-import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { GoalSetter } from "../../api/listener/GoalSetter";
-import { PushMapping } from "../../api/mapping/PushMapping";
-import { PushTest } from "../../api/listener/PushTest";
-import { PushRule } from "../../api/mapping/support/PushRule";
-import { PushRules } from "../../api/mapping/support/PushRules";
-import { AnyPush } from "../../api/mapping/support/commonPushTests";
-import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
 import { disposeCommand } from "../../handlers/commands/disposeCommand";
 import { displayBuildLogHandler } from "../../handlers/commands/ShowBuildLog";
@@ -66,24 +83,7 @@ import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../../spi/build/Builder";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { ExtensionPack } from "../../api/machine/ExtensionPack";
-import { EmptyFunctionalUnit, FunctionalUnit } from "../../api/machine/FunctionalUnit";
-import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
-import {
-    ArtifactGoal,
-    AutofixGoal,
-    BuildGoal,
-    DeleteAfterUndeploysGoal,
-    DeleteRepositoryGoal,
-    FingerprintGoal,
-    JustBuildGoal,
-    NoGoal,
-    PushReactionGoal,
-    ReviewGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../../api/machine/wellKnownGoals";
 import { ListenerRegistrationSupport } from "./ListenerRegistrationSupport";
 
 /**

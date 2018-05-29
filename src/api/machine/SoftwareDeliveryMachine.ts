@@ -16,15 +16,15 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { ListenerRegistrationSupport } from "../../blueprint/support/ListenerRegistrationSupport";
 import { Target } from "../../common/delivery/deploy/deploy";
-import { GoalSetter } from "../listener/GoalSetter";
+import { Builder } from "../../spi/build/Builder";
+import { GoalSetter } from "../mapping/GoalSetter";
 import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
-import { Builder } from "../../spi/build/Builder";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
-import { ListenerRegistrationSupport } from "../../blueprint/support/ListenerRegistrationSupport";
 
 /**
  * Class instantiated to create a **Software Delivery MachineConfiguration**.

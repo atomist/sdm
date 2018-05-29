@@ -23,14 +23,14 @@ import { GitHubFallbackReposParameters } from "@atomist/automation-client/operat
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { CachingProjectLoader } from "../../../../spi/repo/CachingProjectLoader";
+import { projectLoaderRepoLoader } from "../../../../spi/repo/projectLoaderRepoLoader";
 import { Status } from "../../../../util/github/ghub";
 import { EmptyParameters } from "../../EmptyParameters";
 import { EditModeSuggestion } from "../EditModeSuggestion";
 import { toEditorOrReviewerParametersMaker } from "../editorCommand";
 import { chattyEditorFactory } from "../editorWrappers";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
-import { projectLoaderRepoLoader } from "../../../../common/repo/projectLoaderRepoLoader";
-import { CachingProjectLoader } from "../../../../common/repo/CachingProjectLoader";
 
 export const DryRunContext = "atomist-dry-run";
 

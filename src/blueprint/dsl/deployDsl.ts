@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
 import { Goal } from "../../api/goal/Goal";
-import { PushTest } from "../../api/listener/PushTest";
+import { PushTest } from "../../api/mapping/PushTest";
 import { PushRule } from "../../api/mapping/support/PushRule";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
+import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
 
 export class DeployPushRule extends PushRule<Target> {
 

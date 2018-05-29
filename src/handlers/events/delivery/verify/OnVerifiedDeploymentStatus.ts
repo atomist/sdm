@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { StagingVerifiedGoal } from "../../../../api/machine/wellKnownGoals";
 import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../api/listener/VerifiedDeploymentListener";
+import { StagingVerifiedGoal } from "../../../../api/machine/wellKnownGoals";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
