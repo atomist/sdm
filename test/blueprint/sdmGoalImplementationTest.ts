@@ -23,7 +23,7 @@ import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
 import { createSoftwareDeliveryMachine } from "../../src/blueprint/machineFactory";
 import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
-import { TheSoftwareDeliveryMachine } from "../../src/blueprint/support/TheSoftwareDeliveryMachine";
+import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/ConcreteSoftwareDeliveryMachine";
 import { AutofixGoal } from "../../src/blueprint/wellKnownGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
 import { Goals } from "../../src/common/delivery/goals/Goals";
@@ -58,7 +58,7 @@ describe("implementing goals in the SDM", () => {
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
-                .setGoals(new Goals("Autofix only", AutofixGoal))) as TheSoftwareDeliveryMachine;
+                .setGoals(new Goals("Autofix only", AutofixGoal))) as ConcreteSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
@@ -101,7 +101,7 @@ describe("implementing goals in the SDM", () => {
             .addGoalImplementation("Cornelius",
                 customGoal,
                 goalExecutor,
-            ) as TheSoftwareDeliveryMachine;
+            ) as ConcreteSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,

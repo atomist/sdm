@@ -18,12 +18,16 @@ import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { executeBuild } from "../../common/delivery/build/executeBuild";
+import { executeAutofixes } from "../../common/delivery/code/autofix/executeAutofixes";
+import { executePushReactions } from "../../common/delivery/code/executePushReactions";
+import { executeFingerprinting } from "../../common/delivery/code/fingerprint/executeFingerprinting";
+import { executeReview } from "../../common/delivery/code/review/executeReview";
 import { Target } from "../../common/delivery/deploy/deploy";
 import { executeDeploy } from "../../common/delivery/deploy/executeDeploy";
-import { executeUndeploy } from "../../common/delivery/deploy/executeUndeploy";
+import { executeUndeploy, offerToDeleteRepository } from "../../common/delivery/deploy/executeUndeploy";
 import { Goal } from "../../common/delivery/goals/Goal";
 import { Goals } from "../../common/delivery/goals/Goals";
-import { lastLinesLogInterpreter } from "../../common/delivery/goals/support/logInterpreters";
+import { lastLinesLogInterpreter, LogSuppressor } from "../../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
 import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../common/listener/GoalSetter";
@@ -46,7 +50,7 @@ import { KubernetesIsolatedGoalLauncher } from "../../handlers/events/delivery/g
 import { RequestDownstreamGoalsOnGoalSuccess } from "../../handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 import { resetGoalsCommand } from "../../handlers/events/delivery/goals/resetGoals";
 import { RespondOnGoalCompletion } from "../../handlers/events/delivery/goals/RespondOnGoalCompletion";
-import { SetGoalsOnPush } from "../../handlers/events/delivery/goals/SetGoalsOnPush";
+import { executeImmaterial, SetGoalsOnPush } from "../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { SkipDownstreamGoalsOnGoalFailure } from "../../handlers/events/delivery/goals/SkipDownstreamGoalsOnGoalFailure";
 import { executeVerifyEndpoint, SdmVerification } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { OnVerifiedDeploymentStatus } from "../../handlers/events/delivery/verify/OnVerifiedDeploymentStatus";
@@ -66,13 +70,26 @@ import { EmptyFunctionalUnit, FunctionalUnit } from "../FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfigurer } from "../SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
-import { ArtifactGoal, BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../wellKnownGoals";
+import {
+    ArtifactGoal,
+    AutofixGoal,
+    BuildGoal,
+    DeleteAfterUndeploysGoal,
+    DeleteRepositoryGoal,
+    FingerprintGoal,
+    JustBuildGoal,
+    NoGoal,
+    PushReactionGoal,
+    ReviewGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../wellKnownGoals";
 import { ListenerRegistrationSupport } from "./ListenerRegistrationSupport";
 
 /**
- * Abstract software delivery machine
+ * Implementation of SoftwareDeliveryMachine
  */
-export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrationSupport implements SoftwareDeliveryMachine {
+export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport implements SoftwareDeliveryMachine {
 
     private generators: Array<Maker<HandleCommand>> = [];
 
@@ -426,10 +443,32 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
      * more goal setters.
      * @param {string} name
      * @param {SoftwareDeliveryMachineOptions} options
+     * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
      */
-    protected constructor(public readonly name: string,
-                          public readonly options: SoftwareDeliveryMachineOptions) {
+    constructor(public readonly name: string,
+                public readonly options: SoftwareDeliveryMachineOptions,
+                ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
+        this.goalSetters = _.flatten(goalSetters);
+
+        this.addGoalImplementation("Autofix", AutofixGoal,
+            executeAutofixes(this.options.projectLoader, this.autofixRegistrations), {
+                // Autofix errors should not be reported to the user
+                logInterpreter: LogSuppressor,
+            })
+            .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
+            .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
+                executeFingerprinting(this.options.projectLoader, this.fingerprinterRegistrations, this.fingerprintListeners))
+            .addGoalImplementation("CodeReactions", PushReactionGoal,
+                executePushReactions(this.options.projectLoader, this.pushReactionRegistrations))
+            .addGoalImplementation("Reviews", ReviewGoal,
+                executeReview(this.options.projectLoader, this.reviewerRegistrations, this.reviewListeners))
+            .addVerifyImplementation()
+            .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
+                offerToDeleteRepository())
+            .addGoalImplementation("OfferToDeleteRepoAfterUndeploys", DeleteAfterUndeploysGoal,
+                offerToDeleteRepository());
+        this.knownSideEffect(ArtifactGoal, "from ImageLinked");
     }
 
 }

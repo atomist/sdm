@@ -5,7 +5,7 @@ import { GoalSetter } from "../common/listener/GoalSetter";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
-import { TheSoftwareDeliveryMachine } from "./support/TheSoftwareDeliveryMachine";
+import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
 
 /**
  * Create a **Software Delivery Machine** with default predefined goals.
@@ -48,7 +48,7 @@ import { TheSoftwareDeliveryMachine } from "./support/TheSoftwareDeliveryMachine
 export function createSoftwareDeliveryMachine(name: string,
                                               opts: SoftwareDeliveryMachineOptions,
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
-    const machine = new TheSoftwareDeliveryMachine(name, opts);
+    const machine = new ConcreteSoftwareDeliveryMachine(name, opts);
     machine.goalSetters = _.flatten(goalSetters);
     return machine.addSupportingCommands(
         selfDescribeHandler(machine),
