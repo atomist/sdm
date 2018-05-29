@@ -16,10 +16,11 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { Goal } from "../common/delivery/goals/Goal";
-import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
+import { Target } from "../common/delivery/deploy/deploy";
 import { GoalSetter } from "../common/listener/GoalSetter";
-import { PushTest } from "../common/listener/PushTest";
+import { PushRule } from "../common/listener/support/PushRule";
+import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
+import { Builder } from "../spi/build/Builder";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
@@ -68,7 +69,7 @@ export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegi
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 
     /**
-     * Add generators to this machine
+     * Add generators to this machine to enable project creation
      * @param {Maker<HandleCommand>} g
      * @return {this}
      */
@@ -100,18 +101,6 @@ export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegi
     addFunctionalUnits(...fus: FunctionalUnit[]): this;
 
     /**
-     * Declare that a goal will become successful based on something outside.
-     * For instance, ArtifactGoal succeeds because of an ImageLink event.
-     * This tells the SDM that it does not need to run anything when this
-     * goal becomes ready.
-     * @param {Goal} goal
-     * @param {string} sideEffectName
-     * @param {PushTest} pushTest
-     */
-    knownSideEffect(goal: Goal, sideEffectName: string,
-                    pushTest: PushTest);
-
-    /**
      * Add the given capabilities from these configurers
      * @param {SoftwareDeliveryMachineConfigurer} configurers
      * @return {this}
@@ -126,7 +115,20 @@ export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegi
      */
     configure(configurer: SoftwareDeliveryMachineConfigurer): this;
 
-    // TODO this should be an interface
-    readonly goalFulfillmentMapper: SdmGoalImplementationMapper;
+    /**
+     * Add build rules. *May be removed in future: only applicable to local SDM work*
+     * @param {PushRule<Builder> | Array<PushRule<Builder>>} rules
+     * @return {this}
+     * @deprecated
+     */
+    addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this;
+
+    /**
+     * Add build rules. *May be removed in future: only applicable to local SDM work*
+     * @param {StaticPushMapping<Target> | Array<StaticPushMapping<Target>>} rules
+     * @return {this}
+     * @deprecated
+     */
+    addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this;
 
 }
