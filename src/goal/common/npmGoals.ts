@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
+import { IndependentOfEnvironment, ProductionEnvironment, StagingEnvironment } from "../../api/goal/common/environment";
 import { GoalWithPrecondition } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
 import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../api/machine/wellKnownGoals";
 import { StagingDeploymentGoal } from "../../api/machine/wellKnownGoals";
-import {
-    IndependentOfEnvironment,
-    ProductionEnvironment,
-    StagingEnvironment,
-} from "../../internal/delivery/goals/support/github/gitHubContext";
 import { DockerBuildGoal, TagGoal, VersionGoal } from "./commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({

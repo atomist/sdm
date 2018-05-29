@@ -19,7 +19,7 @@ import {
     ProductionEnvironment,
     ProjectDisposalEnvironment,
     StagingEnvironment,
-} from "../../internal/delivery/goals/support/github/gitHubContext";
+} from "../goal/common/environment";
 import { Goal, GoalWithPrecondition } from "../goal/Goal";
 
 /**

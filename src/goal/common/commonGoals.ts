@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import { IndependentOfEnvironment, ProjectDisposalEnvironment } from "../../api/goal/common/environment";
 import { Goal, GoalWithPrecondition } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
 import { BuildGoal, LocalDeploymentGoal, NoGoal } from "../../api/machine/wellKnownGoals";
-import { IndependentOfEnvironment, ProjectDisposalEnvironment } from "../../internal/delivery/goals/support/github/gitHubContext";
 
 export const VersionGoal = new Goal({
     uniqueName: "Version",

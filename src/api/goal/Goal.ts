@@ -21,8 +21,8 @@ import {
     BaseContext,
     GitHubStatusAndFriends,
     GitHubStatusContext,
-    GoalEnvironment,
 } from "../../internal/delivery/goals/support/github/gitHubContext";
+import { GoalEnvironment } from "./common/environment";
 
 /**
  * Core data for a goal
