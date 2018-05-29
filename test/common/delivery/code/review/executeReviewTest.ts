@@ -22,7 +22,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import { ReviewListener, ReviewListenerInvocation } from "../../../../../src/api/listener/ReviewListener";
 import { ReviewerRegistration } from "../../../../../src/api/registration/ReviewerRegistration";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
-import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
+import { TruePushTest } from "../../../../api/mapping/support/pushTestUtilsTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import * as assert from "power-assert";

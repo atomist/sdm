@@ -17,7 +17,7 @@
 import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { HttpServiceGoals } from "../../../src/internal/delivery/goals/common/httpServiceGoals";
-import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
+import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
 import { fakePush } from "./decisionTreeTest";
 
 describe("whenPushSatisfies", () => {

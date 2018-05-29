@@ -17,7 +17,7 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { fakeRunWithLogContext } from "../../../../src/util/test/fakeRunWithLogContext";
-import { TruePushTest } from "../../listener/support/pushTestUtilsTest";
+import { TruePushTest } from "../../../api/mapping/support/pushTestUtilsTest";
 
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";

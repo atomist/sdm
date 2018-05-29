@@ -15,7 +15,7 @@
  */
 
 import { given } from "../../../src/api/dsl/decisionTree";
-import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
+import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
 
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
