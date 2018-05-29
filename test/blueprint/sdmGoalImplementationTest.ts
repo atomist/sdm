@@ -27,8 +27,8 @@ import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { ConcreteSoftwareDeliveryMachine } from "../../src/internal/machine/ConcreteSoftwareDeliveryMachine";
+import { ConcreteSoftwareDeliveryMachineOptions } from "../../src/machine/ConcreteSoftwareDeliveryMachineOptions";
 import { createSoftwareDeliveryMachine } from "../../src/machine/machineFactory";
-import { SoftwareDeliveryMachineOptions } from "../../src/machine/SoftwareDeliveryMachineOptions";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
 
@@ -42,7 +42,7 @@ const favoriteRepoRef = GitHubRepoRef.from({
 export const fakeSoftwareDeliveryMachineOptions = {
     projectLoader: new SingleProjectLoader(InMemoryProject.from(favoriteRepoRef,
         {path: "README.md", content: "read sometthing else"})),
-} as any as SoftwareDeliveryMachineOptions;
+} as any as ConcreteSoftwareDeliveryMachineOptions;
 
 const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
 

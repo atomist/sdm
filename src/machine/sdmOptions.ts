@@ -20,9 +20,9 @@ import { CachingProjectLoader } from "../api/project/CachingProjectLoader";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { ConcreteSoftwareDeliveryMachineOptions } from "./ConcreteSoftwareDeliveryMachineOptions";
 
-export function softwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineOptions {
+export function softwareDeliveryMachineOptions(configuration: Configuration): ConcreteSoftwareDeliveryMachineOptions {
     return {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),

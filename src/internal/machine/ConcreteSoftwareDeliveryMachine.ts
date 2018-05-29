@@ -74,7 +74,7 @@ import { OnRepoCreation } from "../../handlers/events/repo/OnRepoCreation";
 import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
-import { SoftwareDeliveryMachineOptions } from "../../machine/SoftwareDeliveryMachineOptions";
+import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -90,7 +90,8 @@ import { lastLinesLogInterpreter, LogSuppressor } from "../delivery/goals/suppor
  * Implementation of SoftwareDeliveryMachine.
  * Not intended for direct user instantiation. See machineFactory.ts
  */
-export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport implements SoftwareDeliveryMachine<SoftwareDeliveryMachineOptions> {
+export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
+    implements SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
 
     private generators: Array<Maker<HandleCommand>> = [];
 
@@ -438,12 +439,12 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
      * Construct a new software delivery machine, with zero or
      * more goal setters.
      * @param {string} name
-     * @param {SoftwareDeliveryMachineOptions} options
+     * @param {ConcreteSoftwareDeliveryMachineOptions} options
      * @param configuration automation client configuration we're running in
      * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
      */
     constructor(public readonly name: string,
-                public readonly options: SoftwareDeliveryMachineOptions,
+                public readonly options: ConcreteSoftwareDeliveryMachineOptions,
                 public readonly configuration: Configuration,
                 goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();

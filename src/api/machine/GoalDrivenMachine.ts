@@ -23,6 +23,7 @@ import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementati
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
+import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
 /**
  * MachineConfiguration driven by configurable goals.
@@ -30,7 +31,7 @@ import { MachineConfiguration } from "./MachineConfiguration";
  * However, certain well known goals are built into the TheSoftwareDeliveryMachine
  * for convenience, with their own associated listeners.
  */
-export interface GoalDrivenMachine<O> extends MachineConfiguration<O> {
+export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineOptions> extends MachineConfiguration<O> {
 
     /**
      * Automation client configuration this machine will run in
