@@ -1,11 +1,11 @@
-import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
-import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import * as _ from "lodash";
 import { createRepoHandler } from "../common/command/generator/createRepo";
+import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { GoalSetter } from "../common/listener/GoalSetter";
-import { DefaultGoalsSoftwareDeliveryMachine } from "./support/DefaultGoalsSoftwareDeliveryMachine";
+import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { TheSoftwareDeliveryMachine } from "./support/TheSoftwareDeliveryMachine";
 
 /**
  * Create a **Software Delivery Machine** with default predefined goals.
@@ -25,7 +25,7 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  * This is normally done using the internal DSL as follows:
  *
  * ```
- * const sdm = defaultMachine(
+ * const sdm = createSoftwareDeliveryMachine(
  *    "MyMachine",
  *    options,
  *    whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(MaterialChangeToJavaRepo))
@@ -45,10 +45,10 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  *    .add...;
  * ```
  */
-export function defaultMachine(name: string,
-                               opts: SoftwareDeliveryMachineOptions,
-                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
-    const machine = new DefaultGoalsSoftwareDeliveryMachine(name, opts);
+export function createSoftwareDeliveryMachine(name: string,
+                                              opts: SoftwareDeliveryMachineOptions,
+                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
+    const machine = new TheSoftwareDeliveryMachine(name, opts);
     machine.goalSetters = _.flatten(goalSetters);
     return machine.addSupportingCommands(
         selfDescribeHandler(machine),

@@ -171,19 +171,19 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
-            () => new OnRepoCreation(this.repoCreationListeners, this.opts.credentialsResolver) :
+            () => new OnRepoCreation(this.repoCreationListeners, this.options.credentialsResolver) :
             undefined;
     }
 
     private get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
         return this.newRepoWithCodeActions.length > 0 ?
-            () => new OnFirstPushToRepo(this.newRepoWithCodeActions, this.opts.credentialsResolver) :
+            () => new OnFirstPushToRepo(this.newRepoWithCodeActions, this.options.credentialsResolver) :
             undefined;
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
         return this.fingerprintDifferenceListeners.length > 0 ?
-            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners, this.opts.credentialsResolver) :
+            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners, this.options.credentialsResolver) :
             undefined;
     }
 
@@ -193,11 +193,11 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
             return EmptyFunctionalUnit;
         }
         return {
-            eventHandlers: [() => new SetGoalsOnPush(this.opts.projectLoader,
+            eventHandlers: [() => new SetGoalsOnPush(this.options.projectLoader,
                 this.goalSetters, this.goalsSetListeners,
-                this.goalFulfillmentMapper, this.opts.credentialsResolver)],
+                this.goalFulfillmentMapper, this.options.credentialsResolver)],
             commandHandlers: [() => resetGoalsCommand({
-                projectLoader: this.opts.projectLoader,
+                projectLoader: this.options.projectLoader,
                 goalsListeners: this.goalsSetListeners,
                 goalSetters: this.goalSetters,
                 implementationMapping: this.goalFulfillmentMapper,
@@ -210,7 +210,7 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
             eventHandlers: [
                 () => new SkipDownstreamGoalsOnGoalFailure(),
                 () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
-                () => new RespondOnGoalCompletion(this.opts.credentialsResolver,
+                () => new RespondOnGoalCompletion(this.options.credentialsResolver,
                     this.goalCompletionListeners)],
             commandHandlers: [],
         };
@@ -218,20 +218,20 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
 
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
-        this.opts.artifactStore,
+        this.options.artifactStore,
         this.artifactListenerRegistrations,
-        this.opts.projectLoader,
-        this.opts.credentialsResolver)
+        this.options.projectLoader,
+        this.options.credentialsResolver)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
-            () => new OnDeployStatus(this.deploymentListeners, this.opts.credentialsResolver) :
+            () => new OnDeployStatus(this.deploymentListeners, this.options.credentialsResolver) :
             undefined;
     }
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
         return this.verifiedDeploymentListeners.length > 0 ?
-            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners, this.opts.credentialsResolver) :
+            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners, this.options.credentialsResolver) :
             undefined;
     }
 
@@ -240,7 +240,7 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
             commandHandlers: [
                 () => disposeCommand({
                     goalSetters: this.disposalGoalSetters,
-                    projectLoader: this.opts.projectLoader,
+                    projectLoader: this.options.projectLoader,
                     goalsListeners: this.goalsSetListeners,
                     implementationMapping: this.goalFulfillmentMapper,
                 }),
@@ -269,31 +269,31 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.opts.projectLoader, this.opts.logFactory))
+            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.options.projectLoader, this.options.logFactory))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.userJoiningChannelListeners.length > 0 ?
-                    () => new OnUserJoiningChannel(this.userJoiningChannelListeners, this.opts.credentialsResolver) :
+                    () => new OnUserJoiningChannel(this.userJoiningChannelListeners, this.options.credentialsResolver) :
                     undefined,
                 this.buildListeners.length > 0 ?
-                    () => new InvokeListenersOnBuildComplete(this.buildListeners, this.opts.credentialsResolver) :
+                    () => new InvokeListenersOnBuildComplete(this.buildListeners, this.options.credentialsResolver) :
                     undefined,
-                this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners, this.opts.credentialsResolver) : undefined,
-                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners, this.opts.credentialsResolver) : undefined,
+                this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners, this.options.credentialsResolver) : undefined,
+                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners, this.options.credentialsResolver) : undefined,
                 this.updatedIssueListeners.length > 0 ?
-                    () => new UpdatedIssueHandler(this.updatedIssueListeners, this.opts.credentialsResolver) :
+                    () => new UpdatedIssueHandler(this.updatedIssueListeners, this.options.credentialsResolver) :
                     undefined,
                 this.closedIssueListeners.length > 0 ?
-                    () => new ClosedIssueHandler(this.closedIssueListeners, this.opts.credentialsResolver) :
+                    () => new ClosedIssueHandler(this.closedIssueListeners, this.options.credentialsResolver) :
                     undefined,
                 this.channelLinkListeners.length > 0 ?
-                    () => new OnChannelLink(this.opts.projectLoader, this.channelLinkListeners, this.opts.credentialsResolver) :
+                    () => new OnChannelLink(this.options.projectLoader, this.channelLinkListeners, this.options.credentialsResolver) :
                     undefined,
                 this.pullRequestListeners.length > 0 ?
-                    () => new OnPullRequest(this.opts.projectLoader, this.pullRequestListeners,
-                        this.opts.credentialsResolver) : undefined,
+                    () => new OnPullRequest(this.options.projectLoader, this.pullRequestListeners,
+                        this.options.credentialsResolver) : undefined,
                 this.repoOnboardingListeners.length > 0 ?
-                    () => new OnRepoOnboarded(this.repoOnboardingListeners, this.opts.credentialsResolver) :
+                    () => new OnRepoOnboarded(this.repoOnboardingListeners, this.options.credentialsResolver) :
                     undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
@@ -343,13 +343,13 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
         this.mightMutate = rules.length > 0;
         _.flatten(rules).forEach(r =>
             this.addGoalImplementation(r.name, BuildGoal,
-                executeBuild(this.opts.projectLoader, r.value),
+                executeBuild(this.options.projectLoader, r.value),
                 {
                     pushTest: r.pushTest,
                     logInterpreter: r.value.logInterpreter,
                 })
                 .addGoalImplementation(r.name, JustBuildGoal,
-                    executeBuild(this.opts.projectLoader, r.value),
+                    executeBuild(this.options.projectLoader, r.value),
                     {
                         pushTest: r.pushTest,
                         logInterpreter:
@@ -363,7 +363,8 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
         this.mightMutate = rules.length > 0;
         _.flatten(rules).forEach(r => {
             // deploy
-            this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(this.opts.artifactStore,
+            this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(
+                this.options.artifactStore,
                 r.value.endpointGoal, r.value),
                 {
                     pushTest: r.pushTest,
@@ -424,10 +425,10 @@ export abstract class AbstractSoftwareDeliveryMachine extends ListenerRegistrati
      * Construct a new software delivery machine, with zero or
      * more goal setters.
      * @param {string} name
-     * @param {SoftwareDeliveryMachineOptions} opts
+     * @param {SoftwareDeliveryMachineOptions} options
      */
     protected constructor(public readonly name: string,
-                          public readonly opts: SoftwareDeliveryMachineOptions) {
+                          public readonly options: SoftwareDeliveryMachineOptions) {
         super();
     }
 

@@ -21,7 +21,9 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
+import { createSoftwareDeliveryMachine } from "../../src/blueprint/machineFactory";
 import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
+import { TheSoftwareDeliveryMachine } from "../../src/blueprint/support/TheSoftwareDeliveryMachine";
 import { AutofixGoal } from "../../src/blueprint/wellKnownGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
 import { Goals } from "../../src/common/delivery/goals/Goals";
@@ -29,8 +31,6 @@ import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTe
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
-import { defaultMachine } from "../../src/blueprint/machineFactory";
-import { DefaultGoalsSoftwareDeliveryMachine } from "../../src/blueprint/support/DefaultGoalsSoftwareDeliveryMachine";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",
@@ -54,11 +54,11 @@ describe("implementing goals in the SDM", () => {
 
     it("I can ask it to do an autofix", async () => {
 
-        const mySDM = defaultMachine("Gustave",
+        const mySDM = createSoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
-                .setGoals(new Goals("Autofix only", AutofixGoal))) as DefaultGoalsSoftwareDeliveryMachine;
+                .setGoals(new Goals("Autofix only", AutofixGoal))) as TheSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
@@ -93,7 +93,7 @@ describe("implementing goals in the SDM", () => {
             return Success;
         };
 
-        const mySDM = defaultMachine("Gustave",
+        const mySDM = createSoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
@@ -101,7 +101,7 @@ describe("implementing goals in the SDM", () => {
             .addGoalImplementation("Cornelius",
                 customGoal,
                 goalExecutor,
-            ) as DefaultGoalsSoftwareDeliveryMachine;
+            ) as TheSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,

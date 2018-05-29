@@ -17,16 +17,12 @@
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Goal } from "../common/delivery/goals/Goal";
-import { Goals } from "../common/delivery/goals/Goals";
-import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
 import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../common/listener/GoalSetter";
-import { PushMapping } from "../common/listener/PushMapping";
 import { PushTest } from "../common/listener/PushTest";
-import { InterpretLog } from "../spi/log/InterpretedLog";
 import { FunctionalUnit } from "./FunctionalUnit";
+import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSupport";
 
 /**
@@ -34,7 +30,7 @@ import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSuppo
  * Combines commands and delivery event handling using _goals_.
  *
  * Goals and goal "implementations" can be defined by users.
- * However, certain well known goals are built into the DefaultGoalsSoftwareDeliveryMachine
+ * However, certain well known goals are built into the TheSoftwareDeliveryMachine
  * for convenience, with their own associated listeners.
  *
  * Well known goal support is based around a delivery process spanning
@@ -47,7 +43,7 @@ import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSuppo
  * This is normally done using the internal DSL as follows:
  *
  * ```
- * const sdm = new DefaultGoalsSoftwareDeliveryMachine(
+ * const sdm = new TheSoftwareDeliveryMachine(
  *    "MyMachine",
  *    options,
  *    whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(MaterialChangeToJavaRepo))
@@ -67,46 +63,7 @@ import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSuppo
  *    .add...;
  * ```
  */
-export interface SoftwareDeliveryMachine extends ListenerRegistrationSupport, FunctionalUnit {
-
-    readonly name: string;
-
-    readonly options: SoftwareDeliveryMachineOptions;
-
-    /**
-     * Return the PushMapping that will be used on pushes.
-     * Useful in testing goal setting.
-     * @return {PushMapping<Goals>}
-     */
-    pushMapping: PushMapping<Goals>;
-
-    /**
-     * Return if this SDM purely observes, rather than changes an org.
-     * Note that this cannot be 100% reliable, as arbitrary event handlers
-     * could be making commits, initiating deployments etc.
-     * @return {boolean}
-     */
-    observesOnly: boolean;
-
-    /**
-     * Provide the implementation for a goal.
-     * The SDM will run it as soon as the goal is ready (all preconditions are met).
-     * If you provide a PushTest, then the SDM can assign different implementations
-     * to the same goal based on the code in the project.
-     * @param {string} implementationName
-     * @param {Goal} goal
-     * @param {ExecuteGoalWithLog} goalExecutor
-     * @param options PushTest to narrow matching & InterpretLog that can handle
-     * the log from the goalExecutor function
-     * @return {this}
-     */
-    addGoalImplementation(implementationName: string,
-                          goal: Goal,
-                          goalExecutor: ExecuteGoalWithLog,
-                          options?: Partial<{
-                              pushTest: PushTest,
-                              logInterpreter: InterpretLog,
-                          }>): this;
+export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegistrationSupport, FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 
