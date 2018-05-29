@@ -34,7 +34,7 @@ import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSuppo
  * Combines commands and delivery event handling using _goals_.
  *
  * Goals and goal "implementations" can be defined by users.
- * However, certain well known goals are built into the DefaultSoftwareDeliveryMachine
+ * However, certain well known goals are built into the DefaultGoalsSoftwareDeliveryMachine
  * for convenience, with their own associated listeners.
  *
  * Well known goal support is based around a delivery process spanning
@@ -47,7 +47,7 @@ import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSuppo
  * This is normally done using the internal DSL as follows:
  *
  * ```
- * const sdm = new DefaultSoftwareDeliveryMachine(
+ * const sdm = new DefaultGoalsSoftwareDeliveryMachine(
  *    "MyMachine",
  *    options,
  *    whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(MaterialChangeToJavaRepo))

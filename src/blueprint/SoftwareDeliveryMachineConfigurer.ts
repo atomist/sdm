@@ -17,7 +17,7 @@
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
- * Configuration function that can added in DefaultSoftwareDeliveryMachine.addCapabilities.
+ * Configuration function that can added in SoftwareDeliveryMachine.addCapabilities.
  * Facilitates modularity at a higher level than FunctionUnit or handlers.
  * For example, a Node module can export a configurer.
  */

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DefaultSoftwareDeliveryMachine } from "../../src/blueprint/DefaultSoftwareDeliveryMachine";
+import { DefaultGoalsSoftwareDeliveryMachine } from "../../src/blueprint/support/DefaultGoalsSoftwareDeliveryMachine";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
 import { NoGoals } from "../../src/common/delivery/goals/common/commonGoals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
@@ -38,7 +38,7 @@ describe("SDM handler creation", () => {
     describe("emits event handlers", () => {
 
         it("emits goal setter", async () => {
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -50,7 +50,7 @@ describe("SDM handler creation", () => {
 
         it("emits goal setter with listener", async () => {
             const gl: GoalsSetListener = async () => undefined;
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -66,7 +66,7 @@ describe("SDM handler creation", () => {
     describe("can test goal setting", () => {
 
         it("sets no goals", async () => {
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -76,7 +76,7 @@ describe("SDM handler creation", () => {
         });
 
         it("sets goals on any push", async () => {
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(AnyPush)
                     .setGoals(HttpServiceGoals));
@@ -86,7 +86,7 @@ describe("SDM handler creation", () => {
 
         it("sets goals on particular push", async () => {
             const project = InMemoryProject.of(new InMemoryFile("thing", "1"));
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals));
@@ -98,7 +98,7 @@ describe("SDM handler creation", () => {
     describe("observesOnly", () => {
 
         it("cannot mutate", async () => {
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals));
@@ -106,7 +106,7 @@ describe("SDM handler creation", () => {
         });
 
         it("has an autofix", async () => {
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals));
@@ -115,7 +115,7 @@ describe("SDM handler creation", () => {
         });
 
         it("has a build", async () => {
-            const sdm = new DefaultSoftwareDeliveryMachine("Gustave",
+            const sdm = new DefaultGoalsSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
                 whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals));
