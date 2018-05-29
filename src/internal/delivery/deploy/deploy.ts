@@ -17,7 +17,7 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { providerIdFromStatus } from "../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../api/command/editor/support/RepoRefResolver";
 import { RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../api/goal/Goal";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
@@ -58,12 +58,13 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
 }
 
 export async function setEndpointGoalOnSuccessfulDeploy(params: {
+    repoRefResolver: RepoRefResolver,
     endpointGoal: Goal,
     rwlc: RunWithLogContext,
     deployment: Deployment,
 }) {
     const {rwlc, deployment, endpointGoal} = params;
-    const sdmGoal = await findSdmGoalOnCommit(rwlc.context, rwlc.id, providerIdFromStatus(rwlc.status), endpointGoal);
+    const sdmGoal = await findSdmGoalOnCommit(rwlc.context, rwlc.id, params.repoRefResolver.providerIdFromStatus(rwlc.status), endpointGoal);
     if (deployment.endpoint) {
         const newState = "success";
         await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});

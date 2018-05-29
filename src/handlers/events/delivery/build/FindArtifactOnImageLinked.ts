@@ -16,19 +16,13 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
-import {
-    ArtifactListenerInvocation,
-    ArtifactListenerRegisterable,
-    toArtifactListenerRegistration,
-} from "../../../../api/listener/ArtifactListener";
+import { ArtifactListenerInvocation, ArtifactListenerRegisterable, toArtifactListenerRegistration } from "../../../../api/listener/ArtifactListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
+import { SoftwareDeliveryMachineOptions } from "../../../../api/machine/SoftwareDeliveryMachineOptions";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
-import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { OnImageLinked } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
@@ -40,9 +34,8 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
      * When an artifact is linked to a commit, the build must be done.
      */
     constructor(public goal: Goal,
-                private readonly artifactStore: ArtifactStore,
+                private readonly sdmOptions: SoftwareDeliveryMachineOptions,
                 private readonly registrations: ArtifactListenerRegisterable[],
-                private readonly projectLoader: ProjectLoader,
                 private readonly credentialsResolver: CredentialsResolver) {}
 
     public async handle(event: EventFired<OnImageLinked.Subscription>,
@@ -51,7 +44,7 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         const imageLinked = event.data.ImageLinked[0];
         const commit = imageLinked.commit;
         const image = imageLinked.image;
-        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const id = params.sdmOptions.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha });
 
         const artifactSdmGoal = await findSdmGoalOnCommit(context, id, commit.repo.org.provider.providerId, params.goal);
         if (!artifactSdmGoal) {
@@ -62,10 +55,10 @@ export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subs
         if (params.registrations.length > 0) {
             const credentials = this.credentialsResolver.eventHandlerCredentials(context, id);
             logger.info("FindArtifactOnImageLinked: Scanning artifact for %j", id);
-            const deployableArtifact = await params.artifactStore.checkout(image.imageName, id, credentials);
+            const deployableArtifact = await params.sdmOptions.artifactStore.checkout(image.imageName, id, credentials);
             const addressChannels = addressChannelsFor(commit.repo, context);
 
-            await this.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
+            await params.sdmOptions.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
                 // TODO only handles first push
                 const pli: PushListenerInvocation = {
                     id,

@@ -21,12 +21,13 @@ import { combineEditResults } from "@atomist/automation-client/operations/edit/p
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { confirmEditedness } from "../../api/command/editor/support/confirmEditedness";
-import { toRemoteRepoRef } from "../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../api/command/editor/support/RepoRefResolver";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { relevantCodeActions } from "../../api/registration/PushReactionRegistration";
+import { DefaultRepoRefResolver } from "../../handlers/common/DefaultRepoRefResolver";
 import { createPushImpactListenerInvocation } from "../../internal/delivery/code/createPushImpactListenerInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -39,7 +40,9 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
  * @return GoalExecutor
  */
 export function executeAutofixes(projectLoader: ProjectLoader,
-                                 registrations: AutofixRegistration[]): ExecuteGoalWithLog {
+                                 registrations: AutofixRegistration[],
+                                 // TODO get rid of hard coding
+                                 repoRefResolver: RepoRefResolver = new DefaultRepoRefResolver()): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const {credentials, context, status, progressLog } = rwlc;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));
@@ -49,7 +52,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 return Success;
             }
             const push = commit.pushes[0];
-            const editableRepoRef = toRemoteRepoRef(commit.repo, {branch: push.branch});
+            const editableRepoRef = repoRefResolver.toRemoteRepoRef(commit.repo, {branch: push.branch});
             const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,

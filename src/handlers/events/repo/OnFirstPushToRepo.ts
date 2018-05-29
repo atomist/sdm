@@ -18,7 +18,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../api/command/editor/support/RepoRefResolver";
 import {AddressChannels, AddressNoChannels} from "../../../api/context/addressChannels";
 import { PushListener, PushListenerInvocation } from "../../../api/listener/PushListener";
 import * as schema from "../../../typings/types";
@@ -32,6 +32,7 @@ export class OnFirstPushToRepo
     implements HandleEvent<schema.OnFirstPushToRepo.Subscription> {
 
     constructor(private readonly actions: PushListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
     }
 
@@ -51,7 +52,7 @@ export class OnFirstPushToRepo
         }
 
         const screenName = _.get(push, "after.committer.person.chatId.screenName");
-        const id = toRemoteRepoRef(push.repo, { sha: push.after.sha });
+        const id = params.repoRefResolver.toRemoteRepoRef(push.repo, { sha: push.after.sha });
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         let addressChannels: AddressChannels;

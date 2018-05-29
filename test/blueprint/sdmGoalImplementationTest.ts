@@ -25,6 +25,7 @@ import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
 import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
+import { DefaultRepoRefResolver } from "../../src/handlers/common/DefaultRepoRefResolver";
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { ConcreteSoftwareDeliveryMachine } from "../../src/internal/machine/ConcreteSoftwareDeliveryMachine";
 import { ConcreteSoftwareDeliveryMachineOptions } from "../../src/machine/ConcreteSoftwareDeliveryMachineOptions";
@@ -54,13 +55,14 @@ describe("implementing goals in the SDM", () => {
 
     it("can autofix", async () => {
         const mySDM = createSoftwareDeliveryMachine(
-            { name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined},
+            {name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined},
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
                 .setGoals(new Goals("Autofix only", AutofixGoal))) as ConcreteSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
+                repoRefResolver: new DefaultRepoRefResolver(),
                 goalSetters: mySDM.goalSetters,
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
@@ -91,7 +93,7 @@ describe("implementing goals in the SDM", () => {
         };
 
         const mySDM = createSoftwareDeliveryMachine(
-            {name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined },
+            {name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined},
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
                 .setGoals(new Goals("Springer", customGoal)))
@@ -102,6 +104,7 @@ describe("implementing goals in the SDM", () => {
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
+                repoRefResolver: new DefaultRepoRefResolver(),
                 goalSetters: mySDM.goalSetters,
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {

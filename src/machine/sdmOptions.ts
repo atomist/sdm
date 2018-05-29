@@ -17,6 +17,7 @@
 import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { CachingProjectLoader } from "../api/project/CachingProjectLoader";
+import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
@@ -29,5 +30,6 @@ export function softwareDeliveryMachineOptions(configuration: Configuration): Co
         logFactory: rolarAndDashboardLogFactory(_.get(configuration, "sdm.rolar.url"),
             _.get(configuration, "sdm.dashboard.url")),
         credentialsResolver: new GitHubCredentialsResolver(),
+        repoRefResolver: new DefaultRepoRefResolver(),
     };
 }

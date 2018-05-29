@@ -20,7 +20,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
 import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
@@ -37,6 +37,7 @@ import { reportFailureInterpretationToLinkedChannels } from "../../../../util/sl
 export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     constructor(private readonly buildGoals: Goal[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly logInterpretation?: LogInterpretation) {
     }
 
@@ -45,7 +46,7 @@ export class SetGoalOnBuildComplete implements HandleEvent<OnBuildComplete.Subsc
         const build = event.data.Build[0];
         const commit: OnBuildComplete.Commit = build.commit;
 
-        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const id = params.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha });
         params.buildGoals.forEach(async buildGoal => {
             const sdmGoal = await findSdmGoalOnCommit(ctx, id, commit.repo.org.provider.providerId, buildGoal);
             if (!sdmGoal) {

@@ -27,7 +27,7 @@ import {
     EventHandlerMetadata,
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
-import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
@@ -67,6 +67,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly logFactory: ProgressLogFactory) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
@@ -102,7 +103,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const log = await this.logFactory(ctx, sdmGoal);
         const progressLog = new WriteToAllProgressLog(sdmGoal.name, new LoggingProgressLog(sdmGoal.name, "debug"), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
-        const id = repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
+        const id = params.repoRefResolver.repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
         const credentials = {token: params.githubToken};
         const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
 

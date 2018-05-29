@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../api/command/editor/support/RepoRefResolver";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { PullRequestListener, PullRequestListenerInvocation } from "../../../api/listener/PullRequestListener";
 import { ProjectLoader } from "../../../spi/project/ProjectLoader";
@@ -31,6 +31,7 @@ export class OnPullRequest implements HandleEvent<schema.OnPullRequest.Subscript
 
     constructor(
         private readonly projectLoader: ProjectLoader,
+        private readonly repoRefResolver: RepoRefResolver,
         private readonly listeners: PullRequestListener[],
         private readonly credentialsFactory: CredentialsResolver) {
     }
@@ -40,7 +41,7 @@ export class OnPullRequest implements HandleEvent<schema.OnPullRequest.Subscript
                         params: this): Promise<HandlerResult> {
         const pullRequest = event.data.PullRequest[0];
         const repo = pullRequest.repo;
-        const id = toRemoteRepoRef(repo, { sha: pullRequest.head.sha });
+        const id = params.repoRefResolver.toRemoteRepoRef(repo, { sha: pullRequest.head.sha });
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);

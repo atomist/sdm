@@ -26,7 +26,7 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
-import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import {
     goalKeyString,
@@ -51,12 +51,14 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
     @Value("token")
     public githubToken: string;
 
-    constructor(private readonly implementationMapper: SdmGoalImplementationMapper) { }
+    constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
+                private readonly repoRefResolver: RepoRefResolver) { }
 
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
     public async handle(event: EventFired<OnAnySuccessfulSdmGoal.Subscription>,
-                        context: HandlerContext): Promise<HandlerResult> {
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
 
         if (sdmGoal.state !== "success") { // atomisthq/automation-api#395
@@ -64,7 +66,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
             return Promise.resolve(Success);
         }
 
-        const id = repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(context, sdmGoal.repo.providerId));
+        const id = params.repoRefResolver.repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(context, sdmGoal.repo.providerId));
         const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))

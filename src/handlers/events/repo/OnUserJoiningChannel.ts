@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../api/command/editor/support/RepoRefResolver";
 import { UserJoiningChannelListener, UserJoiningChannelListenerInvocation } from "../../../api/listener/UserJoiningChannelListener";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
@@ -28,6 +28,7 @@ import { CredentialsResolver } from "../../common/CredentialsResolver";
 export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningChannel.Subscription> {
 
     constructor(private readonly listeners: UserJoiningChannelListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
     }
 
@@ -36,7 +37,7 @@ export class OnUserJoiningChannel implements HandleEvent<schema.OnUserJoiningCha
                         params: this): Promise<HandlerResult> {
         const joinEvent = event.data.UserJoinedChannel[0];
         const repos = joinEvent.channel.repos.map(
-            repo => toRemoteRepoRef(repo, undefined));
+            repo => params.repoRefResolver.toRemoteRepoRef(repo, {}));
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, repos[0]);
         const addressChannels = (msg, opts) => context.messageClient.addressChannels(msg, joinEvent.channel.name, opts);
         const invocation: UserJoiningChannelListenerInvocation = {

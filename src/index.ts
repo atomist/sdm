@@ -8,7 +8,7 @@ export * from "./api/command/editor/dry-run/dryRunEditor";
 export * from "./api/command/editor/support/allReposInTeam";
 export * from "./api/command/editor/support/confirmEditedness";
 export * from "./api/command/editor/support/editorWrappers";
-export * from "./api/command/editor/support/repoRef";
+export * from "./api/command/editor/support/RepoRefResolver";
 export * from "./api/command/generator/BitBucketRepoCreationParameters";
 export * from "./api/command/generator/GeneratorConfig";
 export * from "./api/command/generator/SeedDrivenGeneratorParametersSupport";

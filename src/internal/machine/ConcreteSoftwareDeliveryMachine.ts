@@ -180,7 +180,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         };
         return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
-            executeVerifyEndpoint(stagingVerification));
+            executeVerifyEndpoint(stagingVerification, this.options.repoRefResolver));
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {
@@ -190,19 +190,22 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
 
     private get onRepoCreation(): Maker<OnRepoCreation> {
         return this.repoCreationListeners.length > 0 ?
-            () => new OnRepoCreation(this.repoCreationListeners, this.options.credentialsResolver) :
+            () => new OnRepoCreation(this.repoCreationListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
             undefined;
     }
 
     private get onNewRepoWithCode(): Maker<OnFirstPushToRepo> {
         return this.newRepoWithCodeActions.length > 0 ?
-            () => new OnFirstPushToRepo(this.newRepoWithCodeActions, this.options.credentialsResolver) :
+            () => new OnFirstPushToRepo(this.newRepoWithCodeActions, this.options.repoRefResolver, this.options.credentialsResolver) :
             undefined;
     }
 
     private get semanticDiffReactor(): Maker<ReactToSemanticDiffsOnPushImpact> {
         return this.fingerprintDifferenceListeners.length > 0 ?
-            () => new ReactToSemanticDiffsOnPushImpact(this.fingerprintDifferenceListeners, this.options.credentialsResolver) :
+            () => new ReactToSemanticDiffsOnPushImpact(
+                this.fingerprintDifferenceListeners,
+                this.options.repoRefResolver,
+                this.options.credentialsResolver) :
             undefined;
     }
 
@@ -212,11 +215,14 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             return EmptyFunctionalUnit;
         }
         return {
-            eventHandlers: [() => new SetGoalsOnPush(this.options.projectLoader,
+            eventHandlers: [() => new SetGoalsOnPush(
+                this.options.projectLoader,
+                this.options.repoRefResolver,
                 this.goalSetters, this.goalsSetListeners,
                 this.goalFulfillmentMapper, this.options.credentialsResolver)],
             commandHandlers: [() => resetGoalsCommand({
                 projectLoader: this.options.projectLoader,
+                repoRefResolver: this.options.repoRefResolver,
                 goalsListeners: this.goalsSetListeners,
                 goalSetters: this.goalSetters,
                 implementationMapping: this.goalFulfillmentMapper,
@@ -227,9 +233,11 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     private get goalConsequences(): FunctionalUnit {
         return {
             eventHandlers: [
-                () => new SkipDownstreamGoalsOnGoalFailure(),
-                () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper),
-                () => new RespondOnGoalCompletion(this.options.credentialsResolver,
+                () => new SkipDownstreamGoalsOnGoalFailure(this.options.repoRefResolver),
+                () => new RequestDownstreamGoalsOnGoalSuccess(this.goalFulfillmentMapper, this.options.repoRefResolver),
+                () => new RespondOnGoalCompletion(
+                    this.options.repoRefResolver,
+                    this.options.credentialsResolver,
                     this.goalCompletionListeners)],
             commandHandlers: [],
         };
@@ -237,20 +245,19 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
 
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
-        this.options.artifactStore,
+        this.options,
         this.artifactListenerRegistrations,
-        this.options.projectLoader,
         this.options.credentialsResolver)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
-            () => new OnDeployStatus(this.deploymentListeners, this.options.credentialsResolver) :
+            () => new OnDeployStatus(this.deploymentListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
             undefined;
     }
 
     private get onVerifiedStatus(): Maker<OnVerifiedDeploymentStatus> {
         return this.verifiedDeploymentListeners.length > 0 ?
-            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners, this.options.credentialsResolver) :
+            () => new OnVerifiedDeploymentStatus(this.verifiedDeploymentListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
             undefined;
     }
 
@@ -259,6 +266,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             commandHandlers: [
                 () => disposeCommand({
                     goalSetters: this.disposalGoalSetters,
+                    repoRefResolver: this.options.repoRefResolver,
                     projectLoader: this.options.projectLoader,
                     goalsListeners: this.goalsSetListeners,
                     implementationMapping: this.goalFulfillmentMapper,
@@ -269,7 +277,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal])
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.options.repoRefResolver)
 
     get showBuildLog(): Maker<HandleCommand> {
         return () => {
@@ -288,31 +296,41 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
         return this.supportingEvents
-            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper, this.options.projectLoader, this.options.logFactory))
+            .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper,
+                this.options.projectLoader,
+                this.options.repoRefResolver,
+                this.options.logFactory))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
                 this.userJoiningChannelListeners.length > 0 ?
-                    () => new OnUserJoiningChannel(this.userJoiningChannelListeners, this.options.credentialsResolver) :
+                    () => new OnUserJoiningChannel(this.userJoiningChannelListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
                     undefined,
                 this.buildListeners.length > 0 ?
-                    () => new InvokeListenersOnBuildComplete(this.buildListeners, this.options.credentialsResolver) :
+                    () => new InvokeListenersOnBuildComplete(this.buildListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
                     undefined,
-                this.tagListeners.length > 0 ? () => new OnTag(this.tagListeners, this.options.credentialsResolver) : undefined,
-                this.newIssueListeners.length > 0 ? () => new NewIssueHandler(this.newIssueListeners, this.options.credentialsResolver) : undefined,
+                this.tagListeners.length > 0 ?
+                    () => new OnTag(this.tagListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
+                    undefined,
+                this.newIssueListeners.length > 0 ?
+                    () => new NewIssueHandler(this.newIssueListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
+                    undefined,
                 this.updatedIssueListeners.length > 0 ?
-                    () => new UpdatedIssueHandler(this.updatedIssueListeners, this.options.credentialsResolver) :
+                    () => new UpdatedIssueHandler(this.updatedIssueListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
                     undefined,
                 this.closedIssueListeners.length > 0 ?
-                    () => new ClosedIssueHandler(this.closedIssueListeners, this.options.credentialsResolver) :
+                    () => new ClosedIssueHandler(this.closedIssueListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
                     undefined,
                 this.channelLinkListeners.length > 0 ?
-                    () => new OnChannelLink(this.options.projectLoader, this.channelLinkListeners, this.options.credentialsResolver) :
+                    () => new OnChannelLink(
+                        this.options.projectLoader,
+                        this.options.repoRefResolver,
+                        this.channelLinkListeners, this.options.credentialsResolver) :
                     undefined,
                 this.pullRequestListeners.length > 0 ?
-                    () => new OnPullRequest(this.options.projectLoader, this.pullRequestListeners,
+                    () => new OnPullRequest(this.options.projectLoader, this.options.repoRefResolver, this.pullRequestListeners,
                         this.options.credentialsResolver) : undefined,
                 this.repoOnboardingListeners.length > 0 ?
-                    () => new OnRepoOnboarded(this.repoOnboardingListeners, this.options.credentialsResolver) :
+                    () => new OnRepoOnboarded(this.repoOnboardingListeners, this.options.repoRefResolver, this.options.credentialsResolver) :
                     undefined,
                 this.onRepoCreation,
                 this.onNewRepoWithCode,
@@ -384,6 +402,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             // deploy
             this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(
                 this.options.artifactStore,
+                this.options.repoRefResolver,
                 r.value.endpointGoal, r.value),
                 {
                     pushTest: r.pushTest,

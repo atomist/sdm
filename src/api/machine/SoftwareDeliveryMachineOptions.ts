@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ArtifactStore, ProgressLogFactory, ProjectLoader } from "../..";
+import { ArtifactStore, ProgressLogFactory, ProjectLoader, RepoRefResolver } from "../..";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -38,5 +38,7 @@ export interface SoftwareDeliveryMachineOptions {
      * such as build and deployment.
      */
     logFactory: ProgressLogFactory;
+
+    repoRefResolver: RepoRefResolver;
 
 }

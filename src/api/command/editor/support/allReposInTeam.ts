@@ -19,8 +19,9 @@ import { twoTierDirectoryRepoFinder } from "@atomist/automation-client/operation
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
+import { DefaultRepoRefResolver } from "../../../../handlers/common/DefaultRepoRefResolver";
 import { ReposInTeam } from "../../../../typings/types";
-import { toRemoteRepoRef } from "./repoRef";
+import { RepoRefResolver } from "./RepoRefResolver";
 
 // Hard-coded limit in GraphQL queries. Not sure why we can't pass this
 const PageSize = 100;
@@ -31,12 +32,13 @@ const PageSize = 100;
  * @param cwd directory to look in if this is local
  * @constructor
  */
-export function allReposInTeam(cwd?: string): RepoFinder {
+// TODO get rid of this hard coded default
+export function allReposInTeam(rrr: RepoRefResolver = new DefaultRepoRefResolver(), cwd?: string): RepoFinder {
     return (context: HandlerContext) => {
         if (cwd) {
             return twoTierDirectoryRepoFinder(cwd)(context);
         }
-        return queryForPage(context, 0);
+        return queryForPage(rrr, context, 0);
     };
 }
 
@@ -46,19 +48,19 @@ export function allReposInTeam(cwd?: string): RepoFinder {
  * @param {number} offset
  * @return {Promise<RepoRef[]>}
  */
-function queryForPage(context: HandlerContext, offset: number): Promise<RemoteRepoRef[]> {
+function queryForPage(rrr: RepoRefResolver, context: HandlerContext, offset: number): Promise<RemoteRepoRef[]> {
     return context.graphClient.query<ReposInTeam.Query, ReposInTeam.Variables>({
         name: "ReposInTeam",
         variables: {teamId: context.teamId, offset},
     })
         .then(result => {
             return _.flatMap(result.ChatTeam[0].orgs, org =>
-                org.repo.map(r => toRemoteRepoRef(r, {})));
+                org.repo.map(r => rrr.toRemoteRepoRef(r, {})));
         })
         .then(repos => {
             return (repos.length < PageSize) ?
                 repos :
-                queryForPage(context, offset + PageSize)
+                queryForPage(rrr, context, offset + PageSize)
                     .then(moreRepos => repos.concat(moreRepos));
         });
 }
