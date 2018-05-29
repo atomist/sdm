@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { Goal, GoalWithPrecondition } from "../goal/Goal";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     ProjectDisposalEnvironment,
     StagingEnvironment,
-} from "../goal/common/environment";
-import { Goal, GoalWithPrecondition } from "../goal/Goal";
+} from "../goal/support/environment";
 
 /**
  * Goals referenced in TheSoftwareDeliveryMachine

@@ -20,7 +20,7 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
 import { GoalSetter } from "../../../../api/mapping/GoalSetter";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";

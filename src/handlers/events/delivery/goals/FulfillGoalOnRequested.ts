@@ -30,7 +30,7 @@ import {
 import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import {
     SdmGoal,
     SdmGoalState,

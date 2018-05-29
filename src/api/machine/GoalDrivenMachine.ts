@@ -19,7 +19,7 @@ import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
-import { SdmGoalImplementationMapper } from "../goal/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
@@ -84,7 +84,6 @@ export interface GoalDrivenMachine<O> extends MachineConfiguration<O> {
     knownSideEffect(goal: Goal, sideEffectName: string,
                     pushTest: PushTest);
 
-    // TODO this should be an interface
     readonly goalFulfillmentMapper: SdmGoalImplementationMapper;
 
 }

@@ -15,7 +15,7 @@
  */
 
 import { Goal, GoalDefinition } from "../Goal";
-import { IndependentOfEnvironment } from "./environment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Generic goal. Used when creating use-case specific specific goals.

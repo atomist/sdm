@@ -20,7 +20,6 @@ import * as _ from "lodash";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
-import { SdmGoalImplementationMapper } from "../../api/goal/SdmGoalImplementationMapper";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { EmptyFunctionalUnit, FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
@@ -47,6 +46,7 @@ import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { executeAutofixes } from "../../code/autofix/executeAutofixes";
+import { SdmGoalImplementationMapperImpl } from "../../goal/SdmGoalImplementationMapperImpl";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
 import { disposeCommand } from "../../handlers/commands/disposeCommand";
 import { displayBuildLogHandler } from "../../handlers/commands/ShowBuildLog";
@@ -134,7 +134,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     /*
      * Store all the implementations we know
      */
-    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapper(
+    public readonly goalFulfillmentMapper = new SdmGoalImplementationMapperImpl(
         // For now we only support kube or in process
         process.env.ATOMIST_GOAL_LAUNCHER === "kubernetes" ? KubernetesIsolatedGoalLauncher : undefined); // public for testing
 

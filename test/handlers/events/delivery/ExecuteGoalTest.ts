@@ -18,9 +18,9 @@ import { Success } from "@atomist/automation-client";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { IndependentOfEnvironment } from "../../../../src/api/goal/common/environment";
 import { RunWithLogContext } from "../../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../src/api/goal/Goal";
+import { IndependentOfEnvironment } from "../../../../src/api/goal/support/environment";
 import { executeGoal } from "../../../../src/handlers/events/delivery/goals/executeGoal";
 import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";
 import { lastLinesLogInterpreter } from "../../../../src/internal/delivery/goals/support/logInterpreters";

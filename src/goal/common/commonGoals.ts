@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { IndependentOfEnvironment, ProjectDisposalEnvironment } from "../../api/goal/common/environment";
 import { Goal, GoalWithPrecondition } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import { IndependentOfEnvironment, ProjectDisposalEnvironment } from "../../api/goal/support/environment";
 import { BuildGoal, LocalDeploymentGoal, NoGoal } from "../../api/machine/wellKnownGoals";
 
 export const VersionGoal = new Goal({

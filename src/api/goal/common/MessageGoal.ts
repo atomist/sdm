@@ -15,7 +15,7 @@
  */
 
 import { Goal } from "../Goal";
-import { IndependentOfEnvironment } from "./environment";
+import { IndependentOfEnvironment } from "../support/environment";
 
 /**
  * Goal that sends a message

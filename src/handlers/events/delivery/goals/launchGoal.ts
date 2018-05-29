@@ -16,8 +16,6 @@
 
 import {
     automationClientInstance,
-    HandlerContext,
-    HandlerResult,
     logger,
     Secrets,
 } from "@atomist/automation-client";
@@ -32,18 +30,11 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import { AutomationEventListenerSupport } from "@atomist/automation-client/server/AutomationEventListener";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
-import { ProgressLog, ProgressLogFactory } from "../../../../spi/log/ProgressLog";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
+import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
-import { OnAnyRequestedSdmGoal, SdmGoalById } from "../../../../typings/types";
+import { SdmGoalById } from "../../../../typings/types";
 import { FulfillGoalOnRequested } from "./FulfillGoalOnRequested";
-
-/**
- * Launch a goal in an isolated environment (container or process) for fulfillment.
- */
-export type IsolatedGoalLauncher = (goal: OnAnyRequestedSdmGoal.SdmGoal,
-                                    ctx: HandlerContext,
-                                    progressLog: ProgressLog) => Promise<HandlerResult>;
 
 export class GoalAutomationEventListener extends AutomationEventListenerSupport {
 

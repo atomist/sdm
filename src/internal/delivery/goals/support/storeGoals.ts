@@ -19,9 +19,9 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { disregardApproval } from "../../../../api/goal/common/approvalGate";
 import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
-import { GoalImplementation } from "../../../../api/goal/SdmGoalImplementationMapper";
+import { disregardApproval } from "../../../../api/goal/support/approvalGate";
+import { GoalImplementation } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import {
     GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey, SdmGoalState,
     SdmProvenance,

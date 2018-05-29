@@ -42,7 +42,7 @@ import {
     isGoalImplementation,
     isSideEffect,
     SdmGoalImplementationMapper,
-} from "../../../../api/goal/SdmGoalImplementationMapper";
+} from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { GoalSetter } from "../../../../api/mapping/GoalSetter";

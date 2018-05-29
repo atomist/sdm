@@ -27,7 +27,7 @@ import {
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import {
     goalKeyString,
     SdmGoal,
