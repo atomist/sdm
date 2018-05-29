@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { executeBuild } from "../../common/delivery/build/executeBuild";
@@ -438,10 +438,12 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
      * more goal setters.
      * @param {string} name
      * @param {SoftwareDeliveryMachineOptions} options
+     * @param configuration automation client configuration we're running in
      * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
      */
     constructor(public readonly name: string,
                 public readonly options: SoftwareDeliveryMachineOptions,
+                public readonly configuration: Configuration,
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);

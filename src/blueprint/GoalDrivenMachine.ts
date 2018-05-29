@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Configuration } from "@atomist/automation-client";
 import { Goal } from "../common/delivery/goals/Goal";
 import { Goals } from "../common/delivery/goals/Goals";
 import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
@@ -34,6 +35,11 @@ export interface GoalDrivenMachine {
     readonly name: string;
 
     readonly options: SoftwareDeliveryMachineOptions;
+
+    /**
+     * Automation client configuration this machine will run in
+     */
+    readonly configuration: Configuration;
 
     /**
      * Return the PushMapping that will be used on pushes.

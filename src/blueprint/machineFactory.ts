@@ -1,3 +1,4 @@
+import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
@@ -46,9 +47,10 @@ import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliv
  * ```
  */
 export function createSoftwareDeliveryMachine(name: string,
-                                              opts: SoftwareDeliveryMachineOptions,
+                                              options: SoftwareDeliveryMachineOptions,
+                                              configuration: Configuration,
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
-    const machine = new ConcreteSoftwareDeliveryMachine(name, opts);
+    const machine = new ConcreteSoftwareDeliveryMachine(name, options, configuration);
     machine.goalSetters = _.flatten(goalSetters);
     return machine.addSupportingCommands(
         selfDescribeHandler(machine),
