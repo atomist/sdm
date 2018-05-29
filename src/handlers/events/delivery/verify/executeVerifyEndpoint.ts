@@ -15,12 +15,12 @@
  */
 
 import { sprintf } from "sprintf-js";
+import { providerIdFromStatus } from "../../../../api/command/editor/support/repoRef";
 import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
 import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../../../api/listener/EndpointVerificationListener";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
-import { providerIdFromStatus } from "../../../../util/git/repoRef";
 
 /**
  * What the SDM should define for each environment's verification

@@ -20,8 +20,8 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { CachingProjectLoader } from "../../../spi/repo/CachingProjectLoader";
-import { projectLoaderRepoLoader } from "../../../spi/repo/projectLoaderRepoLoader";
+import { CachingProjectLoader } from "../../project/CachingProjectLoader";
+import { projectLoaderRepoLoader } from "../../project/projectLoaderRepoLoader";
 import { allReposInTeam } from "../editor/support/allReposInTeam";
 
 /**

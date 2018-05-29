@@ -33,6 +33,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { ExecuteGoalWithLog } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
@@ -50,7 +51,6 @@ import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngest
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
-import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**

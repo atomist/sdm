@@ -16,11 +16,11 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../api/listener/ChannelLinkListenerInvocation";
 import { ProjectLoader } from "../../../spi/repo/ProjectLoader";
 import * as schema from "../../../typings/types";
-import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**

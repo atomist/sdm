@@ -20,8 +20,8 @@ import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import * as stringify from "json-stringify-safe";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
+import { Target } from "../../../spi/deploy/Target";
 import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
-import { Target } from "./deploy";
 
 export function executeUndeploy(target: Target): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {

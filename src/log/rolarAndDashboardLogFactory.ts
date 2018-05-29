@@ -15,12 +15,12 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import {DashboardDisplayProgressLog} from "../../log/DashboardDisplayProgressLog";
-import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
-import { firstAvailableProgressLog } from "../../log/firstAvailableProgressLog";
-import { LoggingProgressLog } from "../../log/LoggingProgressLog";
-import { WriteToAllProgressLog } from "../../log/WriteToAllProgressLog";
-import { ProgressLogFactory } from "./ProgressLog";
+import { ProgressLogFactory } from "../spi/log/ProgressLog";
+import {DashboardDisplayProgressLog} from "./DashboardDisplayProgressLog";
+import { createEphemeralProgressLog } from "./EphemeralProgressLog";
+import { firstAvailableProgressLog } from "./firstAvailableProgressLog";
+import { LoggingProgressLog } from "./LoggingProgressLog";
+import { WriteToAllProgressLog } from "./WriteToAllProgressLog";
 
 /**
  * Create a progress log that will use Rolar logging service if available,
@@ -29,7 +29,7 @@ import { ProgressLogFactory } from "./ProgressLog";
  * @param {string} dashboardBaseUrl
  * @return {ProgressLogFactory}
  */
-export function logFactory(rolarBaseUrl?: string, dashboardBaseUrl?: string): ProgressLogFactory {
+export function rolarAndDashboardLogFactory(rolarBaseUrl?: string, dashboardBaseUrl?: string): ProgressLogFactory {
     let persistentLogFactory = (context, sdmGoal, fallback) => firstAvailableProgressLog(fallback);
     if (rolarBaseUrl) {
         logger.info("Logging with Rolar at " + rolarBaseUrl);

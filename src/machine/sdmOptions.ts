@@ -16,17 +16,17 @@
 
 import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
+import { CachingProjectLoader } from "../api/project/CachingProjectLoader";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
-import { logFactory } from "../spi/log/logFactory";
-import { CachingProjectLoader } from "../spi/repo/CachingProjectLoader";
+import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
 export function softwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineOptions {
     return {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
-        logFactory: logFactory(_.get(configuration, "sdm.rolar.url"),
+        logFactory: rolarAndDashboardLogFactory(_.get(configuration, "sdm.rolar.url"),
             _.get(configuration, "sdm.dashboard.url")),
         credentialsResolver: new GitHubCredentialsResolver(),
     };

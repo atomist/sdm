@@ -16,15 +16,15 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { Target } from "../../internal/delivery/deploy/deploy";
-import { ListenerRegistrationSupport } from "../../internal/machine/ListenerRegistrationSupport";
 import { Builder } from "../../spi/build/Builder";
+import { Target } from "../../spi/deploy/Target";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
+import { ListenerRegistration } from "./ListenerRegistration";
 
 /**
  * Class instantiated to create a **Software Delivery MachineConfiguration**.
@@ -64,7 +64,7 @@ import { GoalDrivenMachine } from "./GoalDrivenMachine";
  *    .add...;
  * ```
  */
-export interface SoftwareDeliveryMachine<O = any> extends GoalDrivenMachine<O>, ListenerRegistrationSupport, FunctionalUnit {
+export interface SoftwareDeliveryMachine<O = any> extends GoalDrivenMachine<O>, ListenerRegistration, FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 

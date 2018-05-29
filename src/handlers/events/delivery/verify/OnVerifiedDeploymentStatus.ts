@@ -16,12 +16,12 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../api/listener/VerifiedDeploymentListener";
 import { StagingVerifiedGoal } from "../../../../api/machine/wellKnownGoals";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**

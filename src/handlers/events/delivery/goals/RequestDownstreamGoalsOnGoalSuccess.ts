@@ -26,6 +26,7 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
+import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
 import {
     goalKeyString,
@@ -39,7 +40,6 @@ import {
     OnAnySuccessfulSdmGoal,
     ScmProvider,
 } from "../../../../typings/types";
-import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals

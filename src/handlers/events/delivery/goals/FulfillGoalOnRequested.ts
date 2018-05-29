@@ -27,6 +27,7 @@ import {
     EventHandlerMetadata,
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
+import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
@@ -46,7 +47,6 @@ import {
     SdmGoalFields,
     StatusForExecuteGoal,
 } from "../../../../typings/types";
-import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
 

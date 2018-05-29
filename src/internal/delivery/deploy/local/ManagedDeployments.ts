@@ -20,8 +20,8 @@ import axios from "axios";
 import { ChildProcess } from "child_process";
 import * as https from "https";
 import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
+import { Targeter } from "../../../../spi/deploy/Target";
 import { poisonAndWait } from "../../../../util/misc/spawned";
-import { Targeter } from "../deploy";
 
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
     managedDeploymentKey: RemoteRepoRef;

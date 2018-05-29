@@ -16,12 +16,12 @@
 
 import { logger } from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { requiresApproval } from "../../handlers/events/delivery/verify/approvalGate";
 import {
     BaseContext,
     GitHubStatusAndFriends,
     GitHubStatusContext,
 } from "../../internal/delivery/goals/support/github/gitHubContext";
+import { requiresApproval } from "./common/approvalGate";
 import { GoalEnvironment } from "./common/environment";
 
 /**

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "./ProjectLoader";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/repo/ProjectLoader";
 
 import { logger } from "@atomist/automation-client";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs";
 import { promisify } from "util";
-import { cacheKeyForSha } from "../../util/misc/cacheKey";
-import { LruCache } from "../../util/misc/LruCache";
-import { SimpleCache } from "../../util/misc/SimpleCache";
+import { cacheKeyForSha } from "./support/cacheKey";
+import { LruCache } from "./support/LruCache";
+import { SimpleCache } from "./support/SimpleCache";
 
 /**
  * Caching implementation of ProjectLoader
@@ -31,6 +31,8 @@ import { SimpleCache } from "../../util/misc/SimpleCache";
 export class CachingProjectLoader implements ProjectLoader {
 
     private readonly cache: SimpleCache<GitProject>;
+
+    // TODO should be expressed in terms of another ProjectLoader, not cloning
 
     constructor(maxEntries: number = 20) {
         this.cache = new LruCache<GitProject>(maxEntries);

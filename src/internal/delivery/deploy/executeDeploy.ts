@@ -18,10 +18,11 @@ import { logger, Success } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import { Goal } from "../../../api/goal/Goal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target } from "./deploy";
+import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy } from "./deploy";
 
 import * as _ from "lodash";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
+import { Target } from "../../../spi/deploy/Target";
 
 /**
  * Execute deploy with the supplied deployer and target

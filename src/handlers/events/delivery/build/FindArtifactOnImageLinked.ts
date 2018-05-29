@@ -16,6 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
 import {
@@ -29,7 +30,6 @@ import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoa
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { OnImageLinked } from "../../../../typings/types";
-import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
