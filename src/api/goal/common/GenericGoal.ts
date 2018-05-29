@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Goal, GoalDefinition } from "../../../../api/goal/Goal";
-import { IndependentOfEnvironment } from "../support/github/gitHubContext";
+import { Goal, GoalDefinition } from "../Goal";
+import { IndependentOfEnvironment } from "../../../internal/delivery/goals/support/github/gitHubContext";
 
 /**
  * Generic goal. Used when creating use-case specific specific goals.

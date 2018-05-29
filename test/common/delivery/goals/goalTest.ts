@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { MessageGoal } from "../../../../src/internal/delivery/goals/common/MessageGoal";
+import { MessageGoal } from "../../../../src/api/goal/common/MessageGoal";
 
 describe("Goal", () => {
 
