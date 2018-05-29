@@ -677,7 +677,7 @@ The `SoftwareDeliveryMachine` class offers a fluent builder approach to adding c
 For example:
 
 ```typescript
-    const sdm = new SoftwareDeliveryMachine(
+    const sdm = createSoftwareDeliveryMachine(
         {
             builder: K8sBuildOnSuccessStatus,
             deployers: [
@@ -745,17 +745,18 @@ events: assembled.eventHandlers,
 
 ## Structure of This Project
 
-- The `src/spi` directory contains interfaces that are likely to be extended in integrations with infrastructure,
+- `src/api` is the public user-facing API, including the software delivery machine concept that ties everything together. *This may be extracted into its own Node module in future.*
+- `src/spi` contains interfaces to be extended in integrations with infrastructure,
 such as artifact storage, logging, build and deployment.
-- `src/blueprint` contains the higher level software delivery machine concept that ties things together
-- `src/common` contains lower level code
 - `src/graphql` contains GraphQL queries. You can add fields to existing queries and subscriptions, and add your own.
-- `src/handlers` contains handlers that implement general SDM concepts. This is lower level infrastructure, which you generally won't need to modify directly.
 - `src/typings` is where types generated from GraphQL wind up. Refresh these with `npm run gql:gen` 
 if you update any GraphQL files in `src/graphql`.
 - `src/util` contains miscellaneous utilities.
+- `src/internal` contains lower level code such as event handlers necessary to support the user API. This is not intended for user use.
+- `src/pack` contains "extension packs." These will ultimately be extracted into their own Node modules.
+- The other directories unders `src` contain useful functionality that may eventually be moved out of this project.
 
-The important types can be imported into downstream projects from the `index.ts` barrel.
+The types from `src/api` can be imported into downstream projects from the `index.ts` barrel.
 
 ## Plugging in Third Party Tools
 
@@ -813,8 +814,12 @@ const pm: PushMapping<Goals> = given<Goals>(IsNode)
     );
 ```
 
+### "Contribution" Style
+tbd
+
 ## Roadmap
 
 This project is under active development, and still in flux. Some goals:
 
-- Support for BitBucket, as well as GitHub.
+- Splitting out `sdm-api` project with the contents of the `src/api` directory
+- Extracting the extension packs under `src/pack` into their own Node modules.
