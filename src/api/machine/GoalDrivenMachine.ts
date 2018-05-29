@@ -19,7 +19,7 @@ import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
 import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { PushMapping } from "../listener/PushMapping";
+import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../listener/PushTest";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { MachineConfiguration } from "./MachineConfiguration";

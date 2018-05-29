@@ -24,7 +24,7 @@ import { NoGoals } from "../../../src/common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
 import { Goals } from "../../../src/api/goal/Goals";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { PushMapping } from "../../../src/api/listener/PushMapping";
+import { PushMapping } from "../../../src/api/mapping/PushMapping";
 import { fakeContext } from "../../../src/util/test/fakeContext";
 
 const FrogPushMapping: PushMapping<string> = {

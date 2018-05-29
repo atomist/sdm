@@ -16,7 +16,7 @@
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { PushImpactListenerInvocation } from "../../../../../api/listener/PushImpactListener";
-import { FingerprinterRegistration } from "../../../../../api/FingerprinterRegistration";
+import { FingerprinterRegistration } from "../../../../../api/registration/FingerprinterRegistration";
 import { dependenciesFingerprintsFromParsedPom } from "./dependenciesFingerprintsFromParsedPom";
 import { extractEffectivePom } from "./effectivePomExtractor";
 

@@ -15,8 +15,8 @@
  */
 
 import { PushTest } from "../../api/listener/PushTest";
-import { PushRule } from "../../common/listener/support/PushRule";
-import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
+import { PushRule } from "../../api/mapping/support/PushRule";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { Builder } from "../../spi/build/Builder";
 
 export function when(guard1: PushTest, ...guards: PushTest[]): PushRule<Builder> {

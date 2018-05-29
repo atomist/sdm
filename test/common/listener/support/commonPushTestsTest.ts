@@ -18,7 +18,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { hasFile, hasFileContaining, hasFileWithExtension, ToDefaultBranch } from "../../../../src/common/listener/support/pushtest/commonPushTests";
+import { hasFile, hasFileContaining, hasFileWithExtension, ToDefaultBranch } from "../../../../src/api/mapping/support/commonPushTests";
 
 describe("commonPushTests", () => {
 

@@ -16,7 +16,7 @@
 
 import { AtomistBuildFile } from "../../../../delivery/build/local/npm/NpmDetectBuildMapping";
 import { PredicatePushTest, predicatePushTest } from "../../../../../api/listener/PushTest";
-import { hasFile } from "../commonPushTests";
+import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
 
 export const IsNode: PredicatePushTest = predicatePushTest("Is Node", async p => {
     try {

@@ -31,12 +31,12 @@ import { lastLinesLogInterpreter, LogSuppressor } from "../../common/delivery/go
 import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
 import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../api/listener/GoalSetter";
-import { PushMapping } from "../../api/listener/PushMapping";
+import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/listener/PushTest";
-import { PushRule } from "../../common/listener/support/PushRule";
-import { PushRules } from "../../common/listener/support/PushRules";
-import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
-import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
+import { PushRule } from "../../api/mapping/support/PushRule";
+import { PushRules } from "../../api/mapping/support/PushRules";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
+import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
 import { disposeCommand } from "../../handlers/commands/disposeCommand";
 import { displayBuildLogHandler } from "../../handlers/commands/ShowBuildLog";

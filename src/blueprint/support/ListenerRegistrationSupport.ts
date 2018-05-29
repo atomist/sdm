@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { AutofixRegistration } from "../../api/AutofixRegistration";
-import { FingerprinterRegistration } from "../../api/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../../api/PushReactionRegistration";
-import { ReviewerRegistration } from "../../api/ReviewerRegistration";
+import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
+import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
 import { BuildListener } from "../../api/listener/BuildListener";
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";

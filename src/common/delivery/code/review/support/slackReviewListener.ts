@@ -25,7 +25,7 @@ import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import { ReviewListener } from "../../../../../api/listener/ReviewListener";
 import { AddressChannels } from "../../../../slack/addressChannels";
-import { PushReactionResponse } from "../../../../../api/PushReactionRegistration";
+import { PushReactionResponse } from "../../../../../api/registration/PushReactionRegistration";
 
 /**
  * Strategy for deep linking to a source control system.

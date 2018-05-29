@@ -23,9 +23,9 @@ import { FingerprintListener } from "../../../../api/listener/FingerprintListene
 import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
-import { relevantCodeActions } from "../../../../api/PushReactionRegistration";
+import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
 import { computeFingerprints } from "./computeFingerprints";
-import { FingerprinterRegistration } from "../../../../api/FingerprinterRegistration";
+import { FingerprinterRegistration } from "../../../../api/registration/FingerprinterRegistration";
 
 /**
  * Execute fingerprinting

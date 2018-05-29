@@ -27,7 +27,7 @@ import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/Con
 import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
-import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
+import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";

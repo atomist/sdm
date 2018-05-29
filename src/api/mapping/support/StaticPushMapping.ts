@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-import { PushTest, pushTest } from "../../../../api/listener/PushTest";
+import { PushMapping } from "../PushMapping";
+import { PushTest } from "../../listener/PushTest";
 
 /**
- * Is this a seed repo, based on the naming convention
- * that such repos have "-seed" in their name
- * @param {PushListenerInvocation} pi
- * @constructor
+ * PushMapping that always returns the same value, guarded by a PushTest.
+ * Return undefined if the PushTest doesn't match.
  */
-export const NamedSeedRepo: PushTest = pushTest(
-    "Named seed repo",
-    async pi => pi.id.repo.includes("-seed"));
+export interface StaticPushMapping<V> extends PushMapping<V> {
+
+    readonly pushTest: PushTest;
+
+    /**
+     * Value we always return
+     */
+    readonly value: V;
+}

@@ -19,14 +19,14 @@ import { saveFromFiles } from "@atomist/automation-client/project/util/projectUt
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { ReviewerRegistration } from "../../../../../src/api/ReviewerRegistration";
+import { ReviewerRegistration } from "../../../../../src/api/registration/ReviewerRegistration";
 import { ReviewListener, ReviewListenerInvocation } from "../../../../../src/api/listener/ReviewListener";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import * as assert from "power-assert";
-import { PushReactionResponse } from "../../../../../src/api/PushReactionRegistration";
+import { PushReactionResponse } from "../../../../../src/api/registration/PushReactionRegistration";
 import { executeReview } from "../../../../../src/common/delivery/code/review/executeReview";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 

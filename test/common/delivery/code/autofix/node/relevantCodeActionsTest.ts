@@ -21,9 +21,9 @@ import * as assert from "power-assert";
 import {
     AutofixRegistration,
     editorAutofixRegistration,
-} from "../../../../../../src/api/AutofixRegistration";
+} from "../../../../../../src/api/registration/AutofixRegistration";
 import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
-import { relevantCodeActions } from "../../../../../../src/api/PushReactionRegistration";
+import { relevantCodeActions } from "../../../../../../src/api/registration/PushReactionRegistration";
 import { PushImpactListenerInvocation } from "../../../../../../src/api/listener/PushImpactListener";
 
 describe("relevantCodeActions", () => {

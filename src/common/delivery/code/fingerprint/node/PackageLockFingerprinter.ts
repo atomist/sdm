@@ -19,7 +19,7 @@ import { computeShaOf } from "../../../../../util/misc/sha";
 import { PushImpactListenerInvocation } from "../../../../../api/listener/PushImpactListener";
 import { PushTest } from "../../../../../api/listener/PushTest";
 import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
-import { FingerprinterRegistration, FingerprinterResult } from "../../../../../api/FingerprinterRegistration";
+import { FingerprinterRegistration, FingerprinterResult } from "../../../../../api/registration/FingerprinterRegistration";
 
 /**
  * Compute a fingerprint from a package-lock.json file.

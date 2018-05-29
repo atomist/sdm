@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { AnyProjectEditor, EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { PushTest } from "./listener/PushTest";
+import { PushTest } from "../listener/PushTest";
 import { PushReactionRegistration, SelectiveCodeActionOptions } from "./PushReactionRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {

@@ -45,7 +45,7 @@ import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../
 import { GoalSetter } from "../../../../api/listener/GoalSetter";
 import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
-import { PushRules } from "../../../../common/listener/support/PushRules";
+import { PushRules } from "../../../../api/mapping/support/PushRules";
 import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";

@@ -15,15 +15,15 @@
  */
 
 import { asSpawnCommand } from "../../../../../util/misc/spawned";
-import { hasFile } from "../../../../listener/support/pushtest/commonPushTests";
+import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
 import { IsNode } from "../../../../listener/support/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../listener/support/pushtest/node/tsPushTests";
-import { allSatisfied } from "../../../../listener/support/pushtest/pushTestUtils";
+import { allSatisfied } from "../../../../../api/mapping/support/pushTestUtils";
 import {
     DevelopmentEnvOptions,
     Install,
 } from "../../../build/local/npm/npmBuilder";
-import { AutofixRegistration } from "../../../../../api/AutofixRegistration";
+import { AutofixRegistration } from "../../../../../api/registration/AutofixRegistration";
 import { spawnedCommandAutofix } from "../spawnedCommandAutofix";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(

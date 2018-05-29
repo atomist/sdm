@@ -16,7 +16,7 @@
 
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { NoGoals } from "../../src/common/delivery/goals/common/commonGoals";
-import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
+import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";

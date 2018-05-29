@@ -1,5 +1,5 @@
-import { PredicateMapping } from "../listener/PredicateMapping";
-import { PredicateMappingTerm, toPredicateMapping } from "../../common/listener/support/PredicateMappingTerm";
+import { PredicateMapping } from "../mapping/PredicateMapping";
+import { PredicateMappingTerm, toPredicateMapping } from "../mapping/support/PredicateMappingTerm";
 
 /**
  * Predicate mapping DSL method. Allows use of booleans and functions

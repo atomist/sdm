@@ -25,7 +25,7 @@ import {
     PushReactionResponse,
     relevantCodeActions,
     toPushReactionRegistration,
-} from "../../../api/PushReactionRegistration";
+} from "../../../api/registration/PushReactionRegistration";
 
 /**
  * Execute arbitrary code reactions against a codebase

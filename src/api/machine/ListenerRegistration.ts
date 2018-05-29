@@ -1,7 +1,7 @@
-import { AutofixRegistration } from "../AutofixRegistration";
-import { FingerprinterRegistration } from "../FingerprinterRegistration";
-import { PushReactionRegisterable } from "../PushReactionRegistration";
-import { ReviewerRegistration } from "../ReviewerRegistration";
+import { AutofixRegistration } from "../registration/AutofixRegistration";
+import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../registration/PushReactionRegistration";
+import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 import { ArtifactListenerRegisterable } from "../listener/ArtifactListener";
 import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";

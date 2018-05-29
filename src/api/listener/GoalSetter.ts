@@ -15,7 +15,7 @@
  */
 
 import { Goals } from "../goal/Goals";
-import { PushMapping } from "./PushMapping";
+import { PushMapping } from "../mapping/PushMapping";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics

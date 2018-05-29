@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProjectPredicate } from "../../../../api/listener/PushTest";
+import { ProjectPredicate } from "../../listener/PushTest";
 
 /**
  * Return the opposite of this ProjectPredicate

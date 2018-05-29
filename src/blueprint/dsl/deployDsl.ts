@@ -17,8 +17,8 @@
 import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
 import { Goal } from "../../api/goal/Goal";
 import { PushTest } from "../../api/listener/PushTest";
-import { PushRule } from "../../common/listener/support/PushRule";
-import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
+import { PushRule } from "../../api/mapping/support/PushRule";
+import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 
 export class DeployPushRule extends PushRule<Target> {
 

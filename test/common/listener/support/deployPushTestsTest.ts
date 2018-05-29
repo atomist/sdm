@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { IsDeployEnabled } from "../../../../src/common/listener/support/pushtest/deployPushTests";
+import { IsDeployEnabled } from "../../../../src/api/mapping/support/deployPushTests";
 
 describe("deployPushTests tests thing", () => {
 

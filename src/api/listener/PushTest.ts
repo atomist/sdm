@@ -16,7 +16,7 @@
 
 import { Project } from "@atomist/automation-client/project/Project";
 import { PushListenerInvocation } from "./PushListener";
-import { PushMapping } from "./PushMapping";
+import { PushMapping } from "../mapping/PushMapping";
 
 /**
  * Special PushMapping. Return true if we like this push. Used in goal setting etc.

@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PredicateMapping } from "../../../api/listener/PredicateMapping";
+import { PredicateMapping } from "../PredicateMapping";
 
 /**
  * Return the opposite of this predicate mapping

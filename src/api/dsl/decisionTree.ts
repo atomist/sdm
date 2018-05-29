@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { PushMapping } from "../listener/PushMapping";
+import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../listener/PushTest";
-import { PushRules } from "../../common/listener/support/PushRules";
-import { allSatisfied } from "../../common/listener/support/pushtest/pushTestUtils";
+import { PushRules } from "../mapping/support/PushRules";
+import { allSatisfied } from "../mapping/support/pushTestUtils";
 
 /**
  * Simple DSL to create a decision tree.

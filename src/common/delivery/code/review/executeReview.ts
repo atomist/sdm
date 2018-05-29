@@ -24,9 +24,9 @@ import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
-import { PushReactionResponse, relevantCodeActions } from "../../../../api/PushReactionRegistration";
-import { formatReviewerError, ReviewerError } from "../../../../api/ReviewerError";
-import { ReviewerRegistration } from "../../../../api/ReviewerRegistration";
+import { PushReactionResponse, relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
+import { formatReviewerError, ReviewerError } from "../../../../api/registration/ReviewerError";
+import { ReviewerRegistration } from "../../../../api/registration/ReviewerRegistration";
 
 /**
  * Execute reviews and route or react to results using review listeners

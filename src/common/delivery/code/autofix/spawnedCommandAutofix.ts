@@ -16,7 +16,7 @@
 
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { PushTest } from "../../../../api/listener/PushTest";
-import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../../../api/AutofixRegistration";
+import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../../../api/registration/AutofixRegistration";
 import { localCommandsEditor } from "../../../command/support/localCommandsEditor";
 
 /**

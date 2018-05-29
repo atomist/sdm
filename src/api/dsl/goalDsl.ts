@@ -17,9 +17,9 @@
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
 import { PushTest } from "../listener/PushTest";
-import { PredicateMappingTerm, toPredicateMapping } from "../../common/listener/support/PredicateMappingTerm";
-import { PushRule } from "../../common/listener/support/PushRule";
-import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
+import { PredicateMappingTerm, toPredicateMapping } from "../mapping/support/PredicateMappingTerm";
+import { PushRule } from "../mapping/support/PushRule";
+import { AnyPush } from "../mapping/support/commonPushTests";
 import { GoalComponent, toGoals } from "./GoalComponent";
 
 export class GoalSetterMapping extends PushRule<Goals> {

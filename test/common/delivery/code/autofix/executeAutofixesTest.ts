@@ -20,7 +20,7 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { AutofixRegistration } from "../../../../../src/api/AutofixRegistration";
+import { AutofixRegistration } from "../../../../../src/api/registration/AutofixRegistration";
 import { executeAutofixes } from "../../../../../src/common/delivery/code/autofix/executeAutofixes";
 import { IsTypeScript } from "../../../../../src/common/listener/support/pushtest/node/tsPushTests";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";

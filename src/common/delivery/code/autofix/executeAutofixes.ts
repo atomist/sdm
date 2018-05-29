@@ -28,8 +28,8 @@ import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
-import { relevantCodeActions } from "../../../../api/PushReactionRegistration";
-import { AutofixRegistration } from "../../../../api/AutofixRegistration";
+import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
+import { AutofixRegistration } from "../../../../api/registration/AutofixRegistration";
 
 /**
  * Execute autofixes against this push

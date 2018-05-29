@@ -21,7 +21,7 @@ import * as assert from "power-assert";
 import {
     allPredicatesSatisfied,
     anyPredicateSatisfied, notPredicate,
-} from "../../../../src/common/listener/support/pushtest/projectPredicateUtils";
+} from "../../../../src/api/mapping/support/projectPredicateUtils";
 import { FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtilsTest";
 
 const id = new GitHubRepoRef("atomist", "github-sdm");

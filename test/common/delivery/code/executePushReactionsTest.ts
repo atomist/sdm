@@ -21,7 +21,7 @@ import { TruePushTest } from "../../listener/support/pushTestUtilsTest";
 
 import * as assert from "power-assert";
 import { executePushReactions } from "../../../../src/common/delivery/code/executePushReactions";
-import { PushReactionRegistration, PushReactionResponse } from "../../../../src/api/PushReactionRegistration";
+import { PushReactionRegistration, PushReactionResponse } from "../../../../src/api/registration/PushReactionRegistration";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 

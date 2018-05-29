@@ -16,7 +16,7 @@
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { predicatePushTest, PredicatePushTest } from "../../../../../api/listener/PushTest";
-import { hasFile, hasFileWithExtension } from "../commonPushTests";
+import { hasFile, hasFileWithExtension } from "../../../../../api/mapping/support/commonPushTests";
 
 /**
  * Is this a Maven project

@@ -15,8 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { PushListenerInvocation } from "../../../api/listener/PushListener";
-import { PushMapping } from "../../../api/listener/PushMapping";
+import { PushListenerInvocation } from "../../listener/PushListener";
+import { PushMapping } from "../PushMapping";
 
 /**
  * Use to execute a rule set for any push to resolve to an object.

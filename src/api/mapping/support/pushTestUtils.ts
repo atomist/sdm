@@ -15,12 +15,12 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { LruCache } from "../../../../util/misc/LruCache";
-import { isMapping } from "../../../../api/listener/Mapping";
-import { PushListenerInvocation } from "../../../../api/listener/PushListener";
-import { predicatePushTest, ProjectPredicate, PushTest } from "../../../../api/listener/PushTest";
+import { LruCache } from "../../../util/misc/LruCache";
+import { isMapping } from "../Mapping";
+import { PushListenerInvocation } from "../../listener/PushListener";
+import { predicatePushTest, ProjectPredicate, PushTest } from "../../listener/PushTest";
 
-import * as pred from "../predicateUtils";
+import * as pred from "./predicateUtils";
 
 /**
  * Return the opposite of this push test
