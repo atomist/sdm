@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
-import { PushRegistration } from "../../listener/PushRegistration";
+import { PushImpactListenerInvocation } from "./listener/PushImpactListener";
+import { PushRegistration } from "./listener/PushRegistration";
 
 /**
  * A code action response that affects delivery:

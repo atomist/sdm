@@ -24,8 +24,8 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
 import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
-import { ReviewerError } from "../ReviewerError";
-import { ReviewerRegistration } from "../ReviewerRegistration";
+import { ReviewerError } from "../../../../../api/ReviewerError";
+import { ReviewerRegistration } from "../../../../../api/ReviewerRegistration";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
 

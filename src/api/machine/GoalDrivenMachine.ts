@@ -15,13 +15,13 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
-import { Goal } from "../common/delivery/goals/Goal";
-import { Goals } from "../common/delivery/goals/Goals";
-import { ExecuteGoalWithLog } from "../common/delivery/goals/support/reportGoalError";
-import { SdmGoalImplementationMapper } from "../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { PushMapping } from "../common/listener/PushMapping";
-import { PushTest } from "../common/listener/PushTest";
-import { InterpretLog } from "../spi/log/InterpretedLog";
+import { Goal } from "../goal/Goal";
+import { Goals } from "../goal/Goals";
+import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
+import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
+import { PushMapping } from "../listener/PushMapping";
+import { PushTest } from "../listener/PushTest";
+import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { MachineConfiguration } from "./MachineConfiguration";
 
 /**
@@ -30,7 +30,7 @@ import { MachineConfiguration } from "./MachineConfiguration";
  * However, certain well known goals are built into the TheSoftwareDeliveryMachine
  * for convenience, with their own associated listeners.
  */
-export interface GoalDrivenMachine extends MachineConfiguration {
+export interface GoalDrivenMachine<O> extends MachineConfiguration<O> {
 
     /**
      * Automation client configuration this machine will run in

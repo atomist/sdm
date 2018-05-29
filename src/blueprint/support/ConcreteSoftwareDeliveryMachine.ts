@@ -25,14 +25,14 @@ import { executeReview } from "../../common/delivery/code/review/executeReview";
 import { Target } from "../../common/delivery/deploy/deploy";
 import { executeDeploy } from "../../common/delivery/deploy/executeDeploy";
 import { executeUndeploy, offerToDeleteRepository } from "../../common/delivery/deploy/executeUndeploy";
-import { Goal } from "../../common/delivery/goals/Goal";
-import { Goals } from "../../common/delivery/goals/Goals";
+import { Goal } from "../../api/goal/Goal";
+import { Goals } from "../../api/goal/Goals";
 import { lastLinesLogInterpreter, LogSuppressor } from "../../common/delivery/goals/support/logInterpreters";
 import { ExecuteGoalWithLog } from "../../common/delivery/goals/support/reportGoalError";
 import { SdmGoalImplementationMapper } from "../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { GoalSetter } from "../../common/listener/GoalSetter";
-import { PushMapping } from "../../common/listener/PushMapping";
-import { PushTest } from "../../common/listener/PushTest";
+import { GoalSetter } from "../../api/listener/GoalSetter";
+import { PushMapping } from "../../api/listener/PushMapping";
+import { PushTest } from "../../api/listener/PushTest";
 import { PushRule } from "../../common/listener/support/PushRule";
 import { PushRules } from "../../common/listener/support/PushRules";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
@@ -66,9 +66,9 @@ import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../../spi/build/Builder";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { ExtensionPack } from "../ExtensionPack";
-import { EmptyFunctionalUnit, FunctionalUnit } from "../FunctionalUnit";
-import { SoftwareDeliveryMachine } from "../SoftwareDeliveryMachine";
+import { ExtensionPack } from "../../api/machine/ExtensionPack";
+import { EmptyFunctionalUnit, FunctionalUnit } from "../../api/machine/FunctionalUnit";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
 import {
     ArtifactGoal,
@@ -83,14 +83,14 @@ import {
     ReviewGoal,
     StagingEndpointGoal,
     StagingVerifiedGoal,
-} from "../wellKnownGoals";
+} from "../../api/machine/wellKnownGoals";
 import { ListenerRegistrationSupport } from "./ListenerRegistrationSupport";
 
 /**
  * Implementation of SoftwareDeliveryMachine.
  * Not intended for direct user instantiation. See machineFactory.ts
  */
-export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport implements SoftwareDeliveryMachine {
+export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport implements SoftwareDeliveryMachine<SoftwareDeliveryMachineOptions> {
 
     private generators: Array<Maker<HandleCommand>> = [];
 

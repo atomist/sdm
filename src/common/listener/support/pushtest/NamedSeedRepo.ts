@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushTest, pushTest } from "../../PushTest";
+import { PushTest, pushTest } from "../../../../api/listener/PushTest";
 
 /**
  * Is this a seed repo, based on the naming convention

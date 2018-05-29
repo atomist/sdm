@@ -16,21 +16,12 @@
 
 import { sprintf } from "sprintf-js";
 import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
-import { Goal } from "../../../../common/delivery/goals/Goal";
+import { Goal } from "../../../../api/goal/Goal";
 import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { RepoListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
+import { RepoListenerInvocation, SdmListener } from "../../../../api/listener/Listener";
 import { providerIdFromStatus } from "../../../../util/git/repoRef";
-
-export interface EndpointVerificationInvocation extends RepoListenerInvocation {
-
-    /**
-     * Reported endpoint base url
-     */
-    url: string;
-}
-
-export type EndpointVerificationListener = SdmListener<EndpointVerificationInvocation>;
+import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../../../api/listener/EndpointVerificationListener";
 
 /**
  * What the SDM should define for each environment's verification

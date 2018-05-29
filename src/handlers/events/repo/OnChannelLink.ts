@@ -16,7 +16,7 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../common/listener/ChannelLinkListenerInvocation";
+import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../api/listener/ChannelLinkListenerInvocation";
 import { ProjectLoader } from "../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
 import * as schema from "../../../typings/types";

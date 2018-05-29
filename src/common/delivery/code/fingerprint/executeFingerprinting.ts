@@ -19,13 +19,13 @@ import { Success } from "@atomist/automation-client/Handlers";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
-import { FingerprintListener } from "../../../listener/FingerprintListener";
+import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
-import { relevantCodeActions } from "../PushReactionRegistration";
+import { relevantCodeActions } from "../../../../api/PushReactionRegistration";
 import { computeFingerprints } from "./computeFingerprints";
-import { FingerprinterRegistration } from "./FingerprinterRegistration";
+import { FingerprinterRegistration } from "../../../../api/FingerprinterRegistration";
 
 /**
  * Execute fingerprinting

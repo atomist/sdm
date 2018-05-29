@@ -24,7 +24,7 @@ import {
     GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey, SdmGoalState,
     SdmProvenance,
 } from "../../../../ingesters/sdmGoalIngester";
-import { Goal, hasPreconditions } from "../Goal";
+import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
 import { GoalImplementation } from "./SdmGoalImplementationMapper";
 
 export function environmentFromGoal(goal: Goal) {

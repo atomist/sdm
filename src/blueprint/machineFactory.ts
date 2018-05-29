@@ -1,10 +1,11 @@
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
-import { GoalSetter } from "../common/listener/GoalSetter";
+import { GoalSetter } from "../api/listener/GoalSetter";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
-import { MachineConfiguration } from "./MachineConfiguration";
-import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { MachineConfiguration } from "../api/machine/MachineConfiguration";
+import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
 import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
 /**
  * Create a **Software Delivery MachineConfiguration** with default predefined goals.
@@ -44,8 +45,8 @@ import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliv
  *    .add...;
  * ```
  */
-export function createSoftwareDeliveryMachine(config: MachineConfiguration,
-                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
+export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineOptions>,
+                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<SoftwareDeliveryMachineOptions> {
     const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration,
         goalSetters);
     return machine.addSupportingCommands(

@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { PushListenerInvocation } from "../../../../../api/listener/PushListener";
-import { PushTest, pushTest } from "../../../../../api/listener/PushTest";
+import { sprintf } from "sprintf-js";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 
-export const IsTypeScript: PushTest = pushTest(
-    "Is TypeScript",
-    async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
-);
+export interface EndpointVerificationInvocation extends RepoListenerInvocation {
+
+    /**
+     * Reported endpoint base url
+     */
+    url: string;
+}
+
+export type EndpointVerificationListener = SdmListener<EndpointVerificationInvocation>;
+

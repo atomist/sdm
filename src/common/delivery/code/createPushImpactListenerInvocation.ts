@@ -17,7 +17,7 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../../../util/git/filesChangedSince";
 import { filteredView } from "../../../util/project/filteredView";
-import { PushImpactListenerInvocation } from "../../listener/PushImpactListener";
+import { PushImpactListenerInvocation } from "../../../api/listener/PushImpactListener";
 import { messageDestinationsFor } from "../../slack/addressChannels";
 import { teachToRespondInEventHandler } from "../../slack/contextMessageRouting";
 import { RunWithLogContext } from "../goals/support/reportGoalError";

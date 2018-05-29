@@ -20,13 +20,13 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
+import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { createSoftwareDeliveryMachine } from "../../src/blueprint/machineFactory";
 import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
 import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/ConcreteSoftwareDeliveryMachine";
-import { AutofixGoal } from "../../src/blueprint/wellKnownGoals";
-import { Goal } from "../../src/common/delivery/goals/Goal";
-import { Goals } from "../../src/common/delivery/goals/Goals";
+import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
+import { Goal } from "../../src/api/goal/Goal";
+import { Goals } from "../../src/api/goal/Goals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { PushFields } from "../../src/typings/types";

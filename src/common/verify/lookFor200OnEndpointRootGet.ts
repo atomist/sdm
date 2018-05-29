@@ -19,7 +19,7 @@ import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import * as https from "https";
 import { WrapOptions } from "retry";
-import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
+import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
 
 /**
  * Make an HTTP request to the reported endpoint to check

@@ -17,7 +17,7 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 import * as assert from "power-assert";
-import { PushTest, pushTest } from "../../../../src/common/listener/PushTest";
+import { PushTest, pushTest } from "../../../../src/api/listener/PushTest";
 import { PushRules } from "../../../../src/common/listener/support/PushRules";
 import { FalsePushTest, TruePushTest } from "./pushTestUtilsTest";
 

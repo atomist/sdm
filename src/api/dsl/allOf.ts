@@ -1,4 +1,4 @@
-import { PredicateMapping } from "../../common/listener/PredicateMapping";
+import { PredicateMapping } from "../listener/PredicateMapping";
 import { PredicateMappingTerm, toPredicateMapping } from "../../common/listener/support/PredicateMappingTerm";
 
 /**

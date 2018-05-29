@@ -15,8 +15,8 @@
  */
 
 import { DeployerInfo, Target } from "../../common/delivery/deploy/deploy";
-import { Goal } from "../../common/delivery/goals/Goal";
-import { PushTest } from "../../common/listener/PushTest";
+import { Goal } from "../../api/goal/Goal";
+import { PushTest } from "../../api/listener/PushTest";
 import { PushRule } from "../../common/listener/support/PushRule";
 import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
 

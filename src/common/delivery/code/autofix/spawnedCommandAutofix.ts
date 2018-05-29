@@ -16,8 +16,8 @@
 
 import { SpawnCommand } from "../../../../util/misc/spawned";
 import { localCommandsEditor } from "../../../command/editor/editorWrappers";
-import { PushTest } from "../../../listener/PushTest";
-import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "./AutofixRegistration";
+import { PushTest } from "../../../../api/listener/PushTest";
+import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../../../api/AutofixRegistration";
 
 /**
  * Register an autofix based on spawned local shell commands.

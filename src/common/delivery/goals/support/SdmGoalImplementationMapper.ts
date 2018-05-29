@@ -17,10 +17,10 @@
 import { IsolatedGoalLauncher } from "../../../../handlers/events/delivery/goals/launchGoal";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
-import { RepoContext } from "../../../context/SdmContext";
-import { PushListenerInvocation } from "../../../listener/PushListener";
-import { PushTest } from "../../../listener/PushTest";
-import { Goal } from "../Goal";
+import { RepoContext } from "../../../../api/context/SdmContext";
+import { PushListenerInvocation } from "../../../../api/listener/PushListener";
+import { PushTest } from "../../../../api/listener/PushTest";
+import { Goal } from "../../../../api/goal/Goal";
 import { ExecuteGoalWithLog } from "./reportGoalError";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;

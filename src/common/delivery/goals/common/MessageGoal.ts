@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goal } from "../Goal";
+import { Goal } from "../../../../api/goal/Goal";
 import { IndependentOfEnvironment } from "../support/github/gitHubContext";
 
 /**

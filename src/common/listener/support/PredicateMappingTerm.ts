@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { isMapping, Mapper } from "../Mapping";
-import { PredicateMapping } from "../PredicateMapping";
+import { isMapping, Mapper } from "../../../api/listener/Mapping";
+import { PredicateMapping } from "../../../api/listener/PredicateMapping";
 
 /**
  * Predicate that can be used in predicate DSL.

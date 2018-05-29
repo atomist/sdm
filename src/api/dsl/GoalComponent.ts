@@ -1,5 +1,5 @@
-import { Goal } from "../../common/delivery/goals/Goal";
-import { Goals, isGoals } from "../../common/delivery/goals/Goals";
+import { Goal } from "../goal/Goal";
+import { Goals, isGoals } from "../goal/Goals";
 
 /**
  * Type used in constructing goals

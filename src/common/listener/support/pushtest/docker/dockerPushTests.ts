@@ -17,7 +17,7 @@
 import {
     predicatePushTest,
     PredicatePushTest,
-} from "../../../PushTest";
+} from "../../../../../api/listener/PushTest";
 import { hasFile } from "../commonPushTests";
 
 /**

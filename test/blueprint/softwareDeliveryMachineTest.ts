@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
+import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { NoGoals } from "../../src/common/delivery/goals/common/commonGoals";
 import { AnyPush } from "../../src/common/listener/support/pushtest/commonPushTests";
 import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest";
@@ -27,7 +27,7 @@ import { when } from "../../src/blueprint/dsl/buildDsl";
 import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/ConcreteSoftwareDeliveryMachine";
 import { npmCustomBuilder } from "../../src/common/delivery/build/local/npm/NpmDetectBuildMapping";
 import { HttpServiceGoals } from "../../src/common/delivery/goals/common/httpServiceGoals";
-import { GoalsSetListener } from "../../src/common/listener/GoalsSetListener";
+import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
 import { HasAtomistBuildFile } from "../../src/common/listener/support/pushtest/node/nodePushTests";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { AddThingAutofix } from "../common/delivery/code/autofix/executeAutofixesTest";

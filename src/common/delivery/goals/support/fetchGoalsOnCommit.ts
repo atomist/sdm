@@ -32,7 +32,7 @@ import {
     SdmGoalRepo,
     SdmGoalsForCommit,
 } from "../../../../typings/types";
-import { Goal } from "../Goal";
+import { Goal } from "../../../../api/goal/Goal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {

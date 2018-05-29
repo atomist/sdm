@@ -23,7 +23,7 @@ import { Deployer } from "../../../spi/deploy/Deployer";
 import { Deployment, TargetInfo } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { providerIdFromStatus } from "../../../util/git/repoRef";
-import { Goal } from "../goals/Goal";
+import { Goal } from "../../../api/goal/Goal";
 import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
 import { RunWithLogContext } from "../goals/support/reportGoalError";
 import { descriptionFromState, updateGoal } from "../goals/support/storeGoals";

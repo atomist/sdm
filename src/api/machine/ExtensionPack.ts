@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-import { AddressChannels } from "../slack/addressChannels";
-import { SdmListener } from "./Listener";
-import { ProjectListenerInvocation } from "./ProjectListener";
+import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
- * Listener invoked when a repo has been linked to a channel
+ * Implemented to expose a capability that can be added to a
+ * software delivery machine in a consistent manner.
+ * Facilitates modularity at a higher level than FunctionUnit or handlers.
+ * For example, a Node module can export a configurer.
  */
-export interface ChannelLinkListenerInvocation extends ProjectListenerInvocation {
-
-    newlyLinkedChannelName: string;
+export interface ExtensionPack {
 
     /**
-     * Convenient method to address the newly linked channel only.
-     * The inherited addressChannels method will address all linked channels.
+     * Name of this configurer
      */
-    addressNewlyLinkedChannel: AddressChannels;
+    name: string;
+
+    /**
+     * Function to addExtensionPack the given SDM
+     * @param sdm
+     */
+    configure(sdm: SoftwareDeliveryMachine<any>): void;
 
 }
-
-export type ChannelLinkListener = SdmListener<ChannelLinkListenerInvocation>;

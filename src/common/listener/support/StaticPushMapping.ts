@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PushMapping } from "../PushMapping";
-import { PushTest } from "../PushTest";
+import { PushMapping } from "../../../api/listener/PushMapping";
+import { PushTest } from "../../../api/listener/PushTest";
 
 /**
  * PushMapping that always returns the same value, guarded by a PushTest.

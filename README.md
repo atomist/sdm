@@ -330,7 +330,7 @@ Let's look at some examples of listeners.
 ### Issue Creation
 When a new issue is created, you may want to notify people or perform an action.
 #### Listener interfaces
-1. `NewIssueListener`: [NewIssueListener](src/common/listener/NewIssueListener.ts)
+1. `NewIssueListener`: [NewIssueListener](src/api/listener/NewIssueListener.ts)
 
 #### Examples
 The following example notifies any user who raises an issue with insufficient detail in the body, via a 
@@ -361,8 +361,8 @@ We frequently want to respond to the creation of a new repository: For example, 
 #### Listener interfaces
 There are two scenarios to consider:
 
-1. The creation of a new repository. `RepoCreationListener`: [RepoCreationListener](src/common/listener/RepoCreationListener.ts)
-2. The first push to a repository, which uses the more generic [ProjectListener](src/common/listener/PushListener.ts)
+1. The creation of a new repository. `RepoCreationListener`: [RepoCreationListener](src/api/listener/RepoCreationListener.ts)
+2. The first push to a repository, which uses the more generic [ProjectListener](src/api/listener/PushListener.ts)
 
 The second scenario is usually more important, as it is possible to create a repository without any source code or a master branch, which isn't enough to work with for common actions.
 

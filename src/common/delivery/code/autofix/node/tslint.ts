@@ -23,7 +23,7 @@ import {
     DevelopmentEnvOptions,
     Install,
 } from "../../../build/local/npm/npmBuilder";
-import { AutofixRegistration } from "../AutofixRegistration";
+import { AutofixRegistration } from "../../../../../api/AutofixRegistration";
 import { spawnedCommandAutofix } from "../spawnedCommandAutofix";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(

@@ -18,7 +18,7 @@ import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomis
 import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
 import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
-import { Goal } from "../../../../common/delivery/goals/Goal";
+import { Goal } from "../../../../api/goal/Goal";
 import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";

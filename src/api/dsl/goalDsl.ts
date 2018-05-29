@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Goals } from "../../common/delivery/goals/Goals";
-import { PushListenerInvocation } from "../../common/listener/PushListener";
-import { PushTest } from "../../common/listener/PushTest";
+import { Goals } from "../goal/Goals";
+import { PushListenerInvocation } from "../listener/PushListener";
+import { PushTest } from "../listener/PushTest";
 import { PredicateMappingTerm, toPredicateMapping } from "../../common/listener/support/PredicateMappingTerm";
 import { PushRule } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";

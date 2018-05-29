@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { PushTest } from "../../common/listener/PushTest";
+import { PushTest } from "../../api/listener/PushTest";
 import { PushRule } from "../../common/listener/support/PushRule";
 import { AnyPush } from "../../common/listener/support/pushtest/commonPushTests";
 import { Builder } from "../../spi/build/Builder";

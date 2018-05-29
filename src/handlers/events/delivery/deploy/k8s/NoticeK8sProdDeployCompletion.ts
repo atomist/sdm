@@ -17,7 +17,7 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Goal } from "../../../../../common/delivery/goals/Goal";
+import { Goal } from "../../../../../api/goal/Goal";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../../util/git/repoRef";
 import { createStatus } from "../../../../../util/github/ghub";

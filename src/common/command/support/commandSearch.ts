@@ -18,7 +18,7 @@ import { HandleCommand } from "@atomist/automation-client";
 import { isCommandHandlerMetadata } from "@atomist/automation-client/internal/metadata/metadata";
 import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { FunctionalUnit } from "../../../blueprint/FunctionalUnit";
+import { FunctionalUnit } from "../../../api/machine/FunctionalUnit";
 
 export interface HandlerInfo {
     maker: Maker<HandleCommand<any>>;

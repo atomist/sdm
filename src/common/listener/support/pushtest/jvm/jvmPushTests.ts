@@ -15,7 +15,7 @@
  */
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
+import { predicatePushTest, PredicatePushTest } from "../../../../../api/listener/PushTest";
 import { hasFile, hasFileWithExtension } from "../commonPushTests";
 
 /**

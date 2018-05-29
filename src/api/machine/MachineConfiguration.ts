@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { Configuration } from "@atomist/automation-client";
 
 /**
- * Implemented to expose a capability that can be added to a
- * software delivery machine in a consistent manner.
- * Facilitates modularity at a higher level than FunctionUnit or handlers.
- * For example, a Node module can export a configurer.
+ * Configuration for software delivery machines
  */
-export interface ExtensionPack {
+export interface MachineConfiguration<O> {
+
+    readonly name: string;
+
+    readonly options: O;
 
     /**
-     * Name of this configurer
+     * Automation client configuration this machine will run in
      */
-    name: string;
-
-    /**
-     * Function to addExtensionPack the given SDM
-     * @param sdm
-     */
-    configure(sdm: SoftwareDeliveryMachine): void;
+    readonly configuration: Configuration;
 
 }

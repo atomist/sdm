@@ -22,7 +22,7 @@ import {
     FingerprintDifferenceListener,
     FingerprintDifferenceListenerInvocation,
     FingerprintValue,
-} from "../../../../common/listener/FingerprintDifferenceListener";
+} from "../../../../api/listener/FingerprintDifferenceListener";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import * as schema from "../../../../typings/types";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";

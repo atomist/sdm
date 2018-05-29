@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SoftwareDeliveryMachine } from "../../../../blueprint/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachine } from "../../../../api/machine/SoftwareDeliveryMachine";
 import { createPendingGitHubStatusOnGoalSet, SetGitHubStatusOnGoalCompletion } from "./github/gitHubStatusSetters";
 
 export function summarizeGoalsInGitHubStatus(sdm: SoftwareDeliveryMachine): SoftwareDeliveryMachine {

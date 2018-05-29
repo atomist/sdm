@@ -17,8 +17,8 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 import * as assert from "power-assert";
-import { PushListenerInvocation } from "../../../../src/common/listener/PushListener";
-import { ProjectPredicate, PushTest, pushTest } from "../../../../src/common/listener/PushTest";
+import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
+import { ProjectPredicate, PushTest, pushTest } from "../../../../src/api/listener/PushTest";
 import { allSatisfied, anySatisfied, not } from "../../../../src/common/listener/support/pushtest/pushTestUtils";
 
 export const TruePushTest: PushTest = pushTest("true", async () => true);

@@ -15,7 +15,7 @@
  */
 
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
-import { Goals } from "../delivery/goals/Goals";
+import { Goals } from "../goal/Goals";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
 /**

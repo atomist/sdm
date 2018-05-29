@@ -21,10 +21,10 @@ import * as assert from "power-assert";
 import {
     AutofixRegistration,
     editorAutofixRegistration,
-} from "../../../../../../src/common/delivery/code/autofix/AutofixRegistration";
+} from "../../../../../../src/api/AutofixRegistration";
 import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
-import { relevantCodeActions } from "../../../../../../src/common/delivery/code/PushReactionRegistration";
-import { PushImpactListenerInvocation } from "../../../../../../src/common/listener/PushImpactListener";
+import { relevantCodeActions } from "../../../../../../src/api/PushReactionRegistration";
+import { PushImpactListenerInvocation } from "../../../../../../src/api/listener/PushImpactListener";
 
 describe("relevantCodeActions", () => {
 

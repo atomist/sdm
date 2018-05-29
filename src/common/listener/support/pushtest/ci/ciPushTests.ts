@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { predicatePushTest, PredicatePushTest } from "../../../PushTest";
+import { predicatePushTest, PredicatePushTest } from "../../../../../api/listener/PushTest";
 import { hasFile } from "../commonPushTests";
 
 /**

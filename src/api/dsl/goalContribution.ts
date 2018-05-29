@@ -1,10 +1,10 @@
 import { logger } from "@atomist/automation-client";
 import * as _ from "lodash";
-import { SdmContext } from "../../common/context/SdmContext";
-import { Goal } from "../../common/delivery/goals/Goal";
-import { Goals } from "../../common/delivery/goals/Goals";
-import { Mapping, NeverMatch } from "../../common/listener/Mapping";
-import { PushListenerInvocation } from "../../common/listener/PushListener";
+import { SdmContext } from "../context/SdmContext";
+import { Goal } from "../goal/Goal";
+import { Goals } from "../goal/Goals";
+import { Mapping, NeverMatch } from "../listener/Mapping";
+import { PushListenerInvocation } from "../listener/PushListener";
 import { GoalComponent, toGoals } from "./GoalComponent";
 
 export type GoalContribution<F> = Mapping<F, GoalComponent>;

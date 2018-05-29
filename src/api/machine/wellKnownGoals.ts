@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Goal, GoalWithPrecondition } from "../common/delivery/goals/Goal";
+import { Goal, GoalWithPrecondition } from "../goal/Goal";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     ProjectDisposalEnvironment,
     StagingEnvironment,
-} from "../common/delivery/goals/support/github/gitHubContext";
+} from "../../common/delivery/goals/support/github/gitHubContext";
 
 /**
  * Goals referenced in TheSoftwareDeliveryMachine

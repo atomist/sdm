@@ -23,13 +23,13 @@ import { sprintf } from "sprintf-js";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 import { toRemoteRepoRef } from "../../../../util/git/repoRef";
-import { PushImpactListenerInvocation } from "../../../listener/PushImpactListener";
+import { PushImpactListenerInvocation } from "../../../../api/listener/PushImpactListener";
 import { ProjectLoader } from "../../../repo/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
-import { relevantCodeActions } from "../PushReactionRegistration";
-import { AutofixRegistration } from "./AutofixRegistration";
+import { relevantCodeActions } from "../../../../api/PushReactionRegistration";
+import { AutofixRegistration } from "../../../../api/AutofixRegistration";
 
 /**
  * Execute autofixes against this push

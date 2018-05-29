@@ -21,8 +21,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as stringify from "json-stringify-safe";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { GoalsSetListener } from "../../../../common/listener/GoalsSetListener";
+import { GoalSetter } from "../../../../api/listener/GoalSetter";
+import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { PushFields, PushForCommit, RepoBranchTips } from "../../../../typings/types";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";

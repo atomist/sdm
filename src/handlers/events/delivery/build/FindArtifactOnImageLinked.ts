@@ -16,15 +16,15 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { Goal } from "../../../../common/delivery/goals/Goal";
+import { Goal } from "../../../../api/goal/Goal";
 import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import {
     ArtifactListenerInvocation,
     ArtifactListenerRegisterable,
     toArtifactListenerRegistration,
-} from "../../../../common/listener/ArtifactListener";
-import { PushListenerInvocation } from "../../../../common/listener/PushListener";
+} from "../../../../api/listener/ArtifactListener";
+import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";

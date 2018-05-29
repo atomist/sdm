@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-import { AutofixRegistration } from "../../common/delivery/code/autofix/AutofixRegistration";
-import { FingerprinterRegistration } from "../../common/delivery/code/fingerprint/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../../common/delivery/code/PushReactionRegistration";
-import { ReviewerRegistration } from "../../common/delivery/code/review/ReviewerRegistration";
-import { ArtifactListenerRegisterable } from "../../common/listener/ArtifactListener";
-import { BuildListener } from "../../common/listener/BuildListener";
-import { ChannelLinkListener } from "../../common/listener/ChannelLinkListenerInvocation";
-import { ClosedIssueListener } from "../../common/listener/ClosedIssueListener";
-import { DeploymentListener } from "../../common/listener/DeploymentListener";
-import { FingerprintDifferenceListener } from "../../common/listener/FingerprintDifferenceListener";
-import { FingerprintListener } from "../../common/listener/FingerprintListener";
-import { GoalCompletionListener, GoalsSetListener } from "../../common/listener/GoalsSetListener";
-import { NewIssueListener } from "../../common/listener/NewIssueListener";
-import { ProjectListener } from "../../common/listener/ProjectListener";
-import { PullRequestListener } from "../../common/listener/PullRequestListener";
-import { PushListener } from "../../common/listener/PushListener";
-import { RepoCreationListener } from "../../common/listener/RepoCreationListener";
-import { ReviewListener } from "../../common/listener/ReviewListener";
-import { TagListener } from "../../common/listener/TagListener";
-import { UpdatedIssueListener } from "../../common/listener/UpdatedIssueListener";
-import { UserJoiningChannelListener } from "../../common/listener/UserJoiningChannelListener";
-import { VerifiedDeploymentListener } from "../../common/listener/VerifiedDeploymentListener";
-import { EndpointVerificationListener } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
-import { ListenerRegistration } from "../ListenerRegistration";
+import { AutofixRegistration } from "../../api/AutofixRegistration";
+import { FingerprinterRegistration } from "../../api/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../../api/PushReactionRegistration";
+import { ReviewerRegistration } from "../../api/ReviewerRegistration";
+import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
+import { BuildListener } from "../../api/listener/BuildListener";
+import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
+import { ClosedIssueListener } from "../../api/listener/ClosedIssueListener";
+import { DeploymentListener } from "../../api/listener/DeploymentListener";
+import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
+import { FingerprintListener } from "../../api/listener/FingerprintListener";
+import { GoalCompletionListener, GoalsSetListener } from "../../api/listener/GoalsSetListener";
+import { NewIssueListener } from "../../api/listener/NewIssueListener";
+import { ProjectListener } from "../../api/listener/ProjectListener";
+import { PullRequestListener } from "../../api/listener/PullRequestListener";
+import { PushListener } from "../../api/listener/PushListener";
+import { RepoCreationListener } from "../../api/listener/RepoCreationListener";
+import { ReviewListener } from "../../api/listener/ReviewListener";
+import { TagListener } from "../../api/listener/TagListener";
+import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
+import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
+import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
+import { ListenerRegistration } from "../../api/machine/ListenerRegistration";
+import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.

@@ -25,7 +25,7 @@ import {
     GoalCompletionListenerInvocation,
     GoalsSetListener,
     GoalsSetListenerInvocation,
-} from "../../../../listener/GoalsSetListener";
+} from "../../../../../api/listener/GoalsSetListener";
 
 export function createPendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {

@@ -33,8 +33,8 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
-import { Goals } from "../../../../common/delivery/goals/Goals";
+import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
+import { Goals } from "../../../../api/goal/Goals";
 import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
 import {
     isGoalImplementation,
@@ -42,9 +42,9 @@ import {
     SdmGoalImplementationMapper,
 } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../common/listener/GoalsSetListener";
-import { PushListenerInvocation } from "../../../../common/listener/PushListener";
+import { GoalSetter } from "../../../../api/listener/GoalSetter";
+import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/listener/GoalsSetListener";
+import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { PushRules } from "../../../../common/listener/support/PushRules";
 import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
 import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";

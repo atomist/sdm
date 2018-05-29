@@ -1,11 +1,11 @@
-import { goalContributors } from "../../../src/blueprint/dsl/goalContribution";
-import { whenPushSatisfies } from "../../../src/blueprint/dsl/goalDsl";
+import { goalContributors } from "../../../src/api/dsl/goalContribution";
+import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
 import { fakePush } from "./decisionTreeTest";
 
 import * as assert from "power-assert";
-import { BuildGoal } from "../../../src/blueprint/wellKnownGoals";
-import { Goals } from "../../../src/common/delivery/goals/Goals";
+import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
+import { Goals } from "../../../src/api/goal/Goals";
 
 describe("goalContributors", () => {
 

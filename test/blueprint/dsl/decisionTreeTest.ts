@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-import { given } from "../../../src/blueprint/dsl/decisionTree";
+import { given } from "../../../src/api/dsl/decisionTree";
 import { FalsePushTest, TruePushTest } from "../../common/listener/support/pushTestUtilsTest";
 
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
-import { whenPushSatisfies } from "../../../src/blueprint/dsl/goalDsl";
+import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { NoGoals } from "../../../src/common/delivery/goals/common/commonGoals";
 import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
-import { Goals } from "../../../src/common/delivery/goals/Goals";
-import { PushListenerInvocation } from "../../../src/common/listener/PushListener";
-import { PushMapping } from "../../../src/common/listener/PushMapping";
+import { Goals } from "../../../src/api/goal/Goals";
+import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
+import { PushMapping } from "../../../src/api/listener/PushMapping";
 import { fakeContext } from "../../../src/util/test/fakeContext";
 
 const FrogPushMapping: PushMapping<string> = {

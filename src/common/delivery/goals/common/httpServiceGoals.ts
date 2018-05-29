@@ -22,8 +22,8 @@ import {
     ProductionUndeploymentGoal,
     PushReactionGoal, ReviewGoal,
     StagingDeploymentGoal, StagingEndpointGoal, StagingVerifiedGoal,
-} from "../../../../blueprint/wellKnownGoals";
-import { Goals } from "../Goals";
+} from "../../../../api/machine/wellKnownGoals";
+import { Goals } from "../../../../api/goal/Goals";
 import {
     LocalEndpointGoal, LocalUndeploymentGoal,
     StagingUndeploymentGoal,

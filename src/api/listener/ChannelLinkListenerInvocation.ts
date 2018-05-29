@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { AddressChannels } from "../../common/slack/addressChannels";
+import { SdmListener } from "./Listener";
+import { ProjectListenerInvocation } from "./ProjectListener";
 
 /**
- * Configuration for software delivery machines
+ * Listener invoked when a repo has been linked to a channel
  */
-export interface MachineConfiguration {
+export interface ChannelLinkListenerInvocation extends ProjectListenerInvocation {
 
-    readonly name: string;
-
-    readonly options: SoftwareDeliveryMachineOptions;
+    newlyLinkedChannelName: string;
 
     /**
-     * Automation client configuration this machine will run in
+     * Convenient method to address the newly linked channel only.
+     * The inherited addressChannels method will address all linked channels.
      */
-    readonly configuration: Configuration;
+    addressNewlyLinkedChannel: AddressChannels;
 
 }
+
+export type ChannelLinkListener = SdmListener<ChannelLinkListenerInvocation>;

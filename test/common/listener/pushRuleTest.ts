@@ -16,9 +16,9 @@
 
 import {InMemoryProject} from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { whenPushSatisfies } from "../../../src/blueprint/dsl/goalDsl";
+import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { LibraryGoals } from "../../../src/common/delivery/goals/common/libraryGoals";
-import { PushListenerInvocation } from "../../../src/common/listener/PushListener";
+import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushRules } from "../../../src/common/listener/support/PushRules";
 import { IsLein } from "../../../src/common/listener/support/pushtest/jvm/jvmPushTests";
 

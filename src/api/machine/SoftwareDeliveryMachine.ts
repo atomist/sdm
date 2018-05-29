@@ -16,15 +16,15 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { Target } from "../common/delivery/deploy/deploy";
-import { GoalSetter } from "../common/listener/GoalSetter";
-import { PushRule } from "../common/listener/support/PushRule";
-import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
-import { Builder } from "../spi/build/Builder";
+import { Target } from "../../common/delivery/deploy/deploy";
+import { GoalSetter } from "../listener/GoalSetter";
+import { PushRule } from "../../common/listener/support/PushRule";
+import { StaticPushMapping } from "../../common/listener/support/StaticPushMapping";
+import { Builder } from "../../spi/build/Builder";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
-import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSupport";
+import { ListenerRegistrationSupport } from "../../blueprint/support/ListenerRegistrationSupport";
 
 /**
  * Class instantiated to create a **Software Delivery MachineConfiguration**.
@@ -64,7 +64,7 @@ import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSuppo
  *    .add...;
  * ```
  */
-export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegistrationSupport, FunctionalUnit {
+export interface SoftwareDeliveryMachine<O = any> extends GoalDrivenMachine<O>, ListenerRegistrationSupport, FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 

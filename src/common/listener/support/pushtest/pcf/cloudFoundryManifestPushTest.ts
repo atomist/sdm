@@ -15,7 +15,7 @@
  */
 
 import { CloudFoundryManifestPath } from "../../../../delivery/deploy/pcf/CloudFoundryTarget";
-import { PredicatePushTest, predicatePushTest } from "../../../PushTest";
+import { PredicatePushTest, predicatePushTest } from "../../../../../api/listener/PushTest";
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 
