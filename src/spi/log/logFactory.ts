@@ -15,11 +15,11 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import {DashboardDisplayProgressLog} from "../../internal/log/DashboardDisplayProgressLog";
-import { createEphemeralProgressLog } from "../../internal/log/EphemeralProgressLog";
-import { firstAvailableProgressLog } from "../../internal/log/firstAvailableProgressLog";
-import { LoggingProgressLog } from "../../internal/log/LoggingProgressLog";
-import { WriteToAllProgressLog } from "../../internal/log/WriteToAllProgressLog";
+import {DashboardDisplayProgressLog} from "../../log/DashboardDisplayProgressLog";
+import { createEphemeralProgressLog } from "../../log/EphemeralProgressLog";
+import { firstAvailableProgressLog } from "../../log/firstAvailableProgressLog";
+import { LoggingProgressLog } from "../../log/LoggingProgressLog";
+import { WriteToAllProgressLog } from "../../log/WriteToAllProgressLog";
 import { ProgressLogFactory } from "./ProgressLog";
 
 /**

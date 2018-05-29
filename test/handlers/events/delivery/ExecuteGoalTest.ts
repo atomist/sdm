@@ -24,7 +24,7 @@ import { executeGoal } from "../../../../src/handlers/events/delivery/goals/exec
 import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";
 import { IndependentOfEnvironment } from "../../../../src/internal/delivery/goals/support/github/gitHubContext";
 import { lastLinesLogInterpreter } from "../../../../src/internal/delivery/goals/support/logInterpreters";
-import { createEphemeralProgressLog } from "../../../../src/internal/log/EphemeralProgressLog";
+import { createEphemeralProgressLog } from "../../../../src/log/EphemeralProgressLog";
 import { fakeContext } from "../../../../src/util/test/fakeContext";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 

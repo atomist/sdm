@@ -21,7 +21,7 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { mavenDeployer } from "../../../../../src/internal/delivery/deploy/local/maven/mavenSourceDeployer";
-import { LoggingProgressLog } from "../../../../../src/internal/log/LoggingProgressLog";
+import { LoggingProgressLog } from "../../../../../src/log/LoggingProgressLog";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
 describe("mavenSourceDeployer", () => {

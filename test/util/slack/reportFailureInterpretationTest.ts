@@ -17,7 +17,7 @@
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { SlackMessage } from "@atomist/slack-messages";
 import * as assert from "power-assert";
-import { AddressChannels } from "../../../src/internal/slack/addressChannels";
+import { AddressChannels } from "../../../src/api/context/addressChannels";
 
 import { InterpretedLog } from "../../../src/spi/log/InterpretedLog";
 import { reportFailureInterpretationToLinkedChannels } from "../../../src/util/slack/reportFailureInterpretationToLinkedChannels";

@@ -22,6 +22,7 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import { sprintf } from "sprintf-js";
+import { AddressChannels } from "../../../../api/context/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
@@ -31,7 +32,6 @@ import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { SdmBuildIdentifierForRepo } from "../../../../typings/types";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
-import { AddressChannels } from "../../../slack/addressChannels";
 import { createTagForStatus } from "../executeTag";
 import { readSdmVersion } from "./projectVersioner";
 import SdmBuildIdentifier = SdmBuildIdentifierForRepo.SdmBuildIdentifier;

@@ -16,7 +16,7 @@
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { predicatePushTest, PredicatePushTest } from "../../../api/mapping/PushTest";
-import { CloudFoundryManifestPath } from "../../../internal/delivery/deploy/pcf/CloudFoundryTarget";
+import { CloudFoundryManifestPath } from "../../../pack/pcf/CloudFoundryTarget";
 
 export const HasCloudFoundryManifest: PredicatePushTest = predicatePushTest(
     "Has PCF manifest",

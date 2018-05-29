@@ -18,8 +18,8 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as _ from "lodash";
+import {AddressChannels, AddressNoChannels} from "../../../api/context/addressChannels";
 import { PushListener, PushListenerInvocation } from "../../../api/listener/PushListener";
-import {AddressChannels, AddressNoChannels} from "../../../internal/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { CredentialsResolver } from "../../common/CredentialsResolver";

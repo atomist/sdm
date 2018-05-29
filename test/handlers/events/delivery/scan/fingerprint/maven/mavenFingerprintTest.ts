@@ -19,7 +19,7 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 
 import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../../../src/api/listener/PushImpactListener";
-import { MavenFingerprinter } from "../../../../../../../src/internal/delivery/code/fingerprint/maven/MavenFingerprinter";
+import { MavenFingerprinter } from "../../../../../../../src/pack/maven/MavenFingerprinter";
 
 describe("MavenFingerprinter", () => {
 

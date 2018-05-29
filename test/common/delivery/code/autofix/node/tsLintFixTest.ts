@@ -22,7 +22,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../../src/code/autofix/executeAutofixes";
-import { tslintFix } from "../../../../../../src/internal/delivery/code/autofix/node/tslint";
+import { tslintFix } from "../../../../../../src/pack/node/tslint";
 import { fakeRunWithLogContext } from "../../../../../../src/util/test/fakeRunWithLogContext";
 import { SingleProjectLoader } from "../../../../../../src/util/test/SingleProjectLoader";
 

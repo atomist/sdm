@@ -21,7 +21,7 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../src/api/listener/PushImpactListener";
-import { MavenFingerprinter } from "../../../../../src/internal/delivery/code/fingerprint/maven/MavenFingerprinter";
+import { MavenFingerprinter } from "../../../../../src/pack/maven/MavenFingerprinter";
 import { computeShaOf } from "../../../../../src/util/misc/sha";
 
 describe("computeFingerprints", () => {

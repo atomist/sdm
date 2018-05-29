@@ -23,9 +23,9 @@ import { buttonForCommand } from "@atomist/automation-client/spi/message/Message
 import { deepLink as githubDeepLink } from "@atomist/automation-client/util/gitHub";
 import * as slack from "@atomist/slack-messages";
 import { Attachment, SlackMessage } from "@atomist/slack-messages";
+import { AddressChannels } from "../../api/context/addressChannels";
 import { ReviewListener } from "../../api/listener/ReviewListener";
 import { PushReactionResponse } from "../../api/registration/PushReactionRegistration";
-import { AddressChannels } from "../../internal/slack/addressChannels";
 
 /**
  * Strategy for deep linking to a source control system.

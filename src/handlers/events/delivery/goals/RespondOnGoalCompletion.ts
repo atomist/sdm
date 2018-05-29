@@ -28,10 +28,10 @@ import {
     Value,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
-import { addressChannelsFor } from "../../../../internal/slack/addressChannels";
 import { OnAnyCompletedSdmGoal } from "../../../../typings/types";
 import { repoRefFromPush } from "../../../../util/git/repoRef";
 

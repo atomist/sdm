@@ -18,6 +18,7 @@ import * as _ from "lodash";
 
 import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { AddressChannels } from "../../../../api/context/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../../../api/listener/PushImpactListener";
 import { ReviewListener } from "../../../../api/listener/ReviewListener";
@@ -25,7 +26,6 @@ import { PushReactionResponse, relevantCodeActions } from "../../../../api/regis
 import { formatReviewerError, ReviewerError } from "../../../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../../../api/registration/ReviewerRegistration";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
-import { AddressChannels } from "../../../slack/addressChannels";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 
 /**

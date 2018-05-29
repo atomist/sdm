@@ -16,13 +16,13 @@
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AddressChannels } from "../../../../../api/context/addressChannels";
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { InterpretLog, LogInterpretation } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog, ProgressLogFactory } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
 import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../../util/misc/spawned";
-import { AddressChannels } from "../../../../slack/addressChannels";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { MavenLogInterpreter } from "./mavenLogInterpreter";
 import { identification } from "./pomParser";
