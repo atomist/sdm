@@ -21,6 +21,7 @@ import {
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
+import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,
     RunWithLogContext,
@@ -35,7 +36,6 @@ import {
     SdmVersionForCommit,
     StatusForExecuteGoal,
 } from "../../../../typings/types";
-import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 
 export type ProjectVersioner =
     (status: StatusForExecuteGoal.Fragment, p: GitProject, log: ProgressLog) => Promise<string>;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Goals } from "../../../../api/goal/Goals";
+import { Goals } from "../../api/goal/Goals";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -23,7 +23,7 @@ import {
     ProductionUndeploymentGoal,
     PushReactionGoal, ReviewGoal,
     StagingDeploymentGoal, StagingEndpointGoal, StagingVerifiedGoal,
-} from "../../../../api/machine/wellKnownGoals";
+} from "../../api/machine/wellKnownGoals";
 import {
     LocalEndpointGoal, LocalUndeploymentGoal,
     StagingUndeploymentGoal,

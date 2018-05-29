@@ -15,10 +15,10 @@
  */
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ExecuteGoalResult } from "../../internal/delivery/goals/ExecuteGoalResult";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../typings/types";
 import { RepoContext } from "../context/SdmContext";
+import { ExecuteGoalResult } from "./ExecuteGoalResult";
 
 export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
 

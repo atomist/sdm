@@ -20,10 +20,10 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as https from "https";
 import * as _ from "lodash";
-import { Goal, GoalWithPrecondition } from "../../../../api/goal/Goal";
-import { Goals } from "../../../../api/goal/Goals";
-import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
-import { splitContext } from "../support/github/gitHubContext";
+import { Goal, GoalWithPrecondition } from "../../api/goal/Goal";
+import { Goals } from "../../api/goal/Goals";
+import { GoalsSetListener } from "../../api/listener/GoalsSetListener";
+import { splitContext } from "../../internal/delivery/goals/support/github/gitHubContext";
 
 /**
  * Display a graph of the goals that have just been set to Slack

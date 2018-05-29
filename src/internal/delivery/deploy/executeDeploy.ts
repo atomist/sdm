@@ -15,9 +15,9 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
+import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import { Goal } from "../../../api/goal/Goal";
 import { ArtifactStore } from "../../../spi/artifact/ArtifactStore";
-import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
 import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy, Target } from "./deploy";
 
 import * as _ from "lodash";

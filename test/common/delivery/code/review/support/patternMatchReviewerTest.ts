@@ -20,7 +20,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../../src/api/listener/PushImpactListener";
 import { ReviewerRegistration } from "../../../../../../src/api/registration/ReviewerRegistration";
-import { patternMatchReviewer } from "../../../../../../src/internal/delivery/code/review/support/patternMatchReviewer";
+import { patternMatchReviewer } from "../../../../../../src/code/review/patternMatchReviewer";
 
 describe("patternMatchReviewer", () => {
 

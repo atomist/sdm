@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { GoalWithPrecondition } from "../../../../api/goal/Goal";
-import { Goals } from "../../../../api/goal/Goals";
-import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../../../api/machine/wellKnownGoals";
-import { StagingDeploymentGoal } from "../../../../api/machine/wellKnownGoals";
+import { GoalWithPrecondition } from "../../api/goal/Goal";
+import { Goals } from "../../api/goal/Goals";
+import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../api/machine/wellKnownGoals";
+import { StagingDeploymentGoal } from "../../api/machine/wellKnownGoals";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,
     StagingEnvironment,
-} from "../support/github/gitHubContext";
+} from "../../internal/delivery/goals/support/github/gitHubContext";
 import { DockerBuildGoal, TagGoal, VersionGoal } from "./commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({

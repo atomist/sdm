@@ -17,10 +17,10 @@
 import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
+import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { ExecuteGoalResult } from "../../../../internal/delivery/goals/ExecuteGoalResult";
 import { descriptionFromState, updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";

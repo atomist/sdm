@@ -15,10 +15,10 @@
  */
 
 import { sprintf } from "sprintf-js";
+import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
 import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../../../api/listener/EndpointVerificationListener";
-import { ExecuteGoalResult } from "../../../../internal/delivery/goals/ExecuteGoalResult";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { providerIdFromStatus } from "../../../../util/git/repoRef";
 

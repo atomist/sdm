@@ -1,5 +1,5 @@
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { computeShaOf } from "../../../../../util/misc/sha";
+import { computeShaOf } from "../../util/misc/sha";
 
 /**
  * Convenient superclass for fingerprints.

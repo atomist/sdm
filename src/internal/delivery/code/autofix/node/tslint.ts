@@ -17,6 +17,7 @@
 import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
 import { allSatisfied } from "../../../../../api/mapping/support/pushTestUtils";
 import { AutofixRegistration } from "../../../../../api/registration/AutofixRegistration";
+import { spawnedCommandAutofix } from "../../../../../code/autofix/spawnedCommandAutofix";
 import { IsNode } from "../../../../../mapping/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../../../../mapping/pushtest/node/tsPushTests";
 import { asSpawnCommand } from "../../../../../util/misc/spawned";
@@ -24,7 +25,6 @@ import {
     DevelopmentEnvOptions,
     Install,
 } from "../../../build/local/npm/npmBuilder";
-import { spawnedCommandAutofix } from "../spawnedCommandAutofix";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
     "tslint",

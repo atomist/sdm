@@ -16,7 +16,7 @@
 
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
-import { NoGoals } from "../../src/internal/delivery/goals/common/commonGoals";
+import { NoGoals } from "../../src/goal/common/commonGoals";
 import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
@@ -25,9 +25,9 @@ import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
 import { when } from "../../src/dsl/buildDsl";
+import { HttpServiceGoals } from "../../src/goal/common/httpServiceGoals";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
-import { HttpServiceGoals } from "../../src/internal/delivery/goals/common/httpServiceGoals";
 import { ConcreteSoftwareDeliveryMachine } from "../../src/machine/support/ConcreteSoftwareDeliveryMachine";
 import { HasAtomistBuildFile } from "../../src/mapping/pushtest/node/nodePushTests";
 import { fakePush } from "../api/dsl/decisionTreeTest";

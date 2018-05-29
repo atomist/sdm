@@ -19,6 +19,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { LocalProject } from "@atomist/automation-client/project/local/LocalProject";
 import { spawn } from "child_process";
+import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";
 import { DeployableArtifact } from "../../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../../spi/deploy/Deployer";
 import { Deployment } from "../../../../../spi/deploy/Deployment";
@@ -26,7 +27,6 @@ import { InterpretedLog, InterpretLog } from "../../../../../spi/log/Interpreted
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
 import {DelimitedWriteProgressLogDecorator} from "../../../../log/DelimitedWriteProgressLogDecorator";
-import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import { DefaultLocalDeployerOptions, LocalDeployerOptions, SpawnedDeployment } from "../LocalDeployerOptions";
 import { LookupStrategy, ManagedDeployments, ManagedDeploymentTargetInfo } from "../ManagedDeployments";
 
