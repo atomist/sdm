@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-import { PredicatePushTest, predicatePushTest } from "../../../../../api/mapping/PushTest";
-import { CloudFoundryManifestPath } from "../../../../delivery/deploy/pcf/CloudFoundryTarget";
-
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { predicatePushTest, PredicatePushTest } from "../../../api/mapping/PushTest";
+import { hasFile, hasFileWithExtension } from "../../../api/mapping/support/commonPushTests";
 
-export const HasCloudFoundryManifest: PredicatePushTest = predicatePushTest(
-    "Has PCF manifest",
-    async p => fileExists(p, CloudFoundryManifestPath, f => true));
+/**
+ * Is this a Maven project
+ * @constructor
+ */
+export const IsMaven: PredicatePushTest = predicatePushTest(
+    "Is Maven",
+    async p => !!(await p.getFile("pom.xml")));
+
+export const IsJava = predicatePushTest(
+    "Is Java",
+    async p =>
+        fileExists(p, "**/*.java", () => true));
+
+export const IsClojure = hasFileWithExtension("clj");
+
+export const IsLein = hasFile("project.clj");

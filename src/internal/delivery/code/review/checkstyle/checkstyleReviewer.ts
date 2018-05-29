@@ -25,7 +25,7 @@ import { LocalProject } from "@atomist/automation-client/project/local/LocalProj
 import { spawn } from "child_process";
 import { ReviewerError } from "../../../../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../../../../api/registration/ReviewerRegistration";
-import { IsJava } from "../../../../listener/support/pushtest/jvm/jvmPushTests";
+import { IsJava } from "../../../../../mapping/pushtest/jvm/jvmPushTests";
 import { extract } from "./checkstyleReportExtractor";
 import { checkstyleReportToReview } from "./checkStyleReportToReview";
 

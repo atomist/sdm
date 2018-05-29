@@ -28,8 +28,8 @@ import { when } from "../../src/dsl/buildDsl";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
 import { HttpServiceGoals } from "../../src/internal/delivery/goals/common/httpServiceGoals";
-import { HasAtomistBuildFile } from "../../src/internal/listener/support/pushtest/node/nodePushTests";
 import { ConcreteSoftwareDeliveryMachine } from "../../src/machine/support/ConcreteSoftwareDeliveryMachine";
+import { HasAtomistBuildFile } from "../../src/mapping/pushtest/node/nodePushTests";
 import { fakePush } from "../api/dsl/decisionTreeTest";
 import { AddThingAutofix } from "../common/delivery/code/autofix/executeAutofixesTest";
 

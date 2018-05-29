@@ -18,7 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor, EditResult, ProjectEditor, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { confirmEditedness } from "../../../util/git/confirmEditedness";
+import { confirmEditedness } from "../../../../util/git/confirmEditedness";
 
 /**
  * Decorate an editor factory to make editors it creates chatty, so they respond to

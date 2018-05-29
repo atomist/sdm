@@ -20,7 +20,7 @@ import { whenPushSatisfies } from "../../../../src/api/dsl/goalDsl";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
 import { PushRules } from "../../../../src/api/mapping/support/PushRules";
 import { LibraryGoals } from "../../../../src/internal/delivery/goals/common/libraryGoals";
-import { IsLein } from "../../../../src/internal/listener/support/pushtest/jvm/jvmPushTests";
+import { IsLein } from "../../../../src/mapping/pushtest/jvm/jvmPushTests";
 
 describe("Construction of PushRules", () => {
 

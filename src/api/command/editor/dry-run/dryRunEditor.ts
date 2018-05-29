@@ -29,7 +29,7 @@ import { Status } from "../../../../util/github/ghub";
 import { EmptyParameters } from "../../EmptyParameters";
 import { EditModeSuggestion } from "../EditModeSuggestion";
 import { toEditorOrReviewerParametersMaker } from "../editorCommand";
-import { chattyEditorFactory } from "../editorWrappers";
+import { chattyEditorFactory } from "../support/editorWrappers";
 import { NewBranchWithStatus } from "./NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";

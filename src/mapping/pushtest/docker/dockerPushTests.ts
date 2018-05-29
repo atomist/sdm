@@ -17,8 +17,8 @@
 import {
     predicatePushTest,
     PredicatePushTest,
-} from "../../../../../api/mapping/PushTest";
-import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
+} from "../../../api/mapping/PushTest";
+import { hasFile } from "../../../api/mapping/support/commonPushTests";
 
 /**
  * Does this project have a Dockerfile

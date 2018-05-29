@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
-import { PushListener } from "../../../api/listener/PushListener";
-import { publishTags } from "../../repo/publishTags";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { predicatePushTest, PredicatePushTest } from "../../../api/mapping/PushTest";
+import { CloudFoundryManifestPath } from "../../../internal/delivery/deploy/pcf/CloudFoundryTarget";
 
-/**
- * Tag the repo using the given tagger
- * @param {Tagger} tagger
- */
-export function tagRepo(tagger: Tagger): PushListener {
-    return async pInv =>
-        isGitHubRepoRef(pInv.id) ?
-            publishTags(tagger, pInv.id, pInv.credentials, pInv.addressChannels, pInv.context) :
-            true;
-}
+export const HasCloudFoundryManifest: PredicatePushTest = predicatePushTest(
+    "Has PCF manifest",
+    async p => fileExists(p, CloudFoundryManifestPath, f => true));

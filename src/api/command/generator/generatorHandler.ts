@@ -22,7 +22,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { CachingProjectLoader } from "../../../spi/repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../../spi/repo/projectLoaderRepoLoader";
-import { allReposInTeam } from "../editor/allReposInTeam";
+import { allReposInTeam } from "../editor/support/allReposInTeam";
 
 /**
  * Create a command handler for project generation

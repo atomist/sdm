@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { PushListenerInvocation } from "../../../../../api/listener/PushListener";
-import { PushTest, pushTest } from "../../../../../api/mapping/PushTest";
+import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Tagger } from "@atomist/automation-client/operations/tagger/Tagger";
+import { PushListener } from "../api/listener/PushListener";
+import { publishTags } from "../internal/repo/publishTags";
 
-export const IsTypeScript: PushTest = pushTest(
-    "Is TypeScript",
-    async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
-);
+/**
+ * Tag the repo using the given tagger
+ * @param {Tagger} tagger
+ */
+export function tagRepo(tagger: Tagger): PushListener {
+    return async pInv =>
+        isGitHubRepoRef(pInv.id) ?
+            publishTags(tagger, pInv.id, pInv.credentials, pInv.addressChannels, pInv.context) :
+            true;
+}

@@ -18,7 +18,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { ToPublicRepo } from "../../../../src/api/mapping/support/commonPushTests";
+import { ToPublicRepo } from "../../../../src/mapping/pushtest/toPublicRepo";
 
 const credentials = { token: process.env.GITHUB_TOKEN};
 

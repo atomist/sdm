@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { isPublicRepo } from "../../../util/github/ghub";
 import { PredicatePushTest, predicatePushTest, PushTest, pushTest } from "../PushTest";
 
 export const ToDefaultBranch: PushTest = pushTest("Push to default branch", async p =>
@@ -39,17 +37,6 @@ export const FromAtomist: PushTest = pushTest("Push from Atomist", async p =>
  * @constructor
  */
 export const AnyPush: PushTest = pushTest("Any push", async p => true);
-
-/**
- * Match only pushes on a public repo
- * @param {PushListenerInvocation} p
- * @return {Promise<boolean>}
- * @constructor
- */
-export const ToPublicRepo: PushTest = pushTest("To public repo", async p =>
-    // Ask GitHub if the repo is public as we do not have this information in our model
-    isGitHubRepoRef(p.id) && isPublicRepo(p.credentials, p.id),
-);
 
 /**
  * Return a PushTest testing for the existence of the given file

@@ -17,9 +17,9 @@
 import { HandleCommand, Success } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { SoftwareDeliveryMachine } from "../../../api/machine/SoftwareDeliveryMachine";
-import { commandHandlersWithTag } from "../../../internal/command/support/commandSearch";
-import { EmptyParameters } from "../EmptyParameters";
+import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import { commandHandlersWithTag } from "../../internal/command/support/commandSearch";
 
 /**
  * Return a command handler that can list generators in the current SDM.

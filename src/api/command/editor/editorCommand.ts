@@ -28,9 +28,9 @@ import * as assert from "power-assert";
 import { CachingProjectLoader } from "../../../spi/repo/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../../spi/repo/projectLoaderRepoLoader";
 import { EmptyParameters } from "../EmptyParameters";
-import { allReposInTeam } from "./allReposInTeam";
 import { EditModeSuggestion } from "./EditModeSuggestion";
-import { chattyEditorFactory } from "./editorWrappers";
+import { allReposInTeam } from "./support/allReposInTeam";
+import { chattyEditorFactory } from "./support/editorWrappers";
 
 /**
  * Wrap an editor in a command handler, allowing use of custom parameters.

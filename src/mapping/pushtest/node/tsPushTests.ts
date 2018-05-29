@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { predicatePushTest, PredicatePushTest } from "../../../../../api/mapping/PushTest";
-import { hasFile } from "../../../../../api/mapping/support/commonPushTests";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { PushListenerInvocation } from "../../../api/listener/PushListener";
+import { PushTest, pushTest } from "../../../api/mapping/PushTest";
 
-/**
- * Does this project use Travis?
- */
-export const HasTravisFile: PredicatePushTest = predicatePushTest(
-    "Is Travis",
-    hasFile(".travis.yml").predicate);
+export const IsTypeScript: PushTest = pushTest(
+    "Is TypeScript",
+    async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+);
