@@ -16,8 +16,8 @@
 
 import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { ListenerRegistrationSupport } from "../../blueprint/support/ListenerRegistrationSupport";
-import { Target } from "../../common/delivery/deploy/deploy";
+import { Target } from "../../internal/delivery/deploy/deploy";
+import { ListenerRegistrationSupport } from "../../machine/support/ListenerRegistrationSupport";
 import { Builder } from "../../spi/build/Builder";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushRule } from "../mapping/support/PushRule";

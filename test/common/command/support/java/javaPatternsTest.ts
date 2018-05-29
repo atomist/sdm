@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { JavaIdentifierRegExp, JavaPackageRegExp, MavenGroupIdRegExp } from "../../../../../src/common/command/support/java/javaPatterns";
+import { JavaIdentifierRegExp, JavaPackageRegExp, MavenGroupIdRegExp } from "../../../../../src/internal/command/support/java/javaPatterns";
 
 describe("javaPatterns", () => {
 

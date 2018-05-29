@@ -5,8 +5,8 @@ import { allOf } from "../../api/dsl/allOf";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { PushTest } from "../../api/mapping/PushTest";
-import { MessageGoal } from "../../common/delivery/goals/common/MessageGoal";
-import { executeSendMessageToSlack } from "../../common/slack/executeSendMessageToSlack";
+import { MessageGoal } from "../../internal/delivery/goals/common/MessageGoal";
+import { executeSendMessageToSlack } from "../../internal/slack/executeSendMessageToSlack";
 
 /**
  * Goal to explain a deployment freeze to the user.

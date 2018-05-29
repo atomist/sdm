@@ -45,9 +45,9 @@ import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/li
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { GoalSetter } from "../../../../api/mapping/GoalSetter";
 import { PushRules } from "../../../../api/mapping/support/PushRules";
-import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
+import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { AddressChannels, addressChannelsFor } from "../../../../internal/slack/addressChannels";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../util/git/repoRef";

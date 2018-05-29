@@ -21,7 +21,7 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
-import { AddressChannels } from "../../common/slack/addressChannels";
+import { AddressChannels } from "../../internal/slack/addressChannels";
 import { LogInterpretation } from "../../spi/log/InterpretedLog";
 import { BuildUrlBySha } from "../../typings/types";
 import { toRemoteRepoRef } from "../../util/git/repoRef";

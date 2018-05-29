@@ -18,7 +18,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
-import { IsClojure, IsJava, IsMaven } from "../../../../src/common/listener/support/pushtest/jvm/jvmPushTests";
+import { IsClojure, IsJava, IsMaven } from "../../../../src/internal/listener/support/pushtest/jvm/jvmPushTests";
 
 describe("jvmPushTests", () => {
 

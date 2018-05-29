@@ -16,7 +16,7 @@
 
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
-import { NoGoals } from "../../src/common/delivery/goals/common/commonGoals";
+import { NoGoals } from "../../src/internal/delivery/goals/common/commonGoals";
 import { fakeSoftwareDeliveryMachineOptions } from "./sdmGoalImplementationTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
@@ -24,14 +24,14 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
-import { when } from "../../src/blueprint/dsl/buildDsl";
-import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/ConcreteSoftwareDeliveryMachine";
-import { npmCustomBuilder } from "../../src/common/delivery/build/local/npm/NpmDetectBuildMapping";
-import { HttpServiceGoals } from "../../src/common/delivery/goals/common/httpServiceGoals";
-import { HasAtomistBuildFile } from "../../src/common/listener/support/pushtest/node/nodePushTests";
+import { when } from "../../src/dsl/buildDsl";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
+import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
+import { HttpServiceGoals } from "../../src/internal/delivery/goals/common/httpServiceGoals";
+import { HasAtomistBuildFile } from "../../src/internal/listener/support/pushtest/node/nodePushTests";
+import { ConcreteSoftwareDeliveryMachine } from "../../src/machine/support/ConcreteSoftwareDeliveryMachine";
+import { fakePush } from "../api/dsl/decisionTreeTest";
 import { AddThingAutofix } from "../common/delivery/code/autofix/executeAutofixesTest";
-import { fakePush } from "./dsl/decisionTreeTest";
 
 describe("SDM handler creation", () => {
 

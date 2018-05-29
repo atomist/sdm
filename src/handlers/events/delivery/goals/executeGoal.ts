@@ -19,9 +19,9 @@ import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
-import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { ExecuteGoalResult } from "../../../../internal/delivery/goals/ExecuteGoalResult";
+import { descriptionFromState, updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
@@ -29,7 +29,7 @@ import { spawnAndWatch } from "../../../../util/misc/spawned";
 import { sprintf } from "sprintf-js";
 
 import * as stringify from "json-stringify-safe";
-import { reportGoalError } from "../../../../common/delivery/goals/support/reportGoalError";
+import { reportGoalError } from "../../../../internal/delivery/goals/support/reportGoalError";
 import { toToken } from "../../../../util/credentials/toToken";
 
 /**

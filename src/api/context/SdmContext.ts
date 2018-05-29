@@ -17,7 +17,7 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AddressChannels } from "../../common/slack/addressChannels";
+import { AddressChannels } from "../../internal/slack/addressChannels";
 
 /**
  * Context for an SDM action, whether a listener invocation or internal action

@@ -24,7 +24,7 @@ import {
     editorAutofixRegistration,
 } from "../../../../../../src/api/registration/AutofixRegistration";
 import { relevantCodeActions } from "../../../../../../src/api/registration/PushReactionRegistration";
-import { tslintFix } from "../../../../../../src/common/delivery/code/autofix/node/tslint";
+import { tslintFix } from "../../../../../../src/internal/delivery/code/autofix/node/tslint";
 
 describe("relevantCodeActions", () => {
 

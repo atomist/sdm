@@ -2,8 +2,8 @@ import { listGeneratorsHandler } from "../api/command/generator/listGenerators";
 import { MachineConfiguration } from "../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
 import { GoalSetter } from "../api/mapping/GoalSetter";
-import { createRepoHandler } from "../common/command/createRepo";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
+import { createRepoHandler } from "../internal/command/createRepo";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
 

@@ -19,7 +19,7 @@ import * as fs from "fs";
 import * as assert from "power-assert";
 import {
     GitHubReleaseArtifactStore,
-} from "../../../../../src/common/artifact/github/GitHubReleaseArtifactStore";
+} from "../../../../../src/internal/artifact/github/GitHubReleaseArtifactStore";
 
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import * as p from "path";

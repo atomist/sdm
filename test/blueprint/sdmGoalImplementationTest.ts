@@ -25,10 +25,10 @@ import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
 import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
-import { createSoftwareDeliveryMachine } from "../../src/blueprint/machineFactory";
-import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
-import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/ConcreteSoftwareDeliveryMachine";
 import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
+import { createSoftwareDeliveryMachine } from "../../src/machine/machineFactory";
+import { SoftwareDeliveryMachineOptions } from "../../src/machine/SoftwareDeliveryMachineOptions";
+import { ConcreteSoftwareDeliveryMachine } from "../../src/machine/support/ConcreteSoftwareDeliveryMachine";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
 

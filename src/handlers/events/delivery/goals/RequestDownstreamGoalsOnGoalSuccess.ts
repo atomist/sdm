@@ -27,14 +27,14 @@ import {
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { preconditionsAreMet } from "../../../../common/delivery/goals/support/goalPreconditions";
-import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
 import {
     goalKeyString,
     SdmGoal,
     SdmGoalKey,
 } from "../../../../ingesters/sdmGoalIngester";
+import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { preconditionsAreMet } from "../../../../internal/delivery/goals/support/goalPreconditions";
+import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import {
     OnAnySuccessfulSdmGoal,
     ScmProvider,

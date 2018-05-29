@@ -16,7 +16,7 @@
 
 import * as assert from "power-assert";
 
-import { SemVerRegExp } from "../../../../src/common/command/support/commonPatterns";
+import { SemVerRegExp } from "../../../../src/internal/command/support/commonPatterns";
 
 describe("commonPatterns", () => {
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { PushTest } from "../../api/mapping/PushTest";
-import { AnyPush } from "../../api/mapping/support/commonPushTests";
-import { PushRule } from "../../api/mapping/support/PushRule";
-import { Builder } from "../../spi/build/Builder";
+import { PushTest } from "../api/mapping/PushTest";
+import { AnyPush } from "../api/mapping/support/commonPushTests";
+import { PushRule } from "../api/mapping/support/PushRule";
+import { Builder } from "../spi/build/Builder";
 
 export function when(guard1: PushTest, ...guards: PushTest[]): PushRule<Builder> {
     return new PushRule(guard1, guards);

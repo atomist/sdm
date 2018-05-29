@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AddressChannels } from "../../common/slack/addressChannels";
+import { AddressChannels } from "../../internal/slack/addressChannels";
 import { SdmListener } from "./Listener";
 import { ProjectListenerInvocation } from "./ProjectListener";
 

@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as slack from "@atomist/slack-messages/SlackMessages";
-import { AddressChannels } from "../../common/slack/addressChannels";
+import { AddressChannels } from "../../internal/slack/addressChannels";
 import { InterpretedLog } from "../../spi/log/InterpretedLog";
 
 export async function reportFailureInterpretationToLinkedChannels(stepName: string,

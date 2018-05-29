@@ -23,8 +23,8 @@ import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { Goals } from "../../../src/api/goal/Goals";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
-import { NoGoals } from "../../../src/common/delivery/goals/common/commonGoals";
-import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
+import { NoGoals } from "../../../src/internal/delivery/goals/common/commonGoals";
+import { HttpServiceGoals } from "../../../src/internal/delivery/goals/common/httpServiceGoals";
 import { fakeContext } from "../../../src/util/test/fakeContext";
 
 const FrogPushMapping: PushMapping<string> = {

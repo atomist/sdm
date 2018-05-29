@@ -1,6 +1,6 @@
 import { goalContributors } from "../../../src/api/dsl/goalContribution";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
-import { HttpServiceGoals } from "../../../src/common/delivery/goals/common/httpServiceGoals";
+import { HttpServiceGoals } from "../../../src/internal/delivery/goals/common/httpServiceGoals";
 import { fakePush } from "./decisionTreeTest";
 
 import * as assert from "power-assert";

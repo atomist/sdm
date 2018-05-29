@@ -23,9 +23,9 @@ import {
     toArtifactListenerRegistration,
 } from "../../../../api/listener/ArtifactListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
-import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { addressChannelsFor } from "../../../../internal/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
 import { OnImageLinked } from "../../../../typings/types";

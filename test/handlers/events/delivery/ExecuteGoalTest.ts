@@ -20,11 +20,11 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { RunWithLogContext } from "../../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../src/api/goal/Goal";
-import { IndependentOfEnvironment } from "../../../../src/common/delivery/goals/support/github/gitHubContext";
-import { lastLinesLogInterpreter } from "../../../../src/common/delivery/goals/support/logInterpreters";
-import { createEphemeralProgressLog } from "../../../../src/common/log/EphemeralProgressLog";
 import { executeGoal } from "../../../../src/handlers/events/delivery/goals/executeGoal";
 import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";
+import { IndependentOfEnvironment } from "../../../../src/internal/delivery/goals/support/github/gitHubContext";
+import { lastLinesLogInterpreter } from "../../../../src/internal/delivery/goals/support/logInterpreters";
+import { createEphemeralProgressLog } from "../../../../src/internal/log/EphemeralProgressLog";
 import { fakeContext } from "../../../../src/util/test/fakeContext";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 

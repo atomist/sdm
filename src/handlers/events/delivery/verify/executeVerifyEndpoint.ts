@@ -18,8 +18,8 @@ import { sprintf } from "sprintf-js";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
 import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../../../api/listener/EndpointVerificationListener";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
+import { ExecuteGoalResult } from "../../../../internal/delivery/goals/ExecuteGoalResult";
+import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { providerIdFromStatus } from "../../../../util/git/repoRef";
 
 /**

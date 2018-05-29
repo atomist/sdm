@@ -29,9 +29,9 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../api/listener/GoalsSetListener";
-import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { addressChannelsFor } from "../../../../internal/slack/addressChannels";
 import { OnAnyCompletedSdmGoal } from "../../../../typings/types";
 import { repoRefFromPush } from "../../../../util/git/repoRef";
 

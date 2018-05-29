@@ -18,7 +18,7 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, S
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { ProjectListener, ProjectListenerInvocation } from "../../../api/listener/ProjectListener";
-import { AddressChannels, addressChannelsFor } from "../../../common/slack/addressChannels";
+import { AddressChannels, addressChannelsFor } from "../../../internal/slack/addressChannels";
 import * as schema from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { CredentialsResolver } from "../../common/CredentialsResolver";

@@ -15,7 +15,7 @@
  */
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ExecuteGoalResult } from "../../common/delivery/goals/ExecuteGoalResult";
+import { ExecuteGoalResult } from "../../internal/delivery/goals/ExecuteGoalResult";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { StatusForExecuteGoal } from "../../typings/types";
 import { RepoContext } from "../context/SdmContext";

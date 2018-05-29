@@ -22,7 +22,7 @@ import { TruePushTest } from "../../listener/support/pushTestUtilsTest";
 import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
 import { PushReactionRegistration, PushReactionResponse } from "../../../../src/api/registration/PushReactionRegistration";
-import { executePushReactions } from "../../../../src/common/delivery/code/executePushReactions";
+import { executePushReactions } from "../../../../src/internal/delivery/code/executePushReactions";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 
 function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushReactionRegistration {

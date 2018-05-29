@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { computeFingerprints } from "../../../../../src/common/delivery/code/fingerprint/computeFingerprints";
+import { computeFingerprints } from "../../../../../src/internal/delivery/code/fingerprint/computeFingerprints";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../src/api/listener/PushImpactListener";
-import { MavenFingerprinter } from "../../../../../src/common/delivery/code/fingerprint/maven/MavenFingerprinter";
+import { MavenFingerprinter } from "../../../../../src/internal/delivery/code/fingerprint/maven/MavenFingerprinter";
 import { computeShaOf } from "../../../../../src/util/misc/sha";
 
 describe("computeFingerprints", () => {
