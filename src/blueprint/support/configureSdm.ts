@@ -24,7 +24,7 @@ export function configureSdm(
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
-                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.opts.projectLoader, machine.opts.logFactory));
+                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.options.projectLoader, machine.options.logFactory));
             config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
             // force ephemeral policy and no handlers or ingesters
             config.policy = "ephemeral";

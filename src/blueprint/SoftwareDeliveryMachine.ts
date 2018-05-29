@@ -71,7 +71,7 @@ export interface SoftwareDeliveryMachine extends ListenerRegistrationSupport, Fu
 
     readonly name: string;
 
-    readonly opts: SoftwareDeliveryMachineOptions;
+    readonly options: SoftwareDeliveryMachineOptions;
 
     /**
      * Return the PushMapping that will be used on pushes.

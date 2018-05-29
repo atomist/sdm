@@ -18,7 +18,7 @@ import { SoftwareDeliveryMachine } from "../../../../blueprint/SoftwareDeliveryM
 import { createPendingGitHubStatusOnGoalSet, SetGitHubStatusOnGoalCompletion } from "./github/gitHubStatusSetters";
 
 export function summarizeGoalsInGitHubStatus(sdm: SoftwareDeliveryMachine): SoftwareDeliveryMachine {
-    sdm.addGoalsSetListeners(createPendingGitHubStatusOnGoalSet(sdm.opts.credentialsResolver));
+    sdm.addGoalsSetListeners(createPendingGitHubStatusOnGoalSet(sdm.options.credentialsResolver));
     sdm.addGoalCompletionListeners(SetGitHubStatusOnGoalCompletion());
     return sdm;
 }
