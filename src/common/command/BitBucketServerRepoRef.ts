@@ -24,8 +24,8 @@ import { Configurable } from "@atomist/automation-client/project/git/Configurabl
 import axios from "axios";
 import { encode } from "../../util/misc/base64";
 import { spawnAndWatch } from "../../util/misc/spawned";
-import { AbstractRemoteRepoRef } from "./AbstractRemoteRepoRef";
 import { LoggingProgressLog } from "../log/LoggingProgressLog";
+import { AbstractRemoteRepoRef } from "./AbstractRemoteRepoRef";
 
 /**
  * RemoteRepoRef implementation for BitBucket server (not BitBucket Cloud)
