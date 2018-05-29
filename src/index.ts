@@ -83,3 +83,4 @@ export * from "./spi/repo/CachingProjectLoader";
 export * from "./spi/repo/ProjectLoader";
 export * from "./spi/repo/cloningProjectLoader";
 export * from "./spi/repo/projectLoaderRepoLoader";
+export * from "./typings/types";
