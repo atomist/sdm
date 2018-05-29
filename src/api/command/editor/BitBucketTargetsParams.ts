@@ -19,7 +19,7 @@ import { FallbackParams } from "@atomist/automation-client/operations/common/par
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { BitBucketServerRepoRef } from "./BitBucketServerRepoRef";
+import { BitBucketServerRepoRef } from "../../repo-ref/BitBucketServerRepoRef";
 
 /**
  * Base parameters for working with GitHub repo(s).
