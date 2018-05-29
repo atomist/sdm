@@ -21,8 +21,9 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/blueprint/dsl/goalDsl";
-import { SoftwareDeliveryMachine } from "../../src/blueprint/SoftwareDeliveryMachine";
+import { createSoftwareDeliveryMachine } from "../../src/blueprint/machineFactory";
 import { SoftwareDeliveryMachineOptions } from "../../src/blueprint/SoftwareDeliveryMachineOptions";
+import { ConcreteSoftwareDeliveryMachine } from "../../src/blueprint/support/ConcreteSoftwareDeliveryMachine";
 import { AutofixGoal } from "../../src/blueprint/wellKnownGoals";
 import { Goal } from "../../src/common/delivery/goals/Goal";
 import { Goals } from "../../src/common/delivery/goals/Goals";
@@ -53,11 +54,11 @@ describe("implementing goals in the SDM", () => {
 
     it("I can ask it to do an autofix", async () => {
 
-        const mySDM = new SoftwareDeliveryMachine("Gustave",
+        const mySDM = createSoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
-                .setGoals(new Goals("Autofix only", AutofixGoal)));
+                .setGoals(new Goals("Autofix only", AutofixGoal))) as ConcreteSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
@@ -92,7 +93,7 @@ describe("implementing goals in the SDM", () => {
             return Success;
         };
 
-        const mySDM = new SoftwareDeliveryMachine("Gustave",
+        const mySDM = createSoftwareDeliveryMachine("Gustave",
             fakeSoftwareDeliveryMachineOptions,
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
@@ -100,7 +101,7 @@ describe("implementing goals in the SDM", () => {
             .addGoalImplementation("Cornelius",
                 customGoal,
                 goalExecutor,
-            );
+            ) as ConcreteSoftwareDeliveryMachine;
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,

@@ -30,7 +30,7 @@ export interface SoftwareDeliveryMachineConfigurer {
 
     /**
      * Function to configure the given SDM
-     * @param {SoftwareDeliveryMachine} sdm
+     * @param sdm
      */
     configure(sdm: SoftwareDeliveryMachine): void;
 

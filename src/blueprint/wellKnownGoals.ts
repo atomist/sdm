@@ -23,7 +23,7 @@ import {
 } from "../common/delivery/goals/support/github/gitHubContext";
 
 /**
- * Goals referenced in SoftwareDeliveryMachine
+ * Goals referenced in TheSoftwareDeliveryMachine
  */
 
 export const NoGoal = new Goal({

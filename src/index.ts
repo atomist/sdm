@@ -2,6 +2,7 @@ export * from "./blueprint/FunctionalUnit";
 export * from "./blueprint/SoftwareDeliveryMachine";
 export * from "./blueprint/SoftwareDeliveryMachineConfigurer";
 export * from "./blueprint/SoftwareDeliveryMachineOptions";
+export * from "./blueprint/machineFactory";
 export * from "./blueprint/wellKnownGoals";
 export * from "./blueprint/dsl/goalDsl";
 export * from "./common/artifact/github/GitHubReleaseArtifactStore";
