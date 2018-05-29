@@ -22,7 +22,7 @@ import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/Exec
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../../../api/registration/FingerprinterRegistration";
 import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { computeFingerprints } from "./computeFingerprints";

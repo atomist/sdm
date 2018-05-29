@@ -21,7 +21,7 @@ import {
     RunWithLogContext,
 } from "../../../api/goal/ExecuteGoalWithLog";
 import { Builder } from "../../../spi/build/Builder";
-import { ProjectLoader } from "../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/project/ProjectLoader";
 import { StatusForExecuteGoal } from "../../../typings/types";
 
 /**

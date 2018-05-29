@@ -19,7 +19,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { PullRequestListener, PullRequestListenerInvocation } from "../../../api/listener/PullRequestListener";
-import { ProjectLoader } from "../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/project/ProjectLoader";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 

@@ -23,7 +23,7 @@ import { Goal } from "../../../../api/goal/Goal";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { descriptionFromState, updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 import { sprintf } from "sprintf-js";

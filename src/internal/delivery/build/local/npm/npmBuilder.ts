@@ -20,7 +20,7 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";
 import { RunWithLogContext } from "../../../../../api/goal/ExecuteGoalWithLog";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
-import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import {
     asSpawnCommand,
     spawnAndWatch,

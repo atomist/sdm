@@ -28,7 +28,7 @@ import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { OnImageLinked } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 

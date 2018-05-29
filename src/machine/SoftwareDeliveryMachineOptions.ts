@@ -17,7 +17,7 @@
 import { CredentialsResolver } from "../handlers/common/CredentialsResolver";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { ProgressLogFactory } from "../spi/log/ProgressLog";
-import { ProjectLoader } from "../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../spi/project/ProjectLoader";
 
 /**
  * Infrastructure options for a SoftwareDeliveryMachine.

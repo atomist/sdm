@@ -25,7 +25,7 @@ import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
 import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import {
     asSpawnCommand,
     ChildProcessResult,

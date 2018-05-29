@@ -18,7 +18,7 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
-import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 

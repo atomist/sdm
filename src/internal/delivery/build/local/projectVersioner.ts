@@ -31,7 +31,7 @@ import {
     SdmVersionRootType,
 } from "../../../../ingesters/sdmVersionIngester";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import {
     SdmVersionForCommit,
     StatusForExecuteGoal,

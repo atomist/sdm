@@ -40,7 +40,7 @@ import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/g
 import { LoggingProgressLog } from "../../../../log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../log/WriteToAllProgressLog";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import {
     CommitForSdmGoal,
     OnAnyRequestedSdmGoal,

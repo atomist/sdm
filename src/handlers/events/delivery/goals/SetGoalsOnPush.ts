@@ -49,7 +49,7 @@ import { GoalSetter } from "../../../../api/mapping/GoalSetter";
 import { PushRules } from "../../../../api/mapping/support/PushRules";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../internal/delivery/goals/support/storeGoals";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 

@@ -21,7 +21,7 @@ import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { InterpretLog, LogInterpretation } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog, ProgressLogFactory } from "../../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../../util/misc/spawned";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { MavenLogInterpreter } from "./mavenLogInterpreter";

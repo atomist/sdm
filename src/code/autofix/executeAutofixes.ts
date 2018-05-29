@@ -29,7 +29,7 @@ import { AutofixRegistration } from "../../api/registration/AutofixRegistration"
 import { relevantCodeActions } from "../../api/registration/PushReactionRegistration";
 import { createPushImpactListenerInvocation } from "../../internal/delivery/code/createPushImpactListenerInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
 
 /**
  * Execute autofixes against this push

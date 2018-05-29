@@ -17,7 +17,7 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { ProjectLoader } from "../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
 
 /**
  * Adapter from newer ProjectLoader to older RepoLoader for use in editors

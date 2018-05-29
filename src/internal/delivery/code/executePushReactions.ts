@@ -24,7 +24,7 @@ import {
     relevantCodeActions,
     toPushReactionRegistration,
 } from "../../../api/registration/PushReactionRegistration";
-import { ProjectLoader } from "../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
 /**

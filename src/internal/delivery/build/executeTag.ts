@@ -20,7 +20,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
-import { ProjectLoader } from "../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/project/ProjectLoader";
 import { createTag, createTagReference, Tag } from "../../../util/github/ghub";
 import { readSdmVersion } from "./local/projectVersioner";
 

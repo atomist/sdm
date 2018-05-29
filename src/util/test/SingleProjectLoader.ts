@@ -16,7 +16,7 @@
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/repo/ProjectLoader";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
 
 /**
  * ProjectLoader that can only return one project.

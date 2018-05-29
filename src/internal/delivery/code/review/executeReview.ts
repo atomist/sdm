@@ -25,7 +25,7 @@ import { ReviewListener } from "../../../../api/listener/ReviewListener";
 import { PushReactionResponse, relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
 import { formatReviewerError, ReviewerError } from "../../../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../../../api/registration/ReviewerRegistration";
-import { ProjectLoader } from "../../../../spi/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 
 /**
