@@ -24,6 +24,7 @@ import { SdmGoalImplementationMapper } from "../../api/goal/SdmGoalImplementatio
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { EmptyFunctionalUnit, FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import { ListenerRegistrationSupport } from "../../api/machine/support/ListenerRegistrationSupport";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -84,7 +85,6 @@ import { executeReview } from "../delivery/code/review/executeReview";
 import { executeDeploy } from "../delivery/deploy/executeDeploy";
 import { executeUndeploy, offerToDeleteRepository } from "../delivery/deploy/executeUndeploy";
 import { lastLinesLogInterpreter, LogSuppressor } from "../delivery/goals/support/logInterpreters";
-import { ListenerRegistrationSupport } from "./ListenerRegistrationSupport";
 
 /**
  * Implementation of SoftwareDeliveryMachine.

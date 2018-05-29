@@ -60,6 +60,7 @@ export * from "./api/machine/ListenerRegistration";
 export * from "./api/machine/MachineConfiguration";
 export * from "./api/machine/SoftwareDeliveryMachine";
 export * from "./api/machine/wellKnownGoals";
+export * from "./api/machine/support/ListenerRegistrationSupport";
 export * from "./api/mapping/GoalSetter";
 export * from "./api/mapping/Mapping";
 export * from "./api/mapping/PredicateMapping";
