@@ -24,6 +24,7 @@ export * from "./api/goal/Goals";
 export * from "./api/goal/SdmGoalImplementationMapper";
 export * from "./api/goal/common/GenericGoal";
 export * from "./api/goal/common/MessageGoal";
+export * from "./api/goal/common/environment";
 export * from "./api/goal/common/executeSendMessageToSlack";
 export * from "./api/listener/ArtifactListener";
 export * from "./api/listener/BuildListener";
