@@ -66,9 +66,9 @@ import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { Builder } from "../../spi/build/Builder";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { ExtensionPack } from "../ExtensionPack";
 import { EmptyFunctionalUnit, FunctionalUnit } from "../FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../SoftwareDeliveryMachine";
-import { SoftwareDeliveryMachineConfigurer } from "../SoftwareDeliveryMachineConfigurer";
 import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
 import {
     ArtifactGoal,
@@ -420,19 +420,14 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         });
     }
 
-    /**
-     * Add the given capabilities from these configurers
-     * @param {SoftwareDeliveryMachineConfigurer} configurers
-     * @return {this}
-     */
-    public addCapabilities(...configurers: SoftwareDeliveryMachineConfigurer[]): this {
+    public addExtensionPacks(...configurers: ExtensionPack[]): this {
         for (const configurer of configurers) {
-            this.configure(configurer);
+            this.addExtensionPack(configurer);
         }
         return this;
     }
 
-    public configure(configurer: SoftwareDeliveryMachineConfigurer): this {
+    private addExtensionPack(configurer: ExtensionPack): this {
         logger.info("Adding capabilities from configurer '%s'", configurer.name);
         configurer.configure(this);
         return this;

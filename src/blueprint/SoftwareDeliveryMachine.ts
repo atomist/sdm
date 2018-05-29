@@ -21,9 +21,9 @@ import { GoalSetter } from "../common/listener/GoalSetter";
 import { PushRule } from "../common/listener/support/PushRule";
 import { StaticPushMapping } from "../common/listener/support/StaticPushMapping";
 import { Builder } from "../spi/build/Builder";
+import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
-import { SoftwareDeliveryMachineConfigurer } from "./SoftwareDeliveryMachineConfigurer";
 import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSupport";
 
 /**
@@ -84,7 +84,7 @@ export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegi
 
     /**
      * Add supporting commands for other functionality. Consider using
-     * addCapabilities to group functionality
+     * addExtensionPacks to group functionality
      * @param {Maker<HandleCommand>} e
      * @return {this}
      */
@@ -92,7 +92,7 @@ export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegi
 
     /**
      * Add supporting events for other functionality. Consider using
-     * addCapabilities to group functionality
+     * addExtensionPacks to group functionality
      * @param {Maker<HandleCommand>} e
      * @return {this}
      */
@@ -101,19 +101,12 @@ export interface SoftwareDeliveryMachine extends GoalDrivenMachine, ListenerRegi
     addFunctionalUnits(...fus: FunctionalUnit[]): this;
 
     /**
-     * Add the given capabilities from these configurers
-     * @param {SoftwareDeliveryMachineConfigurer} configurers
+     * Add capabilities from these extension packs
+     * @param {ExtensionPack} configurers
      * @return {this}
      */
 
-    addCapabilities(...configurers: SoftwareDeliveryMachineConfigurer[]): this;
-
-    /**
-     * Let a single configurer configure this SDM
-     * @param {SoftwareDeliveryMachineConfigurer} configurer
-     * @return {this}
-     */
-    configure(configurer: SoftwareDeliveryMachineConfigurer): this;
+    addExtensionPacks(...configurers: ExtensionPack[]): this;
 
     /**
      * Add build rules. *May be removed in future: only applicable to local SDM work*

@@ -17,11 +17,12 @@
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
- * Configuration function that can added in SoftwareDeliveryMachine.addCapabilities.
+ * Implemented to expose a capability that can be added to a
+ * software delivery machine in a consistent manner.
  * Facilitates modularity at a higher level than FunctionUnit or handlers.
  * For example, a Node module can export a configurer.
  */
-export interface SoftwareDeliveryMachineConfigurer {
+export interface ExtensionPack {
 
     /**
      * Name of this configurer
@@ -29,7 +30,7 @@ export interface SoftwareDeliveryMachineConfigurer {
     name: string;
 
     /**
-     * Function to configure the given SDM
+     * Function to addExtensionPack the given SDM
      * @param sdm
      */
     configure(sdm: SoftwareDeliveryMachine): void;

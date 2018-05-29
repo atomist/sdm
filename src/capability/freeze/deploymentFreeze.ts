@@ -1,7 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { allOf } from "../../blueprint/dsl/allOf";
-import { SoftwareDeliveryMachineConfigurer } from "../../blueprint/SoftwareDeliveryMachineConfigurer";
+import { ExtensionPack } from "../../blueprint/ExtensionPack";
 import { EmptyParameters } from "../../common/command/EmptyParameters";
 import { MessageGoal } from "../../common/delivery/goals/common/MessageGoal";
 import { PushListenerInvocation } from "../../common/listener/PushListener";
@@ -29,9 +29,9 @@ export interface DeploymentStatusManager {
  * Capability to add to an SDM to add deployment freeze.
  * Makes the ExplainDeploymentFreezeGoal available.
  * @param {DeploymentStatusManager} dsm
- * @return {SoftwareDeliveryMachineConfigurer}
+ * @return {ExtensionPack}
  */
-export function deploymentFreeze(dsm: DeploymentStatusManager): SoftwareDeliveryMachineConfigurer {
+export function deploymentFreeze(dsm: DeploymentStatusManager): ExtensionPack {
     return {
         name: "deploymentFreeze",
         configure: sdm => {
