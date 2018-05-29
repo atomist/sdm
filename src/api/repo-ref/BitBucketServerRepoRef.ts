@@ -22,7 +22,9 @@ import { ProviderType } from "@atomist/automation-client/operations/common/RepoI
 import { isBasicAuthCredentials } from "@atomist/automation-client/operations/common/BasicAuthCredentials";
 import { Configurable } from "@atomist/automation-client/project/git/Configurable";
 import axios from "axios";
+import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 import { encode } from "../../util/misc/base64";
+import { spawnAndWatch } from "../../util/misc/spawned";
 import { AbstractRemoteRepoRef } from "./AbstractRemoteRepoRef";
 
 /**
@@ -63,17 +65,29 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
         };
         const hdrs = headers(creds);
         logger.info("Making request to BitBucket '%s' to create repo, data=%j, headers=%j", url, data, hdrs);
-        return axios.post(url, data, hdrs)
-            .then(axiosResponse => {
-                return {
-                    target: this,
-                    success: true,
-                    axiosResponse,
-                };
-            })
+        return this.postWithCurl(creds, url, data)
             .catch(error => {
                 logger.error("Error attempting to create repository %j: %s", this, error);
                 return Promise.reject(error);
+            });
+    }
+
+    private postWithCurl(creds: ProjectOperationCredentials, url: string, data: any) {
+        return spawnAndWatch({
+            command: "curl", args: [
+                "-u", usernameColonPassword(creds),
+                "-X", "POST",
+                "-H", "Content-Type: application/json",
+                "-d", JSON.stringify(data),
+                url,
+            ],
+        }, {}, new LoggingProgressLog("postWithCurl"))
+            .then(curlResponse => {
+                return {
+                    target: this,
+                    success: true,
+                    curlResponse,
+                };
             });
     }
 
@@ -102,7 +116,7 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
                             title: string, body: string, head: string, base: string): Promise<ActionResult<this>> {
         const url = `${this.scheme}${this.apiBase}/${this.apiPathComponent}/pull-requests`;
         logger.debug(`Making request to '${url}' to raise PR`);
-        return axios.post(url, {
+        return this.postWithCurl(credentials, url, {
             title,
             description: body,
             fromRef: {
@@ -111,15 +125,7 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
             toRef: {
                 id: base,
             },
-        }, headers(credentials))
-            .then(axiosResponse => {
-                return {
-                    target: this,
-                    success: true,
-                    axiosResponse,
-                };
-            })
-            .catch(err => {
+        }) .catch(err => {
                 logger.error(`Error attempting to raise PR: ${err}`);
                 return Promise.reject(err);
             });
@@ -151,12 +157,15 @@ export class BitBucketServerRepoRef extends AbstractRemoteRepoRef {
 
 }
 
-function headers(creds: ProjectOperationCredentials) {
+function usernameColonPassword(creds: ProjectOperationCredentials): string {
     if (!isBasicAuthCredentials(creds)) {
         throw new Error("Only Basic auth supported: Had " + JSON.stringify(creds));
     }
-    const upwd = `${creds.username}:${creds.password}`;
-    const encoded = encode(upwd);
+    return `${creds.username}:${creds.password}`;
+}
+
+function headers(creds: ProjectOperationCredentials) {
+    const encoded = encode(usernameColonPassword(creds));
     return {
         headers: {
             Authorization: `Basic ${encoded}`,
