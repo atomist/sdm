@@ -20,7 +20,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
 import { relevantCodeActions } from "../../../../api/PushReactionRegistration";

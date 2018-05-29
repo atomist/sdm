@@ -21,7 +21,7 @@ import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { InterpretLog, LogInterpretation } from "../../../../../spi/log/InterpretedLog";
 import { ProgressLog, ProgressLogFactory } from "../../../../../spi/log/ProgressLog";
 import { asSpawnCommand, ChildProcessResult, spawnAndWatch } from "../../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/ProjectLoader";
 import { AddressChannels } from "../../../../slack/addressChannels";
 import { LocalBuilder, LocalBuildInProgress } from "../LocalBuilder";
 import { MavenLogInterpreter } from "./mavenLogInterpreter";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "./ProjectLoader";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/ProjectLoader";
 
 import { logger } from "@atomist/automation-client";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";

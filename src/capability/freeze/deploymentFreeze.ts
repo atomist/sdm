@@ -2,11 +2,11 @@ import { logger } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { allOf } from "../../api/dsl/allOf";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
-import { EmptyParameters } from "../../common/command/EmptyParameters";
 import { MessageGoal } from "../../common/delivery/goals/common/MessageGoal";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { PushTest } from "../../api/listener/PushTest";
 import { executeSendMessageToSlack } from "../../common/slack/executeSendMessageToSlack";
+import { EmptyParameters } from "../../api/command/EmptyParameters";
 
 /**
  * Goal to explain a deployment freeze to the user.

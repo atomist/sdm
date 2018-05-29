@@ -16,7 +16,7 @@
 
 import { logger, Success } from "@atomist/automation-client";
 import { PushImpactListenerInvocation } from "../../../api/listener/PushImpactListener";
-import { ProjectLoader } from "../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/ProjectLoader";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import {

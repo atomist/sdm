@@ -17,7 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { Builder } from "../../../spi/build/Builder";
 import { StatusForExecuteGoal } from "../../../typings/types";
-import { ProjectLoader } from "../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,

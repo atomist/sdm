@@ -20,7 +20,7 @@ import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import { PushImpactListenerInvocation } from "../../../../api/listener/PushImpactListener";
 import { ReviewListener } from "../../../../api/listener/ReviewListener";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../goals/support/reportGoalError";
 import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";

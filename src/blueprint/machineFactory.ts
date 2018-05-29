@@ -1,11 +1,11 @@
-import { createRepoHandler } from "../common/command/generator/createRepo";
-import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { GoalSetter } from "../api/listener/GoalSetter";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { MachineConfiguration } from "../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
 import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import { listGeneratorsHandler } from "../api/command/generator/listGenerators";
+import { createRepoHandler } from "../common/command/createRepo";
 
 /**
  * Create a **Software Delivery MachineConfiguration** with default predefined goals.

@@ -24,7 +24,7 @@ import { Deployer } from "../../../../spi/deploy/Deployer";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../../util/misc/spawned";
 import {DelimitedWriteProgressLogDecorator} from "../../../log/DelimitedWriteProgressLogDecorator";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { identification } from "../../build/local/maven/pomParser";
 import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";

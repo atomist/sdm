@@ -23,7 +23,7 @@ import * as stringify from "json-stringify-safe";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../../../api/listener/GoalSetter";
 import { GoalsSetListener } from "../../../../api/listener/GoalsSetListener";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { PushFields, PushForCommit, RepoBranchTips } from "../../../../typings/types";
 import { chooseAndSetGoals } from "./SetGoalsOnPush";
 

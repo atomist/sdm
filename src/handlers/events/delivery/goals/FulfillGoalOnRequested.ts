@@ -33,7 +33,7 @@ import { RunWithLogContext } from "../../../../common/delivery/goals/support/rep
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
 import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import {
     SdmGoal,

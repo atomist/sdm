@@ -21,7 +21,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { StatusForExecuteGoal } from "../../../typings/types";
 import { spawnAndWatch } from "../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../util/webhook/ImageLink";
-import { ProjectLoader } from "../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/ProjectLoader";
 import { branchFromCommit } from "../build/executeBuild";
 import { readSdmVersion } from "../build/local/projectVersioner";
 import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";

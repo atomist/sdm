@@ -19,7 +19,7 @@ import * as fs from "fs-extra";
 import * as p from "path";
 import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, PrepareForGoalExecution, RunWithLogContext } from "../../../goals/support/reportGoalError";
 import { ProjectIdentifier } from "../projectIdentifier";

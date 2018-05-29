@@ -25,7 +25,7 @@ import {
     toArtifactListenerRegistration,
 } from "../../../../api/listener/ArtifactListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { addressChannelsFor } from "../../../../common/slack/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { OnImageLinked } from "../../../../typings/types";

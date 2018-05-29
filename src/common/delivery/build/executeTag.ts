@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { createTag, createTagReference, Tag } from "../../../util/github/ghub";
-import { ProjectLoader } from "../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../goals/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../goals/support/reportGoalError";
 import { readSdmVersion } from "./local/projectVersioner";

@@ -21,7 +21,7 @@ import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoal
 import { Goal } from "../../../../api/goal/Goal";
 import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
 import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { spawnAndWatch } from "../../../../util/misc/spawned";

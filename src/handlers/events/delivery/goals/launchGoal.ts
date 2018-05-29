@@ -33,7 +33,7 @@ import { AutomationEventListenerSupport } from "@atomist/automation-client/serve
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
 import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { ProgressLog, ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { OnAnyRequestedSdmGoal, SdmGoalById } from "../../../../typings/types";
 import { FulfillGoalOnRequested } from "./FulfillGoalOnRequested";

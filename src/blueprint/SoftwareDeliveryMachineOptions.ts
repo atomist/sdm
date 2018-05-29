@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProjectLoader } from "../common/repo/ProjectLoader";
+import { ProjectLoader } from "../spi/ProjectLoader";
 import { CredentialsResolver } from "../handlers/common/CredentialsResolver";
 import { ArtifactStore } from "../spi/artifact/ArtifactStore";
 import { ProgressLogFactory } from "../spi/log/ProgressLog";

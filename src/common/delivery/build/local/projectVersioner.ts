@@ -30,7 +30,7 @@ import {
     SdmVersionForCommit,
     StatusForExecuteGoal,
 } from "../../../../typings/types";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../../goals/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,

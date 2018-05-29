@@ -25,7 +25,7 @@ import { DeployableArtifact } from "../../../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../../../spi/deploy/Deployer";
 import { InterpretedLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { CloudFoundryApi, initializeCloudFoundry } from "./CloudFoundryApi";
 import {BlueGreenNamer, CloudFoundryBlueGreener} from "./CloudFoundryBlueGreener";
 import {Manifest} from "./CloudFoundryManifest";

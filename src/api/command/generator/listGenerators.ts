@@ -19,31 +19,31 @@ import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onComm
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { SoftwareDeliveryMachine } from "../../../api/machine/SoftwareDeliveryMachine";
 import { EmptyParameters } from "../EmptyParameters";
-import { commandHandlersWithTag } from "../support/commandSearch";
+import { commandHandlersWithTag } from "../../../common/command/support/commandSearch";
 
 /**
- * Return a command handler that can create a repo using generators in this SDM
- * @param sdm
+ * Return a command handler that can list generators in the current SDM.
+ * Will not identify generators in other projects.
+ * @param {SoftwareDeliveryMachine} sdm
  * @return {HandleCommand<EmptyParameters>}
  */
-export function createRepoHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
+export function listGeneratorsHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
     return () => commandHandlerFrom(
-        handleCreateRepo(sdm),
+        handleListGenerators(sdm),
         EmptyParameters,
-        "createRepo",
-        "Create a repo",
-        "create repo", "new repo");
+        "listGenerators",
+        "List generators",
+        "list generators", "show generators");
 }
 
-// TODO implement this with dropdown
-
-function handleCreateRepo(sdm: SoftwareDeliveryMachine): OnCommand {
+function handleListGenerators(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
         const generators = commandHandlersWithTag(sdm, "generator");
-        await ctx.messageClient.respond(`${generators.length} generators in this SDM`);
+        let message = `${generators.length} generators in this software delivery machine\n`;
         generators.forEach(async hi => {
-            await ctx.messageClient.respond(`${hi.instance.intent.map(intent => "`" + intent + "`").join(", ")}`);
+            message += `${hi.instance.intent.map(intent => "`" + intent + "`").join(", ")}\n`;
         });
+        await ctx.messageClient.respond(message);
         return Success;
     };
 }

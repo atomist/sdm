@@ -33,7 +33,7 @@ import {
     SpawnCommand,
     stringifySpawnCommand,
 } from "../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
 
 export interface SpawnBuilderOptions {

@@ -22,8 +22,8 @@ import { RemoteLocator } from "@atomist/automation-client/operations/common/para
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
-import { SemVerRegExp } from "../support/commonPatterns";
 import { GeneratorConfig } from "./GeneratorConfig";
+import { SemVerRegExp } from "../../../common/command/support/commonPatterns";
 
 /**
  * Convenient base class for project generator parameters.

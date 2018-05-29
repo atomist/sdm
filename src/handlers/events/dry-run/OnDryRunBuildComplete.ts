@@ -18,10 +18,10 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
-import { DryRunContext } from "../../../common/command/editor/dry-run/dryRunEditor";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
 import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { createStatus } from "../../../util/github/ghub";
+import { DryRunContext } from "../../../api/command/editor/dry-run/dryRunEditor";
 
 /**
  * React to to result of a dry run build to raise a PR or issue

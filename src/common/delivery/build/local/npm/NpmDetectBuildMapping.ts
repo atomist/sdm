@@ -15,7 +15,7 @@
  */
 
 import { ArtifactStore } from "../../../../../spi/artifact/ArtifactStore";
-import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/ProjectLoader";
 import { SpawnBuilder } from "../SpawnBuilder";
 import { npmBuilderOptionsFromFile } from "./npmBuilder";
 

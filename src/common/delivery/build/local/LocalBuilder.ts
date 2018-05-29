@@ -30,7 +30,7 @@ import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { SdmBuildIdentifierForRepo } from "../../../../typings/types";
 import { ChildProcessResult } from "../../../../util/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
-import { ProjectLoader } from "../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../spi/ProjectLoader";
 import { AddressChannels } from "../../../slack/addressChannels";
 import { createTagForStatus } from "../executeTag";
 import { readSdmVersion } from "./projectVersioner";

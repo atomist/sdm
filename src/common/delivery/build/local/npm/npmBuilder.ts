@@ -23,7 +23,7 @@ import {
     spawnAndWatch,
     SpawnCommand,
 } from "../../../../../util/misc/spawned";
-import { ProjectLoader } from "../../../../repo/ProjectLoader";
+import { ProjectLoader } from "../../../../../spi/ProjectLoader";
 import { ExecuteGoalResult } from "../../../goals/ExecuteGoalResult";
 import { RunWithLogContext } from "../../../goals/support/reportGoalError";
 import { branchFromCommit } from "../../executeBuild";
