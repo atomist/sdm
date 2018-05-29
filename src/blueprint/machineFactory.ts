@@ -1,4 +1,3 @@
-import * as _ from "lodash";
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { GoalSetter } from "../common/listener/GoalSetter";
@@ -47,8 +46,8 @@ import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliv
  */
 export function createSoftwareDeliveryMachine(config: MachineConfiguration,
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
-    const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration);
-    machine.goalSetters = _.flatten(goalSetters);
+    const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration,
+        goalSetters);
     return machine.addSupportingCommands(
         selfDescribeHandler(machine),
         listGeneratorsHandler(machine),

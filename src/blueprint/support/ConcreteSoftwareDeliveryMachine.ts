@@ -87,7 +87,8 @@ import {
 import { ListenerRegistrationSupport } from "./ListenerRegistrationSupport";
 
 /**
- * Implementation of SoftwareDeliveryMachine
+ * Implementation of SoftwareDeliveryMachine.
+ * Not intended for direct user instantiation. See machineFactory.ts
  */
 export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport implements SoftwareDeliveryMachine {
 
@@ -444,7 +445,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     constructor(public readonly name: string,
                 public readonly options: SoftwareDeliveryMachineOptions,
                 public readonly configuration: Configuration,
-                ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
+                goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.goalSetters = _.flatten(goalSetters);
 

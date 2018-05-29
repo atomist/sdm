@@ -1,5 +1,6 @@
 export * from "./blueprint/ExtensionPack";
 export * from "./blueprint/FunctionalUnit";
+export * from "./blueprint/MachineConfiguration";
 export * from "./blueprint/SoftwareDeliveryMachine";
 export * from "./blueprint/SoftwareDeliveryMachineOptions";
 export * from "./blueprint/machineFactory";
