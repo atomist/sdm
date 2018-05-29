@@ -18,7 +18,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as path from "path";
 import * as assert from "power-assert";
-import { checkstyleReviewer } from "../../../../../../src/common/delivery/code/review/checkstyle/checkstyleReviewer";
+import { checkstyleReviewer } from "../../../../../../src/pack/checkstyle/checkstyleReviewer";
 
 const checkstylePath = path.join(__dirname, "../../../../../checkstyle-8.8-all.jar");
 

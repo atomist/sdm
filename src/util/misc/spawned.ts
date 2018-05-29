@@ -21,7 +21,7 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import { sprintf } from "sprintf-js";
 
 import * as strip_ansi from "strip-ansi";
-import {DelimitedWriteProgressLogDecorator} from "../../common/log/DelimitedWriteProgressLogDecorator";
+import {DelimitedWriteProgressLogDecorator} from "../../log/DelimitedWriteProgressLogDecorator";
 
 /**
  * Type that can react to the exit of a spawned child process, after

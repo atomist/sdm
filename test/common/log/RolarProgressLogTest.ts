@@ -17,7 +17,7 @@
 import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import * as assert from "power-assert";
-import {RolarProgressLog} from "../../../src/common/log/RolarProgressLog";
+import {RolarProgressLog} from "../../../src/log/RolarProgressLog";
 
 describe("RolarProgressLog", () => {
 

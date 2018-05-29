@@ -24,11 +24,11 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
+import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
+import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
-import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
 /**

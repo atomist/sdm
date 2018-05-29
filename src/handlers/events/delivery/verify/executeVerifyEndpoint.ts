@@ -15,22 +15,12 @@
  */
 
 import { sprintf } from "sprintf-js";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { RepoListenerInvocation, SdmListener } from "../../../../common/listener/Listener";
-import { providerIdFromStatus } from "../../../../util/git/repoRef";
-
-export interface EndpointVerificationInvocation extends RepoListenerInvocation {
-
-    /**
-     * Reported endpoint base url
-     */
-    url: string;
-}
-
-export type EndpointVerificationListener = SdmListener<EndpointVerificationInvocation>;
+import { providerIdFromStatus } from "../../../../api/command/editor/support/repoRef";
+import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../../../api/goal/Goal";
+import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../../../api/listener/EndpointVerificationListener";
+import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 
 /**
  * What the SDM should define for each environment's verification

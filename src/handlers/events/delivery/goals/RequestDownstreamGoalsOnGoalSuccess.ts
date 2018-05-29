@@ -26,20 +26,20 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
-import { fetchGoalsForCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { preconditionsAreMet } from "../../../../common/delivery/goals/support/goalPreconditions";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
+import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
 import {
     goalKeyString,
     SdmGoal,
     SdmGoalKey,
 } from "../../../../ingesters/sdmGoalIngester";
+import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { preconditionsAreMet } from "../../../../internal/delivery/goals/support/goalPreconditions";
+import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import {
     OnAnySuccessfulSdmGoal,
     ScmProvider,
 } from "../../../../typings/types";
-import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 
 /**
  * Respond to a failure status by failing downstream goals

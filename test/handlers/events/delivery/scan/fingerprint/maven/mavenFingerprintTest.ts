@@ -18,8 +18,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 
 import * as assert from "power-assert";
-import { MavenFingerprinter } from "../../../../../../../src/common/delivery/code/fingerprint/maven/MavenFingerprinter";
-import { PushImpactListenerInvocation } from "../../../../../../../src/common/listener/PushImpactListener";
+import { PushImpactListenerInvocation } from "../../../../../../../src/api/listener/PushImpactListener";
+import { MavenFingerprinter } from "../../../../../../../src/pack/maven/MavenFingerprinter";
 
 describe("MavenFingerprinter", () => {
 

@@ -33,24 +33,24 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Goal, hasPreconditions } from "../../../../common/delivery/goals/Goal";
-import { Goals } from "../../../../common/delivery/goals/Goals";
-import { ExecuteGoalWithLog } from "../../../../common/delivery/goals/support/reportGoalError";
+import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
+import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
+import { ExecuteGoalWithLog } from "../../../../api/goal/ExecuteGoalWithLog";
+import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
+import { Goals } from "../../../../api/goal/Goals";
 import {
     isGoalImplementation,
     isSideEffect,
     SdmGoalImplementationMapper,
-} from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { GoalSetter } from "../../../../common/listener/GoalSetter";
-import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../common/listener/GoalsSetListener";
-import { PushListenerInvocation } from "../../../../common/listener/PushListener";
-import { PushRules } from "../../../../common/listener/support/PushRules";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { AddressChannels, addressChannelsFor } from "../../../../common/slack/addressChannels";
+} from "../../../../api/goal/SdmGoalImplementationMapper";
+import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/listener/GoalsSetListener";
+import { PushListenerInvocation } from "../../../../api/listener/PushListener";
+import { GoalSetter } from "../../../../api/mapping/GoalSetter";
+import { PushRules } from "../../../../api/mapping/support/PushRules";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
+import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
-import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**

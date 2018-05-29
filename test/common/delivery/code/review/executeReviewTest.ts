@@ -19,15 +19,15 @@ import { saveFromFiles } from "@atomist/automation-client/project/util/projectUt
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { ReviewerRegistration } from "../../../../../src/common/delivery/code/review/ReviewerRegistration";
-import { ReviewListener, ReviewListenerInvocation } from "../../../../../src/common/listener/ReviewListener";
+import { ReviewListener, ReviewListenerInvocation } from "../../../../../src/api/listener/ReviewListener";
+import { ReviewerRegistration } from "../../../../../src/api/registration/ReviewerRegistration";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
-import { TruePushTest } from "../../../listener/support/pushTestUtilsTest";
+import { TruePushTest } from "../../../../api/mapping/support/pushTestUtilsTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import * as assert from "power-assert";
-import { PushReactionResponse } from "../../../../../src/common/delivery/code/PushReactionRegistration";
-import { executeReview } from "../../../../../src/common/delivery/code/review/executeReview";
+import { PushReactionResponse } from "../../../../../src/api/registration/PushReactionRegistration";
+import { executeReview } from "../../../../../src/internal/delivery/code/review/executeReview";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
 const HatesTheWorld: ReviewerRegistration = {

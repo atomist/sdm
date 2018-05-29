@@ -20,8 +20,8 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { mavenDeployer } from "../../../../../src/common/delivery/deploy/local/maven/mavenSourceDeployer";
-import { LoggingProgressLog } from "../../../../../src/common/log/LoggingProgressLog";
+import { mavenDeployer } from "../../../../../src/internal/delivery/deploy/local/maven/mavenSourceDeployer";
+import { LoggingProgressLog } from "../../../../../src/log/LoggingProgressLog";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
 describe("mavenSourceDeployer", () => {

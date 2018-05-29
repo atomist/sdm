@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { MavenLogInterpreter } from "../../../../../../../src/common/delivery/build/local/maven/mavenLogInterpreter";
+import { MavenLogInterpreter } from "../../../../../../../src/internal/delivery/build/local/maven/mavenLogInterpreter";
 
 describe("MavenLogInterpreter", () => {
 

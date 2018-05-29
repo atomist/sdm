@@ -16,10 +16,10 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../common/listener/ClosedIssueListener";
-import { addressChannelsFor } from "../../../common/slack/addressChannels";
+import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
+import { addressChannelsFor } from "../../../api/context/addressChannels";
+import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../api/listener/ClosedIssueListener";
 import * as schema from "../../../typings/types";
-import { toRemoteRepoRef } from "../../../util/git/repoRef";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**

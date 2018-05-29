@@ -27,26 +27,26 @@ import {
     EventHandlerMetadata,
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
-import { fetchCommitForSdmGoal } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { sdmGoalStateToGitHubStatusState } from "../../../../common/delivery/goals/support/github/gitHubStatusSetters";
-import { RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { SdmGoalImplementationMapper } from "../../../../common/delivery/goals/support/SdmGoalImplementationMapper";
-import { LoggingProgressLog } from "../../../../common/log/LoggingProgressLog";
-import { WriteToAllProgressLog } from "../../../../common/log/WriteToAllProgressLog";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
+import { addressChannelsFor } from "../../../../api/context/addressChannels";
+import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
 import {
     SdmGoal,
     SdmGoalState,
 } from "../../../../ingesters/sdmGoalIngester";
+import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
+import { LoggingProgressLog } from "../../../../log/LoggingProgressLog";
+import { WriteToAllProgressLog } from "../../../../log/WriteToAllProgressLog";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import {
     CommitForSdmGoal,
     OnAnyRequestedSdmGoal,
     SdmGoalFields,
     StatusForExecuteGoal,
 } from "../../../../typings/types";
-import { repoRefFromSdmGoal } from "../../../../util/git/repoRef";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
 

@@ -15,8 +15,8 @@
  */
 
 import * as assert from "power-assert";
-import { createEphemeralProgressLog } from "../../../src/common/log/EphemeralProgressLog";
 import { SdmGoal } from "../../../src/ingesters/sdmGoalIngester";
+import { createEphemeralProgressLog } from "../../../src/log/EphemeralProgressLog";
 import { spawnAndWatch, SpawnCommand } from "../../../src/util/misc/spawned";
 import { fakeContext } from "../../../src/util/test/fakeContext";
 

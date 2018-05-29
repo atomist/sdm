@@ -17,18 +17,19 @@
 import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
-import { ExecuteGoalResult } from "../../../../common/delivery/goals/ExecuteGoalResult";
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import { ExecuteGoalWithLog, reportGoalError, RunWithLogContext } from "../../../../common/delivery/goals/support/reportGoalError";
-import { descriptionFromState, updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
+import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../../../api/goal/Goal";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { descriptionFromState, updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { InterpretLog } from "../../../../spi/log/InterpretedLog";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { spawnAndWatch } from "../../../../util/misc/spawned";
 
 import { sprintf } from "sprintf-js";
 
 import * as stringify from "json-stringify-safe";
+import { reportGoalError } from "../../../../internal/delivery/goals/support/reportGoalError";
 import { toToken } from "../../../../util/credentials/toToken";
 
 /**

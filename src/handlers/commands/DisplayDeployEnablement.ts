@@ -25,7 +25,7 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
-import { isDeployEnabled } from "../../common/listener/support/pushtest/deployPushTests";
+import { isDeployEnabled } from "../../api/mapping/support/deployPushTests";
 import { SetDeployEnablementParameters } from "./SetDeployEnablement";
 
 function displayDeployEnablement() {

@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { NpmLogInterpreter } from "../../../../../../../src/common/delivery/build/local/npm/npmLogInterpreter";
+import { NpmLogInterpreter } from "../../../../../../../src/internal/delivery/build/local/npm/npmLogInterpreter";
 
 describe("NpmLogInterpreter", () => {
 

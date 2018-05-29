@@ -16,20 +16,20 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { Goal } from "../../../../common/delivery/goals/Goal";
-import { findSdmGoalOnCommit } from "../../../../common/delivery/goals/support/fetchGoalsOnCommit";
-import { updateGoal } from "../../../../common/delivery/goals/support/storeGoals";
+import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
+import { addressChannelsFor } from "../../../../api/context/addressChannels";
+import { Goal } from "../../../../api/goal/Goal";
 import {
     ArtifactListenerInvocation,
     ArtifactListenerRegisterable,
     toArtifactListenerRegistration,
-} from "../../../../common/listener/ArtifactListener";
-import { PushListenerInvocation } from "../../../../common/listener/PushListener";
-import { ProjectLoader } from "../../../../common/repo/ProjectLoader";
-import { addressChannelsFor } from "../../../../common/slack/addressChannels";
+} from "../../../../api/listener/ArtifactListener";
+import { PushListenerInvocation } from "../../../../api/listener/PushListener";
+import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { OnImageLinked } from "../../../../typings/types";
-import { toRemoteRepoRef } from "../../../../util/git/repoRef";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))

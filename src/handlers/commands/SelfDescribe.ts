@@ -17,8 +17,8 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { SoftwareDeliveryMachine } from "../../blueprint/SoftwareDeliveryMachine";
-import { EmptyParameters } from "../../common/command/EmptyParameters";
+import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 
 export const SelfDescribeCommandName = "SelfDescribe";
 

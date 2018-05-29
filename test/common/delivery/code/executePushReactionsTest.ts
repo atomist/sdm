@@ -17,12 +17,12 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { fakeRunWithLogContext } from "../../../../src/util/test/fakeRunWithLogContext";
-import { TruePushTest } from "../../listener/support/pushTestUtilsTest";
+import { TruePushTest } from "../../../api/mapping/support/pushTestUtilsTest";
 
 import * as assert from "power-assert";
-import { executePushReactions } from "../../../../src/common/delivery/code/executePushReactions";
-import { PushReactionRegistration, PushReactionResponse } from "../../../../src/common/delivery/code/PushReactionRegistration";
-import { PushListenerInvocation } from "../../../../src/common/listener/PushListener";
+import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
+import { PushReactionRegistration, PushReactionResponse } from "../../../../src/api/registration/PushReactionRegistration";
+import { executePushReactions } from "../../../../src/internal/delivery/code/executePushReactions";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 
 function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushReactionRegistration {

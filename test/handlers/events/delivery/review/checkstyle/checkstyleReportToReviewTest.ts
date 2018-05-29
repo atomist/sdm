@@ -17,8 +17,8 @@
 import * as assert from "power-assert";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
-import { extract } from "../../../../../../src/common/delivery/code/review/checkstyle/checkstyleReportExtractor";
-import { checkstyleReportToReview } from "../../../../../../src/common/delivery/code/review/checkstyle/checkStyleReportToReview";
+import { extract } from "../../../../../../src/pack/checkstyle/checkstyleReportExtractor";
+import { checkstyleReportToReview } from "../../../../../../src/pack/checkstyle/checkStyleReportToReview";
 import { xml2valid1 } from "./checkstyleReportExtractorTest";
 
 describe("checkstyleReportToReview", () => {
