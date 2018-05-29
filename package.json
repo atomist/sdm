@@ -82,7 +82,7 @@
     "fmt": "npm-run-all fmt:ts fmt:gql",
     "fmt:ts": "tsfmt --replace",
     "fmt:gql": "prettier --write \"**/*.graphql\"",
-    "generate:barrels": "barrelsby --delete -d src --i '.*/listener/.*' --i 'blueprint/SoftwareDel.*' --i 'blueprint/DefaultSoftwareDel.*' --i 'blueprint/FunctionalU.*' --i 'blueprint/wellKnownGoals.ts' --i 'goalDsl' --i 'spi/.*' --i 'common/command' --i 'common/artifact' --i 'common/log' --i 'common/delivery' --i 'ProjectLoader' --i OnDryRunBuildComplete --i Config --i 'regexpReviewer' --i typings/.*",
+    "generate:barrels": "barrelsby --delete -d src --i '.*/listener/.*' --i 'blueprint/SoftwareDel.*' --i 'blueprint/machineFactory.*' --i 'blueprint/FunctionalU.*' --i 'blueprint/wellKnownGoals.ts' --i 'goalDsl' --i 'spi/.*' --i 'common/command' --i 'common/artifact' --i 'common/log' --i 'common/delivery' --i 'ProjectLoader' --i OnDryRunBuildComplete --i Config --i 'regexpReviewer' --i typings/.*",
     "git:info": "atomist git",
     "gql:copy": "copyfiles \"./src/**/*.graphql\" build",
     "gql:gen": "atomist gql-gen --no-install \"src/graphql/**/*.graphql\"",

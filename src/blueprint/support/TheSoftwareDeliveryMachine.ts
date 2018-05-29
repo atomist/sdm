@@ -15,16 +15,6 @@
  */
 
 import * as _ from "lodash";
-import {
-    ArtifactGoal,
-    AutofixGoal,
-    DeleteAfterUndeploysGoal,
-    DeleteRepositoryGoal,
-    FingerprintGoal,
-    NoGoal,
-    PushReactionGoal,
-    ReviewGoal,
-} from "../wellKnownGoals";
 import { createRepoHandler } from "../../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../../common/command/generator/listGenerators";
 import { executeAutofixes } from "../../common/delivery/code/autofix/executeAutofixes";
@@ -37,12 +27,22 @@ import { GoalSetter } from "../../common/listener/GoalSetter";
 import { selfDescribeHandler } from "../../handlers/commands/SelfDescribe";
 import { executeImmaterial } from "../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
+import {
+    ArtifactGoal,
+    AutofixGoal,
+    DeleteAfterUndeploysGoal,
+    DeleteRepositoryGoal,
+    FingerprintGoal,
+    NoGoal,
+    PushReactionGoal,
+    ReviewGoal,
+} from "../wellKnownGoals";
 import { AbstractSoftwareDeliveryMachine } from "./AbstractSoftwareDeliveryMachine";
 
 /**
- * Add default goals to AbstractSoftwareDeliveryMachine
+ * Implementation of SoftwareDeliveryMachine
  */
-export class DefaultGoalsSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
+export class TheSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     /**
      * Construct a new software delivery machine, with zero or
@@ -63,17 +63,17 @@ export class DefaultGoalsSoftwareDeliveryMachine extends AbstractSoftwareDeliver
         );
 
         this.addGoalImplementation("Autofix", AutofixGoal,
-            executeAutofixes(this.opts.projectLoader, this.autofixRegistrations), {
+            executeAutofixes(this.options.projectLoader, this.autofixRegistrations), {
                 // Autofix errors should not be reported to the user
                 logInterpreter: LogSuppressor,
             })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
             .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
-                executeFingerprinting(this.opts.projectLoader, this.fingerprinterRegistrations, this.fingerprintListeners))
+                executeFingerprinting(this.options.projectLoader, this.fingerprinterRegistrations, this.fingerprintListeners))
             .addGoalImplementation("CodeReactions", PushReactionGoal,
-                executePushReactions(this.opts.projectLoader, this.pushReactionRegistrations))
+                executePushReactions(this.options.projectLoader, this.pushReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,
-                executeReview(this.opts.projectLoader, this.reviewerRegistrations, this.reviewListeners))
+                executeReview(this.options.projectLoader, this.reviewerRegistrations, this.reviewListeners))
             .addVerifyImplementation()
             .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
                 offerToDeleteRepository())
