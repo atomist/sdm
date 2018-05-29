@@ -27,7 +27,7 @@ import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { ListenerRegistrationSupport } from "./support/ListenerRegistrationSupport";
 
 /**
- * Class instantiated to create a **Software Delivery Machine**.
+ * Class instantiated to create a **Software Delivery MachineConfiguration**.
  * Combines commands and delivery event handling using _goals_.
  *
  * Goals and goal "implementations" can be defined by users.

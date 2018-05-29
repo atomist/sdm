@@ -1,15 +1,14 @@
-import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
 import { createRepoHandler } from "../common/command/generator/createRepo";
 import { listGeneratorsHandler } from "../common/command/generator/listGenerators";
 import { GoalSetter } from "../common/listener/GoalSetter";
 import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
+import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliveryMachine";
 
 /**
- * Create a **Software Delivery Machine** with default predefined goals.
+ * Create a **Software Delivery MachineConfiguration** with default predefined goals.
  * Combines commands and delivery event handling using _goals_.
  *
  * Goals and goal "implementations" can be defined by users.
@@ -46,11 +45,9 @@ import { ConcreteSoftwareDeliveryMachine } from "./support/ConcreteSoftwareDeliv
  *    .add...;
  * ```
  */
-export function createSoftwareDeliveryMachine(name: string,
-                                              options: SoftwareDeliveryMachineOptions,
-                                              configuration: Configuration,
+export function createSoftwareDeliveryMachine(config: MachineConfiguration,
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine {
-    const machine = new ConcreteSoftwareDeliveryMachine(name, options, configuration);
+    const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration);
     machine.goalSetters = _.flatten(goalSetters);
     return machine.addSupportingCommands(
         selfDescribeHandler(machine),

@@ -52,10 +52,9 @@ const aPush = {repo: {org: {provider: {providerId: "myProviderId"}}}} as PushFie
 
 describe("implementing goals in the SDM", () => {
 
-    it("I can ask it to do an autofix", async () => {
-
-        const mySDM = createSoftwareDeliveryMachine("Gustave",
-            fakeSoftwareDeliveryMachineOptions,
+    it("can autofix", async () => {
+        const mySDM = createSoftwareDeliveryMachine(
+            { name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined},
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
                 .setGoals(new Goals("Autofix only", AutofixGoal))) as ConcreteSoftwareDeliveryMachine;
@@ -72,12 +71,10 @@ describe("implementing goals in the SDM", () => {
         );
 
         assert(determinedGoals.goals.includes(AutofixGoal));
-
         assert.equal(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
 
         const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
-
         assert.equal(myImpl.implementationName, "Autofix");
     });
 
@@ -93,8 +90,8 @@ describe("implementing goals in the SDM", () => {
             return Success;
         };
 
-        const mySDM = createSoftwareDeliveryMachine("Gustave",
-            fakeSoftwareDeliveryMachineOptions,
+        const mySDM = createSoftwareDeliveryMachine(
+            {name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined },
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
                 .setGoals(new Goals("Springer", customGoal)))
@@ -115,12 +112,9 @@ describe("implementing goals in the SDM", () => {
         );
 
         assert(determinedGoals.goals.includes(customGoal));
-
         assert.equal(goalsToSave.length, 1);
         const onlyGoal = goalsToSave[0];
-
         const myImpl = mySDM.goalFulfillmentMapper.findImplementationBySdmGoal(onlyGoal);
-
         assert.equal(myImpl.implementationName, "Cornelius");
         await myImpl.goalExecutor(undefined);
         assert(executed);
