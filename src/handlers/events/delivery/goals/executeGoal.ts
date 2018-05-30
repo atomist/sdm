@@ -36,7 +36,6 @@ import { AddressChannels } from "../../../../api/context/addressChannels";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
 
-
 class GoalExecutionError extends Error {
     public readonly where: string;
     public readonly result?: HandlerResult;
@@ -48,7 +47,7 @@ class GoalExecutionError extends Error {
     get description() {
         const resultDescription = this.result ? `Result code ${this.result.code} ${this.result.message}` : "";
         const causeDescription = this.cause ? `Caused by: ${this.cause.message}` : "";
-        return `Failure in ${this.where}: ${resultDescription} ${causeDescription}`;    
+        return `Failure in ${this.where}: ${resultDescription} ${causeDescription}`;
     }
 }
 
@@ -63,11 +62,11 @@ class GoalExecutionError extends Error {
  * @return {Promise<ExecuteGoalResult>}
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
-    execute: ExecuteGoalWithLog,
-    rwlc: RunWithLogContext,
-    sdmGoal: SdmGoal,
-    goal: Goal,
-    logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
+                                  execute: ExecuteGoalWithLog,
+                                  rwlc: RunWithLogContext,
+                                  sdmGoal: SdmGoal,
+                                  goal: Goal,
+                                  logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
     const ctx = rwlc.context;
     const { addressChannels, progressLog, id } = rwlc;
     const implementationName = sdmGoal.fulfillment.name;
@@ -78,25 +77,25 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         // execute pre hook
         let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
         if (result.code !== 0) {
-            throw new GoalExecutionError({ where: "executing pre-goal hook", result })
+            throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        let goalResult = (await execute(rwlc)
+        const goalResult = (await execute(rwlc)
             .catch(err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
                 progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
 
-                throw new GoalExecutionError({ where: "executing goal", cause: err })
+                throw new GoalExecutionError({ where: "executing goal", cause: err });
             })) || Success;
         if (goalResult.code !== 0) {
-            throw new GoalExecutionError({ where: "executing goal", result: goalResult })
+            throw new GoalExecutionError({ where: "executing goal", result: goalResult });
         }
 
         // execute post hook
-        let hookResult = (await executeHook(rules, rwlc, sdmGoal, "post")) || Success;
+        const hookResult = (await executeHook(rules, rwlc, sdmGoal, "post")) || Success;
         if (hookResult.code !== 0) {
-            throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult })
+            throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
 
         result = {
@@ -113,16 +112,16 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         logger.warn(err.stack);
         await reportGoalError({
             goal, implementationName, addressChannels, progressLog, id, logInterpreter,
-        }, err)
+        }, err);
         await markStatus({ ctx, sdmGoal, goal, result: { code: 1 }, error: err, progressLogUrl: progressLog.url });
         return failure(err);
     }
 }
 
 export async function executeHook(rules: { projectLoader: ProjectLoader },
-    rwlc: RunWithLogContext,
-    sdmGoal: SdmGoal,
-    stage: "post" | "pre"): Promise<HandlerResult> {
+                                  rwlc: RunWithLogContext,
+                                  sdmGoal: SdmGoal,
+                                  stage: "post" | "pre"): Promise<HandlerResult> {
     const { projectLoader } = rules;
     const { credentials, id, context, progressLog } = rwlc;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
@@ -212,12 +211,12 @@ async function reportGoalError(parameters: {
     id: RemoteRepoRef,
     logInterpreter: InterpretLog,
 },
-    err: GoalExecutionError) {
+                               err: GoalExecutionError) {
     const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
     logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",
         goal.name, implementationName, err.description);
-    if (err.cause) { logger.error(err.cause.stack) };
+    if (err.cause) { logger.error(err.cause.stack); }
     progressLog.write("ERROR: " + err.description + "\n");
 
     const interpretation = logInterpreter(progressLog.log);
