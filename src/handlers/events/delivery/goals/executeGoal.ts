@@ -217,7 +217,7 @@ async function reportGoalError(parameters: {
 
     logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",
         goal.name, implementationName, err.description);
-    if (err.cause) { logger.error(err.cause.stack) };
+    if (err.cause) { logger.error(err.cause.stack) } else { logger.error(err.stack) };
     progressLog.write("ERROR: " + err.description + "\n");
 
     const interpretation = logInterpreter(progressLog.log);
