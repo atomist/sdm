@@ -17,6 +17,7 @@
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
+ * Primary unit of extensibility in SDMs.
  * Implemented to expose a capability that can be added to a
  * software delivery machine in a consistent manner.
  * Facilitates modularity at a higher level than FunctionUnit or handlers.
