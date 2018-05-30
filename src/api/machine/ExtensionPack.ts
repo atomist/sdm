@@ -36,7 +36,7 @@ export interface ExtensionPack {
      * Function to add extension pack functionality to the given SDM
      * @param sdm
      */
-    configure(sdm: SoftwareDeliveryMachine<any>): void;
+    configure(sdm: SoftwareDeliveryMachine): void;
 
     /**
      * Optional goal setting contributions that will be added into SDM goal setting

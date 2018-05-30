@@ -8,6 +8,8 @@ import { OnDryRunBuildComplete } from "./support/OnDryRunBuildComplete";
 export const DryRunEditing: ExtensionPack = {
     name: "DryRunEditing",
     configure: sdm => {
-        sdm.addSupportingEvents(() => new OnDryRunBuildComplete(sdm.options.repoResolver));
+        sdm.addSupportingEvents(
+            () => new OnDryRunBuildComplete(sdm.options.repoRefResolver),
+        );
     },
 };
