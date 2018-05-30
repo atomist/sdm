@@ -48,16 +48,16 @@ export const DryRunContext = "atomist-dry-run";
  * @param targets targets parameters. Allows targeting to other source control systems
  * Add intent "try edit <name>"
  */
-export function dryRunEditor<PARAMS = EmptyParameters>(
+export function dryRunEditorCommand<PARAMS = EmptyParameters>(
     sdm: MachineOrMachineOptions,
     edd: (params: PARAMS) => AnyProjectEditor,
-    paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
     name: string,
+    paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
     details: Partial<EditorCommandDetails<PARAMS>> = {},
     targets: FallbackParams =
         new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
     if (!!details.editMode) {
-        throw new Error("Cannot set editMode for dryRunEditor");
+        throw new Error("Cannot set editMode for dryRunEditorCommand");
     }
     const detailsToUse: EditorCommandDetails = {
         description: details.description || name,

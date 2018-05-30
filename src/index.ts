@@ -1,4 +1,3 @@
-export * from "./api/command/SdmCommandMakerFactory";
 export * from "./api/command/editor/BitBucketTargetsParams";
 export * from "./api/command/editor/EditModeSuggestion";
 export * from "./api/command/editor/editorCommand";
@@ -52,8 +51,10 @@ export * from "./api/listener/TagListener";
 export * from "./api/listener/UpdatedIssueListener";
 export * from "./api/listener/UserJoiningChannelListener";
 export * from "./api/listener/VerifiedDeploymentListener";
+export * from "./api/machine/EditorRegistration";
 export * from "./api/machine/ExtensionPack";
 export * from "./api/machine/FunctionalUnit";
+export * from "./api/machine/GeneratorRegistration";
 export * from "./api/machine/GoalDrivenMachine";
 export * from "./api/machine/ListenerRegistration";
 export * from "./api/machine/MachineConfiguration";

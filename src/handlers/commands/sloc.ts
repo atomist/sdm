@@ -17,9 +17,8 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
-import { editorCommand } from "../../api/command/editor/editorCommand";
-import { SdmCommandMakerFactory } from "../../api/command/SdmCommandMakerFactory";
 import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { EditorRegistration } from "../../api/machine/EditorRegistration";
 import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 
 /**
@@ -27,13 +26,11 @@ import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
  * to Slack, across understood languages.
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const slocCommand: SdmCommandMakerFactory = sdm => () => editorCommand<EmptyParameters>(
-    sdm,
-    () => computeSloc,
-    "sloc",
-    EmptyParameters, {
-        intent: ["compute sloc", "sloc"],
-    });
+export const slocCommand: EditorRegistration = {
+    name: "sloc",
+    editor: () => computeSloc,
+    intent: ["compute sloc", "sloc"],
+};
 
 async function computeSloc(p: Project, ctx: HandlerContext, params: EmptyParameters) {
     const report = await reportForLanguages(p);

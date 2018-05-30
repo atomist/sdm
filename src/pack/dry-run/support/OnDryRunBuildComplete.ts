@@ -21,7 +21,7 @@ import { raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
-import { DryRunContext } from "../dryRunEditor";
+import { DryRunContext } from "../dryRunEditorCommand";
 
 /**
  * React to to result of a dry run build to raise a PR or issue

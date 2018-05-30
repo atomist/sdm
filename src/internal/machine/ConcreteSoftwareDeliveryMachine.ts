@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
+/* tslint:disable:max-file-line-count */
+
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { editorCommand } from "../../api/command/editor/editorCommand";
+import { generatorCommand } from "../../api/command/generator/generatorCommand";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import { EditorRegistration } from "../../api/machine/EditorRegistration";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
+import { GeneratorRegistration } from "../../api/machine/GeneratorRegistration";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { ListenerRegistrationSupport } from "../../api/machine/support/ListenerRegistrationSupport";
 import {
@@ -76,6 +82,7 @@ import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
+import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -349,13 +356,30 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             .filter(m => !!m);
     }
 
-    public addGenerators(...g: Array<Maker<HandleCommand>>): this {
-        this.generators = this.generators.concat(g);
+    public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
+        const commands = gens.map(e => () => generatorCommand(
+            this,
+            e.editor,
+            e.name,
+            e.paramsMaker,
+            e,
+        ));
+        this.generators = this.generators.concat(commands);
         return this;
     }
 
-    public addEditors(...e: Array<Maker<HandleCommand>>): this {
-        this.editors = this.editors.concat(e);
+    public addEditors(...eds: EditorRegistration[]): this {
+        const commands = eds.map(e => {
+            const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
+            return () => fun(
+                this,
+                e.editor,
+                e.name,
+                e.paramsMaker,
+                e,
+            );
+        });
+        this.editors = this.editors.concat(commands);
         return this;
     }
 

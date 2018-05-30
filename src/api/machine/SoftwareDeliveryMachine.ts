@@ -21,8 +21,10 @@ import { Target } from "../../spi/deploy/Target";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
+import { EditorRegistration } from "./EditorRegistration";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
+import { GeneratorRegistration } from "./GeneratorRegistration";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { ListenerRegistration } from "./ListenerRegistration";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
@@ -72,17 +74,15 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
 
     /**
      * Add generators to this machine to enable project creation
-     * @param {Maker<HandleCommand>} g
      * @return {this}
      */
-    addGenerators(...g: Array<Maker<HandleCommand>>): this;
+    addGenerators(...g: Array<GeneratorRegistration<any>>): this;
 
     /**
      * Add editors to this machine
-     * @param {Maker<HandleCommand>} e
      * @return {this}
      */
-    addEditors(...e: Array<Maker<HandleCommand>>): this;
+    addEditors(...e: EditorRegistration[]): this;
 
     /**
      * Add supporting commands for other functionality. Consider using
