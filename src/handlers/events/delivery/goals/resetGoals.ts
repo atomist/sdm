@@ -55,7 +55,7 @@ export function resetGoalsCommand(rules: {
     projectLoader: ProjectLoader,
     repoRefResolver: RepoRefResolver,
     goalsListeners: GoalsSetListener[],
-    goalSetters: GoalSetter[],
+    goalSetter: GoalSetter,
     implementationMapping: SdmGoalImplementationMapper,
 }): HandleCommand {
     return commandHandlerFrom(resetGoalsOnCommit(rules),
@@ -69,10 +69,10 @@ function resetGoalsOnCommit(rules: {
     projectLoader: ProjectLoader,
     repoRefResolver: RepoRefResolver,
     goalsListeners: GoalsSetListener[],
-    goalSetters: GoalSetter[],
+    goalSetter: GoalSetter,
     implementationMapping: SdmGoalImplementationMapper,
 }) {
-    const {projectLoader, goalsListeners, goalSetters, implementationMapping, repoRefResolver} = rules;
+    const {projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver} = rules;
     return async (ctx: HandlerContext, commandParams: ResetGoalsParameters) => {
         // figure out which commit
         const repoData = await fetchDefaultBranchTip(ctx, commandParams);
@@ -88,7 +88,7 @@ function resetGoalsOnCommit(rules: {
             projectLoader,
             repoRefResolver,
             goalsListeners,
-            goalSetters,
+            goalSetter,
             implementationMapping,
         }, {
             context: ctx,

@@ -23,6 +23,7 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
+import { ExtensionPack, MessageGoal } from "../../src";
 import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
 import { when } from "../../src/dsl/buildDsl";
 import { HttpServiceGoals } from "../../src/goal/common/httpServiceGoals";
@@ -78,6 +79,23 @@ describe("SDM handler creation", () => {
             assert.equal(await sdm.pushMapping.mapping(p), undefined);
         });
 
+        it("has pack-contributed behavior adding goals to no default", async () => {
+            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                undefined,
+                [whenPushSatisfies(AnyPush)
+                    .itMeans("do nothing")
+                    .setGoals(null)]);
+            const p = fakePush();
+            const ep: ExtensionPack = {
+                name: "x",
+                configure: () => { /* do nothing */ },
+                goalContributions: whenPushSatisfies(true).setGoals(HttpServiceGoals),
+            };
+            sdm.addExtensionPacks(ep);
+            assert.deepEqual((await sdm.pushMapping.mapping(p)).goals, HttpServiceGoals.goals);
+        });
+
         it("sets goals on any push", async () => {
             const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineOptions,
@@ -97,6 +115,24 @@ describe("SDM handler creation", () => {
                     .setGoals(HttpServiceGoals)]);
             const p = fakePush(project);
             assert.equal(await sdm.pushMapping.mapping(p), HttpServiceGoals);
+        });
+
+        it("sets goals on particular push with extra goals", async () => {
+            const project = InMemoryProject.of(new InMemoryFile("thing", "1"));
+            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+                fakeSoftwareDeliveryMachineOptions,
+                undefined,
+                [whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
+                    .setGoals(HttpServiceGoals)]);
+            const p = fakePush(project);
+            const ep: ExtensionPack = {
+                name: "x",
+                configure: () => { /* do nothing */ },
+                // TODO why is this cast necessary?
+                goalContributions: whenPushSatisfies(true).setGoals(MessageGoal as any),
+            };
+            sdm.addExtensionPacks(ep);
+            assert.deepEqual((await sdm.pushMapping.mapping(p)).goals, HttpServiceGoals.goals.concat([MessageGoal as any]));
         });
     });
 

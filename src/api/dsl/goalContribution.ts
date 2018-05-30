@@ -54,3 +54,17 @@ export function goalContributors<F extends SdmContext = PushListenerInvocation>(
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
     return new AdditiveGoalSetter("Contributed", [contributor].concat(contributors));
 }
+
+/**
+ * Enrich the given push mapping with our own contributions
+ * @param {Mapping<F extends SdmContext, Goals>} mapping
+ * @param {GoalContribution<F extends SdmContext>} contributor
+ * @param {GoalContribution<F extends SdmContext>} contributors
+ * @return {Mapping<F extends SdmContext, Goals>}
+ */
+export function enrichGoalSetters<F extends SdmContext = PushListenerInvocation>(
+    mapping: GoalContribution<F>,
+    contributor: GoalContribution<F>,
+    ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
+    return new AdditiveGoalSetter(`${mapping.name}-enriched`, [mapping, contributor].concat(contributors));
+}

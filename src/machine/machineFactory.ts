@@ -1,10 +1,8 @@
 import { MachineConfiguration } from "../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
 import { GoalSetter } from "../api/mapping/GoalSetter";
-import { createRepoHandler } from "../handlers/commands/createRepo";
-import { listGeneratorsHandler } from "../handlers/commands/listGenerators";
-import { selfDescribeHandler } from "../handlers/commands/SelfDescribe";
 import { ConcreteSoftwareDeliveryMachine } from "../internal/machine/ConcreteSoftwareDeliveryMachine";
+import { ExposeInfo } from "../pack/info/exposeInfo";
 import { ConcreteSoftwareDeliveryMachineOptions } from "./ConcreteSoftwareDeliveryMachineOptions";
 
 /**
@@ -50,9 +48,5 @@ export function createSoftwareDeliveryMachine(config: MachineConfiguration<Concr
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
     const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration,
         goalSetters);
-    return machine.addSupportingCommands(
-        selfDescribeHandler(machine),
-        listGeneratorsHandler(machine),
-        createRepoHandler(machine),
-    );
+    return machine.addExtensionPacks(ExposeInfo);
 }
