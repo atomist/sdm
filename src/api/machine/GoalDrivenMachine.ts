@@ -19,10 +19,11 @@ import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
-import { SdmGoalImplementationMapper } from "../goal/SdmGoalImplementationMapper";
+import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
+import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
 /**
  * MachineConfiguration driven by configurable goals.
@@ -30,7 +31,7 @@ import { MachineConfiguration } from "./MachineConfiguration";
  * However, certain well known goals are built into the TheSoftwareDeliveryMachine
  * for convenience, with their own associated listeners.
  */
-export interface GoalDrivenMachine<O> extends MachineConfiguration<O> {
+export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineOptions> extends MachineConfiguration<O> {
 
     /**
      * Automation client configuration this machine will run in
@@ -84,7 +85,6 @@ export interface GoalDrivenMachine<O> extends MachineConfiguration<O> {
     knownSideEffect(goal: Goal, sideEffectName: string,
                     pushTest: PushTest);
 
-    // TODO this should be an interface
     readonly goalFulfillmentMapper: SdmGoalImplementationMapper;
 
 }

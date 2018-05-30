@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { AddressNoChannels } from "../../../api/context/addressChannels";
 import { RepoCreationListener, RepoCreationListenerInvocation } from "../../../api/listener/RepoCreationListener";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
@@ -31,6 +31,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
     private readonly newRepoActions: RepoCreationListener[];
 
     constructor(newRepoActions: RepoCreationListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
         this.newRepoActions = newRepoActions;
     }
@@ -39,7 +40,7 @@ export class OnRepoCreation implements HandleEvent<schema.OnRepoCreation.Subscri
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const repo = event.data.Repo[0];
-        const id = toRemoteRepoRef(repo);
+        const id = params.repoRefResolver.toRemoteRepoRef(repo, {});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const invocation: RepoCreationListenerInvocation = {
             addressChannels: AddressNoChannels,

@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../api/context/addressChannels";
 import { NewIssueListener, NewIssueListenerInvocation } from "../../../api/listener/NewIssueListener";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
@@ -31,6 +31,7 @@ export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscri
     private readonly newIssueListeners: NewIssueListener[];
 
     constructor(newIssueListeners: NewIssueListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
         this.newIssueListeners = newIssueListeners;
     }
@@ -40,7 +41,7 @@ export class NewIssueHandler implements HandleEvent<schema.OnIssueAction.Subscri
                         params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
         const addressChannels = addressChannelsFor(issue.repo, context);
-        const id = toRemoteRepoRef(issue.repo);
+        const id = params.repoRefResolver.toRemoteRepoRef(issue.repo, {});
 
         if (issue.updatedAt !== issue.createdAt) {
             logger.debug("Issue updated, not created: %s on %j", issue.number, id);

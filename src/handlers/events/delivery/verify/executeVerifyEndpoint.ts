@@ -15,12 +15,12 @@
  */
 
 import { sprintf } from "sprintf-js";
-import { providerIdFromStatus } from "../../../../api/command/editor/support/repoRef";
 import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../api/goal/Goal";
 import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../../../api/listener/EndpointVerificationListener";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 
 /**
  * What the SDM should define for each environment's verification
@@ -31,10 +31,10 @@ export interface SdmVerification {
     requestApproval: boolean;
 }
 
-export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoalWithLog {
+export function executeVerifyEndpoint(sdm: SdmVerification, repoRefResolver: RepoRefResolver): ExecuteGoalWithLog {
     return async (r: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { context, id, status } = r;
-        const sdmGoals = await fetchGoalsForCommit(context, id, providerIdFromStatus(status));
+        const sdmGoals = await fetchGoalsForCommit(context, id, repoRefResolver.providerIdFromStatus(status));
         const endpointGoal = sdmGoals.find(sg => sg.externalKey === sdm.endpointGoal.context);
 
         if (!endpointGoal) {

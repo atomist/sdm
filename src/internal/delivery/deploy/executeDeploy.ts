@@ -23,11 +23,13 @@ import { checkOutArtifact, setEndpointGoalOnSuccessfulDeploy } from "./deploy";
 import * as _ from "lodash";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { Target } from "../../../spi/deploy/Target";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 
 /**
  * Execute deploy with the supplied deployer and target
  */
 export function executeDeploy(artifactStore: ArtifactStore,
+                              repoRefResolver: RepoRefResolver,
                               endpointGoal: Goal,
                               target: Target): ExecuteGoalWithLog {
 
@@ -51,7 +53,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
             atomistTeam);
 
         await Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
-            {endpointGoal, rwlc, deployment})));
+            {endpointGoal, rwlc, deployment, repoRefResolver})));
 
         return Success;
     };

@@ -19,7 +19,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { DryRunContext } from "../../../api/command/editor/dry-run/dryRunEditor";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
 
@@ -32,6 +32,8 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
 
+    constructor(private readonly repoRefResolver: RepoRefResolver) {}
+
     public async handle(event: EventFired<OnBuildCompleteForDryRun.Subscription>,
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
@@ -39,7 +41,7 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
         const commit = build.commit;
 
         // TODO currently Github only
-        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
+        const id = params.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
         const branch = build.commit.pushes[0].branch;
 
         logger.debug("Assessing dry run for %j: Statuses=%j", id, commit.statuses);

@@ -15,9 +15,10 @@
  */
 
 import { SoftwareDeliveryMachine } from "../../../../api/machine/SoftwareDeliveryMachine";
+import { ConcreteSoftwareDeliveryMachineOptions } from "../../../../machine/ConcreteSoftwareDeliveryMachineOptions";
 import { createPendingGitHubStatusOnGoalSet, SetGitHubStatusOnGoalCompletion } from "./github/gitHubStatusSetters";
 
-export function summarizeGoalsInGitHubStatus(sdm: SoftwareDeliveryMachine): SoftwareDeliveryMachine {
+export function summarizeGoalsInGitHubStatus(sdm: SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions>): SoftwareDeliveryMachine {
     sdm.addGoalsSetListeners(createPendingGitHubStatusOnGoalSet(sdm.options.credentialsResolver));
     sdm.addGoalCompletionListeners(SetGitHubStatusOnGoalCompletion());
     return sdm;

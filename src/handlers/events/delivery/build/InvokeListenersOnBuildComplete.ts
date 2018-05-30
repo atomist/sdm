@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { BuildListener, BuildListenerInvocation } from "../../../../api/listener/BuildListener";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnBuildComplete } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
@@ -30,6 +30,7 @@ import { CredentialsResolver } from "../../../common/CredentialsResolver";
 export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComplete.Subscription> {
 
     constructor(private readonly listeners: BuildListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
     }
 
@@ -38,7 +39,7 @@ export class InvokeListenersOnBuildComplete implements HandleEvent<OnBuildComple
                         params: this): Promise<HandlerResult> {
         const build = event.data.Build[0];
         const repo = build.commit.repo;
-        const id = toRemoteRepoRef(repo);
+        const id = this.repoRefResolver.toRemoteRepoRef(repo, {});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);

@@ -28,11 +28,11 @@ import {
     Value,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { repoRefFromPush } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyCompletedSdmGoal } from "../../../../typings/types";
 
 /**
@@ -44,7 +44,8 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
     @Value("token")
     public token: string;
 
-    constructor(private readonly credentialsFactory: CredentialsResolver,
+    constructor(private readonly repoRefResolver: RepoRefResolver,
+                private readonly credentialsFactory: CredentialsResolver,
                 private readonly goalCompletionListeners: GoalCompletionListener[]) {
     }
 
@@ -59,7 +60,7 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
 
         const commit = await fetchCommitForSdmGoal(context, sdmGoal);
         const push = commit.pushes[0];
-        const id = repoRefFromPush(push);
+        const id = this.repoRefResolver.repoRefFromPush(push);
         const allGoals: SdmGoal[] = sumSdmGoalEventsByOverride(
             await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
 

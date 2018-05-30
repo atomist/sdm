@@ -3,20 +3,20 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
-import { softwareDeliveryMachineOptions } from "../../machine/sdmOptions";
-import { SoftwareDeliveryMachineOptions } from "../../machine/SoftwareDeliveryMachineOptions";
+import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
+import { defaultSoftwareDeliveryMachineOptions } from "../../machine/defaultSoftwareDeliveryMachineOptions";
 
 export interface ConfigureOptions {
-    sdmOptions?: Partial<SoftwareDeliveryMachineOptions>;
+    sdmOptions?: Partial<ConcreteSoftwareDeliveryMachineOptions>;
     requiredConfigurationValues?: string[];
 }
 
 export function configureSdm(
-    machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
+    machineMaker: (options: ConcreteSoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
     options: ConfigureOptions = {}) {
     return async (config: Configuration) => {
         const sdmOptions = {
-            ...softwareDeliveryMachineOptions(config),
+            ...defaultSoftwareDeliveryMachineOptions(config),
             ...(options.sdmOptions ? options.sdmOptions : {}),
         };
         const machine = machineMaker(sdmOptions, config);
@@ -24,7 +24,11 @@ export function configureSdm(
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
             config.listeners.push(
-                new GoalAutomationEventListener(machine.goalFulfillmentMapper, machine.options.projectLoader, machine.options.logFactory));
+                new GoalAutomationEventListener(
+                    machine.goalFulfillmentMapper,
+                    machine.options.projectLoader,
+                    machine.options.repoRefResolver,
+                    machine.options.logFactory));
             config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
             // force ephemeral policy and no handlers or ingesters
             config.policy = "ephemeral";

@@ -16,10 +16,10 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { DeploymentListener, DeploymentListenerInvocation } from "../../../../api/listener/DeploymentListener";
 import { StagingDeploymentGoal } from "../../../../api/machine/wellKnownGoals";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
@@ -37,6 +37,7 @@ import { CredentialsResolver } from "../../../common/CredentialsResolver";
 export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     constructor(private readonly listeners: DeploymentListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {}
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
@@ -49,7 +50,7 @@ export class OnDeployStatus implements HandleEvent<OnSuccessStatus.Subscription>
             return Success;
         }
         const addressChannels = addressChannelsFor(commit.repo, context);
-        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const id = params.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha });
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const dil: DeploymentListenerInvocation = {

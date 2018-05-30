@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { CredentialsResolver } from "../handlers/common/CredentialsResolver";
-import { ArtifactStore } from "../spi/artifact/ArtifactStore";
-import { ProgressLogFactory } from "../spi/log/ProgressLog";
-import { ProjectLoader } from "../spi/project/ProjectLoader";
+import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
+import { ProgressLogFactory } from "../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 
 /**
- * Infrastructure options for a SoftwareDeliveryMachine.
+ * Infrastructure options common to all SoftwareDeliveryMachines.
  * Can be used to control the behavior of an SDM, and
  * also to facilitate testing.
  */
@@ -42,8 +42,6 @@ export interface SoftwareDeliveryMachineOptions {
      */
     logFactory: ProgressLogFactory;
 
-    /**
-     * Strategy for resolving credentials from a handler invocation
-     */
-    credentialsResolver: CredentialsResolver;
+    repoRefResolver: RepoRefResolver;
+
 }

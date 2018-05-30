@@ -33,7 +33,6 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { providerIdFromPush, repoRefFromPush, toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { ExecuteGoalWithLog } from "../../../../api/goal/ExecuteGoalWithLog";
 import { Goal, hasPreconditions } from "../../../../api/goal/Goal";
@@ -42,7 +41,7 @@ import {
     isGoalImplementation,
     isSideEffect,
     SdmGoalImplementationMapper,
-} from "../../../../api/goal/SdmGoalImplementationMapper";
+} from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { GoalsSetListener, GoalsSetListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { GoalSetter } from "../../../../api/mapping/GoalSetter";
@@ -50,6 +49,7 @@ import { PushRules } from "../../../../api/mapping/support/PushRules";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
@@ -68,20 +68,23 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
      * @param credentialsFactory credentials factory
      */
     constructor(private readonly projectLoader: ProjectLoader,
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly goalSetters: GoalSetter[],
                 public readonly goalsListeners: GoalsSetListener[],
                 private readonly implementationMapping: SdmGoalImplementationMapper,
-                private readonly credentialsFactory: CredentialsResolver) {}
+                private readonly credentialsFactory: CredentialsResolver) {
+    }
 
     public async handle(event: EventFired<OnPushToAnyBranch.Subscription>,
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const push: OnPushToAnyBranch.Push = event.data.Push[0];
-        const id: RemoteRepoRef = toRemoteRepoRef(push.repo);
+        const id: RemoteRepoRef = params.repoRefResolver.toRemoteRepoRef(push.repo, {});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         await chooseAndSetGoals({
             projectLoader: params.projectLoader,
+            repoRefResolver: params.repoRefResolver,
             goalsListeners: params.goalsListeners,
             goalSetters: params.goalSetters,
             implementationMapping: params.implementationMapping,
@@ -96,6 +99,7 @@ export class SetGoalsOnPush implements HandleEvent<OnPushToAnyBranch.Subscriptio
 
 export interface ChooseAndSetGoalsRules {
     projectLoader: ProjectLoader;
+    repoRefResolver: RepoRefResolver;
     goalsListeners: GoalsSetListener[];
     goalSetters: GoalSetter[];
     implementationMapping: SdmGoalImplementationMapper;
@@ -107,14 +111,14 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                             credentials: ProjectOperationCredentials,
                                             push: PushFields.Fragment,
                                         }) {
-    const {projectLoader, goalsListeners, goalSetters, implementationMapping} = rules;
+    const {projectLoader, goalsListeners, goalSetters, implementationMapping, repoRefResolver} = rules;
     const {context, credentials, push} = parameters;
-    const id = repoRefFromPush(push);
+    const id = repoRefResolver.repoRefFromPush(push);
     const addressChannels = addressChannelsFor(push.repo, context);
     const goalSetId = guid();
 
     const {determinedGoals, goalsToSave} = await determineGoals(
-        {projectLoader, goalSetters, implementationMapping}, {
+        {projectLoader, repoRefResolver, goalSetters, implementationMapping}, {
             credentials, id, context, push, addressChannels, goalSetId,
         });
 
@@ -136,6 +140,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 
 export async function determineGoals(rules: {
                                          projectLoader: ProjectLoader,
+                                         repoRefResolver: RepoRefResolver,
                                          goalSetters: GoalSetter[],
                                          implementationMapping: SdmGoalImplementationMapper,
                                      },
@@ -150,8 +155,8 @@ export async function determineGoals(rules: {
     determinedGoals: Goals | undefined,
     goalsToSave: SdmGoal[],
 }> {
-    const {projectLoader, goalSetters, implementationMapping} = rules;
-    const {credentials, id, context, push, addressChannels, goalSetId } = circumstances;
+    const {projectLoader, repoRefResolver, goalSetters, implementationMapping} = rules;
+    const {credentials, id, context, push, addressChannels, goalSetId} = circumstances;
     return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
         const pli: PushListenerInvocation = {
             project,
@@ -165,13 +170,14 @@ export async function determineGoals(rules: {
         if (!determinedGoals) {
             return {determinedGoals: undefined, goalsToSave: []};
         }
-        const goalsToSave = await sdmGoalsFromGoals(implementationMapping, pli, determinedGoals, goalSetId);
+        const goalsToSave = await sdmGoalsFromGoals(implementationMapping, repoRefResolver, pli, determinedGoals, goalSetId);
         return {determinedGoals, goalsToSave};
     });
 
 }
 
 async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMapper,
+                                 repoRefResolver: RepoRefResolver,
                                  pli: PushListenerInvocation,
                                  determinedGoals: Goals,
                                  goalSetId: string) {
@@ -182,7 +188,7 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
             goal: g,
             state: hasPreconditions(g) ? "planned" : "requested",
             id: pli.id,
-            providerId: providerIdFromPush(pli.push),
+            providerId: repoRefResolver.providerIdFromPush(pli.push),
             fulfillment: await fulfillment({implementationMapping}, g, pli),
         })));
 }

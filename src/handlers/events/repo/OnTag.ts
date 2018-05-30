@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../api/context/addressChannels";
 import { TagListener, TagListenerInvocation } from "../../../api/listener/TagListener";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
@@ -29,6 +29,7 @@ import { CredentialsResolver } from "../../common/CredentialsResolver";
 export class OnTag implements HandleEvent<schema.OnTag.Subscription> {
 
     constructor(private readonly listeners: TagListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {}
 
     public async handle(event: EventFired<schema.OnTag.Subscription>,
@@ -36,7 +37,7 @@ export class OnTag implements HandleEvent<schema.OnTag.Subscription> {
                         params: this): Promise<HandlerResult> {
         const tag = event.data.Tag[0];
         const repo = tag.commit.repo;
-        const id = toRemoteRepoRef(repo);
+        const id = params.repoRefResolver.toRemoteRepoRef(repo, {});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const addressChannels = addressChannelsFor(repo, context);
         const invocation: TagListenerInvocation = {

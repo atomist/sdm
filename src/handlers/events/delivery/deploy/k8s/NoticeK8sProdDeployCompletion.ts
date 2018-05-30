@@ -17,8 +17,8 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Secret, Secrets, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { toRemoteRepoRef } from "../../../../../api/command/editor/support/repoRef";
 import { Goal } from "../../../../../api/goal/Goal";
+import { RepoRefResolver } from "../../../../../spi/repo-ref/RepoRefResolver";
 import { OnAParticularStatus } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 import { k8AutomationDeployContext, K8TargetBase } from "./RequestK8sDeploys";
@@ -50,7 +50,8 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
      * @param {Goal} endpointGoal
      */
     constructor(private readonly deployGoal: Goal,
-                private readonly endpointGoal: Goal) {
+                private readonly endpointGoal: Goal,
+                private readonly repoRefResolver: RepoRefResolver) {
     }
 
     public async handle(event: EventFired<OnAParticularStatus.Subscription>,
@@ -72,7 +73,7 @@ export class NoticeK8sProdDeployCompletionOnStatus implements HandleEvent<OnAPar
         logger.info(`Recognized deploy result. ${status.state} status: ${status.context}: ${status.description}`);
 
         // TODO this is Github only
-        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
+        const id = params.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
         await createStatus(params.githubToken, id, {
             context: params.deployGoal.context,
             state: status.state,

@@ -16,11 +16,11 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../api/listener/VerifiedDeploymentListener";
 import { StagingVerifiedGoal } from "../../../../api/machine/wellKnownGoals";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
@@ -38,6 +38,7 @@ import { CredentialsResolver } from "../../../common/CredentialsResolver";
 export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.Subscription> {
 
     constructor(private readonly listeners: VerifiedDeploymentListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {}
 
     public async handle(event: EventFired<OnSuccessStatus.Subscription>,
@@ -51,7 +52,7 @@ export class OnVerifiedDeploymentStatus implements HandleEvent<OnSuccessStatus.S
             return Success;
         }
 
-        const id = toRemoteRepoRef(commit.repo, { sha: commit.sha });
+        const id = this.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha });
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
         const vdi: VerifiedDeploymentListenerInvocation = {
             id,

@@ -17,7 +17,6 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
-import { toRemoteRepoRef } from "../../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import {
     FingerprintDifference,
@@ -25,6 +24,7 @@ import {
     FingerprintDifferenceListenerInvocation,
     FingerprintValue,
 } from "../../../../api/listener/FingerprintDifferenceListener";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
@@ -36,6 +36,7 @@ export class ReactToSemanticDiffsOnPushImpact
     implements HandleEvent<schema.OnPushImpact.Subscription> {
 
     constructor(private readonly differenceListeners: FingerprintDifferenceListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
     }
 
@@ -45,7 +46,7 @@ export class ReactToSemanticDiffsOnPushImpact
         const pushImpact = event.data.PushImpact[0];
 
         const after = pushImpact.push.after;
-        const id = toRemoteRepoRef(after.repo, { sha: after.sha });
+        const id = params.repoRefResolver.toRemoteRepoRef(after.repo, { sha: after.sha });
 
         const oldFingerprints = pushImpact.push.before.fingerprints;
         const newFingerprints = after.fingerprints;

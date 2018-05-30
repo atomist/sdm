@@ -16,8 +16,6 @@
 
 import {
     automationClientInstance,
-    HandlerContext,
-    HandlerResult,
     logger,
     Secrets,
 } from "@atomist/automation-client";
@@ -32,23 +30,18 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import { AutomationEventListenerSupport } from "@atomist/automation-client/server/AutomationEventListener";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/SdmGoalImplementationMapper";
-import { ProgressLog, ProgressLogFactory } from "../../../../spi/log/ProgressLog";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
+import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
-import { OnAnyRequestedSdmGoal, SdmGoalById } from "../../../../typings/types";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
+import { SdmGoalById } from "../../../../typings/types";
 import { FulfillGoalOnRequested } from "./FulfillGoalOnRequested";
-
-/**
- * Launch a goal in an isolated environment (container or process) for fulfillment.
- */
-export type IsolatedGoalLauncher = (goal: OnAnyRequestedSdmGoal.SdmGoal,
-                                    ctx: HandlerContext,
-                                    progressLog: ProgressLog) => Promise<HandlerResult>;
 
 export class GoalAutomationEventListener extends AutomationEventListenerSupport {
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly logFactory: ProgressLogFactory) {
         super();
     }
@@ -56,7 +49,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
     public eventIncoming(payload: EventIncoming) {
         if (cluster.isWorker) {
             // Register event handler locally only
-            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.logFactory);
+            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.repoRefResolver, this.logFactory);
             automationClientInstance().withEventHandler(maker);
         }
     }
@@ -83,7 +76,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
             });
 
             // Register event handler locally only
-            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.logFactory);
+            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.repoRefResolver, this.logFactory);
             automationClientInstance().withEventHandler(maker);
 
             // Create event and run event handler

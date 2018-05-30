@@ -21,11 +21,11 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
-import { toRemoteRepoRef } from "../../api/command/editor/support/repoRef";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { LogInterpretation } from "../../spi/log/InterpretedLog";
 import { BuildUrlBySha } from "../../typings/types";
 import { tipOfDefaultBranch } from "../../util/github/ghub";
+import { DefaultRepoRefResolver } from "../common/DefaultRepoRefResolver";
 import { displayBuildLogFailure } from "../events/delivery/build/SetStatusOnBuildComplete";
 
 @Parameters()
@@ -50,7 +50,8 @@ function displayBuildLogForCommit(interpreter?: LogInterpretation) {
         const sha = params.sha ? params.sha :
             await tipOfDefaultBranch(params.githubToken, new GitHubRepoRef(params.owner, params.repo)); // TODO: use fetchDefaultBranchTip
 
-        const id = toRemoteRepoRef(params, {sha});
+        // TODO get rid of hard coding
+        const id = new DefaultRepoRefResolver().toRemoteRepoRef(params, {sha});
         const ac: AddressChannels = (msg, opts) => ctx.messageClient.respond(msg, opts);
         const build = await fetchBuildUrl(ctx, id);
 

@@ -16,10 +16,10 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../api/listener/ChannelLinkListenerInvocation";
 import { ProjectLoader } from "../../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
@@ -31,6 +31,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
 
     constructor(
         private readonly projectLoader: ProjectLoader,
+        private readonly repoRefResolver: RepoRefResolver,
         private readonly listeners: ChannelLinkListener[],
         private readonly credentialsFactory: CredentialsResolver) {
     }
@@ -39,7 +40,7 @@ export class OnChannelLink implements HandleEvent<schema.OnChannelLink.Subscript
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const repo = event.data.ChannelLink[0].repo;
-        const id = toRemoteRepoRef(repo);
+        const id = params.repoRefResolver.toRemoteRepoRef(repo, {});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repo, context);

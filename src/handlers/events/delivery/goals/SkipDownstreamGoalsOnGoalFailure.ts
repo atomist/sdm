@@ -24,10 +24,10 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { repoRefFromSdmGoal } from "../../../../api/command/editor/support/repoRef";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
 import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
@@ -37,13 +37,16 @@ import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstrea
 @EventHandler("Fail downstream goals on a goal failure", subscription("OnAnyFailedSdmGoal"))
 export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailedSdmGoal.Subscription> {
 
+    constructor(private readonly repoRefResolver: RepoRefResolver) {}
+
     // #98: GitHub Status->SdmGoal: We still have to respond to failure on status,
     // until we change all the failure updates to happen on SdmGoal.
     // but we can update the SdmGoals, and let that propagate to the statuses.
     // we can count on all of the statuses we need to update to exist as SdmGoals.
     // however, we can't count on the SdmGoal to have the latest state, so check the Status for that.
     public async handle(event: EventFired<OnAnyFailedSdmGoal.Subscription>,
-                        context: HandlerContext): Promise<HandlerResult> {
+                        context: HandlerContext,
+                        params: this): Promise<HandlerResult> {
 
         const failedGoal = event.data.SdmGoal[0] as SdmGoal;
 
@@ -52,7 +55,7 @@ export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
             return Promise.resolve(Success);
         }
 
-        const id = repoRefFromSdmGoal(failedGoal, await fetchScmProvider(context, failedGoal.repo.providerId));
+        const id = params.repoRefResolver.repoRefFromSdmGoal(failedGoal, await fetchScmProvider(context, failedGoal.repo.providerId));
         const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, failedGoal.repo.providerId) as SdmGoal[],
             [failedGoal]);
 

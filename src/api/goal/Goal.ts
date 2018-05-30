@@ -21,8 +21,8 @@ import {
     GitHubStatusAndFriends,
     GitHubStatusContext,
 } from "../../internal/delivery/goals/support/github/gitHubContext";
-import { requiresApproval } from "./common/approvalGate";
-import { GoalEnvironment } from "./common/environment";
+import { requiresApproval } from "./support/approvalGate";
+import { GoalEnvironment } from "./support/environment";
 
 /**
  * Core data for a goal

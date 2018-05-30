@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { addressChannelsFor } from "../../../api/context/addressChannels";
 import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../api/listener/ClosedIssueListener";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
@@ -31,6 +31,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
     private readonly closedIssueListeners: ClosedIssueListener[];
 
     constructor(closedIssueListeners: ClosedIssueListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
         this.closedIssueListeners = closedIssueListeners;
     }
@@ -39,7 +40,7 @@ export class ClosedIssueHandler implements HandleEvent<schema.OnClosedIssue.Subs
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const issue = event.data.Issue[0];
-        const id = toRemoteRepoRef(issue.repo);
+        const id = params.repoRefResolver.toRemoteRepoRef(issue.repo, {});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels = addressChannelsFor(issue.repo, context);

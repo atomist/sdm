@@ -17,9 +17,9 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { toRemoteRepoRef } from "../../../api/command/editor/support/repoRef";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { ProjectListener, ProjectListenerInvocation } from "../../../api/listener/ProjectListener";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 
@@ -30,6 +30,7 @@ import { CredentialsResolver } from "../../common/CredentialsResolver";
 export class OnRepoOnboarded implements HandleEvent<schema.OnRepoOnboarded.Subscription> {
 
     constructor(private readonly actions: ProjectListener[],
+                private readonly repoRefResolver: RepoRefResolver,
                 private readonly credentialsFactory: CredentialsResolver) {
     }
 
@@ -37,8 +38,7 @@ export class OnRepoOnboarded implements HandleEvent<schema.OnRepoOnboarded.Subsc
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const repoOnboarded = event.data.RepoOnboarded[0];
-
-        const id = toRemoteRepoRef(repoOnboarded.repo, {branch: repoOnboarded.repo.defaultBranch});
+        const id = params.repoRefResolver.toRemoteRepoRef(repoOnboarded.repo, {branch: repoOnboarded.repo.defaultBranch});
         const credentials = this.credentialsFactory.eventHandlerCredentials(context, id);
 
         const addressChannels: AddressChannels = addressChannelsFor(repoOnboarded.repo, context);

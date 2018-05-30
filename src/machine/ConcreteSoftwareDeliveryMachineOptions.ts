@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-import { Goal } from "../Goal";
-import { IndependentOfEnvironment } from "../support/environment";
+import { SoftwareDeliveryMachineOptions } from "../api/machine/SoftwareDeliveryMachineOptions";
+import { CredentialsResolver } from "../handlers/common/CredentialsResolver";
 
 /**
- * Goal that sends a message
+ * Infrastructure options for a SoftwareDeliveryMachine.
+ * Can be used to control the behavior of an SDM, and
+ * also to facilitate testing.
  */
-export class MessageGoal extends Goal {
+export interface ConcreteSoftwareDeliveryMachineOptions extends SoftwareDeliveryMachineOptions {
 
-    constructor(uniqueName: string) {
-        super({
-            uniqueName,
-            environment: IndependentOfEnvironment,
-            orderedName: `0-message-${uniqueName}`,
-            completedDescription: "Sent",
-        });
-    }
-
+    /**
+     * Strategy for resolving credentials from a handler invocation
+     */
+    credentialsResolver: CredentialsResolver;
 }
