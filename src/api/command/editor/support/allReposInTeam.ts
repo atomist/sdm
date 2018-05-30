@@ -19,7 +19,6 @@ import { twoTierDirectoryRepoFinder } from "@atomist/automation-client/operation
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
-import { DefaultRepoRefResolver } from "../../../../handlers/common/DefaultRepoRefResolver";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { ReposInTeam } from "../../../../typings/types";
 
@@ -32,8 +31,7 @@ const PageSize = 100;
  * @param cwd directory to look in if this is local
  * @constructor
  */
-// TODO get rid of this hard coded default
-export function allReposInTeam(rrr: RepoRefResolver = new DefaultRepoRefResolver(), cwd?: string): RepoFinder {
+export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
     return (context: HandlerContext) => {
         if (cwd) {
             return twoTierDirectoryRepoFinder(cwd)(context);

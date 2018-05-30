@@ -1,4 +1,4 @@
-import { ExtensionPack } from "../..";
+import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { createRepoHandler } from "./createRepo";
 import { listGeneratorsHandler } from "./listGenerators";
 import { selfDescribeHandler } from "./SelfDescribe";

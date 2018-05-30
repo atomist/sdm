@@ -23,8 +23,9 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
-import { ExtensionPack, MessageGoal } from "../../src";
+import { MessageGoal } from "../../src/api/goal/common/MessageGoal";
 import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
+import { ExtensionPack } from "../../src/api/machine/ExtensionPack";
 import { when } from "../../src/dsl/buildDsl";
 import { HttpServiceGoals } from "../../src/goal/common/httpServiceGoals";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";

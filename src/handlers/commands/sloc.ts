@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandlerContext } from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { editorCommand } from "../../api/command/editor/editorCommand";
-import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { SdmCommandMakerFactory } from "../../api/command/SdmCommandMakerFactory";
+import { EmptyParameters } from "../../api/command/support/EmptyParameters";
 import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 
 /**
@@ -26,7 +27,8 @@ import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
  * to Slack, across understood languages.
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const slocCommand: HandleCommand = editorCommand<EmptyParameters>(
+export const slocCommand: SdmCommandMakerFactory = sdm => () => editorCommand<EmptyParameters>(
+    sdm,
     () => computeSloc,
     "sloc",
     EmptyParameters, {

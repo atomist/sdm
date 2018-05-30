@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GoalSetter } from "../..";
+import { GoalSetter } from "../mapping/GoalSetter";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**

@@ -17,7 +17,7 @@
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { enrichGoalSetters } from "../..";
+import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";

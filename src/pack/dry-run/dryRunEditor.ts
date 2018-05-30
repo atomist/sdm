@@ -15,7 +15,6 @@
  */
 
 import { HandleCommand, logger } from "@atomist/automation-client";
-import { allReposInTeam } from "@atomist/automation-client/operations/common/allReposInTeamRepoFinder";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
@@ -25,9 +24,10 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { EditModeSuggestion } from "../../api/command/editor/EditModeSuggestion";
 import { toEditorOrReviewerParametersMaker } from "../../api/command/editor/editorCommand";
+import { allReposInTeam } from "../../api/command/editor/support/allReposInTeam";
 import { chattyEditorFactory } from "../../api/command/editor/support/editorWrappers";
-import { EmptyParameters } from "../../api/command/EmptyParameters";
-import { CachingProjectLoader } from "../../api/project/CachingProjectLoader";
+import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { MachineOrMachineOptions, toMachineOptions } from "../../api/machine/support/toMachineOptions";
 import { projectLoaderRepoLoader } from "../../api/project/projectLoaderRepoLoader";
 import { Status } from "../../util/github/ghub";
 import { NewBranchWithStatus } from "./support/NewBranchWithStatus";
@@ -35,35 +35,38 @@ import { NewBranchWithStatus } from "./support/NewBranchWithStatus";
 export const DryRunContext = "atomist-dry-run";
 
 /**
- * Wrap an editor in a command handler that sets a dry run status.
+ * Wrap an editorCommand in a command handler that sets a dry run status.
  * Typically used to wait for build success or failure, resulting in issue or PR.
  * Allows use of custom parameters as in editorCommand
  * Targeting (targets property) is handled automatically if the parameters
  * do not implement TargetsParams
- * @param edd function to make a fresh editor instance from the params
- * @param name editor name
+ * @param sdm sdm machine or machine options
+ * @param edd function to make a fresh editorCommand instance from the params
+ * @param name editorCommand name
  * @param paramsMaker parameters factory, typically the name of a class with a no arg constructor
  * @param details optional details to customize behavior
  * @param targets targets parameters. Allows targeting to other source control systems
  * Add intent "try edit <name>"
  */
-export function dryRunEditor<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
-                                                       paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
-                                                       name: string,
-                                                       details: Partial<EditorCommandDetails<PARAMS>> = {},
-                                                       targets: FallbackParams =
-                                                           new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
+export function dryRunEditor<PARAMS = EmptyParameters>(
+    sdm: MachineOrMachineOptions,
+    edd: (params: PARAMS) => AnyProjectEditor,
+    paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
+    name: string,
+    details: Partial<EditorCommandDetails<PARAMS>> = {},
+    targets: FallbackParams =
+        new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
     if (!!details.editMode) {
         throw new Error("Cannot set editMode for dryRunEditor");
     }
     const detailsToUse: EditorCommandDetails = {
         description: details.description || name,
         intent: `try edit ${name}`,
-        repoFinder: allReposInTeam(),
+        repoFinder: allReposInTeam(toMachineOptions(sdm).repoRefResolver),
         repoLoader:
-            p => projectLoaderRepoLoader(new CachingProjectLoader(), p.targets.credentials),
+            p => projectLoaderRepoLoader(toMachineOptions(sdm).projectLoader, p.targets.credentials),
         editMode: ((params: PARAMS & EditorOrReviewerParameters) => {
-            logger.info("About to create edit mode for dry run editor: params=%j", params);
+            logger.info("About to create edit mode for dry run editorCommand: params=%j", params);
             const description = (params as any as EditModeSuggestion).desiredPullRequestTitle || details.description || name;
             const status: Status = {
                 context: DryRunContext,

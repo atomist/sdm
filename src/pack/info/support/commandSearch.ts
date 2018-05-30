@@ -28,7 +28,7 @@ export interface HandlerInfo {
 /**
  * Return command handlers with a given tag.
  * Note this may not find all, but it will find those that know their
- * own metadata, which is true of all those returned by generatorHandler
+ * own metadata, which is true of all those returned by generatorCommand
  * and the underlying commandHandlerFrom
  * @param {FunctionalUnit} unit
  * @param {string} tag

@@ -7,8 +7,8 @@ import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
 
 /**
- * Create a project editor wrapping spawned local commands
- * run on the project. For example, allows use of tslint as an editor.
+ * Create a project editorCommand wrapping spawned local commands
+ * run on the project. For example, allows use of tslint as an editorCommand.
  * @param {SpawnCommand[]} commands to execute
  * @param log progress log (optional, stream to console if not passed in)
  * @return {ProjectEditor}
