@@ -99,7 +99,7 @@ export function watchSpawned(childProcess: ChildProcess,
         childProcess.stdout.on("data", sendToLog);
         childProcess.stderr.on("data", sendToLog);
         childProcess.addListener("exit", (code, signal) => {
-            logger.info("Spawn exit (pid=%d): code=%d, signal=%s", childProcess.pid, code, signal);
+            logger.info("Spawn exit (pid=%d): code=%d, signal=%d", childProcess.pid, code, signal);
             resolve({
                 error: optsToUse.errorFinder(code, signal, log),
                 code,
