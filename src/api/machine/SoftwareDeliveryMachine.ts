@@ -103,8 +103,10 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
     addFunctionalUnits(...fus: FunctionalUnit[]): this;
 
     /**
-     * Add capabilities from these extension packs. Primary SDM extension
-     * mechanism. Extension packs are typically brought in as Node modules.
+     * Add capabilities from these extension packs.
+     * This is the primary SDM extension
+     * mechanism. Extension packs are typically brought in as Node modules,
+     * and can contribute goals as well configure SDM behavior.
      * @param {ExtensionPack} packs
      * @return {this}
      */
