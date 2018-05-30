@@ -15,7 +15,7 @@
  */
 
 import { PushImpactListenerInvocation } from "../listener/PushImpactListener";
-import { PushRegistration } from "../listener/PushRegistration";
+import { PushRegistration } from "./PushRegistration";
 
 /**
  * A code action response that affects delivery:

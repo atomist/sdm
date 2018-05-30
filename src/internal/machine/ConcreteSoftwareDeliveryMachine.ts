@@ -25,10 +25,8 @@ import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
-import { EditorRegistration } from "../../api/machine/EditorRegistration";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
-import { GeneratorRegistration } from "../../api/machine/GeneratorRegistration";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { ListenerRegistrationSupport } from "../../api/machine/support/ListenerRegistrationSupport";
 import {
@@ -52,6 +50,8 @@ import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
+import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { executeAutofixes } from "../../code/autofix/executeAutofixes";
 import { SdmGoalImplementationMapperImpl } from "../../goal/SdmGoalImplementationMapperImpl";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
@@ -359,7 +359,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
         const commands = gens.map(e => () => generatorCommand(
             this,
-            e.editor,
+            e.createEditor,
             e.name,
             e.paramsMaker,
             e,
@@ -373,7 +373,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
             return () => fun(
                 this,
-                e.editor,
+                e.createEditor,
                 e.name,
                 e.paramsMaker,
                 e,

@@ -18,7 +18,7 @@ import { HandlerContext } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { EmptyParameters } from "../../api/command/support/EmptyParameters";
-import { EditorRegistration } from "../../api/machine/EditorRegistration";
+import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 
 /**
@@ -28,7 +28,7 @@ import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
  */
 export const slocCommand: EditorRegistration = {
     name: "sloc",
-    editor: () => computeSloc,
+    createEditor: () => computeSloc,
     intent: ["compute sloc", "sloc"],
 };
 

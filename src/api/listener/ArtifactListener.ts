@@ -15,8 +15,8 @@
  */
 
 import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
+import { PushRegistration } from "../registration/PushRegistration";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
-import { PushRegistration } from "./PushRegistration";
 
 export interface ArtifactListenerInvocation extends RepoListenerInvocation {
 
