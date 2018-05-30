@@ -23,14 +23,14 @@ import { GitHubFallbackReposParameters } from "@atomist/automation-client/operat
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { Status } from "../../../../util/github/ghub";
-import { CachingProjectLoader } from "../../../project/CachingProjectLoader";
-import { projectLoaderRepoLoader } from "../../../project/projectLoaderRepoLoader";
-import { EmptyParameters } from "../../EmptyParameters";
-import { EditModeSuggestion } from "../EditModeSuggestion";
-import { toEditorOrReviewerParametersMaker } from "../editorCommand";
-import { chattyEditorFactory } from "../support/editorWrappers";
-import { NewBranchWithStatus } from "./NewBranchWithStatus";
+import { EditModeSuggestion } from "../../api/command/editor/EditModeSuggestion";
+import { toEditorOrReviewerParametersMaker } from "../../api/command/editor/editorCommand";
+import { chattyEditorFactory } from "../../api/command/editor/support/editorWrappers";
+import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { CachingProjectLoader } from "../../api/project/CachingProjectLoader";
+import { projectLoaderRepoLoader } from "../../api/project/projectLoaderRepoLoader";
+import { Status } from "../../util/github/ghub";
+import { NewBranchWithStatus } from "./support/NewBranchWithStatus";
 
 export const DryRunContext = "atomist-dry-run";
 

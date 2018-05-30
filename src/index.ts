@@ -3,8 +3,6 @@ export * from "./api/command/commonPatterns";
 export * from "./api/command/editor/BitBucketTargetsParams";
 export * from "./api/command/editor/EditModeSuggestion";
 export * from "./api/command/editor/editorCommand";
-export * from "./api/command/editor/dry-run/NewBranchWithStatus";
-export * from "./api/command/editor/dry-run/dryRunEditor";
 export * from "./api/command/editor/support/allReposInTeam";
 export * from "./api/command/editor/support/confirmEditedness";
 export * from "./api/command/editor/support/editorWrappers";

@@ -18,10 +18,10 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, l
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { raiseIssue } from "@atomist/automation-client/util/gitHub";
-import { DryRunContext } from "../../../api/command/editor/dry-run/dryRunEditor";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { OnBuildCompleteForDryRun } from "../../../typings/types";
 import { createStatus } from "../../../util/github/ghub";
+import { DryRunContext } from "../dryRunEditor";
 
 /**
  * React to to result of a dry run build to raise a PR or issue
@@ -32,7 +32,8 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
     @Secret(Secrets.OrgToken)
     private readonly githubToken: string;
 
-    constructor(private readonly repoRefResolver: RepoRefResolver) {}
+    constructor(private readonly repoRefResolver: RepoRefResolver) {
+    }
 
     public async handle(event: EventFired<OnBuildCompleteForDryRun.Subscription>,
                         ctx: HandlerContext,
@@ -41,7 +42,7 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
         const commit = build.commit;
 
         // TODO currently Github only
-        const id = params.repoRefResolver.toRemoteRepoRef(commit.repo, { sha: commit.sha }) as GitHubRepoRef;
+        const id = params.repoRefResolver.toRemoteRepoRef(commit.repo, {sha: commit.sha}) as GitHubRepoRef;
         const branch = build.commit.pushes[0].branch;
 
         logger.debug("Assessing dry run for %j: Statuses=%j", id, commit.statuses);
@@ -51,34 +52,39 @@ export class OnDryRunBuildComplete implements HandleEvent<OnBuildCompleteForDryR
             return Success;
         }
 
-        if (build.status === "passed") {
-            logger.info("Raising PR for successful dry run on %j", id);
-            await id.raisePullRequest({token: params.githubToken},
-                dryRunStatus.description,
-                dryRunStatus.description,
-                branch,
-                "master");
-            await createStatus(params.githubToken, id, {
-                context: DryRunContext,
-                target_url: dryRunStatus.targetUrl,
-                description: dryRunStatus.description,
-                state: "success",
-            });
-        } else if (build.status === "failed" || build.status === "broken") {
-            logger.info("Raising issue for failed dry run on %j on branch %s,", id, branch);
-            let body = "Details:\n\n";
-            body += !!build.buildUrl ? `[Build log](${build.buildUrl})` : "No build log available";
-            body += `\n\n[Branch with failure](${id.url}/tree/${branch} "Failing branch ${branch}")`;
-            await raiseIssue(params.githubToken, id, {
-                title: `Failed to ${dryRunStatus.description}`,
-                body,
-            });
-            await createStatus(params.githubToken, id, {
-                context: DryRunContext,
-                target_url: dryRunStatus.targetUrl,
-                description: dryRunStatus.description,
-                state: "failure",
-            });
+        switch (build.status) {
+            case "passed":
+                logger.info("Raising PR for successful dry run on %j", id);
+                await id.raisePullRequest({token: params.githubToken},
+                    dryRunStatus.description,
+                    dryRunStatus.description,
+                    branch,
+                    "master");
+                await createStatus(params.githubToken, id, {
+                    context: DryRunContext,
+                    target_url: dryRunStatus.targetUrl,
+                    description: dryRunStatus.description,
+                    state: "success",
+                });
+                break;
+
+            case "failed" :
+            case "broken":
+                logger.info("Raising issue for failed dry run on %j on branch %s,", id, branch);
+                let body = "Details:\n\n";
+                body += !!build.buildUrl ? `[Build log](${build.buildUrl})` : "No build log available";
+                body += `\n\n[Branch with failure](${id.url}/tree/${branch} "Failing branch ${branch}")`;
+                await raiseIssue(params.githubToken, id, {
+                    title: `Failed to ${dryRunStatus.description}`,
+                    body,
+                });
+                await createStatus(params.githubToken, id, {
+                    context: DryRunContext,
+                    target_url: dryRunStatus.targetUrl,
+                    description: dryRunStatus.description,
+                    state: "failure",
+                });
+                break;
         }
         return Success;
     }
