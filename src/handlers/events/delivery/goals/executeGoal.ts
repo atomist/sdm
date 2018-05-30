@@ -29,8 +29,28 @@ import { spawnAndWatch } from "../../../../util/misc/spawned";
 import { sprintf } from "sprintf-js";
 
 import * as stringify from "json-stringify-safe";
-import { reportGoalError } from "../../../../internal/delivery/goals/support/reportGoalError";
 import { toToken } from "../../../../util/credentials/toToken";
+
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AddressChannels } from "../../../../api/context/addressChannels";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
+
+
+class GoalExecutionError extends Error {
+    public readonly where: string;
+    public readonly result?: HandlerResult;
+    public readonly cause?: Error;
+    constructor(params: { where: string, result?: HandlerResult, cause?: Error }) {
+        super("Failure in " + params.where);
+    }
+
+    get description() {
+        const resultDescription = this.result ? `Result code ${this.result.code} ${this.result.message}` : "";
+        const causeDescription = this.cause ? `Caused by: ${this.cause.message}` : "";
+        return `Failure in ${this.where}: ${resultDescription} ${causeDescription}`;    
+    }
+}
 
 /**
  * Central function to execute a goal with progress logging
@@ -43,81 +63,69 @@ import { toToken } from "../../../../util/credentials/toToken";
  * @return {Promise<ExecuteGoalResult>}
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
-                                  execute: ExecuteGoalWithLog,
-                                  rwlc: RunWithLogContext,
-                                  sdmGoal: SdmGoal,
-                                  goal: Goal,
-                                  logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
+    execute: ExecuteGoalWithLog,
+    rwlc: RunWithLogContext,
+    sdmGoal: SdmGoal,
+    goal: Goal,
+    logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
     const ctx = rwlc.context;
-    const {addressChannels, progressLog, id} = rwlc;
+    const { addressChannels, progressLog, id } = rwlc;
     const implementationName = sdmGoal.fulfillment.name;
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 
-    await markGoalInProcess({ctx, sdmGoal, goal, progressLogUrl: progressLog.url});
+    await markGoalInProcess({ ctx, sdmGoal, goal, progressLogUrl: progressLog.url });
     try {
         // execute pre hook
         let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
+        if (result.code !== 0) {
+            throw new GoalExecutionError({ where: "executing pre-goal hook", result })
+        }
+        // execute the actual goal
+        let goalResult = (await execute(rwlc)
+            .catch(err => {
+                progressLog.write("ERROR caught: " + err.message + "\n");
+                progressLog.write(err.stack);
+                progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
 
-        // TODO CD is there a isSuccess(result) method somewhere
-        if (result.code === 0) {
-            // execute the actual goal
-            let goalResult = await execute(rwlc)
-                .catch(err => {
-                        progressLog.write("ERROR caught: " + err.message + "\n");
-                        progressLog.write(err.stack);
-                        progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
-
-                        return reportGoalError({
-                            goal, implementationName, addressChannels, progressLog, id, logInterpreter,
-                        }, err)
-                            .then(() => Promise.reject(err));
-                    },
-                );
-            if (!goalResult) {
-                logger.error("Execute method for %s of %s returned undefined", implementationName, sdmGoal.name);
-                goalResult = Success;
-            }
-
-            result = {
-                ...result,
-                ...goalResult,
-            };
+                throw new GoalExecutionError({ where: "executing goal", cause: err })
+            })) || Success;
+        if (goalResult.code !== 0) {
+            throw new GoalExecutionError({ where: "executing goal", result: goalResult })
         }
 
         // execute post hook
-        if (result.code === 0) {
-            let hookResult = await executeHook(rules, rwlc, sdmGoal, "post");
-            if (!hookResult) {
-                hookResult = Success;
-            }
-            result = {
-                ...result,
-                ...hookResult,
-            };
-        } else {
-            await reportGoalError({goal, implementationName, addressChannels, progressLog, id, logInterpreter},
-                new Error("Failure reported: " + result.message));
+        let hookResult = (await executeHook(rules, rwlc, sdmGoal, "post")) || Success;
+        if (hookResult.code !== 0) {
+            throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult })
         }
 
+        result = {
+            ...result,
+            ...goalResult,
+            ...hookResult,
+        };
+
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
-        await markStatus({ctx, sdmGoal, goal, result, progressLogUrl: progressLog.url});
+        await markStatus({ ctx, sdmGoal, goal, result, progressLogUrl: progressLog.url });
         return Success;
     } catch (err) {
-        logger.warn("Error executing %s on %s: %s",
-            implementationName, sdmGoal.sha, err.message);
+        logger.warn("Error executing %s on %s: %s", implementationName, sdmGoal.sha, err.message);
         logger.warn(err.stack);
-        await markStatus({ctx, sdmGoal, goal, result: {code: 1}, error: err, progressLogUrl: progressLog.url});
+        await reportGoalError({
+            goal, implementationName, addressChannels, progressLog, id, logInterpreter,
+        }, err)
+        await markStatus({ ctx, sdmGoal, goal, result: { code: 1 }, error: err, progressLogUrl: progressLog.url });
         return failure(err);
     }
 }
 
 export async function executeHook(rules: { projectLoader: ProjectLoader },
-                                  rwlc: RunWithLogContext,
-                                  sdmGoal: SdmGoal,
-                                  stage: "post" | "pre"): Promise<HandlerResult> {
-    const {projectLoader} = rules;
-    const {credentials, id, context, progressLog} = rwlc;
-    return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async p => {
+    rwlc: RunWithLogContext,
+    sdmGoal: SdmGoal,
+    stage: "post" | "pre"): Promise<HandlerResult> {
+    const { projectLoader } = rules;
+    const { credentials, id, context, progressLog } = rwlc;
+    return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
         const hook = goalToHookFile(sdmGoal, stage);
         if (p.fileExistsSync(`.atomist/hooks/${hook}`)) {
 
@@ -140,7 +148,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
             };
 
             let result: HandlerResult = await spawnAndWatch(
-                {command: path.join(p.baseDir, ".atomist", "hooks", hook), args: []},
+                { command: path.join(p.baseDir, ".atomist", "hooks", hook), args: [] },
                 opts,
                 progressLog,
                 {
@@ -166,7 +174,7 @@ export function markStatus(parameters: {
     ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
     error?: Error, progressLogUrl: string,
 }) {
-    const {ctx, sdmGoal, goal, result, error, progressLogUrl} = parameters;
+    const { ctx, sdmGoal, goal, result, error, progressLogUrl } = parameters;
     const newState = result.code !== 0 ? "failure" :
         result.requireApproval ? "waiting_for_approval" : "success";
     // Currently, the goals tend to have a single url so it seems safe to use whichever of these we have.
@@ -182,7 +190,7 @@ export function markStatus(parameters: {
 }
 
 function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, progressLogUrl: string }) {
-    const {ctx, sdmGoal, goal, progressLogUrl} = parameters;
+    const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
     return updateGoal(ctx, sdmGoal, {
         url: progressLogUrl,
         description: goal.inProcessDescription,
@@ -190,4 +198,60 @@ function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, 
     }).catch(err =>
         logger.warn("Failed to update %s goal to tell people we are working on it", goal.name));
 
+}
+
+/**
+ * Report an error executing a goal and present a retry button
+ * @return {Promise<void>}
+ */
+async function reportGoalError(parameters: {
+    goal: Goal,
+    implementationName: string,
+    addressChannels: AddressChannels,
+    progressLog: ProgressLog,
+    id: RemoteRepoRef,
+    logInterpreter: InterpretLog,
+},
+    err: GoalExecutionError) {
+    const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
+
+    logger.error("RunWithLog on goal %s with implementation name '%s' caught error: %s",
+        goal.name, implementationName, err.description);
+    if (err.cause) { logger.error(err.cause.stack) };
+    progressLog.write("ERROR: " + err.description + "\n");
+
+    const interpretation = logInterpreter(progressLog.log);
+    // The executor might have information about the failure; report it in the channels
+    if (interpretation) {
+        if (!interpretation.doNotReportToUser) {
+            await reportFailureInterpretationToLinkedChannels(implementationName, interpretation,
+                { url: progressLog.url, log: progressLog.log },
+                id, addressChannels);
+        }
+    } else {
+        // We don't have an interpretation available. Just report
+        await addressChannels("Failure executing goal: " + err.message);
+    }
+}
+
+export function CompositeGoalExecutor(...goalImplementations: ExecuteGoalWithLog[]): ExecuteGoalWithLog {
+    return async (r: RunWithLogContext) => {
+        let overallResult: ExecuteGoalResult = {
+            code: 0,
+        };
+
+        for (const goalImplementation of goalImplementations) {
+            const result = await goalImplementation(r);
+            if (result.code !== 0) {
+                return result;
+            } else {
+                overallResult = {
+                    code: result.code,
+                    requireApproval: result.requireApproval ? result.requireApproval : overallResult.requireApproval,
+                    message: result.message ? `${overallResult.message}\n${result.message}` : overallResult.message,
+                };
+            }
+        }
+        return overallResult;
+    };
 }
