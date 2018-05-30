@@ -59,6 +59,8 @@ export interface GoalFullfillmentCallback {
 
 export interface SdmGoalImplementationMapper {
 
+    addSideEffect(sideEffect: GoalSideEffect): this;
+
     findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation;
 
     getIsolatedGoalLauncher(): IsolatedGoalLauncher;
