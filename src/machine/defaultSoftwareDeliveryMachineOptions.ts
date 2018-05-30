@@ -23,7 +23,7 @@ import { EphemeralLocalArtifactStore } from "../internal/artifact/local/Ephemera
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
 import { ConcreteSoftwareDeliveryMachineOptions } from "./ConcreteSoftwareDeliveryMachineOptions";
 
-export function softwareDeliveryMachineOptions(configuration: Configuration): ConcreteSoftwareDeliveryMachineOptions {
+export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): ConcreteSoftwareDeliveryMachineOptions {
     return {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),

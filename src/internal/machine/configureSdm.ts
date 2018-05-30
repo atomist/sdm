@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
 import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
-import { softwareDeliveryMachineOptions } from "../../machine/sdmOptions";
+import { defaultSoftwareDeliveryMachineOptions } from "../../machine/defaultSoftwareDeliveryMachineOptions";
 
 export interface ConfigureOptions {
     sdmOptions?: Partial<ConcreteSoftwareDeliveryMachineOptions>;
@@ -16,7 +16,7 @@ export function configureSdm(
     options: ConfigureOptions = {}) {
     return async (config: Configuration) => {
         const sdmOptions = {
-            ...softwareDeliveryMachineOptions(config),
+            ...defaultSoftwareDeliveryMachineOptions(config),
             ...(options.sdmOptions ? options.sdmOptions : {}),
         };
         const machine = machineMaker(sdmOptions, config);

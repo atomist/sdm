@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { BitBucketServerRepoRef } from "../../../..";
 import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../../../typings/types";
 
+/**
+ * Resolve a RemoteRepoRef from data in our model
+ */
 export interface RepoRefResolver {
 
     /**
@@ -41,8 +43,6 @@ export interface RepoRefResolver {
     providerIdFromPush(push: OnPushToAnyBranch.Push): string | null;
 
     providerIdFromStatus(status: StatusForExecuteGoal.Fragment): string | null;
-
-    repoRefFromStatus(status: StatusForExecuteGoal.Fragment): GitHubRepoRef;
 
     repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef;
 
