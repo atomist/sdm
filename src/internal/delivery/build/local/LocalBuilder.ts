@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Failure, HandlerContext, HandlerResult, logger, Success, failure } from "@atomist/automation-client";
+import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
@@ -91,7 +91,7 @@ export abstract class LocalBuilder implements Builder {
             } catch (err) {
                 logger.warn("Build on branch %s failed on run: %j - %s", push.branch, id, err.message);
                 log.write(sprintf("Build failed with: %s", err.message));
-                log.write(err.stack);    
+                log.write(err.stack);
                 await this.onExit(
                     credentials,
                     id,
