@@ -30,10 +30,10 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import { AutomationEventListenerSupport } from "@atomist/automation-client/server/AutomationEventListener";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
-import { RepoRefResolver } from "../../../..";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { SdmGoalById } from "../../../../typings/types";
 import { FulfillGoalOnRequested } from "./FulfillGoalOnRequested";
 

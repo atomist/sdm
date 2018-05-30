@@ -16,9 +16,9 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { BuildListener, BuildListenerInvocation } from "../../../../api/listener/BuildListener";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnBuildComplete } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 

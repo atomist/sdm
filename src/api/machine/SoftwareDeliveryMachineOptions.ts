@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ArtifactStore, ProgressLogFactory, ProjectLoader, RepoRefResolver } from "../..";
+import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
+import { ProgressLogFactory } from "../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.

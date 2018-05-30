@@ -15,9 +15,9 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { BitBucketServerRepoRef } from "../../../..";
-import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
-import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../../../typings/types";
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
+import { BitBucketServerRepoRef } from "./BitBucketServerRepoRef";
 
 /**
  * Resolve a RemoteRepoRef from data in our model

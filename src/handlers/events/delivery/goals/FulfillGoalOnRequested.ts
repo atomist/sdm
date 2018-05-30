@@ -17,7 +17,6 @@
 import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata, ValueDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
-import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
@@ -28,6 +27,7 @@ import { LoggingProgressLog } from "../../../../log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../log/WriteToAllProgressLog";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../../typings/types";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";

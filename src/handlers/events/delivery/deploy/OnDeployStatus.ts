@@ -16,10 +16,10 @@
 
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { DeploymentListener, DeploymentListenerInvocation } from "../../../../api/listener/DeploymentListener";
 import { StagingDeploymentGoal } from "../../../../api/machine/wellKnownGoals";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnSuccessStatus } from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 

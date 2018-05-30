@@ -1,18 +1,12 @@
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    BitBucketServerRepoRef,
-    CoreRepoFieldsAndChannels,
-    OnPushToAnyBranch,
-    ProviderType,
-    RepoRefResolver,
-    ScmProvider,
-    StatusForExecuteGoal,
-} from "../..";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 import * as _ from "lodash";
+import { BitBucketServerRepoRef } from "../../spi/repo-ref/BitBucketServerRepoRef";
+import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ProviderType, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
 export class DefaultRepoRefResolver implements RepoRefResolver {
 
@@ -77,16 +71,6 @@ export class DefaultRepoRefResolver implements RepoRefResolver {
 
     public providerIdFromStatus(status: StatusForExecuteGoal.Fragment) {
         return status.commit.repo.org.provider.providerId;
-    }
-
-    public repoRefFromStatus(status: StatusForExecuteGoal.Fragment): GitHubRepoRef {
-        return GitHubRepoRef.from({
-            owner: status.commit.repo.owner,
-            repo: status.commit.repo.name,
-            sha: status.commit.sha,
-            rawApiBase: status.commit.repo.org.provider.apiUrl,
-            branch: _.get(status, "commit.pushes[0].branch"),
-        });
     }
 
     public repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef {

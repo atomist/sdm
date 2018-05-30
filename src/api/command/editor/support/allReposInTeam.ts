@@ -20,8 +20,8 @@ import { RepoFinder } from "@atomist/automation-client/operations/common/repoFin
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { DefaultRepoRefResolver } from "../../../../handlers/common/DefaultRepoRefResolver";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { ReposInTeam } from "../../../../typings/types";
-import { RepoRefResolver } from "./RepoRefResolver";
 
 // Hard-coded limit in GraphQL queries. Not sure why we can't pass this
 const PageSize = 100;

@@ -17,7 +17,6 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
-import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import {
     FingerprintDifference,
@@ -25,6 +24,7 @@ import {
     FingerprintDifferenceListenerInvocation,
     FingerprintValue,
 } from "../../../../api/listener/FingerprintDifferenceListener";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../../typings/types";
 import { CredentialsResolver } from "../../../common/CredentialsResolver";
 

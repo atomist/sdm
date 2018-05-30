@@ -24,10 +24,10 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
 import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 

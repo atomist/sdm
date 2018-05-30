@@ -17,9 +17,9 @@
 import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
-import { RepoRefResolver } from "../../..";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { ProjectListener, ProjectListenerInvocation } from "../../../api/listener/ProjectListener";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
 import { CredentialsResolver } from "../../common/CredentialsResolver";
 

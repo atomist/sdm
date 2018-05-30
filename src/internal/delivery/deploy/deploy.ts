@@ -17,13 +17,13 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { RepoRefResolver } from "../../../api/command/editor/support/RepoRefResolver";
 import { RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../api/goal/Goal";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { Deployment } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
+import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
 import { descriptionFromState, updateGoal } from "../goals/support/storeGoals";
 

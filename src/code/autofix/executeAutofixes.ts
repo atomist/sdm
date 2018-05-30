@@ -21,7 +21,6 @@ import { combineEditResults } from "@atomist/automation-client/operations/edit/p
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { confirmEditedness } from "../../api/command/editor/support/confirmEditedness";
-import { RepoRefResolver } from "../../api/command/editor/support/RepoRefResolver";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
@@ -31,6 +30,7 @@ import { DefaultRepoRefResolver } from "../../handlers/common/DefaultRepoRefReso
 import { createPushImpactListenerInvocation } from "../../internal/delivery/code/createPushImpactListenerInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 
 /**
  * Execute autofixes against this push

@@ -20,13 +20,13 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as slack from "@atomist/slack-messages/SlackMessages";
 import axios from "axios";
 import * as stringify from "json-stringify-safe";
-import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
 import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { descriptionFromState, updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
 import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
 
