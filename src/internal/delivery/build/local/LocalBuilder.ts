@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { Failure, HandlerContext, HandlerResult, logger, Success, failure } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
@@ -89,6 +89,9 @@ export abstract class LocalBuilder implements Builder {
                     context);
                 return br.error ? {code: 1, message: br.message} : Success;
             } catch (err) {
+                logger.warn("Build on branch %s failed on run: %j - %s", push.branch, id, err.message);
+                log.write(sprintf("Build failed with: %s", err.message));
+                log.write(err.stack);    
                 await this.onExit(
                     credentials,
                     id,
@@ -98,7 +101,7 @@ export abstract class LocalBuilder implements Builder {
                     buildNumber,
                     as,
                     context);
-                return Failure;
+                return failure(err);
             }
         } catch (err) {
             // If we get here, the build failed before even starting
@@ -108,7 +111,7 @@ export abstract class LocalBuilder implements Builder {
                 "failed",
                 push.branch,
                 buildNumber);
-            return Failure;
+            return failure(err);
         }
     }
 
