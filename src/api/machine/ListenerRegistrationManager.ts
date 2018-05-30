@@ -25,7 +25,7 @@ import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 /**
  * Listener management offering a fluent builder pattern for registrations.
  */
-export interface ListenerRegistration {
+export interface ListenerRegistrationManager {
 
     addNewIssueListeners(...e: NewIssueListener[]): this;
 

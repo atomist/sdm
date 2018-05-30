@@ -21,6 +21,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { editorCommand } from "../../api/command/editor/editorCommand";
 import { generatorCommand } from "../../api/command/generator/generatorCommand";
+import { createCommand } from "../../api/command/support/createCommand";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -50,6 +51,7 @@ import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { executeAutofixes } from "../../code/autofix/executeAutofixes";
@@ -354,6 +356,18 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             .concat(this.supportingCommands)
             .concat([this.showBuildLog])
             .filter(m => !!m);
+    }
+
+    public addCommands(...cmds: Array<CommandHandlerRegistration<any>>): this {
+        const commands = cmds.map(e => () => createCommand(
+            this,
+            e.createCommand,
+            e.name,
+            e.paramsMaker,
+            e,
+        ));
+        this.supportingCommands = this.supportingCommands.concat(commands);
+        return this;
     }
 
     public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {

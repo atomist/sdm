@@ -11,8 +11,8 @@ export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<Ed
     ProjectOperationRegistration<PARAMS> {
 
     /**
-     * Create the parameters required by this generator.
-     * Empty parameters will be required by default.
+     * Create the parameters required by this editor.
+     * Empty parameters will be returned by default.
      */
     paramsMaker?: Maker<PARAMS>;
 
