@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Success, } from "@atomist/automation-client";
+import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { EventHandlerMetadata, ValueDeclaration, } from "@atomist/automation-client/metadata/automationMetadata";
+import { EventHandlerMetadata, ValueDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
 import { RepoRefResolver } from "../../../../api/command/editor/support/RepoRefResolver";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
-import { SdmGoal, SdmGoalState, } from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
 import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
 import { LoggingProgressLog } from "../../../../log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../log/WriteToAllProgressLog";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
-import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal, } from "../../../../typings/types";
+import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../../typings/types";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { executeGoal } from "./executeGoal";
 
