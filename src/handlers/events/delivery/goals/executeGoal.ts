@@ -84,10 +84,11 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         }
         // execute the actual goal
         const goalResult = (await execute(rwlc)
-            .catch(err => {
+            .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
                 progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
+                await progressLog.flush();
 
                 throw new GoalExecutionError({ where: "executing goal", cause: err });
             })) || Success;
