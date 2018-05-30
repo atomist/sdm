@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
+import { PushListenerInvocation, SdmContext } from "../..";
 import { Goals } from "../goal/Goals";
-import { PushMapping } from "./PushMapping";
+import { Mapping } from "./Mapping";
 
 /**
  * A GoalSetter decides what goals to run depending on repo contents and characteristics
@@ -25,4 +26,4 @@ import { PushMapping } from "./PushMapping";
  * @returns Goals or undefined if it doesn't like the push or
  * understand the repo
  */
-export type GoalSetter = PushMapping<Goals>;
+export type GoalSetter<F extends SdmContext = PushListenerInvocation> = Mapping<F, Goals>;

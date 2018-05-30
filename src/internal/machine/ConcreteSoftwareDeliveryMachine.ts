@@ -17,11 +17,12 @@
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { enrichGoalSetters } from "../..";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
-import { EmptyFunctionalUnit, FunctionalUnit } from "../../api/machine/FunctionalUnit";
+import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { ListenerRegistrationSupport } from "../../api/machine/support/ListenerRegistrationSupport";
 import {
@@ -103,7 +104,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
 
     public functionalUnits: FunctionalUnit[] = [];
 
-    public goalSetters: GoalSetter[] = [];
+    private pushMap: GoalSetter;
 
     private readonly disposalGoalSetters: GoalSetter[] = [];
 
@@ -116,7 +117,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
      * @return {PushMapping<Goals>}
      */
     get pushMapping(): PushMapping<Goals> {
-        return new PushRules("Goal setter", this.goalSetters);
+        return this.pushMap;
     }
 
     /**
@@ -210,21 +211,18 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     }
 
     private get goalSetting(): FunctionalUnit {
-        if (this.goalSetters.length === 0) {
-            logger.warn("No goal setters");
-            return EmptyFunctionalUnit;
-        }
         return {
             eventHandlers: [() => new SetGoalsOnPush(
                 this.options.projectLoader,
                 this.options.repoRefResolver,
-                this.goalSetters, this.goalsSetListeners,
+                this.pushMapping,
+                this.goalsSetListeners,
                 this.goalFulfillmentMapper, this.options.credentialsResolver)],
             commandHandlers: [() => resetGoalsCommand({
                 projectLoader: this.options.projectLoader,
                 repoRefResolver: this.options.repoRefResolver,
                 goalsListeners: this.goalsSetListeners,
-                goalSetters: this.goalSetters,
+                goalSetter: this.pushMapping,
                 implementationMapping: this.goalFulfillmentMapper,
             })],
         };
@@ -265,7 +263,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         return {
             commandHandlers: [
                 () => disposeCommand({
-                    goalSetters: this.disposalGoalSetters,
+                    goalSetter: new PushRules("disposal", this.disposalGoalSetters),
                     repoRefResolver: this.options.repoRefResolver,
                     projectLoader: this.options.projectLoader,
                     goalsListeners: this.goalsSetListeners,
@@ -441,9 +439,12 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         });
     }
 
-    public addExtensionPacks(...configurers: ExtensionPack[]): this {
-        for (const configurer of configurers) {
+    public addExtensionPacks(...packs: ExtensionPack[]): this {
+        for (const configurer of packs) {
             this.addExtensionPack(configurer);
+            if (!!configurer.goalContributions) {
+                this.pushMap = enrichGoalSetters(this.pushMap, configurer.goalContributions);
+            }
         }
         return this;
     }
@@ -467,8 +468,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
                 public readonly configuration: Configuration,
                 goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
-        this.goalSetters = _.flatten(goalSetters);
-
+        this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         this.addGoalImplementation("Autofix", AutofixGoal,
             executeAutofixes(this.options.projectLoader, this.autofixRegistrations), {
                 // Autofix errors should not be reported to the user

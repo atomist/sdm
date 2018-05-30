@@ -63,7 +63,7 @@ describe("implementing goals in the SDM", () => {
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 repoRefResolver: new DefaultRepoRefResolver(),
-                goalSetters: mySDM.goalSetters,
+                goalSetter: mySDM.pushMapping,
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,
@@ -105,7 +105,7 @@ describe("implementing goals in the SDM", () => {
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
                 repoRefResolver: new DefaultRepoRefResolver(),
-                goalSetters: mySDM.goalSetters,
+                goalSetter: mySDM.pushMapping,
                 implementationMapping: mySDM.goalFulfillmentMapper,
             }, {
                 credentials, id: favoriteRepoRef, context: fakeContext, push: aPush,

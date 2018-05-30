@@ -105,10 +105,10 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
     /**
      * Add capabilities from these extension packs. Primary SDM extension
      * mechanism. Extension packs are typically brought in as Node modules.
-     * @param {ExtensionPack} configurers
+     * @param {ExtensionPack} packs
      * @return {this}
      */
-    addExtensionPacks(...configurers: ExtensionPack[]): this;
+    addExtensionPacks(...packs: ExtensionPack[]): this;
 
     /**
      * Add build rules. *May be removed in future: only applicable to local SDM work*

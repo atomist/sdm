@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { GoalSetter } from "../..";
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
 /**
@@ -21,7 +22,8 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  * Implemented to expose a capability that can be added to a
  * software delivery machine in a consistent manner.
  * Facilitates modularity at a higher level than FunctionUnit or handlers.
- * For example, a Node module can export a configurer.
+ * For example, a Node module can export an ExtensionPack.
+ * ExtensionPacks can optional contribute goal setting, which will be added to existing goal setting.
  */
 export interface ExtensionPack {
 
@@ -31,9 +33,14 @@ export interface ExtensionPack {
     name: string;
 
     /**
-     * Function to addExtensionPack the given SDM
+     * Function to add extension pack functionality to the given SDM
      * @param sdm
      */
     configure(sdm: SoftwareDeliveryMachine<any>): void;
+
+    /**
+     * Optional goal setting contributions that will be added into SDM goal setting
+     */
+    goalContributions?: GoalSetter;
 
 }
