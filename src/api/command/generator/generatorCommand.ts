@@ -1,11 +1,4 @@
-/**
- * Create a generator function wrapping the given transform
- * @param {AnyProjectEditor} editorFactory editor for the transformation
- * @param factory construction function
- * @param {string} name name of the generator
- * @param {string} details object allowing customization beyond reasonable defaults
- * @return {HandleCommand}
- */
+
 import { HandleCommand, HandlerContext, RedirectResult } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
