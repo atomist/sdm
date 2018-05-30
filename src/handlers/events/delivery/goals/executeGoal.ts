@@ -42,6 +42,9 @@ class GoalExecutionError extends Error {
     public readonly cause?: Error;
     constructor(params: { where: string, result?: HandlerResult, cause?: Error }) {
         super("Failure in " + params.where);
+        this.where = params.where;
+        this.result = params.result;
+        this.cause = params.cause;
     }
 
     get description() {
