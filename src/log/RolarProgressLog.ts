@@ -70,7 +70,7 @@ export class RolarProgressLog implements ProgressLog {
     }
 
     public write(what: string) {
-        const line = what;
+        const line = what || "";
         this.localLogs.push({
             level: this.logLevel,
             message: line,
