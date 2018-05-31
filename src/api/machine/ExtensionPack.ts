@@ -39,7 +39,8 @@ export interface ExtensionPack {
     configure(sdm: SoftwareDeliveryMachine): void;
 
     /**
-     * Optional goal setting contributions that will be added into SDM goal setting
+     * Optional goal setting contributions that will be added into SDM goal setting.
+     * Decorates other goal setting behavior.
      */
     goalContributions?: GoalSetter;
 

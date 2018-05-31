@@ -22,12 +22,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
  */
 export interface FunctionalUnit {
 
-    eventHandlers: Array<Maker<HandleEvent<any>>>;
+    readonly eventHandlers: Array<Maker<HandleEvent<any>>>;
 
-    commandHandlers: Array<Maker<HandleCommand>>;
+    readonly commandHandlers: Array<Maker<HandleCommand>>;
 }
-
-export const EmptyFunctionalUnit: FunctionalUnit = {
-    eventHandlers: [],
-    commandHandlers: [],
-};

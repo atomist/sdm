@@ -101,7 +101,8 @@ import { lastLinesLogInterpreter, LogSuppressor } from "../delivery/goals/suppor
  * Implementation of SoftwareDeliveryMachine.
  * Not intended for direct user instantiation. See machineFactory.ts
  */
-export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
+export class ConcreteSoftwareDeliveryMachine
+    extends ListenerRegistrationSupport
     implements SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
 
     private generators: Array<Maker<HandleCommand>> = [];
@@ -111,8 +112,6 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     public supportingCommands: Array<Maker<HandleCommand>> = [];
 
     public supportingEvents: Array<Maker<HandleEvent<any>>> = [];
-
-    public functionalUnits: FunctionalUnit[] = [];
 
     private pushMap: GoalSetter;
 
@@ -294,7 +293,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     }
 
     private get allFunctionalUnits(): FunctionalUnit[] {
-        return this.functionalUnits
+        return []
             .concat([
                 this.goalSetting,
                 this.goalConsequences,
@@ -384,11 +383,6 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
 
     public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
         this.supportingEvents.push(...e);
-        return this;
-    }
-
-    public addFunctionalUnits(...fus: FunctionalUnit[]): this {
-        this.functionalUnits.push(...fus);
         return this;
     }
 

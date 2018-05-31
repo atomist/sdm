@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { GoalSetter } from "../mapping/GoalSetter";
@@ -73,24 +71,6 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
         FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
-
-    /**
-     * Add supporting commands for other functionality. Consider using
-     * addExtensionPacks to group functionality
-     * @param {Maker<HandleCommand>} e
-     * @return {this}
-     */
-    addSupportingCommands(...e: Array<Maker<HandleCommand>>): this;
-
-    /**
-     * Add supporting events for other functionality. Consider using
-     * addExtensionPacks to group functionality
-     * @param {Maker<HandleCommand>} e
-     * @return {this}
-     */
-    addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this;
-
-    addFunctionalUnits(...fus: FunctionalUnit[]): this;
 
     /**
      * Add capabilities from these extension packs.

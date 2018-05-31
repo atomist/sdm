@@ -26,10 +26,8 @@ import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
 /**
- * MachineConfiguration driven by configurable goals.
+ * Interface for machines driven by configurable goals.
  * Goals and goal "implementations" can be defined by users.
- * However, certain well known goals are built into the TheSoftwareDeliveryMachine
- * for convenience, with their own associated listeners.
  */
 export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineOptions> extends MachineConfiguration<O> {
 
