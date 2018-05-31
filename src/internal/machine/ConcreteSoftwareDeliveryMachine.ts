@@ -488,9 +488,9 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         return this;
     }
 
-    private addExtensionPack(configurer: ExtensionPack): this {
-        logger.info("Adding capabilities from configurer '%s'", configurer.name);
-        configurer.configure(this);
+    private addExtensionPack(pack: ExtensionPack): this {
+        logger.info("Adding extension pack '%s'", pack.name);
+        pack.configure(this);
         return this;
     }
 
