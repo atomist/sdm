@@ -223,7 +223,7 @@ async function reportGoalError(parameters: {
     if (err.cause) {
         logger.error(err.cause.stack);
         progressLog.write(err.cause.stack);
-    } else if ((err.result as any).error) {
+    } else if (err.result && (err.result as any).error) {
         logger.error((err.result as any).error.stack);
         progressLog.write((err.result as any).error.stack);
     } else {
