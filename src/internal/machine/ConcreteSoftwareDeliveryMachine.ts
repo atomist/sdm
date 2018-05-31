@@ -391,6 +391,7 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
                 e.name,
                 e.paramsMaker,
                 e,
+                e.targets,
             );
         });
         this.editors = this.editors.concat(commands);

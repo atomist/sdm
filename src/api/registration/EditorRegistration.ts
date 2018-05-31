@@ -1,3 +1,4 @@
+import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { EmptyParameters } from "../command/support/EmptyParameters";
@@ -15,6 +16,11 @@ export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<Ed
      * Empty parameters will be returned by default.
      */
     paramsMaker?: Maker<PARAMS>;
+
+    /**
+     * Allow customization of editor targeting
+     */
+    targets?: FallbackParams;
 
     /**
      * Should this be a dry run editor: That is,
