@@ -43,7 +43,7 @@ import { ReviewerRegistration } from "../../api/registration/ReviewerRegistratio
  * Listener management offering a fluent builder pattern for registrations.
  * This class is purely a registration store, and has no other behavior.
  */
-export class ListenerRegistrationSupport implements ListenerRegistrationManager {
+export class ListenerRegistrationManagerSupport implements ListenerRegistrationManager {
 
     protected readonly buildListeners: BuildListener[] = [];
 

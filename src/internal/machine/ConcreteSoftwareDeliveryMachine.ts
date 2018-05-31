@@ -28,7 +28,7 @@ import {
     editorRegistrationToCommand,
     generatorRegistrationToCommand,
 } from "../../api-helper/machine/commandRegistrations";
-import { ListenerRegistrationSupport } from "../../api-helper/machine/ListenerRegistrationSupport";
+import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -102,7 +102,7 @@ import { lastLinesLogInterpreter, LogSuppressor } from "../delivery/goals/suppor
  * Not intended for direct user instantiation. See machineFactory.ts
  */
 export class ConcreteSoftwareDeliveryMachine
-    extends ListenerRegistrationSupport
+    extends ListenerRegistrationManagerSupport
     implements SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
 
     private generators: Array<Maker<HandleCommand>> = [];
