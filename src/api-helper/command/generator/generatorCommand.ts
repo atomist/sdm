@@ -15,9 +15,9 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { CachingProjectLoader } from "../../../project/CachingProjectLoader";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
-import { MachineOrMachineOptions, toMachineOptions } from "../../machine/support/toMachineOptions";
-import { projectLoaderRepoLoader } from "../../project/projectLoaderRepoLoader";
-import { allReposInTeam } from "../editor/support/allReposInTeam";
+import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
+import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
+import { allReposInTeam } from "../editor/allReposInTeam";
 
 /**
  * Create a command handler for project generation

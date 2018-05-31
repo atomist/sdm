@@ -17,9 +17,9 @@
 import { logger } from "@atomist/automation-client";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import * as _ from "lodash";
-import { PushImpactListenerInvocation } from "../../../../api/listener/PushImpactListener";
-import { FingerprinterResult } from "../../../../api/registration/FingerprinterRegistration";
-import { PushReaction } from "../../../../api/registration/PushReactionRegistration";
+import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
+import { FingerprinterResult } from "../../api/registration/FingerprinterRegistration";
+import { PushReaction } from "../../api/registration/PushReactionRegistration";
 
 /**
  * Compute fingerprints on this invocation with the given fingerprinters

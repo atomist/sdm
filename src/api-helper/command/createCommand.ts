@@ -18,8 +18,8 @@ import { HandleCommand } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { MachineOrMachineOptions } from "../../machine/support/toMachineOptions";
-import { EmptyParameters } from "../support/EmptyParameters";
+import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { MachineOrMachineOptions } from "../machine/toMachineOptions";
 
 /**
  * Wrap a function in a command handler, allowing use of custom parameters.

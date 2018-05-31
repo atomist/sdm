@@ -20,8 +20,9 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
+import { executeAutofixes } from "../../../../../src/api-helper/listener/executeAutofixes";
 import { AutofixRegistration } from "../../../../../src/api/registration/AutofixRegistration";
-import { executeAutofixes } from "../../../../../src/code/autofix/executeAutofixes";
+import { DefaultRepoRefResolver } from "../../../../../src/handlers/common/DefaultRepoRefResolver";
 import { IsTypeScript } from "../../../../../src/mapping/pushtest/node/tsPushTests";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
@@ -40,7 +41,7 @@ describe("executeAutofixes", () => {
     it("should execute none", async () => {
         const id = new GitHubRepoRef("a", "b");
         const pl = new SingleProjectLoader({ id } as any);
-        const r = await executeAutofixes(pl, [])(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl, [], new DefaultRepoRefResolver())(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
     });
 
@@ -50,7 +51,7 @@ describe("executeAutofixes", () => {
         const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl, [AddThingAutofix], new DefaultRepoRefResolver())(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
         assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
@@ -63,7 +64,7 @@ describe("executeAutofixes", () => {
         (p as any as GitProject).revert = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl, [AddThingAutofix])(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl, [AddThingAutofix], new DefaultRepoRefResolver())(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");

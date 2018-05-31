@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-import { ArtifactListenerRegisterable } from "../../listener/ArtifactListener";
-import { BuildListener } from "../../listener/BuildListener";
-import { ChannelLinkListener } from "../../listener/ChannelLinkListenerInvocation";
-import { ClosedIssueListener } from "../../listener/ClosedIssueListener";
-import { DeploymentListener } from "../../listener/DeploymentListener";
-import { EndpointVerificationListener } from "../../listener/EndpointVerificationListener";
-import { FingerprintDifferenceListener } from "../../listener/FingerprintDifferenceListener";
-import { FingerprintListener } from "../../listener/FingerprintListener";
-import { GoalCompletionListener, GoalsSetListener } from "../../listener/GoalsSetListener";
-import { NewIssueListener } from "../../listener/NewIssueListener";
-import { ProjectListener } from "../../listener/ProjectListener";
-import { PullRequestListener } from "../../listener/PullRequestListener";
-import { PushListener } from "../../listener/PushListener";
-import { RepoCreationListener } from "../../listener/RepoCreationListener";
-import { ReviewListener } from "../../listener/ReviewListener";
-import { TagListener } from "../../listener/TagListener";
-import { UpdatedIssueListener } from "../../listener/UpdatedIssueListener";
-import { UserJoiningChannelListener } from "../../listener/UserJoiningChannelListener";
-import { VerifiedDeploymentListener } from "../../listener/VerifiedDeploymentListener";
-import { AutofixRegistration } from "../../registration/AutofixRegistration";
-import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../../registration/PushReactionRegistration";
-import { ReviewerRegistration } from "../../registration/ReviewerRegistration";
-import { ListenerRegistrationManager } from "../ListenerRegistrationManager";
+import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
+import { BuildListener } from "../../api/listener/BuildListener";
+import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
+import { ClosedIssueListener } from "../../api/listener/ClosedIssueListener";
+import { DeploymentListener } from "../../api/listener/DeploymentListener";
+import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
+import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
+import { FingerprintListener } from "../../api/listener/FingerprintListener";
+import { GoalCompletionListener, GoalsSetListener } from "../../api/listener/GoalsSetListener";
+import { NewIssueListener } from "../../api/listener/NewIssueListener";
+import { ProjectListener } from "../../api/listener/ProjectListener";
+import { PullRequestListener } from "../../api/listener/PullRequestListener";
+import { PushListener } from "../../api/listener/PushListener";
+import { RepoCreationListener } from "../../api/listener/RepoCreationListener";
+import { ReviewListener } from "../../api/listener/ReviewListener";
+import { TagListener } from "../../api/listener/TagListener";
+import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
+import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
+import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
+import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
+import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
+import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
+import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.

@@ -1,5 +1,5 @@
 import { OnCommand } from "@atomist/automation-client/onCommand";
-import { MachineOrMachineOptions } from "../..";
+import { MachineOrMachineOptions } from "../../api-helper/machine/toMachineOptions";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**

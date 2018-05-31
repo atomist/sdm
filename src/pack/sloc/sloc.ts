@@ -18,18 +18,24 @@ import { HandlerContext } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
-import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
+import { LanguageReport, reportForLanguages } from "./slocReport";
 
 /**
  * Commmand to display lines of code in current project
  * to Slack, across understood languages.
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const slocCommand: EditorRegistration = {
+export const SlocCommand: EditorRegistration = {
     name: "sloc",
     createEditor: () => computeSloc,
     intent: ["compute sloc", "sloc"],
+};
+
+export const Sloc: ExtensionPack = {
+    name: "sloc",
+    configure: sdm => sdm.addEditors(SlocCommand),
 };
 
 async function computeSloc(p: Project, ctx: HandlerContext, params: EmptyParameters) {

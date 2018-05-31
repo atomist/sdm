@@ -15,12 +15,12 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { createEphemeralProgressLog } from "../api-helper/log/EphemeralProgressLog";
+import { firstAvailableProgressLog } from "../api-helper/log/firstAvailableProgressLog";
+import { LoggingProgressLog } from "../api-helper/log/LoggingProgressLog";
+import { WriteToAllProgressLog } from "../api-helper/log/WriteToAllProgressLog";
 import { ProgressLogFactory } from "../spi/log/ProgressLog";
 import {DashboardDisplayProgressLog} from "./DashboardDisplayProgressLog";
-import { createEphemeralProgressLog } from "./EphemeralProgressLog";
-import { firstAvailableProgressLog } from "./firstAvailableProgressLog";
-import { LoggingProgressLog } from "./LoggingProgressLog";
-import { WriteToAllProgressLog } from "./WriteToAllProgressLog";
 
 /**
  * Create a progress log that will use Rolar logging service if available,

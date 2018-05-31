@@ -20,9 +20,9 @@ import { fakeRunWithLogContext } from "../../../../src/util/test/fakeRunWithLogC
 import { TruePushTest } from "../../../api/mapping/support/pushTestUtilsTest";
 
 import * as assert from "power-assert";
+import { executePushReactions } from "../../../../src/api-helper/listener/executePushReactions";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
 import { PushReactionRegistration, PushReactionResponse } from "../../../../src/api/registration/PushReactionRegistration";
-import { executePushReactions } from "../../../../src/internal/delivery/code/executePushReactions";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 
 function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushReactionRegistration {

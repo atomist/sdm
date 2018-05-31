@@ -1,15 +1,15 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { dryRunEditorCommand } from "../../../pack/dry-run/dryRunEditorCommand";
-import { editorCommand } from "../../command/editor/editorCommand";
-import { generatorCommand } from "../../command/generator/generatorCommand";
-import { createCommand } from "../../command/support/createCommand";
-import { MachineOrMachineOptions } from "../../machine/support/toMachineOptions";
-import { CommandHandlerRegistration } from "../CommandHandlerRegistration";
-import { EditorRegistration } from "../EditorRegistration";
-import { GeneratorRegistration } from "../GeneratorRegistration";
-import { ProjectOperationRegistration } from "../ProjectOperationRegistration";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
+import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
+import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
+import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
+import { createCommand } from "../command/createCommand";
+import { editorCommand } from "../command/editor/editorCommand";
+import { generatorCommand } from "../command/generator/generatorCommand";
+import { MachineOrMachineOptions } from "./toMachineOptions";
 
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
     const fun = e.dryRun ? dryRunEditorCommand : editorCommand;

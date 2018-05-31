@@ -20,29 +20,28 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { confirmEditedness } from "../../api/command/editor/support/confirmEditedness";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { relevantCodeActions } from "../../api/registration/PushReactionRegistration";
-import { DefaultRepoRefResolver } from "../../handlers/common/DefaultRepoRefResolver";
-import { createPushImpactListenerInvocation } from "../../internal/delivery/code/createPushImpactListenerInvocation";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { confirmEditedness } from "../command/editor/confirmEditedness";
+import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
 /**
  * Execute autofixes against this push
  * Throw an error on failure
  * @param projectLoader use to load projects
  * @param {AutofixRegistration[]} registrations
+ * @param repoRefResolver RepoRefResolver
  * @return GoalExecutor
  */
 export function executeAutofixes(projectLoader: ProjectLoader,
                                  registrations: AutofixRegistration[],
-                                 // TODO get rid of hard coding
-                                 repoRefResolver: RepoRefResolver = new DefaultRepoRefResolver()): ExecuteGoalWithLog {
+                                 repoRefResolver: RepoRefResolver ): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const {credentials, context, status, progressLog } = rwlc;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));

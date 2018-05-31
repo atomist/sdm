@@ -1,5 +1,5 @@
-import { MachineConfiguration } from "../MachineConfiguration";
-import { SoftwareDeliveryMachineOptions } from "../SoftwareDeliveryMachineOptions";
+import { MachineConfiguration } from "../../api/machine/MachineConfiguration";
+import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 
 export type MachineOrMachineOptions = MachineConfiguration<any> | SoftwareDeliveryMachineOptions;
 

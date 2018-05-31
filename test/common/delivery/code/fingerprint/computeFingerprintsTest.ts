@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { computeFingerprints } from "../../../../../src/internal/delivery/code/fingerprint/computeFingerprints";
+import { computeFingerprints } from "../../../../../src/api-helper/listener/computeFingerprints";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";

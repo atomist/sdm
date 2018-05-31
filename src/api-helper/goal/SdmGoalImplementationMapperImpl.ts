@@ -1,14 +1,14 @@
-import { Goal } from "../api/goal/Goal";
-import { IsolatedGoalLauncher } from "../api/goal/support/IsolatedGoalLauncher";
+import { Goal } from "../../api/goal/Goal";
+import { IsolatedGoalLauncher } from "../../api/goal/support/IsolatedGoalLauncher";
 import {
     GoalFulfillment,
     GoalFullfillmentCallback,
     GoalImplementation,
     GoalSideEffect,
     SdmGoalImplementationMapper,
-} from "../api/goal/support/SdmGoalImplementationMapper";
-import { PushListenerInvocation } from "../api/listener/PushListener";
-import { SdmGoal } from "../ingesters/sdmGoalIngester";
+} from "../../api/goal/support/SdmGoalImplementationMapper";
+import { PushListenerInvocation } from "../../api/listener/PushListener";
+import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMapper {
 

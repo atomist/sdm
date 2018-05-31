@@ -19,6 +19,16 @@
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { SdmGoalImplementationMapperImpl } from "../../api-helper/goal/SdmGoalImplementationMapperImpl";
+import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
+import { executePushReactions } from "../../api-helper/listener/executePushReactions";
+import { executeReview } from "../../api-helper/listener/executeReview";
+import {
+    commandHandlerRegistrationToCommand,
+    editorRegistrationToCommand,
+    generatorRegistrationToCommand,
+} from "../../api-helper/machine/commandRegistrations";
+import { ListenerRegistrationSupport } from "../../api-helper/machine/ListenerRegistrationSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -26,7 +36,6 @@ import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
-import { ListenerRegistrationSupport } from "../../api/machine/support/ListenerRegistrationSupport";
 import {
     ArtifactGoal,
     AutofixGoal,
@@ -51,13 +60,6 @@ import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import {
-    commandHandlerRegistrationToCommand,
-    editorRegistrationToCommand,
-    generatorRegistrationToCommand,
-} from "../../api/registration/support/commandRegistrations";
-import { executeAutofixes } from "../../code/autofix/executeAutofixes";
-import { SdmGoalImplementationMapperImpl } from "../../goal/SdmGoalImplementationMapperImpl";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
 import { disposeCommand } from "../../handlers/commands/disposeCommand";
 import { displayBuildLogHandler } from "../../handlers/commands/ShowBuildLog";
@@ -90,9 +92,7 @@ import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../delivery/build/executeBuild";
-import { executePushReactions } from "../delivery/code/executePushReactions";
 import { executeFingerprinting } from "../delivery/code/fingerprint/executeFingerprinting";
-import { executeReview } from "../delivery/code/review/executeReview";
 import { executeDeploy } from "../delivery/deploy/executeDeploy";
 import { executeUndeploy, offerToDeleteRepository } from "../delivery/deploy/executeUndeploy";
 import { lastLinesLogInterpreter, LogSuppressor } from "../delivery/goals/support/logInterpreters";
@@ -488,7 +488,10 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         super();
         this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         this.addGoalImplementation("Autofix", AutofixGoal,
-            executeAutofixes(this.options.projectLoader, this.autofixRegistrations), {
+            executeAutofixes(
+                this.options.projectLoader,
+                this.autofixRegistrations,
+                this.options.repoRefResolver), {
                 // Autofix errors should not be reported to the user
                 logInterpreter: LogSuppressor,
             })

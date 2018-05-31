@@ -20,7 +20,7 @@ import { allSatisfied, memoize } from "./pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
 
 /**
- * Generic DSL for returning an object on a push
+ * Generic DSL support for returning an object on a push
  */
 export class PushRule<V = any> implements StaticPushMapping<V> {
 

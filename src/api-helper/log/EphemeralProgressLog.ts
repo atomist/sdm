@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProgressLog, ProgressLogFactory } from "../spi/log/ProgressLog";
+import { ProgressLog, ProgressLogFactory } from "../../spi/log/ProgressLog";
 
 /**
  * Implementation of ProgressLog log that returns
