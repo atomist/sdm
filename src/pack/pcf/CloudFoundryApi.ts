@@ -99,10 +99,9 @@ export class CloudFoundryApi {
             return result;
         }
         if (failureCondition(result)) {
-            throw {
-                name: "RetryUntilConditionFailure",
-                message: JSON.stringify(result.data),
-            } as Error;
+            const error = new Error(JSON.stringify(result.data));
+            error.name = "RetryUntilConditionFailure";
+            throw error;
         }
         await new Promise<AxiosResponse>(res => setTimeout(res, this.retryInterval));
         return this.retryUntilCondition(action, successCondition, failureCondition);
