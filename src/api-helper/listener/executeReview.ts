@@ -18,15 +18,15 @@ import * as _ from "lodash";
 
 import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { AddressChannels } from "../../../../api/context/addressChannels";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
-import { PushImpactListenerInvocation } from "../../../../api/listener/PushImpactListener";
-import { ReviewListener } from "../../../../api/listener/ReviewListener";
-import { PushReactionResponse, relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
-import { formatReviewerError, ReviewerError } from "../../../../api/registration/ReviewerError";
-import { ReviewerRegistration } from "../../../../api/registration/ReviewerRegistration";
-import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
-import { createPushImpactListenerInvocation } from "../createPushImpactListenerInvocation";
+import { AddressChannels } from "../../api/context/addressChannels";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
+import { ReviewListener } from "../../api/listener/ReviewListener";
+import { PushReactionResponse, relevantCodeActions } from "../../api/registration/PushReactionRegistration";
+import { formatReviewerError, ReviewerError } from "../../api/registration/ReviewerError";
+import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
 /**
  * Execute reviews and route or react to results using review listeners

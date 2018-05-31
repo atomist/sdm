@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProgressLog } from "../spi/log/ProgressLog";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * Return the first available progress log.

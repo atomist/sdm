@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ProgressLog } from "../spi/log/ProgressLog";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * ProgressLog implementation that captures the log into a string and makes it

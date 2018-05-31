@@ -21,7 +21,8 @@ import { successOn } from "@atomist/automation-client/action/ActionResult";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
-import { executeAutofixes } from "../../../../../../src/code/autofix/executeAutofixes";
+import { executeAutofixes } from "../../../../../../src/api-helper/listener/executeAutofixes";
+import { DefaultRepoRefResolver } from "../../../../../../src/handlers/common/DefaultRepoRefResolver";
 import { tslintFix } from "../../../../../../src/pack/node/tslint";
 import { fakeRunWithLogContext } from "../../../../../../src/util/test/fakeRunWithLogContext";
 import { SingleProjectLoader } from "../../../../../../src/util/test/SingleProjectLoader";
@@ -43,7 +44,7 @@ describe("tsLintFix", () => {
         await p.addFile(f.path, f.content);
         assert(!!p.findFileSync(f.path));
 
-        await executeAutofixes(pl, [tslintFix])(fakeRunWithLogContext(p.id as RemoteRepoRef));
+        await executeAutofixes(pl, [tslintFix], new DefaultRepoRefResolver())(fakeRunWithLogContext(p.id as RemoteRepoRef));
         const fileNow = p.findFileSync(f.path);
         assert(!!fileNow);
         assert(fileNow.getContentSync().startsWith("const foo;"));

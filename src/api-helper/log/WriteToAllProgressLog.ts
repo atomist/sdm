@@ -15,7 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProgressLog } from "../spi/log/ProgressLog";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * Write to multiple progress logs, exposing them as one.

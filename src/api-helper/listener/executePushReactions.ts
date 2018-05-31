@@ -15,16 +15,16 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
-import { PushImpactListenerInvocation } from "../../../api/listener/PushImpactListener";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import {
     PushReactionRegisterable,
     PushReactionRegistration,
     PushReactionResponse,
     relevantCodeActions,
     toPushReactionRegistration,
-} from "../../../api/registration/PushReactionRegistration";
-import { ProjectLoader } from "../../../spi/project/ProjectLoader";
+} from "../../api/registration/PushReactionRegistration";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 
 /**
