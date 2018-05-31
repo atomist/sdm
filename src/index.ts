@@ -89,6 +89,7 @@ export * from "./api/registration/PushReactionRegistration";
 export * from "./api/registration/PushRegistration";
 export * from "./api/registration/ReviewerError";
 export * from "./api/registration/ReviewerRegistration";
+export * from "./api/registration/support/commandRegistrations";
 export * from "./spi/artifact/ArtifactStore";
 export * from "./spi/build/Builder";
 export * from "./spi/deploy/Deployer";

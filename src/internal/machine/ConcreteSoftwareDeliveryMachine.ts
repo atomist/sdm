@@ -19,9 +19,6 @@
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { editorCommand } from "../../api/command/editor/editorCommand";
-import { generatorCommand } from "../../api/command/generator/generatorCommand";
-import { createCommand } from "../../api/command/support/createCommand";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -54,6 +51,11 @@ import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
+import {
+    commandHandlerRegistrationToCommand,
+    editorRegistrationToCommand,
+    generatorRegistrationToCommand,
+} from "../../api/registration/support/commandRegistrations";
 import { executeAutofixes } from "../../code/autofix/executeAutofixes";
 import { SdmGoalImplementationMapperImpl } from "../../goal/SdmGoalImplementationMapperImpl";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
@@ -84,7 +86,6 @@ import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
-import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -359,41 +360,19 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
     }
 
     public addCommands(...cmds: Array<CommandHandlerRegistration<any>>): this {
-        const commands = cmds.map(e => () => createCommand(
-            this,
-            e.createCommand,
-            e.name,
-            e.paramsMaker,
-            e,
-        ));
+        const commands = cmds.map(c => commandHandlerRegistrationToCommand(this, c));
         this.supportingCommands = this.supportingCommands.concat(commands);
         return this;
     }
 
     public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
-        const commands = gens.map(e => () => generatorCommand(
-            this,
-            e.createEditor,
-            e.name,
-            e.paramsMaker,
-            e,
-        ));
+        const commands = gens.map(g => generatorRegistrationToCommand(this, g));
         this.generators = this.generators.concat(commands);
         return this;
     }
 
     public addEditors(...eds: EditorRegistration[]): this {
-        const commands = eds.map(e => {
-            const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
-            return () => fun(
-                this,
-                e.createEditor,
-                e.name,
-                e.paramsMaker,
-                e,
-                e.targets,
-            );
-        });
+        const commands = eds.map(e => editorRegistrationToCommand(this, e));
         this.editors = this.editors.concat(commands);
         return this;
     }
