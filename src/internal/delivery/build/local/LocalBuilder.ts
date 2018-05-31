@@ -78,7 +78,7 @@ export abstract class LocalBuilder implements Builder {
             await this.onStarted(credentials, id, push, rb, buildNumber, context);
             try {
                 const br = await rb.buildResult;
-                log.write(`Build result: ${br.error? "Error" : "Success"} ${br.message}`);
+                log.write(`Build result: ${br.error ? "Error" : "Success"} ${br.message}`);
                 await this.onExit(
                     credentials,
                     id,
