@@ -21,10 +21,11 @@ import { Target } from "../../spi/deploy/Target";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
+import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
-import { ListenerRegistration } from "./ListenerRegistration";
+import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
 /**
@@ -66,23 +67,12 @@ import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions
  * ```
  */
 export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOptions = SoftwareDeliveryMachineOptions>
-    extends GoalDrivenMachine<O>, ListenerRegistration, FunctionalUnit {
+    extends GoalDrivenMachine<O>,
+        ListenerRegistrationManager,
+        CommandRegistrationManager,
+        FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
-
-    /**
-     * Add generators to this machine to enable project creation
-     * @param {Maker<HandleCommand>} g
-     * @return {this}
-     */
-    addGenerators(...g: Array<Maker<HandleCommand>>): this;
-
-    /**
-     * Add editors to this machine
-     * @param {Maker<HandleCommand>} e
-     * @return {this}
-     */
-    addEditors(...e: Array<Maker<HandleCommand>>): this;
 
     /**
      * Add supporting commands for other functionality. Consider using

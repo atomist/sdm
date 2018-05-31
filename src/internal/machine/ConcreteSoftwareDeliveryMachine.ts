@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
+/* tslint:disable:max-file-line-count */
+
 import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { enrichGoalSetters } from "../..";
+import { editorCommand } from "../../api/command/editor/editorCommand";
+import { generatorCommand } from "../../api/command/generator/generatorCommand";
+import { createCommand } from "../../api/command/support/createCommand";
+import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
@@ -46,6 +51,9 @@ import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
+import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { executeAutofixes } from "../../code/autofix/executeAutofixes";
 import { SdmGoalImplementationMapperImpl } from "../../goal/SdmGoalImplementationMapperImpl";
 import { deleteRepositoryCommand } from "../../handlers/commands/deleteRepository";
@@ -76,6 +84,7 @@ import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
+import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -349,13 +358,43 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
             .filter(m => !!m);
     }
 
-    public addGenerators(...g: Array<Maker<HandleCommand>>): this {
-        this.generators = this.generators.concat(g);
+    public addCommands(...cmds: Array<CommandHandlerRegistration<any>>): this {
+        const commands = cmds.map(e => () => createCommand(
+            this,
+            e.createCommand,
+            e.name,
+            e.paramsMaker,
+            e,
+        ));
+        this.supportingCommands = this.supportingCommands.concat(commands);
         return this;
     }
 
-    public addEditors(...e: Array<Maker<HandleCommand>>): this {
-        this.editors = this.editors.concat(e);
+    public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
+        const commands = gens.map(e => () => generatorCommand(
+            this,
+            e.createEditor,
+            e.name,
+            e.paramsMaker,
+            e,
+        ));
+        this.generators = this.generators.concat(commands);
+        return this;
+    }
+
+    public addEditors(...eds: EditorRegistration[]): this {
+        const commands = eds.map(e => {
+            const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
+            return () => fun(
+                this,
+                e.createEditor,
+                e.name,
+                e.paramsMaker,
+                e,
+                e.targets,
+            );
+        });
+        this.editors = this.editors.concat(commands);
         return this;
     }
 
@@ -449,9 +488,9 @@ export class ConcreteSoftwareDeliveryMachine extends ListenerRegistrationSupport
         return this;
     }
 
-    private addExtensionPack(configurer: ExtensionPack): this {
-        logger.info("Adding capabilities from configurer '%s'", configurer.name);
-        configurer.configure(this);
+    private addExtensionPack(pack: ExtensionPack): this {
+        logger.info("Adding extension pack '%s'", pack.name);
+        pack.configure(this);
         return this;
     }
 

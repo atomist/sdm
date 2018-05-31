@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandlerContext } from "@atomist/automation-client";
+import { HandlerContext } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
-import { editorCommand } from "../../api/command/editor/editorCommand";
-import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
 
 /**
@@ -26,12 +26,11 @@ import { LanguageReport, reportForLanguages } from "../../util/sloc/slocReport";
  * to Slack, across understood languages.
  * @type {HandleCommand<EditOneOrAllParameters>}
  */
-export const slocCommand: HandleCommand = editorCommand<EmptyParameters>(
-    () => computeSloc,
-    "sloc",
-    EmptyParameters, {
-        intent: ["compute sloc", "sloc"],
-    });
+export const slocCommand: EditorRegistration = {
+    name: "sloc",
+    createEditor: () => computeSloc,
+    intent: ["compute sloc", "sloc"],
+};
 
 async function computeSloc(p: Project, ctx: HandlerContext, params: EmptyParameters) {
     const report = await reportForLanguages(p);

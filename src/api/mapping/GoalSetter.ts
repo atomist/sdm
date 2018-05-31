@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation, SdmContext } from "../..";
+import { SdmContext } from "../context/SdmContext";
 import { Goals } from "../goal/Goals";
+import { PushListenerInvocation } from "../listener/PushListener";
 import { Mapping } from "./Mapping";
 
 /**

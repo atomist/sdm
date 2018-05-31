@@ -37,13 +37,13 @@ import { AutofixRegistration } from "../../registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
 import { PushReactionRegisterable } from "../../registration/PushReactionRegistration";
 import { ReviewerRegistration } from "../../registration/ReviewerRegistration";
-import { ListenerRegistration } from "../ListenerRegistration";
+import { ListenerRegistrationManager } from "../ListenerRegistrationManager";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
  * This class is purely a registration store, and has no other behavior.
  */
-export class ListenerRegistrationSupport implements ListenerRegistration {
+export class ListenerRegistrationSupport implements ListenerRegistrationManager {
 
     protected readonly buildListeners: BuildListener[] = [];
 

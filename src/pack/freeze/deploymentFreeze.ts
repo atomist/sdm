@@ -1,6 +1,6 @@
 import { logger } from "@atomist/automation-client";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { EmptyParameters } from "../../api/command/support/EmptyParameters";
 import { allOf } from "../../api/dsl/allOf";
 import { MessageGoal } from "../../api/goal/common/MessageGoal";
 import { executeSendMessageToSlack } from "../../api/goal/support/executeSendMessageToSlack";

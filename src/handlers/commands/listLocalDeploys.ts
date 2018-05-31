@@ -17,7 +17,7 @@
 import { HandleCommand, HandlerContext, Success } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters } from "../../api/command/EmptyParameters";
+import { EmptyParameters } from "../../api/command/support/EmptyParameters";
 import { managedExecutableJarDeployments } from "../../internal/delivery/deploy/local/jar/executableJarDeployer";
 import { DeployedApp, ManagedDeployments } from "../../internal/delivery/deploy/local/ManagedDeployments";
 import { managedMavenDeployments } from "../../internal/delivery/deploy/local/maven/mavenSourceDeployer";

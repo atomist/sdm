@@ -25,9 +25,9 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
-import { CachingProjectLoader } from "../../project/CachingProjectLoader";
+import { MachineOrMachineOptions, toMachineOptions } from "../../machine/support/toMachineOptions";
 import { projectLoaderRepoLoader } from "../../project/projectLoaderRepoLoader";
-import { EmptyParameters } from "../EmptyParameters";
+import { EmptyParameters } from "../support/EmptyParameters";
 import { EditModeSuggestion } from "./EditModeSuggestion";
 import { allReposInTeam } from "./support/allReposInTeam";
 import { chattyEditorFactory } from "./support/editorWrappers";
@@ -36,6 +36,7 @@ import { chattyEditorFactory } from "./support/editorWrappers";
  * Wrap an editor in a command handler, allowing use of custom parameters.
  * Targeting (targets property) is handled automatically if the parameters
  * do not implement TargetsParams
+ * @param sdm machine or options
  * @param edd function to make a fresh editor instance from the params
  * @param name editor name
  * @param paramsMaker parameters factory, typically the name of a class with a no arg constructor
@@ -43,19 +44,21 @@ import { chattyEditorFactory } from "./support/editorWrappers";
  * @param details optional details to customize behavior
  * Add intent "edit <name>"
  */
-export function editorCommand<PARAMS = EmptyParameters>(edd: (params: PARAMS) => AnyProjectEditor,
-                                                        name: string,
-                                                        paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
-                                                        details: Partial<EditorCommandDetails> = {},
-                                                        targets: FallbackParams =
-                                                            new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
+export function editorCommand<PARAMS = EmptyParameters>(
+    sdm: MachineOrMachineOptions,
+    edd: (params: PARAMS) => AnyProjectEditor,
+    name: string,
+    paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
+    details: Partial<EditorCommandDetails> = {},
+    targets: FallbackParams =
+        new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
     const description = details.description || name;
     const detailsToUse: EditorCommandDetails = {
         description,
         intent: `edit ${name}`,
-        repoFinder: allReposInTeam(),
+        repoFinder: allReposInTeam(toMachineOptions(sdm).repoRefResolver),
         repoLoader:
-            p => projectLoaderRepoLoader(new CachingProjectLoader(), p.targets.credentials),
+            p => projectLoaderRepoLoader(toMachineOptions(sdm).projectLoader, p.targets.credentials),
         editMode: ((params: PARAMS) => new PullRequest(
             (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
             (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),

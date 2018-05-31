@@ -1,12 +1,14 @@
-import { goalContributors } from "../../../src/api/dsl/goalContribution";
+import { enrichGoalSetters, goalContributors } from "../../../src/api/dsl/goalContribution";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { HttpServiceGoals } from "../../../src/goal/common/httpServiceGoals";
 import { fakePush } from "./decisionTreeTest";
 
 import * as assert from "power-assert";
-import { enrichGoalSetters, GoalComponent, GoalSetter, MessageGoal } from "../../../src";
+import { GoalComponent } from "../../../src/api/dsl/GoalComponent";
+import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
+import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
 
 describe("goalContribution", () => {
 
