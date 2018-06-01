@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { AnyOptions } from "@atomist/automation-client/configuration";
+import {
+    AnyOptions,
+    Configuration,
+} from "@atomist/automation-client/configuration";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
@@ -59,6 +62,6 @@ export interface SoftwareDeliveryMachineOptions {
 /**
  * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key.
  */
-export interface SoftwareDeliveryMachineConfiguration {
+export interface SoftwareDeliveryMachineConfiguration extends Configuration {
     sdm: SoftwareDeliveryMachineOptions & AnyOptions;
 }

@@ -24,9 +24,18 @@ import {
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
 import { defaultSoftwareDeliveryMachineOptions } from "../../machine/defaultSoftwareDeliveryMachineOptions";
 
+/**
+ * Options that are used during configuration of an SDM but don't get passed on to the
+ * running SDM instance
+ */
 export interface ConfigureOptions {
     requiredConfigurationValues?: string[];
 }
+
+/**
+ * Type that can create a fully configured SDM
+ */
+export type SoftwareDeliveryMachineMaker = (configuration: SoftwareDeliveryMachineConfiguration) => SoftwareDeliveryMachine;
 
 /**
  * Configure and set up a Software Deliver Machince instance with the automation-client framework for standalone
@@ -36,12 +45,12 @@ export interface ConfigureOptions {
  * @returns {(config: Configuration) => Promise<Configuration & SoftwareDeliveryMachineOptions>}
  */
 export function configureSdm(
-    machineMaker: (configuration: Configuration & SoftwareDeliveryMachineConfiguration) => SoftwareDeliveryMachine,
+    machineMaker: SoftwareDeliveryMachineMaker,
     options: ConfigureOptions = {}) {
 
     return async (config: Configuration) => {
         const defaultSdmOptions = defaultSoftwareDeliveryMachineOptions(config);
-        const mergedConfig = _.merge(defaultSdmOptions, config) as Configuration & SoftwareDeliveryMachineConfiguration;
+        const mergedConfig = _.merge(defaultSdmOptions, config) as SoftwareDeliveryMachineConfiguration;
         const machine = machineMaker(mergedConfig);
 
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
