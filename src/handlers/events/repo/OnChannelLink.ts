@@ -18,10 +18,10 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, S
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { AddressChannels, addressChannelsFor } from "../../../api/context/addressChannels";
 import { ChannelLinkListener, ChannelLinkListenerInvocation } from "../../../api/listener/ChannelLinkListenerInvocation";
+import { CredentialsResolver } from "../../../spi/credentials/CredentialsResolver";
 import { ProjectLoader } from "../../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
-import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new channel has been linked to a repo

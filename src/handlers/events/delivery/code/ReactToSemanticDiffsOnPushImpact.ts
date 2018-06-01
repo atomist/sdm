@@ -24,9 +24,9 @@ import {
     FingerprintDifferenceListenerInvocation,
     FingerprintValue,
 } from "../../../../api/listener/FingerprintDifferenceListener";
+import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../../typings/types";
-import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**
  * React to a PushImpact event to react to semantic diffs

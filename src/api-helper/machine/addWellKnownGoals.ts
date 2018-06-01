@@ -1,4 +1,4 @@
-import { AnyPush, SoftwareDeliveryMachine } from "../..";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
     ArtifactGoal,
     AutofixGoal, DeleteAfterUndeploysGoal,
@@ -8,6 +8,7 @@ import {
     PushReactionGoal,
     ReviewGoal,
 } from "../../api/machine/wellKnownGoals";
+import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { executeImmaterial } from "../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/executeFingerprinting";
 import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";

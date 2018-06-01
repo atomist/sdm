@@ -22,4 +22,5 @@ export interface HandlerRegistrationManager extends FunctionalUnit {
      * @return {this}
      */
     addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this;
+
 }

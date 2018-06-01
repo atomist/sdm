@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { OnCommand } from "@atomist/automation-client/onCommand";
+import { CommandHandlerRegistration } from "../..";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
-
-export const SelfDescribeCommandName = "SelfDescribe";
 
 /**
  * Return a command handler that can describe the present software delivery machine
  * @param {SoftwareDeliveryMachine} sdm
  * @return {HandleCommand<EmptyParameters>}
  */
-export function selfDescribeHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
-    return () => commandHandlerFrom(
-        handleDescribe(sdm),
-        EmptyParameters,
-        SelfDescribeCommandName,
-        "Describe this SDM",
-        "describe sdm");
-}
+export const SelfDescribeHandler: CommandHandlerRegistration = {
+    name: "SelfDescribe",
+    createCommand: handleDescribe,
+    description: "Describe this SDM",
+    intent: "describe sdm",
+};
 
 function handleDescribe(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
         const message = `I am a brilliant SDM, eager to work for you.\nMy name is _${sdm.name}_`;
         await ctx.messageClient.respond(message);
-        return { code: 0, message };
+        return {code: 0, message};
     };
 }

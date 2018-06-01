@@ -22,8 +22,8 @@ import {
     GoalsSetListener,
     GoalsSetListenerInvocation,
 } from "../../../../../api/listener/GoalsSetListener";
-import { CredentialsResolver } from "../../../../../handlers/common/CredentialsResolver";
 import { goalKeyString, SdmGoal, SdmGoalState } from "../../../../../ingesters/sdmGoalIngester";
+import { CredentialsResolver } from "../../../../../spi/credentials/CredentialsResolver";
 import { StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
 

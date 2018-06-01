@@ -2,17 +2,17 @@ import { Configuration } from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
-import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
 import { defaultSoftwareDeliveryMachineOptions } from "../../machine/defaultSoftwareDeliveryMachineOptions";
 
 export interface ConfigureOptions {
-    sdmOptions?: Partial<ConcreteSoftwareDeliveryMachineOptions>;
+    sdmOptions?: Partial<SoftwareDeliveryMachineOptions>;
     requiredConfigurationValues?: string[];
 }
 
 export function configureSdm(
-    machineMaker: (options: ConcreteSoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
+    machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
     options: ConfigureOptions = {}) {
     return async (config: Configuration) => {
         const sdmOptions = {

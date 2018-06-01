@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-import { HandleCommand, Success } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { Success } from "@atomist/automation-client";
+import { OnCommand } from "@atomist/automation-client/onCommand";
+import { CommandHandlerRegistration } from "../..";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { commandHandlersWithTag } from "./support/commandSearch";
 
@@ -26,14 +25,12 @@ import { commandHandlersWithTag } from "./support/commandSearch";
  * @param sdm
  * @return {HandleCommand<EmptyParameters>}
  */
-export function createRepoHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
-    return () => commandHandlerFrom(
-        handleCreateRepo(sdm),
-        EmptyParameters,
-        "createRepo",
-        "Create a repo",
-        "create repo", "new repo");
-}
+export const CreateRepoHandler: CommandHandlerRegistration = {
+    createCommand: handleCreateRepo,
+    name: "createRepo",
+    description: "Create a repo",
+    intent: ["create repo", "new repo"],
+};
 
 // TODO implement this with dropdown
 

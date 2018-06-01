@@ -21,7 +21,6 @@ import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
-import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { HandlerRegistrationManager } from "./HandlerRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
@@ -69,8 +68,7 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
     extends GoalDrivenMachine<O>,
         ListenerRegistrationManager,
         CommandRegistrationManager,
-        HandlerRegistrationManager,
-        FunctionalUnit {
+        HandlerRegistrationManager {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 
@@ -85,6 +83,8 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
      * @return {this}
      */
     addExtensionPacks(...packs: ExtensionPack[]): this;
+
+    readonly extensionPacks: ExtensionPack[];
 
     /**
      * Add build rules. *May be removed in future: only applicable to local SDM work*

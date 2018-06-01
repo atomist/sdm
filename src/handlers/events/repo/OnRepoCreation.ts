@@ -18,9 +18,9 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, S
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { AddressNoChannels } from "../../../api/context/addressChannels";
 import { RepoCreationListener, RepoCreationListenerInvocation } from "../../../api/listener/RepoCreationListener";
+import { CredentialsResolver } from "../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
-import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new repo has been created. We don't know if it has code.

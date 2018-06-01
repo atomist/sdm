@@ -15,6 +15,7 @@
  */
 
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
+import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
@@ -43,5 +44,10 @@ export interface SoftwareDeliveryMachineOptions {
     logFactory: ProgressLogFactory;
 
     repoRefResolver: RepoRefResolver;
+
+    /**
+     * Strategy for resolving credentials from a handler invocation
+     */
+    credentialsResolver: CredentialsResolver;
 
 }

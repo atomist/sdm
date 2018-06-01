@@ -16,14 +16,14 @@
 
 import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
+import { SoftwareDeliveryMachineOptions } from "../api/machine/SoftwareDeliveryMachineOptions";
 import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
 import { CachingProjectLoader } from "../project/CachingProjectLoader";
-import { ConcreteSoftwareDeliveryMachineOptions } from "./ConcreteSoftwareDeliveryMachineOptions";
 
-export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): ConcreteSoftwareDeliveryMachineOptions {
+export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineOptions {
     return {
         artifactStore: new EphemeralLocalArtifactStore(),
         projectLoader: new CachingProjectLoader(),
