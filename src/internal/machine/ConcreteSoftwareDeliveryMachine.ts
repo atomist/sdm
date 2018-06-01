@@ -236,10 +236,7 @@ export class ConcreteSoftwareDeliveryMachine
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
         this.artifactListenerRegistrations,
-        this.configuration.sdm.credentialsResolver,
-        this.configuration.sdm.repoRefResolver,
-        this.configuration.sdm.artifactStore,
-        this.configuration.sdm.projectLoader)
+        this.configuration.sdm)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
