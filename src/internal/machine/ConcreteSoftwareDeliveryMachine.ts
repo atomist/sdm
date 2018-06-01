@@ -225,7 +225,7 @@ export class ConcreteSoftwareDeliveryMachine
         ArtifactGoal,
         this.options,
         this.artifactListenerRegistrations,
-        this.options.credentialsResolver);
+        this.options.credentialsResolver)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -255,7 +255,7 @@ export class ConcreteSoftwareDeliveryMachine
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.options.repoRefResolver);
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.options.repoRefResolver)
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return []
