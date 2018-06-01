@@ -74,6 +74,8 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 
+    addVerifyImplementation(): this;
+
     /**
      * Add capabilities from these extension packs.
      * This is the primary SDM extension

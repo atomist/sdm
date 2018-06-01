@@ -45,45 +45,45 @@ import { ReviewerRegistration } from "../../api/registration/ReviewerRegistratio
  */
 export class ListenerRegistrationManagerSupport implements ListenerRegistrationManager {
 
+    public readonly autofixRegistrations: AutofixRegistration[] = [];
+
+    public readonly fingerprintListeners: FingerprintListener[] = [];
+
+    public readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
+
+    public readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
+
+    public readonly userJoiningChannelListeners: UserJoiningChannelListener[] = [];
+
+    public readonly tagListeners: TagListener[] = [];
+
+    public readonly newIssueListeners: NewIssueListener[] = [];
+
+    public readonly updatedIssueListeners: UpdatedIssueListener[] = [];
+
+    public readonly closedIssueListeners: ClosedIssueListener[] = [];
+
+    public readonly repoCreationListeners: RepoCreationListener[] = [];
+
+    public readonly repoOnboardingListeners: ProjectListener[] = [];
+
+    public readonly pullRequestListeners: PullRequestListener[] = [];
+
+    public readonly newRepoWithCodeActions: PushListener[] = [];
+
+    public readonly channelLinkListeners: ChannelLinkListener[] = [];
+
+    public readonly goalsSetListeners: GoalsSetListener[] = [];
+
+    public readonly reviewerRegistrations: ReviewerRegistration[] = [];
+
+    public readonly reviewListeners: ReviewListener[] = [];
+
+    public readonly pushReactionRegistrations: PushReactionRegisterable[] = [];
+
+    public readonly artifactListenerRegistrations: ArtifactListenerRegisterable[] = [];
+
     protected readonly buildListeners: BuildListener[] = [];
-
-    protected readonly userJoiningChannelListeners: UserJoiningChannelListener[] = [];
-
-    protected readonly tagListeners: TagListener[] = [];
-
-    protected readonly newIssueListeners: NewIssueListener[] = [];
-
-    protected readonly updatedIssueListeners: UpdatedIssueListener[] = [];
-
-    protected readonly closedIssueListeners: ClosedIssueListener[] = [];
-
-    protected readonly repoCreationListeners: RepoCreationListener[] = [];
-
-    protected readonly repoOnboardingListeners: ProjectListener[] = [];
-
-    protected readonly pullRequestListeners: PullRequestListener[] = [];
-
-    protected readonly newRepoWithCodeActions: PushListener[] = [];
-
-    protected readonly channelLinkListeners: ChannelLinkListener[] = [];
-
-    protected readonly goalsSetListeners: GoalsSetListener[] = [];
-
-    protected readonly reviewerRegistrations: ReviewerRegistration[] = [];
-
-    protected readonly reviewListeners: ReviewListener[] = [];
-
-    protected readonly pushReactionRegistrations: PushReactionRegisterable[] = [];
-
-    protected readonly autofixRegistrations: AutofixRegistration[] = [];
-
-    protected readonly artifactListenerRegistrations: ArtifactListenerRegisterable[] = [];
-
-    protected readonly fingerprinterRegistrations: FingerprinterRegistration[] = [];
-
-    protected readonly fingerprintListeners: FingerprintListener[] = [];
-
-    protected readonly fingerprintDifferenceListeners: FingerprintDifferenceListener[] = [];
 
     protected readonly deploymentListeners?: DeploymentListener[] = [];
 

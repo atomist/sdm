@@ -89,9 +89,15 @@ export interface ListenerRegistrationManager {
      */
     addAutofixes(...ars: AutofixRegistration[]): this;
 
+    autofixRegistrations: AutofixRegistration[];
+
     addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this;
 
+    fingerprinterRegistrations: FingerprinterRegistration[];
+
     addFingerprintListeners(...l: FingerprintListener[]): this;
+
+    fingerprintListeners: FingerprintListener[];
 
     addFingerprintDifferenceListeners(...fh: FingerprintDifferenceListener[]): this;
 
@@ -102,5 +108,35 @@ export interface ListenerRegistrationManager {
     addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this;
 
     addUserJoiningChannelListeners(...l: UserJoiningChannelListener[]): this;
+
+    userJoiningChannelListeners: UserJoiningChannelListener[];
+
+    tagListeners: TagListener[];
+
+    newIssueListeners: NewIssueListener[];
+
+    updatedIssueListeners: UpdatedIssueListener[];
+
+    closedIssueListeners: ClosedIssueListener[];
+
+    repoCreationListeners: RepoCreationListener[];
+
+    repoOnboardingListeners: ProjectListener[];
+
+    pullRequestListeners: PullRequestListener[];
+
+    newRepoWithCodeActions: PushListener[];
+
+    channelLinkListeners: ChannelLinkListener[];
+
+    goalsSetListeners: GoalsSetListener[];
+
+    reviewerRegistrations: ReviewerRegistration[];
+
+    reviewListeners: ReviewListener[];
+
+    pushReactionRegistrations: PushReactionRegisterable[];
+
+    artifactListenerRegistrations: ArtifactListenerRegisterable[];
 
 }
