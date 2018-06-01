@@ -427,11 +427,12 @@ export class ConcreteSoftwareDeliveryMachine
      * @param {PushTest} pushTest
      */
     public knownSideEffect(goal: Goal, sideEffectName: string,
-                           pushTest: PushTest = AnyPush) {
+                           pushTest: PushTest = AnyPush): this {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
             sideEffectName, pushTest,
         });
+        return this;
     }
 
     public addExtensionPacks(...packs: ExtensionPack[]): this {
