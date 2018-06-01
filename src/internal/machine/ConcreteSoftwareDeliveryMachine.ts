@@ -85,6 +85,7 @@ import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSo
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
 import { executeBuild } from "../delivery/build/executeBuild";
 import { executeFingerprinting } from "../delivery/code/fingerprint/executeFingerprinting";
 import { executeDeploy } from "../delivery/deploy/executeDeploy";
@@ -475,7 +476,11 @@ export class ConcreteSoftwareDeliveryMachine
             })
             .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
             .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
-                executeFingerprinting(this.options.projectLoader, this.fingerprinterRegistrations, this.fingerprintListeners))
+                executeFingerprinting(
+                    this.options.projectLoader,
+                    this.fingerprinterRegistrations,
+                    this.fingerprintListeners,
+                    SendFingerprintToAtomist))
             .addGoalImplementation("CodeReactions", PushReactionGoal,
                 executePushReactions(this.options.projectLoader, this.pushReactionRegistrations))
             .addGoalImplementation("Reviews", ReviewGoal,

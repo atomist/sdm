@@ -16,7 +16,7 @@
 
 import { logger } from "@atomist/automation-client";
 import { Success } from "@atomist/automation-client/Handlers";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { computeFingerprints } from "../../../../api-helper/listener/computeFingerprints";
 import { createPushImpactListenerInvocation } from "../../../../api-helper/listener/createPushImpactListenerInvocation";
@@ -25,17 +25,23 @@ import { FingerprintListener } from "../../../../api/listener/FingerprintListene
 import { FingerprinterRegistration } from "../../../../api/registration/FingerprinterRegistration";
 import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
-import { sendFingerprint } from "../../../../util/webhook/sendFingerprint";
+
+/**
+ * Function to publish a fingerprint
+ */
+export type PublishFingerprint = (id: RemoteRepoRef, fingerprint: Fingerprint, team: string) => Promise<any>;
 
 /**
  * Execute fingerprinting and send fingerprints to Atomist
  * @param projectLoader project loader
  * @param {FingerprinterRegistration} fingerprinters
  * @param listeners listeners to fingerprints
+ * @param publish function to publish fingerprints
  */
 export function executeFingerprinting(projectLoader: ProjectLoader,
                                       fingerprinters: FingerprinterRegistration[],
-                                      listeners: FingerprintListener[]): ExecuteGoalWithLog {
+                                      listeners: FingerprintListener[],
+                                      publish: PublishFingerprint): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         const {id, credentials, context} = rwlc;
         if (fingerprinters.length === 0) {
@@ -49,14 +55,15 @@ export function executeFingerprinting(projectLoader: ProjectLoader,
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
             const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
-            fingerprints.map(fingerprint => sendFingerprint(id as GitHubRepoRef, fingerprint, context.teamId));
-            await Promise.all(listeners.map(l => Promise.all(fingerprints.map(fingerprint => l({
-                id,
-                context,
-                credentials,
-                addressChannels: cri.addressChannels,
-                fingerprint,
-            })))));
+            fingerprints.map(fingerprint => publish(id, fingerprint, context.teamId));
+            await Promise.all(listeners.map(l =>
+                Promise.all(fingerprints.map(fingerprint => l({
+                    id,
+                    context,
+                    credentials,
+                    addressChannels: cri.addressChannels,
+                    fingerprint,
+                })))));
         });
         return Success;
     };
