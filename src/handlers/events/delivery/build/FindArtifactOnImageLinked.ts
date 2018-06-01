@@ -14,20 +14,30 @@
  * limitations under the License.
  */
 
-import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
-import { subscription } from "@atomist/automation-client/graph/graphQL";
 import {
-    ArtifactStore,
-    ProjectLoader,
-    RepoRefResolver,
-} from "../../../..";
+    EventFired,
+    EventHandler,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success,
+} from "@atomist/automation-client";
+import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
-import { ArtifactListenerInvocation, ArtifactListenerRegisterable, toArtifactListenerRegistration } from "../../../../api/listener/ArtifactListener";
+import {
+    ArtifactListenerInvocation,
+    ArtifactListenerRegisterable,
+    toArtifactListenerRegistration,
+} from "../../../../api/listener/ArtifactListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
+import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnImageLinked } from "../../../../typings/types";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
