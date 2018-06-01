@@ -26,6 +26,9 @@ export type ListenerInvocation = SdmContext;
  */
 export type RepoListenerInvocation = RepoContext;
 
+export type RepoListener<I extends RepoListenerInvocation = RepoListenerInvocation, R extends any = any> =
+    Function1<I, Promise<R>>;
+
 /**
  * Mapper from a ListenerInvocation to any result
  */
