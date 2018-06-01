@@ -18,7 +18,6 @@ import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
 import {
     SoftwareDeliveryMachineConfiguration,
-    SoftwareDeliveryMachineOptions,
 } from "../api/machine/SoftwareDeliveryMachineOptions";
 import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";

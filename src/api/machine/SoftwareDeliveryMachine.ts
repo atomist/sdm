@@ -26,7 +26,6 @@ import { HandlerRegistrationManager } from "./HandlerRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
 import {
     SoftwareDeliveryMachineConfiguration,
-    SoftwareDeliveryMachineOptions,
 } from "./SoftwareDeliveryMachineOptions";
 
 /**

@@ -20,7 +20,6 @@ import * as _ from "lodash";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
     SoftwareDeliveryMachineConfiguration,
-    SoftwareDeliveryMachineOptions,
 } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
 import { defaultSoftwareDeliveryMachineOptions } from "../../machine/defaultSoftwareDeliveryMachineOptions";

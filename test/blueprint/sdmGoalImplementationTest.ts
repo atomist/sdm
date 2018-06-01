@@ -49,7 +49,7 @@ export const fakeSoftwareDeliveryMachineOptions = {
 
 export const fakeSoftwareDeliveryMachineConfiguration: SoftwareDeliveryMachineConfiguration = {
     sdm: fakeSoftwareDeliveryMachineOptions,
-}
+};
 
 const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
 

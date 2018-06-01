@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
 import { Goal } from "../goal/Goal";
@@ -25,7 +24,6 @@ import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
 import {
     SoftwareDeliveryMachineConfiguration,
-    SoftwareDeliveryMachineOptions,
 } from "./SoftwareDeliveryMachineOptions";
 
 /**

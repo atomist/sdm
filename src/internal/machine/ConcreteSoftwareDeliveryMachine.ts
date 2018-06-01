@@ -30,7 +30,6 @@ import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
     SoftwareDeliveryMachineConfiguration,
-    SoftwareDeliveryMachineOptions,
 } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { ArtifactGoal, BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";

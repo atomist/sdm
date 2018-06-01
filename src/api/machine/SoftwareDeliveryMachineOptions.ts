@@ -57,7 +57,7 @@ export interface SoftwareDeliveryMachineOptions {
 }
 
 /**
- * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key. 
+ * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key.
  */
 export interface SoftwareDeliveryMachineConfiguration {
     sdm: SoftwareDeliveryMachineOptions & AnyOptions;
