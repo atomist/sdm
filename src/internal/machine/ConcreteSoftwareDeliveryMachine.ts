@@ -379,7 +379,7 @@ export class ConcreteSoftwareDeliveryMachine
                 },
             );
             // endpoint
-            this.knownSideEffect(
+            this.addKnownSideEffect(
                 r.value.endpointGoal,
                 r.value.deployGoal.definition.displayName);
             // undeploy
@@ -402,8 +402,8 @@ export class ConcreteSoftwareDeliveryMachine
      * @param {string} sideEffectName
      * @param {PushTest} pushTest
      */
-    public knownSideEffect(goal: Goal, sideEffectName: string,
-                           pushTest: PushTest = AnyPush): this {
+    public addKnownSideEffect(goal: Goal, sideEffectName: string,
+                              pushTest: PushTest = AnyPush): this {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
             sideEffectName, pushTest,

@@ -80,8 +80,8 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineOptions> ext
      * @param {string} sideEffectName
      * @param {PushTest} pushTest
      */
-    knownSideEffect(goal: Goal, sideEffectName: string,
-                    pushTest: PushTest): this;
+    addKnownSideEffect(goal: Goal, sideEffectName: string,
+                       pushTest: PushTest): this;
 
     readonly goalFulfillmentMapper: SdmGoalImplementationMapper;
 

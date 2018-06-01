@@ -46,5 +46,5 @@ export function addWellKnownGoals(sdm: SoftwareDeliveryMachine) {
             offerToDeleteRepository())
         .addGoalImplementation("OfferToDeleteRepoAfterUndeploys", DeleteAfterUndeploysGoal,
             offerToDeleteRepository());
-    sdm.knownSideEffect(ArtifactGoal, "from ImageLinked", AnyPush);
+    sdm.addKnownSideEffect(ArtifactGoal, "from ImageLinked", AnyPush);
 }
