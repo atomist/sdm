@@ -15,11 +15,11 @@
  */
 
 import { HandleCommand, Success } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { OnCommand } from "@atomist/automation-client/onCommand";
 import { EmptyParameters } from "../../api/command/support/EmptyParameters";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { commandHandlersWithTag } from "./support/commandSearch";
+import { CommandHandlerRegistration } from "../..";
 
 /**
  * Return a command handler that can list generators in the current SDM.
@@ -27,14 +27,12 @@ import { commandHandlersWithTag } from "./support/commandSearch";
  * @param {SoftwareDeliveryMachine} sdm
  * @return {HandleCommand<EmptyParameters>}
  */
-export function listGeneratorsHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
-    return () => commandHandlerFrom(
-        handleListGenerators(sdm),
-        EmptyParameters,
-        "listGenerators",
-        "List generators",
-        "list generators", "show generators");
-}
+export const ListGeneratorsHandler: CommandHandlerRegistration = {
+    createCommand: handleListGenerators,
+    name: "listGenerators",
+    description: "List generators",
+    intent: ["list generators", "show generators"],
+};
 
 function handleListGenerators(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {

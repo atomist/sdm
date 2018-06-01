@@ -20,20 +20,19 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { EmptyParameters } from "../../api/command/support/EmptyParameters";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { commandHandlersWithTag } from "./support/commandSearch";
+import { CommandHandlerRegistration } from "../..";
 
 /**
  * Return a command handler that can create a repo using generators in this SDM
  * @param sdm
  * @return {HandleCommand<EmptyParameters>}
  */
-export function createRepoHandler(sdm: SoftwareDeliveryMachine): Maker<HandleCommand> {
-    return () => commandHandlerFrom(
-        handleCreateRepo(sdm),
-        EmptyParameters,
-        "createRepo",
-        "Create a repo",
-        "create repo", "new repo");
-}
+export const CreateRepoHandler: CommandHandlerRegistration = {
+    createCommand: handleCreateRepo,
+    name: "createRepo",
+    description: "Create a repo",
+    intent: ["create repo", "new repo"],
+};
 
 // TODO implement this with dropdown
 
