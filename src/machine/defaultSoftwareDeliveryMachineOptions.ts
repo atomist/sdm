@@ -16,20 +16,25 @@
 
 import { Configuration } from "@atomist/automation-client";
 import * as _ from "lodash";
-import { SoftwareDeliveryMachineOptions } from "../api/machine/SoftwareDeliveryMachineOptions";
+import {
+    SoftwareDeliveryMachineConfiguration,
+    SoftwareDeliveryMachineOptions,
+} from "../api/machine/SoftwareDeliveryMachineOptions";
 import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
 import { CachingProjectLoader } from "../project/CachingProjectLoader";
 
-export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineOptions {
+export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineConfiguration {
     return {
-        artifactStore: new EphemeralLocalArtifactStore(),
-        projectLoader: new CachingProjectLoader(),
-        logFactory: rolarAndDashboardLogFactory(_.get(configuration, "sdm.rolar.url"),
-            _.get(configuration, "sdm.dashboard.url")),
-        credentialsResolver: new GitHubCredentialsResolver(),
-        repoRefResolver: new DefaultRepoRefResolver(),
+        sdm: {
+            artifactStore: new EphemeralLocalArtifactStore(),
+            projectLoader: new CachingProjectLoader(),
+            logFactory: rolarAndDashboardLogFactory(_.get(configuration, "sdm.rolar.url"),
+                _.get(configuration, "sdm.dashboard.url")),
+            credentialsResolver: new GitHubCredentialsResolver(),
+            repoRefResolver: new DefaultRepoRefResolver(),
+        },
     };
 }

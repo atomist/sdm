@@ -1,65 +1,96 @@
+/*
+ * Copyright © 2018 Atomist, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Configuration } from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
-import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
+import {
+    SoftwareDeliveryMachineConfiguration,
+    SoftwareDeliveryMachineOptions,
+} from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalAutomationEventListener } from "../../handlers/events/delivery/goals/launchGoal";
 import { defaultSoftwareDeliveryMachineOptions } from "../../machine/defaultSoftwareDeliveryMachineOptions";
 
 export interface ConfigureOptions {
-    sdmOptions?: Partial<SoftwareDeliveryMachineOptions>;
     requiredConfigurationValues?: string[];
 }
 
+/**
+ * Configure and set up a Software Deliver Machince instance with the automation-client framework for standalone
+ * or single goal based execution
+ * @param {(configuration: (Configuration & SoftwareDeliveryMachineOptions)) => SoftwareDeliveryMachine} machineMaker
+ * @param {ConfigureOptions} options
+ * @returns {(config: Configuration) => Promise<Configuration & SoftwareDeliveryMachineOptions>}
+ */
 export function configureSdm(
-    machineMaker: (options: SoftwareDeliveryMachineOptions, configuration: Configuration) => SoftwareDeliveryMachine,
+    machineMaker: (configuration: Configuration & SoftwareDeliveryMachineConfiguration) => SoftwareDeliveryMachine,
     options: ConfigureOptions = {}) {
+
     return async (config: Configuration) => {
-        const sdmOptions = {
-            ...defaultSoftwareDeliveryMachineOptions(config),
-            ...(options.sdmOptions ? options.sdmOptions : {}),
-        };
-        const machine = machineMaker(sdmOptions, config);
+        const defaultSdmOptions = defaultSoftwareDeliveryMachineOptions(config);
+        const mergedConfig = _.merge(defaultSdmOptions, config) as Configuration & SoftwareDeliveryMachineConfiguration;
+        const machine = machineMaker(mergedConfig);
 
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
-            config.listeners.push(
+            mergedConfig.name = `${mergedConfig.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
+
+            // Force ephemeral policy and no handlers or ingesters
+            mergedConfig.policy = "ephemeral";
+            mergedConfig.commands = [];
+            mergedConfig.events = [];
+            mergedConfig.ingesters = [];
+
+            mergedConfig.listeners.push(
                 new GoalAutomationEventListener(
                     machine.goalFulfillmentMapper,
-                    machine.options.projectLoader,
-                    machine.options.repoRefResolver,
-                    machine.options.logFactory));
-            config.name = `${config.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
-            // force ephemeral policy and no handlers or ingesters
-            config.policy = "ephemeral";
-            config.commands = [];
-            config.events = [];
-            config.ingesters = [];
+                    machine.configuration.sdm.projectLoader,
+                    machine.configuration.sdm.repoRefResolver,
+                    machine.configuration.sdm.logFactory));
 
             // Disable app events for forked clients
-            config.applicationEvents.enabled = false;
+            mergedConfig.applicationEvents.enabled = false;
         } else {
-            const missingValues = [];
-            (options.requiredConfigurationValues || []).forEach(v => {
-                if (!_.get(config, v)) {
-                    missingValues.push(v);
-                }
-            });
-            if (missingValues.length > 0) {
-                throw new Error(
-                    `Missing configuration values. Please add the following values to your client configuration: '${missingValues.join(", ")}'`);
-            }
+            validateConfiguration(mergedConfig, options);
 
-            if (!config.commands) {
-                config.commands = [];
+            if (!mergedConfig.commands) {
+                mergedConfig.commands = [];
             }
-            config.commands.push(...machine.commandHandlers);
+            mergedConfig.commands.push(...machine.commandHandlers);
 
-            if (!config.events) {
-                config.events = [];
+            if (!mergedConfig.events) {
+                mergedConfig.events = [];
             }
-            config.events.push(...machine.eventHandlers);
+            mergedConfig.events.push(...machine.eventHandlers);
         }
-        return config;
+        return mergedConfig;
     };
+}
+
+function validateConfiguration(config: Configuration, options: ConfigureOptions) {
+    const missingValues = [];
+    (options.requiredConfigurationValues || []).forEach(v => {
+        if (!_.get(config, v)) {
+            missingValues.push(v);
+        }
+    });
+    if (missingValues.length > 0) {
+        throw new Error(
+            `Missing configuration values. Please add the following values to your client configuration: '${
+                missingValues.join(", ")}'`);
+    }
 }

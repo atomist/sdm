@@ -42,7 +42,7 @@ export let managedMavenDeployments: ManagedDeployments;
  */
 export function mavenDeployer(projectLoader: ProjectLoader, opts: LocalDeployerOptions): Deployer<ManagedDeploymentTargetInfo> {
     if (!managedMavenDeployments) {
-        logger.info("Created new deployments record");
+        logger.debug("Created new deployments record");
         managedMavenDeployments = new ManagedDeployments(opts.lowerPort);
     }
     return new MavenSourceDeployer(projectLoader, {

@@ -11,7 +11,7 @@ export const DryRunEditing: ExtensionPack = {
     version: "0.1.0",
     configure: sdm => {
         sdm.addSupportingEvents(
-            () => new OnDryRunBuildComplete(sdm.options.repoRefResolver),
+            () => new OnDryRunBuildComplete(sdm.configuration.sdm.repoRefResolver),
         );
     },
 };

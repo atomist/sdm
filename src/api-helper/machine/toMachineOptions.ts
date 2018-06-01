@@ -5,11 +5,11 @@ export type MachineOrMachineOptions = MachineConfiguration<any> | SoftwareDelive
 
 export function toMachineOptions(m: MachineOrMachineOptions): SoftwareDeliveryMachineOptions {
     return isMachineConfiguration(m) ?
-        m.options :
+        m.configuration.sdm :
         m;
 }
 
 function isMachineConfiguration(o: object): o is MachineConfiguration<any> {
     const maybe = o as MachineConfiguration<any>;
-    return !!maybe.options && !!maybe.configuration;
+    return !!maybe.configuration;
 }

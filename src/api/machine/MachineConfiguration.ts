@@ -23,11 +23,9 @@ export interface MachineConfiguration<O> {
 
     readonly name: string;
 
-    readonly options: O;
-
     /**
-     * Automation client configuration this machine will run in
+     * Automation client and machine configuration this machine will run in
      */
-    readonly configuration: Configuration;
+    readonly configuration: Configuration & O;
 
 }
