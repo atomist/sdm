@@ -31,6 +31,3 @@ export type RepoListenerInvocation = RepoContext;
  */
 export type SdmListener<I extends ListenerInvocation, R extends any = any> =
     Function1<I, Promise<R>>;
-
-export type RepoListener<I extends RepoListenerInvocation = RepoListenerInvocation, R extends any = any> =
-    Function1<I, Promise<R>>;

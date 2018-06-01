@@ -82,6 +82,8 @@ export class ConcreteSoftwareDeliveryMachine
     extends ListenerRegistrationManagerSupport
     implements SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
 
+    public readonly extensionPacks: ExtensionPack[] = [];
+
     private readonly registrationManager = new RegistrationManagerSupport(this);
 
     private pushMap: GoalSetter;
@@ -425,6 +427,7 @@ export class ConcreteSoftwareDeliveryMachine
         logger.info("Adding extension pack '%s' version %s from %s",
             pack.name, pack.version, pack.vendor);
         pack.configure(this);
+        this.extensionPacks.push(pack);
         return this;
     }
 

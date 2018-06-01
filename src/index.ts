@@ -27,6 +27,7 @@ export * from "./api/listener/ArtifactListener";
 export * from "./api/listener/BuildListener";
 export * from "./api/listener/ChannelLinkListenerInvocation";
 export * from "./api/listener/ClosedIssueListener";
+export * from "./api/listener/CommandListener";
 export * from "./api/listener/DeploymentListener";
 export * from "./api/listener/EndpointVerificationListener";
 export * from "./api/listener/FingerprintDifferenceListener";
