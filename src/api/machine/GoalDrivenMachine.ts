@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
 import { Goal } from "../goal/Goal";
@@ -23,18 +22,15 @@ import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementati
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import {
+    SoftwareDeliveryMachineConfiguration,
+} from "./SoftwareDeliveryMachineOptions";
 
 /**
  * Interface for machines driven by configurable goals.
  * Goals and goal "implementations" can be defined by users.
  */
-export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineOptions> extends MachineConfiguration<O> {
-
-    /**
-     * Automation client configuration this machine will run in
-     */
-    readonly configuration: Configuration;
+export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguration> extends MachineConfiguration<O> {
 
     /**
      * Return the PushMapping that will be used on pushes.

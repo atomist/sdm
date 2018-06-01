@@ -1,11 +1,11 @@
 import { logger } from "@atomist/automation-client";
-import { CommandHandlerRegistration } from "../..";
 import { allOf } from "../../api/dsl/allOf";
 import { MessageGoal } from "../../api/goal/common/MessageGoal";
 import { executeSendMessageToSlack } from "../../api/goal/support/executeSendMessageToSlack";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { PushTest } from "../../api/mapping/PushTest";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 
 /**
  * Goal to explain a deployment freeze to the user.

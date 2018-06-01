@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+import {
+    AnyOptions,
+    Configuration,
+} from "@atomist/automation-client/configuration";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
@@ -43,6 +47,9 @@ export interface SoftwareDeliveryMachineOptions {
      */
     logFactory: ProgressLogFactory;
 
+    /**
+     * Strategy for resolving Git repository references
+     */
     repoRefResolver: RepoRefResolver;
 
     /**
@@ -50,4 +57,11 @@ export interface SoftwareDeliveryMachineOptions {
      */
     credentialsResolver: CredentialsResolver;
 
+}
+
+/**
+ * Configuration that takes SoftwareDeliveryMachineOptions inside the sdm key.
+ */
+export interface SoftwareDeliveryMachineConfiguration extends Configuration {
+    sdm: SoftwareDeliveryMachineOptions & AnyOptions;
 }

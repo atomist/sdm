@@ -20,15 +20,24 @@ import { EditOneOrAllParameters } from "@atomist/automation-client/operations/co
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
-import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
+import {
+    EditorCommandDetails,
+    editorHandler,
+} from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { SmartParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import { EditModeSuggestion } from "../../../api/command/editor/EditModeSuggestion";
 import { EmptyParameters } from "../../../api/command/support/EmptyParameters";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
-import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
+import {
+    MachineOrMachineOptions,
+    toMachineOptions,
+} from "../../machine/toMachineOptions";
 import { allReposInTeam } from "./allReposInTeam";
 import { chattyEditorFactory } from "./editorWrappers";
 

@@ -23,7 +23,10 @@ import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
-import { SoftwareDeliveryMachineOptions } from "../../src/api/machine/SoftwareDeliveryMachineOptions";
+import {
+    SoftwareDeliveryMachineConfiguration,
+    SoftwareDeliveryMachineOptions,
+} from "../../src/api/machine/SoftwareDeliveryMachineOptions";
 import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { DefaultRepoRefResolver } from "../../src/handlers/common/DefaultRepoRefResolver";
@@ -44,6 +47,10 @@ export const fakeSoftwareDeliveryMachineOptions = {
         {path: "README.md", content: "read sometthing else"})),
 } as any as SoftwareDeliveryMachineOptions;
 
+export const fakeSoftwareDeliveryMachineConfiguration: SoftwareDeliveryMachineConfiguration = {
+    sdm: fakeSoftwareDeliveryMachineOptions,
+};
+
 const credentials: ProjectOperationCredentials = {token: "ab123bbbaaa"};
 
 const fakeContext = {context: {name: "my favorite context "}} as any as HandlerContext;
@@ -54,7 +61,7 @@ describe("implementing goals in the SDM", () => {
 
     it("can autofix", async () => {
         const mySDM = createSoftwareDeliveryMachine(
-            {name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined},
+            {name: "Gustave", configuration: fakeSoftwareDeliveryMachineConfiguration},
             whenPushSatisfies(AnyPush)
                 .itMeans("autofix the crap out of that thing")
                 .setGoals(new Goals("Autofix only", AutofixGoal)));
@@ -92,7 +99,7 @@ describe("implementing goals in the SDM", () => {
         };
 
         const mySDM = createSoftwareDeliveryMachine(
-            {name: "Gustave", options: fakeSoftwareDeliveryMachineOptions, configuration: undefined},
+            {name: "Gustave", configuration: fakeSoftwareDeliveryMachineConfiguration},
             whenPushSatisfies(AnyPush)
                 .itMeans("cornelius springer")
                 .setGoals(new Goals("Springer", customGoal)))

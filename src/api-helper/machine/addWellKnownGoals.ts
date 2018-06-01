@@ -25,23 +25,23 @@ import { executeReview } from "../listener/executeReview";
 export function addWellKnownGoals(sdm: SoftwareDeliveryMachine) {
     sdm.addGoalImplementation("Autofix", AutofixGoal,
         executeAutofixes(
-            sdm.options.projectLoader,
+            sdm.configuration.sdm.projectLoader,
             sdm.autofixRegistrations,
-            sdm.options.repoRefResolver), {
+            sdm.configuration.sdm.repoRefResolver), {
             // Autofix errors should not be reported to the user
             logInterpreter: LogSuppressor,
         })
         .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
         .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
             executeFingerprinting(
-                sdm.options.projectLoader,
+                sdm.configuration.sdm.projectLoader,
                 sdm.fingerprinterRegistrations,
                 sdm.fingerprintListeners,
                 SendFingerprintToAtomist))
         .addGoalImplementation("CodeReactions", PushReactionGoal,
-            executePushReactions(sdm.options.projectLoader, sdm.pushReactionRegistrations))
+            executePushReactions(sdm.configuration.sdm.projectLoader, sdm.pushReactionRegistrations))
         .addGoalImplementation("Reviews", ReviewGoal,
-            executeReview(sdm.options.projectLoader, sdm.reviewerRegistrations, sdm.reviewListeners))
+            executeReview(sdm.configuration.sdm.projectLoader, sdm.reviewerRegistrations, sdm.reviewListeners))
         .addVerifyImplementation()
         .addGoalImplementation("OfferToDeleteRepo", DeleteRepositoryGoal,
             offerToDeleteRepository())

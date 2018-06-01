@@ -1,6 +1,8 @@
 import { MachineConfiguration } from "../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
-import { SoftwareDeliveryMachineOptions } from "../api/machine/SoftwareDeliveryMachineOptions";
+import {
+    SoftwareDeliveryMachineConfiguration,
+} from "../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../api/mapping/GoalSetter";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ConcreteSoftwareDeliveryMachine } from "../internal/machine/ConcreteSoftwareDeliveryMachine";
@@ -44,10 +46,10 @@ import { ExposeInfo } from "../pack/info/exposeInfo";
  *    .add...;
  * ```
  */
-export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineOptions>,
+export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineConfiguration>,
                                               // tslint:disable-next-line:max-line-length
-                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<SoftwareDeliveryMachineOptions> {
-    const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration,
+                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<SoftwareDeliveryMachineConfiguration> {
+    const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.configuration,
         goalSetters);
     return machine
         .addSupportingCommands(() => displayBuildLogHandler())

@@ -24,7 +24,9 @@ import { ExtensionPack } from "./ExtensionPack";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { HandlerRegistrationManager } from "./HandlerRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
-import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
+import {
+    SoftwareDeliveryMachineConfiguration,
+} from "./SoftwareDeliveryMachineOptions";
 
 /**
  * Class instantiated to create a **Software Delivery MachineConfiguration**.
@@ -64,7 +66,7 @@ import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions
  *    .add...;
  * ```
  */
-export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOptions = SoftwareDeliveryMachineOptions>
+export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfiguration = SoftwareDeliveryMachineConfiguration>
     extends GoalDrivenMachine<O>,
         ListenerRegistrationManager,
         CommandRegistrationManager,

@@ -16,8 +16,8 @@
 
 import { Success } from "@atomist/automation-client";
 import { OnCommand } from "@atomist/automation-client/onCommand";
-import { CommandHandlerRegistration } from "../..";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { commandHandlersWithTag } from "./support/commandSearch";
 
 /**
