@@ -18,9 +18,9 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, S
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { addressChannelsFor } from "../../../api/context/addressChannels";
 import { ClosedIssueListener, ClosedIssueListenerInvocation } from "../../../api/listener/ClosedIssueListener";
+import { CredentialsResolver } from "../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
-import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new issue has been created.

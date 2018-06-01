@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CredentialsResolver } from "../../../common/CredentialsResolver";
+import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
 import { sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
 import {

@@ -43,10 +43,10 @@ import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { GoalSetter } from "../../../../api/mapping/GoalSetter";
 import { SdmGoal, SdmGoalFulfillment } from "../../../../ingesters/sdmGoalIngester";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "../../../../internal/delivery/goals/support/storeGoals";
+import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnPushToAnyBranch, PushFields } from "../../../../typings/types";
-import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**
  * Set up goalSet on a push (e.g. for delivery).

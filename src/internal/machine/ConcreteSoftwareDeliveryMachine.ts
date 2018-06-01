@@ -28,6 +28,7 @@ import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { FunctionalUnit } from "../../api/machine/FunctionalUnit";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { ArtifactGoal, BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
@@ -65,7 +66,6 @@ import { OnRepoCreation } from "../../handlers/events/repo/OnRepoCreation";
 import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
-import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -80,7 +80,7 @@ import { lastLinesLogInterpreter } from "../delivery/goals/support/logInterprete
  */
 export class ConcreteSoftwareDeliveryMachine
     extends ListenerRegistrationManagerSupport
-    implements SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
+    implements SoftwareDeliveryMachine {
 
     public readonly extensionPacks: ExtensionPack[] = [];
 
@@ -435,12 +435,12 @@ export class ConcreteSoftwareDeliveryMachine
      * Construct a new software delivery machine, with zero or
      * more goal setters.
      * @param {string} name
-     * @param {ConcreteSoftwareDeliveryMachineOptions} options
+     * @param {SoftwareDeliveryMachineOptions} options
      * @param configuration automation client configuration we're running in
      * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
      */
     constructor(public readonly name: string,
-                public readonly options: ConcreteSoftwareDeliveryMachineOptions,
+                public readonly options: SoftwareDeliveryMachineOptions,
                 public readonly configuration: Configuration,
                 goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();

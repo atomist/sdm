@@ -84,6 +84,7 @@ export * from "./api/registration/ReviewerError";
 export * from "./api/registration/ReviewerRegistration";
 export * from "./spi/artifact/ArtifactStore";
 export * from "./spi/build/Builder";
+export * from "./spi/credentials/CredentialsResolver";
 export * from "./spi/deploy/Deployer";
 export * from "./spi/deploy/Deployment";
 export * from "./spi/deploy/Target";

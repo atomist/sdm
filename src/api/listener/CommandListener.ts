@@ -15,9 +15,9 @@ export interface CommandListenerInvocation<PARAMS = any> extends SdmContext {
     parameters?: PARAMS;
 
     /**
-     * The repo this command relates to, if it's available
+     * The repos this command relates to, if available.
      */
-    id?: RemoteRepoRef;
+    ids?: RemoteRepoRef[];
 
 }
 

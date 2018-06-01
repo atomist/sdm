@@ -1,10 +1,10 @@
 import { MachineConfiguration } from "../api/machine/MachineConfiguration";
 import { SoftwareDeliveryMachine } from "../api/machine/SoftwareDeliveryMachine";
+import { SoftwareDeliveryMachineOptions } from "../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../api/mapping/GoalSetter";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
 import { ConcreteSoftwareDeliveryMachine } from "../internal/machine/ConcreteSoftwareDeliveryMachine";
 import { ExposeInfo } from "../pack/info/exposeInfo";
-import { ConcreteSoftwareDeliveryMachineOptions } from "./ConcreteSoftwareDeliveryMachineOptions";
 
 /**
  * Create a **Software Delivery MachineConfiguration** with default predefined goals.
@@ -44,9 +44,9 @@ import { ConcreteSoftwareDeliveryMachineOptions } from "./ConcreteSoftwareDelive
  *    .add...;
  * ```
  */
-export function createSoftwareDeliveryMachine(config: MachineConfiguration<ConcreteSoftwareDeliveryMachineOptions>,
+export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineOptions>,
                                               // tslint:disable-next-line:max-line-length
-                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
+                                              ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<SoftwareDeliveryMachineOptions> {
     const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.options, config.configuration,
         goalSetters);
     return machine

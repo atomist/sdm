@@ -24,5 +24,5 @@ export interface CommandRegistrationManager {
      * @return {this}
      */
     addEditors(...eds: EditorRegistration[]): this;
-    
+
 }

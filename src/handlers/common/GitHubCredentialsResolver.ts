@@ -16,7 +16,7 @@
 
 import { Secret, Secrets } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { CredentialsResolver } from "./CredentialsResolver";
+import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 
 export class GitHubCredentialsResolver implements CredentialsResolver {
 

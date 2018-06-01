@@ -20,9 +20,9 @@ import { GitCommandGitProject } from "@atomist/automation-client/project/git/Git
 import * as _ from "lodash";
 import {AddressChannels, AddressNoChannels} from "../../../api/context/addressChannels";
 import { PushListener, PushListenerInvocation } from "../../../api/listener/PushListener";
+import { CredentialsResolver } from "../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import * as schema from "../../../typings/types";
-import { CredentialsResolver } from "../../common/CredentialsResolver";
 
 /**
  * A new repo has been created, and it has some code in it.

@@ -1,15 +1,14 @@
-import { HandleCommand, Success } from "@atomist/automation-client";
+import { HandleCommand, logger, Success } from "@atomist/automation-client";
 import { OnCommand } from "@atomist/automation-client/onCommand";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { AddressChannels } from "../../api/context/addressChannels";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
-import { ConcreteSoftwareDeliveryMachineOptions } from "../../machine/ConcreteSoftwareDeliveryMachineOptions";
 import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
@@ -64,21 +63,23 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
     }
     if (!!c.listener) {
         return (sdm: SoftwareDeliveryMachineOptions) => async (context, parameters) =>  {
-            // TODO this type cast and definite dependency is bad
-            const opts = toMachineOptions(sdm) as ConcreteSoftwareDeliveryMachineOptions;
-            const addressChannels: AddressChannels = null;
+            const opts = toMachineOptions(sdm);
             const credentials = opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+            // TODO do a look up for associated channels
+            const ids: RemoteRepoRef[] = undefined;
             const cli: CommandListenerInvocation = {
                 commandName: c.name,
                 context,
                 parameters,
-                addressChannels,
+                addressChannels: context.messageClient.respond,
                 credentials,
+                ids,
             };
             try {
                 await c.listener(cli);
                 return Success;
             } catch (err) {
+                logger.error("Error executing command '%s': %s", cli.commandName, err.message);
                 return {
                     code: 1,
                     message: err.message,

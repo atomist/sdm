@@ -20,9 +20,9 @@ import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import Status = OnSuccessStatus.Status;
 import { VerifiedDeploymentListener, VerifiedDeploymentListenerInvocation } from "../../../../api/listener/VerifiedDeploymentListener";
 import { StagingVerifiedGoal } from "../../../../api/machine/wellKnownGoals";
+import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnSuccessStatus } from "../../../../typings/types";
-import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**
  * React to a verified deployment

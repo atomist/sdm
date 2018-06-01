@@ -18,9 +18,9 @@ import { EventFired, EventHandler, HandleEvent, HandlerContext, HandlerResult, S
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { BuildListener, BuildListenerInvocation } from "../../../../api/listener/BuildListener";
+import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnBuildComplete } from "../../../../typings/types";
-import { CredentialsResolver } from "../../../common/CredentialsResolver";
 
 /**
  * Invoke listeners on complete build. Not a part of our delivery flow:
