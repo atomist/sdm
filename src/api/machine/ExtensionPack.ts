@@ -27,10 +27,11 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  */
 export interface ExtensionPack {
 
-    /**
-     * Name of this configurer
-     */
     name: string;
+
+    vendor: string;
+
+    version: string;
 
     /**
      * Function to add extension pack functionality to the given SDM

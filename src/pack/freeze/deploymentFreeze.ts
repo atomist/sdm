@@ -34,6 +34,8 @@ export interface DeploymentStatusManager {
 export function deploymentFreeze(dsm: DeploymentStatusManager): ExtensionPack {
     return {
         name: "deploymentFreeze",
+        vendor: "Atomist",
+        version: "0.1.0",
         configure: sdm => {
             sdm.addSupportingCommands(
                 () => freezeCommand(dsm),

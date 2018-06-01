@@ -7,6 +7,8 @@ import { OnDryRunBuildComplete } from "./support/OnDryRunBuildComplete";
  */
 export const DryRunEditing: ExtensionPack = {
     name: "DryRunEditing",
+    vendor: "Atomist",
+    version: "0.1.0",
     configure: sdm => {
         sdm.addSupportingEvents(
             () => new OnDryRunBuildComplete(sdm.options.repoRefResolver),

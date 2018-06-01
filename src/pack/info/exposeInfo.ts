@@ -5,12 +5,11 @@ import { selfDescribeHandler } from "./SelfDescribe";
 
 /**
  * Expose information about this machine
- * @type {{name: string; configure: (sdm) => void}}
  */
 export const ExposeInfo: ExtensionPack = {
-
     name: "ExposeInfo",
-
+    vendor: "Atomist",
+    version: "0.1.0",
     configure: sdm => {
         sdm.addSupportingCommands(
             selfDescribeHandler(sdm),

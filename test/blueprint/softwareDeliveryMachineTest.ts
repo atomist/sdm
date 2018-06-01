@@ -90,6 +90,8 @@ describe("SDM handler creation", () => {
             const p = fakePush();
             const ep: ExtensionPack = {
                 name: "x",
+                vendor: "Atomist",
+                version: "0.1.0",
                 configure: () => { /* do nothing */ },
                 goalContributions: whenPushSatisfies(true).setGoals(HttpServiceGoals),
             };
@@ -128,6 +130,8 @@ describe("SDM handler creation", () => {
             const p = fakePush(project);
             const ep: ExtensionPack = {
                 name: "x",
+                vendor: "Atomist",
+                version: "0.1.0",
                 configure: () => { /* do nothing */ },
                 // TODO why is this cast necessary?
                 goalContributions: whenPushSatisfies(true).setGoals(MessageGoal as any),

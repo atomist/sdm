@@ -35,6 +35,8 @@ export const SlocCommand: EditorRegistration = {
 
 export const Sloc: ExtensionPack = {
     name: "sloc",
+    vendor: "Atomist",
+    version: "0.1.0",
     configure: sdm => sdm.addEditors(SlocCommand),
 };
 
