@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, Success } from "@atomist/automation-client";
+import { Success } from "@atomist/automation-client";
 import { OnCommand } from "@atomist/automation-client/onCommand";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { CommandHandlerRegistration } from "../..";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { commandHandlersWithTag } from "./support/commandSearch";
-import { CommandHandlerRegistration } from "../..";
 
 /**
  * Return a command handler that can list generators in the current SDM.

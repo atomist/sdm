@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, Success } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { Success } from "@atomist/automation-client";
+import { OnCommand } from "@atomist/automation-client/onCommand";
+import { CommandHandlerRegistration } from "../..";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { commandHandlersWithTag } from "./support/commandSearch";
-import { CommandHandlerRegistration } from "../..";
 
 /**
  * Return a command handler that can create a repo using generators in this SDM

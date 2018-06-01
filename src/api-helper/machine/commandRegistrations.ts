@@ -13,7 +13,7 @@ import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
-import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
+import { MachineOrMachineOptions } from "./toMachineOptions";
 
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
     const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
@@ -63,8 +63,9 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
     }
     if (!!c.listener) {
         return (sdm: SoftwareDeliveryMachineOptions) => async (context, parameters) =>  {
-            const opts = toMachineOptions(sdm);
-            const credentials = opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+            // const opts = toMachineOptions(sdm);
+            // TODO will add this. Currently it doesn't work.
+            const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
             // TODO do a look up for associated channels
             const ids: RemoteRepoRef[] = undefined;
             const cli: CommandListenerInvocation = {

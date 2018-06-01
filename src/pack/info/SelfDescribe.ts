@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
-import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
+import { OnCommand } from "@atomist/automation-client/onCommand";
 import { CommandHandlerRegistration } from "../..";
+import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 
 /**
  * Return a command handler that can describe the present software delivery machine

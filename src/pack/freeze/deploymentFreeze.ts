@@ -1,6 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
+import { CommandHandlerRegistration } from "../..";
 import { allOf } from "../../api/dsl/allOf";
 import { MessageGoal } from "../../api/goal/common/MessageGoal";
 import { executeSendMessageToSlack } from "../../api/goal/support/executeSendMessageToSlack";
@@ -37,9 +36,9 @@ export function deploymentFreeze(dsm: DeploymentStatusManager): ExtensionPack {
         vendor: "Atomist",
         version: "0.1.0",
         configure: sdm => {
-            sdm.addSupportingCommands(
-                () => freezeCommand(dsm),
-                () => unfreezeCommand(dsm),
+            sdm.addCommands(
+                freezeCommand(dsm),
+                unfreezeCommand(dsm),
             );
             sdm.addGoalImplementation("ExplainDeploymentFreezeGoal",
                 ExplainDeploymentFreezeGoal,
@@ -61,28 +60,26 @@ export function isDeploymentFrozen(dsm: DeploymentStatusManager): PushTest {
     });
 }
 
-function freezeCommand(dsm: DeploymentStatusManager) {
-    return commandHandlerFrom(
-        async ctx => {
+function freezeCommand(dsm: DeploymentStatusManager): CommandHandlerRegistration {
+    return {
+        listener: async cli => {
             dsm.setFrozen(true);
-            return ctx.messageClient.respond("Deployment is frozen for all services :no_entry:");
+            return cli.addressChannels("Deployment is frozen for all services :no_entry:");
         },
-        EmptyParameters,
-        "freeze",
-        "Freeze deployment",
-        "freeze deployment",
-    );
+        name: "freeze",
+        description: "Freeze deployment",
+        intent: "freeze deployment",
+    };
 }
 
-function unfreezeCommand(freezeStore: DeploymentStatusManager) {
-    return commandHandlerFrom(
-        async ctx => {
-            freezeStore.setFrozen(false);
-            return ctx.messageClient.respond("Deployment is re-enabled for all services :woman-running:");
+function unfreezeCommand(dsm: DeploymentStatusManager): CommandHandlerRegistration {
+    return {
+        listener: async cli => {
+            dsm.setFrozen(false);
+            return cli.addressChannels("Deployment is re-enabled for all services :woman-running:");
         },
-        EmptyParameters,
-        "unfreeze",
-        "Unfreeze deployment",
-        "unfreeze deployment",
-    );
+        name: "unfreeze",
+        description: "Unfreeze deployment",
+        intent: "unfreeze deployment",
+    };
 }

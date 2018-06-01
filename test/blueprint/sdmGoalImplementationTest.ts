@@ -23,6 +23,7 @@ import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
+import { SoftwareDeliveryMachineOptions } from "../../src/api/machine/SoftwareDeliveryMachineOptions";
 import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { DefaultRepoRefResolver } from "../../src/handlers/common/DefaultRepoRefResolver";
@@ -30,8 +31,6 @@ import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoal
 import { createSoftwareDeliveryMachine } from "../../src/machine/machineFactory";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
-import { SoftwareDeliveryMachineOptions } from "../../src/api/machine/SoftwareDeliveryMachineOptions";
-import { SoftwareDeliveryMachine } from "../../src/api/machine/SoftwareDeliveryMachine";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",
@@ -100,7 +99,7 @@ describe("implementing goals in the SDM", () => {
             .addGoalImplementation("Cornelius",
                 customGoal,
                 goalExecutor,
-            ) as SoftwareDeliveryMachine;
+            );
 
         const {determinedGoals, goalsToSave} = await determineGoals({
                 projectLoader: fakeSoftwareDeliveryMachineOptions.projectLoader,
