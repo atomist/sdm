@@ -22,6 +22,7 @@ import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
 import { executePushReactions } from "../../api-helper/listener/executePushReactions";
 import { executeReview } from "../../api-helper/listener/executeReview";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
+import { RegistrationManagerSupport } from "../../api-helper/machine/RegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -89,7 +90,6 @@ import { executeFingerprinting } from "../delivery/code/fingerprint/executeFinge
 import { executeDeploy } from "../delivery/deploy/executeDeploy";
 import { executeUndeploy, offerToDeleteRepository } from "../delivery/deploy/executeUndeploy";
 import { lastLinesLogInterpreter, LogSuppressor } from "../delivery/goals/support/logInterpreters";
-import { CommandRegistrationManagerImpl } from "../../api-helper/machine/CommandRegistrationManagerImpl";
 
 /**
  * Implementation of SoftwareDeliveryMachine.
@@ -99,7 +99,7 @@ export class ConcreteSoftwareDeliveryMachine
     extends ListenerRegistrationManagerSupport
     implements SoftwareDeliveryMachine<ConcreteSoftwareDeliveryMachineOptions> {
 
-    private handlerManager = new CommandRegistrationManagerImpl(this);
+    private readonly registrationManager = new RegistrationManagerSupport(this);
 
     private pushMap: GoalSetter;
 
@@ -290,7 +290,7 @@ export class ConcreteSoftwareDeliveryMachine
     }
 
     get eventHandlers(): Array<Maker<HandleEvent<any>>> {
-        return this.handlerManager.eventHandlers
+        return this.registrationManager.eventHandlers
             .concat(() => new FulfillGoalOnRequested(this.goalFulfillmentMapper,
                 this.options.projectLoader,
                 this.options.repoRefResolver,
@@ -338,34 +338,34 @@ export class ConcreteSoftwareDeliveryMachine
     }
 
     get commandHandlers(): Array<Maker<HandleCommand>> {
-        return this.handlerManager.commandHandlers
+        return this.registrationManager.commandHandlers
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.commandHandlers)))
             .concat([this.showBuildLog])
             .filter(m => !!m);
     }
 
     public addCommands(...cmds: Array<CommandHandlerRegistration<any>>): this {
-        this.handlerManager.addCommands(...cmds);
+        this.registrationManager.addCommands(...cmds);
         return this;
     }
 
     public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
-        this.handlerManager.addGenerators(...gens);
+        this.registrationManager.addGenerators(...gens);
         return this;
     }
 
     public addEditors(...eds: EditorRegistration[]): this {
-        this.handlerManager.addEditors(...eds);
+        this.registrationManager.addEditors(...eds);
         return this;
     }
 
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
-        this.handlerManager.addSupportingCommands(...e);
+        this.registrationManager.addSupportingCommands(...e);
         return this;
     }
 
     public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
-        this.handlerManager.addSupportingEvents(...e);
+        this.registrationManager.addSupportingEvents(...e);
         return this;
     }
 

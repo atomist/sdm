@@ -23,6 +23,7 @@ import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
+import { HandlerRegistrationManager } from "./HandlerRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
 import { SoftwareDeliveryMachineOptions } from "./SoftwareDeliveryMachineOptions";
 
@@ -68,6 +69,7 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineOption
     extends GoalDrivenMachine<O>,
         ListenerRegistrationManager,
         CommandRegistrationManager,
+        HandlerRegistrationManager,
         FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
