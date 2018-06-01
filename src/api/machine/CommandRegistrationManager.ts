@@ -11,7 +11,7 @@ export interface CommandRegistrationManager {
      * Add commands to this machine
      * @return {this}
      */
-    addCommands(...commands: Array<CommandHandlerRegistration<any>>): this;
+    addCommands(...commands: CommandHandlerRegistration[]): this;
 
     /**
      * Add generators to this machine to enable project creation

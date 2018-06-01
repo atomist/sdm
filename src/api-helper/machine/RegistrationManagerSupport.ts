@@ -21,7 +21,7 @@ export class RegistrationManagerSupport implements CommandRegistrationManager, H
 
     public eventHandlers: Array<Maker<HandleEvent<any>>> = [];
 
-    public addCommands(...cmds: Array<CommandHandlerRegistration<any>>): this {
+    public addCommands(...cmds: CommandHandlerRegistration[]): this {
         const commands = cmds.map(c => commandHandlerRegistrationToCommand(this.sdm, c));
         this.commandHandlers = this.commandHandlers.concat(commands);
         return this;

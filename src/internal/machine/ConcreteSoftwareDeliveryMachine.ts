@@ -322,7 +322,7 @@ export class ConcreteSoftwareDeliveryMachine
             .filter(m => !!m);
     }
 
-    public addCommands(...cmds: Array<CommandHandlerRegistration<any>>): this {
+    public addCommands(...cmds: CommandHandlerRegistration[]): this {
         this.registrationManager.addCommands(...cmds);
         return this;
     }

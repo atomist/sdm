@@ -4,7 +4,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
@@ -14,6 +13,8 @@ import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
 import { MachineOrMachineOptions } from "./toMachineOptions";
+
+import * as stringify from "json-stringify-safe";
 
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
     const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
@@ -62,7 +63,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
         return c.createCommand;
     }
     if (!!c.listener) {
-        return (sdm: SoftwareDeliveryMachineOptions) => async (context, parameters) =>  {
+        return sdm => async (context, parameters) =>  {
             // const opts = toMachineOptions(sdm);
             // TODO will add this. Currently it doesn't work.
             const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
@@ -72,10 +73,11 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
                 commandName: c.name,
                 context,
                 parameters,
-                addressChannels: context.messageClient.respond,
+                addressChannels: (msg, opts) => context.messageClient.respond(msg, opts),
                 credentials,
                 ids,
             };
+            logger.debug("Running command listener %s", stringify(cli));
             try {
                 await c.listener(cli);
                 return Success;
