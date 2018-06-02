@@ -32,14 +32,6 @@ export interface RepoRefResolver {
      */
     repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef;
 
-    toBitBucketServerRepoRef(params: {
-        providerUrl: string,
-        owner: string,
-        name: string,
-        sha: string,
-        branch?: string,
-    }): BitBucketServerRepoRef;
-
     providerIdFromPush(push: OnPushToAnyBranch.Push): string | null;
 
     providerIdFromStatus(status: StatusForExecuteGoal.Fragment): string | null;
