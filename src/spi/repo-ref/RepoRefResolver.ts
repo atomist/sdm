@@ -1,3 +1,4 @@
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -17,7 +18,6 @@
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
-import { BitBucketServerRepoRef } from "./BitBucketServerRepoRef";
 
 /**
  * Resolve a RemoteRepoRef from data in our model
