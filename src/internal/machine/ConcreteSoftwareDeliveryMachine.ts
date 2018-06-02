@@ -165,7 +165,7 @@ export class ConcreteSoftwareDeliveryMachine
         };
         return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
-            executeVerifyEndpoint(stagingVerification, this.configuration.repoRefResolver));
+            executeVerifyEndpoint(stagingVerification, this.configuration.sdm.repoRefResolver));
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {
@@ -261,8 +261,8 @@ export class ConcreteSoftwareDeliveryMachine
             commandHandlers: [
                 () => disposeCommand({
                     goalSetter: new PushRules("disposal", this.disposalGoalSetters),
-                    repoRefResolver: this.configuration.repoRefResolver,
-                    projectLoader: this.configuration.projectLoader,
+                    repoRefResolver: this.configuration.sdm.repoRefResolver,
+                    projectLoader: this.configuration.sdm.projectLoader,
                     goalsListeners: this.goalsSetListeners,
                     implementationMapping: this.goalFulfillmentMapper,
                 }),
@@ -272,7 +272,7 @@ export class ConcreteSoftwareDeliveryMachine
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.configuration.repoRefResolver)
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.configuration.sdm.repoRefResolver)
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return []
