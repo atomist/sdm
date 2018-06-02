@@ -1,11 +1,9 @@
-
 import { HandleCommand, HandlerContext, RedirectResult } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { RemoteGitProjectPersister } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
@@ -13,11 +11,10 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { SoftwareDeliveryMachineOptions } from "../../..";
 import { CachingProjectLoader } from "../../../project/CachingProjectLoader";
-import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
-import { allReposInTeam } from "../editor/allReposInTeam";
 
 /**
  * Create a command handler for project generation
@@ -33,9 +30,8 @@ export function generatorCommand<P extends SeedDrivenGeneratorParameters>(sdm: M
                                                                           name: string,
                                                                           paramsMaker: Maker<P>,
                                                                           details: Partial<GeneratorCommandDetails<P>> = {}): HandleCommand {
-
     const detailsToUse: GeneratorCommandDetails<P> = {
-        ...defaultDetails(toMachineOptions(sdm).repoRefResolver, name),
+        ...defaultDetails(toMachineOptions(sdm), name),
         ...details,
     };
     return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse), paramsMaker, name,
@@ -118,12 +114,12 @@ function startingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
     return repoLoader(params.source.repoRef);
 }
 
-function defaultDetails<P extends SeedDrivenGeneratorParameters>(rrr: RepoRefResolver, name: string): GeneratorCommandDetails<P> {
+function defaultDetails<P extends SeedDrivenGeneratorParameters>(opts: SoftwareDeliveryMachineOptions, name: string): GeneratorCommandDetails<P> {
     return {
         description: name,
-        repoFinder: allReposInTeam(rrr),
+        repoFinder: opts.repoFinder,
         repoLoader: (p: P) => projectLoaderRepoLoader(new CachingProjectLoader(), p.target.credentials),
-        projectPersister: RemoteGitProjectPersister,
+        projectPersister: opts.projectPersister,
         redirecter: () => undefined,
     };
 }

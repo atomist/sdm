@@ -32,10 +32,10 @@ import {
     toArtifactListenerRegistration,
 } from "../../../../api/listener/ArtifactListener";
 import { PushListenerInvocation } from "../../../../api/listener/PushListener";
+import { SoftwareDeliveryMachineOptions } from "../../../../api/machine/SoftwareDeliveryMachineOptions";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { OnImageLinked } from "../../../../typings/types";
-import { SoftwareDeliveryMachineOptions } from "../../../../api/machine/SoftwareDeliveryMachineOptions";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {

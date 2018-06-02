@@ -18,12 +18,13 @@ import {
     AnyOptions,
     Configuration,
 } from "@atomist/automation-client/configuration";
+import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
+import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -57,6 +58,11 @@ export interface SoftwareDeliveryMachineOptions {
      * Strategy for finding all repos to act on
      */
     repoFinder: RepoFinder;
+
+    /**
+     * Strategy for persisting new projects
+     */
+    projectPersister: ProjectPersister;
 
     /**
      * Strategy for resolving credentials from a handler invocation

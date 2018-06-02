@@ -15,16 +15,15 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
+import { RemoteGitProjectPersister } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 import * as _ from "lodash";
-import {
-    SoftwareDeliveryMachineConfiguration,
-} from "../api/machine/SoftwareDeliveryMachineOptions";
+import { allReposInTeam } from "../api-helper/command/editor/allReposInTeam";
+import { SoftwareDeliveryMachineConfiguration } from "../api/machine/SoftwareDeliveryMachineOptions";
 import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
 import { CachingProjectLoader } from "../project/CachingProjectLoader";
-import { allReposInTeam } from "../api-helper/command/editor/allReposInTeam";
 
 export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineConfiguration {
     const repoRefResolver = new DefaultRepoRefResolver();
@@ -37,6 +36,7 @@ export function defaultSoftwareDeliveryMachineOptions(configuration: Configurati
             credentialsResolver: new GitHubCredentialsResolver(),
             repoRefResolver,
             repoFinder: allReposInTeam(repoRefResolver),
+            projectPersister: RemoteGitProjectPersister,
         },
     };
 }
