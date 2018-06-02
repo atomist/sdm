@@ -23,6 +23,7 @@ import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -51,6 +52,11 @@ export interface SoftwareDeliveryMachineOptions {
      * Strategy for resolving Git repository references
      */
     repoRefResolver: RepoRefResolver;
+
+    /**
+     * Strategy for finding all repos to act on
+     */
+    repoFinder: RepoFinder;
 
     /**
      * Strategy for resolving credentials from a handler invocation

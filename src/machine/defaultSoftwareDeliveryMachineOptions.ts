@@ -24,8 +24,10 @@ import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsR
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
 import { CachingProjectLoader } from "../project/CachingProjectLoader";
+import { allReposInTeam } from "../api-helper/command/editor/allReposInTeam";
 
 export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineConfiguration {
+    const repoRefResolver = new DefaultRepoRefResolver();
     return {
         sdm: {
             artifactStore: new EphemeralLocalArtifactStore(),
@@ -33,7 +35,8 @@ export function defaultSoftwareDeliveryMachineOptions(configuration: Configurati
             logFactory: rolarAndDashboardLogFactory(_.get(configuration, "sdm.rolar.url"),
                 _.get(configuration, "sdm.dashboard.url")),
             credentialsResolver: new GitHubCredentialsResolver(),
-            repoRefResolver: new DefaultRepoRefResolver(),
+            repoRefResolver,
+            repoFinder: allReposInTeam(repoRefResolver),
         },
     };
 }

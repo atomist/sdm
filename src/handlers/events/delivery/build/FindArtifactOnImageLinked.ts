@@ -24,7 +24,6 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { SoftwareDeliveryMachineOptions } from "../../../..";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
 import {
@@ -36,6 +35,7 @@ import { PushListenerInvocation } from "../../../../api/listener/PushListener";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { updateGoal } from "../../../../internal/delivery/goals/support/storeGoals";
 import { OnImageLinked } from "../../../../typings/types";
+import { SoftwareDeliveryMachineOptions } from "../../../../api/machine/SoftwareDeliveryMachineOptions";
 
 @EventHandler("Scan when artifact is found", subscription("OnImageLinked"))
 export class FindArtifactOnImageLinked implements HandleEvent<OnImageLinked.Subscription> {

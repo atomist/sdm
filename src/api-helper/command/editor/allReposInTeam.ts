@@ -28,6 +28,7 @@ const PageSize = 100;
 /**
  * Use a GraphQL query to find all repos for the current team,
  * or look locally if appropriate, in current working directory
+ * @param rrr RepoRefResolver used to find RepoRef from GraphQL result
  * @param cwd directory to look in if this is local
  * @constructor
  */
