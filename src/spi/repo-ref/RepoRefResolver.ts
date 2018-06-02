@@ -1,4 +1,3 @@
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -31,14 +30,6 @@ export interface RepoRefResolver {
      * @return {any}
      */
     repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef;
-
-    toBitBucketServerRepoRef(params: {
-        providerUrl: string,
-        owner: string,
-        name: string,
-        sha: string,
-        branch?: string,
-    }): BitBucketServerRepoRef;
 
     providerIdFromPush(push: OnPushToAnyBranch.Push): string | null;
 
