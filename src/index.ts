@@ -91,7 +91,5 @@ export * from "./spi/deploy/Target";
 export * from "./spi/log/InterpretedLog";
 export * from "./spi/log/ProgressLog";
 export * from "./spi/project/ProjectLoader";
-export * from "./spi/repo-ref/AbstractRemoteRepoRef";
-export * from "./spi/repo-ref/BitBucketServerRepoRef";
 export * from "./spi/repo-ref/RepoRefResolver";
 export * from "./typings/types";

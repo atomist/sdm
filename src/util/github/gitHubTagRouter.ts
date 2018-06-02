@@ -32,8 +32,7 @@ import { toToken } from "../credentials/toToken";
  */
 export const GitHubTagRouter: TagRouter = (tags, params) => {
     const grr = isGitHubRepoRef(tags.repoId) ? tags.repoId : new GitHubRepoRef(tags.repoId.owner, tags.repoId.repo, tags.repoId.sha);
-    const apiBase = grr.apiBase.replace(/\/*$/, "");
-    const url = `${apiBase}/repos/${grr.owner}/${grr.repo}/topics`;
+    const url = `${grr.scheme}${grr.apiBase}/repos/${grr.owner}/${grr.repo}/topics`;
     logger.debug(`Request to '${url}' to raise tags: [${tags.tags.join()}]`);
     return axios.put(url, { names: _.uniq(tags.tags) },
         // Mix in custom media type for
