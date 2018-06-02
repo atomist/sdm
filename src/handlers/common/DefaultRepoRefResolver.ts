@@ -1,10 +1,10 @@
 import { logger } from "@atomist/automation-client";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
 import * as _ from "lodash";
-import { BitBucketServerRepoRef } from "../../spi/repo-ref/BitBucketServerRepoRef";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ProviderType, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
@@ -28,7 +28,7 @@ export class DefaultRepoRefResolver implements RepoRefResolver {
                     rawApiBase: push.repo.org.provider.apiUrl,
                     branch: push.branch,
                 });
-            case ProviderType.bitbucket :
+            case ProviderType.bitbucket:
                 const providerUrl = push.repo.org.provider.url;
                 return this.toBitBucketServerRepoRef({
                     providerUrl,
@@ -37,7 +37,7 @@ export class DefaultRepoRefResolver implements RepoRefResolver {
                     sha: push.after.sha,
                     branch: push.branch,
                 });
-            case ProviderType.bitbucket_cloud :
+            case ProviderType.bitbucket_cloud:
                 throw new Error("BitBucket Cloud not yet supported");
             default:
                 throw new Error(`Provider ${providerType} not currently supported in SDM`);
@@ -84,7 +84,7 @@ export class DefaultRepoRefResolver implements RepoRefResolver {
                     branch: sdmGoal.branch,
                     rawApiBase: provider.apiUrl,
                 });
-            case ProviderType.bitbucket :
+            case ProviderType.bitbucket:
                 const providerUrl = provider.url;
                 return this.toBitBucketServerRepoRef({
                     providerUrl,
@@ -122,7 +122,7 @@ export class DefaultRepoRefResolver implements RepoRefResolver {
                     branch: opts.branch,
                     rawApiBase: apiUrl,
                 });
-            case ProviderType.bitbucket :
+            case ProviderType.bitbucket:
                 return this.toBitBucketServerRepoRef({
                     owner: repo.owner,
                     name: repo.name,
