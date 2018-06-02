@@ -22,7 +22,6 @@ import { Issue } from "@atomist/automation-client/util/gitHub";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
 import { toToken } from "../credentials/toToken";
-import * as _ from "lodash";
 
 export type State = "error" | "failure" | "pending" | "success";
 
