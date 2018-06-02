@@ -1,4 +1,4 @@
-import { BitBucketServerRepoRef } from '@atomist/automation-client/operations/common/BitBucketServerRepoRef';
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 /*
  * Copyright © 2018 Atomist, Inc.
  *
