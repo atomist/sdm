@@ -1,3 +1,4 @@
+import { BitBucketServerRepoRef } from '@atomist/automation-client/operations/common/BitBucketServerRepoRef';
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -19,7 +20,6 @@ import { FallbackParams } from "@atomist/automation-client/operations/common/par
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { BitBucketServerRepoRef } from "../../../spi/repo-ref/BitBucketServerRepoRef";
 
 /**
  * Base parameters for working with GitHub repo(s).
@@ -37,10 +37,10 @@ export class BitBucketTargetsParams extends TargetsParams implements FallbackPar
     @MappedParameter(MappedParameters.GitHubRepository, false)
     public repo: string;
 
-    @Parameter({description: "Branch or ref. Defaults to 'master'", ...GitBranchRegExp, required: false})
+    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...GitBranchRegExp, required: false })
     public sha: string = "master";
 
-    @Parameter({description: "regex", required: false})
+    @Parameter({ description: "regex", required: false })
     public repos: string = ".*";
 
     get credentials(): ProjectOperationCredentials {
