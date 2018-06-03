@@ -20,11 +20,11 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { executeGoal } from "../../../../src/api-helper/goal/executeGoal";
 import { createEphemeralProgressLog } from "../../../../src/api-helper/log/EphemeralProgressLog";
+import { lastLinesLogInterpreter } from "../../../../src/api-helper/log/logInterpreters";
 import { RunWithLogContext } from "../../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../src/api/goal/Goal";
 import { IndependentOfEnvironment } from "../../../../src/api/goal/support/environment";
 import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";
-import { lastLinesLogInterpreter } from "../../../../src/internal/delivery/goals/support/logInterpreters";
 import { fakeContext } from "../../../../src/util/test/fakeContext";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 

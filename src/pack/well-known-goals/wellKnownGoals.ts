@@ -2,6 +2,7 @@ import { executeImmaterial } from "../../api-helper/goal/chooseAndSetGoals";
 import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
 import { executePushReactions } from "../../api-helper/listener/executePushReactions";
 import { executeReview } from "../../api-helper/listener/executeReview";
+import { LogSuppressor } from "../../api-helper/log/logInterpreters";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
@@ -17,7 +18,6 @@ import {
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/executeFingerprinting";
 import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";
-import { LogSuppressor } from "../../internal/delivery/goals/support/logInterpreters";
 import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
 
 /**

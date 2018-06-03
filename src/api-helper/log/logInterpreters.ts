@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InterpretedLog, InterpretLog } from "../../../../spi/log/InterpretedLog";
+import { InterpretedLog, InterpretLog } from "../../spi/log/InterpretedLog";
 
 /**
  * Generally useful InterpretLog that takes the last n logs of the log

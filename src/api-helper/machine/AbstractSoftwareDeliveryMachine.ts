@@ -41,10 +41,10 @@ import { executeVerifyEndpoint, SdmVerification } from "../../handlers/events/de
 import { executeBuild } from "../../internal/delivery/build/executeBuild";
 import { executeDeploy } from "../../internal/delivery/deploy/executeDeploy";
 import { executeUndeploy } from "../../internal/delivery/deploy/executeUndeploy";
-import { lastLinesLogInterpreter } from "../../internal/delivery/goals/support/logInterpreters";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { lastLinesLogInterpreter } from "../log/logInterpreters";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
