@@ -24,7 +24,10 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { EventHandlerMetadata, ValueDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
+import {
+    EventHandlerMetadata,
+    ValueDeclaration,
+} from "@atomist/automation-client/metadata/automationMetadata";
 import * as stringify from "json-stringify-safe";
 import { executeGoal } from "../../../../api-helper/goal/executeGoal";
 import { LoggingProgressLog } from "../../../../api-helper/log/LoggingProgressLog";
@@ -32,7 +35,10 @@ import { WriteToAllProgressLog } from "../../../../api-helper/log/WriteToAllProg
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
-import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
+import {
+    SdmGoal,
+    SdmGoalState,
+} from "../../../../ingesters/sdmGoalIngester";
 import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
 import {
@@ -41,7 +47,12 @@ import {
 } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
-import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../../typings/types";
+import {
+    CommitForSdmGoal,
+    OnAnyRequestedSdmGoal,
+    SdmGoalFields,
+    StatusForExecuteGoal,
+} from "../../../../typings/types";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
 import { formatDuration } from "../../../../util/misc/time";
 

@@ -55,7 +55,11 @@ export function configureSdm(
 
         const forked = process.env.ATOMIST_ISOLATED_GOAL === "true";
         if (forked) {
-            mergedConfig.name = `${mergedConfig.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
+            if (process.env.ATOMIST_JOB_NAME) {
+                mergedConfig.name = process.env.ATOMIST_JOB_NAME;
+            } else {
+                mergedConfig.name = `${mergedConfig.name}-${process.env.ATOMIST_GOAL_ID || guid()}`;
+            }
 
             // Force ephemeral policy and no handlers or ingesters
             mergedConfig.policy = "ephemeral";
