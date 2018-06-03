@@ -128,7 +128,7 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
         this.artifactListenerRegistrations,
-        this.configuration.sdm);
+        this.configuration.sdm)
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -164,7 +164,7 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.configuration.sdm.repoRefResolver);
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.configuration.sdm.repoRefResolver)
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return []

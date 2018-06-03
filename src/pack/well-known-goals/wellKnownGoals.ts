@@ -18,7 +18,6 @@ import {
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/executeFingerprinting";
 import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";
-import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
 
 /**
  * Add well known goals to the given SDM
