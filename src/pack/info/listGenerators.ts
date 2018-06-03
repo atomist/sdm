@@ -27,13 +27,13 @@ import { commandHandlersWithTag } from "./support/commandSearch";
  * @return {HandleCommand<EmptyParameters>}
  */
 export const ListGeneratorsHandler: CommandHandlerRegistration = {
-    createCommand: handleListGenerators,
+    createCommand,
     name: "listGenerators",
     description: "List generators",
     intent: ["list generators", "show generators"],
 };
 
-function handleListGenerators(sdm: SoftwareDeliveryMachine): OnCommand {
+function createCommand(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
         const generators = commandHandlersWithTag(sdm, "generator");
         let message = `${generators.length} generators in this software delivery machine\n`;

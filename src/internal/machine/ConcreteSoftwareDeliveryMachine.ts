@@ -18,7 +18,7 @@ import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/auto
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SdmGoalImplementationMapperImpl } from "../../api-helper/goal/SdmGoalImplementationMapperImpl";
-import { addWellKnownGoals } from "../../api-helper/machine/addWellKnownGoals";
+import { WellKnownGoals } from "../../pack/well-known-goals/wellKnownGoals";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { RegistrationManagerSupport } from "../../api-helper/machine/RegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
@@ -484,7 +484,7 @@ export class ConcreteSoftwareDeliveryMachine
                 goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
-        addWellKnownGoals(this);
+        this.addExtensionPacks(WellKnownGoals);
     }
 
 }

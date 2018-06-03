@@ -26,7 +26,7 @@ import { commandHandlersWithTag } from "./support/commandSearch";
  * @return {HandleCommand<EmptyParameters>}
  */
 export const CreateRepoHandler: CommandHandlerRegistration = {
-    createCommand: handleCreateRepo,
+    createCommand,
     name: "createRepo",
     description: "Create a repo",
     intent: ["create repo", "new repo"],
@@ -34,7 +34,7 @@ export const CreateRepoHandler: CommandHandlerRegistration = {
 
 // TODO implement this with dropdown
 
-function handleCreateRepo(sdm: SoftwareDeliveryMachine): OnCommand {
+function createCommand(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
         const generators = commandHandlersWithTag(sdm, "generator");
         await ctx.messageClient.respond(`${generators.length} generators in this SDM`);

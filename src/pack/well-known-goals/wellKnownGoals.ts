@@ -1,7 +1,8 @@
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
     ArtifactGoal,
-    AutofixGoal, DeleteAfterUndeploysGoal,
+    AutofixGoal,
+    DeleteAfterUndeploysGoal,
     DeleteRepositoryGoal,
     FingerprintGoal,
     NoGoal,
@@ -13,16 +14,24 @@ import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/
 import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";
 import { LogSuppressor } from "../../internal/delivery/goals/support/logInterpreters";
 import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
-import { executeImmaterial } from "../goal/chooseAndSetGoals";
-import { executeAutofixes } from "../listener/executeAutofixes";
-import { executePushReactions } from "../listener/executePushReactions";
-import { executeReview } from "../listener/executeReview";
+import { executeImmaterial } from "../../api-helper/goal/chooseAndSetGoals";
+import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
+import { executePushReactions } from "../../api-helper/listener/executePushReactions";
+import { executeReview } from "../../api-helper/listener/executeReview";
+import { ExtensionPack } from "../..";
 
 /**
  * Add well known goals to the given SDM
  * @param {SoftwareDeliveryMachine} sdm
  */
-export function addWellKnownGoals(sdm: SoftwareDeliveryMachine) {
+export const WellKnownGoals: ExtensionPack = {
+    name: "WellKnownGoals",
+    vendor: "Atomist",
+    version: "0.1.0",
+    configure,
+};
+
+function configure(sdm: SoftwareDeliveryMachine) {
     sdm.addGoalImplementation("Autofix", AutofixGoal,
         executeAutofixes(
             sdm.configuration.sdm.projectLoader,

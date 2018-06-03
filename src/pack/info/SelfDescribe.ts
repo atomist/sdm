@@ -25,12 +25,12 @@ import { CommandHandlerRegistration } from "../../api/registration/CommandHandle
  */
 export const SelfDescribeHandler: CommandHandlerRegistration = {
     name: "SelfDescribe",
-    createCommand: handleDescribe,
+    createCommand,
     description: "Describe this SDM",
     intent: "describe sdm",
 };
 
-function handleDescribe(sdm: SoftwareDeliveryMachine): OnCommand {
+function createCommand(sdm: SoftwareDeliveryMachine): OnCommand {
     return async ctx => {
         const message = `I am a brilliant SDM, eager to work for you.\nMy name is _${sdm.name}_`;
         await ctx.messageClient.respond(message);
