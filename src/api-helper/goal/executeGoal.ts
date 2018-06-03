@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    failure,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { jwtToken } from "@atomist/automation-client/globals";
 import * as path from "path";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
