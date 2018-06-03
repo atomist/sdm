@@ -1,3 +1,8 @@
+import { ExtensionPack } from "../..";
+import { executeImmaterial } from "../../api-helper/goal/chooseAndSetGoals";
+import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
+import { executePushReactions } from "../../api-helper/listener/executePushReactions";
+import { executeReview } from "../../api-helper/listener/executeReview";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
     ArtifactGoal,
@@ -14,11 +19,6 @@ import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/
 import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";
 import { LogSuppressor } from "../../internal/delivery/goals/support/logInterpreters";
 import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
-import { executeImmaterial } from "../../api-helper/goal/chooseAndSetGoals";
-import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
-import { executePushReactions } from "../../api-helper/listener/executePushReactions";
-import { executeReview } from "../../api-helper/listener/executeReview";
-import { ExtensionPack } from "../..";
 
 /**
  * Add well known goals to the given SDM

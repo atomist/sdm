@@ -18,7 +18,6 @@ import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/auto
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SdmGoalImplementationMapperImpl } from "../../api-helper/goal/SdmGoalImplementationMapperImpl";
-import { WellKnownGoals } from "../../pack/well-known-goals/wellKnownGoals";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { RegistrationManagerSupport } from "../../api-helper/machine/RegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
@@ -68,6 +67,7 @@ import { OnRepoCreation } from "../../handlers/events/repo/OnRepoCreation";
 import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
+import { WellKnownGoals } from "../../pack/well-known-goals/wellKnownGoals";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
