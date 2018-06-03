@@ -17,6 +17,7 @@
 import { HandlerContext, logger } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { descriptionFromState, updateGoal } from "../../../api-helper/goal/storeGoals";
 import { RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../api/goal/Goal";
 import { SdmGoal, SdmGoalState } from "../../../ingesters/sdmGoalIngester";
@@ -25,7 +26,6 @@ import { Deployment } from "../../../spi/deploy/Deployment";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { findSdmGoalOnCommit } from "../goals/support/fetchGoalsOnCommit";
-import { descriptionFromState, updateGoal } from "../goals/support/storeGoals";
 
 export async function checkOutArtifact(targetUrl: string,
                                        artifactStore: ArtifactStore,

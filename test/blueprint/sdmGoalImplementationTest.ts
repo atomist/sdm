@@ -20,6 +20,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
+import { determineGoals } from "../../src/api-helper/goal/chooseAndSetGoals";
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
@@ -30,7 +31,6 @@ import {
 import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { DefaultRepoRefResolver } from "../../src/handlers/common/DefaultRepoRefResolver";
-import { determineGoals } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { createSoftwareDeliveryMachine } from "../../src/machine/machineFactory";
 import { PushFields } from "../../src/typings/types";
 import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";

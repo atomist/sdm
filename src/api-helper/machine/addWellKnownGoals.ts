@@ -9,11 +9,11 @@ import {
     ReviewGoal,
 } from "../../api/machine/wellKnownGoals";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
-import { executeImmaterial } from "../../handlers/events/delivery/goals/SetGoalsOnPush";
 import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/executeFingerprinting";
 import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";
 import { LogSuppressor } from "../../internal/delivery/goals/support/logInterpreters";
 import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
+import { executeImmaterial } from "../goal/chooseAndSetGoals";
 import { executeAutofixes } from "../listener/executeAutofixes";
 import { executePushReactions } from "../listener/executePushReactions";
 import { executeReview } from "../listener/executeReview";
