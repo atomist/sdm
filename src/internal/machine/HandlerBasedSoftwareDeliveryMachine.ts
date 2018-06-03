@@ -50,6 +50,7 @@ import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
 import { WellKnownGoals } from "../../pack/well-known-goals/wellKnownGoals";
+import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
 
 /**
  * Implementation of SoftwareDeliveryMachine based on Atomist event handlers.
@@ -127,7 +128,7 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
     private readonly artifactFinder = () => new FindArtifactOnImageLinked(
         ArtifactGoal,
         this.artifactListenerRegistrations,
-        this.configuration.sdm)
+        this.configuration.sdm);
 
     private get notifyOnDeploy(): Maker<OnDeployStatus> {
         return this.deploymentListeners.length > 0 ?
@@ -163,7 +164,7 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
     }
 
     private readonly onBuildComplete: Maker<SetGoalOnBuildComplete> =
-        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.configuration.sdm.repoRefResolver)
+        () => new SetGoalOnBuildComplete([BuildGoal, JustBuildGoal], this.configuration.sdm.repoRefResolver);
 
     private get allFunctionalUnits(): FunctionalUnit[] {
         return []
@@ -265,6 +266,8 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
                 configuration: Configuration & SoftwareDeliveryMachineConfiguration,
                 goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super(name, configuration, goalSetters);
+        // This hits the Atomist service
+        this.addFingerprintListeners(SendFingerprintToAtomist);
         this.addExtensionPacks(WellKnownGoals);
     }
 

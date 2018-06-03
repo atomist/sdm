@@ -15,28 +15,23 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import axios from "axios";
-import { PublishFingerprint } from "../../internal/delivery/code/fingerprint/executeFingerprinting";
+import { FingerprintListener } from "../..";
 
 /**
  * Publish the given fingerprint to Atomist in the given team
- * @param {GitHubRepoRef} id id of repo the fingerprint applies to
- * @param {Fingerprint} fingerprint fingerprint to publish
- * @param {string} team team to which this fingerprint applies
  * @return {Promise<any>}
  */
-export const SendFingerprintToAtomist: PublishFingerprint = (id: RemoteRepoRef, fingerprint: Fingerprint, team: string) => {
-    const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${team}`;
+export const SendFingerprintToAtomist: FingerprintListener = fli => {
+    const url = `https://webhook.atomist.com/atomist/fingerprints/teams/${fli.context.teamId}`;
     const payload = {
         commit: {
-            provider: id.providerType,
-            owner: id.owner,
-            repo: id.repo,
-            sha: id.sha,
+            provider: fli.id.providerType,
+            owner: fli.id.owner,
+            repo: fli.id.repo,
+            sha: fli.id.sha,
         },
-        fingerprints: [fingerprint],
+        fingerprints: [fli.fingerprint],
     };
     logger.info("Sending up fingerprint to %s: %j", url, payload);
     return axios.post(url, payload)

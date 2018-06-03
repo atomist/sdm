@@ -16,7 +16,6 @@
 
 import { logger } from "@atomist/automation-client";
 import { Success } from "@atomist/automation-client/Handlers";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { computeFingerprints } from "../../../../api-helper/listener/computeFingerprints";
 import { createPushImpactListenerInvocation } from "../../../../api-helper/listener/createPushImpactListenerInvocation";
@@ -27,21 +26,14 @@ import { relevantCodeActions } from "../../../../api/registration/PushReactionRe
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 
 /**
- * Function to publish a fingerprint
- */
-export type PublishFingerprint = (id: RemoteRepoRef, fingerprint: Fingerprint, team: string) => Promise<any>;
-
-/**
  * Execute fingerprinting and send fingerprints to Atomist
  * @param projectLoader project loader
  * @param {FingerprinterRegistration} fingerprinters
  * @param listeners listeners to fingerprints
- * @param publish function to publish fingerprints
  */
 export function executeFingerprinting(projectLoader: ProjectLoader,
                                       fingerprinters: FingerprinterRegistration[],
-                                      listeners: FingerprintListener[],
-                                      publish: PublishFingerprint): ExecuteGoalWithLog {
+                                      listeners: FingerprintListener[]): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
         const {id, credentials, context} = rwlc;
         if (fingerprinters.length === 0) {
@@ -55,7 +47,6 @@ export function executeFingerprinting(projectLoader: ProjectLoader,
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
             const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
-            fingerprints.map(fingerprint => publish(id, fingerprint, context.teamId));
             await Promise.all(listeners.map(l =>
                 Promise.all(fingerprints.map(fingerprint => l({
                     id,
