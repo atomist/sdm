@@ -10,6 +10,9 @@ import {
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 
+/**
+ * Concrete implementation of SdmGoalImplementationMapper
+ */
 export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMapper {
 
     private readonly implementations: GoalImplementation[] = [];
@@ -27,7 +30,8 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
             throw new Error("Multiple mappings for name " + goal.fulfillment.name);
         }
         if (matchedNames.length === 0) {
-            throw new Error("No implementation found with name " + goal.fulfillment.name);
+            throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +
+                `Found ${this.implementations.map(impl => impl.implementationName)}`);
         }
         return matchedNames[0];
     }

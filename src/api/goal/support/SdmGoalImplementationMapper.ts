@@ -57,6 +57,9 @@ export interface GoalFullfillmentCallback {
     callback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
 }
 
+/**
+ * Registers and looks up goal implementations
+ */
 export interface SdmGoalImplementationMapper {
 
     addSideEffect(sideEffect: GoalSideEffect): this;
