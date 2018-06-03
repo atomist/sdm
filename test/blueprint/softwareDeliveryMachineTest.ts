@@ -28,7 +28,7 @@ import { NoGoals } from "../../src/goal/common/commonGoals";
 import { HttpServiceGoals } from "../../src/goal/common/httpServiceGoals";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
-import { ConcreteSoftwareDeliveryMachine } from "../../src/internal/machine/ConcreteSoftwareDeliveryMachine";
+import { HandlerBasedSoftwareDeliveryMachine } from "../../src/internal/machine/HandlerBasedSoftwareDeliveryMachine";
 import { HasAtomistBuildFile } from "../../src/mapping/pushtest/node/nodePushTests";
 import { fakePush } from "../api/dsl/decisionTreeTest";
 import { AddThingAutofix } from "../common/delivery/code/autofix/executeAutofixesTest";
@@ -39,7 +39,7 @@ describe("SDM handler creation", () => {
     describe("emits event handlers", () => {
 
         it("emits goal setter", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -51,7 +51,7 @@ describe("SDM handler creation", () => {
 
         it("emits goal setter with listener", async () => {
             const gl: GoalsSetListener = async () => undefined;
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -67,7 +67,7 @@ describe("SDM handler creation", () => {
     describe("can test goal setting", () => {
 
         it("sets no goals", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -77,7 +77,7 @@ describe("SDM handler creation", () => {
         });
 
         it("has pack-contributed behavior adding goals to no default", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(AnyPush)
                     .itMeans("do nothing")
@@ -95,7 +95,7 @@ describe("SDM handler creation", () => {
         });
 
         it("sets goals on any push", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(AnyPush)
                     .setGoals(HttpServiceGoals)]);
@@ -105,7 +105,7 @@ describe("SDM handler creation", () => {
 
         it("sets goals on particular push", async () => {
             const project = InMemoryProject.of(new InMemoryFile("thing", "1"));
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals)]);
@@ -115,7 +115,7 @@ describe("SDM handler creation", () => {
 
         it("sets goals on particular push with extra goals", async () => {
             const project = InMemoryProject.of(new InMemoryFile("thing", "1"));
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals)]);
@@ -136,7 +136,7 @@ describe("SDM handler creation", () => {
     describe("observesOnly", () => {
 
         it("cannot mutate", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals)]);
@@ -144,7 +144,7 @@ describe("SDM handler creation", () => {
         });
 
         it("has an autofix", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals)]);
@@ -153,7 +153,7 @@ describe("SDM handler creation", () => {
         });
 
         it("has a build", async () => {
-            const sdm = new ConcreteSoftwareDeliveryMachine("Gustave",
+            const sdm = new HandlerBasedSoftwareDeliveryMachine("Gustave",
                 fakeSoftwareDeliveryMachineConfiguration,
                 [whenPushSatisfies(async pu => !!await pu.project.getFile("thing"))
                     .setGoals(HttpServiceGoals)]);
