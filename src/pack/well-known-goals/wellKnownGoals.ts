@@ -1,8 +1,8 @@
-import { ExtensionPack } from "../..";
 import { executeImmaterial } from "../../api-helper/goal/chooseAndSetGoals";
 import { executeAutofixes } from "../../api-helper/listener/executeAutofixes";
 import { executePushReactions } from "../../api-helper/listener/executePushReactions";
 import { executeReview } from "../../api-helper/listener/executeReview";
+import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import {
     ArtifactGoal,

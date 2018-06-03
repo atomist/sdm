@@ -5,7 +5,7 @@ import {
 } from "../api/machine/SoftwareDeliveryMachineOptions";
 import { GoalSetter } from "../api/mapping/GoalSetter";
 import { displayBuildLogHandler } from "../handlers/commands/ShowBuildLog";
-import { ConcreteSoftwareDeliveryMachine } from "../internal/machine/ConcreteSoftwareDeliveryMachine";
+import { HandlerBasedSoftwareDeliveryMachine } from "../internal/machine/HandlerBasedSoftwareDeliveryMachine";
 import { ExposeInfo } from "../pack/info/exposeInfo";
 
 /**
@@ -49,7 +49,7 @@ import { ExposeInfo } from "../pack/info/exposeInfo";
 export function createSoftwareDeliveryMachine(config: MachineConfiguration<SoftwareDeliveryMachineConfiguration>,
                                               // tslint:disable-next-line:max-line-length
                                               ...goalSetters: Array<GoalSetter | GoalSetter[]>): SoftwareDeliveryMachine<SoftwareDeliveryMachineConfiguration> {
-    const machine = new ConcreteSoftwareDeliveryMachine(config.name, config.configuration,
+    const machine = new HandlerBasedSoftwareDeliveryMachine(config.name, config.configuration,
         goalSetters);
     return machine
         .addSupportingCommands(() => displayBuildLogHandler())
