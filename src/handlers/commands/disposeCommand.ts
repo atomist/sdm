@@ -28,8 +28,8 @@ import {
 import { Parameters } from "@atomist/automation-client/decorators";
 import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../../api-helper/goal/chooseAndSetGoals";
 import { fetchDefaultBranchTip, fetchPushForCommit, tipOfBranch } from "../events/delivery/goals/resetGoals";
-import { chooseAndSetGoals, ChooseAndSetGoalsRules } from "../events/delivery/goals/SetGoalsOnPush";
 
 @Parameters()
 export class DisposeParameters {

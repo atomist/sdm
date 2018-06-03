@@ -17,6 +17,7 @@
 import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { EventHandlerMetadata, ValueDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
+import { executeGoal } from "../../../../api-helper/goal/executeGoal";
 import { LoggingProgressLog } from "../../../../api-helper/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../api-helper/log/WriteToAllProgressLog";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
@@ -30,7 +31,6 @@ import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../../typings/types";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
-import { executeGoal } from "./executeGoal";
 
 /**
  * Handle an SDM request goal. Used for many implementation types.

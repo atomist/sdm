@@ -11,7 +11,7 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { SoftwareDeliveryMachineOptions } from "../../..";
+import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { CachingProjectLoader } from "../../../project/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";

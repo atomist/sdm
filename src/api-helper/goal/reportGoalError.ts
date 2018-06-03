@@ -16,13 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AddressChannels } from "../../../../api/context/addressChannels";
-import { ExecuteGoalResult } from "../../../../api/goal/ExecuteGoalResult";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
-import { Goal } from "../../../../api/goal/Goal";
-import { InterpretLog } from "../../../../spi/log/InterpretedLog";
-import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
+import { AddressChannels } from "../../api/context/addressChannels";
+import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../api/goal/Goal";
+import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../spi/log/ProgressLog";
+import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
 
 /**
  * Report an error executing a goal and present a retry button
