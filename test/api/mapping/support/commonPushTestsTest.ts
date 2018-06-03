@@ -123,6 +123,24 @@ describe("commonPushTests", () => {
 
     describe("hasFileWithExtension", () => {
 
+        it("should return false if no files and empty extension", async () => {
+            const project = InMemoryProject.of();
+            const r = await hasFileWithExtension("").mapping({project} as any as PushListenerInvocation);
+            assert(!r);
+        });
+
+        it("should return true if any files and empty extension", async () => {
+            const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
+            const r = await hasFileWithExtension("").mapping({project} as any as PushListenerInvocation);
+            assert(r);
+        });
+
+        it("should return true if any files and undefined extension", async () => {
+            const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
+            const r = await hasFileWithExtension(undefined).mapping({project} as any as PushListenerInvocation);
+            assert(r);
+        });
+
         it("should not find file in empty repo", async () => {
             const project = InMemoryProject.of();
             const r = await hasFileWithExtension("java").mapping({project} as any as PushListenerInvocation);
@@ -135,6 +153,12 @@ describe("commonPushTests", () => {
             assert(r);
             const r2 = await hasFileWithExtension("java").mapping({project} as any as PushListenerInvocation);
             assert(!r2);
+        });
+
+        it("should strip . if provided", async () => {
+            const project = InMemoryProject.of({ path: "pom.xml", content: "<xml>"});
+            const r = await hasFileWithExtension(".xml").mapping({project} as any as PushListenerInvocation);
+            assert(r);
         });
     });
 

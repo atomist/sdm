@@ -67,11 +67,22 @@ export function hasFileContaining(path: string, pattern: RegExp): PredicatePushT
 }
 
 /**
+ * PushTest that returns true if project is non empty
+ * @type {PredicatePushTest}
+ */
+export const NonEmpty: PredicatePushTest = predicatePushTest("NonEmpty",
+    async p => (await p.totalFileCount()) > 0);
+
+/**
  * Is there at least one file with the given extension?
  * @param {string} extension
  * @return {PredicatePushTest}
  */
 export function hasFileWithExtension(extension: string): PredicatePushTest {
-    return predicatePushTest(`HasFileWithExtension(${extension}})`,
-        async p => fileExists(p, `**/*.${extension}`, () => true));
+    if (!extension) {
+        return NonEmpty;
+    }
+    const extensionToUse = extension.startsWith(".") ? extension : `.${extension}`;
+    return predicatePushTest(`HasFileWithExtension(${extensionToUse}})`,
+        async p => fileExists(p, `**/*${extensionToUse}`, () => true));
 }
