@@ -30,6 +30,8 @@
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
     "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "moment-duration-format": "^2.2.2",
     "npm": "^5.10.0",
     "random-word": "^2.0.0",
     "request": "^2.87.0",
