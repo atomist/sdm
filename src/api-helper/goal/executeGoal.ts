@@ -28,8 +28,8 @@ import { descriptionFromState, updateGoal } from "./storeGoals";
 
 import { sprintf } from "sprintf-js";
 import { toToken } from "../../util/credentials/toToken";
-import { reportGoalError } from "./reportGoalError";
 import { stringifyError } from "../../util/misc/errorPrinting";
+import { reportGoalError } from "./reportGoalError";
 
 /**
  * Central function to execute a goal with progress logging
