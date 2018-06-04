@@ -14,23 +14,47 @@
  * limitations under the License.
  */
 
-import { EventFired, HandleEvent, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import {
+    automationClientInstance,
+    EventFired,
+    HandleEvent,
+    HandlerContext,
+    HandlerResult,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
-import { EventHandlerMetadata, ValueDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
+import {
+    EventHandlerMetadata,
+    ValueDeclaration,
+} from "@atomist/automation-client/metadata/automationMetadata";
+import * as stringify from "json-stringify-safe";
 import { executeGoal } from "../../../../api-helper/goal/executeGoal";
 import { LoggingProgressLog } from "../../../../api-helper/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../api-helper/log/WriteToAllProgressLog";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
-import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
+import {
+    SdmGoal,
+    SdmGoalState,
+} from "../../../../ingesters/sdmGoalIngester";
 import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
-import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
+import {
+    ProgressLog,
+    ProgressLogFactory,
+} from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
-import { CommitForSdmGoal, OnAnyRequestedSdmGoal, SdmGoalFields, StatusForExecuteGoal } from "../../../../typings/types";
+import {
+    CommitForSdmGoal,
+    OnAnyRequestedSdmGoal,
+    SdmGoalFields,
+    StatusForExecuteGoal,
+} from "../../../../typings/types";
 import { fetchProvider } from "../../../../util/github/gitHubProvider";
+import { formatDuration } from "../../../../util/misc/time";
 
 /**
  * Handle an SDM request goal. Used for many implementation types.
@@ -95,13 +119,17 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
             return isolatedGoalLauncher(sdmGoal, ctx, progressLog);
         } else {
             delete (sdmGoal as any).id;
+
+            reportStart(sdmGoal, progressLog);
+            const start = Date.now();
+
             return executeGoal({projectLoader: params.projectLoader},
                 goalExecutor, rwlc, sdmGoal, goal, logInterpreter)
                 .then(async res => {
-                    await progressLog.close();
+                    await reportEndAndClose(res, start, progressLog);
                     return res;
                 }, async err => {
-                    await progressLog.close();
+                    await reportEndAndClose(err, start, progressLog);
                     throw err;
                 });
         }
@@ -116,4 +144,21 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
         context: sdmGoal.externalKey,
         description: sdmGoal.description,
     };
+}
+
+function reportStart(sdmGoal: SdmGoal, progressLog: ProgressLog) {
+    progressLog.write(`---`);
+    progressLog.write(`Goal: ${sdmGoal.name} - ${sdmGoal.environment}`);
+    progressLog.write(`GoalSet: ${sdmGoal.goalSet} - ${sdmGoal.goalSetId}`);
+    progressLog.write(
+        `SDM: ${automationClientInstance().configuration.name}@${automationClientInstance().configuration.version}`);
+    progressLog.write(`---`);
+}
+
+async function reportEndAndClose(result: any, start: number, progressLog: ProgressLog) {
+    progressLog.write(`---`);
+    progressLog.write(`Result: ${stringify(result)}`);
+    progressLog.write(`Duration: ${formatDuration(Date.now() - start)}`);
+    progressLog.write(`---`);
+    await progressLog.close();
 }
