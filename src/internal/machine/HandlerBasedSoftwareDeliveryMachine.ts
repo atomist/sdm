@@ -49,7 +49,7 @@ import { OnRepoCreation } from "../../handlers/events/repo/OnRepoCreation";
 import { OnRepoOnboarded } from "../../handlers/events/repo/OnRepoOnboarded";
 import { OnTag } from "../../handlers/events/repo/OnTag";
 import { OnUserJoiningChannel } from "../../handlers/events/repo/OnUserJoiningChannel";
-import { WellKnownGoals } from "../../pack/well-known-goals/wellKnownGoals";
+import { WellKnownGoals } from "../../pack/well-known-goals/addWellKnownGoals";
 import { SendFingerprintToAtomist } from "../../util/webhook/sendFingerprintToAtomist";
 
 /**
