@@ -25,7 +25,7 @@ function removePainfulBits(err: AxiosError) {
         config: {
             url: err.config.url,
             method: err.config.method,
-        }
+        },
     };
     return usefulBits;
 }
