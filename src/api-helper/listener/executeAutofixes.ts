@@ -85,7 +85,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
             }
             return Success;
         } catch (err) {
-            logger.warn("Autofixes failed with %s: Ignoring failure", err.message);
+            logger.warn("Autofixes failed with %s: Ignoring failure.\n%s", err.message, err.stack);
             progressLog.write(sprintf("Autofixes failed with %s: Ignoring failure", err.message));
             return Success;
         }
