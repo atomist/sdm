@@ -27,10 +27,9 @@ import { spawnAndWatch } from "../../util/misc/spawned";
 import { descriptionFromState, updateGoal } from "./storeGoals";
 
 import { sprintf } from "sprintf-js";
-
-import * as stringify from "json-stringify-safe";
 import { toToken } from "../../util/credentials/toToken";
 import { reportGoalError } from "./reportGoalError";
+import { stringifyError } from "../../util/misc/errorPrinting";
 
 /**
  * Central function to execute a goal with progress logging
@@ -65,7 +64,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                 .catch(err => {
                         progressLog.write("ERROR caught: " + err.message + "\n");
                         progressLog.write(err.stack);
-                        progressLog.write(sprintf("Full error object: [%s]", stringify(err)));
+                        progressLog.write(sprintf("Full error object: [%s]", stringifyError(err)));
 
                         return reportGoalError({
                             goal, implementationName, addressChannels, progressLog, id, logInterpreter,
