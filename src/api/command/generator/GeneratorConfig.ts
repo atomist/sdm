@@ -27,12 +27,7 @@ export interface GeneratorConfig {
     seed: RemoteRepoRef;
 
     /**
-     * Command intent
-     */
-    intent: string;
-
-    /**
      * Add an Atomist webhook to new repos?
      */
-    addAtomistWebhook: boolean;
+    addAtomistWebhook?: boolean;
 }

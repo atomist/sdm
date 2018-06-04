@@ -81,8 +81,10 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
         return {repoRef};
     }
 
-    protected constructor(private readonly config: GeneratorConfig) {
-        this.addAtomistWebhook = config.addAtomistWebhook;
+    public constructor(private readonly config: GeneratorConfig) {
+        if (config.addAtomistWebhook !== undefined) {
+            this.addAtomistWebhook = config.addAtomistWebhook;
+        }
     }
 
 }
