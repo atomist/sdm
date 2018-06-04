@@ -21,11 +21,6 @@ import { fakePush } from "./decisionTreeTest";
 
 describe("allOf", () => {
 
-    it("should satisfy true", async () => {
-        const test = allOf(true);
-        assert.equal(await test.mapping(fakePush()), true);
-    });
-
     it("should satisfy function => true", async () => {
         const test = allOf(() => true);
         assert.equal(await test.mapping(fakePush()), true);
@@ -37,7 +32,7 @@ describe("allOf", () => {
     });
 
     it("should not satisfy function => Promise(true) and false", async () => {
-        const test = allOf(async () => true, false);
+        const test = allOf(async () => true, () => false);
         assert.equal(await test.mapping(fakePush()), false);
     });
 

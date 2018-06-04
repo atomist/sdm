@@ -117,7 +117,7 @@ describe("given", () => {
                 given<Goals>(TruePushTest).itMeans("case1")
                     .compute(() => count++)
                     .then(
-                        whenPushSatisfies(count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
+                        whenPushSatisfies(() => count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
                         whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
                     ),
             );

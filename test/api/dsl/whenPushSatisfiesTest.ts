@@ -22,16 +22,6 @@ import { fakePush } from "./decisionTreeTest";
 
 describe("whenPushSatisfies", () => {
 
-    it("should satisfy true", async () => {
-        const test = whenPushSatisfies(true).itMeans("war").setGoals(HttpServiceGoals);
-        assert.equal(await test.mapping(fakePush()), HttpServiceGoals);
-    });
-
-    it("should not satisfy false", async () => {
-        const test = whenPushSatisfies(false).itMeans("war").setGoals(HttpServiceGoals);
-        assert.equal(await test.mapping(fakePush()), undefined);
-    });
-
     it("should satisfy function returning true", async () => {
         const test = whenPushSatisfies(() => true).itMeans("war").setGoals(HttpServiceGoals);
         assert.equal(await test.mapping(fakePush()), HttpServiceGoals);

@@ -88,7 +88,7 @@ describe("SDM handler creation", () => {
                 vendor: "Atomist",
                 version: "0.1.0",
                 configure: () => { /* do nothing */ },
-                goalContributions: whenPushSatisfies(true).setGoals(HttpServiceGoals),
+                goalContributions: whenPushSatisfies(() => true).setGoals(HttpServiceGoals),
             };
             sdm.addExtensionPacks(ep);
             assert.deepEqual((await sdm.pushMapping.mapping(p)).goals, HttpServiceGoals.goals);
@@ -126,7 +126,8 @@ describe("SDM handler creation", () => {
                 version: "0.1.0",
                 configure: () => { /* do nothing */ },
                 // TODO why is this cast necessary?
-                goalContributions: whenPushSatisfies(true).setGoals(MessageGoal as any),
+                goalContributions: whenPushSatisfies(() => true)
+                    .setGoals(MessageGoal as any),
             };
             sdm.addExtensionPacks(ep);
             assert.deepEqual((await sdm.pushMapping.mapping(p)).goals, HttpServiceGoals.goals.concat([MessageGoal as any]));

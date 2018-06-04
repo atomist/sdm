@@ -24,7 +24,6 @@ import { PredicateMapping } from "../PredicateMapping";
 export type PredicateMappingTerm<F> =
     PredicateMapping<F> |
     Mapper<F, boolean> |
-    boolean |
     (() => (boolean | Promise<boolean>));
 
 /**
@@ -35,9 +34,6 @@ export type PredicateMappingTerm<F> =
 export function toPredicateMapping<F>(p: PredicateMappingTerm<F>): PredicateMapping<F> {
     if (isMapping(p)) {
         return p;
-    }
-    if (typeof p === "boolean") {
-        return {name: p + "", mapping: async () => p};
     }
     return {name: p + "", mapping: p as any};
 }
