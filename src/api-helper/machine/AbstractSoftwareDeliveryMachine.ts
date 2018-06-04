@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Configuration, HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
@@ -49,9 +49,9 @@ import { lastLinesLogInterpreter } from "../log/logInterpreters";
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
  */
-export abstract class AbstractSoftwareDeliveryMachine
+export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfiguration = SoftwareDeliveryMachineConfiguration>
     extends ListenerRegistrationManagerSupport
-    implements SoftwareDeliveryMachine {
+    implements SoftwareDeliveryMachine<O> {
 
     public abstract readonly commandHandlers: Array<Maker<HandleCommand>>;
 
@@ -260,7 +260,7 @@ export abstract class AbstractSoftwareDeliveryMachine
      * @param {GoalSetter} goalSetters tell me what to do on a push. Hint: start with "whenPushSatisfies(...)"
      */
     protected constructor(public readonly name: string,
-                          public readonly configuration: Configuration & SoftwareDeliveryMachineConfiguration,
+                          public readonly configuration: O,
                           goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
