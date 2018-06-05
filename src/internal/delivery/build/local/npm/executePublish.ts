@@ -32,10 +32,13 @@ import { NpmPreparations } from "./npmBuilder";
  * @param {PrepareForGoalExecution[]} preparations
  * @return {ExecuteGoalWithLog}
  */
-export function executePublish(projectLoader: ProjectLoader,
-                               projectIdentifier: ProjectIdentifier,
-                               preparations: PrepareForGoalExecution[] = NpmPreparations,
-                               options: NpmOptions): ExecuteGoalWithLog {
+export function executePublish(
+    projectLoader: ProjectLoader,
+    projectIdentifier: ProjectIdentifier,
+    preparations: PrepareForGoalExecution[] = NpmPreparations,
+    options: NpmOptions,
+): ExecuteGoalWithLog {
+
     return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
         const { credentials, id, context } = rwlc;
         return projectLoader.doWithProject({ credentials, id, context, readOnly: false }, async project => {
@@ -48,20 +51,24 @@ export function executePublish(projectLoader: ProjectLoader,
 
             await configure(options);
 
-            const result: ExecuteGoalResult = await spawnAndWatch({
-                    command: "bash",
-                    args: [p.join(__dirname, "..", "..", "..", "..", "..", "scripts", "npm-publish.bash"),
-                        `--registry=${options.registry}`,
-                        "--access",
-                        options.access ? options.access : "restricted"],
-                },
-                {
-                    cwd: project.baseDir,
-                },
+            const args = [
+                p.join(__dirname, "..", "..", "..", "..", "..", "scripts", "npm-publish.bash"),
+            ];
+            if (options.registry) {
+                args.push("--registry", options.registry);
+            }
+            if (options.access) {
+                args.push("--access", options.access);
+            }
+            if (options.tag) {
+                args.push("--tag", options.tag);
+            }
+
+            const result: ExecuteGoalResult = await spawnAndWatch(
+                { command: "bash", args },
+                { cwd: project.baseDir },
                 rwlc.progressLog,
-                {
-                    errorFinder: code => code !== 0,
-                });
+            );
 
             if (result.code === 0) {
                 const pi = await projectIdentifier(project);
@@ -78,35 +85,29 @@ export function executePublish(projectLoader: ProjectLoader,
                 result.targetUrl = url;
             }
 
-            await deleteNpmrc();
             return result;
         });
     };
 }
 
+/**
+ * Create an npmrc file for the package.
+ */
 async function configure(options: NpmOptions): Promise<NpmOptions> {
-    const npmrc = p.join(process.env.HOME || process.env.USER_DIR, ".npmrc");
-    let npm = "";
-    if (fs.existsSync(npmrc))  {
-        npm = fs.readFileSync(npmrc).toString();
-    }
-
-    if (!npm.includes(options.npmrc)) {
-        npm = `${npm}
-${options.npmrc}`;
-    }
-
-    await fs.writeFile(npmrc, npm);
+    await fs.writeFile(".npmrc", options.npmrc, { mode: 0o600 });
     return options;
 }
 
-async function deleteNpmrc() {
-    const npmrc = p.join(process.env.HOME || process.env.USER_DIR, ".npmrc");
-    return fs.unlink(npmrc);
-}
-
+/**
+ * NPM options used when publishing NPM modules.
+ */
 export interface NpmOptions {
+    /** The contents of a .npmrc file, typically containing authentication information */
     npmrc: string;
-    registry: string;
-    access: string;
+    /** Optional registry, use NPM default if not present, currently "https://registry.npmjs.org" */
+    registry?: string;
+    /** Optional publication access, use NPM default if not present, currently "restricted" */
+    access?: "public" | "restricted";
+    /** Optional publication tag, use NPM default if not present, currently "latest" */
+    tag?: string;
 }
