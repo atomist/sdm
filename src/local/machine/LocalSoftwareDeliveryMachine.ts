@@ -83,13 +83,12 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         const context: HandlerContext = new LocalHandlerContext(null);
         const parameters = !!instance.freshParametersInstance ? instance.freshParametersInstance() : instance;
 
-        // TODO this isn't good
-        //(parameters.target as any).githubToken = process.env.GITHUB_TOKEN;
-            //EnvironmentTokenCredentialsResolver.commandHandlerCredentials(null, null).token;
-
+        // TODO should handle this with normal population, but it is dependable with generators
+        const params = parameters as any;
+        if (!!params.target) {
+            params.target.githubToken = process.env.GITHUB_TOKEN;
+        }
         await invokeCommandHandlerWithFreshParametersInstance(instance, handler.instance, parameters, args, context);
-
-        // await instance.handle(context, parameters);
     }
 
     // TODO needs to consider goal state and preconditions
