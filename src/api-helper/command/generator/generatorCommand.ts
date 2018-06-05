@@ -65,7 +65,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
         details.afterAction,
     );
     await ctx.messageClient.respond(`Created and pushed new project ${params.target.repoRef.url}`);
-    if (isGitHubRepoRef(r.target.id)) {
+    if (isGitHubRepoRef(r.target.id) && params.addAtomistWebhook) {
         const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
         if (!webhookInstalled) {
             await addAtomistWebhook((r.target as GitProject), params);
