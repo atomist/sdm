@@ -67,6 +67,15 @@ export interface SpawnBuilderOptions {
     options?: SpawnOptions;
 
     /**
+     * If this method is implemented, it enriches the options returned by the options
+     * property with data from within the given project
+     * @param {GitProject} p
+     * @param {module:child_process.SpawnOptions} options
+     * @return {Promise<module:child_process.SpawnOptions>}
+     */
+    enrich?(options: SpawnOptions, p: GitProject): Promise<SpawnOptions>;
+
+    /**
      * Find artifact info from the sources of this project,
      * for example by parsing a package.json or Maven POM file.
      * @param {Project} p
@@ -123,9 +132,15 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
             const commands: SpawnCommand[] = this.options.commands || await loadCommandsFromFile(p, this.options.commandFile);
 
             const appId: AppInfo = await this.options.projectToAppInfo(p);
+
+            let optionsToUse = this.options.options || {};
+            if (!!this.options.enrich) {
+                logger.info("Enriching options from project %s:%s", p.id.owner, p.id.repo);
+                optionsToUse = await this.options.enrich(optionsToUse, p);
+            }
             const opts = {
                 cwd: p.baseDir,
-                ...(this.options.options || {}),
+                ...optionsToUse,
             };
 
             function executeOne(buildCommand: SpawnCommand): Promise<ChildProcessResult> {
