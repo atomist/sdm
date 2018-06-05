@@ -32,12 +32,12 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { spawnAndWatch } from "../../util/misc/spawned";
 import { descriptionFromState, updateGoal } from "./storeGoals";
 
-import { sprintf } from "sprintf-js";
-import { stringifyError } from "../../util/misc/errorPrinting";
-import { toToken } from "../../util/credentials/toToken";
-import { AddressChannels } from "../../api/context/addressChannels";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { sprintf } from "sprintf-js";
+import { AddressChannels } from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { toToken } from "../../util/credentials/toToken";
+import { stringifyError } from "../../util/misc/errorPrinting";
 import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
 
 class GoalExecutionError extends Error {
