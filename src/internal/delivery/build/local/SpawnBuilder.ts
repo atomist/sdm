@@ -20,6 +20,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { SpawnOptions } from "child_process";
+import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../../spi/deploy/Deployment";
@@ -138,17 +139,11 @@ export class SpawnBuilder extends LocalBuilder implements LogInterpretation {
                 logger.info("Enriching options from project %s:%s", p.id.owner, p.id.repo);
                 optionsToUse = await this.options.enrich(optionsToUse, p);
             }
-            const opts = {
-                cwd: p.baseDir,
-                ...optionsToUse,
-            };
+            const opts = _.merge({cwd: p.baseDir}, optionsToUse);
 
             function executeOne(buildCommand: SpawnCommand): Promise<ChildProcessResult> {
                 return spawnAndWatch(buildCommand,
-                    {
-                        ...opts,
-                        ...buildCommand.options,
-                    },
+                    _.merge(opts, buildCommand.options),
                     log,
                     {
                         errorFinder,
