@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 [Unreleased]: https://github.com/atomist/sdm/compare/0.1.0...HEAD
 
+### Added
+
+-   Can provide tag when publishing NPM package [#404][404]
+
+[404]: https://github.com/atomist/sdm/issues/404
+
 ## [0.1.0][] - 2018-05-16
 
 Initial release
