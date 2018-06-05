@@ -30,7 +30,7 @@ import { executeReview } from "../../../../../src/api-helper/listener/executeRev
 import { PushReactionResponse } from "../../../../../src/api/registration/PushReactionRegistration";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
-const HatesTheWorld: ReviewerRegistration = {
+export const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
     pushTest: TruePushTest,
     action: async cri => ({
