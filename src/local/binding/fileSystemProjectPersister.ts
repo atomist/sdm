@@ -4,6 +4,12 @@ import { ProjectPersister } from "@atomist/automation-client/operations/generate
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import * as fs from "fs";
 
+/**
+ * Persist the project to the given local directory given expanded directory
+ * conventions
+ * @param {string} repositoryOwnerParentDirectory
+ * @return {ProjectPersister}
+ */
 export function fileSystemProjectPersister(repositoryOwnerParentDirectory: string): ProjectPersister {
     return async (p, _, id) => {
         const baseDir = `${repositoryOwnerParentDirectory}/${id.owner}/${id.repo}`;

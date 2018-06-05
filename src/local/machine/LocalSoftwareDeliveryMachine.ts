@@ -84,7 +84,7 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         const parameters = !!instance.freshParametersInstance ? instance.freshParametersInstance() : instance;
 
         // TODO this isn't good
-        (parameters.target as any).githubToken = process.env.GITHUB_TOKEN;
+        //(parameters.target as any).githubToken = process.env.GITHUB_TOKEN;
             //EnvironmentTokenCredentialsResolver.commandHandlerCredentials(null, null).token;
 
         await invokeCommandHandlerWithFreshParametersInstance(instance, handler.instance, parameters, args, context);

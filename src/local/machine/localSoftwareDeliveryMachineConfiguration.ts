@@ -17,6 +17,7 @@ import * as fs from "fs";
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import { copy } from "fs-extra";
 import { fileSystemProjectPersister } from "../binding/fileSystemProjectPersister";
+import { expandedDirectoryRepoFinder } from "../binding/expandedDirectoyRepoFinder";
 
 export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliveryMachineConfiguration {
 
@@ -35,13 +36,16 @@ export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirecto
             logFactory: createEphemeralProgressLog,
             credentialsResolver: EnvironmentTokenCredentialsResolver,
             repoRefResolver,
-            repoFinder: allReposInTeam(repoRefResolver),
+            repoFinder: expandedDirectoryRepoFinder(repositoryOwnerParentDirectory),
             projectPersister: fileSystemProjectPersister(repositoryOwnerParentDirectory),
         },
         repositoryOwnerParentDirectory,
     };
 }
 
+/**
+ * Project loader that performs additional steps before acting on the project
+ */
 class MonkeyingProjectLoader implements ProjectLoader {
 
     public doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {

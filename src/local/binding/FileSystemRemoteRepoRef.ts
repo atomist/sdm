@@ -1,8 +1,9 @@
-import { ActionResult } from "@atomist/automation-client/action/ActionResult";
+import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
 import { AbstractRemoteRepoRef } from "@atomist/automation-client/operations/common/AbstractRemoteRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Configurable } from "@atomist/automation-client/project/git/Configurable";
+import { logger } from "@atomist/automation-client";
 
 export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
 
@@ -25,8 +26,13 @@ export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
         throw new Error();
     }
 
-    public raisePullRequest(creds: ProjectOperationCredentials, title: string, body: string, head: string, base: string): Promise<ActionResult<this>> {
-        throw new Error();
+    public async raisePullRequest(creds: ProjectOperationCredentials,
+                                  title: string,
+                                  body: string,
+                                  head: string,
+                                  base: string): Promise<ActionResult<this>> {
+        logger.info("Pull request [%s] on %s:%s", title, this.owner, this.repo);
+        return successOn(this);
     }
 
     public async setUserConfig(credentials: ProjectOperationCredentials, project: Configurable): Promise<ActionResult<any>> {
