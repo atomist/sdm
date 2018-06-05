@@ -1,24 +1,15 @@
-import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
+import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
 import { CommandIncoming, EventIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { AutomationContext } from "@atomist/automation-client/internal/util/cls";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import * as stringify from "json-stringify-safe";
+import { LoggingMessageClient } from "../io/LoggingMessageClient";
 
 export class LocalHandlerContext implements HandlerContext, AutomationContextAware, AutomationContext {
 
     public correlationId = new Date().getTime() + "_";
 
     get messageClient() {
-        return {
-            respond(m) {
-                logger.info("respond > " + m);
-                return Promise.resolve({});
-            },
-            send(event) {
-                logger.debug("send > " + stringify(event));
-                return Promise.resolve({});
-            },
-        } as any;
+        return new LoggingMessageClient();
     }
 
     get graphClient(): GraphClient {

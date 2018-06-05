@@ -10,8 +10,13 @@ import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../.
 import { LocalRepoRefResolver } from "../binding/LocalRepoRefResolver";
 import { EnvironmentTokenCredentialsResolver } from "./EnvironmentTokenCredentialsResolver";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { Success } from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
 import { successOn } from "@atomist/automation-client/action/ActionResult";
+import { FileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
+import * as fs from "fs";
+import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
+import { copy } from "fs-extra";
+import { fileSystemProjectPersister } from "../binding/fileSystemProjectPersister";
 
 export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliveryMachineConfiguration {
 
@@ -34,13 +39,6 @@ export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirecto
             projectPersister: fileSystemProjectPersister(repositoryOwnerParentDirectory),
         },
         repositoryOwnerParentDirectory,
-    };
-}
-
-function fileSystemProjectPersister(repositoryOwnerParentDirectory: string): ProjectPersister {
-    return async (p, _, id) => {
-        console.log("PRETEND TO PERSIST ")
-        return successOn(p);
     };
 }
 
