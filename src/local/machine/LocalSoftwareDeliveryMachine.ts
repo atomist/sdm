@@ -20,6 +20,8 @@ import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDelive
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { localRunWithLogContext } from "../binding/localPush";
+import { EnvironmentTokenCredentialsResolver } from "./EnvironmentTokenCredentialsResolver";
+import { LocalHandlerContext } from "../binding/LocalHandlerContext";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
@@ -78,8 +80,12 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
             throw new Error(`No command found with name '${name}'`);
         }
         const instance = toFactory(handler.maker)();
-        const context: HandlerContext = undefined;
+        const context: HandlerContext = new LocalHandlerContext(null);
         const parameters = !!instance.freshParametersInstance ? instance.freshParametersInstance() : instance;
+
+        // TODO this isn't good
+        (parameters.target as any).githubToken = process.env.GITHUB_TOKEN;
+            //EnvironmentTokenCredentialsResolver.commandHandlerCredentials(null, null).token;
 
         await invokeCommandHandlerWithFreshParametersInstance(instance, handler.instance, parameters, args, context);
 

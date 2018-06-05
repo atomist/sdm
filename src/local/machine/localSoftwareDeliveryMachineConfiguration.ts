@@ -8,6 +8,10 @@ import { EphemeralLocalArtifactStore } from "../../internal/artifact/local/Ephem
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
 import { LocalRepoRefResolver } from "../binding/LocalRepoRefResolver";
+import { EnvironmentTokenCredentialsResolver } from "./EnvironmentTokenCredentialsResolver";
+import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { Success } from "@atomist/automation-client";
+import { successOn } from "@atomist/automation-client/action/ActionResult";
 
 export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliveryMachineConfiguration {
 
@@ -24,12 +28,19 @@ export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirecto
             artifactStore: new EphemeralLocalArtifactStore(),
             projectLoader: new MonkeyingProjectLoader(new CachingProjectLoader(), pushToAtomistBranch),
             logFactory: createEphemeralProgressLog,
-            credentialsResolver: new GitHubCredentialsResolver(),
+            credentialsResolver: EnvironmentTokenCredentialsResolver,
             repoRefResolver,
             repoFinder: allReposInTeam(repoRefResolver),
-            projectPersister: undefined,
+            projectPersister: fileSystemProjectPersister(repositoryOwnerParentDirectory),
         },
         repositoryOwnerParentDirectory,
+    };
+}
+
+function fileSystemProjectPersister(repositoryOwnerParentDirectory: string): ProjectPersister {
+    return async (p, _, id) => {
+        console.log("PRETEND TO PERSIST ")
+        return successOn(p);
     };
 }
 
