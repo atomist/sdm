@@ -70,7 +70,7 @@ export class RolarProgressLog implements ProgressLog {
     }
 
     public write(what: string) {
-        const line = what;
+        const line = what || "";
         this.localLogs.push({
             level: this.logLevel,
             message: line,
@@ -101,7 +101,8 @@ export class RolarProgressLog implements ProgressLog {
                 content: postingLogs,
             }, {
                 headers: {"Content-Type": "application/json"},
-            }),
+            }).catch(axiosError =>
+                 Promise.reject(new Error(`Failure post to ${url}: ${axiosError.message}`))),
             `post log to Rolar`,
             this.retryOptions).catch(e => {
                 this.localLogs = postingLogs.concat(this.localLogs);
