@@ -35,7 +35,7 @@ export function configure(sdm: SoftwareDeliveryMachine) {
             pushTest: hasFileWithExtension("md"),
             action: async pu => {
                 const hasReadme = !!(await pu.project.getFile("README.md"));
-                return pu.addressChannels(`Project at ${pu.id.url} has readme=${hasReadme}`);
+                return pu.addressChannels(`Project at ${pu.id.url} has README=${hasReadme}`);
             },
         })
         .addGenerators({
