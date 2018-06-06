@@ -1,5 +1,5 @@
-import { CredentialsResolver } from "../..";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { CredentialsResolver } from "../..";
 
 export const EnvironmentTokenCredentialsResolver: CredentialsResolver = {
 
