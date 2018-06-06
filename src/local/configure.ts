@@ -6,6 +6,8 @@ import { hasFileWithExtension } from "../api/mapping/support/commonPushTests";
 import { TypedFingerprint } from "../code/fingerprint/TypedFingerprint";
 import { WellKnownGoals } from "../pack/well-known-goals/addWellKnownGoals";
 import { LogFingerprint } from "./io/logFingerprint";
+import { SeedDrivenGeneratorParametersSupport } from "../api/command/generator/SeedDrivenGeneratorParametersSupport";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 /**
  * User-specific code
@@ -35,5 +37,12 @@ export function configure(sdm: SoftwareDeliveryMachine) {
                 const hasReadme = !!(await pu.project.getFile("README.md"));
                 return pu.addressChannels(`Project at ${pu.id.url} has readme=${hasReadme}`);
             },
+        })
+        .addGenerators({
+            name: "foo",
+            editor: async p => p.addFile("local", "stuff"),
+            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({
+                seed: new GitHubRepoRef("spring-team", "spring-rest-seed"),
+            }),
         });
 }
