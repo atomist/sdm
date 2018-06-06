@@ -4,9 +4,9 @@ import { FingerprintGoal, PushReactionGoal, ReviewGoal } from "../../../api/mach
 import { hasFileWithExtension } from "../../../api/mapping/support/commonPushTests";
 import { TypedFingerprint } from "../../../code/fingerprint/TypedFingerprint";
 import { WellKnownGoals } from "../../../pack/well-known-goals/addWellKnownGoals";
+import { LogFingerprint } from "../../io/logFingerprint";
 import { LocalSoftwareDeliveryMachine } from "../../machine/LocalSoftwareDeliveryMachine";
 import { localSoftwareDeliveryMachineOptions } from "../../machine/localSoftwareDeliveryMachineConfiguration";
-import { LogFingerprint } from "../../io/logFingerprint";
 
 export const RepositoryOwnerParentDirectory = "/Users/rodjohnson/temp/local-sdm";
 

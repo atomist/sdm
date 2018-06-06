@@ -1,9 +1,14 @@
+import { logger } from "@atomist/automation-client";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import * as fs from "fs";
 import * as _ from "lodash";
 import { FileSystemRemoteRepoRef } from "./FileSystemRemoteRepoRef";
-import { logger } from "@atomist/automation-client";
 
+/**
+ * Find all repos under the given expanded directory structure
+ * @param {string} repositoryOwnerParentDirectory
+ * @return {RepoFinder}
+ */
 export function expandedDirectoryRepoFinder(repositoryOwnerParentDirectory: string): RepoFinder {
     return async () => {
         const eligibleDirectories: string[] =
