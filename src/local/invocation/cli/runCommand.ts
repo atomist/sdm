@@ -1,11 +1,11 @@
 #! /usr/bin/env node
 
-import { sdm } from "../machine";
-import * as fs from "fs";
-import { execSync } from "child_process";
-import { addGitHooks } from "../../setup/addGitHooks";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Arg } from "@atomist/automation-client/internal/transport/RequestProcessor";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { execSync } from "child_process";
+import * as fs from "fs";
+import { addGitHooks } from "../../setup/addGitHooks";
+import { sdm } from "../machine";
 
 /* tslint:disable */
 

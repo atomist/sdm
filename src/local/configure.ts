@@ -1,13 +1,13 @@
 import { logger, Parameter } from "@atomist/automation-client";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { SoftwareDeliveryMachine } from "..";
+import { SeedDrivenGeneratorParametersSupport } from "../api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { whenPushSatisfies } from "../api/dsl/goalDsl";
 import { FingerprintGoal, PushReactionGoal, ReviewGoal } from "../api/machine/wellKnownGoals";
 import { hasFileWithExtension } from "../api/mapping/support/commonPushTests";
 import { TypedFingerprint } from "../code/fingerprint/TypedFingerprint";
 import { WellKnownGoals } from "../pack/well-known-goals/addWellKnownGoals";
 import { LogFingerprint } from "./io/logFingerprint";
-import { SeedDrivenGeneratorParametersSupport } from "../api/command/generator/SeedDrivenGeneratorParametersSupport";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 
 /**
  * User-specific code
