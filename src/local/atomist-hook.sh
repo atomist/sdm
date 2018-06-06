@@ -1,13 +1,13 @@
 #!/bin/sh
 
-hookDir=$2
-event=$1
+script=$1
+hookDir=$3
+event=$2
 
 echo "git hook fire: Invoking Atomist $event against $hookDir"
 
 # TODO make this Atomist base
-node \
-/Users/rodjohnson/sforzando-dev/idea-projects/my-flow/build/src/local/invocation/git/onGitHook.js \
+node $script\
     $event \
     $hookDir \
     $(git rev-parse --abbrev-ref HEAD) \

@@ -8,8 +8,8 @@ import {
     ParameterType,
 } from "@atomist/automation-client/metadata/automationMetadata";
 import { isSmartParameters, isValidationError, ValidationResult } from "@atomist/automation-client/SmartParameters";
-import * as _ from "lodash";
 import { SecretResolver } from "@atomist/automation-client/spi/env/SecretResolver";
+import * as _ from "lodash";
 
 /**
  * Try to resolve secrets from arguments

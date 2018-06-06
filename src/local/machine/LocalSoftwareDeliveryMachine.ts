@@ -18,9 +18,9 @@ import { selfDescribingHandlers } from "../../pack/info/support/commandSearch";
 import { FileSystemRemoteRepoRef, isFileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
 import { LocalHandlerContext } from "../binding/LocalHandlerContext";
 import { localRunWithLogContext } from "../binding/localPush";
+import { addGitHooks } from "../setup/addGitHooks";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
-import { addGitHooks } from "../setup/addGitHooks";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
@@ -44,7 +44,7 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
             if (!isFileSystemRemoteRepoRef(rr)) {
                 throw new Error(`Unexpected return from repo ref resolver: ${JSON.stringify(rr)}`);
             }
-            await addGitHooks(rr);
+            await addGitHooks(rr, rr.fileSystemLocation);
         }
     }
 
