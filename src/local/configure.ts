@@ -44,6 +44,10 @@ export function configure(sdm: SoftwareDeliveryMachine) {
             paramsMaker: () => new MyParameters({
                 seed: new GitHubRepoRef("spring-team", "spring-rest-seed"),
             }),
+        })
+        .addEditors({
+            name: "addThing",
+            editor: async p => p.addFile("thing", "1"),
         });
 }
 
