@@ -1,6 +1,6 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { SeedDrivenGeneratorParametersSupport } from "../../src/api/command/generator/SeedDrivenGeneratorParametersSupport";
-import { RepositoryOwnerParentDirectory } from "../../src/local/invocation/git/machine";
+import { RepositoryOwnerParentDirectory } from "../../src/local/invocation/machine";
 import { LocalSoftwareDeliveryMachine } from "../../src/local/machine/LocalSoftwareDeliveryMachine";
 import { localSoftwareDeliveryMachineOptions } from "../../src/local/machine/localSoftwareDeliveryMachineConfiguration";
 

@@ -4,6 +4,7 @@ import { ProjectPersister } from "@atomist/automation-client/operations/generate
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import * as fs from "fs";
 import { execSync } from "child_process";
+import { addGitHooksToProject } from "../setup/addGitHooks";
 
 /**
  * Persist the project to the given local directory given expanded directory
@@ -18,11 +19,11 @@ export function fileSystemProjectPersister(repositoryOwnerParentDirectory: strin
         if (fs.existsSync(baseDir)) {
             throw new Error(`Cannot write new project to [${baseDir}] as this directory already exists`);
         }
-
-        await NodeFsLocalProject.copy(p, baseDir);
+        const createdProject = await NodeFsLocalProject.copy(p, baseDir);
         execSync("git init", { cwd: baseDir});
         execSync("git add .", { cwd: baseDir});
         execSync(`git commit -a -m "Initial commit from Atomist"`, { cwd: baseDir});
-        return successOn(p);
+        await addGitHooksToProject(createdProject);
+        return successOn(createdProject);
     };
 }

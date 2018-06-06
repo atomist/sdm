@@ -2,7 +2,7 @@ import { logger } from "@atomist/automation-client";
 import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
 import { AbstractRemoteRepoRef } from "@atomist/automation-client/operations/common/AbstractRemoteRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Configurable } from "@atomist/automation-client/project/git/Configurable";
 
 export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
@@ -39,8 +39,12 @@ export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
         return null;
     }
 
-    public cloneUrl(creds: ProjectOperationCredentials): string | string {
+    public cloneUrl(): string {
         return `file://${this.repositoryOwnerParentDirectory}/${this.owner}/${this.repo}`;
+    }
+
+    public get fileSystemLocation(): string {
+        return `${this.repositoryOwnerParentDirectory}/${this.owner}/${this.repo}`;
     }
 
     constructor(private readonly repositoryOwnerParentDirectory,
@@ -51,4 +55,9 @@ export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
             owner, repo, sha);
     }
 
+}
+
+export function isFileSystemRemoteRepoRef(rr: RepoRef): rr is FileSystemRemoteRepoRef {
+    const maybe = rr as FileSystemRemoteRepoRef;
+    return !!maybe.fileSystemLocation;
 }

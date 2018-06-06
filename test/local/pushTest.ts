@@ -5,7 +5,7 @@ import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { hasFileWithExtension } from "../../src/api/mapping/support/commonPushTests";
 import { AutofixRegistration } from "../../src/api/registration/AutofixRegistration";
 import { TypedFingerprint } from "../../src/code/fingerprint/TypedFingerprint";
-import { RepositoryOwnerParentDirectory } from "../../src/local/invocation/git/machine";
+import { RepositoryOwnerParentDirectory } from "../../src/local/invocation/machine";
 import { LogFingerprint } from "../../src/local/io/logFingerprint";
 import { LocalSoftwareDeliveryMachine } from "../../src/local/machine/LocalSoftwareDeliveryMachine";
 import { localSoftwareDeliveryMachineOptions } from "../../src/local/machine/localSoftwareDeliveryMachineConfiguration";

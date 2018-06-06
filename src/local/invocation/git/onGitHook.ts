@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client";
-import { sdm } from "./machine";
+import { sdm } from "../machine";
 
 /**
  * Usage gitHookTrigger <event> <directory>

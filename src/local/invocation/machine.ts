@@ -1,12 +1,12 @@
 import { logger } from "@atomist/automation-client";
-import { whenPushSatisfies } from "../../../api/dsl/goalDsl";
-import { FingerprintGoal, PushReactionGoal, ReviewGoal } from "../../../api/machine/wellKnownGoals";
-import { hasFileWithExtension } from "../../../api/mapping/support/commonPushTests";
-import { TypedFingerprint } from "../../../code/fingerprint/TypedFingerprint";
-import { WellKnownGoals } from "../../../pack/well-known-goals/addWellKnownGoals";
-import { LogFingerprint } from "../../io/logFingerprint";
-import { LocalSoftwareDeliveryMachine } from "../../machine/LocalSoftwareDeliveryMachine";
-import { localSoftwareDeliveryMachineOptions } from "../../machine/localSoftwareDeliveryMachineConfiguration";
+import { whenPushSatisfies } from "../../api/dsl/goalDsl";
+import { FingerprintGoal, PushReactionGoal, ReviewGoal } from "../../api/machine/wellKnownGoals";
+import { hasFileWithExtension } from "../../api/mapping/support/commonPushTests";
+import { TypedFingerprint } from "../../code/fingerprint/TypedFingerprint";
+import { WellKnownGoals } from "../../pack/well-known-goals/addWellKnownGoals";
+import { LogFingerprint } from "../io/logFingerprint";
+import { LocalSoftwareDeliveryMachine } from "../machine/LocalSoftwareDeliveryMachine";
+import { localSoftwareDeliveryMachineOptions } from "../machine/localSoftwareDeliveryMachineConfiguration";
 
 export const RepositoryOwnerParentDirectory = "/Users/rodjohnson/temp/local-sdm";
 
