@@ -21,6 +21,7 @@ import { localRunWithLogContext } from "../binding/localPush";
 import { addGitHooks } from "../setup/addGitHooks";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
+import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
@@ -88,6 +89,18 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
     // ---------------------------------------------------------------
     // end git binding methods
     // ---------------------------------------------------------------
+
+    public commandMetadata(name: string): CommandHandlerMetadata {
+        const handlers = selfDescribingHandlers(this);
+        return handlers.filter(h => h.instance.name === name)
+            .map(hi => hi.instance)
+            .find(() => true);
+    }
+
+    public get commandsMetadata(): CommandHandlerMetadata[] {
+        return selfDescribingHandlers(this)
+            .map(hi => hi.instance);
+    }
 
     // TODO break dependency on client
     public async executeCommand(name: string, args: Arg[]): Promise<any> {
