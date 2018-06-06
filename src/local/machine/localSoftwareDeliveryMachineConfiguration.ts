@@ -5,10 +5,10 @@ import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/Software
 import { EphemeralLocalArtifactStore } from "../../internal/artifact/local/EphemeralLocalArtifactStore";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
+import { EnvironmentTokenCredentialsResolver } from "../binding/EnvironmentTokenCredentialsResolver";
 import { expandedDirectoryRepoFinder } from "../binding/expandedDirectoryRepoFinder";
 import { fileSystemProjectPersister } from "../binding/fileSystemProjectPersister";
 import { LocalRepoRefResolver } from "../binding/LocalRepoRefResolver";
-import { EnvironmentTokenCredentialsResolver } from "../binding/EnvironmentTokenCredentialsResolver";
 
 export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliveryMachineConfiguration {
 

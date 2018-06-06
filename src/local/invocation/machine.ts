@@ -8,7 +8,9 @@ import { LogFingerprint } from "../io/logFingerprint";
 import { LocalSoftwareDeliveryMachine } from "../machine/LocalSoftwareDeliveryMachine";
 import { localSoftwareDeliveryMachineOptions } from "../machine/localSoftwareDeliveryMachineConfiguration";
 
-export const RepositoryOwnerParentDirectory = "/Users/rodjohnson/temp/local-sdm";
+export const RepositoryOwnerParentDirectory = process.env.LOCAL_SDM_BASE || "/Users/rodjohnson/temp/local-sdm";
+
+// TODO need to put this in a function that takes SDM
 
 export const sdm = new LocalSoftwareDeliveryMachine(
     "gitMachine",

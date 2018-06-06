@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/atomist/sdm.git"
   },
+  "bin": {
+    "slalom": "./build/src/local/invocation/cli/runCommand.js"
+  },
   "keywords": [
     "atomist",
     "automation",
