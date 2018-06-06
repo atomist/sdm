@@ -34,6 +34,11 @@ export interface ExtensionPack {
     version: string;
 
     /**
+     * Human-readable description of this extension pack
+     */
+    description?: string;
+
+    /**
      * Function to add extension pack functionality to the given SDM
      * @param sdm
      */
