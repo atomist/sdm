@@ -51,9 +51,30 @@ require("yargs")
             console.log(JSON.stringify(argv))
 
             const extraArgs = Object.getOwnPropertyNames(argv)
-                .map(name => ({ name, value: argv[name]});
-                //.filter(a => !["generator", "owner", "repo"].includes(a.name));
+                .map(name => ({ name, value: argv[name]}));
             logExceptionsToConsole( () => generate(argv.generator, argv.owner, argv.repo, extraArgs));
+        }
+    })
+    .command({
+        command: "edit",
+        aliases: ["e"],
+        builder: {
+            editor: {
+                required: true,
+            },
+            owner: {
+                required: true,
+            },
+            repos: {
+                required: true,
+            },
+        },
+        desc: "Edit",
+        handler: argv => {
+            console.log(JSON.stringify(argv));
+            const extraArgs = Object.getOwnPropertyNames(argv)
+                .map(name => ({ name, value: argv[name]}));
+            logExceptionsToConsole( () => edit(argv.editor, argv.owner, argv.repos, extraArgs));
         }
     })
     .usage("Usage: $0 <command> [options]")
@@ -81,6 +102,23 @@ async function generate(commandName: string, targetOwner: string, targetRepo: st
     const args = [
         {name: "target.owner", value: targetOwner},
         {name: "target.repo", value: targetRepo},
+    ].concat(extraArgs);
+
+    // TODO should come from environment
+    args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
+    return sdm.executeCommand(commandName, args);
+}
+
+async function edit(commandName: string, targetOwner: string, targetRepos: string,
+                        extraArgs: Arg[]): Promise<any> {
+    const hm = sdm.commandMetadata(commandName);
+    if (!hm) {
+        console.log(`No editor with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
+        process.exit(1);
+    }
+    const args = [
+        {name: "targets.owner", value: targetOwner},
+        {name: "target.repos", value: targetRepos},
     ].concat(extraArgs);
 
     // TODO should come from environment
