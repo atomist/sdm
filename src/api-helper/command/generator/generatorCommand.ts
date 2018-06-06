@@ -13,6 +13,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { CachingProjectLoader } from "../../../project/CachingProjectLoader";
+import { CredentialsResolver } from "../../../spi/credentials/CredentialsResolver";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
 
@@ -30,26 +31,30 @@ export function generatorCommand<P extends SeedDrivenGeneratorParameters>(sdm: M
                                                                           name: string,
                                                                           paramsMaker: Maker<P>,
                                                                           details: Partial<GeneratorCommandDetails<P>> = {}): HandleCommand {
+    const mo = toMachineOptions(sdm);
     const detailsToUse: GeneratorCommandDetails<P> = {
-        ...defaultDetails(toMachineOptions(sdm), name),
+        ...defaultDetails(mo, name),
         ...details,
     };
-    return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse), paramsMaker, name,
+    return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse, mo.credentialsResolver),
+        paramsMaker, name,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
 }
 
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
-                                                                 details: GeneratorCommandDetails<P>): OnCommand<P> {
+                                                                 details: GeneratorCommandDetails<P>,
+                                                                 credentialsResolver: CredentialsResolver): OnCommand<P> {
 
     return (ctx: HandlerContext, parameters: P) => {
-        return handle(ctx, editorFactory, parameters, details);
+        return handle(ctx, editorFactory, parameters, details, credentialsResolver);
     };
 }
 
 async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerContext,
                                                                editorFactory: EditorFactory<P>,
                                                                params: P,
-                                                               details: GeneratorCommandDetails<P>): Promise<RedirectResult> {
+                                                               details: GeneratorCommandDetails<P>,
+                                                               credentialsResolver: CredentialsResolver): Promise<RedirectResult> {
     const r = await generate(
         startingPoint(params, ctx, details.repoLoader(params), details)
             .then(p => {
@@ -57,7 +62,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                     .then(() => p);
             }),
         ctx,
-        params.target.credentials,
+        credentialsResolver.commandHandlerCredentials(ctx, params.target.repoRef),
         editorFactory(params, ctx),
         details.projectPersister,
         params.target.repoRef,

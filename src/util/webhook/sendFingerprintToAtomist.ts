@@ -16,10 +16,10 @@
 
 import { logger } from "@atomist/automation-client";
 import axios from "axios";
-import { FingerprintListener } from "../..";
+import { FingerprintListener } from "../../api/listener/FingerprintListener";
 
 /**
- * Publish the given fingerprint to Atomist in the given team
+ * Publish the given fingerprint to Atomist service in the given team
  * @return {Promise<any>}
  */
 export const SendFingerprintToAtomist: FingerprintListener = fli => {
