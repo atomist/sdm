@@ -48,6 +48,10 @@ export function configure(sdm: SoftwareDeliveryMachine) {
         .addEditors({
             name: "addThing",
             editor: async p => p.addFile("thing", "1"),
+        })
+        .addCommands({
+            name: "hello",
+            listener: async ci => ci.addressChannels("Hello world!"),
         });
 }
 
