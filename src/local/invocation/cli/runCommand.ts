@@ -11,7 +11,7 @@ import { sdm } from "../machine";
 
 require("yargs")
     .command({
-        command: "install",
+        command: "add-git-hooks",
         desc: "Install web hooks",
         handler: () => {
             logExceptionsToConsole(() => sdm.installGitHooks());
