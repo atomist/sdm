@@ -15,11 +15,12 @@ import { Goal } from "../../api/goal/Goal";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { selfDescribingHandlers } from "../../pack/info/support/commandSearch";
-import { FileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
+import { FileSystemRemoteRepoRef, isFileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
 import { LocalHandlerContext } from "../binding/LocalHandlerContext";
 import { localRunWithLogContext } from "../binding/localPush";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
+import { addGitHooks } from "../setup/addGitHooks";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
@@ -32,6 +33,24 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
     }
 
     public readonly goalFulfillmentMapper = new SdmGoalImplementationMapperImpl(undefined);
+
+    /**
+     * Install git hooks in all git projects under our local directory
+     * @return {Promise<void>}
+     */
+    public async installGitHooks() {
+        const allRepos = await this.configuration.sdm.repoFinder(undefined);
+        for (const rr of allRepos) {
+            if (!isFileSystemRemoteRepoRef(rr)) {
+                throw new Error(`Unexpected return from repo ref resolver: ${JSON.stringify(rr)}`);
+            }
+            await addGitHooks(rr);
+        }
+    }
+
+    public async removeGitHooks() {
+        throw new Error("Not yet implemented. Looks like Atomist is here to stay");
+    }
 
     // ---------------------------------------------------------------
     // git binding methods
