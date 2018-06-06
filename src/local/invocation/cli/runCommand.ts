@@ -48,11 +48,11 @@ require("yargs")
         },
         desc: "Generate",
         handler: argv => {
-            console.log(JSON.stringify(argv))
+            console.log(JSON.stringify(argv));
 
             const extraArgs = Object.getOwnPropertyNames(argv)
-                .map(name => ({ name, value: argv[name]}));
-            logExceptionsToConsole( () => generate(argv.generator, argv.owner, argv.repo, extraArgs));
+                .map(name => ({name, value: argv[name]}));
+            logExceptionsToConsole(() => generate(argv.generator, argv.owner, argv.repo, extraArgs));
         }
     })
     .command({
@@ -73,8 +73,24 @@ require("yargs")
         handler: argv => {
             console.log(JSON.stringify(argv));
             const extraArgs = Object.getOwnPropertyNames(argv)
-                .map(name => ({ name, value: argv[name]}));
-            logExceptionsToConsole( () => edit(argv.editor, argv.owner, argv.repos, extraArgs));
+                .map(name => ({name, value: argv[name]}));
+            logExceptionsToConsole(() => edit(argv.editor, argv.owner, argv.repos, extraArgs));
+        }
+    })
+    .command({
+        command: "run",
+        aliases: ["r"],
+        builder: {
+            command: {
+                required: true,
+            },
+        },
+        desc: "Run command",
+        handler: argv => {
+            console.log(JSON.stringify(argv));
+            const command = Object.getOwnPropertyNames(argv)
+                .map(name => ({name, value: argv[name]}));
+            logExceptionsToConsole(() => runCommand(argv.command, command));
         }
     })
     .usage("Usage: $0 <command> [options]")
@@ -110,7 +126,7 @@ async function generate(commandName: string, targetOwner: string, targetRepo: st
 }
 
 async function edit(commandName: string, targetOwner: string, targetRepos: string,
-                        extraArgs: Arg[]): Promise<any> {
+                    extraArgs: Arg[]): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
     if (!hm) {
         console.log(`No editor with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
@@ -120,6 +136,18 @@ async function edit(commandName: string, targetOwner: string, targetRepos: strin
         {name: "targets.owner", value: targetOwner},
         {name: "target.repos", value: targetRepos},
     ].concat(extraArgs);
+
+    // TODO should come from environment
+    args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
+    return sdm.executeCommand(commandName, args);
+}
+
+async function runCommand(commandName: string, args: Arg[]): Promise<any> {
+    const hm = sdm.commandMetadata(commandName);
+    if (!hm) {
+        console.log(`No command with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
+        process.exit(1);
+    }
 
     // TODO should come from environment
     args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
