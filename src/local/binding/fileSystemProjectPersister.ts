@@ -2,8 +2,8 @@ import { logger } from "@atomist/automation-client";
 import { successOn } from "@atomist/automation-client/action/ActionResult";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
-import * as fs from "fs";
 import { execSync } from "child_process";
+import * as fs from "fs";
 import { addGitHooksToProject } from "../setup/addGitHooks";
 
 /**
