@@ -234,11 +234,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
+    public addGoalContributions(goalContributions: GoalSetter): this {
+        this.pushMap = enrichGoalSetters(this.pushMap, goalContributions);
+        return this;
+    }
+
     public addExtensionPacks(...packs: ExtensionPack[]): this {
         for (const configurer of packs) {
             this.addExtensionPack(configurer);
             if (!!configurer.goalContributions) {
-                this.pushMap = enrichGoalSetters(this.pushMap, configurer.goalContributions);
+                this.addGoalContributions(configurer.goalContributions);
             }
         }
         return this;

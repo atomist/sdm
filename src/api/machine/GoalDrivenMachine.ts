@@ -19,6 +19,7 @@ import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
+import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
@@ -80,5 +81,12 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
                        pushTest: PushTest): this;
 
     readonly goalFulfillmentMapper: SdmGoalImplementationMapper;
+
+    /**
+     * Add goal setting contributions that will be added into SDM goal setting.
+     * Decorates other goal setting behavior.
+     * @param goalContributions contributions to goals
+     */
+    addGoalContributions(goalContributions: GoalSetter): this;
 
 }
