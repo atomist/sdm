@@ -31,15 +31,28 @@ The `configure` function in the root of the `src` directory configures your SDM.
 > The API is identical to the API of a cloud-connected Atomist SDM.
 
 ## Adding projects
-Further projects can be added in two ways:
+Further projects can be added in three ways:
 
-1. Cloning any git project from anywhere under `$LOCAL_SDM_BASE` and running `slalom add-git-hooks` to add git hooks to it.
-2. Running the convenience command to clone a GitHub.com directory in the right place and automatically install the git hook as follows:
+### Normal git Clone
+
+Cloning any git project from anywhere under `$LOCAL_SDM_BASE` and running `slalom add-git-hooks` to add git hooks to it.
+
+### Symbolic Link
+Go to the correct organization directory, creating it if necessary. Then create a symlink to the required directory elsewhere on your machine. For example:
+
+```
+ln -s /Users/rodjohnson/sforzando-dev/idea-projects/flight1
+```
+Then run `slalom add-git-hooks` and the linked project will be treatd as a normal project.
+
+### Import Command
+The easiest way to add a problem is funning the `import` command to clone a GitHub.com directory in the right place in the expanded tree and automatically install the git hook as follows:
 
 ```
 slalom import --owner=johnsonr --repo=initializr
 
 ```
+This command should be run from your SDM directory.
 
 Output will look as follows:
 
