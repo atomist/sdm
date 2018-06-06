@@ -18,7 +18,7 @@ describe("LocalSoftwareDeliveryMachine generator", () => {
                 seed: new GitHubRepoRef("spring-team", "spring-rest-seed"),
             }),
         });
-        //console.log(sdm.generatorMetadata());
+        // console.log(sdm.generatorMetadata());
         await sdm.executeCommand("foo", [
             {name: "target.owner", value: "x"},
             {name: "target.repo", value: "y"},

@@ -1,23 +1,14 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { execSync } from "child_process";
-import { allReposInTeam } from "../../api-helper/command/editor/allReposInTeam";
 import { createEphemeralProgressLog } from "../../api-helper/log/EphemeralProgressLog";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { GitHubCredentialsResolver } from "../../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../../internal/artifact/local/EphemeralLocalArtifactStore";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
+import { expandedDirectoryRepoFinder } from "../binding/expandedDirectoyRepoFinder";
+import { fileSystemProjectPersister } from "../binding/fileSystemProjectPersister";
 import { LocalRepoRefResolver } from "../binding/LocalRepoRefResolver";
 import { EnvironmentTokenCredentialsResolver } from "./EnvironmentTokenCredentialsResolver";
-import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { logger, Success } from "@atomist/automation-client";
-import { successOn } from "@atomist/automation-client/action/ActionResult";
-import { FileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
-import * as fs from "fs";
-import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
-import { copy } from "fs-extra";
-import { fileSystemProjectPersister } from "../binding/fileSystemProjectPersister";
-import { expandedDirectoryRepoFinder } from "../binding/expandedDirectoyRepoFinder";
 
 export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliveryMachineConfiguration {
 

@@ -1,16 +1,19 @@
-import * as _ from "lodash";
 import { Configuration, HandleCommand, HandlerContext, HandlerResult, SuccessPromise } from "@atomist/automation-client";
-import { isSmartParameters, isValidationError, ValidationResult } from "@atomist/automation-client/SmartParameters";
+import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
 import {
     AutomationMetadata,
     Chooser,
     CommandHandlerMetadata,
     FreeChoices,
-    ParameterType
+    ParameterType,
 } from "@atomist/automation-client/metadata/automationMetadata";
-import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
+import { isSmartParameters, isValidationError, ValidationResult } from "@atomist/automation-client/SmartParameters";
+import * as _ from "lodash";
 
-// Based on code from automation-client
+/**
+ *  Based on code from automation-client. We don't want to depend on that
+ *  project, so this duplication is OK.
+ */
 
 export function invokeCommandHandlerWithFreshParametersInstance<P>(h: HandleCommand<P>,
                                                                    md: CommandHandlerMetadata,
@@ -79,7 +82,9 @@ function populateValues(instanceToPopulate: any, am: AutomationMetadata, configu
     });
 }
 
+/* tslint:disable:cyclomatic-complexity */
 function computeValue(parameter: { name: string, type?: ParameterType }, value: any) {
+    let valueToUse = value;
     // Convert type if necessary
     switch (parameter.type) {
         case "string":
@@ -90,30 +95,30 @@ function computeValue(parameter: { name: string, type?: ParameterType }, value: 
             // It's a string array. Keep the value the same
             break;
         case "boolean":
-            if (typeof value !== "boolean") {
-                value = value === "true" || value === "yes" || value === "1";
+            if (typeof valueToUse !== "boolean") {
+                valueToUse = valueToUse === "true" || valueToUse === "yes" || valueToUse === "1";
             }
             break;
         case "number":
-            if (typeof value === "string") {
-                value = parseInt(value, 10);
+            if (typeof valueToUse === "string") {
+                valueToUse = parseInt(valueToUse, 10);
             } else {
                 throw new Error(`Parameter '${parameter.name}' has array value, but is numeric`);
             }
             break;
         default:
             // It's a Chooser
-            const chooser = parameter.type as Chooser;
+            const chooser = parameter.type;
             if (chooser.pickOne) {
-                if (typeof value !== "string") {
+                if (typeof valueToUse !== "string") {
                     throw new Error(`Parameter '${parameter.name}' has array value, but should be string`);
                 }
             } else {
-                if (typeof value.value === "string") {
+                if (typeof valueToUse.value === "string") {
                     throw new Error(`Parameter '${parameter.name}' has string value, but should be array`);
                 }
             }
             break;
     }
-    return value;
+    return valueToUse;
 }

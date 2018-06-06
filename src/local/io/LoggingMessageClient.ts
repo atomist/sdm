@@ -1,5 +1,5 @@
-import { Destination, MessageClient, MessageOptions, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
 import { logger } from "@atomist/automation-client";
+import { Destination, MessageClient, MessageOptions, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
 export class LoggingMessageClient implements MessageClient, SlackMessageClient {

@@ -1,9 +1,9 @@
+import { logger } from "@atomist/automation-client";
 import { ActionResult, successOn } from "@atomist/automation-client/action/ActionResult";
 import { AbstractRemoteRepoRef } from "@atomist/automation-client/operations/common/AbstractRemoteRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Configurable } from "@atomist/automation-client/project/git/Configurable";
-import { logger } from "@atomist/automation-client";
 
 export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
 

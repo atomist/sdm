@@ -16,12 +16,10 @@ import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementation
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { selfDescribingHandlers } from "../../pack/info/support/commandSearch";
 import { FileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
+import { LocalHandlerContext } from "../binding/LocalHandlerContext";
+import { localRunWithLogContext } from "../binding/localPush";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { localRunWithLogContext } from "../binding/localPush";
-import { EnvironmentTokenCredentialsResolver } from "./EnvironmentTokenCredentialsResolver";
-import { LocalHandlerContext } from "../binding/LocalHandlerContext";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
@@ -84,7 +82,7 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         const parameters = !!instance.freshParametersInstance ? instance.freshParametersInstance() : instance;
 
         // TODO should handle this with normal population, but it is dependable with generators
-        const params = parameters as any;
+        const params = parameters;
         if (!!params.target) {
             params.target.githubToken = process.env.GITHUB_TOKEN;
         }
@@ -129,20 +127,6 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
             {},
             () => null);
         return action(p);
-    }
-
-    /**
-     * Reference to the local directory within this file system
-     * @param {string} owner
-     * @param {string} repo
-     * @param {string} branch
-     * @param {string} sha
-     * @return {RemoteRepoRef}
-     */
-    private localRepoRef(owner: string, repo: string, branch: string = "master", sha?: string): RemoteRepoRef {
-        return FileSystemRemoteRepoRef.fromDirectory(this.configuration.repositoryOwnerParentDirectory,
-            `${this.configuration.repositoryOwnerParentDirectory}/${owner}/${repo}`,
-            branch, sha);
     }
 
     constructor(name: string,
