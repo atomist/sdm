@@ -5,6 +5,7 @@ import * as fs from "fs";
 import { execSync } from "child_process";
 import { addGitHooks } from "../../setup/addGitHooks";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { Arg } from "@atomist/automation-client/internal/transport/RequestProcessor";
 
 /* tslint:disable */
 
@@ -47,7 +48,12 @@ require("yargs")
         },
         desc: "Generate",
         handler: argv => {
-            logExceptionsToConsole( () => generate(argv.generator, argv.owner, argv.repo));
+            console.log(JSON.stringify(argv))
+
+            const extraArgs = Object.getOwnPropertyNames(argv)
+                .map(name => ({ name, value: argv[name]});
+                //.filter(a => !["generator", "owner", "repo"].includes(a.name));
+            logExceptionsToConsole( () => generate(argv.generator, argv.owner, argv.repo, extraArgs));
         }
     })
     .usage("Usage: $0 <command> [options]")
@@ -65,7 +71,8 @@ async function importFromGitHub(org: string, repo: string): Promise<any> {
     return addGitHooks(new GitHubRepoRef(org, repo), `${orgDir}/${repo}`);
 }
 
-async function generate(commandName: string, targetOwner: string, targetRepo: string): Promise<any> {
+async function generate(commandName: string, targetOwner: string, targetRepo: string,
+                        extraArgs: Arg[]): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
     if (!hm) {
         console.log(`No generator with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
@@ -74,7 +81,7 @@ async function generate(commandName: string, targetOwner: string, targetRepo: st
     const args = [
         {name: "target.owner", value: targetOwner},
         {name: "target.repo", value: targetRepo},
-    ];
+    ].concat(extraArgs);
 
     // TODO should come from environment
     args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
