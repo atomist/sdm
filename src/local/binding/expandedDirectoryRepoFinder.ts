@@ -13,8 +13,9 @@ export function expandedDirectoryRepoFinder(repositoryOwnerParentDirectory: stri
     return async () => {
         const eligibleDirectories: string[] =
             _.flatten(fs.readdirSync(repositoryOwnerParentDirectory)
+                .filter(item => fs.statSync(`${repositoryOwnerParentDirectory}/${item}`).isDirectory())
                 .map(org => {
-                    logger.info("Reading under child directory [%s] under %s", org, repositoryOwnerParentDirectory);
+                    logger.info("Searching under child directory [%s] of %s", org, repositoryOwnerParentDirectory);
                     return fs.readdirSync(`${repositoryOwnerParentDirectory}/${org}`)
                         .map(repo => `${repositoryOwnerParentDirectory}/${org}/${repo}`)
                         .filter(repo => fs.existsSync(`${repo}/.git`));
