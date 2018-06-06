@@ -6,6 +6,7 @@ import { execSync } from "child_process";
 import * as fs from "fs";
 import { addGitHooks } from "../../setup/addGitHooks";
 import { sdm } from "../machine";
+import { logExceptionsToConsole } from "./logExceptionsToConsole";
 
 /* tslint:disable */
 
@@ -152,14 +153,4 @@ async function runCommand(commandName: string, args: Arg[]): Promise<any> {
     // TODO should come from environment
     args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
     return sdm.executeCommand(commandName, args);
-}
-
-async function logExceptionsToConsole(what: () => Promise<any>) {
-    try {
-        await what();
-    }
-    catch (err) {
-        console.error(`Error: ${err.message}`);
-        process.exit(1);
-    }
 }

@@ -1,4 +1,4 @@
-# Local SDM
+# Slalom: Local Software Delivery Machine
 
 ## Setup
 1. Set the `LOCAL_SDM_BASE` environment variable. This will is the directory which is the base for your expanded directory tree. It may contain existing cleaned repos.
@@ -23,7 +23,12 @@ Success will result in output like the following:
 2018-06-06T11:23:58.080Z [m:85087] [info ] addGitHooks: Adding git post-commit script to project at /Users/rodjohnson/temp/local-sdm/x/y
 ```
 
->Running `slalom add-git-hooks` is only necessary for pre-existing cloned directories and directories that are cloned using `git` rather than the local SDM.
+> Running `slalom add-git-hooks` is only necessary for pre-existing cloned directories and directories that are cloned using `git` rather than the local SDM.
+
+### Adding to your SDM
+The `configure` function in the root of the `src` directory configures your SDM. Add listeners, editors, generators and other commands here. The present implementation shows some basic functionality.
+
+> The API is identical to the API of a cloud-connected Atomist SDM.
 
 ## Adding projects
 Further projects can be added in two ways:
@@ -46,9 +51,10 @@ warning: redirecting to https://github.com/johnsonr/initializr/
 2018-06-06T11:27:33.349Z [m:85220] [info ] addGitHooks: Adding git post-commit script to project at /Users/rodjohnson/temp/local-sdm/johnsonr/initializr
 ```
 
-Only local repos are supported.
+Only public repos are supported.
 
 ## Running Goals
+Commits to managed repos will now generate Atomist *push* events.
 
 
 ## Running Generators
@@ -96,12 +102,19 @@ No parameters beyond the command name are required. However, command-specific pa
 - Autofixes produce error output
 
 ### Major Tasks
+Urgent:
+
 - Goal preconditions are not respected
 - Add [git merge and fetch hooks](https://githooks.com/).
+- Mapped parameters and secrets should be sourced from the environment if not provided
+
+Less urgent:
+
 - Depend only on `sdm-api` project. This will require it to be split out and `automation-client` to be split to pull out the Project API, which is part of the SDM API.
-- Decide on how to present output to the user.
+- Decide on how to present output to the user, especially actionable output
+- Decide how to get build results from external tools in (if we wish to)
 
 ### Enhancements
-- We could pull command metadata and generate CLI completions from it
+- We could pull command metadata and generate CLI completions from it at the time when we initialize `yargs`. This would require generators and editors to be tagged.
 - `yargs` can export Bash completions
 - Only public repos can be cloned at present
