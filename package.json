@@ -20,6 +20,7 @@
   "dependencies": {
     "@atomist/automation-client": "0.17.2-20180605032022",
     "@atomist/slack-messages": "^0.12.1",
+    "@jessitron/git-branch-to-npm-tag": "^1.0.1",
     "archiver": "^2.1.1",
     "axios": "^0.18.0",
     "base64-js": "^1.2.3",
