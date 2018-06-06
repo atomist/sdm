@@ -13,7 +13,7 @@ describe("LocalSoftwareDeliveryMachine generator", () => {
             localSoftwareDeliveryMachineOptions(repoOwnerDirectory));
         sdm.addGenerators({
             name: "foo",
-            editor: async p => p,
+            editor: async p => p.addFile("local", "stuff"),
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({
                 seed: new GitHubRepoRef("spring-team", "spring-rest-seed"),
             }),
