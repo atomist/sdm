@@ -87,6 +87,15 @@ function populateParameters(instanceToPopulate: any,
             }
         }
     });
+
+    // TODO what about mapped parameters
+    const missingParams = hm.parameters
+        .filter(p => p.required)
+        .filter(p => _.get(instanceToPopulate, p.name) === undefined)
+        .filter(param => !args.some(a => a.name === param.name));
+    if (missingParams.length > 0) {
+        throw new Error("Missing parameters: " + missingParams.map(p => p.name));
+    }
 }
 
 function populateSecrets(instanceToPopulate: any, hm: CommandHandlerMetadata, secretResolver: SecretResolver) {
