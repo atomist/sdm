@@ -1,9 +1,22 @@
 # Slalom: Local Software Delivery Machine
 
 ## Setup
-1. Set the `LOCAL_SDM_BASE` environment variable. This will is the directory which is the base for your expanded directory tree. It may contain existing cleaned repos.
-2. From the SDM base directory (where you have cloned the project), run `npm install`.
-3. Add the Atomist git hook to the existing git projects within this directory structure by running the following command in your SDM base directory:
+
+### Environment
+Set the `LOCAL_SDM_BASE` environment variable. This is the directory which is the base for your expanded directory tree. It may contain existing cleaned repos.
+
+### npm Setup
+
+From the SDM base directory (where you have cloned the project), run the following commands:
+
+```
+npm install
+npm link
+```
+
+### Configure Existing Projects
+
+Add the Atomist git hook to the existing git projects within this directory structure by running the following command in your SDM base directory:
 
 ```
 slalom add-git-hooks
