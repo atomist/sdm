@@ -1,4 +1,4 @@
-import { logger } from "@atomist/automation-client";
+import { logger, Parameter } from "@atomist/automation-client";
 import { SoftwareDeliveryMachine } from "..";
 import { whenPushSatisfies } from "../api/dsl/goalDsl";
 import { FingerprintGoal, PushReactionGoal, ReviewGoal } from "../api/machine/wellKnownGoals";
@@ -41,8 +41,14 @@ export function configure(sdm: SoftwareDeliveryMachine) {
         .addGenerators({
             name: "foo",
             editor: async p => p.addFile("local", "stuff"),
-            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({
+            paramsMaker: () => new MyParameters({
                 seed: new GitHubRepoRef("spring-team", "spring-rest-seed"),
             }),
         });
+}
+
+class MyParameters extends SeedDrivenGeneratorParametersSupport {
+
+    @Parameter()
+    public grommit;
 }
