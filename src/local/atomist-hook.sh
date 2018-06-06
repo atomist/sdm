@@ -6,7 +6,6 @@ event=$2
 
 echo "git hook fire: Invoking Atomist $event against $hookDir"
 
-# TODO make this Atomist base
 node $script\
     $event \
     $hookDir \
