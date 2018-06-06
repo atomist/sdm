@@ -1,5 +1,6 @@
 import { HandleCommand, HandleEvent, HandlerContext } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
+import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
@@ -21,7 +22,6 @@ import { localRunWithLogContext } from "../binding/localPush";
 import { addGitHooks } from "../setup/addGitHooks";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
-import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
