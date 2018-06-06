@@ -3,10 +3,11 @@ import { successOn } from "@atomist/automation-client/action/ActionResult";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { NodeFsLocalProject } from "@atomist/automation-client/project/local/NodeFsLocalProject";
 import * as fs from "fs";
+import { execSync } from "child_process";
 
 /**
  * Persist the project to the given local directory given expanded directory
- * conventions
+ * conventions. Perform a git init
  * @param {string} repositoryOwnerParentDirectory
  * @return {ProjectPersister}
  */
@@ -19,6 +20,9 @@ export function fileSystemProjectPersister(repositoryOwnerParentDirectory: strin
         }
 
         await NodeFsLocalProject.copy(p, baseDir);
+        execSync("git init", { cwd: baseDir});
+        execSync("git add .", { cwd: baseDir});
+        execSync(`git commit -a -m "Initial commit from Atomist"`, { cwd: baseDir});
         return successOn(p);
     };
 }
