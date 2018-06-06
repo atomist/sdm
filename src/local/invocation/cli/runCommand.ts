@@ -13,7 +13,7 @@ require("yargs")
         command: "install",
         desc: "Install web hooks",
         handler: () => {
-            sdm.installGitHooks();
+            logExceptionsToConsole(() => sdm.installGitHooks());
         }
     })
     .command({
@@ -28,7 +28,7 @@ require("yargs")
             },
         },
         handler: argv => {
-            importFromGitHub(argv.owner, argv.repo);
+            logExceptionsToConsole(() => importFromGitHub(argv.owner, argv.repo));
         }
     })
     .command({
@@ -47,14 +47,14 @@ require("yargs")
         },
         desc: "Generate",
         handler: argv => {
-            generate(argv.generator, argv.owner, argv.repo);
+            logExceptionsToConsole( () => generate(argv.generator, argv.owner, argv.repo));
         }
     })
     .usage("Usage: $0 <command> [options]")
     .epilog("Copyright Atomist 2018")
     .argv;
 
-async function importFromGitHub(org: string, repo: string) {
+async function importFromGitHub(org: string, repo: string): Promise<any> {
     console.log(`Adding GitHub project ${org}/${repo}`);
     const orgDir = `${sdm.configuration.repositoryOwnerParentDirectory}/${org}`;
     if (!fs.existsSync(orgDir)) {
@@ -62,10 +62,10 @@ async function importFromGitHub(org: string, repo: string) {
     }
     execSync(`git clone http://github.com/${org}/${repo}`,
         {cwd: orgDir});
-    addGitHooks(new GitHubRepoRef(org, repo), `${orgDir}/${repo}`);
+    return addGitHooks(new GitHubRepoRef(org, repo), `${orgDir}/${repo}`);
 }
 
-async function generate(commandName: string, targetOwner: string, targetRepo: string) {
+async function generate(commandName: string, targetOwner: string, targetRepo: string): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
     if (!hm) {
         console.log(`No generator with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
@@ -78,5 +78,15 @@ async function generate(commandName: string, targetOwner: string, targetRepo: st
 
     // TODO should come from environment
     args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
-    sdm.executeCommand(commandName, args);
+    return sdm.executeCommand(commandName, args);
+}
+
+async function logExceptionsToConsole(what: () => Promise<any>) {
+    try {
+        await what();
+    }
+    catch (err) {
+        console.error(`Error: ${err.message}`);
+        process.exit(1);
+    }
 }
