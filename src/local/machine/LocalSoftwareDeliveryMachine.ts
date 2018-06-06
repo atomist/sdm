@@ -42,7 +42,7 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
      * @return {Promise<Promise<any>>}
      */
     public async postCommit(baseDir: string, branch: string, sha: string) {
-        return this.doWithLocalProject(baseDir, branch, sha,
+        return this.doWithProjectUnderExpandedDirectoryTree(baseDir, branch, sha,
             async p => {
                 const rwlc = await localRunWithLogContext(p);
                 const goals = await chooseAndSetGoals(
@@ -80,12 +80,6 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         const instance = toFactory(handler.maker)();
         const context: HandlerContext = new LocalHandlerContext(null);
         const parameters = !!instance.freshParametersInstance ? instance.freshParametersInstance() : instance;
-
-        // TODO should handle this with normal population, but it is dependable with generators
-        const params = parameters;
-        if (!!params.target) {
-            params.target.githubToken = process.env.GITHUB_TOKEN;
-        }
         await invokeCommandHandlerWithFreshParametersInstance(instance, handler.instance, parameters, args, context);
     }
 
@@ -117,9 +111,10 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         }
     }
 
-    private async doWithLocalProject(baseDir: string,
-                                     branch: string, sha: string,
-                                     action: (p: GitProject) => Promise<any>) {
+    private async doWithProjectUnderExpandedDirectoryTree(baseDir: string,
+                                                          branch: string,
+                                                          sha: string,
+                                                          action: (p: GitProject) => Promise<any>) {
         const p = GitCommandGitProject.fromBaseDir(
             FileSystemRemoteRepoRef.fromDirectory(this.configuration.repositoryOwnerParentDirectory,
                 baseDir, branch, sha),

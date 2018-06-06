@@ -22,6 +22,7 @@ describe("LocalSoftwareDeliveryMachine generator", () => {
         await sdm.executeCommand("foo", [
             {name: "target.owner", value: "x"},
             {name: "target.repo", value: "y"},
+            {name: "github://user_token?scopes=repo,user:email,read:user", value: null},
         ]);
     }).timeout(40000);
 

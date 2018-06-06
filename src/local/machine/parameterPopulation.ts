@@ -9,20 +9,38 @@ import {
 } from "@atomist/automation-client/metadata/automationMetadata";
 import { isSmartParameters, isValidationError, ValidationResult } from "@atomist/automation-client/SmartParameters";
 import * as _ from "lodash";
+import { SecretResolver } from "@atomist/automation-client/spi/env/SecretResolver";
+
+/**
+ * Try to resolve secrets from arguments
+ */
+class ArgsSecretResolver implements SecretResolver {
+
+    constructor(private readonly args: Arg[]) {}
+
+    public resolve(key: string): string {
+        const arg = this.args.find(a => a.name === key);
+        if (!arg) {
+            throw new Error(`Can't resolve secret '${key}' from args`);
+        }
+        return arg.value as string;
+    }
+}
 
 /**
  *  Based on code from automation-client. We don't want to depend on that
  *  project, so this duplication is OK.
  */
-
 export function invokeCommandHandlerWithFreshParametersInstance<P>(h: HandleCommand<P>,
                                                                    md: CommandHandlerMetadata,
                                                                    params: P,
                                                                    args: Arg[],
-                                                                   ctx: HandlerContext): Promise<HandlerResult> {
+                                                                   ctx: HandlerContext,
+                                                                   secretResolver?: SecretResolver): Promise<HandlerResult> {
     populateParameters(params, md, args);
     populateValues(params, md, {});
-    // this.populateSecrets(params, md, invocation.secrets);
+    const secretResolverToUse = secretResolver || new ArgsSecretResolver(args);
+    populateSecrets(params, md, secretResolverToUse);
 
     const bindAndValidate: Promise<ValidationResult> =
         isSmartParameters(params) ?
@@ -51,13 +69,15 @@ export function invokeCommandHandlerWithFreshParametersInstance<P>(h: HandleComm
 }
 
 /**
- * Populate the parameters of the command handler instance,
+ * Populate parameters and mapped parameters of the command handler instance,
  * performing type coercion if necessary
  * @param instanceToPopulate parameters instance (may be handler instance itself)
  * @param hm handler metadata
  * @param args string args
  */
-function populateParameters(instanceToPopulate: any, hm: CommandHandlerMetadata, args: Arg[]) {
+function populateParameters(instanceToPopulate: any,
+                            hm: CommandHandlerMetadata,
+                            args: Arg[]) {
     const allParams = hm.parameters.concat(hm.mapped_parameters);
     args.forEach(arg => {
         if (arg.value !== undefined) {
@@ -66,6 +86,13 @@ function populateParameters(instanceToPopulate: any, hm: CommandHandlerMetadata,
                 _.update(instanceToPopulate, parameter.name, () => computeValue(parameter, arg.value));
             }
         }
+    });
+}
+
+function populateSecrets(instanceToPopulate: any, hm: CommandHandlerMetadata, secretResolver: SecretResolver) {
+    const secrets = hm.secrets || [];
+    secrets.forEach(s => {
+        _.update(instanceToPopulate, s.name, () => secretResolver.resolve(s.uri));
     });
 }
 
