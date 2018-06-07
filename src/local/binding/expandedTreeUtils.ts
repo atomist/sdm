@@ -1,4 +1,12 @@
-export function parseOwnerAndRepo(repositoryOwnerParentDirectory, baseDir: string): { owner?: string, repo?: string } {
+/**
+ * Find the owner and repo from the given directory, returning the empty
+ * object if it isn't within our expanded directory structure
+ * @param {string} repositoryOwnerParentDirectory
+ * @param {string} baseDir directory to test
+ * @return {{owner?: string; repo?: string}}
+ */
+export function parseOwnerAndRepo(repositoryOwnerParentDirectory: string,
+                                  baseDir: string = determineCwd()): { owner?: string, repo?: string } {
     // TODO support symlinks
     if (!baseDir.startsWith(repositoryOwnerParentDirectory)) {
         return {};
@@ -17,7 +25,12 @@ export function parseOwnerAndRepo(repositoryOwnerParentDirectory, baseDir: strin
  * @param {string} baseDir directory to test
  * @return {boolean}
  */
-export function withinExpandedTree(repositoryOwnerParentDirectory: string, baseDir: string): boolean {
+export function withinExpandedTree(repositoryOwnerParentDirectory: string,
+                                   baseDir: string = determineCwd()): boolean {
     const {owner, repo} = parseOwnerAndRepo(repositoryOwnerParentDirectory, baseDir);
     return !!owner && !!repo;
+}
+
+export function determineCwd() {
+    return process.env.PWD;
 }
