@@ -4,19 +4,21 @@ import {
     AutomationMetadata,
     Chooser,
     CommandHandlerMetadata,
-    FreeChoices,
+    FreeChoices, MappedParameterDeclaration,
     ParameterType,
 } from "@atomist/automation-client/metadata/automationMetadata";
 import { isSmartParameters, isValidationError, ValidationResult } from "@atomist/automation-client/SmartParameters";
 import { SecretResolver } from "@atomist/automation-client/spi/env/SecretResolver";
 import * as _ from "lodash";
+import { MappedParameterResolver } from "../binding/MappedParameterResolver";
 
 /**
  * Try to resolve secrets from arguments
  */
 class ArgsSecretResolver implements SecretResolver {
 
-    constructor(private readonly args: Arg[]) {}
+    constructor(private readonly args: Arg[]) {
+    }
 
     public resolve(key: string): string {
         const arg = this.args.find(a => a.name === key);
@@ -36,8 +38,10 @@ export function invokeCommandHandlerWithFreshParametersInstance<P>(h: HandleComm
                                                                    params: P,
                                                                    args: Arg[],
                                                                    ctx: HandlerContext,
+                                                                   mpr: MappedParameterResolver,
                                                                    secretResolver?: SecretResolver): Promise<HandlerResult> {
     populateParameters(params, md, args);
+    populateMappedParameters(params, md, args, mpr);
     populateValues(params, md, {});
     const secretResolverToUse = secretResolver || new ArgsSecretResolver(args);
     populateSecrets(params, md, secretResolverToUse);
@@ -78,23 +82,43 @@ export function invokeCommandHandlerWithFreshParametersInstance<P>(h: HandleComm
 function populateParameters(instanceToPopulate: any,
                             hm: CommandHandlerMetadata,
                             args: Arg[]) {
-    const allParams = hm.parameters.concat(hm.mapped_parameters);
     args.forEach(arg => {
         if (arg.value !== undefined) {
-            const parameter = allParams.find(p => p.name === arg.name);
+            const parameter = hm.parameters.find(p => p.name === arg.name);
             if (parameter) {
                 _.update(instanceToPopulate, parameter.name, () => computeValue(parameter, arg.value));
             }
         }
     });
 
-    // TODO what about mapped parameters
     const missingParams = hm.parameters
         .filter(p => p.required)
         .filter(p => _.get(instanceToPopulate, p.name) === undefined)
         .filter(param => !args.some(a => a.name === param.name));
     if (missingParams.length > 0) {
         throw new Error("Missing parameters: " + missingParams.map(p => p.name));
+    }
+}
+
+function populateMappedParameters(instanceToPopulate: any,
+                                  hm: CommandHandlerMetadata,
+                                  args: Arg[],
+                                  mpr: MappedParameterResolver) {
+    hm.mapped_parameters.forEach(mp => {
+        const matchingArg = args.find(arg => arg.name === mp.name);
+        if (matchingArg) {
+            _.update(instanceToPopulate, mp.name, () => computeValue(mp, matchingArg.value));
+        } else {
+            _.update(instanceToPopulate, mp.name, () => mpr.resolve(mp));
+        }
+    });
+
+    const missingParams = hm.mapped_parameters
+        .filter(p => p.required)
+        .filter(p => _.get(instanceToPopulate, p.name) === undefined)
+        .filter(param => !args.some(a => a.name === param.name));
+    if (missingParams.length > 0) {
+        throw new Error("Missing mapped parameters: " + missingParams.map(p => p.name));
     }
 }
 

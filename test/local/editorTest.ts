@@ -8,7 +8,7 @@ describe("LocalSoftwareDeliveryMachine editor", () => {
         const repoOwnerDirectory = RepositoryOwnerParentDirectory;
         const sdm = new LocalSoftwareDeliveryMachine(
             "name",
-            localSoftwareDeliveryMachineOptions(repoOwnerDirectory));
+            localSoftwareDeliveryMachineOptions(repoOwnerDirectory, ));
         sdm.addEditors({
             name: "ed1",
             editor: async p => p.addFile("thing", "1"),
