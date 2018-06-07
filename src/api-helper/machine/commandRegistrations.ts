@@ -14,9 +14,14 @@ import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
 import { MachineOrMachineOptions } from "./toMachineOptions";
 
+export const GeneratorTag = "generator";
+export const EditorTag = "editor";
+
+import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import * as stringify from "json-stringify-safe";
 
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
+    tagWith(e, EditorTag);
     const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
     return () => fun(
         sdm,
@@ -28,7 +33,25 @@ export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: Edi
     );
 }
 
+/**
+ * Tag the command details with the given tag if it isn't already
+ * @param {Partial<CommandDetails>} e
+ * @param {string} tag
+ */
+function tagWith(e: Partial<CommandDetails>, tag: string) {
+    if (!e.tags) {
+        e.tags = [];
+    }
+    if (typeof e.tags === "string") {
+        e.tags = [e.tags];
+    }
+    if (!e.tags.includes(tag)) {
+        e.tags.push(tag);
+    }
+}
+
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
+    tagWith(e, GeneratorTag);
     return () => generatorCommand(
         sdm,
         toEditorFunction(e),
@@ -63,7 +86,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
         return c.createCommand;
     }
     if (!!c.listener) {
-        return sdm => async (context, parameters) =>  {
+        return sdm => async (context, parameters) => {
             // const opts = toMachineOptions(sdm);
             // TODO will add this. Currently it doesn't work.
             const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
