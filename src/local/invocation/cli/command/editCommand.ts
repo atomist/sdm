@@ -1,6 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { Argv } from "yargs";
+import { EditorTag } from "../../../../api-helper/machine/commandRegistrations";
+import { commandHandlersWithTag } from "../../../../pack/info/support/commandSearch";
 import { determineCwd, withinExpandedTree } from "../../../binding/expandedTreeUtils";
 import { LocalSoftwareDeliveryMachine } from "../../../machine/LocalSoftwareDeliveryMachine";
 import { logExceptionsToConsole } from "../support/consoleOutput";
@@ -33,8 +35,8 @@ async function edit(sdm: LocalSoftwareDeliveryMachine,
                     targetRepos: string | undefined,
                     extraArgs: Arg[]): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
-    if (!hm) {
-        logger.error(`No editor with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
+    if (!hm || !!hm.tags && !hm.tags.some(t => t.name === EditorTag)) {
+        logger.error(`No editor with name [${commandName}]: Known editors are [${commandHandlersWithTag(sdm, EditorTag).map(m => m.instance.name)}]`);
         process.exit(1);
     }
 
