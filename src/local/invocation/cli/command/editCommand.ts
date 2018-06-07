@@ -3,7 +3,7 @@ import { Arg } from "@atomist/automation-client/internal/transport/RequestProces
 import { Argv } from "yargs";
 import { determineCwd, withinExpandedTree } from "../../../binding/expandedTreeUtils";
 import { LocalSoftwareDeliveryMachine } from "../../../machine/LocalSoftwareDeliveryMachine";
-import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
+import { logExceptionsToConsole } from "../support/consoleOutput";
 
 export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({

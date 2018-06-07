@@ -1,5 +1,5 @@
-import { logger } from "@atomist/automation-client";
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
+import { writeToConsole } from "../support/consoleOutput";
 
 /**
  * Display fingerprints to the user
@@ -8,4 +8,4 @@ import { FingerprintListener } from "../../../../api/listener/FingerprintListene
  * @constructor
  */
 export const LogFingerprint: FingerprintListener = async fli =>
-    logger.info("FINGERPRINT: %j", fli.fingerprint);
+    writeToConsole("FINGERPRINT: %j", fli.fingerprint);
