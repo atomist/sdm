@@ -4,7 +4,7 @@ import {
     AutomationMetadata,
     Chooser,
     CommandHandlerMetadata,
-    FreeChoices, MappedParameterDeclaration,
+    FreeChoices,
     ParameterType,
 } from "@atomist/automation-client/metadata/automationMetadata";
 import { isSmartParameters, isValidationError, ValidationResult } from "@atomist/automation-client/SmartParameters";

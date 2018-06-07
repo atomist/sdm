@@ -1,6 +1,10 @@
 import { HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
 import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
+import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
+import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
+import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
@@ -22,13 +26,6 @@ import { localRunWithLogContext } from "../binding/localPush";
 import { addGitHooks } from "../setup/addGitHooks";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
-import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
-import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 

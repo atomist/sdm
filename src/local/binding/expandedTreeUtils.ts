@@ -11,7 +11,13 @@ export function parseOwnerAndRepo(repositoryOwnerParentDirectory, baseDir: strin
         {};
 }
 
-export function withinExpandedTree(repositoryOwnerParentDirectory, baseDir: string): boolean {
+/**
+ * Is the given directory within the expanded directory tree?
+ * @param repositoryOwnerParentDirectory
+ * @param {string} baseDir directory to test
+ * @return {boolean}
+ */
+export function withinExpandedTree(repositoryOwnerParentDirectory: string, baseDir: string): boolean {
     const {owner, repo} = parseOwnerAndRepo(repositoryOwnerParentDirectory, baseDir);
     return !!owner && !!repo;
 }
