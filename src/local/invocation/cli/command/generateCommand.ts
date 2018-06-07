@@ -2,7 +2,7 @@ import { logger } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { Argv } from "yargs";
 import { LocalSoftwareDeliveryMachine } from "../../../machine/LocalSoftwareDeliveryMachine";
-import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
+import { logExceptionsToConsole } from "../support/consoleOutput";
 
 export function addGenerateCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({
