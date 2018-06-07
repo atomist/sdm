@@ -2,7 +2,6 @@ import { MappedParameters } from "@atomist/automation-client";
 import { MappedParameterDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
 import { parseOwnerAndRepo } from "../../../binding/expandedTreeUtils";
 import { MappedParameterResolver } from "../../../binding/MappedParameterResolver";
-import { MappedRepoParameters } from "@atomist/automation-client/operations/common/params/MappedRepoParameters";
 
 import * as os from "os";
 
