@@ -30,7 +30,8 @@ export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
 }
 
 async function edit(sdm: LocalSoftwareDeliveryMachine,
-                    commandName: string, targetOwner: string, targetRepos: string,
+                    commandName: string, targetOwner: string,
+                    targetRepos: string,
                     extraArgs: Arg[]): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
     if (!hm) {
