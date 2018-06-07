@@ -15,6 +15,7 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { gitBranchToNpmTag } from "@jessitron/git-branch-to-npm-tag/lib";
 import * as fs from "fs-extra";
 import * as p from "path";
 import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";
@@ -27,6 +28,9 @@ import { NpmPreparations } from "./npmBuilder";
 
 /**
  * Execute npm publish
+ *
+ * Tags with branch:name unless the `tag` option is specified
+ *
  * @param {ProjectLoader} projectLoader
  * @param {ProjectIdentifier} projectIdentifier
  * @param {PrepareForGoalExecution[]} preparations
@@ -62,6 +66,8 @@ export function executePublish(
             }
             if (options.tag) {
                 args.push("--tag", options.tag);
+            } else {
+                args.push("--tag", gitBranchToNpmTag(id.branch));
             }
 
             const result: ExecuteGoalResult = await spawnAndWatch(
