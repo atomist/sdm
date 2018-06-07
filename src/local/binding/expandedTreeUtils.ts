@@ -32,5 +32,6 @@ export function withinExpandedTree(repositoryOwnerParentDirectory: string,
 }
 
 export function determineCwd() {
+    // Be sure to respect symlinks
     return process.env.PWD;
 }

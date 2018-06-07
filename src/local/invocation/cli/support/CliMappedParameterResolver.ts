@@ -1,7 +1,7 @@
 import { MappedParameters } from "@atomist/automation-client";
 import { MappedParameterDeclaration } from "@atomist/automation-client/metadata/automationMetadata";
-import { parseOwnerAndRepo } from "../../binding/expandedTreeUtils";
-import { MappedParameterResolver } from "../../binding/MappedParameterResolver";
+import { parseOwnerAndRepo } from "../../../binding/expandedTreeUtils";
+import { MappedParameterResolver } from "../../../binding/MappedParameterResolver";
 
 export class CliMappedParameterResolver implements MappedParameterResolver {
 

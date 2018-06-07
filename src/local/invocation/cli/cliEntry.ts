@@ -2,16 +2,18 @@
 
 import * as yargs from "yargs";
 import { sdm } from "../machine";
-import { addGitHooksCommand } from "./addGitHooksCommand";
-import { addEditCommand } from "./editCommand";
-import { addGenerateCommand } from "./generateCommand";
-import { addImportFromGitHubCommand } from "./importFromGitHubCommand";
-import { redirectLoggingToConsole } from "./redirectLoggingToConsole";
-import { addRunCommand } from "./runCommand";
+import { addGitHooksCommand } from "./command/addGitHooksCommand";
+import { addEditCommand } from "./command/editCommand";
+import { addGenerateCommand } from "./command/generateCommand";
+import { addImportFromGitHubCommand } from "./command/importFromGitHubCommand";
+import { addRunCommand } from "./command/runCommand";
+import { redirectLoggingToConsole } from "./support/redirectLoggingToConsole";
 
 /* tslint:disable */
 
 redirectLoggingToConsole();
+
+yargs.usage("Usage: $0 <command> [options]");
 
 addGenerateCommand(sdm, yargs);
 addEditCommand(sdm, yargs);
@@ -20,6 +22,5 @@ addGitHooksCommand(yargs);
 addImportFromGitHubCommand(sdm, yargs);
 
 yargs
-    .usage("Usage: $0 <command> [options]")
     .epilog("Copyright Atomist 2018")
     .argv;

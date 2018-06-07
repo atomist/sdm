@@ -7,7 +7,7 @@ import { FingerprintGoal, PushReactionGoal, ReviewGoal } from "../api/machine/we
 import { hasFileWithExtension } from "../api/mapping/support/commonPushTests";
 import { TypedFingerprint } from "../code/fingerprint/TypedFingerprint";
 import { WellKnownGoals } from "../pack/well-known-goals/addWellKnownGoals";
-import { LogFingerprint } from "./io/logFingerprint";
+import { LogFingerprint } from "./invocation/cli/io/logFingerprint";
 
 /**
  * User-specific code

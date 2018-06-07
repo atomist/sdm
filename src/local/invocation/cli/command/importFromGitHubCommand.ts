@@ -3,9 +3,9 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { execSync } from "child_process";
 import * as fs from "fs";
 import { Argv } from "yargs";
-import { LocalSoftwareDeliveryMachine } from "../../machine/LocalSoftwareDeliveryMachine";
-import { addGitHooks } from "../../setup/addGitHooks";
-import { logExceptionsToConsole } from "./logExceptionsToConsole";
+import { LocalSoftwareDeliveryMachine } from "../../../machine/LocalSoftwareDeliveryMachine";
+import { addGitHooks } from "../../../setup/addGitHooks";
+import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
 
 export function addImportFromGitHubCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({

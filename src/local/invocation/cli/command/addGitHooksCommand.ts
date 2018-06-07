@@ -1,6 +1,6 @@
 import { Argv } from "yargs";
-import { sdm } from "../machine";
-import { logExceptionsToConsole } from "./logExceptionsToConsole";
+import { sdm } from "../../machine";
+import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
 
 export function addGitHooksCommand(yargs: Argv) {
     yargs.command({
