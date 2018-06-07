@@ -2,7 +2,7 @@ import { AutomationContextAware, HandlerContext } from "@atomist/automation-clie
 import { CommandIncoming, EventIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { AutomationContext } from "@atomist/automation-client/internal/util/cls";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import { LoggingMessageClient } from "../io/LoggingMessageClient";
+import { LoggingMessageClient } from "../invocation/cli/io/LoggingMessageClient";
 
 export class LocalHandlerContext implements HandlerContext, AutomationContextAware, AutomationContext {
 
