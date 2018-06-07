@@ -3,7 +3,7 @@ import { LocalSoftwareDeliveryMachine } from "../machine/LocalSoftwareDeliveryMa
 import { localSoftwareDeliveryMachineOptions } from "../machine/localSoftwareDeliveryMachineConfiguration";
 
 function failWith(message: string): string {
-    throw new Error(message)
+    throw new Error(message);
 }
 
 export const RepositoryOwnerParentDirectory = process.env.SDM_PROJECTS_ROOT ||
