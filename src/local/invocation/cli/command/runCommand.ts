@@ -6,13 +6,8 @@ import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
 
 export function addRunCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({
-        command: "run",
+        command: "run <command>",
         aliases: ["r"],
-        builder: {
-            command: {
-                required: true,
-            },
-        },
         describe: "Run command",
         handler: argv => {
             logger.debug("Args are %j", argv);
