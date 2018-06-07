@@ -1,4 +1,4 @@
-import { HandleCommand, HandleEvent, HandlerContext } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
 import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
@@ -22,6 +22,13 @@ import { localRunWithLogContext } from "../binding/localPush";
 import { addGitHooks } from "../setup/addGitHooks";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
+import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
+import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
+import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine<LocalSoftwareDeliveryMachineConfiguration> {
 
@@ -86,7 +93,17 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
             });
     }
 
-    // ---------------------------------------------------------------
+    public addEditors(...eds): this {
+        // Transparently change targets so that repos to be edited will default locally
+        const edsToUse = eds.map(ed => {
+            // Set our own target
+            ed.targets = new LocalTargetsParams(this.configuration.repositoryOwnerParentDirectory);
+            return ed;
+        });
+        return super.addEditors(...edsToUse);
+    }
+
+// ---------------------------------------------------------------
     // end git binding methods
     // ---------------------------------------------------------------
 
@@ -112,7 +129,9 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         const instance = toFactory(handler.maker)();
         const context: HandlerContext = new LocalHandlerContext(null);
         const parameters = !!instance.freshParametersInstance ? instance.freshParametersInstance() : instance;
-        await invokeCommandHandlerWithFreshParametersInstance(instance, handler.instance, parameters, args, context);
+        await invokeCommandHandlerWithFreshParametersInstance(instance,
+            handler.instance, parameters, args, context,
+            this.configuration.mappedParameterResolver);
     }
 
     // TODO needs to consider goal state and preconditions
@@ -160,6 +179,49 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
                 configuration: LocalSoftwareDeliveryMachineConfiguration,
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super(name, configuration, goalSetters);
+    }
+
+}
+
+@Parameters()
+export class LocalTargetsParams extends TargetsParams implements FallbackParams {
+
+    @MappedParameter(MappedParameters.GitHubApiUrl, false)
+    public apiUrl: string;
+
+    @MappedParameter(MappedParameters.GitHubOwner, false)
+    public owner: string;
+
+    @MappedParameter(MappedParameters.GitHubRepository, false)
+    public repo: string;
+
+    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...GitBranchRegExp, required: false })
+    public sha: string = "master";
+
+    @Parameter({ description: "regex", required: false })
+    public repos: string = ".*";
+
+    get credentials(): ProjectOperationCredentials {
+        return { token: "this.is.not.your.token.and.does.not.matter" };
+    }
+
+    constructor(private readonly repositoryOwnerParentDirectory: string) {
+        super();
+    }
+
+    /**
+     * Return a single RepoRef or undefined if we're not identifying a single repo
+     * @return {RepoRef}
+     */
+    get repoRef(): FileSystemRemoteRepoRef {
+        return (!!this.owner && !!this.repo && !this.usesRegex) ?
+            new FileSystemRemoteRepoRef(
+                this.repositoryOwnerParentDirectory,
+                this.owner,
+                this.repo,
+                "master",
+                undefined) :
+            undefined;
     }
 
 }

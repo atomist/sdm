@@ -4,6 +4,7 @@ import { AbstractRemoteRepoRef } from "@atomist/automation-client/operations/com
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Configurable } from "@atomist/automation-client/project/git/Configurable";
+import { parseOwnerAndRepo } from "./expandedTreeUtils";
 
 export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
 
@@ -11,11 +12,11 @@ export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
                                 baseDir: string,
                                 branch: string,
                                 sha: string): RemoteRepoRef {
-        // TODO fix stripping and test
-        const ourPart = baseDir.replace(repositoryOwnerParentDirectory, "");
-        const pattern = /\/(.*)\/(.*)/;
-        const match = ourPart.match(pattern);
-        return new FileSystemRemoteRepoRef(repositoryOwnerParentDirectory, match[1], match[2], branch, sha);
+        const {owner, repo} = parseOwnerAndRepo(repositoryOwnerParentDirectory, baseDir);
+        if (!(!!owner && !!repo)) {
+            throw new Error(`Cannot resolve directory ${baseDir}`);
+        }
+        return new FileSystemRemoteRepoRef(repositoryOwnerParentDirectory, owner, repo, branch, sha);
     }
 
     public createRemote(creds: ProjectOperationCredentials, description: string, visibility): Promise<ActionResult<this>> {
@@ -48,7 +49,8 @@ export class FileSystemRemoteRepoRef extends AbstractRemoteRepoRef {
     }
 
     constructor(private readonly repositoryOwnerParentDirectory,
-                owner: string, repo: string,
+                owner: string,
+                repo: string,
                 public readonly branch: string,
                 sha: string) {
         super(null, "http://not.a.real.remote", "http://not.a.real.apiBase",

@@ -9,6 +9,7 @@ import { EnvironmentTokenCredentialsResolver } from "../binding/EnvironmentToken
 import { expandedDirectoryRepoFinder } from "../binding/expandedDirectoryRepoFinder";
 import { fileSystemProjectPersister } from "../binding/fileSystemProjectPersister";
 import { LocalRepoRefResolver } from "../binding/LocalRepoRefResolver";
+import { MappedParameterResolver } from "../binding/MappedParameterResolver";
 
 export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliveryMachineConfiguration {
 
@@ -16,9 +17,12 @@ export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliv
      * $/<owner>/<repo>
      */
     repositoryOwnerParentDirectory: string;
+
+    mappedParameterResolver: MappedParameterResolver;
 }
 
-export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirectory: string): LocalSoftwareDeliveryMachineConfiguration {
+export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirectory: string,
+                                                    mappedParameterResolver: MappedParameterResolver = ResolveNothingMappedParameterResolver): LocalSoftwareDeliveryMachineConfiguration {
     const repoRefResolver = new LocalRepoRefResolver(repositoryOwnerParentDirectory);
     return {
         sdm: {
@@ -31,8 +35,13 @@ export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirecto
             projectPersister: fileSystemProjectPersister(repositoryOwnerParentDirectory),
         },
         repositoryOwnerParentDirectory,
+        mappedParameterResolver,
     };
 }
+
+const ResolveNothingMappedParameterResolver: MappedParameterResolver = {
+    resolve: () => undefined,
+};
 
 /**
  * Project loader that performs additional steps before acting on the project
@@ -56,8 +65,8 @@ class MonkeyingProjectLoader implements ProjectLoader {
 async function pushToAtomistBranch(p: GitProject): Promise<GitProject> {
     p.push = async opts => {
         await p.createBranch(`atomist/${p.branch}`);
-        execSync(`git push --force --set-upstream origin ${p.branch}`, { cwd: p.baseDir});
-        return { target: p , success: true };
+        execSync(`git push --force --set-upstream origin ${p.branch}`, {cwd: p.baseDir});
+        return {target: p, success: true};
     };
     return p;
 }
