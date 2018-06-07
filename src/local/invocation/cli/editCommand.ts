@@ -3,6 +3,7 @@ import { Arg } from "@atomist/automation-client/internal/transport/RequestProces
 import { Argv } from "yargs";
 import { LocalSoftwareDeliveryMachine } from "../../machine/LocalSoftwareDeliveryMachine";
 import { logExceptionsToConsole } from "./logExceptionsToConsole";
+import { isWithinExpandedTree, withinExpandedTree } from "../../binding/expandedTreeUtils";
 
 export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({
@@ -13,10 +14,10 @@ export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
                 required: true,
             },
             owner: {
-                required: true,
+                required: false,
             },
             repos: {
-                required: true,
+                required: false,
             },
         },
         describe: "Edit",
@@ -30,20 +31,31 @@ export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
 }
 
 async function edit(sdm: LocalSoftwareDeliveryMachine,
-                    commandName: string, targetOwner: string,
-                    targetRepos: string,
+                    commandName: string,
+                    targetOwner: string | undefined,
+                    targetRepos: string | undefined,
                     extraArgs: Arg[]): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
     if (!hm) {
         logger.error(`No editor with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
         process.exit(1);
     }
+
+    if (!(!!targetOwner && !!targetRepos) && !withinExpandedTree(sdm.configuration.repositoryOwnerParentDirectory, process.cwd())) {
+        throw new Error(`Please supply 'owner' and 'repos' parameters when not within the expanded directory tree under ${
+            sdm.configuration.repositoryOwnerParentDirectory}`);
+    }
+
     const args = [
         {name: "targets.owner", value: targetOwner},
-        {name: "target.repos", value: targetRepos},
-    ].concat(extraArgs);
+        {name: "targets.repos", value: targetRepos},
+    ].concat(extraArgs)
+        .filter(a => a.value !== undefined);
 
     // TODO should come from environment
     args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
+
+    logger.warn("Executing command %s with args %j", commandName, args);
+
     return sdm.executeCommand(commandName, args);
 }
