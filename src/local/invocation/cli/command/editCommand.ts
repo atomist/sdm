@@ -7,12 +7,9 @@ import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
 
 export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({
-        command: "edit",
+        command: "edit <editor>",
         aliases: ["e"],
         builder: {
-            editor: {
-                required: true,
-            },
             owner: {
                 required: false,
             },
@@ -20,7 +17,7 @@ export function addEditCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
                 required: false,
             },
         },
-        describe: "Edit",
+        describe: "Edit <editorName>",
         handler: argv => {
             logger.debug("Args are %j", argv);
             const extraArgs = Object.getOwnPropertyNames(argv)
@@ -55,7 +52,7 @@ async function edit(sdm: LocalSoftwareDeliveryMachine,
     // TODO should come from environment
     args.push({name: "github://user_token?scopes=repo,user:email,read:user", value: null});
 
-    logger.warn("Executing command %s with args %j", commandName, args);
+    logger.warn("Executing edit command %s with args %j", commandName, args);
 
     return sdm.executeCommand(commandName, args);
 }
