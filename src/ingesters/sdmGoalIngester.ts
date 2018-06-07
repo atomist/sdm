@@ -72,6 +72,11 @@ export interface SdmGoal extends SdmGoalKey {
     data?: string;
 }
 
+export function isSdmGoal(a: object): a is SdmGoal {
+    const maybe = a as SdmGoal;
+    return !!maybe.goalSet && !!maybe.uniqueName && !!maybe.repo;
+}
+
 export interface SdmProvenance {
     correlationId: string;
     registration: string;
