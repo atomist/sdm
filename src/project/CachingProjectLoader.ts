@@ -40,7 +40,7 @@ export class CachingProjectLoader implements ProjectLoader {
 
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         if (!params.readOnly) {
-            logger.warn("CachingProjectLoader: Forcing fresh clone for non readonly use of %j", params.id);
+            logger.info("CachingProjectLoader: Forcing fresh clone for non readonly use of %j", params.id);
             const p = await GitCommandGitProject.cloned(params.credentials, params.id);
             return action(p);
         }
