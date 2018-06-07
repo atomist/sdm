@@ -8,10 +8,10 @@ export class CliMappedParameterResolver implements MappedParameterResolver {
     public resolve(md: MappedParameterDeclaration): string | undefined {
         switch (md.uri) {
             case MappedParameters.GitHubRepository :
-                const { repo } = parseOwnerAndRepo(this.repositoryOwnerParentDirectory, process.cwd());
+                const { repo } = parseOwnerAndRepo(this.repositoryOwnerParentDirectory);
                 return repo;
             case MappedParameters.GitHubOwner :
-                const { owner } = parseOwnerAndRepo(this.repositoryOwnerParentDirectory, process.cwd());
+                const { owner } = parseOwnerAndRepo(this.repositoryOwnerParentDirectory);
                 return owner;
         }
         if (!md.required) {

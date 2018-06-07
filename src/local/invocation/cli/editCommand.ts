@@ -1,7 +1,7 @@
 import { logger } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { Argv } from "yargs";
-import { withinExpandedTree } from "../../binding/expandedTreeUtils";
+import { determineCwd, withinExpandedTree } from "../../binding/expandedTreeUtils";
 import { LocalSoftwareDeliveryMachine } from "../../machine/LocalSoftwareDeliveryMachine";
 import { logExceptionsToConsole } from "./logExceptionsToConsole";
 
@@ -41,9 +41,9 @@ async function edit(sdm: LocalSoftwareDeliveryMachine,
         process.exit(1);
     }
 
-    if (!(!!targetOwner && !!targetRepos) && !withinExpandedTree(sdm.configuration.repositoryOwnerParentDirectory, process.cwd())) {
+    if (!(!!targetOwner && !!targetRepos) && !withinExpandedTree(sdm.configuration.repositoryOwnerParentDirectory)) {
         throw new Error(`Please supply 'owner' and 'repos' parameters when not within the expanded directory tree under ${
-            sdm.configuration.repositoryOwnerParentDirectory}`);
+            sdm.configuration.repositoryOwnerParentDirectory}: in ${determineCwd()}`);
     }
 
     const args = [
