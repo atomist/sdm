@@ -21,8 +21,9 @@ export interface LocalSoftwareDeliveryMachineConfiguration extends SoftwareDeliv
     mappedParameterResolver: MappedParameterResolver;
 }
 
-export function localSoftwareDeliveryMachineOptions(repositoryOwnerParentDirectory: string,
-                                                    mappedParameterResolver: MappedParameterResolver = ResolveNothingMappedParameterResolver): LocalSoftwareDeliveryMachineConfiguration {
+export function localSoftwareDeliveryMachineOptions(
+    repositoryOwnerParentDirectory: string,
+    mappedParameterResolver: MappedParameterResolver = ResolveNothingMappedParameterResolver): LocalSoftwareDeliveryMachineConfiguration {
     const repoRefResolver = new LocalRepoRefResolver(repositoryOwnerParentDirectory);
     return {
         sdm: {
