@@ -1,6 +1,8 @@
 import { logger } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { Argv } from "yargs";
+import { GeneratorTag } from "../../../../api-helper/machine/commandRegistrations";
+import { commandHandlersWithTag } from "../../../../pack/info/support/commandSearch";
 import { LocalSoftwareDeliveryMachine } from "../../../machine/LocalSoftwareDeliveryMachine";
 import { logExceptionsToConsole } from "../support/consoleOutput";
 
@@ -30,8 +32,9 @@ async function generateCommand(sdm: LocalSoftwareDeliveryMachine,
                                commandName: string, targetOwner: string, targetRepo: string,
                                extraArgs: Arg[]): Promise<any> {
     const hm = sdm.commandMetadata(commandName);
-    if (!hm) {
-        logger.error(`No generator with name [${commandName}]: Known commands are [${sdm.commandsMetadata.map(m => m.name)}]`);
+    if (!hm || !!hm.tags && !hm.tags.some(t => t.name === GeneratorTag)) {
+        logger.error(`No generator with name [${commandName}]: Known generators are [${
+            commandHandlersWithTag(sdm, GeneratorTag).map(m => m.instance.name)}]`);
         process.exit(1);
     }
     const args = [
