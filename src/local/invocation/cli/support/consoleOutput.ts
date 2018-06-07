@@ -11,7 +11,7 @@ export function setCommandLineLogging() {
 
 export interface ConsoleWriteOptions {
     message: string;
-    color: "red" | "blue" | "green" | "gray";
+    color: "cyan" | "red" | "redBright" | "blue" | "green" | "gray" | "yellow";
 }
 
 export function writeToConsole(msg: string | ConsoleWriteOptions, ...args: any[]) {
@@ -25,7 +25,7 @@ export async function logExceptionsToConsole(what: () => Promise<any>) {
     try {
         await what();
     } catch (err) {
-        writeToConsole({message: `Error: ${err.message}`, color: "gray"});
+        writeToConsole({message: `Error: ${err.message}`, color: "red"});
         logger.error(`Error: ${err.message}`);
         process.exit(1);
     }

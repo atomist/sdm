@@ -1,10 +1,6 @@
-import { HandleCommand, HandleEvent, HandlerContext, MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, HandlerContext } from "@atomist/automation-client";
 import { Arg } from "@atomist/automation-client/internal/invoker/Payload";
 import { CommandHandlerMetadata } from "@atomist/automation-client/metadata/automationMetadata";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
-import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
-import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
@@ -23,6 +19,7 @@ import { selfDescribingHandlers } from "../../pack/info/support/commandSearch";
 import { FileSystemRemoteRepoRef, isFileSystemRemoteRepoRef } from "../binding/FileSystemRemoteRepoRef";
 import { LocalHandlerContext } from "../binding/LocalHandlerContext";
 import { localRunWithLogContext } from "../binding/localPush";
+import { LocalTargetsParams } from "../binding/LocalTargetsParams";
 import { addGitHooks } from "../setup/addGitHooks";
 import { LocalSoftwareDeliveryMachineConfiguration } from "./localSoftwareDeliveryMachineConfiguration";
 import { invokeCommandHandlerWithFreshParametersInstance } from "./parameterPopulation";
@@ -61,7 +58,7 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
     // git binding methods
     // ---------------------------------------------------------------
     /**
-     * Invoked after post commit. Pretend it's a push
+     * Invoked after commit. Pretend it's a push
      * @param {string} baseDir
      * @return {Promise<Promise<any>>}
      */
@@ -100,7 +97,7 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
         return super.addEditors(...edsToUse);
     }
 
-// ---------------------------------------------------------------
+    // ---------------------------------------------------------------
     // end git binding methods
     // ---------------------------------------------------------------
 
@@ -176,49 +173,6 @@ export class LocalSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachin
                 configuration: LocalSoftwareDeliveryMachineConfiguration,
                 ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super(name, configuration, goalSetters);
-    }
-
-}
-
-@Parameters()
-export class LocalTargetsParams extends TargetsParams implements FallbackParams {
-
-    @MappedParameter(MappedParameters.GitHubApiUrl, false)
-    public apiUrl: string;
-
-    @MappedParameter(MappedParameters.GitHubOwner, false)
-    public owner: string;
-
-    @MappedParameter(MappedParameters.GitHubRepository, false)
-    public repo: string;
-
-    @Parameter({ description: "Branch or ref. Defaults to 'master'", ...GitBranchRegExp, required: false })
-    public sha: string = "master";
-
-    @Parameter({ description: "regex", required: false })
-    public repos: string = ".*";
-
-    get credentials(): ProjectOperationCredentials {
-        return { token: "this.is.not.your.token.and.does.not.matter" };
-    }
-
-    constructor(private readonly repositoryOwnerParentDirectory: string) {
-        super();
-    }
-
-    /**
-     * Return a single RepoRef or undefined if we're not identifying a single repo
-     * @return {RepoRef}
-     */
-    get repoRef(): FileSystemRemoteRepoRef {
-        return (!!this.owner && !!this.repo && !this.usesRegex) ?
-            new FileSystemRemoteRepoRef(
-                this.repositoryOwnerParentDirectory,
-                this.owner,
-                this.repo,
-                "master",
-                undefined) :
-            undefined;
     }
 
 }

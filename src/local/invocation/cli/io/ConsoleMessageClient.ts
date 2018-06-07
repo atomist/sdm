@@ -8,7 +8,7 @@ const chalk = require("chalk");
 export class ConsoleMessageClient implements MessageClient, SlackMessageClient {
 
     public async respond(msg: any, options?: MessageOptions): Promise<any> {
-        writeToConsole(`${chalk.blue("@atomist")} ${msg}`);
+        writeToConsole(`${chalk.blue("@atomist")} ${chalk.yellow(msg)}`);
     }
 
     public async send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<any> {
