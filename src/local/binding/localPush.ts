@@ -7,7 +7,7 @@ import { SdmContext } from "../../api/context/SdmContext";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, StatusForExecuteGoal } from "../../typings/types";
-import { LoggingAddressChannels } from "../io/loggingAddressChannels";
+import { LoggingAddressChannels } from "../invocation/cli/io/loggingAddressChannels";
 import { LocalHandlerContext } from "./LocalHandlerContext";
 
 function repoFields(project: GitProject): CoreRepoFieldsAndChannels.Fragment {
