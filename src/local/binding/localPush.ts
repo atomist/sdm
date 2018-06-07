@@ -7,7 +7,7 @@ import { SdmContext } from "../../api/context/SdmContext";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, StatusForExecuteGoal } from "../../typings/types";
-import { LoggingAddressChannels } from "../invocation/cli/io/loggingAddressChannels";
+import { ConsoleAddressChannels } from "../invocation/cli/io/consoleAddressChannels";
 import { LocalHandlerContext } from "./LocalHandlerContext";
 
 function repoFields(project: GitProject): CoreRepoFieldsAndChannels.Fragment {
@@ -56,7 +56,7 @@ async function pushFromLastCommit(project: GitProject): Promise<OnPushToAnyBranc
  */
 function coreInvocation(trigger: EventIncoming | CommandIncoming): SdmContext {
     return {
-        addressChannels: LoggingAddressChannels,
+        addressChannels: ConsoleAddressChannels,
         context: new LocalHandlerContext(trigger),
         credentials: {token: "ABCD"},
     };

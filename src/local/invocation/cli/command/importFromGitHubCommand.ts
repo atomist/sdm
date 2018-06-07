@@ -5,7 +5,7 @@ import * as fs from "fs";
 import { Argv } from "yargs";
 import { LocalSoftwareDeliveryMachine } from "../../../machine/LocalSoftwareDeliveryMachine";
 import { addGitHooks } from "../../../setup/addGitHooks";
-import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
+import { logExceptionsToConsole } from "../support/consoleOutput";
 
 export function addImportFromGitHubCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({
