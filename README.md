@@ -1,9 +1,20 @@
 # Slalom: Local Software Delivery Machine
 
+A software delivery machine is a program that understands code. You customize it to work with the code 
+you care about: fix formatting errors (with commits), perform code reviews, run tests, publish artifacts, etc.
+
+This local software delivery machine responds to your commits, performing whatever actions you decide
+should happen in response to new codes.
+
+It also responds to your commands: to create new projects, edit code in existing projects, or other actions
+you program into it.
+
 ## Setup
 
+We expect 
+
 ### Environment
-Set the `LOCAL_SDM_BASE` environment variable. This is the directory which is the base for your expanded directory tree. It may contain existing cleaned repos.
+Set the `SDM_PROJECTS_ROOT` environment variable. This is the directory which is the base for your expanded directory tree. It may contain existing cleaned repos.
 
 ### npm Setup
 
@@ -39,7 +50,9 @@ Success will result in output like the following:
 > Running `slalom add-git-hooks` is only necessary for pre-existing cloned directories and directories that are cloned using `git` rather than the local SDM.
 
 ### Adding to your SDM
-The `configure` function in the root of the `src` directory configures your SDM. Add listeners, editors, generators and other commands here. The present implementation shows some basic functionality.
+The `configure` function in `src/configure.ts` sets up your SDM. Add listeners, 
+editors, generators and other commands here. The present implementation shows some 
+basic functionality.
 
 > The API is identical to the API of a cloud-connected Atomist SDM.
 
@@ -48,7 +61,7 @@ Further projects can be added in three ways:
 
 ### Normal git Clone
 
-Cloning any git project from anywhere under `$LOCAL_SDM_BASE` and running `slalom add-git-hooks` to add git hooks to it.
+Cloning any git project from anywhere under `$SDM_PROJECTS_BASE` and running `slalom add-git-hooks` to add git hooks to it.
 
 ### Symbolic Link
 Go to the correct organization directory, creating it if necessary. Then create a symlink to the required directory elsewhere on your machine. For example:
@@ -59,7 +72,9 @@ ln -s /Users/rodjohnson/sforzando-dev/idea-projects/flight1
 Then run `slalom add-git-hooks` and the linked project will be treatd as a normal project.
 
 ### Import Command
-The easiest way to add a problem is funning the `import` command to clone a GitHub.com directory in the right place in the expanded tree and automatically install the git hook as follows:
+The easiest way to add a problem is running the `import` command to clone a 
+GitHub.com directory in the right place in the expanded tree and automatically
+ install the git hook as follows:
 
 ```
 slalom import --owner=johnsonr --repo=initializr
@@ -80,10 +95,12 @@ warning: redirecting to https://github.com/johnsonr/initializr/
 Only public repos are supported.
 
 ## Running Goals
+
 Commits to managed repos will now generate Atomist *push* events.
 
 
 ## Running Generators
+
 New projects can be generated as follows:
 
 ```
@@ -93,13 +110,22 @@ slalom generate --generator=generatorName --owner=spring-team --repo=andromeda -
 The `generator` parameter should be the value of the generator command. The `owner` and `repo` parameters are always required. Individual generators may require additional parameters such as `grommit` in this example, and these may be added using normal CLI option syntax.
 
 ## Running Editors
+
 Editors can be run across projects as follows:
+
+// TODO: Make it infer context from current directory
 
 ```
 slalom edit --editor=addThing --owner=spring-team --repos=.*
-
 ```
-The `editor` parameter should be the value of the editor command. The following parameters are always required:
+
+The `editor` parameter should be the name of the editor command.
+
+If you're in a repository directory under $SDM_PROJECTS_ROOT, the editor will run on that repository.
+Or, you can supply an owner and a repository -- or better, a regular expression! Then the editor will run on
+all $SDM_PROJECT_ROOT/owner/repository directories that match the expression.
+ 
+You can always supply these parameters:
 - `owner`: Organization to which the repos to be edited belong
 - `repos`: Regular expression matching the repos to be edited within that organization.
 
