@@ -104,10 +104,10 @@ Commits to managed repos will now generate Atomist *push* events.
 New projects can be generated as follows:
 
 ```
-slalom generate --generator=generatorName --owner=spring-team --repo=andromeda --grommit=x
+slalom generate generatorName --owner=spring-team --repo=andromeda --grommit=x
 
 ```
-The `generator` parameter should be the value of the generator command. The `owner` and `repo` parameters are always required. Individual generators may require additional parameters such as `grommit` in this example, and these may be added using normal CLI option syntax.
+The first positional parameter after `generate` should be the value of the generator command. The `owner` and `repo` parameters are always required. Individual generators may require additional parameters such as `grommit` in this example, and these may be added using normal CLI option syntax.
 
 ## Running Editors
 
@@ -116,10 +116,10 @@ Editors can be run across projects as follows:
 // TODO: Make it infer context from current directory
 
 ```
-slalom edit --editor=addThing --owner=spring-team --repos=.*
+slalom edit addThing --owner=spring-team --repos=.*
 ```
 
-The `editor` parameter should be the name of the editor command.
+The first positional parameter after `edit` should be the name of the editor command.
 
 If you're in a repository directory under $SDM_PROJECTS_ROOT, the editor will run on that repository.
 Or, you can supply an owner and a repository -- or better, a regular expression! Then the editor will run on
@@ -143,9 +143,17 @@ To file:///Users/rodjohnson/temp/local-sdm/spring-team/spring-rest-seed
 ## Running Commands
 
 ```
-slalom run --command=hello
+slalom run hello
 ```
 No parameters beyond the command name are required. However, command-specific parameters may be provided in options syntax.
+
+## Advanced Setup
+
+### Mapped Parameters and Secrets
+Environment variables
+
+- `SLACK_TEAM`
+- `SLACK_USER_NAME`
 
 
 ## Roadmap

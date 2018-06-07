@@ -6,12 +6,9 @@ import { logExceptionsToConsole } from "../support/logExceptionsToConsole";
 
 export function addGenerateCommand(sdm: LocalSoftwareDeliveryMachine, yargs: Argv) {
     yargs.command({
-        command: "generate",
+        command: "generate <generator>",
         aliases: ["g"],
         builder: {
-            generator: {
-                required: true,
-            },
             owner: {
                 required: true,
             },
