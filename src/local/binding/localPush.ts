@@ -7,8 +7,9 @@ import { SdmContext } from "../../api/context/SdmContext";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, StatusForExecuteGoal } from "../../typings/types";
-import { ConsoleAddressChannels } from "../invocation/cli/io/consoleAddressChannels";
 import { LocalHandlerContext } from "./LocalHandlerContext";
+import { messageClientAddressChannels } from "../invocation/cli/io/messageClientAddressChannels";
+import { HandlerContext } from "@atomist/automation-client";
 
 function repoFields(project: GitProject): CoreRepoFieldsAndChannels.Fragment {
     return {
@@ -54,10 +55,9 @@ async function pushFromLastCommit(project: GitProject): Promise<OnPushToAnyBranc
  * Core invocation fields
  * @return {SdmContext}
  */
-function coreInvocation(trigger: EventIncoming | CommandIncoming): SdmContext {
+function coreInvocation(context: HandlerContext) {
     return {
-        addressChannels: ConsoleAddressChannels,
-        context: new LocalHandlerContext(trigger),
+        context,
         credentials: {token: "ABCD"},
     };
 }
@@ -71,9 +71,13 @@ export async function localRunWithLogContext(project: GitProject): Promise<RunWi
             await pushFromLastCommit(project),
         ],
     };
+    const trigger = {} as EventIncoming;
+    const context = new LocalHandlerContext(trigger);
+    const id = project.id as any as RemoteRepoRef;
     return {
-        id: project.id as any as RemoteRepoRef,
-        ...coreInvocation({} as EventIncoming),
+        id,
+        ...coreInvocation(context),
+        addressChannels: messageClientAddressChannels(id, context),
         status: {
             commit,
         },
