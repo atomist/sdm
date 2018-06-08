@@ -26,6 +26,7 @@ export class ConsoleMessageClient implements MessageClient, SlackMessageClient {
     public async send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<any> {
         if (isSdmGoal(msg)) {
             logger.info("Storing SDM goal or ingester payload %j", msg);
+            writeToConsole({ message: `Stored goal '${msg.name}'`, color: "cyan"});
             return;
         }
 
@@ -41,7 +42,7 @@ export class ConsoleMessageClient implements MessageClient, SlackMessageClient {
     public async addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<any> {
         const chans = toStringArray(channels);
         chans.forEach(channel => {
-            writeToConsole(chalk.white(`# ${channel} `) + msg);
+            writeToConsole(chalk.white(`# ${channel} `) + chalk.green(msg));
         });
     }
 
