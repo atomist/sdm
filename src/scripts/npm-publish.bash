@@ -21,7 +21,6 @@ function npm-publish () {
       fi
     fi
 
-
     # npm honors this
     rm -f .gitignore
 

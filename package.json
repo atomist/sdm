@@ -11,7 +11,9 @@
   "keywords": [
     "atomist",
     "automation",
-    "sdm"
+    "sdm",
+    "ci",
+    "cd"
   ],
   "homepage": "https://github.com/atomist/sdm#readme",
   "bugs": {
