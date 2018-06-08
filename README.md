@@ -9,29 +9,73 @@ should happen in response to new codes.
 It also responds to your commands: to create new projects, edit code in existing projects, or other actions
 you program into it.
 
+The instructions here will (someday) take you through 
+   * initializing your local SDM
+   * seeing it react to a push
+      * then changing how it reacts to your push
+   * creating a new project with a generator
+      * then changing it to work from a project of your choice
+   * changing code with an editor
+      * then making your own code editor
+   * running a command
+      * then making your own commands
+
+Later, when they've proven useful, you can elevate your push reactions, generators, editors, 
+and commands into the cloud for your whole team to use (with Atomist).
+
 ## Setup
 
-We expect 
+The SDM works on projects, which are git repositories.
+
+To find projects on your filesystem, the SDM looks in directories group by owner (on GitHub, the owner is an organization
+or user; on BitBucket, the owner is a user or a BitBucket Project), and it looks for each owner directory
+ under one parent directory.
+
+The directory structure looks like this:
+
+```
+SDM_PROJECTS_ROOT
+├── owner1
+│   ├── repo1
+│   └── repo2
+└── owner2
+    ├── repo3
+    └── repo4
+
+``` 
 
 ### Environment
-Set the `SDM_PROJECTS_ROOT` environment variable. This is the directory which is the base for your expanded directory tree. It may contain existing cleaned repos.
+Set the `SDM_PROJECTS_ROOT` environment variable. This is the directory which is the base for your expanded directory 
+tree. This can be an empty directory, or a directory with some repositories in it, grouped by owner as described above.
 
-### npm Setup
+### Download and install
+
+Clone this project.
 
 From the SDM base directory (where you have cloned the project), run the following commands:
 
 ```
 npm install
+npm run build
 npm link
 ```
 
+First, `npm install` brings down this project's dependencies.
+Then, `npm run build` compiles the TypeScript into JavaScript.
+Finally, `npm link` makes this project's cli tool, `slalom`, available globally.
+
 ### Configure Existing Projects
 
-Add the Atomist git hook to the existing git projects within this directory structure by running the following command in your SDM base directory:
+If you already have repositories cloned under your $SDM_PROJECTS_ROOT, configure them to activate the local SDM
+on commit.
+
+Add the Atomist git hook to the existing git projects within this directory structure by 
+running the following command:
 
 ```
 slalom add-git-hooks
 ```
+
 Success will result in output like the following:
 
 ```==> slalom add-git-hooks
@@ -49,7 +93,19 @@ Success will result in output like the following:
 
 > Running `slalom add-git-hooks` is only necessary for pre-existing cloned directories and directories that are cloned using `git` rather than the local SDM.
 
-### Adding to your SDM
+## Reacting to commits
+
+A software delivery machine reacts to code changes. For instance, when you commit to a Spring Boot application, it can 
+start the app up locally, while running tests.
+When you commit to a Node library, it can publish a snapshot to npm, while running tests, and while fixing any formatting
+errors and performing automated code review and identifying sensitive changes.
+
+Make a commit in any repository within $SDM_PROJECTS_ROOT, and the SDM will run immediately. 
+
+Commits to managed repos generate Atomist *push* events.
+
+# Adding to your SDM
+
 The `configure` function in `src/configure.ts` sets up your SDM. Add listeners, 
 editors, generators and other commands here. The present implementation shows some 
 basic functionality.
@@ -72,15 +128,15 @@ ln -s /Users/rodjohnson/sforzando-dev/idea-projects/flight1
 Then run `slalom add-git-hooks` and the linked project will be treatd as a normal project.
 
 ### Import Command
-The easiest way to add a problem is running the `import` command to clone a 
-GitHub.com directory in the right place in the expanded tree and automatically
- install the git hook as follows:
+
+The easiest way to add an existing project to your SDM projects is: run the `import` command to clone a 
+GitHub.com repository in the right place in the expanded tree and automatically
+ install the git hook:
 
 ```
 slalom import --owner=johnsonr --repo=initializr
 
 ```
-This command should be run from your SDM directory.
 
 Output will look as follows:
 
@@ -94,11 +150,6 @@ warning: redirecting to https://github.com/johnsonr/initializr/
 
 Only public repos are supported.
 
-## Running Goals
-
-Commits to managed repos will now generate Atomist *push* events.
-
-
 ## Running Generators
 
 New projects can be generated as follows:
@@ -107,13 +158,14 @@ New projects can be generated as follows:
 slalom generate generatorName --owner=spring-team --repo=andromeda --grommit=x
 
 ```
-The first positional parameter after `generate` should be the value of the generator command. The `owner` and `repo` parameters are always required. Individual generators may require additional parameters such as `grommit` in this example, and these may be added using normal CLI option syntax.
+The first positional parameter after `generate` should be the value of the generator command. 
+The `owner` and `repo` parameters are always required. 
+Individual generators may require additional parameters such as `grommit` in this example, 
+and these may be added using normal CLI option syntax.
 
 ## Running Editors
 
 Editors can be run across projects as follows:
-
-// TODO: Make it infer context from current directory
 
 ```
 slalom edit addThing --owner=spring-team --repos=.*
@@ -123,7 +175,7 @@ The first positional parameter after `edit` should be the name of the editor com
 
 If you're in a repository directory under $SDM_PROJECTS_ROOT, the editor will run on that repository.
 Or, you can supply an owner and a repository -- or better, a regular expression! Then the editor will run on
-all $SDM_PROJECT_ROOT/owner/repository directories that match the expression.
+all $SDM_PROJECTS_ROOT/owner/repository directories that match the expression.
  
 You can always supply these parameters:
 - `owner`: Organization to which the repos to be edited belong
