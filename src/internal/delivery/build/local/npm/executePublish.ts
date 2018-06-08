@@ -15,7 +15,7 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { gitBranchToNpmTag } from "@jessitron/git-branch-to-npm-tag/lib";
+import { gitBranchToNpmTag } from "@jessitron/git-branch-to-npm-tag";
 import * as fs from "fs-extra";
 import * as p from "path";
 import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";

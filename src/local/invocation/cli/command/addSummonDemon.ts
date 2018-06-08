@@ -19,11 +19,12 @@ export function addSummonDemon(yargs: Argv) {
 async function summonDemon() {
     writeToConsole("Your friendly neighborhood demon.\nI am here!");
     const app = express();
+    app.use(express.json());
 
-    app.get("/", (req, res) => res.send("Atomist Listener Demon"));
+    app.get("/", (req, res) => res.send("Atomist Listener Demon\n"));
 
     app.post(MessageRoute, (req, res) => {
-        res.send("Read message " + JSON.stringify(req.body));
+        res.send("Read message " + JSON.stringify(req.body) + "\n");
     });
 
     app.listen(DemonPort,
