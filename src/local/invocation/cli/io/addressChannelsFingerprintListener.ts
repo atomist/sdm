@@ -7,5 +7,5 @@ import { writeToConsole } from "../support/consoleOutput";
  * @return {Promise<Logger>}
  * @constructor
  */
-export const LogFingerprint: FingerprintListener = async fli =>
-    writeToConsole("FINGERPRINT: %j", fli.fingerprint);
+export const AddressChannelsFingerprintListener: FingerprintListener = async fli =>
+    fli.addressChannels(`*Fingerprint*: ${JSON.stringify(fli.fingerprint)}`);

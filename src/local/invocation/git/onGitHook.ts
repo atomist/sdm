@@ -1,3 +1,7 @@
+import { setCommandLineLogging } from "../cli/support/consoleOutput";
+
+setCommandLineLogging();
+
 import { logger } from "@atomist/automation-client";
 import { sdm } from "../machine";
 

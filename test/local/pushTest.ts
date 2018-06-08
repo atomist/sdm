@@ -5,7 +5,7 @@ import { AutofixGoal } from "../../src/api/machine/wellKnownGoals";
 import { hasFileWithExtension } from "../../src/api/mapping/support/commonPushTests";
 import { AutofixRegistration } from "../../src/api/registration/AutofixRegistration";
 import { TypedFingerprint } from "../../src/code/fingerprint/TypedFingerprint";
-import { LogFingerprint } from "../../src/local/invocation/cli/io/logFingerprint";
+import { AddressChannelsFingerprintListener } from "../../src/local/invocation/cli/io/addressChannelsFingerprintListener";
 import { RepositoryOwnerParentDirectory } from "../../src/local/invocation/machine";
 import { LocalSoftwareDeliveryMachine } from "../../src/local/machine/LocalSoftwareDeliveryMachine";
 import { localSoftwareDeliveryMachineOptions } from "../../src/local/machine/localSoftwareDeliveryMachineConfiguration";
@@ -23,7 +23,7 @@ describe("LocalSoftwareDeliveryMachine push", () => {
                 AutofixGoal,
                 // FingerprintGoal, ReviewGoal, PushReactionGoal
             ]))
-            .addFingerprintListeners(LogFingerprint)
+            .addFingerprintListeners(AddressChannelsFingerprintListener)
             .addExtensionPacks(WellKnownGoals)
             .addFingerprinterRegistrations({
                 name: "fp1",
