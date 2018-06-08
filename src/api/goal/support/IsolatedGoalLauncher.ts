@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { HandlerContext, HandlerResult } from "@atomist/automation-client";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { OnAnyRequestedSdmGoal } from "../../../typings/types";

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import {HandlerContext} from "@atomist/automation-client";
 import * as assert from "power-assert";
 import {SdmGoal} from "../../../src/ingesters/sdmGoalIngester";

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 export type GoalEnvironment = "0-code/" | "1-staging/" | "2-prod/" | "8-doom/";
 
 export const IndependentOfEnvironment: GoalEnvironment = "0-code/";
