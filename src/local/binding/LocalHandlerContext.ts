@@ -2,14 +2,16 @@ import { AutomationContextAware, HandlerContext } from "@atomist/automation-clie
 import { CommandIncoming, EventIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { AutomationContext } from "@atomist/automation-client/internal/util/cls";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import { ConsoleMessageClient } from "../invocation/cli/io/ConsoleMessageClient";
+import { HttpClientMessageClient } from "../invocation/cli/io/HttpClientMessageClient";
 
 export class LocalHandlerContext implements HandlerContext, AutomationContextAware, AutomationContext {
 
     public correlationId = new Date().getTime() + "_";
 
+    // TODO need to parameterize this
     get messageClient() {
-        return new ConsoleMessageClient();
+        // return new ConsoleMessageClient();
+        return new HttpClientMessageClient();
     }
 
     get graphClient(): GraphClient {

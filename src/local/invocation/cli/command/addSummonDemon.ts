@@ -1,6 +1,8 @@
 import { Argv } from "yargs";
 import { logExceptionsToConsole, writeToConsole } from "../support/consoleOutput";
 
+import { Destination, MessageOptions } from "@atomist/automation-client/spi/message/MessageClient";
+import { SlackMessage } from "@atomist/slack-messages";
 import * as express from "express";
 import { ConsoleMessageClient } from "../io/ConsoleMessageClient";
 
@@ -15,6 +17,12 @@ export function addSummonDemon(yargs: Argv) {
             return logExceptionsToConsole(() => summonDemon());
         },
     });
+}
+
+export interface StreamedMessage {
+    message: string | SlackMessage;
+    destinations: Destination[];
+    options: MessageOptions;
 }
 
 async function summonDemon() {

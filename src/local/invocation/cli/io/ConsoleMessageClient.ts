@@ -1,5 +1,5 @@
 import {
-    Destination,
+    Destination, isSlackMessage,
     MessageClient,
     MessageOptions,
     SlackDestination,
@@ -27,8 +27,8 @@ const chalk = require("chalk");
 
 export class ConsoleMessageClient implements MessageClient, SlackMessageClient {
 
-    public async respond(msg: any, options?: MessageOptions): Promise<any> {
-        writeToConsole(`${chalk.blue("@atomist")} ${chalk.yellow(msg)}`);
+    public async respond(msg: string | SlackMessage, options?: MessageOptions): Promise<any> {
+        return this.addressChannels(msg, "general", options);
     }
 
     public async send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<any> {
@@ -49,8 +49,10 @@ export class ConsoleMessageClient implements MessageClient, SlackMessageClient {
 
     public async addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<any> {
         const chans = toStringArray(channels);
+
+        const m = isSlackMessage(msg) ? msg.text : msg;
         chans.forEach(channel => {
-            writeToConsole(chalk.green("#") + marked(` **${channel}** ` + msg));
+            writeToConsole(chalk.green("#") + marked(` **${channel}** ` + m));
         });
     }
 
