@@ -13,10 +13,14 @@ function err() {
 # npm publish
 # usage: npm-publish [NPM_PUBLISH_ARGS]...
 function npm-publish () {
-    if ! cp -r build/src/* .; then
-        err "packaging module failed"
-        # return 1
+
+    if [ -d "build/src" ]; then
+      if ! cp -r build/src/* .; then
+          err "packaging module failed"
+          return 1
+      fi
     fi
+
 
     # npm honors this
     rm -f .gitignore
@@ -32,11 +36,13 @@ function npm-publish () {
         return 1
     fi
 
-    local pub_file pub_base
-    for pub_file in build/src/*; do
-        pub_base=${pub_file#build/src/}
-        rm -rf "$pub_base"
-    done
+    if [ -d "build/src" ]; then
+        local pub_file pub_base
+        for pub_file in build/src/*; do
+            pub_base=${pub_file#build/src/}
+            rm -rf "$pub_base"
+        done
+    fi
 }
 
 npm-publish "$@"
