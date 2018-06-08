@@ -31,6 +31,7 @@
     "cf-client": "^0.13.26",
     "copyfiles": "^1.2.0",
     "dateformat": "^3.0.3",
+    "express": "^4.16.3",
     "form-data": "^2.3.2",
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",

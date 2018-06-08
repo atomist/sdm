@@ -10,6 +10,7 @@ import { addEditCommand } from "./command/editCommand";
 import { addGenerateCommand } from "./command/generateCommand";
 import { addImportFromGitHubCommand } from "./command/importFromGitHubCommand";
 import { addRunCommand } from "./command/runCommand";
+import { addSummonDemon } from "./command/addSummonDemon";
 
 setCommandLineLogging();
 restoreOriginalConsole();
@@ -18,6 +19,7 @@ restoreOriginalConsole();
 
 yargs.usage("Usage: $0 <command> [options]");
 
+addSummonDemon(yargs);
 addGitHooksCommand(yargs);
 addGenerateCommand(sdm, yargs);
 addEditCommand(sdm, yargs);
