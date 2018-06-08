@@ -6,11 +6,11 @@ import { setCommandLineLogging } from "./support/consoleOutput";
 import * as yargs from "yargs";
 import { sdm } from "../machine";
 import { addGitHooksCommand } from "./command/addGitHooksCommand";
+import { addSummonDemon } from "./command/addSummonDemon";
 import { addEditCommand } from "./command/editCommand";
 import { addGenerateCommand } from "./command/generateCommand";
 import { addImportFromGitHubCommand } from "./command/importFromGitHubCommand";
 import { addRunCommand } from "./command/runCommand";
-import { addSummonDemon } from "./command/addSummonDemon";
 
 setCommandLineLogging();
 restoreOriginalConsole();

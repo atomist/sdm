@@ -1,5 +1,4 @@
 import { Argv } from "yargs";
-import { sdm } from "../../machine";
 import { logExceptionsToConsole, writeToConsole } from "../support/consoleOutput";
 
 import * as express from "express";
