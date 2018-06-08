@@ -3,16 +3,24 @@ import {
     MessageClient,
     MessageOptions,
     SlackDestination,
-    SlackMessageClient,
+    SlackMessageClient
 } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
-import { isArray } from "util";
 import { writeToConsole } from "../support/consoleOutput";
+import { isArray } from "util";
 
-import { logger } from "@atomist/automation-client";
-import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import * as _ from "lodash";
+import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { isSdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { logger } from "@atomist/automation-client";
+import * as marked from "marked";
+
+import * as TerminalRenderer from "marked-terminal";
+
+marked.setOptions({
+    // Define custom renderer
+    renderer: new TerminalRenderer(),
+});
 
 // tslint:disable-next-line:no-var-requires
 const chalk = require("chalk");
@@ -42,7 +50,7 @@ export class ConsoleMessageClient implements MessageClient, SlackMessageClient {
     public async addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<any> {
         const chans = toStringArray(channels);
         chans.forEach(channel => {
-            writeToConsole(chalk.white(`# ${channel} `) + chalk.green(msg));
+            writeToConsole(chalk.green("#") + marked(` **${channel}** ` + msg as string));
         });
     }
 

@@ -23,6 +23,7 @@
   "dependencies": {
     "@atomist/automation-client": "https://r.atomist.com/HJv2LGwwx7",
     "@atomist/slack-messages": "^0.12.1",
+    "@jessitron/git-branch-to-npm-tag": "^1.0.1",
     "@types/yargs": "^11.0.0",
     "archiver": "^2.1.1",
     "axios": "^0.18.0",
@@ -34,6 +35,7 @@
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
     "lodash": "^4.17.10",
+    "marked-terminal": "^3.0.0",
     "moment": "^2.22.2",
     "moment-duration-format": "^2.2.2",
     "npm": "^5.10.0",

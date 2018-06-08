@@ -1,4 +1,5 @@
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
+import { writeToConsole } from "../support/consoleOutput";
 
 /**
  * Display fingerprints to the user
@@ -7,4 +8,4 @@ import { FingerprintListener } from "../../../../api/listener/FingerprintListene
  * @constructor
  */
 export const AddressChannelsFingerprintListener: FingerprintListener = async fli =>
-    fli.addressChannels(`*Fingerprint*: ${JSON.stringify(fli.fingerprint)}`);
+    fli.addressChannels(`*Fingerprint*: \`${JSON.stringify(fli.fingerprint)}\``);
