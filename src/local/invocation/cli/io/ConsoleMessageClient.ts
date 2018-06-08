@@ -3,16 +3,16 @@ import {
     MessageClient,
     MessageOptions,
     SlackDestination,
-    SlackMessageClient
+    SlackMessageClient,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
-import { writeToConsole } from "../support/consoleOutput";
 import { isArray } from "util";
+import { writeToConsole } from "../support/consoleOutput";
 
-import * as _ from "lodash";
-import { toStringArray } from "@atomist/automation-client/internal/util/string";
-import { isSdmGoal } from "../../../../ingesters/sdmGoalIngester";
 import { logger } from "@atomist/automation-client";
+import { toStringArray } from "@atomist/automation-client/internal/util/string";
+import * as _ from "lodash";
+import { isSdmGoal } from "../../../../ingesters/sdmGoalIngester";
 
 // tslint:disable-next-line:no-var-requires
 const chalk = require("chalk");

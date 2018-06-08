@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-import { setCommandLineLogging } from "./support/consoleOutput";
 import { restoreOriginalConsole } from "@atomist/automation-client/internal/util/logger";
-
+import { setCommandLineLogging } from "./support/consoleOutput";
 
 import * as yargs from "yargs";
 import { sdm } from "../machine";

@@ -1,5 +1,4 @@
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
-import { writeToConsole } from "../support/consoleOutput";
 
 /**
  * Display fingerprints to the user
