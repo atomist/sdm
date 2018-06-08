@@ -15,11 +15,16 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { gitBranchToNpmTag } from "@jessitron/git-branch-to-npm-tag/lib";
 import * as fs from "fs-extra";
 import * as p from "path";
 import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";
-import { ExecuteGoalWithLog, PrepareForGoalExecution, RunWithLogContext } from "../../../../../api/goal/ExecuteGoalWithLog";
+import {
+    ExecuteGoalWithLog,
+    PrepareForGoalExecution,
+    RunWithLogContext,
+} from "../../../../../api/goal/ExecuteGoalWithLog";
 import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import { createStatus } from "../../../../../util/github/ghub";
 import { spawnAndWatch } from "../../../../../util/misc/spawned";
@@ -53,7 +58,7 @@ export function executePublish(
                 }
             }
 
-            await configure(options);
+            await configure(options, project);
 
             const args = [
                 p.join(__dirname, "..", "..", "..", "..", "..", "scripts", "npm-publish.bash"),
@@ -99,8 +104,8 @@ export function executePublish(
 /**
  * Create an npmrc file for the package.
  */
-async function configure(options: NpmOptions): Promise<NpmOptions> {
-    await fs.writeFile(".npmrc", options.npmrc, { mode: 0o600 });
+async function configure(options: NpmOptions, project: GitProject): Promise<NpmOptions> {
+    await fs.writeFile(p.join(project.baseDir, ".npmrc"), options.npmrc, { mode: 0o600 });
     return options;
 }
 
