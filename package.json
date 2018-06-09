@@ -20,7 +20,7 @@
     "url": "https://github.com/atomist/sdm/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "0.17.2-20180605032022",
+    "@atomist/automation-client": "https://r.atomist.com/HJV-CGrbYx7",
     "@atomist/slack-messages": "^0.12.1",
     "@jessitron/git-branch-to-npm-tag": "^1.0.1",
     "archiver": "^2.1.1",
