@@ -28,7 +28,7 @@ import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
-import { MachineOrMachineOptions } from "./toMachineOptions";
+import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const EditorTag = "editor";
@@ -45,7 +45,7 @@ export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: Edi
         e.name,
         e.paramsMaker,
         e,
-        e.targets,
+        e.targets || toMachineOptions(sdm).targets,
     );
 }
 

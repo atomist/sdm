@@ -18,6 +18,7 @@ import {
     AnyOptions,
     Configuration,
 } from "@atomist/automation-client/configuration";
+import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
@@ -68,6 +69,12 @@ export interface SoftwareDeliveryMachineOptions {
      * Strategy for resolving credentials from a handler invocation
      */
     credentialsResolver: CredentialsResolver;
+
+    /**
+     * Allow customization of editor targeting at per-SDM level.
+     * If set, can still be overridden by individual editor registrations.
+     */
+    targets?: FallbackParams;
 
 }
 
