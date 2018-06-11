@@ -23,7 +23,7 @@ import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
 import { InterpretedLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { createStatus } from "../../../../util/github/ghub";
-import { MavenLogInterpreter } from "../local/maven/mavenLogInterpreter";
+import { lastLinesLogInterpreter } from "../../../../api-helper/log/logInterpreters";
 
 const K8AutomationBuildContext = "build/atomist/k8s";
 /**
@@ -54,7 +54,5 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
         }).then(success);
     }
 
-    public logInterpreter(log: string): InterpretedLog | undefined {
-        return MavenLogInterpreter(log);
-    }
+    public logInterpreter = lastLinesLogInterpreter("K8Automation Build");
 }

@@ -21,6 +21,8 @@ import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../../../src/api/listener/PushImpactListener";
 import { MavenFingerprinter } from "../../../../../../../src/pack/maven/MavenFingerprinter";
 
+// JESS: MOVED from sdm to sdm-pack-spring
+
 describe("MavenFingerprinter", () => {
 
     it("should have name", () => {
