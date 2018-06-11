@@ -36,7 +36,7 @@ describe("isGoalRelevant", () => {
         assert.equal(isGoalRelevant(goal, "my-super-sdm"), true);
     });
 
-    it("should not handle own goal", () => {
+    it("should not handle goal of different SDM", () => {
         const goal = {
             provenance: [{
                 registration: "some-other-sdm",
