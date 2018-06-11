@@ -20,8 +20,7 @@ import { ProjectOperationCredentials } from "@atomist/automation-client/operatio
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { identification } from "../../internal/delivery/build/local/maven/pomParser";
-import {DelimitedWriteProgressLogDecorator} from "../../log/DelimitedWriteProgressLogDecorator";
+import { DelimitedWriteProgressLogDecorator } from "../../log/DelimitedWriteProgressLogDecorator";
 import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../spi/deploy/Deployer";
 import { ProgressLog } from "../../spi/log/ProgressLog";
@@ -101,14 +100,9 @@ export class CommandLineCloudFoundryDeployer implements Deployer<CloudFoundryInf
     public async findDeployments(id: RemoteRepoRef,
                                  ti: CloudFoundryInfo,
                                  credentials: ProjectOperationCredentials): Promise<CloudFoundryDeployment[]> {
-        // This may or may not be deployed. For now, let's guess that it is.
-        return this.projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-            const pom = await project.findFile("pom.xml");
-            const content = await pom.getContent();
-            const va = await identification(content);
-
-            return [{appName: va.artifact}];
-        });
+        logger.warn("Find Deployments is not implemented in CommandLineCloudFoundryDeployer." +
+            " You should probably use the CloudFoundryBlueGreenDeployer anyway.");
+        return [];
     }
 
     public async undeploy(cfi: CloudFoundryInfo, deployment: CloudFoundryDeployment, log: ProgressLog): Promise<ExecuteGoalResult> {
