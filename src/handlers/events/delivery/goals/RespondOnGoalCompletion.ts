@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { CredentialsResolver } from "../../../../spi/credentials/CredentialsResolver";
 import { sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
 
@@ -52,6 +53,11 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
     public async handle(event: EventFired<OnAnyCompletedSdmGoal.Subscription>,
                         context: HandlerContext): Promise<HandlerResult> {
         const sdmGoal: SdmGoal = event.data.SdmGoal[0] as SdmGoal;
+
+        if (!isGoalRelevant(sdmGoal)) {
+            logger.debug(`Goal ${sdmGoal.name} skipped because not relevant for this SDM`);
+            return Success;
+        }
 
         if (sdmGoal.state !== "failure" && sdmGoal.state !== "success") { // atomisthq/automation-api#395
             logger.debug(`********* completion reported when the state was=[${sdmGoal.state}]`);
