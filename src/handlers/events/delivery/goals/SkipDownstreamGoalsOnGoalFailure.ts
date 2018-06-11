@@ -27,6 +27,7 @@ import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { updateGoal } from "../../../../api-helper/goal/storeGoals";
 import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
 import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
@@ -49,6 +50,11 @@ export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
                         params: this): Promise<HandlerResult> {
 
         const failedGoal = event.data.SdmGoal[0] as SdmGoal;
+
+        if (!isGoalRelevant(failedGoal)) {
+            logger.debug(`Goal ${failedGoal.name} skipped because not relevant for this SDM`);
+            return Success;
+        }
 
         if (failedGoal.state !== "failure") { // atomisthq/automation-api#395
             logger.debug(`Nevermind: failure reported when the state was=[${failedGoal.state}]`);

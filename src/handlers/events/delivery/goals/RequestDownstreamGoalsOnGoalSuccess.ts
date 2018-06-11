@@ -35,6 +35,7 @@ import {
     SdmGoalKey,
 } from "../../../../ingesters/sdmGoalIngester";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
+import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import {
     OnAnySuccessfulSdmGoal,
@@ -60,6 +61,11 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
                         context: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
+
+        if (!isGoalRelevant(sdmGoal)) {
+            logger.debug(`Goal ${sdmGoal.name} skipped because not relevant for this SDM`);
+            return Success;
+        }
 
         if (sdmGoal.state !== "success") { // atomisthq/automation-api#395
             logger.debug(`Nevermind: success reported when the state was=[${sdmGoal.state}]`);
