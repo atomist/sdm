@@ -41,6 +41,7 @@ import {
 } from "../../../../ingesters/sdmGoalIngester";
 import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
+import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import {
     ProgressLog,
     ProgressLogFactory,
@@ -87,6 +88,12 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
                         ctx: HandlerContext,
                         params: this): Promise<HandlerResult> {
         const sdmGoal = event.data.SdmGoal[0] as SdmGoal;
+
+        if (!isGoalRelevant(sdmGoal)) {
+            logger.debug(`Goal ${sdmGoal.name} skipped because not relevant for this SDM`);
+            return Success;
+        }
+
         const commit = await fetchCommitForSdmGoal(ctx, sdmGoal);
 
         const status: StatusForExecuteGoal.Fragment = convertForNow(sdmGoal, commit);
