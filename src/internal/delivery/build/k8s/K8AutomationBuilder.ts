@@ -21,7 +21,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { lastLinesLogInterpreter } from "../../../../api-helper/log/logInterpreters";
 import { AddressChannels } from "../../../../api/context/addressChannels";
 import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
-import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { createStatus } from "../../../../util/github/ghub";
 
@@ -54,5 +54,5 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
         }).then(success);
     }
 
-    public logInterpreter = lastLinesLogInterpreter("K8Automation Build");
+    public logInterpreter: InterpretLog = lastLinesLogInterpreter("K8Automation Build");
 }
