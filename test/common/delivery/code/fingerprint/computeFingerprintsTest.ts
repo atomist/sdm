@@ -21,11 +21,11 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../src/api/listener/PushImpactListener";
-import { computeShaOf } from "../../../../../src/util/misc/sha";
-import { PushReaction } from "../../../../../src/api/registration/PushReactionRegistration";
 import { FingerprinterResult } from "../../../../../src/api/registration/FingerprinterRegistration";
+import { PushReaction } from "../../../../../src/api/registration/PushReactionRegistration";
+import { computeShaOf } from "../../../../../src/util/misc/sha";
 
-const SomeFingerprinter: PushReaction<FingerprinterResult> = async (pli) => {
+const SomeFingerprinter: PushReaction<FingerprinterResult> = async pli => {
     return [];
 };
 

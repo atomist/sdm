@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { PredicatePushTest } from "../../api/mapping/PushTest";
 import { hasFile, hasFileWithExtension } from "../../api/mapping/support/commonPushTests";
 
