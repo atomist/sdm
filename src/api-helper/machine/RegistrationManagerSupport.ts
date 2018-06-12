@@ -55,6 +55,12 @@ export class RegistrationManagerSupport implements CommandRegistrationManager, H
         return this;
     }
 
+    public addEditor<P>(ed: EditorRegistration<P>): this {
+        const commands = [editorRegistrationToCommand(this.sdm, ed)];
+        this.commandHandlers = this.commandHandlers.concat(commands);
+        return this;
+    }
+
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
         this.commandHandlers.push(...e);
         return this;

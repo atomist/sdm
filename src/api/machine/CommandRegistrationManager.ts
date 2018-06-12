@@ -38,7 +38,14 @@ export interface CommandRegistrationManager {
     /**
      * Add editors to this machine
      * @return {this}
+     * @deprecated because in TS 2.9.1 this only works for EditorRegistration<EmptyParameters>
      */
     addEditors(...eds: EditorRegistration[]): this;
+
+    /**
+     * Add an editor to this machine
+     * @return {this}
+     */
+    addEditor<P>(ed: EditorRegistration<P>): this;
 
 }
