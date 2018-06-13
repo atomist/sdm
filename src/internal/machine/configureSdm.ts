@@ -72,6 +72,7 @@ export function configureSdm(
                     machine.goalFulfillmentMapper,
                     machine.configuration.sdm.projectLoader,
                     machine.configuration.sdm.repoRefResolver,
+                    machine.configuration.sdm.credentialsResolver,
                     machine.configuration.sdm.logFactory));
 
             // Disable app events for forked clients

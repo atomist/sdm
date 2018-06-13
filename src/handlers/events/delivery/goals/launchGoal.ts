@@ -30,6 +30,7 @@ import { guid } from "@atomist/automation-client/internal/util/string";
 import { AutomationEventListenerSupport } from "@atomist/automation-client/server/AutomationEventListener";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as cluster from "cluster";
+import { CredentialsResolver } from "../../../..";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { ProgressLogFactory } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
@@ -42,6 +43,7 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
                 private readonly repoRefResolver: RepoRefResolver,
+                private readonly credentailsResolver: CredentialsResolver,
                 private readonly logFactory: ProgressLogFactory) {
         super();
     }
@@ -49,7 +51,12 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
     public eventIncoming(payload: EventIncoming) {
         if (cluster.isWorker) {
             // Register event handler locally only
-            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.repoRefResolver, this.logFactory);
+            const maker = () => new FulfillGoalOnRequested(
+                this.implementationMapper,
+                this.projectLoader,
+                this.repoRefResolver,
+                this.credentailsResolver,
+                this.logFactory);
             automationClientInstance().withEventHandler(maker);
         }
     }
@@ -76,7 +83,12 @@ export class GoalAutomationEventListener extends AutomationEventListenerSupport 
             });
 
             // Register event handler locally only
-            const maker = () => new FulfillGoalOnRequested(this.implementationMapper, this.projectLoader, this.repoRefResolver, this.logFactory);
+            const maker = () => new FulfillGoalOnRequested(
+                this.implementationMapper,
+                this.projectLoader,
+                this.repoRefResolver,
+                this.credentailsResolver,
+                this.logFactory);
             automationClientInstance().withEventHandler(maker);
 
             // Create event and run event handler

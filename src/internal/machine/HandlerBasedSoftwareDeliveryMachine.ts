@@ -181,7 +181,7 @@ export class HandlerBasedSoftwareDeliveryMachine extends AbstractSoftwareDeliver
                 this.goalFulfillmentMapper,
                 this.configuration.sdm.projectLoader,
                 this.configuration.sdm.repoRefResolver,
-                this.configuration.sdm.credentialsResolver.
+                this.configuration.sdm.credentialsResolver,
                 this.configuration.sdm.logFactory))
             .concat(_.flatten(this.allFunctionalUnits.map(fu => fu.eventHandlers)))
             .concat([
