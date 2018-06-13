@@ -29,6 +29,7 @@ import {
     ValueDeclaration,
 } from "@atomist/automation-client/metadata/automationMetadata";
 import * as stringify from "json-stringify-safe";
+import { CredentialsResolver } from "../../../..";
 import { executeGoal } from "../../../../api-helper/goal/executeGoal";
 import { LoggingProgressLog } from "../../../../api-helper/log/LoggingProgressLog";
 import { WriteToAllProgressLog } from "../../../../api-helper/log/WriteToAllProgressLog";
@@ -75,6 +76,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
                 private readonly projectLoader: ProjectLoader,
                 private readonly repoRefResolver: RepoRefResolver,
+                private readonly credentialsResolver: CredentialsResolver,
                 private readonly logFactory: ProgressLogFactory) {
         const implementationName = "FulfillGoal";
         this.subscriptionName = "OnAnyRequestedSdmGoal";
@@ -117,7 +119,10 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         const progressLog = new WriteToAllProgressLog(sdmGoal.name, new LoggingProgressLog(sdmGoal.name, "debug"), log);
         const addressChannels = addressChannelsFor(commit.repo, ctx);
         const id = params.repoRefResolver.repoRefFromSdmGoal(sdmGoal, await fetchProvider(ctx, sdmGoal.repo.providerId));
-        const credentials = {token: params.githubToken};
+
+        (this.credentialsResolver as any).githubToken = params.githubToken;
+        const credentials = this.credentialsResolver.eventHandlerCredentials(ctx, id);
+        
         const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
 
         const isolatedGoalLauncher = this.implementationMapper.getIsolatedGoalLauncher();
