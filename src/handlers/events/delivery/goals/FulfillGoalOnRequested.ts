@@ -122,7 +122,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
 
         (this.credentialsResolver as any).githubToken = params.githubToken;
         const credentials = this.credentialsResolver.eventHandlerCredentials(ctx, id);
-        
+
         const rwlc: RunWithLogContext = {status, progressLog, context: ctx, addressChannels, id, credentials};
 
         const isolatedGoalLauncher = this.implementationMapper.getIsolatedGoalLauncher();
