@@ -158,6 +158,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
+    public addEditor<P>(ed: EditorRegistration<P>): this {
+        this.registrationManager.addEditor<P>(ed);
+        return this;
+    }
+
     public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
         this.registrationManager.addSupportingCommands(...e);
         return this;

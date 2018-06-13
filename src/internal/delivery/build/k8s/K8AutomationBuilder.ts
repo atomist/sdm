@@ -18,12 +18,12 @@ import { HandlerContext, success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { lastLinesLogInterpreter } from "../../../../api-helper/log/logInterpreters";
 import { AddressChannels } from "../../../../api/context/addressChannels";
 import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
-import { InterpretedLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
+import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { createStatus } from "../../../../util/github/ghub";
-import { MavenLogInterpreter } from "../local/maven/mavenLogInterpreter";
 
 const K8AutomationBuildContext = "build/atomist/k8s";
 /**
@@ -54,7 +54,5 @@ export class K8sAutomationBuilder implements Builder, LogInterpretation {
         }).then(success);
     }
 
-    public logInterpreter(log: string): InterpretedLog | undefined {
-        return MavenLogInterpreter(log);
-    }
+    public logInterpreter: InterpretLog = lastLinesLogInterpreter("K8Automation Build");
 }

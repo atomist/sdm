@@ -21,8 +21,13 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { PushImpactListenerInvocation } from "../../../../../src/api/listener/PushImpactListener";
-import { MavenFingerprinter } from "../../../../../src/pack/maven/MavenFingerprinter";
+import { FingerprinterResult } from "../../../../../src/api/registration/FingerprinterRegistration";
+import { PushReaction } from "../../../../../src/api/registration/PushReactionRegistration";
 import { computeShaOf } from "../../../../../src/util/misc/sha";
+
+const SomeFingerprinter: PushReaction<FingerprinterResult> = async pli => {
+    return [];
+};
 
 describe("computeFingerprints", () => {
 
@@ -34,7 +39,7 @@ describe("computeFingerprints", () => {
 
     it("should execute one against empty project", async () => {
         const cri: PushImpactListenerInvocation = {project: InMemoryProject.of()} as any as PushImpactListenerInvocation;
-        const r = await computeFingerprints(cri, [new MavenFingerprinter().action]);
+        const r = await computeFingerprints(cri, [SomeFingerprinter]);
         assert.equal(r.length, 0);
     });
 
