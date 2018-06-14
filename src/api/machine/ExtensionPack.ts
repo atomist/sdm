@@ -15,7 +15,7 @@
  */
 
 import { GoalSetter } from "../mapping/GoalSetter";
-import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
+import { MachineConfigurer } from "./MachineConfigurer";
 
 /**
  * Primary unit of extensibility in SDMs.
@@ -25,7 +25,7 @@ import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
  * For example, a Node module can export an ExtensionPack.
  * ExtensionPacks can optional contribute goal setting, which will be added to existing goal setting.
  */
-export interface ExtensionPack {
+export interface ExtensionPack extends MachineConfigurer {
 
     name: string;
 
@@ -37,12 +37,6 @@ export interface ExtensionPack {
      * Human-readable description of this extension pack
      */
     description?: string;
-
-    /**
-     * Function to add extension pack functionality to the given SDM
-     * @param sdm
-     */
-    configure(sdm: SoftwareDeliveryMachine): void;
 
     /**
      * Optional goal setting contributions that will be added into SDM goal setting.
