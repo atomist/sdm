@@ -65,13 +65,16 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
 }) {
     const {rwlc, deployment, endpointGoal} = params;
     const sdmGoal = await findSdmGoalOnCommit(rwlc.context, rwlc.id, params.repoRefResolver.providerIdFromStatus(rwlc.status), endpointGoal);
-    if (deployment.endpoint) {
-        const newState = "success";
-        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
-    } else {
-        const error = new Error("Deploy finished with success, but the endpoint was not found");
-        const newState = "failure";
-        await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
+    // Only update the endpoint goal if it actually exists in the goal set
+    if (sdmGoal) {
+        if (deployment.endpoint) {
+            const newState = "success";
+            await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
+        } else {
+            const error = new Error("Deploy finished with success, but the endpoint was not found");
+            const newState = "failure";
+            await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
+        }
     }
 }
 
