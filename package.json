@@ -19,8 +19,10 @@
   "bugs": {
     "url": "https://github.com/atomist/sdm/issues"
   },
+  "peerDependencies": {
+    "@atomist/automation-client": ">= 0.17.1"
+  },
   "dependencies": {
-    "@atomist/automation-client": "^0.17.2-20180613153815",
     "@atomist/slack-messages": "^0.12.1",
     "@jessitron/git-branch-to-npm-tag": "^1.0.1",
     "archiver": "^2.1.1",
@@ -45,6 +47,7 @@
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
+    "@atomist/automation-client": "^0.17.2-20180613153815",
     "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.48",
     "@types/node": "^8.10.17",
