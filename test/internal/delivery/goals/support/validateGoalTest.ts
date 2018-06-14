@@ -52,4 +52,20 @@ describe("isGoalRelevant", () => {
         assert.equal(isGoalRelevant(goal, "my-super-sdm"), false);
     });
 
+    it("should handle own goal in a SDM job", () => {
+        const goal = {
+            provenance: [{
+                registration: "some-other-sdm",
+                ts: 3,
+            }, {
+                registration: "my-super-sdm",
+                ts: 1,
+            }, {
+                registration: "again-some-other-sdm",
+                ts: 2,
+            }],
+        } as any as SdmGoal;
+        assert.equal(isGoalRelevant(goal, "my-super-sdm-job-4342234-build"), true);
+    });
+
 });
