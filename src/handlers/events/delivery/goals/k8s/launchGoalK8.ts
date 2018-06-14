@@ -15,6 +15,7 @@
  */
 
 import {
+    automationClientInstance,
     AutomationContextAware,
     HandlerContext,
     HandlerResult,
@@ -72,6 +73,10 @@ export const KubernetesIsolatedGoalLauncher = async (goal: OnAnyRequestedSdmGoal
     jobSpec.spec.template.spec.containers[0].env.push({
             name: "ATOMIST_JOB_NAME",
             value: jobSpec.metadata.name,
+        },
+        {
+            name: "ATOMIST_REGISTRATION_NAME",
+            value: `${automationClientInstance().configuration.name}-job-${goal.goalSetId.slice(0, 7)}-${goal.uniqueName.toLocaleLowerCase()}`,
         },
         {
             name: "ATOMIST_GOAL_TEAM",
