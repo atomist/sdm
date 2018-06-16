@@ -108,6 +108,27 @@ describe("deployPushTests tests thing", () => {
             const result = await IsDeployEnabled.mapping(pi as any as PushListenerInvocation);
             assert(!result);
         });
+
+        it("should return false in case something blows up", async () => {
+            const pi = {
+                context: {
+                    graphClient: {
+                        query(options: { query: string, variables: any, options: any } ) {
+                           throw new Error("This is supposed to happen");
+                        },
+                    },
+                },
+                push: {
+                    repo: {
+                        owner: "atomist",
+                        name: "github-sdm",
+                    },
+                },
+                id: GitHubRepoRef.from({owner: "atomist", repo: "github-sdm"}),
+            };
+            const result = await IsDeployEnabled.mapping(pi as any as PushListenerInvocation);
+            assert(!result);
+        });
     });
 
 });
