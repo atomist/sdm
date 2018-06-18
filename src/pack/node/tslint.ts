@@ -23,8 +23,8 @@ import {
     DevelopmentEnvOptions,
     Install,
 } from "../../internal/delivery/build/local/npm/npmBuilder";
-import { IsNode } from "../../mapping/pushtest/node/nodePushTests";
-import { IsTypeScript } from "../../mapping/pushtest/node/tsPushTests";
+import { IsNode } from "./nodePushTests";
+import { IsTypeScript } from "./tsPushTests";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
     "tslint",

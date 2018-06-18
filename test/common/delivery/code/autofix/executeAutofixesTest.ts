@@ -23,7 +23,7 @@ import * as assert from "power-assert";
 import { executeAutofixes } from "../../../../../src/api-helper/listener/executeAutofixes";
 import { AutofixRegistration } from "../../../../../src/api/registration/AutofixRegistration";
 import { DefaultRepoRefResolver } from "../../../../../src/handlers/common/DefaultRepoRefResolver";
-import { IsTypeScript } from "../../../../../src/mapping/pushtest/node/tsPushTests";
+import { IsTypeScript } from "../../../../../src/pack/node/tsPushTests";
 import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
 import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
 
