@@ -23,7 +23,7 @@ import { MessageGoal } from "../../src/api/goal/common/MessageGoal";
 import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
 import { ExtensionPack } from "../../src/api/machine/ExtensionPack";
 import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
-import { when } from "../../src/dsl/buildDsl";
+import { when } from "../../src/api-helper/dsl/buildDsl";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
 import { HandlerBasedSoftwareDeliveryMachine } from "../../src/internal/machine/HandlerBasedSoftwareDeliveryMachine";
