@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { anyFileChangedSuchThat, anyFileChangedWithExtension } from "../../../src/util/git/filesChangedSince";
+import { anyFileChangedSuchThat, anyFileChangedWithExtension } from "../../../src/api-helper/misc/git/filesChangedSince";
 
 describe("filesChanged", () => {
 
