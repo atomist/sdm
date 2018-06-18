@@ -22,8 +22,7 @@ import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoa
 import { Goal } from "../../api/goal/Goal";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
-import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
-
+import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 /**
  * Report an error executing a goal and present a retry button
  * @return {Promise<void>}
@@ -47,7 +46,7 @@ export async function reportGoalError(parameters: {
     // The executor might have information about the failure; report it in the channels
     if (interpretation) {
         if (!interpretation.doNotReportToUser) {
-            await reportFailureInterpretationToLinkedChannels(implementationName, interpretation,
+            await reportFailureInterpretation(implementationName, interpretation,
                 {url: progressLog.url, log: progressLog.log},
                 id, addressChannels);
         }
