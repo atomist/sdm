@@ -28,9 +28,9 @@ import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphC
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
-import { CachingProjectLoader } from "../../../project/CachingProjectLoader";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
+import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 
 /**
  * Create a command handler for project generation

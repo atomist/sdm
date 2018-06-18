@@ -18,12 +18,12 @@ import { Configuration } from "@atomist/automation-client";
 import { RemoteGitProjectPersister } from "@atomist/automation-client/operations/generate/remoteGitProjectPersister";
 import * as _ from "lodash";
 import { allReposInTeam } from "../api-helper/command/editor/allReposInTeam";
+import { CachingProjectLoader } from "../api-helper/project/CachingProjectLoader";
 import { SoftwareDeliveryMachineConfiguration } from "../api/machine/SoftwareDeliveryMachineOptions";
 import { DefaultRepoRefResolver } from "../handlers/common/DefaultRepoRefResolver";
 import { GitHubCredentialsResolver } from "../handlers/common/GitHubCredentialsResolver";
 import { EphemeralLocalArtifactStore } from "../internal/artifact/local/EphemeralLocalArtifactStore";
 import { rolarAndDashboardLogFactory } from "../log/rolarAndDashboardLogFactory";
-import { CachingProjectLoader } from "../project/CachingProjectLoader";
 
 export function defaultSoftwareDeliveryMachineOptions(configuration: Configuration): SoftwareDeliveryMachineConfiguration {
     const repoRefResolver = new DefaultRepoRefResolver();
