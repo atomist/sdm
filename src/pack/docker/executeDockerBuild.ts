@@ -28,7 +28,7 @@ import { branchFromCommit } from "../../internal/delivery/build/executeBuild";
 import { readSdmVersion } from "../../internal/delivery/build/local/projectVersioner";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { StatusForExecuteGoal } from "../../typings/types";
-import { spawnAndWatch } from "../../util/misc/spawned";
+import { spawnAndWatch } from "../../api-helper/misc/spawned";
 import { postLinkImageWebhook } from "../../util/webhook/ImageLink";
 
 export interface DockerOptions {

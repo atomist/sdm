@@ -34,7 +34,7 @@ import {
     spawnAndWatch,
     SpawnCommand,
     stringifySpawnCommand,
-} from "../../../../util/misc/spawned";
+} from "../../../../api-helper/misc/spawned";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
 
 export interface SpawnBuilderOptions {

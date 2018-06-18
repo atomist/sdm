@@ -15,7 +15,7 @@
  */
 
 import * as df from "dateformat";
-import { spawnAndWatch } from "../../../../../util/misc/spawned";
+import { spawnAndWatch } from "../../../../../api-helper/misc/spawned";
 import { branchFromCommit } from "../../executeBuild";
 import { ProjectVersioner } from "../projectVersioner";
 

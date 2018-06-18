@@ -28,7 +28,7 @@ import { StringCapturingProgressLog } from "../../../../../api-helper/log/String
 import { SdmGoal } from "../../../../../ingesters/sdmGoalIngester";
 import { ProgressLog } from "../../../../../spi/log/ProgressLog";
 import { OnAnyRequestedSdmGoal } from "../../../../../typings/types";
-import { spawnAndWatch } from "../../../../../util/misc/spawned";
+import { spawnAndWatch } from "../../../../../api-helper/misc/spawned";
 
 /**
  * Launch a goal as a kubernetes job

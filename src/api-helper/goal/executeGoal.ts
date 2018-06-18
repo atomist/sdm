@@ -29,7 +29,7 @@ import { Goal } from "../../api/goal/Goal";
 import { SdmGoal } from "../../ingesters/sdmGoalIngester";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { spawnAndWatch } from "../../util/misc/spawned";
+import { spawnAndWatch } from "../misc/spawned";
 import { descriptionFromState, updateGoal } from "./storeGoals";
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";

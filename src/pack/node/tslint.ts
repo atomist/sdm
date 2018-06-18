@@ -24,7 +24,7 @@ import {
 } from "../../internal/delivery/build/local/npm/npmBuilder";
 import { IsNode } from "../../mapping/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../mapping/pushtest/node/tsPushTests";
-import { asSpawnCommand } from "../../util/misc/spawned";
+import { asSpawnCommand } from "../../api-helper/misc/spawned";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
     "tslint",

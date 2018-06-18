@@ -27,7 +27,7 @@ import {
 } from "../../../../../api/goal/ExecuteGoalWithLog";
 import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import { createStatus } from "../../../../../util/github/ghub";
-import { spawnAndWatch } from "../../../../../util/misc/spawned";
+import { spawnAndWatch } from "../../../../../api-helper/misc/spawned";
 import { ProjectIdentifier } from "../projectIdentifier";
 import { NpmPreparations } from "./npmBuilder";
 
