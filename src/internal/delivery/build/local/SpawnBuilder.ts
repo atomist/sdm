@@ -22,11 +22,6 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { SpawnOptions } from "child_process";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
-import { AppInfo } from "../../../../spi/deploy/Deployment";
-import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
-import { ProgressLog } from "../../../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import {
     asSpawnCommand,
     ChildProcessResult,
@@ -35,6 +30,11 @@ import {
     SpawnCommand,
     stringifySpawnCommand,
 } from "../../../../api-helper/misc/spawned";
+import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
+import { AppInfo } from "../../../../spi/deploy/Deployment";
+import { InterpretLog, LogInterpretation } from "../../../../spi/log/InterpretedLog";
+import { ProgressLog } from "../../../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { LocalBuilder, LocalBuildInProgress } from "./LocalBuilder";
 
 export interface SpawnBuilderOptions {

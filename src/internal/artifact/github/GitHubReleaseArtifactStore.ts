@@ -26,9 +26,9 @@ import * as p from "path";
 import * as tmp from "tmp-promise";
 import * as URL from "url";
 import { promisify } from "util";
+import { toToken } from "../../../api-helper/misc/credentials/toToken";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../spi/deploy/Deployment";
-import { toToken } from "../../../api-helper/misc/credentials/toToken";
 import { authHeaders, createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
 
 /**

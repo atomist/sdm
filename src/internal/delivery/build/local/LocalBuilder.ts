@@ -22,6 +22,7 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios from "axios";
 import { sprintf } from "sprintf-js";
+import { ChildProcessResult } from "../../../../api-helper/misc/spawned";
 import { AddressChannels } from "../../../../api/context/addressChannels";
 import { ArtifactStore } from "../../../../spi/artifact/ArtifactStore";
 import { Builder, PushThatTriggersBuild } from "../../../../spi/build/Builder";
@@ -30,7 +31,6 @@ import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { SdmBuildIdentifierForRepo } from "../../../../typings/types";
-import { ChildProcessResult } from "../../../../api-helper/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { createTagForStatus } from "../executeTag";
 import { readSdmVersion } from "./projectVersioner";

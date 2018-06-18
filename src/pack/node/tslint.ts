@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { asSpawnCommand } from "../../api-helper/misc/spawned";
 import { hasFile } from "../../api/mapping/support/commonPushTests";
 import { allSatisfied } from "../../api/mapping/support/pushTestUtils";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
@@ -24,7 +25,6 @@ import {
 } from "../../internal/delivery/build/local/npm/npmBuilder";
 import { IsNode } from "../../mapping/pushtest/node/nodePushTests";
 import { IsTypeScript } from "../../mapping/pushtest/node/tsPushTests";
-import { asSpawnCommand } from "../../api-helper/misc/spawned";
 
 export const tslintFix: AutofixRegistration = spawnedCommandAutofix(
     "tslint",

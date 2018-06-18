@@ -19,6 +19,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { gitBranchToNpmTag } from "@jessitron/git-branch-to-npm-tag/lib";
 import * as fs from "fs-extra";
 import * as p from "path";
+import { spawnAndWatch } from "../../../../../api-helper/misc/spawned";
 import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,
@@ -27,7 +28,6 @@ import {
 } from "../../../../../api/goal/ExecuteGoalWithLog";
 import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import { createStatus } from "../../../../../util/github/ghub";
-import { spawnAndWatch } from "../../../../../api-helper/misc/spawned";
 import { ProjectIdentifier } from "../projectIdentifier";
 import { NpmPreparations } from "./npmBuilder";
 

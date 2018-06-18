@@ -19,13 +19,13 @@ import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { spawn } from "child_process";
+import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../api-helper/misc/spawned";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { DelimitedWriteProgressLogDecorator } from "../../log/DelimitedWriteProgressLogDecorator";
 import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../spi/deploy/Deployer";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../api-helper/misc/spawned";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 
