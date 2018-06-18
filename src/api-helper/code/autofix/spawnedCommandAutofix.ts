@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { SpawnCommand } from "../../api-helper/misc/spawned";
-import { PushTest } from "../../api/mapping/PushTest";
-import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { localCommandsEditor } from "../../handlers/commands/support/localCommandsEditor";
+import { PushTest } from "../../../api/mapping/PushTest";
+import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../../api/registration/AutofixRegistration";
+import { localCommandsEditor } from "../../command/editor/localCommandsEditor";
+import { SpawnCommand } from "../../misc/spawned";
 
 /**
  * Register an autofix based on spawned local shell commands.
