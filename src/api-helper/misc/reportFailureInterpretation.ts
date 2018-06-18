@@ -20,12 +20,12 @@ import * as slack from "@atomist/slack-messages/SlackMessages";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { InterpretedLog } from "../../spi/log/InterpretedLog";
 
-export async function reportFailureInterpretationToLinkedChannels(stepName: string,
-                                                                  interpretation: InterpretedLog | undefined,
-                                                                  fullLog: { url?: string, log: string },
-                                                                  id: RemoteRepoRef,
-                                                                  addressChannels: AddressChannels,
-                                                                  retryButton?: slack.Action) {
+export async function reportFailureInterpretation(stepName: string,
+                                                  interpretation: InterpretedLog | undefined,
+                                                  fullLog: { url?: string, log: string },
+                                                  id: RemoteRepoRef,
+                                                  addressChannels: AddressChannels,
+                                                  retryButton?: slack.Action) {
     if (!interpretation) {
         if (fullLog.url) {
             logger.info("No log interpretation. Log available at: " + fullLog.url);

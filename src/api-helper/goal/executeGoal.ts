@@ -37,7 +37,7 @@ import { AddressChannels } from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
-import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
+import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
 
 class GoalExecutionError extends Error {
     public readonly where: string;
@@ -247,7 +247,7 @@ async function reportGoalError(parameters: {
     // The executor might have information about the failure; report it in the channels
     if (interpretation) {
         if (!interpretation.doNotReportToUser) {
-            await reportFailureInterpretationToLinkedChannels(implementationName, interpretation,
+            await reportFailureInterpretation(implementationName, interpretation,
                 { url: progressLog.url, log: progressLog.log },
                 id, addressChannels);
         }

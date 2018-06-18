@@ -20,7 +20,7 @@ import * as assert from "power-assert";
 import { AddressChannels } from "../../../src/api/context/addressChannels";
 
 import { InterpretedLog } from "../../../src/spi/log/InterpretedLog";
-import { reportFailureInterpretationToLinkedChannels } from "../../../src/util/slack/reportFailureInterpretationToLinkedChannels";
+import { reportFailureInterpretation } from "../../../src/api-helper/misc/reportFailureInterpretation";
 
 describe("Reporting failure interpretation", () => {
 
@@ -47,7 +47,7 @@ describe("Reporting failure interpretation", () => {
             includeFullLog: true,
         };
         const fullLog = {log: "you are so busted"};
-        await reportFailureInterpretationToLinkedChannels("stepName",
+        await reportFailureInterpretation("stepName",
             interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
         assert(spy.sentFullLog);
     });
@@ -60,7 +60,7 @@ describe("Reporting failure interpretation", () => {
             includeFullLog: false,
         };
         const fullLog = {url: "here", log: "you are so busted"};
-        await reportFailureInterpretationToLinkedChannels("stepName",
+        await reportFailureInterpretation("stepName",
             interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
 
         assert(!spy.sentFullLog);
@@ -73,7 +73,7 @@ describe("Reporting failure interpretation", () => {
             message: "Hi",
         };
         const fullLog = {url: "here", log: "you are so busted"};
-        await reportFailureInterpretationToLinkedChannels("stepName",
+        await reportFailureInterpretation("stepName",
             interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
 
         assert(!spy.sentFullLog);
@@ -86,7 +86,7 @@ describe("Reporting failure interpretation", () => {
             message: "Hi",
         };
         const fullLog = {log: "you are so busted"};
-        await reportFailureInterpretationToLinkedChannels("stepName",
+        await reportFailureInterpretation("stepName",
             interpretedLog, fullLog, {sha: "abc"} as RemoteRepoRef, ac);
         assert(spy.sentFullLog);
     });

@@ -28,7 +28,7 @@ import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { BuildStatus, OnBuildComplete } from "../../../../typings/types";
-import { reportFailureInterpretationToLinkedChannels } from "../../../../util/slack/reportFailureInterpretationToLinkedChannels";
+import { reportFailureInterpretation } from "../../../../api-helper/misc/reportFailureInterpretation";
 
 /**
  * Set build status on complete build
@@ -82,7 +82,7 @@ export async function displayBuildLogFailure(id: RemoteRepoRef,
         logger.debug("Do we have a log interpretation? " + !!logInterpretation);
         const interpretation = logInterpretation && logInterpretation.logInterpreter(buildLog);
         logger.debug("What did it say? " + stringify(interpretation));
-        await reportFailureInterpretationToLinkedChannels("external-build", interpretation,
+        await reportFailureInterpretation("external-build", interpretation,
                 { log: buildLog, url: buildUrl }, id, addressChannels);
 
     } else {
