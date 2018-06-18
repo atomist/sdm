@@ -19,9 +19,9 @@ import { RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/co
 import axios from "axios";
 import { ChildProcess } from "child_process";
 import * as https from "https";
+import { poisonAndWait } from "../../../../api-helper/misc/spawned";
 import { Deployment, TargetInfo } from "../../../../spi/deploy/Deployment";
 import { Targeter } from "../../../../spi/deploy/Target";
-import { poisonAndWait } from "../../../../api-helper/misc/spawned";
 
 export interface ManagedDeploymentTargetInfo extends TargetInfo {
     managedDeploymentKey: RemoteRepoRef;
