@@ -37,13 +37,13 @@ import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { executeVerifyEndpoint, SdmVerification } from "../../handlers/events/delivery/verify/executeVerifyEndpoint";
 import { executeBuild } from "../../internal/delivery/build/executeBuild";
 import { executeDeploy } from "../../internal/delivery/deploy/executeDeploy";
 import { executeUndeploy } from "../../internal/delivery/deploy/executeUndeploy";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 
 /**
