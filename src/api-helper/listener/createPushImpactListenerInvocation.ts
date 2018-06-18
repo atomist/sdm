@@ -19,7 +19,7 @@ import { messageDestinationsFor } from "../../api/context/addressChannels";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { teachToRespondInEventHandler } from "../../internal/slack/contextMessageRouting";
-import { filesChangedSince, filesChangedSinceParentCommit } from "../../util/git/filesChangedSince";
+import { filesChangedSince, filesChangedSinceParentCommit } from "../misc/git/filesChangedSince";
 import { filteredView } from "../../util/project/filteredView";
 
 /**
