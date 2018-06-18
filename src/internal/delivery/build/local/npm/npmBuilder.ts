@@ -17,6 +17,7 @@
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Project } from "@atomist/automation-client/project/Project";
+import { branchFromCommit } from "../../../../../api-helper/goal/executeBuild";
 import {
     asSpawnCommand,
     spawnAndWatch,
@@ -29,7 +30,6 @@ import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
 import { readSdmVersion } from "../projectVersioner";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 import { NpmLogInterpreter } from "./npmLogInterpreter";
-import { branchFromCommit } from "../../../../../api-helper/goal/executeBuild";
 
 /**
  * Options to use when running node commands like npm run compile that require dev dependencies to be installed

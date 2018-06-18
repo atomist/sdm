@@ -18,6 +18,7 @@ import {
     HandlerContext,
 } from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { branchFromCommit } from "../../api-helper/goal/executeBuild";
 import { spawnAndWatch } from "../../api-helper/misc/spawned";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
@@ -29,7 +30,6 @@ import { readSdmVersion } from "../../internal/delivery/build/local/projectVersi
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { StatusForExecuteGoal } from "../../typings/types";
 import { postLinkImageWebhook } from "../../util/webhook/ImageLink";
-import { branchFromCommit } from "../../api-helper/goal/executeBuild";
 
 export interface DockerOptions {
     registry: string;
