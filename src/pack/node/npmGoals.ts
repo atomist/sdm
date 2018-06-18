@@ -19,7 +19,7 @@ import { Goals } from "../../api/goal/Goals";
 import { IndependentOfEnvironment, ProductionEnvironment, StagingEnvironment } from "../../api/goal/support/environment";
 import { ArtifactGoal, AutofixGoal, BuildGoal, ReviewGoal, StagingEndpointGoal } from "../../api/machine/wellKnownGoals";
 import { StagingDeploymentGoal } from "../../api/machine/wellKnownGoals";
-import { DockerBuildGoal, TagGoal, VersionGoal } from "./commonGoals";
+import { DockerBuildGoal, TagGoal, VersionGoal } from "../well-known-goals/commonGoals";
 
 export const NpmPublishGoal = new GoalWithPrecondition({
     uniqueName: "Publish",
