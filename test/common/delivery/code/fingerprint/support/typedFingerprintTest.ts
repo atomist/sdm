@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { TypedFingerprint } from "../../../../../../src/code/fingerprint/TypedFingerprint";
+import { TypedFingerprint } from "../../../../../../src/api-helper/code/fingerprint/TypedFingerprint";
 import { isValidSHA1 } from "../../../../../../src/util/misc/sha";
 
 interface Person {
