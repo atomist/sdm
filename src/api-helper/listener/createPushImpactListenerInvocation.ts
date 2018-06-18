@@ -20,7 +20,7 @@ import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { teachToRespondInEventHandler } from "../../internal/slack/contextMessageRouting";
 import { filesChangedSince, filesChangedSinceParentCommit } from "../misc/git/filesChangedSince";
-import { filteredView } from "../../util/project/filteredView";
+import { filteredView } from "../misc/project/filteredView";
 
 /**
  * Create a PushImpactListenerInvocation from the given context.
