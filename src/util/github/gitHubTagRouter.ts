@@ -21,7 +21,7 @@ import { successOn } from "@atomist/automation-client/action/ActionResult";
 import { TagRouter } from "@atomist/automation-client/operations/tagger/Tagger";
 import axios, { AxiosRequestConfig } from "axios";
 import * as _ from "lodash";
-import { toToken } from "../credentials/toToken";
+import { toToken } from "../../api-helper/misc/credentials/toToken";
 
 /**
  * Persist tags to GitHub topics

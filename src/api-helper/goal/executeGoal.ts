@@ -36,7 +36,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
-import { toToken } from "../../util/credentials/toToken";
+import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../../util/misc/errorPrinting";
 import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
 
