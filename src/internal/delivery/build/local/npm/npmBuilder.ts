@@ -25,7 +25,7 @@ import {
     asSpawnCommand,
     spawnAndWatch,
     SpawnCommand,
-} from "../../../../../util/misc/spawned";
+} from "../../../../../api-helper/misc/spawned";
 import { branchFromCommit } from "../../executeBuild";
 import { readSdmVersion } from "../projectVersioner";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";

@@ -19,7 +19,7 @@ import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { InterpretLog } from "../../../../../spi/log/InterpretedLog";
 import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
-import { asSpawnCommand, SpawnCommand } from "../../../../../util/misc/spawned";
+import { asSpawnCommand, SpawnCommand } from "../../../../../api-helper/misc/spawned";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 
 export const RunBuild: SpawnCommand = asSpawnCommand("lein");

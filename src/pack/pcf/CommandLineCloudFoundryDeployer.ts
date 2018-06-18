@@ -25,7 +25,7 @@ import { DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 import { Deployer } from "../../spi/deploy/Deployer";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../util/misc/spawned";
+import { asSpawnCommand, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../api-helper/misc/spawned";
 import { parseCloudFoundryLogForEndpoint } from "./cloudFoundryLogParser";
 import { CloudFoundryDeployment, CloudFoundryInfo, CloudFoundryManifestPath } from "./CloudFoundryTarget";
 

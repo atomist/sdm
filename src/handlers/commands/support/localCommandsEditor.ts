@@ -20,7 +20,7 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { spawn, SpawnOptions } from "child_process";
 import { LoggingProgressLog } from "../../../api-helper/log/LoggingProgressLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
+import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../api-helper/misc/spawned";
 
 /**
  * Create a project editorCommand wrapping spawned local commands

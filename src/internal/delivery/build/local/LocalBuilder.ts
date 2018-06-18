@@ -31,7 +31,7 @@ import { InterpretLog } from "../../../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
 import { SdmBuildIdentifierForRepo } from "../../../../typings/types";
-import { ChildProcessResult } from "../../../../util/misc/spawned";
+import { ChildProcessResult } from "../../../../api-helper/misc/spawned";
 import { postLinkImageWebhook } from "../../../../util/webhook/ImageLink";
 import { createTagForStatus } from "../executeTag";
 import { readSdmVersion } from "./projectVersioner";

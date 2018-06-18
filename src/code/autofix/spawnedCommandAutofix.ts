@@ -17,7 +17,7 @@
 import { PushTest } from "../../api/mapping/PushTest";
 import { AutofixRegistration, AutofixRegistrationOptions, editorAutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { localCommandsEditor } from "../../handlers/commands/support/localCommandsEditor";
-import { SpawnCommand } from "../../util/misc/spawned";
+import { SpawnCommand } from "../../api-helper/misc/spawned";
 
 /**
  * Register an autofix based on spawned local shell commands.
