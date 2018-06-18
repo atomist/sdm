@@ -37,7 +37,7 @@ import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { toToken } from "../misc/credentials/toToken";
-import { stringifyError } from "../../util/misc/errorPrinting";
+import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
 
 class GoalExecutionError extends Error {
