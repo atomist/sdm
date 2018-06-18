@@ -25,11 +25,11 @@ import {
     PrepareForGoalExecution,
     RunWithLogContext,
 } from "../../api/goal/ExecuteGoalWithLog";
-import { branchFromCommit } from "../../internal/delivery/build/executeBuild";
 import { readSdmVersion } from "../../internal/delivery/build/local/projectVersioner";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { StatusForExecuteGoal } from "../../typings/types";
 import { postLinkImageWebhook } from "../../util/webhook/ImageLink";
+import { branchFromCommit } from "../../api-helper/goal/executeBuild";
 
 export interface DockerOptions {
     registry: string;

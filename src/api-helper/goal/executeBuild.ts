@@ -15,14 +15,14 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ExecuteGoalResult } from "../../../api/goal/ExecuteGoalResult";
+import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoalWithLog,
     RunWithLogContext,
-} from "../../../api/goal/ExecuteGoalWithLog";
-import { Builder } from "../../../spi/build/Builder";
-import { ProjectLoader } from "../../../spi/project/ProjectLoader";
-import { StatusForExecuteGoal } from "../../../typings/types";
+} from "../../api/goal/ExecuteGoalWithLog";
+import { Builder } from "../../spi/build/Builder";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { StatusForExecuteGoal } from "../../typings/types";
 
 /**
  * Execute build with the appropriate builder

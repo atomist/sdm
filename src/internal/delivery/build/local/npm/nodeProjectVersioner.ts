@@ -16,8 +16,8 @@
 
 import * as df from "dateformat";
 import { spawnAndWatch } from "../../../../../api-helper/misc/spawned";
-import { branchFromCommit } from "../../executeBuild";
 import { ProjectVersioner } from "../projectVersioner";
+import { branchFromCommit } from "../../../../../api-helper/goal/executeBuild";
 
 export const NodeProjectVersioner: ProjectVersioner = async (status, p, log) => {
     const pjFile = await p.getFile("package.json");
