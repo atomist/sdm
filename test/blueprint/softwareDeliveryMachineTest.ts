@@ -27,7 +27,7 @@ import { when } from "../../src/dsl/buildDsl";
 import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
 import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
 import { HandlerBasedSoftwareDeliveryMachine } from "../../src/internal/machine/HandlerBasedSoftwareDeliveryMachine";
-import { HasAtomistBuildFile } from "../../src/mapping/pushtest/node/nodePushTests";
+import { HasAtomistBuildFile } from "../../src/pack/node/nodePushTests";
 import { NoGoals } from "../../src/pack/well-known-goals/commonGoals";
 import { HttpServiceGoals } from "../../src/pack/well-known-goals/httpServiceGoals";
 import { fakePush } from "../api/dsl/decisionTreeTest";

@@ -15,10 +15,9 @@
  */
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
-import { PushListenerInvocation } from "../../../api/listener/PushListener";
-import { PushTest, pushTest } from "../../../api/mapping/PushTest";
+import { predicatePushTest, PredicatePushTest } from "../../api/mapping/PushTest";
+import { CloudFoundryManifestPath } from "./CloudFoundryTarget";
 
-export const IsTypeScript: PushTest = pushTest(
-    "Is TypeScript",
-    async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
-);
+export const HasCloudFoundryManifest: PredicatePushTest = predicatePushTest(
+    "Has PCF manifest",
+    async p => fileExists(p, CloudFoundryManifestPath, f => true));
