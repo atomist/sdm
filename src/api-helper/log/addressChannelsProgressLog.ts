@@ -15,18 +15,18 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { addressChannelsFor, HasChannels } from "../api/context/addressChannels";
-import { ProgressLog } from "../spi/log/ProgressLog";
+import { addressChannelsFor, HasChannels } from "../../api/context/addressChannels";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
- * Stream the ProgressLog output to any Slack channels associated
- * with the current model element (such a repo)
+ * Stream the ProgressLog output to any channels associated
+ * with the current model element (such a repo) in Slack or elswhere.
  * @param name name for the log. Should relate to the activity we're logging
  * @param {HasChannels} hasChannels
  * @param {HandlerContext} ctx
  * @return {ProgressLog}
  */
-export function slackProgressLog(name: string, hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
+export function addressChannelsProgressLog(name: string, hasChannels: HasChannels, ctx: HandlerContext): ProgressLog {
     const add = addressChannelsFor(hasChannels, ctx);
     return {
         name,
