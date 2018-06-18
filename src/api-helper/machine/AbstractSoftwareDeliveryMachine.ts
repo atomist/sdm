@@ -37,7 +37,7 @@ import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { executeDeploy } from "../../internal/delivery/deploy/executeDeploy";
+import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../../internal/delivery/deploy/executeUndeploy";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
