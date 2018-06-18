@@ -16,7 +16,7 @@
 
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { appendOrCreateFileContent } from "../../../src/util/project/appendOrCreate";
+import { appendOrCreateFileContent } from "../../../src/api-helper/project/appendOrCreate";
 
 describe("appendOrCreate", () => {
 
