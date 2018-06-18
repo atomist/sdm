@@ -37,14 +37,14 @@ import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../../internal/delivery/deploy/executeUndeploy";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { executeBuild } from "../goal/executeBuild";
+import { executeDeploy } from "../goal/executeDeploy";
 import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
-import { executeBuild } from "../goal/executeBuild";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
