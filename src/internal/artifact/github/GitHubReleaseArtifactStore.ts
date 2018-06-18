@@ -28,7 +28,7 @@ import * as URL from "url";
 import { promisify } from "util";
 import { ArtifactStore, DeployableArtifact } from "../../../spi/artifact/ArtifactStore";
 import { AppInfo } from "../../../spi/deploy/Deployment";
-import { toToken } from "../../../util/credentials/toToken";
+import { toToken } from "../../../api-helper/misc/credentials/toToken";
 import { authHeaders, createRelease, createTag, Release, Tag } from "../../../util/github/ghub";
 
 /**

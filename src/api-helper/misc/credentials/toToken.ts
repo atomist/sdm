@@ -21,6 +21,7 @@ import { isTokenCredentials, ProjectOperationCredentials } from "@atomist/automa
  * if possible. Otherwise throw an exception.
  * @param {ProjectOperationCredentials | string} credentials
  * @return {string}
+ * @ModuleExport
  */
 export function toToken(credentials: ProjectOperationCredentials | string): string {
     if (typeof credentials === "string") {

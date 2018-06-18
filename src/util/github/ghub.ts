@@ -21,7 +21,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { Issue } from "@atomist/automation-client/util/gitHub";
 import { doWithRetry } from "@atomist/automation-client/util/retry";
 import axios, { AxiosPromise, AxiosRequestConfig } from "axios";
-import { toToken } from "../credentials/toToken";
+import { toToken } from "../../api-helper/misc/credentials/toToken";
 
 export type State = "error" | "failure" | "pending" | "success";
 
