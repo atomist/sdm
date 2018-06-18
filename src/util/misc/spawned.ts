@@ -63,9 +63,11 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
                                     options: SpawnOptions,
                                     log: ProgressLog,
                                     spOpts: Partial<SpawnWatchOptions> = {}): Promise<ChildProcessResult> {
+    const delimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
+    // TODO: call through to the client function instead
     const childProcess = spawn(spawnCommand.command, spawnCommand.args || [], options);
     logger.info("%s > %s (spawn with pid=%d)", options.cwd, stringifySpawnCommand(spawnCommand), childProcess.pid);
-    return watchSpawned(childProcess, log, spOpts);
+    return watchSpawned(childProcess, delimitedLog, spOpts);
 }
 
 /**
@@ -90,10 +92,9 @@ export function watchSpawned(childProcess: ChildProcess,
             optsToUse.errorFinder = SuccessIsReturn0ErrorFinder;
         }
 
-        const newLineDelimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
         function sendToLog(data) {
             const formatted = optsToUse.stripAnsi ? strip_ansi(data.toString()) : data.toString();
-            return newLineDelimitedLog.write(formatted);
+            return log.write(formatted);
         }
 
         childProcess.stdout.on("data", sendToLog);
