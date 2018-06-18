@@ -26,10 +26,10 @@ import { ExecuteGoalResult } from "../../../../../api/goal/ExecuteGoalResult";
 import { RunWithLogContext } from "../../../../../api/goal/ExecuteGoalWithLog";
 import { AppInfo } from "../../../../../spi/deploy/Deployment";
 import { ProjectLoader } from "../../../../../spi/project/ProjectLoader";
-import { branchFromCommit } from "../../executeBuild";
 import { readSdmVersion } from "../projectVersioner";
 import { SpawnBuilder, SpawnBuilderOptions } from "../SpawnBuilder";
 import { NpmLogInterpreter } from "./npmLogInterpreter";
+import { branchFromCommit } from "../../../../../api-helper/goal/executeBuild";
 
 /**
  * Options to use when running node commands like npm run compile that require dev dependencies to be installed
