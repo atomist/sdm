@@ -15,6 +15,7 @@
  */
 
 import { failure, HandlerContext, HandlerResult, logger, Success } from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
@@ -229,17 +230,18 @@ export abstract class LocalBuilder implements Builder {
                                    buildNo: string,
                                    context: HandlerContext,
                                    credentials: ProjectOperationCredentials) {
-        const version = await readSdmVersion(push.owner, push.name, push.providerId, push.sha, id.branch, context);
-        if (version) {
-            await createTagForStatus(
-                id,
-                push.sha,
-                "Tag created by SDM",
-                `${version}+sdm.${buildNo}`,
-                credentials);
+        if (configurationValue<boolean>("sdm.build.tag", true) === true) {
+            const version = await readSdmVersion(push.owner, push.name, push.providerId, push.sha, id.branch, context);
+            if (version) {
+                await createTagForStatus(
+                    id,
+                    push.sha,
+                    "Tag created by SDM",
+                    `${version}+sdm.${buildNo}`,
+                    credentials);
+            }
         }
     }
-
 }
 
 function linkArtifact(creds: ProjectOperationCredentials, rb: LocalBuildInProgress, team: string, artifactStore: ArtifactStore): Promise<any> {
