@@ -86,7 +86,7 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
      * @return {RemoteLocator}
      */
     get source(): RemoteLocator {
-        const repoRef = this.config.seed;
+        const repoRef = this.config.seed();
         repoRef.repo = this.seed || repoRef.repo;
         repoRef.owner = this.seedOwner || repoRef.owner;
         return {repoRef};
