@@ -57,7 +57,7 @@ export const AutofixGoal = new Goal({
     orderedName: "0.2-autofix",
     workingDescription: "Running autofixes...",
     completedDescription: "Autofixed",
-    failedDescription: "Fixes made: Don't proceed",
+    failedDescription: "Autofixes applied",
 });
 
 /**
@@ -97,6 +97,7 @@ export const JustBuildGoal = new Goal({
     workingDescription: "Building...",
     completedDescription: "Build successful",
     failedDescription: "Build failed",
+    retryFeasible: true,
 });
 
 export const BuildGoal = new GoalWithPrecondition({
@@ -108,6 +109,7 @@ export const BuildGoal = new GoalWithPrecondition({
     completedDescription: "Build successful",
     failedDescription: "Build failed",
     isolated: true,
+    retryFeasible: true,
 }, AutofixGoal);
 
 // This one is actually satisfied in an ImageLinked event,

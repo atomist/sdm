@@ -48,6 +48,9 @@ export interface GoalDefinition {
 
     // when set to true, this goal requires approval before it is marked success
     approvalRequired?: boolean;
+
+    // when set to true, this goal can be retried in case of failure
+    retryFeasible?: boolean;
 }
 
 export type PreconditionsStatus = "waiting" | "success" | "failure";
