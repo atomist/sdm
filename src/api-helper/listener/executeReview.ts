@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 
 import { failure, logger } from "@atomist/automation-client";
@@ -63,7 +64,7 @@ export function executeReview(projectLoader: ProjectLoader,
                     const reviewerErrors = reviewsAndErrors.filter(e => !!e.error)
                         .map(e => e.error);
 
-                    const review = consolidate(reviews);
+                    const review = consolidate(reviews, id);
                     logger.info("Consolidated review of %j has %s comments", id, review.comments.length);
 
                     const rli = {
@@ -91,9 +92,9 @@ export function executeReview(projectLoader: ProjectLoader,
     };
 }
 
-function consolidate(reviews: ProjectReview[]): ProjectReview {
+function consolidate(reviews: ProjectReview[], repoId: RepoRef): ProjectReview {
     return {
-        repoId: reviews[0].repoId,
+        repoId,
         comments: _.flatten(reviews.map(review => review.comments)),
     };
 }
