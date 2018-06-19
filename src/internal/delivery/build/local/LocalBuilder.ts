@@ -230,7 +230,7 @@ export abstract class LocalBuilder implements Builder {
                                    buildNo: string,
                                    context: HandlerContext,
                                    credentials: ProjectOperationCredentials) {
-        if (configurationValue<boolean>("sdm.build.tag", true) === true) {
+        if (configurationValue<boolean>("sdm.build.tag", true)) {
             const version = await readSdmVersion(push.owner, push.name, push.providerId, push.sha, id.branch, context);
             if (version) {
                 await createTagForStatus(
