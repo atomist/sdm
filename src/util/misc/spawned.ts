@@ -17,18 +17,17 @@
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
-import { sprintf } from "sprintf-js";
-import { DelimitedWriteProgressLogDecorator } from "../../log/DelimitedWriteProgressLogDecorator";
 import * as clientSpawned from "@atomist/automation-client/util/spawned";
 import {
+    asSpawnCommand,
     ChildProcessResult,
+    ErrorFinder,
+    poisonAndWait,
     SpawnCommand,
     SpawnWatchOptions,
     stringifySpawnCommand,
-    asSpawnCommand,
-    ErrorFinder,
-    poisonAndWait
 } from "@atomist/automation-client/util/spawned";
+import { DelimitedWriteProgressLogDecorator } from "../../log/DelimitedWriteProgressLogDecorator";
 
 export {
     ChildProcessResult,
@@ -37,7 +36,7 @@ export {
     stringifySpawnCommand,
     asSpawnCommand,
     ErrorFinder,
-    poisonAndWait
+    poisonAndWait,
 };
 
 /**
