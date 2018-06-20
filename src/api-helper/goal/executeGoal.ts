@@ -176,7 +176,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
 }
 
 function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
-    return `${prefix}-${sdmGoal.environment.toLocaleUpperCase().slice(2)}-${
+    return `${prefix}-${sdmGoal.environment.toLocaleLowerCase().slice(2)}-${
         sdmGoal.name.toLocaleLowerCase().replace(" ", "_")}`;
 }
 
