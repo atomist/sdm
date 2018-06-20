@@ -172,7 +172,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
             progressLog.write("---");
             return result;
         } else {
-            progressLog.write(`Skipped`);
+            progressLog.write(`Result: skipped (not provided)`);
             progressLog.write("---");
             return Success;
         }
