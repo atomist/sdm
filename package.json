@@ -1,6 +1,6 @@
 {
   "name": "@atomist/sdm",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Atomist Software Delivery Machine",
   "author": "Atomist, Inc.",
   "license": "Apache-2.0",
