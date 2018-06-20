@@ -135,7 +135,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
         const hook = goalToHookFile(sdmGoal, stage);
         if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
 
-            logger.info("Invoking goal %s hook '%s'", stage, hook);
+            logger.info("Invoking goal hook '%s'", hook);
 
             const opts = {
                 cwd: path.join(p.baseDir, ".atomist", "hooks"),
@@ -166,10 +166,12 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 result = Success;
             }
 
-            logger.info("Goal %s hook returned: %j", stage, result);
+            logger.info("Goal hook '%s' returned: %j", hook, result);
             return result;
+        } else {
+            logger.debug("Goal hook '%s' does not exist", hook);
+            return Success;
         }
-        return Success;
     });
 }
 
