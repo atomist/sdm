@@ -15,6 +15,7 @@
  */
 
 import {
+    automationClientInstance,
     failure,
     HandlerContext,
     HandlerResult,
@@ -134,7 +135,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const { credentials, id, context, progressLog } = rwlc;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
         const hook = goalToHookFile(sdmGoal, stage);
-        if (p.fileExistsSync(`.atomist/hooks/${hook}`)) {
+        if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
 
             logger.info("Invoking goal %s hook '%s'", stage, hook);
 
@@ -150,7 +151,8 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                     GITHUB_TOKEN: toToken(credentials),
                     ATOMIST_TEAM: context.teamId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
-                    ATOMIST_JWT: jwtToken(),
+                    ATOMIST_REPO: sdmGoal.repo.name,
+                    ATOMIST_OWNER: sdmGoal.repo.owner,
                 },
             };
 
