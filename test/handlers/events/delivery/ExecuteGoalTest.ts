@@ -35,10 +35,11 @@ const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
 
 const fakeGoal = new Goal({
     uniqueName: "HelloWorld",
-    environment: IndependentOfEnvironment, orderedName: "0-yo",
+    environment: IndependentOfEnvironment,
+    orderedName: "0-yo",
 });
 
-const fakeSdmGoal = {fulfillment: {name: "HelloWorld"}, environment: "0-code"} as SdmGoal;
+const fakeSdmGoal = {name: "test", fulfillment: {name: "HelloWorld"}, environment: "0-code"} as SdmGoal;
 
 const fakeCredentials = {token: "NOT-A-TOKEN"};
 
