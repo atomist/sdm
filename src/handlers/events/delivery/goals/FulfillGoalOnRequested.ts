@@ -160,6 +160,8 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
 
 function reportStart(sdmGoal: SdmGoal, progressLog: ProgressLog) {
     progressLog.write(`---`);
+    progressLog.write(`Repository: ${sdmGoal.repo.owner}/${sdmGoal.repo.name}#${sdmGoal.branch}`);
+    progressLog.write(`Sha: ${sdmGoal.sha}`);
     progressLog.write(`Goal: ${sdmGoal.name} - ${sdmGoal.environment.slice(2)}`);
     progressLog.write(`GoalSet: ${sdmGoal.goalSet} - ${sdmGoal.goalSetId}`);
     progressLog.write(
