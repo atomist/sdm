@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
-[Unreleased]: https://github.com/atomist/sdm/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/atomist/sdm/compare/0.2.3...HEAD
+
+### BREAKING
+
+-   SeedDrivenGeneratorSupport allows you to override the seed. This fixes a bug with overriding the seed name,
+and also adds the ability to override the owner. Only GitHub repositories are supported.
+This changes the type of GeneratorConfig.seed; give it a function that returns a _new_ seed repoRef, instead of a constant one. 
+
+## Earlier
 
 ### Added
 

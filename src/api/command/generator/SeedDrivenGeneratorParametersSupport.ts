@@ -53,14 +53,24 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
     public version: string = "0.1.0-SNAPSHOT";
 
     @Parameter({
-        displayName: "Seed repo",
-        description: "Seed repo",
+        displayName: "Seed repository override",
+        description: "Seed repository name",
         ...GitHubNameRegExp,
         minLength: 1,
         maxLength: 50,
         required: false,
     })
     public seed: string;
+
+    @Parameter({
+        displayName: "Seed repository owner override",
+        description: "Seed repository owner",
+        ...GitHubNameRegExp,
+        minLength: 1,
+        maxLength: 50,
+        required: false,
+    })
+    public seedOwner: string;
 
     public target: NewRepoCreationParameters = new GitHubRepoCreationParameters();
 
@@ -76,8 +86,9 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
      * @return {RemoteLocator}
      */
     get source(): RemoteLocator {
-        const repoRef = this.config.seed;
+        const repoRef = this.config.seed();
         repoRef.repo = this.seed || repoRef.repo;
+        repoRef.owner = this.seedOwner || repoRef.owner;
         return {repoRef};
     }
 
