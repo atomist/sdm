@@ -135,6 +135,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
         const hook = goalToHookFile(sdmGoal, stage);
         if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
 
+            progressLog.write("---");
             progressLog.write(`Invoking goal hook '${hook}'`);
 
             const opts = {
@@ -167,9 +168,12 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
             }
 
             progressLog.write(`Goal hook '${hook}' returned '${JSON.stringify(result)}'`);
+            progressLog.write("---");
             return result;
         } else {
+            progressLog.write("---");
             progressLog.write(`Goal hook '${hook}' not found`);
+            progressLog.write("---");
             return Success;
         }
     });

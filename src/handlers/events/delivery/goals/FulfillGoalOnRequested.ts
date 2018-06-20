@@ -160,7 +160,7 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
 
 function reportStart(sdmGoal: SdmGoal, progressLog: ProgressLog) {
     progressLog.write(`---`);
-    progressLog.write(`Goal: ${sdmGoal.name} - ${sdmGoal.environment}`);
+    progressLog.write(`Goal: ${sdmGoal.name} - ${sdmGoal.environment.slice(2)}`);
     progressLog.write(`GoalSet: ${sdmGoal.goalSet} - ${sdmGoal.goalSetId}`);
     progressLog.write(
         `SDM: ${automationClientInstance().configuration.name}@${automationClientInstance().configuration.version}`);
