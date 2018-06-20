@@ -133,10 +133,11 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const { credentials, id, context, progressLog } = rwlc;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
         const hook = goalToHookFile(sdmGoal, stage);
-        if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
 
-            progressLog.write("---");
-            progressLog.write(`Invoking goal hook '${hook}'`);
+        progressLog.write("---");
+        progressLog.write(`Invoking goal hook: ${hook}`);
+
+        if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
 
             const opts = {
                 cwd: path.join(p.baseDir, ".atomist", "hooks"),
@@ -167,12 +168,11 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 result = Success;
             }
 
-            progressLog.write(`Goal hook '${hook}' returned '${JSON.stringify(result)}'`);
+            progressLog.write(`Result: ${JSON.stringify(result)}`);
             progressLog.write("---");
             return result;
         } else {
-            progressLog.write("---");
-            progressLog.write(`Goal hook '${hook}' not found`);
+            progressLog.write(`Skipped`);
             progressLog.write("---");
             return Success;
         }
