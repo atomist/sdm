@@ -15,6 +15,7 @@
  */
 
 import { Goal } from "../../api/goal/Goal";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 import { IsolatedGoalLauncher } from "../../api/goal/support/IsolatedGoalLauncher";
 import {
     GoalFulfillment,
@@ -24,7 +25,6 @@ import {
     SdmGoalImplementationMapper,
 } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
-import { SdmGoal } from "../../api/goal/SdmGoal";
 
 /**
  * Concrete implementation of SdmGoalImplementationMapper

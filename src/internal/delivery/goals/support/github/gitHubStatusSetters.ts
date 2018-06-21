@@ -16,17 +16,17 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { goalKeyString } from "../../../../../api-helper/goal/sdmGoal";
+import { SdmGoal, SdmGoalState } from "../../../../../api/goal/SdmGoal";
 import {
     GoalCompletionListener,
     GoalCompletionListenerInvocation,
     GoalsSetListener,
     GoalsSetListenerInvocation,
 } from "../../../../../api/listener/GoalsSetListener";
-import { SdmGoal, SdmGoalState } from "../../../../../api/goal/SdmGoal";
 import { CredentialsResolver } from "../../../../../spi/credentials/CredentialsResolver";
 import { StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
-import { goalKeyString } from "../../../../../api-helper/goal/sdmGoal";
 
 export function createPendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {

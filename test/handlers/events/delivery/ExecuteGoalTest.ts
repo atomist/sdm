@@ -23,8 +23,8 @@ import { createEphemeralProgressLog } from "../../../../src/api-helper/log/Ephem
 import { lastLinesLogInterpreter } from "../../../../src/api-helper/log/logInterpreters";
 import { RunWithLogContext } from "../../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../src/api/goal/Goal";
-import { IndependentOfEnvironment } from "../../../../src/api/goal/support/environment";
 import { SdmGoal } from "../../../../src/api/goal/SdmGoal";
+import { IndependentOfEnvironment } from "../../../../src/api/goal/support/environment";
 import { fakeContext } from "../../../../src/util/test/fakeContext";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 

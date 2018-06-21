@@ -22,11 +22,11 @@ import { AddressChannels, addressChannelsFor } from "../../api/context/addressCh
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal, hasPreconditions } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
+import { SdmGoal, SdmGoalFulfillment } from "../../api/goal/SdmGoal";
 import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { GoalsSetListener, GoalsSetListenerInvocation } from "../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { SdmGoal, SdmGoalFulfillment } from "../../api/goal/SdmGoal";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { PushFields } from "../../typings/types";

@@ -27,9 +27,10 @@ import {
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
 import { preconditionsAreMet } from "../../../../api-helper/goal/goalPreconditions";
+import { goalKeyString } from "../../../../api-helper/goal/sdmGoal";
 import { updateGoal } from "../../../../api-helper/goal/storeGoals";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { SdmGoal, SdmGoalKey } from "../../../../api/goal/SdmGoal";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
@@ -37,7 +38,6 @@ import {
     OnAnySuccessfulSdmGoal,
     ScmProvider,
 } from "../../../../typings/types";
-import { goalKeyString } from "../../../../api-helper/goal/sdmGoal";
 
 /**
  * Respond to a failure status by failing downstream goals

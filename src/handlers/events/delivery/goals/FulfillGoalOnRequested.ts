@@ -34,11 +34,11 @@ import { LoggingProgressLog } from "../../../../api-helper/log/LoggingProgressLo
 import { WriteToAllProgressLog } from "../../../../api-helper/log/WriteToAllProgressLog";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
-import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import {
     SdmGoal,
     SdmGoalState,
 } from "../../../../api/goal/SdmGoal";
+import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
 import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";

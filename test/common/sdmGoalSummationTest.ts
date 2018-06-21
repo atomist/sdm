@@ -17,9 +17,9 @@
 // tslint:disable:max-file-line-count
 
 import * as assert from "power-assert";
-import { sumSdmGoalEventsByOverride } from "../../src/handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
-import { SdmGoal } from "../../src/api/goal/SdmGoal";
 import { goalKeyEquals } from "../../src/api-helper/goal/sdmGoal";
+import { SdmGoal } from "../../src/api/goal/SdmGoal";
+import { sumSdmGoalEventsByOverride } from "../../src/handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
 
 describe("Putting SdmGoal events together", () => {
    it("Lets the event we just received override out-of-date query results", () => {

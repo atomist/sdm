@@ -30,8 +30,8 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
-import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { SdmGoal } from "../../../../api/goal/SdmGoal";
+import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../api/listener/GoalsSetListener";
 import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyCompletedSdmGoal } from "../../../../typings/types";

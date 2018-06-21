@@ -20,12 +20,12 @@ import { addressEvent } from "@atomist/automation-client/spi/message/MessageClie
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { Goal, hasPreconditions } from "../../api/goal/Goal";
-import { disregardApproval } from "../../api/goal/support/approvalGate";
-import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 import {
     GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey, SdmGoalState,
     SdmProvenance,
 } from "../../api/goal/SdmGoal";
+import { disregardApproval } from "../../api/goal/support/approvalGate";
+import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
