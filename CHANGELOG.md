@@ -7,7 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][]
 
-[Unreleased]: https://github.com/atomist/sdm/compare/0.2.3...HEAD
+[Unreleased]: https://github.com/atomist/sdm/compare/0.2.4...HEAD
+
+### BREAKING
+
+- EditorRegistration supports general editorCommand customizations, instead of specifically dryRun.
+If you were setting `dryRun = true`, set `editorCommandFactory = dryRunEditorCommand` instead.
+
+## [0.2.3][https://github.com/atomist/sdm/compare/0.2.2...0.2.3] - 2018-06-18
 
 ### BREAKING
 

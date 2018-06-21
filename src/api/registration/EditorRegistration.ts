@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
+import { HandleCommand } from "@atomist/automation-client";
+import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { MachineOrMachineOptions } from "../../api-helper/machine/toMachineOptions";
 import { EmptyParameters } from "../command/support/EmptyParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
@@ -41,8 +45,16 @@ export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<Ed
     /**
      * Should this be a dry run editor: That is,
      * should it wait for the build result to determine whether to raise a pull request
-     * or issue. Default is no.
+     * or issue. Default is editorCommand, which creates a branch and a PR.
      */
-    dryRun?: boolean;
+    editorCommandFactory?: EditorCommandFactory<PARAMS>;
 
 }
+
+export type EditorCommandFactory<PARAMS> = (
+    sdm: MachineOrMachineOptions,
+    edd: (params: PARAMS) => AnyProjectEditor,
+    name: string,
+    paramsMaker?: Maker<PARAMS>,
+    details?: Partial<EditorCommandDetails<PARAMS>>,
+    targets?: FallbackParams) => HandleCommand<EditOneOrAllParameters>;

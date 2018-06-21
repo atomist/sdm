@@ -24,7 +24,6 @@ import { CommandHandlerRegistration } from "../../api/registration/CommandHandle
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
-import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
@@ -38,7 +37,7 @@ import * as stringify from "json-stringify-safe";
 
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, EditorTag);
-    const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
+    const fun = e.editorCommandFactory || editorCommand;
     return () => fun(
         sdm,
         toEditorFunction(e),
