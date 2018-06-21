@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+import { GitHubStatus } from "../GitHubContext";
+
 /**˚
  * Added to end of URL of a status to fire manual approval step
  * @type {string}
  */
-import { GitHubStatus } from "../../../internal/delivery/goals/support/github/gitHubContext";
 
 export const ApprovalGateParam = "atomist:approve=true";
 

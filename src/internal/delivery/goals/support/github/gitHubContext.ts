@@ -15,23 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { StatusState } from "../../../../../typings/types";
+import { BaseContext, GitHubStatusContext } from "../../../../../api/goal/GitHubContext";
 
-// convention: "sdm/atomist/#-env/#-goal" (the numbers are for ordering)
-export type GitHubStatusContext = string;
-
-export interface GitHubStatus {
-    context?: GitHubStatusContext;
-    description?: string;
-    state?: StatusState;
-    targetUrl?: string;
-}
-
-export interface GitHubStatusAndFriends extends GitHubStatus {
-    siblings: GitHubStatus[];
-}
-
-export const BaseContext = "sdm/atomist/";
 
 /**
  * if this is a context we created, then we can interpret it.
