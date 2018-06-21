@@ -22,16 +22,16 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { goalKeyString } from "../../../../api-helper/goal/sdmGoal";
-import { goalCorrespondsToSdmGoal } from "../../../../api-helper/goal/storeGoals";
-import { Goal } from "../../../../api/goal/Goal";
-import { SdmGoal } from "../../../../api/goal/SdmGoal";
+import { Goal } from "../../api/goal/Goal";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 import {
     CommitForSdmGoal,
     SdmGoalFields,
     SdmGoalRepo,
     SdmGoalsForCommit,
-} from "../../../../typings/types";
+} from "../../typings/types";
+import { goalKeyString } from "./sdmGoal";
+import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
     const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId) as SdmGoal[];

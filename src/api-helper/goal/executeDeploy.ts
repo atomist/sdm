@@ -22,9 +22,9 @@ import { ArtifactStore, DeployableArtifact } from "../../spi/artifact/ArtifactSt
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
+import { findSdmGoalOnCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { SdmGoal, SdmGoalState } from "../../api/goal/SdmGoal";
-import { findSdmGoalOnCommit } from "../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { Deployment } from "../../spi/deploy/Deployment";
 import { Target } from "../../spi/deploy/Target";
 import { ProgressLog } from "../../spi/log/ProgressLog";

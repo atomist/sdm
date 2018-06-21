@@ -29,10 +29,10 @@ import {
     Value,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../api-helper/goal/fetchGoalsOnCommit";
 import { addressChannelsFor } from "../../../../api/context/addressChannels";
 import { SdmGoal } from "../../../../api/goal/SdmGoal";
 import { GoalCompletionListener, GoalCompletionListenerInvocation } from "../../../../api/listener/GoalsSetListener";
-import { fetchCommitForSdmGoal, fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyCompletedSdmGoal } from "../../../../typings/types";
 

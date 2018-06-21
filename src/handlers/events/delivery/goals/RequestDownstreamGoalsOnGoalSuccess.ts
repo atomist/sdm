@@ -26,12 +26,12 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import * as _ from "lodash";
+import { fetchGoalsForCommit } from "../../../../api-helper/goal/fetchGoalsOnCommit";
 import { preconditionsAreMet } from "../../../../api-helper/goal/goalPreconditions";
 import { goalKeyString } from "../../../../api-helper/goal/sdmGoal";
 import { updateGoal } from "../../../../api-helper/goal/storeGoals";
 import { SdmGoal, SdmGoalKey } from "../../../../api/goal/SdmGoal";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
-import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import {

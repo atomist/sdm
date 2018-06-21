@@ -24,10 +24,10 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
+import { fetchGoalsForCommit } from "../../../../api-helper/goal/fetchGoalsOnCommit";
 import { goalKeyEquals } from "../../../../api-helper/goal/sdmGoal";
 import { updateGoal } from "../../../../api-helper/goal/storeGoals";
 import { SdmGoal, SdmGoalKey } from "../../../../api/goal/SdmGoal";
-import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
