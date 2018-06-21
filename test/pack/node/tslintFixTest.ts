@@ -21,11 +21,11 @@ import { successOn } from "@atomist/automation-client/action/ActionResult";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
-import { executeAutofixes } from "../../../../../../src/api-helper/listener/executeAutofixes";
-import { DefaultRepoRefResolver } from "../../../../../../src/handlers/common/DefaultRepoRefResolver";
-import { tslintFix } from "../../../../../../src/pack/node/tslint";
-import { fakeRunWithLogContext } from "../../../../../../src/util/test/fakeRunWithLogContext";
-import { SingleProjectLoader } from "../../../../../../src/util/test/SingleProjectLoader";
+import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
+import { DefaultRepoRefResolver } from "../../../src/handlers/common/DefaultRepoRefResolver";
+import { tslintFix } from "../../../src/pack/node/tslintFix";
+import { fakeRunWithLogContext } from "../../../src/util/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../src/util/test/SingleProjectLoader";
 
 describe("tsLintFix", () => {
 

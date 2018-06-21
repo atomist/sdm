@@ -17,7 +17,7 @@
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { projectCljToAppInfo } from "../../../../../../../src/internal/delivery/build/local/lein/leinBuilder";
+import { projectCljToAppInfo } from "../../../../../../src/internal/delivery/build/local/lein/leinBuilder";
 
 describe("package.clj parsing", () => {
 
