@@ -16,28 +16,18 @@
 
 import { given } from "../../../src/api/dsl/decisionTree";
 import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
-
-import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
-import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
-import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
+import { fakePush } from "../../../src/api-helper/test/fakePush";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",
     mapping: async () => "frog",
 };
 
-export function fakePush(project?: Project): PushListenerInvocation {
-    return {
-        push: {id: new Date().getTime() + "_"},
-        project,
-        context: fakeContext(),
-    } as any as PushListenerInvocation;
-}
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",

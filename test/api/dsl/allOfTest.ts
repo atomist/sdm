@@ -17,7 +17,7 @@
 import * as assert from "power-assert";
 import { allOf } from "../../../src/api/dsl/allOf";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { fakePush } from "./decisionTreeTest";
+import { fakePush } from "../../../src/api-helper/test/fakePush";
 
 describe("allOf", () => {
 

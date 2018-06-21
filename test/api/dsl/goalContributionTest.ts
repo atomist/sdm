@@ -16,7 +16,6 @@
 
 import { enrichGoalSetters, goalContributors } from "../../../src/api/dsl/goalContribution";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
-import { fakePush } from "./decisionTreeTest";
 
 import * as assert from "power-assert";
 import { GoalComponent } from "../../../src/api/dsl/GoalComponent";
@@ -25,6 +24,7 @@ import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
+import { fakePush } from "../../../src/api-helper/test/fakePush";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
