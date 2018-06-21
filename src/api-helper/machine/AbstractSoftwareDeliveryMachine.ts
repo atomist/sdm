@@ -42,9 +42,9 @@ import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../goal/executeBuild";
 import { executeDeploy } from "../goal/executeDeploy";
+import { executeUndeploy } from "../goal/executeUndeploy";
 import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
-import { executeUndeploy } from "../goal/executeUndeploy";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.

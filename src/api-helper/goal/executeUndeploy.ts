@@ -16,8 +16,8 @@
 
 import { logger, Success } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
-import { Target } from "../../spi/deploy/Target";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { Target } from "../../spi/deploy/Target";
 
 export function executeUndeploy(target: Target): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
