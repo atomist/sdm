@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { Project } from "@atomist/automation-client/project/Project";
+import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { fakeContext } from "./fakeContext";
 
 export function fakePush(project?: Project): PushListenerInvocation {

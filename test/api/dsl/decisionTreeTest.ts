@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-import { given } from "../../../src/api/dsl/decisionTree";
-import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
 import * as assert from "power-assert";
+import { fakePush } from "../../../src/api-helper/test/fakePush";
+import { given } from "../../../src/api/dsl/decisionTree";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
-import { fakePush } from "../../../src/api-helper/test/fakePush";
+import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",
     mapping: async () => "frog",
 };
-
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
