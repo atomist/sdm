@@ -19,12 +19,12 @@ import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTes
 
 import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
+import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
+import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
-import { fakeContext } from "../../../src/api-helper/test/fakeContext";
-import { Goal } from "../../../src/api/goal/Goal";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",
@@ -41,7 +41,7 @@ export function fakePush(project?: Project): PushListenerInvocation {
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
-    environment: "0-code/", orderedName: "0-Fred"
+    environment: "0-code/", orderedName: "0-Fred",
 }));
 
 const NoGoals = new Goals("No goals");

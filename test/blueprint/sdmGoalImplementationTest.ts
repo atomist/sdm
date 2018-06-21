@@ -21,6 +21,7 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 
 import * as assert from "power-assert";
 import { determineGoals } from "../../src/api-helper/goal/chooseAndSetGoals";
+import { SingleProjectLoader } from "../../src/api-helper/test/SingleProjectLoader";
 import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
 import { Goal } from "../../src/api/goal/Goal";
 import { Goals } from "../../src/api/goal/Goals";
@@ -33,7 +34,6 @@ import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { DefaultRepoRefResolver } from "../../src/handlers/common/DefaultRepoRefResolver";
 import { createSoftwareDeliveryMachine } from "../../src/machine/machineFactory";
 import { PushFields } from "../../src/typings/types";
-import { SingleProjectLoader } from "../../src/api-helper/test/SingleProjectLoader";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",

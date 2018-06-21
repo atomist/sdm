@@ -21,16 +21,15 @@ import { fakePush } from "./decisionTreeTest";
 import * as assert from "power-assert";
 import { GoalComponent } from "../../../src/api/dsl/GoalComponent";
 import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
+import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
-import { Goal } from "../../../src/api/goal/Goal";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
-    environment: "0-code/", orderedName: "0-Fred"
+    environment: "0-code/", orderedName: "0-Fred",
 }));
-
 
 describe("goalContribution", () => {
 

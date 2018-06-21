@@ -19,18 +19,18 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
-import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import { pushTest } from "../../../src/api/mapping/PushTest";
+import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
 import { RepoRefResolver } from "../../../src/spi/repo-ref/RepoRefResolver";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../../src/typings/types";
-import { SdmGoal } from "../../../src/api/goal/SdmGoal";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
@@ -43,7 +43,6 @@ export const AddThingAutofix: AutofixRegistration = {
         return { edited: true, success: true, target: cri.project };
     },
 };
-
 
 const FakeRepoRefResolver: RepoRefResolver = {
     repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef {
@@ -85,7 +84,7 @@ const FakeRepoRefResolver: RepoRefResolver = {
             owner: repo.owner,
             repo: repo.name,
             sha: opts.sha,
-            branch: opts.branch
+            branch: opts.branch,
         };
     },
 

@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { PushReactionRegistration } from "../../api/registration/PushReactionRegistration";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
+import { PushReactionRegistration } from "../../api/registration/PushReactionRegistration";
 
 /**
  * Compute the relevant actions for this push. Some may be filtered out

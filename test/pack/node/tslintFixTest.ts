@@ -22,10 +22,10 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
+import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { DefaultRepoRefResolver } from "../../../src/handlers/common/DefaultRepoRefResolver";
 import { tslintFix } from "../../../src/pack/node/tslintFix";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
 
 describe("tsLintFix", () => {
 

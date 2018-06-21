@@ -21,12 +21,12 @@ import * as assert from "power-assert";
 import { executeGoal } from "../../../src/api-helper/goal/executeGoal";
 import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";
 import { lastLinesLogInterpreter } from "../../../src/api-helper/log/logInterpreters";
+import { fakeContext } from "../../../src/api-helper/test/fakeContext";
+import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { RunWithLogContext } from "../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../src/api/goal/Goal";
 import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
-import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 
 const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
     rwlc.progressLog.write("Hello world\n");

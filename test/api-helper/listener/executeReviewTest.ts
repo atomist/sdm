@@ -26,9 +26,9 @@ import { TruePushTest } from "../../api/mapping/support/pushTestUtilsTest";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import * as assert from "power-assert";
 import { executeReview } from "../../../src/api-helper/listener/executeReview";
-import { PushReactionResponse } from "../../../src/api/registration/PushReactionRegistration";
 import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { PushReactionResponse } from "../../../src/api/registration/PushReactionRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
