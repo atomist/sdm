@@ -19,11 +19,11 @@ import { Success } from "@atomist/automation-client/Handlers";
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { computeFingerprints } from "../../../../api-helper/listener/computeFingerprints";
 import { createPushImpactListenerInvocation } from "../../../../api-helper/listener/createPushImpactListenerInvocation";
+import { relevantCodeActions } from "../../../../api-helper/listener/relevantCodeActions";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../../../api/registration/FingerprinterRegistration";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
-import { relevantCodeActions } from "../../../../api-helper/listener/relevantCodeActions";
 
 /**
  * Execute fingerprinting and send fingerprints to Atomist

@@ -16,14 +16,14 @@
 
 import * as assert from "power-assert";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
+import { Goal } from "../../../src/api/goal/Goal";
+import { Goals } from "../../../src/api/goal/Goals";
 import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
 import { fakePush } from "./decisionTreeTest";
-import { Goals } from "../../../src/api/goal/Goals";
-import { Goal } from "../../../src/api/goal/Goal";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
-    environment: "0-code/", orderedName: "0-Fred"
+    environment: "0-code/", orderedName: "0-Fred",
 }));
 
 describe("whenPushSatisfies", () => {

@@ -94,4 +94,3 @@ export interface SelectiveCodeActionOptions {
      */
     considerOnlyChangedFiles: boolean;
 }
-

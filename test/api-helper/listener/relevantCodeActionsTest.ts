@@ -18,13 +18,13 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import axios from "axios";
 
 import * as assert from "power-assert";
+import { relevantCodeActions } from "../../../src/api-helper/listener/relevantCodeActions";
 import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
 import {
     AutofixRegistration,
     editorAutofixRegistration,
 } from "../../../src/api/registration/AutofixRegistration";
 import { tslintFix } from "../../../src/pack/node/tslintFix";
-import { relevantCodeActions } from "../../../src/api-helper/listener/relevantCodeActions";
 
 describe("relevantCodeActions", () => {
 
