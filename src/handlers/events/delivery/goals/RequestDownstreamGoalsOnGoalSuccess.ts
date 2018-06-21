@@ -73,7 +73,8 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
         }
 
         const id = params.repoRefResolver.repoRefFromSdmGoal(sdmGoal, await fetchScmProvider(context, sdmGoal.repo.providerId));
-        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(
+            await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId, sdmGoal.goalSetId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
             // .filter(expectToBeFulfilledAfterRequest)

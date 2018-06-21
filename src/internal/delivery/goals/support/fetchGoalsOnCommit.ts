@@ -39,7 +39,7 @@ export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef
     const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId) as SdmGoal[];
     const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g));
     if (matches && matches.length > 1) {
-        logger.warn("FindSdmGoal: More than one match found for %s/%s; they are %j", goal.environment, goal.name, matches);
+        logger.warn("More than one match found for %s/%s; they are %j", goal.environment, goal.name, matches);
     }
     if (matches.length === 0) {
         logger.debug("Did not find goal %s on commit %s#%s", goalKeyString(goal), id.repo, id.sha);
@@ -63,7 +63,10 @@ export async function fetchCommitForSdmGoal(ctx: HandlerContext,
     return result.Commit[0];
 }
 
-export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
+export async function fetchGoalsForCommit(ctx: HandlerContext,
+                                          id: RemoteRepoRef,
+                                          providerId: string,
+                                          goalSetId?: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
     const result = await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
         name: "SdmGoalsForCommit",
         variables: {
@@ -83,15 +86,16 @@ export async function fetchGoalsForCommit(ctx: HandlerContext, id: RemoteRepoRef
         logger.warn("0 goals found for commit %j, provider %s", id, providerId);
     }
     if (result.SdmGoal.some(g => !g)) {
-        logger.warn("Internal error: Null or undefined goal found for commit %j, provider %s", id, providerId);
+        logger.warn("Null or undefined goal found for commit %j, provider %s", id, providerId);
     }
     if (result.SdmGoal.length === 200) {
         logger.warn("Watch out! There may be more goals than this. We only retrieve 200.");
         // automation-api#399 paging is not well-supported yet
     }
 
-    // only maintain latest version of SdmGoals
-    const goals: SdmGoalsForCommit.SdmGoal[] = sumSdmGoalEvents(result.SdmGoal as SdmGoal[]);
+    // only maintain latest version of SdmGoals from the current goal set
+    const goals: SdmGoalsForCommit.SdmGoal[] =
+        sumSdmGoalEvents((result.SdmGoal as SdmGoal[]).filter(g => !goalSetId || g.goalSetId === goalSetId));
     logger.debug("summed goals: ", stringify(goals));
 
     return goals;

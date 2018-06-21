@@ -62,7 +62,8 @@ export class SkipDownstreamGoalsOnGoalFailure implements HandleEvent<OnAnyFailed
         }
 
         const id = params.repoRefResolver.repoRefFromSdmGoal(failedGoal, await fetchScmProvider(context, failedGoal.repo.providerId));
-        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(await fetchGoalsForCommit(context, id, failedGoal.repo.providerId) as SdmGoal[],
+        const goals: SdmGoal[] = sumSdmGoalEventsByOverride(
+            await fetchGoalsForCommit(context, id, failedGoal.repo.providerId, failedGoal.goalSetId) as SdmGoal[],
             [failedGoal]);
 
         const goalsToSkip = goals.filter(g => isDependentOn(failedGoal, g, mapKeyToGoal(goals)))

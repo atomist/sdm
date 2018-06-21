@@ -60,7 +60,6 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
         }
 
         if (sdmGoal.state !== "failure" && sdmGoal.state !== "success") { // atomisthq/automation-api#395
-            logger.debug(`********* completion reported when the state was=[${sdmGoal.state}]`);
             return Promise.resolve(Success);
         }
 
@@ -68,7 +67,7 @@ export class RespondOnGoalCompletion implements HandleEvent<OnAnyCompletedSdmGoa
         const push = commit.pushes[0];
         const id = this.repoRefResolver.repoRefFromPush(push);
         const allGoals: SdmGoal[] = sumSdmGoalEventsByOverride(
-            await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId) as SdmGoal[], [sdmGoal]);
+            await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId, sdmGoal.goalSetId) as SdmGoal[], [sdmGoal]);
 
         (this.credentialsFactory as any).githubToken = this.token;
 
