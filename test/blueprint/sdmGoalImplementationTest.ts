@@ -33,7 +33,7 @@ import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
 import { DefaultRepoRefResolver } from "../../src/handlers/common/DefaultRepoRefResolver";
 import { createSoftwareDeliveryMachine } from "../../src/machine/machineFactory";
 import { PushFields } from "../../src/typings/types";
-import { SingleProjectLoader } from "../../src/util/test/SingleProjectLoader";
+import { SingleProjectLoader } from "../../src/api-helper/test/SingleProjectLoader";
 
 const favoriteRepoRef = GitHubRepoRef.from({
     owner: "jess",

@@ -22,18 +22,73 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
 import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
-import { DefaultRepoRefResolver } from "../../../src/handlers/common/DefaultRepoRefResolver";
-import { IsTypeScript } from "../../../src/pack/node/tsPushTests";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
+import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
+import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import { pushTest } from "../../../src/api/mapping/PushTest";
+import { RepoRefResolver } from "../../../src/spi/repo-ref/RepoRefResolver";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../../src/typings/types";
+import { SdmGoal } from "../../../src/api/goal/SdmGoal";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
-    pushTest: IsTypeScript,
+    pushTest: pushTest(
+        "Is TypeScript",
+        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+    ),
     action: async cri => {
         await cri.project.addFile("thing", "1");
-        return { edited: true, success: true, target: cri.project};
+        return { edited: true, success: true, target: cri.project };
     },
+};
+
+
+const FakeRepoRefResolver: RepoRefResolver = {
+    repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef {
+        throw new Error("Not implemented");
+    },
+
+    providerIdFromPush(push: OnPushToAnyBranch.Push): string | null {
+        throw new Error("Not implemented");
+    },
+
+    providerIdFromStatus(status: StatusForExecuteGoal.Fragment): string | null {
+        throw new Error("Not implemented");
+    },
+
+    repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef {
+        throw new Error("Not implemented");
+    },
+
+    toRemoteRepoRef(repo: CoreRepoFieldsAndChannels.Fragment, opts: { sha?: string, branch?: string }): RemoteRepoRef {
+        return {
+            remoteBase: "unreal",
+            providerType: 0,
+            url: "not-here",
+            cloneUrl() {
+                return "nope";
+            },
+            createRemote() {
+                throw new Error("Not implemented");
+            },
+            setUserConfig() {
+                throw new Error("Not implemented");
+            },
+            raisePullRequest() {
+                throw new Error("Not implemented");
+            },
+            deleteRemote() {
+                throw new Error("Not implemented");
+            },
+            owner: repo.owner,
+            repo: repo.name,
+            sha: opts.sha,
+            branch: opts.branch
+        };
+    },
+
 };
 
 describe("executeAutofixes", () => {
@@ -41,7 +96,9 @@ describe("executeAutofixes", () => {
     it("should execute none", async () => {
         const id = new GitHubRepoRef("a", "b");
         const pl = new SingleProjectLoader({ id } as any);
-        const r = await executeAutofixes(pl, [], new DefaultRepoRefResolver())(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl,
+            [],
+            FakeRepoRefResolver)(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
     });
 
@@ -51,7 +108,9 @@ describe("executeAutofixes", () => {
         const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl, [AddThingAutofix], new DefaultRepoRefResolver())(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl,
+            [AddThingAutofix],
+            FakeRepoRefResolver)(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
         assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
@@ -60,11 +119,13 @@ describe("executeAutofixes", () => {
         const id = new GitHubRepoRef("a", "b");
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
-        const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License"});
+        const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl, [AddThingAutofix], new DefaultRepoRefResolver())(fakeRunWithLogContext(id));
+        const r = await executeAutofixes(pl,
+            [AddThingAutofix],
+            FakeRepoRefResolver)(fakeRunWithLogContext(id));
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");

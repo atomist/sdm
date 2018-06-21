@@ -23,9 +23,8 @@ import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { Goals } from "../../../src/api/goal/Goals";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
-import { NoGoals } from "../../../src/pack/well-known-goals/commonGoals";
-import { HttpServiceGoals } from "../../../src/pack/well-known-goals/httpServiceGoals";
 import { fakeContext } from "../../../src/api-helper/test/fakeContext";
+import { Goal } from "../../../src/api/goal/Goal";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",
@@ -39,6 +38,13 @@ export function fakePush(project?: Project): PushListenerInvocation {
         context: fakeContext(),
     } as any as PushListenerInvocation;
 }
+
+const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
+    uniqueName: "Fred",
+    environment: "0-code/", orderedName: "0-Fred"
+}));
+
+const NoGoals = new Goals("No goals");
 
 describe("given", () => {
 
@@ -78,10 +84,10 @@ describe("given", () => {
         const pm: PushMapping<Goals> = given<Goals>(TruePushTest)
             .itMeans("no frogs coming")
             .then(
-                whenPushSatisfies(TruePushTest).itMeans("http").setGoals(HttpServiceGoals),
+                whenPushSatisfies(TruePushTest).itMeans("http").setGoals(SomeGoalSet),
             );
         const mapped = await pm.mapping(fakePush());
-        assert.equal(mapped, HttpServiceGoals);
+        assert.equal(mapped, SomeGoalSet);
     });
 
     it("nest with multiple when", async () => {
@@ -89,10 +95,10 @@ describe("given", () => {
             .itMeans("no frogs coming")
             .then(
                 whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
-                whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
+                whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
             );
         const mapped = await pm.mapping(fakePush());
-        assert.equal(mapped, HttpServiceGoals);
+        assert.equal(mapped, SomeGoalSet);
     });
 
     it("nested given", async () => {
@@ -101,11 +107,11 @@ describe("given", () => {
             .then(
                 given<Goals>(TruePushTest).itMeans("case1").then(
                     whenPushSatisfies(FalsePushTest).itMeans("nope").setGoals(NoGoals),
-                    whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
+                    whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
                 ),
             );
         const mapped = await pm.mapping(fakePush());
-        assert.equal(mapped, HttpServiceGoals);
+        assert.equal(mapped, SomeGoalSet);
     });
 
     it("nested given with variable", async () => {
@@ -118,10 +124,10 @@ describe("given", () => {
                     .compute(() => count++)
                     .then(
                         whenPushSatisfies(() => count > 0, FalsePushTest).itMeans("nope").setGoals(NoGoals),
-                        whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(HttpServiceGoals),
+                        whenPushSatisfies(TruePushTest).itMeans("yes").setGoals(SomeGoalSet),
                     ),
             );
         const mapped = await pm.mapping(fakePush());
-        assert.equal(mapped, HttpServiceGoals);
+        assert.equal(mapped, SomeGoalSet);
     });
 });
