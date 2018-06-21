@@ -134,7 +134,7 @@ function defaultDetails<P extends SeedDrivenGeneratorParameters>(opts: SoftwareD
     return {
         description: name,
         repoFinder: opts.repoFinder,
-        repoLoader: (p: P) => projectLoaderRepoLoader(new CachingProjectLoader(), p.target.credentials),
+        repoLoader: (p: P) => projectLoaderRepoLoader(opts.projectLoader || new CachingProjectLoader(), p.target.credentials),
         projectPersister: opts.projectPersister,
         redirecter: () => undefined,
     };
