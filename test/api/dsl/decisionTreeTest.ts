@@ -25,7 +25,7 @@ import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
 import { NoGoals } from "../../../src/pack/well-known-goals/commonGoals";
 import { HttpServiceGoals } from "../../../src/pack/well-known-goals/httpServiceGoals";
-import { fakeContext } from "../../../src/util/test/fakeContext";
+import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",

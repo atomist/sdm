@@ -25,8 +25,8 @@ import { RunWithLogContext } from "../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../src/api/goal/Goal";
 import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
-import { fakeContext } from "../../../src/util/test/fakeContext";
-import { SingleProjectLoader } from "../../../src/util/test/SingleProjectLoader";
+import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 
 const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
     rwlc.progressLog.write("Hello world\n");

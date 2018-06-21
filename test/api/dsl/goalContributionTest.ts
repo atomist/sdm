@@ -16,7 +16,6 @@
 
 import { enrichGoalSetters, goalContributors } from "../../../src/api/dsl/goalContribution";
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
-import { HttpServiceGoals } from "../../../src/pack/well-known-goals/httpServiceGoals";
 import { fakePush } from "./decisionTreeTest";
 
 import * as assert from "power-assert";
@@ -25,13 +24,20 @@ import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
+import { Goal } from "../../../src/api/goal/Goal";
+
+const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
+    uniqueName: "Fred",
+    environment: "0-code/", orderedName: "0-Fred"
+}));
+
 
 describe("goalContribution", () => {
 
     describe("goalContributors", () => {
 
         it("should set no goals", async () => {
-            const gs = goalContributors(whenPushSatisfies(() => false).itMeans("thing").setGoals(HttpServiceGoals));
+            const gs = goalContributors(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals, undefined);
@@ -45,12 +51,12 @@ describe("goalContribution", () => {
         });
 
         it("should set goals from one goals", async () => {
-            const r = whenPushSatisfies(() => true).setGoals(HttpServiceGoals);
+            const r = whenPushSatisfies(() => true).setGoals(SomeGoalSet);
             const gs = goalContributors(r);
             const p = fakePush();
-            assert.equal(await r.mapping(p), HttpServiceGoals);
+            assert.equal(await r.mapping(p), SomeGoalSet);
             const goals: Goals = await gs.mapping(p);
-            assert.deepEqual(goals.goals, HttpServiceGoals.goals);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals);
         });
 
     });
@@ -58,29 +64,29 @@ describe("goalContribution", () => {
     describe("enrichGoalSetters", () => {
 
         it("should set no goals", async () => {
-            const gs: GoalSetter = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(HttpServiceGoals),
-                whenPushSatisfies(() => false).setGoals(HttpServiceGoals));
+            const gs: GoalSetter = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
+                whenPushSatisfies(() => false).setGoals(SomeGoalSet));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals, undefined);
         });
 
         it("should add goal to none", async () => {
-            const gs: GoalSetter = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(HttpServiceGoals),
-                whenPushSatisfies(() => true).setGoals(HttpServiceGoals));
+            const gs: GoalSetter = enrichGoalSetters(whenPushSatisfies(() => false).itMeans("thing").setGoals(SomeGoalSet),
+                whenPushSatisfies(() => true).setGoals(SomeGoalSet));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
-            assert.deepEqual(goals.goals, HttpServiceGoals.goals);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals);
         });
 
         it("should add goal to some", async () => {
             // TODO what is the problem with MessageGoal and type checking??
-            const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(HttpServiceGoals);
+            const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             const gs: GoalSetter = enrichGoalSetters(old,
                 whenPushSatisfies(() => true).setGoals(MessageGoal as any as GoalComponent));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
-            assert.deepEqual(goals.goals, HttpServiceGoals.goals.concat(MessageGoal as any));
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat(MessageGoal as any));
         });
 
     });

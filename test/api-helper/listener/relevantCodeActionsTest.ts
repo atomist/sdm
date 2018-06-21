@@ -23,8 +23,17 @@ import {
     AutofixRegistration,
     editorAutofixRegistration,
 } from "../../../src/api/registration/AutofixRegistration";
-import { tslintFix } from "../../../src/pack/node/tslintFix";
 import { relevantCodeActions } from "../../../src/api-helper/listener/relevantCodeActions";
+
+const SomePickyFix: AutofixRegistration = editorAutofixRegistration({
+        name: "Some picky fix",
+        editor: async i => i,
+        pushTest: {
+            name: "has something",
+            mapping: async pi => !!(await pi.project.getFile("something.txt"))
+        }
+    }
+);
 
 describe("relevantCodeActions", () => {
 
@@ -48,7 +57,7 @@ describe("relevantCodeActions", () => {
                 id: "x",
             },
         } as any as PushImpactListenerInvocation;
-        const relevant = await relevantCodeActions([tslintFix], pti);
+        const relevant = await relevantCodeActions([SomePickyFix], pti);
         assert.equal(relevant.length, 0);
     });
 
