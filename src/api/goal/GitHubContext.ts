@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 // convention: "sdm/atomist/#-env/#-goal" (the numbers are for ordering)
 import { StatusState } from "../../typings/types";
 
