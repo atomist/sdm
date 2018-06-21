@@ -18,22 +18,22 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
-import { when } from "../../src/api-helper/dsl/buildDsl";
-import { whenPushSatisfies } from "../../src/api/dsl/goalDsl";
-import { MessageGoal } from "../../src/api/goal/common/MessageGoal";
-import { GoalsSetListener } from "../../src/api/listener/GoalsSetListener";
-import { ExtensionPack } from "../../src/api/machine/ExtensionPack";
-import { AnyPush } from "../../src/api/mapping/support/commonPushTests";
-import { SetGoalsOnPush } from "../../src/handlers/events/delivery/goals/SetGoalsOnPush";
-import { npmCustomBuilder } from "../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
-import { HandlerBasedSoftwareDeliveryMachine } from "../../src/internal/machine/HandlerBasedSoftwareDeliveryMachine";
-import { HasAtomistBuildFile } from "../../src/pack/node/nodePushTests";
-import { NoGoals } from "../../src/pack/well-known-goals/commonGoals";
-import { HttpServiceGoals } from "../../src/pack/well-known-goals/httpServiceGoals";
-import { fakePush } from "../api/dsl/decisionTreeTest";
-import { fakeSoftwareDeliveryMachineConfiguration } from "./sdmGoalImplementationTest";
-import { IsTypeScript } from "../../src/pack/node/tsPushTests";
-import { AutofixRegistration } from "../../src/api/registration/AutofixRegistration";
+import { when } from "../../../src/api-helper/dsl/buildDsl";
+import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
+import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
+import { GoalsSetListener } from "../../../src/api/listener/GoalsSetListener";
+import { ExtensionPack } from "../../../src/api/machine/ExtensionPack";
+import { AnyPush } from "../../../src/api/mapping/support/commonPushTests";
+import { SetGoalsOnPush } from "../../../src/handlers/events/delivery/goals/SetGoalsOnPush";
+import { npmCustomBuilder } from "../../../src/internal/delivery/build/local/npm/NpmDetectBuildMapping";
+import { HandlerBasedSoftwareDeliveryMachine } from "../../../src/internal/machine/HandlerBasedSoftwareDeliveryMachine";
+import { HasAtomistBuildFile } from "../../../src/pack/node/nodePushTests";
+import { NoGoals } from "../../../src/pack/well-known-goals/commonGoals";
+import { HttpServiceGoals } from "../../../src/pack/well-known-goals/httpServiceGoals";
+import { fakePush } from "../../api/dsl/decisionTreeTest";
+import { fakeSoftwareDeliveryMachineConfiguration } from "../../blueprint/sdmGoalImplementationTest";
+import { IsTypeScript } from "../../../src/pack/node/tsPushTests";
+import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
 
 const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
