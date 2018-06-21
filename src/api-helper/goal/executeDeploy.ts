@@ -25,7 +25,7 @@ import { Target } from "../../spi/deploy/Target";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { SdmGoal, SdmGoalState } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalState } from "../../api/goal/SdmGoal";
 import { descriptionFromState, updateGoal } from "./storeGoals";
 import { findSdmGoalOnCommit } from "../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { Deployment } from "../../spi/deploy/Deployment";

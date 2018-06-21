@@ -24,7 +24,7 @@ import { descriptionFromState, updateGoal } from "../../../../api-helper/goal/st
 import { reportFailureInterpretation } from "../../../../api-helper/misc/reportFailureInterpretation";
 import { AddressChannels, addressChannelsFor } from "../../../../api/context/addressChannels";
 import { Goal } from "../../../../api/goal/Goal";
-import { SdmGoal, SdmGoalState } from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalState } from "../../../../api/goal/SdmGoal";
 import { findSdmGoalOnCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { LogInterpretation } from "../../../../spi/log/InterpretedLog";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";

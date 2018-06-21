@@ -15,7 +15,7 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
 
 /**

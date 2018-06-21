@@ -25,7 +25,7 @@ import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementation
 import {
     GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey, SdmGoalState,
     SdmProvenance,
-} from "../../ingesters/sdmGoalIngester";
+} from "../../api/goal/SdmGoal";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least

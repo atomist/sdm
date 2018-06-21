@@ -15,7 +15,7 @@
  */
 
 import { automationClientInstance } from "@atomist/automation-client";
-import { SdmGoal } from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../../../api/goal/SdmGoal";
 
 export function isGoalRelevant(sdmGoal: SdmGoal,
                                registration: string = automationClientInstance().configuration.name): boolean {

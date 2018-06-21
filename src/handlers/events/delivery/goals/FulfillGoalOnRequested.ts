@@ -38,7 +38,7 @@ import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoa
 import {
     SdmGoal,
     SdmGoalState,
-} from "../../../../ingesters/sdmGoalIngester";
+} from "../../../../api/goal/SdmGoal";
 import { fetchCommitForSdmGoal } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { sdmGoalStateToGitHubStatusState } from "../../../../internal/delivery/goals/support/github/gitHubStatusSetters";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";

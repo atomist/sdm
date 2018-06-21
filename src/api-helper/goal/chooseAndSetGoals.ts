@@ -26,7 +26,7 @@ import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from 
 import { GoalsSetListener, GoalsSetListenerInvocation } from "../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { SdmGoal, SdmGoalFulfillment } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalFulfillment } from "../../api/goal/SdmGoal";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { PushFields } from "../../typings/types";

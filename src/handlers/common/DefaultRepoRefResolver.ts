@@ -18,7 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 
 import * as _ from "lodash";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";

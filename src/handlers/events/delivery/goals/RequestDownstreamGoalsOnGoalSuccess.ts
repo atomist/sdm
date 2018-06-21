@@ -29,11 +29,7 @@ import * as _ from "lodash";
 import { preconditionsAreMet } from "../../../../api-helper/goal/goalPreconditions";
 import { updateGoal } from "../../../../api-helper/goal/storeGoals";
 import { SdmGoalImplementationMapper } from "../../../../api/goal/support/SdmGoalImplementationMapper";
-import {
-    goalKeyString,
-    SdmGoal,
-    SdmGoalKey,
-} from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalKey } from "../../../../api/goal/SdmGoal";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
@@ -41,6 +37,7 @@ import {
     OnAnySuccessfulSdmGoal,
     ScmProvider,
 } from "../../../../typings/types";
+import { goalKeyString } from "../../../../api-helper/goal/sdmGoal";
 
 /**
  * Respond to a failure status by failing downstream goals
@@ -53,7 +50,8 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
     public githubToken: string;
 
     constructor(private readonly implementationMapper: SdmGoalImplementationMapper,
-                private readonly repoRefResolver: RepoRefResolver) { }
+                private readonly repoRefResolver: RepoRefResolver) {
+    }
 
     // #98: GitHub Status->SdmGoal: I believe all the goal state updates in this SDM
     // are now happening on the SdmGoal. This subscription can change to be on SdmGoal state.
@@ -77,16 +75,16 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
             await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId, sdmGoal.goalSetId) as SdmGoal[], [sdmGoal]);
 
         const goalsToRequest = goals.filter(g => isDirectlyDependentOn(sdmGoal, g))
-            // .filter(expectToBeFulfilledAfterRequest)
+        // .filter(expectToBeFulfilledAfterRequest)
             .filter(shouldBePlannedOrSkipped)
-            .filter(g => preconditionsAreMet(g, { goalsForCommit: goals }));
+            .filter(g => preconditionsAreMet(g, {goalsForCommit: goals}));
 
         if (goalsToRequest.length > 0) {
             logger.info("because %s is successful, these goals are now ready: %s", goalKeyString(sdmGoal),
                 goalsToRequest.map(goalKeyString).join(", "));
         }
 
-        const credentials = { token: this.githubToken };
+        const credentials = {token: this.githubToken};
 
         /*
          * #294 Intention: for custom descriptions per goal, we need to look up the Goal.
@@ -99,7 +97,7 @@ export class RequestDownstreamGoalsOnGoalSuccess implements HandleEvent<OnAnySuc
             const cbs = this.implementationMapper.findFullfillmentCallbackForGoal(goal);
             let g = goal;
             for (const cb of cbs) {
-                g = await cb.callback(g, { id, addressChannels: undefined, credentials, context });
+                g = await cb.callback(g, {id, addressChannels: undefined, credentials, context});
             }
 
             return updateGoal(context, g, {
@@ -133,7 +131,7 @@ function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
 
 export async function fetchScmProvider(context: HandlerContext, providerId: string): Promise<ScmProvider.ScmProvider> {
     const result = await context.graphClient.query<ScmProvider.Query, ScmProvider.Variables>(
-        { name: "SCMProvider", variables: { providerId } });
+        {name: "SCMProvider", variables: {providerId}});
     if (!result || !result.SCMProvider || result.SCMProvider.length === 0) {
         throw new Error(`Provider not found: ${providerId}`);
     }

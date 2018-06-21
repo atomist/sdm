@@ -24,16 +24,14 @@ import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { goalCorrespondsToSdmGoal } from "../../../../api-helper/goal/storeGoals";
 import { Goal } from "../../../../api/goal/Goal";
-import {
-    goalKeyString,
-    SdmGoal,
-} from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../../../api/goal/SdmGoal";
 import {
     CommitForSdmGoal,
     SdmGoalFields,
     SdmGoalRepo,
     SdmGoalsForCommit,
 } from "../../../../typings/types";
+import { goalKeyString } from "../../../../api-helper/goal/sdmGoal";
 
 export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
     const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId) as SdmGoal[];

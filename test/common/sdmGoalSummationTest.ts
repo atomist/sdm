@@ -18,7 +18,8 @@
 
 import * as assert from "power-assert";
 import { sumSdmGoalEventsByOverride } from "../../src/handlers/events/delivery/goals/RequestDownstreamGoalsOnGoalSuccess";
-import { goalKeyEquals, SdmGoal } from "../../src/ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../src/api/goal/SdmGoal";
+import { goalKeyEquals } from "../../src/api-helper/goal/sdmGoal";
 
 describe("Putting SdmGoal events together", () => {
    it("Lets the event we just received override out-of-date query results", () => {

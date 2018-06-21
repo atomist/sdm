@@ -25,12 +25,13 @@ import {
 } from "@atomist/automation-client";
 import { subscription } from "@atomist/automation-client/graph/graphQL";
 import { updateGoal } from "../../../../api-helper/goal/storeGoals";
-import { goalKeyEquals, SdmGoal, SdmGoalKey } from "../../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalKey } from "../../../../api/goal/SdmGoal";
 import { fetchGoalsForCommit } from "../../../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { isGoalRelevant } from "../../../../internal/delivery/goals/support/validateGoal";
 import { RepoRefResolver } from "../../../../spi/repo-ref/RepoRefResolver";
 import { OnAnyFailedSdmGoal } from "../../../../typings/types";
 import { fetchScmProvider, sumSdmGoalEventsByOverride } from "./RequestDownstreamGoalsOnGoalSuccess";
+import { goalKeyEquals } from "../../../../api-helper/goal/sdmGoal";
 
 /**
  * Respond to a failure status by failing downstream goals

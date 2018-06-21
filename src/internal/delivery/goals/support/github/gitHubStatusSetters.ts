@@ -22,10 +22,11 @@ import {
     GoalsSetListener,
     GoalsSetListenerInvocation,
 } from "../../../../../api/listener/GoalsSetListener";
-import { goalKeyString, SdmGoal, SdmGoalState } from "../../../../../ingesters/sdmGoalIngester";
+import { SdmGoal, SdmGoalState } from "../../../../../api/goal/SdmGoal";
 import { CredentialsResolver } from "../../../../../spi/credentials/CredentialsResolver";
 import { StatusState } from "../../../../../typings/types";
 import { createStatus } from "../../../../../util/github/ghub";
+import { goalKeyString } from "../../../../../api-helper/goal/sdmGoal";
 
 export function createPendingGitHubStatusOnGoalSet(credentialsFactory: CredentialsResolver): GoalsSetListener {
     return async (inv: GoalsSetListenerInvocation) => {

@@ -15,7 +15,7 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 
 /**
  * Log abstraction for output of a specific activity. Not intended as a long-running log

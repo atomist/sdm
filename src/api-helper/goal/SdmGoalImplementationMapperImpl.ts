@@ -24,7 +24,7 @@ import {
     SdmGoalImplementationMapper,
 } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 
 /**
  * Concrete implementation of SdmGoalImplementationMapper

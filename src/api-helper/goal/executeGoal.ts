@@ -25,7 +25,7 @@ import * as path from "path";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { spawnAndWatch } from "../misc/spawned";

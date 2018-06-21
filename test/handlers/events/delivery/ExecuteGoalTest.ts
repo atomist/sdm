@@ -24,7 +24,7 @@ import { lastLinesLogInterpreter } from "../../../../src/api-helper/log/logInter
 import { RunWithLogContext } from "../../../../src/api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../../../src/api/goal/Goal";
 import { IndependentOfEnvironment } from "../../../../src/api/goal/support/environment";
-import { SdmGoal } from "../../../../src/ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../../../src/api/goal/SdmGoal";
 import { fakeContext } from "../../../../src/util/test/fakeContext";
 import { SingleProjectLoader } from "../../../../src/util/test/SingleProjectLoader";
 
