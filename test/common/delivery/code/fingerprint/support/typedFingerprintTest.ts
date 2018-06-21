@@ -16,7 +16,6 @@
 
 import * as assert from "power-assert";
 import { TypedFingerprint } from "../../../../../../src/api-helper/code/fingerprint/TypedFingerprint";
-import { isValidSHA1 } from "../../../../../../src/util/misc/sha";
 
 interface Person {
     name: string;
@@ -46,3 +45,8 @@ describe("TypedFingerprint", () => {
     });
 
 });
+
+
+function isValidSHA1(s: string): boolean {
+    return s.match(/[a-fA-F0-9]{40}/) != null;
+}

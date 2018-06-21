@@ -18,8 +18,8 @@ import { logger } from "@atomist/automation-client";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { PushTest } from "../../api/mapping/PushTest";
 import { FingerprinterRegistration, FingerprinterResult } from "../../api/registration/FingerprinterRegistration";
-import { computeShaOf } from "../../util/misc/sha";
 import { IsNode } from "./nodePushTests";
+import { computeShaOf } from "../../api-helper/misc/sha";
 
 /**
  * Compute a fingerprint from a package-lock.json file.

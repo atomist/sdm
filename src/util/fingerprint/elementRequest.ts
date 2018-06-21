@@ -21,8 +21,8 @@ import { FileParser } from "@atomist/automation-client/tree/ast/FileParser";
 import { TreeNode } from "@atomist/tree-path/TreeNode";
 
 import { CFamilyLangHelper } from "@atomist/microgrammar/matchers/lang/cfamily/CFamilyLangHelper";
-import { computeShaOf } from "../misc/sha";
 import { JavaScriptElementRequest } from "./JavaScriptElementRequest";
+import { computeShaOf } from "../../api-helper/misc/sha";
 
 /**
  * Request for language elements: For example, function declarations
