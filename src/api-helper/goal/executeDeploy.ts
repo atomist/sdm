@@ -19,17 +19,17 @@ import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { Goal } from "../../api/goal/Goal";
 import { ArtifactStore, DeployableArtifact } from "../../spi/artifact/ArtifactStore";
 
+import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
-import { Target } from "../../spi/deploy/Target";
-import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { ProgressLog } from "../../spi/log/ProgressLog";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { SdmGoal, SdmGoalState } from "../../ingesters/sdmGoalIngester";
-import { descriptionFromState, updateGoal } from "./storeGoals";
 import { findSdmGoalOnCommit } from "../../internal/delivery/goals/support/fetchGoalsOnCommit";
 import { Deployment } from "../../spi/deploy/Deployment";
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { Target } from "../../spi/deploy/Target";
+import { ProgressLog } from "../../spi/log/ProgressLog";
+import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { descriptionFromState, updateGoal } from "./storeGoals";
 
 /**
  * Execute deploy with the supplied deployer and target
@@ -64,7 +64,6 @@ export function executeDeploy(artifactStore: ArtifactStore,
         return Success;
     };
 }
-
 
 export async function checkOutArtifact(targetUrl: string,
                                        artifactStore: ArtifactStore,
