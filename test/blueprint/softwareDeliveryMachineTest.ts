@@ -31,8 +31,18 @@ import { HasAtomistBuildFile } from "../../src/pack/node/nodePushTests";
 import { NoGoals } from "../../src/pack/well-known-goals/commonGoals";
 import { HttpServiceGoals } from "../../src/pack/well-known-goals/httpServiceGoals";
 import { fakePush } from "../api/dsl/decisionTreeTest";
-import { AddThingAutofix } from "../common/delivery/code/autofix/executeAutofixesTest";
 import { fakeSoftwareDeliveryMachineConfiguration } from "./sdmGoalImplementationTest";
+import { IsTypeScript } from "../../src/pack/node/tsPushTests";
+import { AutofixRegistration } from "../../src/api/registration/AutofixRegistration";
+
+const AddThingAutofix: AutofixRegistration = {
+    name: "AddThing",
+    pushTest: IsTypeScript,
+    action: async cri => {
+        await cri.project.addFile("thing", "1");
+        return { edited: true, success: true, target: cri.project };
+    },
+};
 
 describe("SDM handler creation", () => {
 
@@ -87,7 +97,8 @@ describe("SDM handler creation", () => {
                 name: "x",
                 vendor: "Atomist",
                 version: "0.1.0",
-                configure: () => { /* do nothing */ },
+                configure: () => { /* do nothing */
+                },
                 goalContributions: whenPushSatisfies(() => true).setGoals(HttpServiceGoals),
             };
             sdm.addExtensionPacks(ep);
@@ -124,7 +135,8 @@ describe("SDM handler creation", () => {
                 name: "x",
                 vendor: "Atomist",
                 version: "0.1.0",
-                configure: () => { /* do nothing */ },
+                configure: () => { /* do nothing */
+                },
                 // TODO why is this cast necessary?
                 goalContributions: whenPushSatisfies(() => true)
                     .setGoals(MessageGoal as any),
