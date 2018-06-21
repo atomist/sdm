@@ -44,7 +44,7 @@ const favoriteRepoRef = GitHubRepoRef.from({
 
 export const fakeSoftwareDeliveryMachineOptions = {
     projectLoader: new SingleProjectLoader(InMemoryProject.from(favoriteRepoRef,
-        {path: "README.md", content: "read sometthing else"})),
+        {path: "README.md", content: "read something else"})),
 } as any as SoftwareDeliveryMachineOptions;
 
 export const fakeSoftwareDeliveryMachineConfiguration: SoftwareDeliveryMachineConfiguration = {
