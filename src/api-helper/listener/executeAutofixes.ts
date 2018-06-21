@@ -24,12 +24,12 @@ import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { relevantCodeActions } from "../../api/registration/PushReactionRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { confirmEditedness } from "../command/editor/confirmEditedness";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
+import { relevantCodeActions } from "./relevantCodeActions";
 
 /**
  * Execute autofixes against this push

@@ -21,11 +21,11 @@ import {
     PushReactionRegisterable,
     PushReactionRegistration,
     PushReactionResponse,
-    relevantCodeActions,
     toPushReactionRegistration,
 } from "../../api/registration/PushReactionRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
+import { relevantCodeActions } from "./relevantCodeActions";
 
 /**
  * Execute arbitrary code reactions against a codebase

@@ -22,8 +22,8 @@ import { createPushImpactListenerInvocation } from "../../../../api-helper/liste
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../../../api/goal/ExecuteGoalWithLog";
 import { FingerprintListener } from "../../../../api/listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../../../api/registration/FingerprinterRegistration";
-import { relevantCodeActions } from "../../../../api/registration/PushReactionRegistration";
 import { ProjectLoader } from "../../../../spi/project/ProjectLoader";
+import { relevantCodeActions } from "../../../../api-helper/listener/relevantCodeActions";
 
 /**
  * Execute fingerprinting and send fingerprints to Atomist

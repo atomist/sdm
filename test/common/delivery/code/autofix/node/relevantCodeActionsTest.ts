@@ -23,8 +23,8 @@ import {
     AutofixRegistration,
     editorAutofixRegistration,
 } from "../../../../../../src/api/registration/AutofixRegistration";
-import { relevantCodeActions } from "../../../../../../src/api/registration/PushReactionRegistration";
-import { tslintFix } from "../../../../../../src/pack/node/tslint";
+import { tslintFix } from "../../../../../../src/pack/node/tslintFix";
+import { relevantCodeActions } from "../../../../../../src/api-helper/listener/relevantCodeActions";
 
 describe("relevantCodeActions", () => {
 

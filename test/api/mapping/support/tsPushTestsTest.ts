@@ -20,7 +20,7 @@ import * as assert from "power-assert";
 import { PushListenerInvocation } from "../../../../src/api/listener/PushListener";
 import { IsTypeScript } from "../../../../src/pack/node/tsPushTests";
 
-describe("nodePushTests", () => {
+describe("tsPushTests", () => {
 
     describe("IsTypeScript", () => {
 

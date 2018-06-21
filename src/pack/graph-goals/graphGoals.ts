@@ -31,7 +31,7 @@ import { splitContext } from "../../internal/delivery/goals/support/github/gitHu
  * @return {Promise<any>}
  * @constructor
  */
-export const GraphGoalsToSlack: GoalsSetListener = async gsi => {
+export const GraphGoals: GoalsSetListener = async gsi => {
     const graphvizServiceUrl = configurationValue<string>("sdm.graphviz.url", null);
     if (!graphvizServiceUrl) {
         return;
