@@ -15,7 +15,7 @@
  */
 
 import * as assert from "power-assert";
-import { parseCloudFoundryLogForEndpoint } from "../../../../../../src/pack/pcf/cloudFoundryLogParser";
+import { parseCloudFoundryLogForEndpoint } from "../../../src/pack/pcf/cloudFoundryLogParser";
 
 describe("CloudFoundryProgressLog", () => {
 

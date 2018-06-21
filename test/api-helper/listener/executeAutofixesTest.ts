@@ -20,12 +20,12 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import * as assert from "power-assert";
-import { executeAutofixes } from "../../../../../src/api-helper/listener/executeAutofixes";
-import { AutofixRegistration } from "../../../../../src/api/registration/AutofixRegistration";
-import { DefaultRepoRefResolver } from "../../../../../src/handlers/common/DefaultRepoRefResolver";
-import { IsTypeScript } from "../../../../../src/pack/node/tsPushTests";
-import { fakeRunWithLogContext } from "../../../../../src/util/test/fakeRunWithLogContext";
-import { SingleProjectLoader } from "../../../../../src/util/test/SingleProjectLoader";
+import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
+import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
+import { DefaultRepoRefResolver } from "../../../src/handlers/common/DefaultRepoRefResolver";
+import { IsTypeScript } from "../../../src/pack/node/tsPushTests";
+import { fakeRunWithLogContext } from "../../../src/util/test/fakeRunWithLogContext";
+import { SingleProjectLoader } from "../../../src/util/test/SingleProjectLoader";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",

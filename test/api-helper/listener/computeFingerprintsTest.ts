@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { computeFingerprints } from "../../../../../src/api-helper/listener/computeFingerprints";
+import { computeFingerprints } from "../../../src/api-helper/listener/computeFingerprints";
 
 import { SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
-import { computeShaOf } from "../../../../../src/api-helper/misc/sha";
-import { PushImpactListenerInvocation } from "../../../../../src/api/listener/PushImpactListener";
-import { FingerprinterResult } from "../../../../../src/api/registration/FingerprinterRegistration";
-import { PushReaction } from "../../../../../src/api/registration/PushReactionRegistration";
+import { computeShaOf } from "../../../src/api-helper/misc/sha";
+import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
+import { FingerprinterResult } from "../../../src/api/registration/FingerprinterRegistration";
+import { PushReaction } from "../../../src/api/registration/PushReactionRegistration";
 
 const SomeFingerprinter: PushReaction<FingerprinterResult> = async pli => {
     return [];
