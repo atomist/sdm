@@ -41,7 +41,7 @@ export class RolarProgressLog implements ProgressLog {
 
     constructor(private readonly rolarBaseUrl: string,
                 private readonly logPath: string[],
-                private readonly bufferSizeLimit: number = 10000,
+                private readonly bufferSizeLimit: number = 1000,
                 private readonly logLevel: string = "info",
                 private readonly timestamper: Iterator<Date> = timestampGenerator(),
                 private readonly retryOptions: WrapOptions = {},

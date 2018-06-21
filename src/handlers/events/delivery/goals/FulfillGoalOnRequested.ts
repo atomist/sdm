@@ -132,7 +132,7 @@ export class FulfillGoalOnRequested implements HandleEvent<OnAnyRequestedSdmGoal
         } else {
             delete (sdmGoal as any).id;
 
-            reportStart(sdmGoal, progressLog);
+            await reportStart(sdmGoal, progressLog);
             const start = Date.now();
 
             return executeGoal({projectLoader: params.projectLoader},
@@ -158,7 +158,7 @@ function convertForNow(sdmGoal: SdmGoalFields.Fragment, commit: CommitForSdmGoal
     };
 }
 
-function reportStart(sdmGoal: SdmGoal, progressLog: ProgressLog) {
+async function reportStart(sdmGoal: SdmGoal, progressLog: ProgressLog) {
     progressLog.write(`---`);
     progressLog.write(`Repository: ${sdmGoal.repo.owner}/${sdmGoal.repo.name}#${sdmGoal.branch}`);
     progressLog.write(`Sha: ${sdmGoal.sha}`);
@@ -167,6 +167,7 @@ function reportStart(sdmGoal: SdmGoal, progressLog: ProgressLog) {
     progressLog.write(
         `SDM: ${automationClientInstance().configuration.name}@${automationClientInstance().configuration.version}`);
     progressLog.write(`---`);
+    await progressLog.flush();
 }
 
 async function reportEndAndClose(result: any, start: number, progressLog: ProgressLog) {
