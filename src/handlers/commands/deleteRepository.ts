@@ -30,6 +30,9 @@ import { commandHandlerFrom } from "@atomist/automation-client/onCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { deleteRepository } from "../../util/github/ghub";
 import { fetchProvider } from "../../util/github/gitHubProvider";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
+import { Attachment, SlackMessage } from "@atomist/slack-messages";
 
 @Parameters()
 export class DeleteRepositoryParameters {
@@ -71,6 +74,38 @@ function deleteRepositoryPlease() {
         const id = GitHubRepoRef.from({owner: commandParams.owner, repo: commandParams.repo, rawApiBase: provider.apiUrl});
 
         await deleteRepository(commandParams.githubToken, id);
+        return Success;
+    };
+}
+
+
+export function offerToDeleteRepository(): ExecuteGoalWithLog {
+    const GitHubDotComProviderId = "zjlmxjzwhurspem";
+    return async (rwlc: RunWithLogContext) => {
+        const {addressChannels, id} = rwlc;
+
+        const params = new DeleteRepositoryParameters();
+        params.owner = id.owner;
+        params.repo = id.repo;
+        params.providerId = GitHubDotComProviderId; // we should put this in the RWLC?
+        params.areYouSure = "yes";
+
+        const deleteRepoButton = buttonForCommand({text: "Delete Repo", style: "danger"},
+            DeleteRepositoryCommandName,
+            params as any);
+
+        const attachment: Attachment = {
+            fallback: "delete repository button",
+            color: "#ff0234",
+            text: "Would you like to delete this repository?",
+            actions: [deleteRepoButton],
+        };
+
+        const message: SlackMessage = {
+            attachments: [attachment],
+        };
+        await addressChannels(message);
+
         return Success;
     };
 }

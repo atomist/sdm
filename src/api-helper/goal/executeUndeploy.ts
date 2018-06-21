@@ -15,13 +15,9 @@
  */
 
 import { logger, Success } from "@atomist/automation-client";
-import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
-import { Attachment, SlackMessage } from "@atomist/slack-messages";
 import * as stringify from "json-stringify-safe";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../../api/goal/ExecuteGoalWithLog";
-import { DeleteRepositoryCommandName, DeleteRepositoryParameters } from "../../../handlers/commands/deleteRepository";
-import { Target } from "../../../spi/deploy/Target";
-import { GitHubDotComProviderId } from "../../../util/github/gitHubProvider";
+import { Target } from "../../spi/deploy/Target";
+import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 
 export function executeUndeploy(target: Target): ExecuteGoalWithLog {
     return async (rwlc: RunWithLogContext) => {
@@ -46,35 +42,5 @@ export function executeUndeploy(target: Target): ExecuteGoalWithLog {
                 progressLog,
             ));
         return {code: 0};
-    };
-}
-
-export function offerToDeleteRepository(): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext) => {
-        const {addressChannels, id} = rwlc;
-
-        const params = new DeleteRepositoryParameters();
-        params.owner = id.owner;
-        params.repo = id.repo;
-        params.providerId = GitHubDotComProviderId; // we should put this in the RWLC?
-        params.areYouSure = "yes";
-
-        const deleteRepoButton = buttonForCommand({text: "Delete Repo", style: "danger"},
-            DeleteRepositoryCommandName,
-            params as any);
-
-        const attachment: Attachment = {
-            fallback: "delete repository button",
-            color: "#ff0234",
-            text: "Would you like to delete this repository?",
-            actions: [deleteRepoButton],
-        };
-
-        const message: SlackMessage = {
-            attachments: [attachment],
-        };
-        await addressChannels(message);
-
-        return Success;
     };
 }

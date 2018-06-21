@@ -33,7 +33,7 @@ import {
 } from "../../api/machine/wellKnownGoals";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { executeFingerprinting } from "../../internal/delivery/code/fingerprint/executeFingerprinting";
-import { offerToDeleteRepository } from "../../internal/delivery/deploy/executeUndeploy";
+import { offerToDeleteRepository } from "../../handlers/commands/deleteRepository";
 
 /**
  * Add well known goals to the given SDM
