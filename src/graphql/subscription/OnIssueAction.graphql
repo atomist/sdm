@@ -1,0 +1,25 @@
+subscription OnIssueAction {
+  Issue {
+    number
+    title
+    state
+    body
+    openedBy {
+      login
+      person {
+        ...PersonFields
+      }
+    }
+    createdAt
+    updatedAt
+    repo {
+      ...CoreRepoFieldsAndChannels
+    }
+    assignees {
+      login
+      person {
+        ...PersonFields
+      }
+    }
+  }
+}
