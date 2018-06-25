@@ -36,6 +36,10 @@ export class DelimitedWriteProgressLogDecorator implements ProgressLog {
         return this.delegate.url;
     }
 
+    get log() {
+        return this.delegate.log;
+    }
+
     public async isAvailable() {
         return this.delegate.isAvailable();
     }
