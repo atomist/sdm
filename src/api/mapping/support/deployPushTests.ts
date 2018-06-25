@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import { HandlerContext, logger } from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import {
     QueryNoCacheOptions,
@@ -44,16 +44,22 @@ export const IsDeployEnabled: PushTest = pushTest("Is Deploy Enabled", isDeployE
 
 export async function isDeployEnabled(parameters: { context: HandlerContext, id: RepoRef }) {
     const {context, id} = parameters;
-    const enablement = await context.graphClient.query<any, any>({
-        query: DeployEnablementQuery,
-        variables: {
-            owner: [id.owner],
-            repo: [id.repo],
-        },
-        options: QueryNoCacheOptions,
-    });
-    return enablement
-        && enablement.SdmDeployEnablement
-        && enablement.SdmDeployEnablement.length === 1
-        && enablement.SdmDeployEnablement[0].state === "requested";
+    try {
+        const enablement = await context.graphClient.query<any, any>({
+            query: DeployEnablementQuery,
+            variables: {
+                owner: [id.owner],
+                repo: [id.repo],
+            },
+            options: QueryNoCacheOptions,
+        });
+        return enablement
+            && enablement.SdmDeployEnablement
+            && enablement.SdmDeployEnablement.length === 1
+            && enablement.SdmDeployEnablement[0].state === "requested";
+    } catch (e) {
+        logger.error("Cannot determine whether deploy is enabled. Guessing `false`. " + e);
+        logger.info(e.stack);
+        return false;
+    }
 }
