@@ -28,7 +28,7 @@ import {
 // TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `
 query DeployEnablementForRepo($owner: [String], $repo: [String]) {
-  SdmDeployEnablement(state: ["requested"], owner: $owner, repo: $repo) {
+  SdmDeployEnablement(owner: $owner, repo: $repo) {
     id
     state
     owner
