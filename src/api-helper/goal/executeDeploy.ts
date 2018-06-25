@@ -22,7 +22,6 @@ import {
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
-import { SdmGoalState } from "../../typings/types";
 import { findSdmGoalOnCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
@@ -39,6 +38,7 @@ import { Deployment } from "../../spi/deploy/Deployment";
 import { Target } from "../../spi/deploy/Target";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { SdmGoalState } from "../../typings/types";
 import {
     descriptionFromState,
     updateGoal,

@@ -24,7 +24,6 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
-import { SdmGoalState } from "../../typings/types";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
@@ -36,6 +35,7 @@ import { SdmGoal } from "../../api/goal/SdmGoal";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { SdmGoalState } from "../../typings/types";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
