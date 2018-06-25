@@ -170,10 +170,12 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
 
             progressLog.write(`Result: ${JSON.stringify(result)}`);
             progressLog.write("---");
+            await progressLog.flush();
             return result;
         } else {
             progressLog.write(`Result: skipped (not provided)`);
             progressLog.write("---");
+            await progressLog.flush();
             return Success;
         }
     });
