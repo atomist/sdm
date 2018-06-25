@@ -123,4 +123,3 @@ export class GoalWithPrecondition extends Goal {
 export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {
     return !!(goal as GoalWithPrecondition).dependsOn;
 }
-
