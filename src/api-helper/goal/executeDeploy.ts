@@ -15,6 +15,7 @@
  */
 
 import { HandlerContext, logger, Success } from "@atomist/automation-client";
+import { SdmGoalState } from "../..";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { Goal } from "../../api/goal/Goal";
 import { ArtifactStore, DeployableArtifact } from "../../spi/artifact/ArtifactStore";
@@ -24,7 +25,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import * as _ from "lodash";
 import { findSdmGoalOnCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
-import { SdmGoal, SdmGoalState } from "../../api/goal/SdmGoal";
+import { SdmGoal } from "../../api/goal/SdmGoal";
 import { Deployment } from "../../spi/deploy/Deployment";
 import { Target } from "../../spi/deploy/Target";
 import { ProgressLog } from "../../spi/log/ProgressLog";
@@ -106,11 +107,11 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
     // Only update the endpoint goal if it actually exists in the goal set
     if (sdmGoal) {
         if (deployment.endpoint) {
-            const newState = "success";
+            const newState = SdmGoalState.success;
             await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
         } else {
             const error = new Error("Deploy finished with success, but the endpoint was not found");
-            const newState = "failure";
+            const newState = SdmGoalState.failure;
             await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
         }
     }

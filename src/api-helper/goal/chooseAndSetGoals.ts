@@ -29,7 +29,10 @@ import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { PushFields } from "../../typings/types";
+import {
+    PushFields,
+    SdmGoalState,
+} from "../../typings/types";
 import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "./storeGoals";
 
 export interface ChooseAndSetGoalsRules {
@@ -127,7 +130,7 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
             goalSet: determinedGoals.name,
             goalSetId,
             goal: g,
-            state: hasPreconditions(g) ? "planned" : "requested",
+            state: (hasPreconditions(g) ? SdmGoalState.planned : SdmGoalState.requested) as SdmGoalState,
             id: pli.id,
             providerId: repoRefResolver.providerIdFromPush(pli.push),
             fulfillment: await fulfillment({implementationMapping}, g, pli),

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-export const GoalRootType = "SdmGoal";
+import { SdmGoalState } from "../..";
 
-export type SdmGoalState = "planned" | "requested" | "in_process" | "waiting_for_approval" | "success" | "failure" | "skipped";
+export const GoalRootType = "SdmGoal";
 
 export type SdmGoalFulfillmentMethod = "SDM fulfill on requested" | "side-effect" | "other";
 

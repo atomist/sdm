@@ -22,6 +22,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import * as path from "path";
+import { SdmGoalState } from "../..";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -191,8 +192,8 @@ export function markStatus(parameters: {
     error?: Error, progressLogUrl: string,
 }) {
     const { ctx, sdmGoal, goal, result, error, progressLogUrl } = parameters;
-    const newState = result.code !== 0 ? "failure" :
-        result.requireApproval ? "waiting_for_approval" : "success";
+    const newState = result.code !== 0 ? SdmGoalState.failure :
+        result.requireApproval ? SdmGoalState.waiting_for_approval : SdmGoalState.success;
 
     return updateGoal(ctx, sdmGoal,
         {
@@ -209,7 +210,7 @@ function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, 
     return updateGoal(ctx, sdmGoal, {
         url: progressLogUrl,
         description: goal.inProcessDescription,
-        state: "in_process",
+        state: SdmGoalState.in_process,
     }).catch(err =>
         logger.warn("Failed to update %s goal to tell people we are working on it", goal.name));
 
