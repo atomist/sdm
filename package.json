@@ -1,7 +1,7 @@
 {
   "name": "@atomist/sdm",
   "version": "0.3.0",
-  "description": "Atomist Software Delivery Machine",
+  "description": "Atomist Software Delivery Machine API",
   "author": "Atomist, Inc.",
   "license": "Apache-2.0",
   "repository": {
@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@atomist/slack-messages": "^0.12.1",
-    "@jessitron/git-branch-to-npm-tag": "^1.0.1",
     "archiver": "^2.1.1",
     "axios": "^0.18.0",
     "base64-js": "^1.2.3",
@@ -44,10 +43,10 @@
     "xml2js": "^0.4.19"
   },
   "peerDependencies": {
-    "@atomist/automation-client": "^0.17.1"
+    "@atomist/automation-client": "^0.17.3"
   },
   "devDependencies": {
-    "@atomist/automation-client": "^0.17.3-nortissej.bb-curl-or-axios.20180618234615",
+    "@atomist/automation-client": "^0.17.3",
     "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.48",
     "@types/node": "^8.10.17",
