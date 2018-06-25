@@ -35,12 +35,15 @@ export interface UpdateSdmGoalParams {
     state: SdmGoalState;
     description: string;
     url?: string;
+    externalUrl?: string;
     approved?: boolean;
     error?: Error;
     data?: string;
 }
 
-export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateSdmGoalParams) {
+export function updateGoal(ctx: HandlerContext,
+                           before: SdmGoal,
+                           params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) :
         !!before ? before.approval : undefined;
@@ -52,6 +55,7 @@ export function updateGoal(ctx: HandlerContext, before: SdmGoal, params: UpdateS
         state: params.state === "success" && !!before && before.approvalRequired ? "waiting_for_approval" : params.state,
         description,
         url: params.url,
+        externalUrl: params.externalUrl,
         approval,
         ts: Date.now(),
         provenance: [constructProvenance(ctx)].concat(!!before ? before.provenance : []),

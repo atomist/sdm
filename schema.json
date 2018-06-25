@@ -9331,18 +9331,6 @@
                   }
                 },
                 {
-                  "name": "state",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
                   "name": "ts",
                   "description": null,
                   "type": {
@@ -108345,18 +108333,6 @@
                   }
                 },
                 {
-                  "name": "state",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
                   "name": "ts",
                   "description": null,
                   "type": {
@@ -110296,8 +110272,8 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "SdmGoalState",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -110606,7 +110582,7 @@
               ]
             },
             {
-              "name": "providerId",
+              "name": "provider",
               "description": null,
               "args": [],
               "type": {
@@ -111944,6 +111920,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "0f64b870-b6a0-45a0-9e65-2811c2fe9e85"
+    "correlation_id": "f5a79ff8-c5c7-4a0c-bbf3-f599f02579d7"
   }
 }
