@@ -17,7 +17,7 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 |CC-BY-3.0|1|
 |CC0-1.0|3|
 |Custom: https://travis-ci.org/ember-cli/ember-cli.svg|1|
-|ISC|103|
+|ISC|102|
 |MIT|324|
 |Unlicense|1|
 |WTFPL|3|
@@ -146,7 +146,6 @@ ISC License - [https://www.isc.org/downloads/software-support-policy/isc-license
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@jessitron/git-branch-to-npm-tag`|`1.0.1`|jessitron|[https://github.com/atm-bankomat/git-branch-to-npm-tag](https://github.com/atm-bankomat/git-branch-to-npm-tag)|
 |`abbrev`|`1.1.1`|Isaac Z. Schlueter|[https://github.com/isaacs/abbrev-js](https://github.com/isaacs/abbrev-js)|
 |`ansi-align`|`2.0.0`|nexdrew|[https://github.com/nexdrew/ansi-align](https://github.com/nexdrew/ansi-align)|
 |`aproba`|`1.2.0`|Rebecca Turner|[https://github.com/iarna/aproba](https://github.com/iarna/aproba)|
