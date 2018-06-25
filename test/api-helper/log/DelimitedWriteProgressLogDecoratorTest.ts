@@ -55,8 +55,8 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         log.write("I sleep all night and I work all day\n");
 
         assert.deepEqual(delegateLog.logList, [
-            "I'm a lumberjack and I'm OK",
-            "I sleep all night and I work all day",
+            "I'm a lumberjack and I'm OK\n",
+            "I sleep all night and I work all day\n",
         ]);
     });
 
@@ -68,8 +68,8 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         log.write(" night and I work all day\n");
 
         assert.deepEqual(delegateLog.logList, [
-            "I'm a lumberjack and I'm OK",
-            "I sleep all night and I work all day",
+            "I'm a lumberjack and I'm OK\n",
+            "I sleep all night and I work all day\n",
         ]);
     });
 
@@ -82,7 +82,7 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         await log.flush();
 
         assert.deepEqual(delegateLog.logList, [
-            "I'm a lumberjack and I'm OK",
+            "I'm a lumberjack and I'm OK\n",
             "I sleep all night and I work all day",
         ]);
     });
