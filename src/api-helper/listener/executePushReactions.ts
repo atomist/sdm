@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { logger, Success } from "@atomist/automation-client";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import {
+    logger,
+    Success,
+} from "@atomist/automation-client";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import {
     PushReactionRegisterable,

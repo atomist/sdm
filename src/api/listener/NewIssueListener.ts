@@ -15,7 +15,6 @@
  */
 
 import * as schema from "../../typings/types";
-
 import { IssueListenerInvocation } from "./IssueListenerInvocation";
 import { SdmListener } from "./Listener";
 

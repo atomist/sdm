@@ -15,7 +15,10 @@
  */
 
 import { OnBuildComplete } from "../../typings/types";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 import Build = OnBuildComplete.Build;
 
 /**

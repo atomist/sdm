@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Goal, GoalWithPrecondition } from "../goal/Goal";
+import {
+    Goal,
+    GoalWithPrecondition,
+} from "../goal/Goal";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,

@@ -16,8 +16,14 @@
 
 import { logger } from "@atomist/automation-client";
 import { sprintf } from "sprintf-js";
-import { SdmGoal, SdmGoalKey } from "../../api/goal/SdmGoal";
-import { goalKeyString, mapKeyToGoal } from "./sdmGoal";
+import {
+    SdmGoal,
+    SdmGoalKey,
+} from "../../api/goal/SdmGoal";
+import {
+    goalKeyString,
+    mapKeyToGoal,
+} from "./sdmGoal";
 
 /*
  * Right now the only preconditions supported are other goals.

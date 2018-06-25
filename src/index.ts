@@ -22,7 +22,6 @@ export * from "./api/goal/common/GenericGoal";
 export * from "./api/goal/common/MessageGoal";
 export * from "./api/goal/support/IsolatedGoalLauncher";
 export * from "./api/goal/support/SdmGoalImplementationMapper";
-export * from "./api/goal/support/approvalGate";
 export * from "./api/goal/support/environment";
 export * from "./api/goal/support/executeSendMessageToSlack";
 export * from "./api/listener/ArtifactListener";

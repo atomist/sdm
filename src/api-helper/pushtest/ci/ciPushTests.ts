@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { predicatePushTest, PredicatePushTest } from "../../../api/mapping/PushTest";
+import {
+    predicatePushTest,
+    PredicatePushTest,
+} from "../../../api/mapping/PushTest";
 import { hasFile } from "../../../api/mapping/support/commonPushTests";
 
 /**

@@ -17,7 +17,12 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ChildProcessResult, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "@atomist/automation-client/util/spawned";
+import {
+    ChildProcessResult,
+    spawnAndWatch,
+    SpawnCommand,
+    stringifySpawnCommand,
+} from "@atomist/automation-client/util/spawned";
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { LoggingProgressLog } from "../../log/LoggingProgressLog";

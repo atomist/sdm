@@ -16,7 +16,12 @@
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { SdmGoal } from "../../api/goal/SdmGoal";
-import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../typings/types";
+import {
+    CoreRepoFieldsAndChannels,
+    OnPushToAnyBranch,
+    ScmProvider,
+    StatusForExecuteGoal,
+} from "../../typings/types";
 
 /**
  * Resolve a RemoteRepoRef from data in our model

@@ -15,10 +15,16 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { RemoteRepoRef, RepoId } from "@atomist/automation-client/operations/common/RepoId";
+import {
+    RemoteRepoRef,
+    RepoId,
+} from "@atomist/automation-client/operations/common/RepoId";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
-import { StatusForExecuteGoal, StatusState } from "../../typings/types";
+import {
+    StatusForExecuteGoal,
+    StatusState,
+} from "../../typings/types";
 import { fakeContext } from "./fakeContext";
 
 /**

@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
 import { messageDestinationsFor } from "../../api/context/addressChannels";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
-import { filesChangedSince, filesChangedSinceParentCommit } from "../misc/git/filesChangedSince";
+import {
+    filesChangedSince,
+    filesChangedSinceParentCommit,
+} from "../misc/git/filesChangedSince";
 import { filteredView } from "../misc/project/filteredView";
 
 /**

@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-import { MappedParameter, MappedParameters, Parameter } from "@atomist/automation-client";
-import { Parameters } from "@atomist/automation-client/decorators";
-
+import {
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Parameters,
+} from "@atomist/automation-client";
 import { GitHubNameRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { RemoteLocator } from "@atomist/automation-client/operations/common/params/RemoteLocator";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";

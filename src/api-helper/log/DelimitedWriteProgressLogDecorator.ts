@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import {ProgressLog} from "../../spi/log/ProgressLog";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**
  * Sometimes new log lines are separated by a character rather than a call to write.

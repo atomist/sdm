@@ -15,7 +15,10 @@
  */
 
 import { sprintf } from "sprintf-js";
-import { SdmGoal, SdmGoalKey } from "../../api/goal/SdmGoal";
+import {
+    SdmGoal,
+    SdmGoalKey,
+} from "../../api/goal/SdmGoal";
 
 export function isSdmGoal(a: object): a is SdmGoal {
     const maybe = a as SdmGoal;

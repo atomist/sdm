@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware, HandlerContext, logger } from "@atomist/automation-client";
+import {
+    AutomationContextAware,
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { SdmGoalState } from "../..";
-import { Goal, hasPreconditions } from "../../api/goal/Goal";
 import {
-    GoalRootType, SdmGoal, SdmGoalFulfillment, SdmGoalKey,
+    Goal,
+    hasPreconditions,
+} from "../../api/goal/Goal";
+import {
+    GoalRootType,
+    SdmGoal,
+    SdmGoalFulfillment,
+    SdmGoalKey,
     SdmProvenance,
 } from "../../api/goal/SdmGoal";
-import { disregardApproval } from "../../api/goal/support/approvalGate";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 
 export function environmentFromGoal(goal: Goal) {
@@ -125,7 +134,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
         },
         state,
         description,
-        url: disregardApproval(url), // when we use goals in lifecycle this can go
+        url,
         externalKey: goal.context,
         ts: Date.now(),
         approvalRequired: goal.definition.approvalRequired ? goal.definition.approvalRequired : false,

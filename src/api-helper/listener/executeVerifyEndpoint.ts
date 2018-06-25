@@ -17,9 +17,15 @@
 import { sprintf } from "sprintf-js";
 import { fetchGoalsForCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
-import { EndpointVerificationInvocation, EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
+import {
+    EndpointVerificationInvocation,
+    EndpointVerificationListener,
+} from "../../api/listener/EndpointVerificationListener";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 
 /**

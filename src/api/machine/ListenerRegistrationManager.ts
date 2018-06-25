@@ -22,7 +22,10 @@ import { DeploymentListener } from "../listener/DeploymentListener";
 import { EndpointVerificationListener } from "../listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
-import { GoalCompletionListener, GoalsSetListener } from "../listener/GoalsSetListener";
+import {
+    GoalCompletionListener,
+    GoalsSetListener,
+} from "../listener/GoalsSetListener";
 import { NewIssueListener } from "../listener/NewIssueListener";
 import { ProjectListener } from "../listener/ProjectListener";
 import { PullRequestListener } from "../listener/PullRequestListener";

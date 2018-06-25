@@ -15,7 +15,10 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { addressChannelsFor, HasChannels } from "../../api/context/addressChannels";
+import {
+    addressChannelsFor,
+    HasChannels,
+} from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 
 /**

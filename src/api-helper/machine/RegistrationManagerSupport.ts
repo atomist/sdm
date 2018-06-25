@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    HandleEvent,
+} from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
 import { HandlerRegistrationManager } from "../../api/machine/HandlerRegistrationManager";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { commandHandlerRegistrationToCommand, editorRegistrationToCommand, generatorRegistrationToCommand } from "./commandRegistrations";
+import {
+    commandHandlerRegistrationToCommand,
+    editorRegistrationToCommand,
+    generatorRegistrationToCommand,
+} from "./commandRegistrations";
 import { MachineOrMachineOptions } from "./toMachineOptions";
 
 /**

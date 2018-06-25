@@ -14,23 +14,36 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger, Success } from "@atomist/automation-client";
-import { SdmGoalState } from "../..";
-import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { Goal } from "../../api/goal/Goal";
-import { ArtifactStore, DeployableArtifact } from "../../spi/artifact/ArtifactStore";
+import {
+    HandlerContext,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
+import { SdmGoalState } from "../..";
 import { findSdmGoalOnCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../api/goal/Goal";
 import { SdmGoal } from "../../api/goal/SdmGoal";
+import {
+    ArtifactStore,
+    DeployableArtifact,
+} from "../../spi/artifact/ArtifactStore";
 import { Deployment } from "../../spi/deploy/Deployment";
 import { Target } from "../../spi/deploy/Target";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { descriptionFromState, updateGoal } from "./storeGoals";
+import {
+    descriptionFromState,
+    updateGoal,
+} from "./storeGoals";
 
 /**
  * Execute deploy with the supplied deployer and target

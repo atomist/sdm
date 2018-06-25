@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
-
 import { logger } from "@atomist/automation-client";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs";
 import { promisify } from "util";
+import {
+    ProjectLoader,
+    ProjectLoadingParameters,
+    WithLoadedProject,
+} from "../../spi/project/ProjectLoader";
 import { cacheKeyForSha } from "./support/cacheKey";
 import { LruCache } from "./support/LruCache";
 import { SimpleCache } from "./support/SimpleCache";

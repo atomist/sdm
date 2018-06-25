@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { isTokenCredentials, ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    isTokenCredentials,
+    ProjectOperationCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 
 /**
  * Convert the given credentials or token string to a token string

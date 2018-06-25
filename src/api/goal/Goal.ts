@@ -15,9 +15,10 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { BaseContext, GitHubStatusAndFriends, GitHubStatusContext } from "./GitHubContext";
-import { requiresApproval } from "./support/approvalGate";
+import {
+    BaseContext,
+    GitHubStatusContext,
+} from "./GitHubContext";
 import { GoalEnvironment } from "./support/environment";
 
 /**
@@ -48,8 +49,6 @@ export interface GoalDefinition {
     // when set to true, this goal can be retried in case of failure
     retryFeasible?: boolean;
 }
-
-export type PreconditionsStatus = "waiting" | "success" | "failure";
 
 const ValidGoalName = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
 
@@ -109,12 +108,6 @@ export class Goal {
         this.name = definition.displayName || (matchGoal && matchGoal[2]) || definition.orderedName;
 
     }
-
-    // TODO decouple from github statuses
-    public async preconditionsStatus(id: RepoRef,
-                                     sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
-        return "success";
-    }
 }
 
 export class GoalWithPrecondition extends Goal {
@@ -125,67 +118,9 @@ export class GoalWithPrecondition extends Goal {
         super(definition);
         this.dependsOn = dependsOn;
     }
-
-    public async preconditionsStatus(idForLogging: RepoRef,
-                                     sub: GitHubStatusAndFriends): Promise<PreconditionsStatus> {
-        const checks = this.dependsOn.map(pg => checkPreconditionStatus(sub, pg));
-        logger.debug("Preconditions: %j", checks);
-        const errors: string[] = checks.filter(r => r.error !== undefined)
-            .map(r => r.error);
-        const reasonsToWait: string[] = checks.filter(r => r.wait !== undefined).map(r => r.wait);
-
-        errors.forEach(e => logger.debug("Could not establish preconditions for " + this.name + ": " + e));
-        reasonsToWait.forEach(e => logger.debug("Not triggering " + this.name + ": " + e));
-        if (errors.length > 0) {
-            logger.info("Preconditions failed on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
-                this.name, this.dependsOn.map(g => g.name),
-                idForLogging, errors.join(","), reasonsToWait.join(","));
-            return "failure";
-        }
-        if (reasonsToWait.length > 0) {
-            logger.debug("Preconditions not yet met on goal %s with dependencies '%s' on %j: Errors=[%s]; reasons to wait=[%s]",
-                this.name, this.dependsOn.map(g => g.name),
-                idForLogging, errors.join(","), reasonsToWait.join(","));
-            return "waiting";
-        }
-        return "success";
-    }
 }
 
 export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {
     return !!(goal as GoalWithPrecondition).dependsOn;
 }
 
-function checkPreconditionStatus(sub: GitHubStatusAndFriends, pg: Goal): { wait?: string, error?: string } {
-    const detectedStatus = sub.siblings.find(gs => gs.context === pg.context);
-    if (!detectedStatus) {
-        return {wait: "Did not find a status for " + pg.context};
-    }
-    if (detectedStatus.state === "pending") {
-        return {wait: "Precondition '" + pg.name + "' not yet successful"};
-    }
-    if (detectedStatus.state !== "success") {
-        return {error: "Precondition '" + pg.name + `' in state [${detectedStatus.state}]`};
-    }
-    if (requiresApproval(detectedStatus)) {
-        return {wait: "Precondition '" + pg.name + "' requires approval"};
-    }
-    return {};
-}
-
-export function currentGoalIsStillPending(currentGoal: GitHubStatusContext, status: GitHubStatusAndFriends): boolean {
-    const myStatus = status.siblings.find(s => s.context === currentGoal);
-    if (!myStatus) {
-        logger.debug("Status.context is %s but there is nothing with this context", currentGoal);
-        return false;
-    }
-    if (myStatus.state === "pending" && myStatus.description.startsWith("Planning")) {
-        return true;
-    }
-    if (myStatus.state === "failure" && myStatus.description.startsWith("Skip")) {
-        return true;
-    }
-    logger.debug(`${currentGoal} is not still planned or skipped, so I'm not running it.
-    State: ${myStatus.state} Description: ${myStatus.description}`);
-    return false;
-}

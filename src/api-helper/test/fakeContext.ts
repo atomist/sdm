@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 
 /**

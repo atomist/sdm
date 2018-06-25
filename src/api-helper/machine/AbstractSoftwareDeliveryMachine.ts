@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
@@ -26,7 +30,12 @@ import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
+import {
+    BuildGoal,
+    JustBuildGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -43,7 +52,10 @@ import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../goal/executeBuild";
 import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
-import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
+import {
+    executeVerifyEndpoint,
+    SdmVerification,
+} from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 
 /**

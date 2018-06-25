@@ -15,7 +15,10 @@
  */
 
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 /**
  * Event raised on a computed fingerprint

@@ -21,24 +21,29 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
+import { sprintf } from "sprintf-js";
 import { SdmGoalState } from "../..";
+import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoal } from "../../api/goal/SdmGoal";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { spawnAndWatch } from "../misc/spawned";
-import { descriptionFromState, updateGoal } from "./storeGoals";
-
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { sprintf } from "sprintf-js";
-import { AddressChannels } from "../../api/context/addressChannels";
 import { ProgressLog } from "../../spi/log/ProgressLog";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
+import { spawnAndWatch } from "../misc/spawned";
+import {
+    descriptionFromState,
+    updateGoal,
+} from "./storeGoals";
 
 class GoalExecutionError extends Error {
     public readonly where: string;
