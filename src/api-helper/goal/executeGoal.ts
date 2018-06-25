@@ -21,6 +21,7 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/configuration";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
@@ -135,11 +136,22 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                                   rwlc: RunWithLogContext,
                                   sdmGoal: SdmGoal,
                                   stage: "post" | "pre"): Promise<HandlerResult> {
+    const hook = goalToHookFile(sdmGoal, stage);
+
+    // Check configuration to see if hooks should be skipped
+    if (!configurationValue<boolean>("sdm.goal.hooks", true)) {
+        rwlc.progressLog.write("---");
+        rwlc.progressLog.write(`Invoking goal hook: ${hook}`);
+        rwlc.progressLog.write(`Result: skipped (hooks disabled in configuration)`);
+        rwlc.progressLog.write("---");
+        await rwlc.progressLog.flush();
+        return Success;
+    }
+
     const { projectLoader } = rules;
     const { credentials, id, context, progressLog } = rwlc;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
         const hook = goalToHookFile(sdmGoal, stage);
-
         progressLog.write("---");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
@@ -149,11 +161,6 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 cwd: path.join(p.baseDir, ".atomist", "hooks"),
                 env: {
                     ...process.env,
-                    // TODO cd do we need more variables to pass over?
-                    // jess: I vote for passing the fewest possible -- like just correlation ID maybe, to show it
-                    // can be done.
-                    // This is an interface that is easy to expand and very hard to contract.
-                    // plus, this is secure information; must we provide it to a script in any repo?
                     GITHUB_TOKEN: toToken(credentials),
                     ATOMIST_TEAM: context.teamId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
