@@ -252,7 +252,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     public addGoalContributions(goalContributions: GoalSetter): this {
-        this.pushMap = enrichGoalSetters(this.pushMap, goalContributions);
+        this.pushMap = enrichGoalSetters(this.pushMap || new PushRules("Goal setters"), goalContributions);
         return this;
     }
 
