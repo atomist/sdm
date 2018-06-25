@@ -285,7 +285,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                           public readonly configuration: O,
                           goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
-        this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
+
+        // If we didn't get any goal setters don't register a mapping
+        if (goalSetters.length > 0) {
+            this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
+        }
     }
 
 }
