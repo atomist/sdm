@@ -16,7 +16,6 @@
 
 import { Success } from "@atomist/automation-client";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-
 import * as assert from "power-assert";
 import { executeGoal } from "../../../src/api-helper/goal/executeGoal";
 import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";
@@ -44,6 +43,20 @@ const fakeSdmGoal = {name: "test", fulfillment: {name: "HelloWorld"}, environmen
 const fakeCredentials = {token: "NOT-A-TOKEN"};
 
 describe("executing the goal", () => {
+
+    before(() => {
+        (global as any).__runningAutomationClient = {
+            configuration: {
+                goal: {
+                    hooks: true,
+                }
+            }
+        }
+    })
+
+    after(() => {
+        delete (global as any).__runningAutomationClient;
+    })
 
     it("calls a pre-hook and sends output to the log", done => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
