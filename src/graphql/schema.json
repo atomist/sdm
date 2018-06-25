@@ -9331,18 +9331,6 @@
                   }
                 },
                 {
-                  "name": "state",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
                   "name": "ts",
                   "description": null,
                   "type": {
@@ -9550,18 +9538,6 @@
                 },
                 {
                   "name": "repo",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -108357,18 +108333,6 @@
                   }
                 },
                 {
-                  "name": "state",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
                   "name": "ts",
                   "description": null,
                   "type": {
@@ -108470,18 +108434,6 @@
                 },
                 {
                   "name": "repo",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -110304,8 +110256,8 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "SdmGoalState",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -110797,8 +110749,8 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "SdmDeployState",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -111928,6 +111880,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "7e1876fd-2601-45e8-82de-c5b454250085"
+    "correlation_id": "77b4680b-1d50-465f-a644-967031accd00"
   }
 }
