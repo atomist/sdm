@@ -17,6 +17,8 @@
 import * as assert from "power-assert";
 import {DelimitedWriteProgressLogDecorator} from "../../../src/api-helper/log/DelimitedWriteProgressLogDecorator";
 import { ProgressLog } from "../../../src/spi/log/ProgressLog";
+import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";
+import { HandlerContext } from "@atomist/automation-client";
 
 class ListProgressLog implements ProgressLog {
 
@@ -84,5 +86,18 @@ describe("DelimitedWriteProgressLogDecorator", () => {
             "I sleep all night and I work all day",
         ]);
     });
+
+    it("Should include newlines in its log property", async () => {
+        const delegateLog = await createEphemeralProgressLog({} as any, { name: "hi"} as any);
+        const log = new DelimitedWriteProgressLogDecorator(delegateLog, "\n");
+
+        log.write("I'm a lumberjack and I'm OK\nI sleep all");
+        log.write(" night and I work all day");
+        await log.flush();
+
+        assert.deepEqual(log.log,
+            "I'm a lumberjack and I'm OK\nI sleep all night and I work all day",
+        );
+    })
 
 });

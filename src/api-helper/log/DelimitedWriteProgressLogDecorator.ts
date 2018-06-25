@@ -50,7 +50,7 @@ export class DelimitedWriteProgressLogDecorator implements ProgressLog {
         if (splitLines.length > 1) {
             const completedLines = splitLines.slice(0, splitLines.length - 1);
             this.lineBuffer = splitLines[splitLines.length - 1];
-            completedLines.forEach(l => this.delegate.write(l));
+            completedLines.forEach(l => this.delegate.write(l + this.lineDelimiter));
         }
     }
 
