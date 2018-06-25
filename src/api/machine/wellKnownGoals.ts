@@ -61,6 +61,7 @@ export const AutofixGoal = new Goal({
     workingDescription: "Running autofixes...",
     completedDescription: "Autofixed",
     failedDescription: "Autofixes applied",
+    isolated: true,
 });
 
 /**
