@@ -33,24 +33,30 @@ export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<Ed
 
     /**
      * Create the parameters required by this editor.
+     * Editors do not require parameters.
      * Empty parameters will be returned by default.
      */
     paramsMaker?: Maker<PARAMS>;
 
     /**
-     * Allow customization of editor targeting
+     * Allow customization of the repositories an editor targets.
      */
     targets?: FallbackParams;
 
     /**
-     * Should this be a dry run editor: That is,
-     * should it wait for the build result to determine whether to raise a pull request
-     * or issue. Default is editorCommand, which creates a branch and a PR.
+     * Should this be a custom editor creation function?
+     * Typically used to enable a dry run editor: That is,
+     * an editor that waits for the build result to determine whether to raise a pull request
+     * or issue. Default behavior is to create a branch and a PR.
      */
     editorCommandFactory?: EditorCommandFactory<PARAMS>;
 
 }
 
+/**
+ * Function providing the ability to create a custom editor command
+ * to change default behavior.
+ */
 export type EditorCommandFactory<PARAMS> = (
     sdm: MachineOrMachineOptions,
     edd: (params: PARAMS) => AnyProjectEditor,
