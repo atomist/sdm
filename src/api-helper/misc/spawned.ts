@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { SpawnOptions } from "child_process";
-import { ProgressLog } from "../../spi/log/ProgressLog";
 import * as clientSpawned from "@atomist/automation-client/util/spawned";
 import {
     asSpawnCommand,
@@ -26,6 +24,8 @@ import {
     SpawnWatchOptions,
     stringifySpawnCommand,
 } from "@atomist/automation-client/util/spawned";
+import { SpawnOptions } from "child_process";
+import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
 
 export {
