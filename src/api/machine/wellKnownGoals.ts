@@ -46,6 +46,7 @@ export const FingerprintGoal = new Goal({
     uniqueName: "Fingerprint",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-fingerprint",
+    workingDescription: "Running fingerprint calculations...",
     completedDescription: "Fingerprinted",
 });
 
