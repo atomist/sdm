@@ -12,7 +12,11 @@ The concept is explained in detail in Rod Johnson's blog [Why you need a Softwar
 > Atomist is about developing your development experience by using your coding skills. Change the code, restart, and see your new automations and changed behavior across all your projects, within seconds. 
 
 ## Get Started
-This repository contains an SDM framework built on lower level Atomist capabilities.
+
+To run an SDM of your own that connects to the Atomist API for Software, start with [Sample SDM](https://github.com/atomist/sample-sdm).
+
+
+This repository contains the API and helpers for an SDM framework. The implementation of the framework, built on lower level Atomist capabilities, lives in [sdm-core](https://github.com/atomist/sdm-core). 
 
 SDMs based on this framework process events from the Atomist SaaS event hub. The architecture is as follows, with events coming in from the systems that matter in your development process:
 
@@ -33,6 +37,12 @@ SDM projects are Atomist automation clients, written in [TypeScript](https://www
 See [set up](./docs/Setup.md) for additional prerequisites depending on the projects you're building.
 
 See the [sample-sdm project](https://github.com/atomist/sample-sdm) project for instructions on how to run an SDM instance, and description of the out of the box functionality.
+
+### Dependencies
+
+A concrete SDM (such as [Sample SDM](https://github.com/atomist/sample-sdm)) depends on this project, on [sdm-core](https://github.com/atomist/sdm-core), and on any number of SDM Packs. Packs bring
+in functionality related to a particular technology. For instance, there is a [Spring pack](https://github.com/atomist/sdm-pack-spring), a [Sonarqube pack](https://github.com/atomist/sdm-pack-sonarqube),
+a [Kubernetes pack](https://github.com/atomist/sdm-pack-k8s), and more.
 
 ## Core Concepts
 Atomist is a flexible platform, enabling you to build your own automations or use those provided by Atomist or third parties. Because you're using a real programming language (not YAML or Bash), and you have access to a real ecosystem (Node), you can create a richer delivery experience than you've even imagined.
