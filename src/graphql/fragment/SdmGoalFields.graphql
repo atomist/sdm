@@ -10,6 +10,7 @@ fragment SdmGoalFields on SdmGoal {
   }
   description
   url
+  externalUrl
   state
   externalKey
   goalSet
