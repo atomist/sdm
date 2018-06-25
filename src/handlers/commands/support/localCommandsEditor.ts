@@ -17,10 +17,10 @@
 import { logger } from "@atomist/automation-client";
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { spawn, SpawnOptions } from "child_process";
+import { SpawnOptions } from "child_process";
 import { LoggingProgressLog } from "../../../api-helper/log/LoggingProgressLog";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
-import { ChildProcessResult, SpawnCommand, stringifySpawnCommand, watchSpawned } from "../../../util/misc/spawned";
+import { ChildProcessResult, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "../../../util/misc/spawned";
 
 /**
  * Create a project editorCommand wrapping spawned local commands
@@ -38,8 +38,7 @@ export function localCommandsEditor(commands: SpawnCommand[],
         let commandResult: ChildProcessResult;
         for (const cmd of commands) {
             logger.info("Executing command %s", stringifySpawnCommand(cmd));
-            commandResult = await watchSpawned(
-                spawn(cmd.command, cmd.args, { ...opts, ...cmd.options }),
+            commandResult = await spawnAndWatch(cmd, { ...opts, ...cmd.options },
                 log,
                 {
                     errorFinder: (code, signal) => code !== 0,
