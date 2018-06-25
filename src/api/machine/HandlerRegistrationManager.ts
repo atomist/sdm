@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    HandleEvent,
+} from "@atomist/automation-client";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { FunctionalUnit } from "./FunctionalUnit";
 

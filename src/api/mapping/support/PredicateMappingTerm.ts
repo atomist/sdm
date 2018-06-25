@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { isMapping, Mapper } from "../Mapping";
+import {
+    isMapping,
+    Mapper,
+} from "../Mapping";
 import { PredicateMapping } from "../PredicateMapping";
 
 /**

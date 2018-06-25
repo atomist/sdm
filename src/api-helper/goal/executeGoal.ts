@@ -21,23 +21,29 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import * as path from "path";
-import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
-import { Goal } from "../../api/goal/Goal";
-import { SdmGoal } from "../../ingesters/sdmGoalIngester";
-import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { spawnAndWatch } from "../../util/misc/spawned";
-import { descriptionFromState, updateGoal } from "./storeGoals";
-
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
+import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../api/goal/ExecuteGoalWithLog";
+import { Goal } from "../../api/goal/Goal";
+import { SdmGoal } from "../../api/goal/SdmGoal";
+import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
-import { toToken } from "../../util/credentials/toToken";
-import { stringifyError } from "../../util/misc/errorPrinting";
-import { reportFailureInterpretationToLinkedChannels } from "../../util/slack/reportFailureInterpretationToLinkedChannels";
+import { ProjectLoader } from "../../spi/project/ProjectLoader";
+import { SdmGoalState } from "../../typings/types";
+import { toToken } from "../misc/credentials/toToken";
+import { stringifyError } from "../misc/errorPrinting";
+import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
+import { spawnAndWatch } from "../misc/spawned";
+import {
+    descriptionFromState,
+    updateGoal,
+} from "./storeGoals";
 
 class GoalExecutionError extends Error {
     public readonly where: string;
@@ -191,8 +197,8 @@ export function markStatus(parameters: {
     error?: Error, progressLogUrl: string,
 }) {
     const { ctx, sdmGoal, goal, result, error, progressLogUrl } = parameters;
-    const newState = result.code !== 0 ? "failure" :
-        result.requireApproval ? "waiting_for_approval" : "success";
+    const newState = result.code !== 0 ? SdmGoalState.failure :
+        result.requireApproval ? SdmGoalState.waiting_for_approval : SdmGoalState.success;
 
     return updateGoal(ctx, sdmGoal,
         {
@@ -209,7 +215,7 @@ function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, 
     return updateGoal(ctx, sdmGoal, {
         url: progressLogUrl,
         description: goal.inProcessDescription,
-        state: "in_process",
+        state: SdmGoalState.in_process,
     }).catch(err =>
         logger.warn("Failed to update %s goal to tell people we are working on it", goal.name));
 
@@ -248,7 +254,7 @@ async function reportGoalError(parameters: {
     // The executor might have information about the failure; report it in the channels
     if (interpretation) {
         if (!interpretation.doNotReportToUser) {
-            await reportFailureInterpretationToLinkedChannels(implementationName, interpretation,
+            await reportFailureInterpretation(implementationName, interpretation,
                 { url: progressLog.url, log: progressLog.log },
                 id, addressChannels);
         }

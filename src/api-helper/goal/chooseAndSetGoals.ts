@@ -14,23 +14,50 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger, Success } from "@atomist/automation-client";
+import {
+    HandlerContext,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { guid } from "@atomist/automation-client/internal/util/string";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AddressChannels, addressChannelsFor } from "../../api/context/addressChannels";
+import {
+    AddressChannels,
+    addressChannelsFor,
+} from "../../api/context/addressChannels";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
-import { Goal, hasPreconditions } from "../../api/goal/Goal";
+import {
+    Goal,
+    hasPreconditions,
+} from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
-import { isGoalImplementation, isSideEffect, SdmGoalImplementationMapper } from "../../api/goal/support/SdmGoalImplementationMapper";
-import { GoalsSetListener, GoalsSetListenerInvocation } from "../../api/listener/GoalsSetListener";
+import {
+    SdmGoal,
+    SdmGoalFulfillment,
+} from "../../api/goal/SdmGoal";
+import {
+    isGoalImplementation,
+    isSideEffect,
+    SdmGoalImplementationMapper,
+} from "../../api/goal/support/SdmGoalImplementationMapper";
+import {
+    GoalsSetListener,
+    GoalsSetListenerInvocation,
+} from "../../api/listener/GoalsSetListener";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
-import { SdmGoal, SdmGoalFulfillment } from "../../ingesters/sdmGoalIngester";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { PushFields } from "../../typings/types";
-import { constructSdmGoal, constructSdmGoalImplementation, storeGoal } from "./storeGoals";
+import {
+    PushFields,
+    SdmGoalState,
+} from "../../typings/types";
+import {
+    constructSdmGoal,
+    constructSdmGoalImplementation,
+    storeGoal,
+} from "./storeGoals";
 
 export interface ChooseAndSetGoalsRules {
     projectLoader: ProjectLoader;
@@ -127,7 +154,7 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
             goalSet: determinedGoals.name,
             goalSetId,
             goal: g,
-            state: hasPreconditions(g) ? "planned" : "requested",
+            state: (hasPreconditions(g) ? SdmGoalState.planned : SdmGoalState.requested) as SdmGoalState,
             id: pli.id,
             providerId: repoRefResolver.providerIdFromPush(pli.push),
             fulfillment: await fulfillment({implementationMapping}, g, pli),

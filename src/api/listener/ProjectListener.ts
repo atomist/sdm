@@ -15,7 +15,10 @@
  */
 
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 /**
  * Invocation for an event on a project

@@ -24,9 +24,7 @@ import { ExtensionPack } from "./ExtensionPack";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { HandlerRegistrationManager } from "./HandlerRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
-import {
-    SoftwareDeliveryMachineConfiguration,
-} from "./SoftwareDeliveryMachineOptions";
+import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
 /**
  * Class instantiated to create a **Software Delivery MachineConfiguration**.

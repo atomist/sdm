@@ -14,31 +14,36 @@
  * limitations under the License.
  */
 
-import { HandleCommand, logger, Success } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { OnCommand } from "@atomist/automation-client/onCommand";
+import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import * as stringify from "json-stringify-safe";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
-import { dryRunEditorCommand } from "../../pack/dry-run/dryRunEditorCommand";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
-import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
+import {
+    MachineOrMachineOptions,
+    toMachineOptions,
+} from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const EditorTag = "editor";
 
-import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
-import * as stringify from "json-stringify-safe";
-
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, EditorTag);
-    const fun = e.dryRun ? dryRunEditorCommand : editorCommand;
+    const fun = e.editorCommandFactory || editorCommand;
     return () => fun(
         sdm,
         toEditorFunction(e),

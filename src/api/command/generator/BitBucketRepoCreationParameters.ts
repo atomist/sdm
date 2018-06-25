@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { MappedParameter, MappedParameters, Secret, Secrets } from "@atomist/automation-client";
+import {
+    MappedParameter,
+    MappedParameters,
+    Secret,
+    Secrets,
+} from "@atomist/automation-client";
 import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";

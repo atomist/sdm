@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Goal, GoalDefinition } from "../Goal";
+import {
+    Goal,
+    GoalDefinition,
+} from "../Goal";
 import { IndependentOfEnvironment } from "../support/environment";
 
 /**

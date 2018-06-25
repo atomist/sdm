@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { HandlerContext, logger } from "@atomist/automation-client";
-import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import {
-    QueryNoCacheOptions,
-} from "@atomist/automation-client/spi/graph/GraphClient";
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import {
     pushTest,
     PushTest,
@@ -27,7 +28,7 @@ import {
 // TODO once the ingester is defined elsewhere move this into a file and generate types
 const DeployEnablementQuery = `
 query DeployEnablementForRepo($owner: [String], $repo: [String]) {
-  SdmDeployEnablement(state: ["requested"], owner: $owner, repo: $repo) {
+  SdmDeployEnablement(owner: $owner, repo: $repo) {
     id
     state
     owner

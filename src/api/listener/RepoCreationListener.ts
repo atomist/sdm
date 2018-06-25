@@ -15,7 +15,10 @@
  */
 
 import * as schema from "../../typings/types";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 /**
  * Superinterface for all event invocations concerning a repo.

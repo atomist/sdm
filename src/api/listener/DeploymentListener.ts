@@ -15,7 +15,10 @@
  */
 
 import { OnSuccessStatus } from "../../typings/types";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 import Status = OnSuccessStatus.Status;
 
 /**

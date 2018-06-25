@@ -1,9 +1,0 @@
-query PersonByChatId($screenName: String!) {
-  ChatId(screenName: $screenName) {
-    userId
-    screenName
-    person @required {
-      ...PersonFields
-    }
-  }
-}

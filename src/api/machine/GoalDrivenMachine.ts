@@ -23,9 +23,7 @@ import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
 import { MachineConfiguration } from "./MachineConfiguration";
-import {
-    SoftwareDeliveryMachineConfiguration,
-} from "./SoftwareDeliveryMachineOptions";
+import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
 /**
  * Interface for machines driven by configurable goals.

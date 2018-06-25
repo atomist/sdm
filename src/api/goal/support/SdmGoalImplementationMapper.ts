@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SdmGoal } from "../../../ingesters/sdmGoalIngester";
+import { SdmGoal } from "../../../api/goal/SdmGoal";
 import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";

@@ -1,4 +1,3 @@
-import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 /*
  * Copyright © 2018 Atomist, Inc.
  *
@@ -15,7 +14,13 @@ import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/co
  * limitations under the License.
  */
 
-import { MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
+import {
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Parameters,
+} from "@atomist/automation-client";
+import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";

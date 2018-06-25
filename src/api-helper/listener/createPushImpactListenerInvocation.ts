@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
+import {
+    HandlerContext,
+    logger,
+} from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
 import { messageDestinationsFor } from "../../api/context/addressChannels";
 import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
-import { teachToRespondInEventHandler } from "../../internal/slack/contextMessageRouting";
-import { filesChangedSince, filesChangedSinceParentCommit } from "../../util/git/filesChangedSince";
-import { filteredView } from "../../util/project/filteredView";
+import {
+    filesChangedSince,
+    filesChangedSinceParentCommit,
+} from "../misc/git/filesChangedSince";
+import { filteredView } from "../misc/project/filteredView";
 
 /**
  * Create a PushImpactListenerInvocation from the given context.
@@ -51,4 +58,26 @@ export async function createPushImpactListenerInvocation(rwlc: RunWithLogContext
         commit,
         push,
     };
+}
+
+/**
+ * Safely mutate the given HandlerContext so that it can respond even when used in
+ * an EventHandler
+ * @param ctx context to wrap
+ * @param destinations
+ * @return {HandlerContext}
+ */
+function teachToRespondInEventHandler(ctx: HandlerContext, ...destinations: Destination[]): HandlerContext {
+    const oldRespondMethod = ctx.messageClient.respond;
+    ctx.messageClient.respond = async (msg, options) => {
+        // First try routing to response. If that doesn't work, we're probably
+        // in an event handler. Try linked channels.
+        try {
+            return await oldRespondMethod(msg, options);
+        } catch (err) {
+            logger.debug("Rerouting response message to destinations: message was [%s]", msg);
+            return ctx.messageClient.send(msg, destinations, options);
+        }
+    };
+    return ctx;
 }

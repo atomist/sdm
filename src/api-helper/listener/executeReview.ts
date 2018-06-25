@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
+import {
+    failure,
+    logger,
+} from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import * as _ from "lodash";
-
-import { failure, logger } from "@atomist/automation-client";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
-import { ExecuteGoalWithLog, RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import {
+    ExecuteGoalWithLog,
+    RunWithLogContext,
+} from "../../api/goal/ExecuteGoalWithLog";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { ReviewListener } from "../../api/listener/ReviewListener";
-import { PushReactionResponse, relevantCodeActions } from "../../api/registration/PushReactionRegistration";
-import { formatReviewerError, ReviewerError } from "../../api/registration/ReviewerError";
+import { PushReactionResponse } from "../../api/registration/PushReactionRegistration";
+import {
+    formatReviewerError,
+    ReviewerError,
+} from "../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
+import { relevantCodeActions } from "./relevantCodeActions";
 
 /**
  * Execute reviews and route or react to results using review listeners

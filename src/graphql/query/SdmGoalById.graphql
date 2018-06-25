@@ -1,6 +1,0 @@
-query SdmGoalById($id: ID!) {
-  SdmGoal(id: $id) {
-    ...SdmGoalFields
-    ...SdmGoalRepo
-  }
-}

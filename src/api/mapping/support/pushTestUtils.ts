@@ -15,10 +15,14 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { LruCache } from "../../../project/support/LruCache";
+import { LruCache } from "../../../api-helper/project/support/LruCache";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { isMapping } from "../Mapping";
-import { predicatePushTest, ProjectPredicate, PushTest } from "../PushTest";
+import {
+    predicatePushTest,
+    ProjectPredicate,
+    PushTest,
+} from "../PushTest";
 
 import * as pred from "./predicateUtils";
 

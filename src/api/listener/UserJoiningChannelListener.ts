@@ -16,7 +16,10 @@
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as schema from "../../typings/types";
-import { ListenerInvocation, SdmListener } from "./Listener";
+import {
+    ListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 export interface UserJoiningChannelListenerInvocation extends ListenerInvocation {
 

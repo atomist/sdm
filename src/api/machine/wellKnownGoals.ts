@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Goal, GoalWithPrecondition } from "../goal/Goal";
+import {
+    Goal,
+    GoalWithPrecondition,
+} from "../goal/Goal";
 import {
     IndependentOfEnvironment,
     ProductionEnvironment,
@@ -58,6 +61,7 @@ export const AutofixGoal = new Goal({
     workingDescription: "Running autofixes...",
     completedDescription: "Autofixed",
     failedDescription: "Autofixes applied",
+    isolated: true,
 });
 
 /**

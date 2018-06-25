@@ -9175,7 +9175,7 @@
                   }
                 },
                 {
-                  "name": "approvelRequired",
+                  "name": "approvalRequired",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -9320,18 +9320,6 @@
                 },
                 {
                   "name": "sha",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -108189,7 +108177,7 @@
               },
               "args": [
                 {
-                  "name": "approvelRequired",
+                  "name": "approvalRequired",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -108334,18 +108322,6 @@
                 },
                 {
                   "name": "sha",
-                  "description": null,
-                  "type": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String"
-                    }
-                  }
-                },
-                {
-                  "name": "state",
                   "description": null,
                   "type": {
                     "kind": "LIST",
@@ -109890,7 +109866,7 @@
               "directives": []
             },
             {
-              "name": "approvelRequired",
+              "name": "approvalRequired",
               "description": null,
               "args": [],
               "type": {
@@ -110014,13 +109990,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110032,13 +110004,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110204,7 +110172,7 @@
                   "name": "name",
                   "description": null,
                   "type": {
-                    "kind": "NON_NULL",
+                    "kind": "LIST",
                     "name": null,
                     "ofType": {
                       "kind": "SCALAR",
@@ -110221,13 +110189,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110239,13 +110203,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110296,8 +110256,8 @@
               "description": null,
               "args": [],
               "type": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "ENUM",
+                "name": "SdmGoalState",
                 "ofType": null
               },
               "isDeprecated": false,
@@ -110659,13 +110619,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110677,13 +110633,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110695,13 +110647,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110888,13 +110836,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110906,13 +110850,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -110924,13 +110864,9 @@
                     "kind": "LIST",
                     "name": null,
                     "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "String",
-                        "ofType": null
-                      }
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
                     }
                   },
                   "defaultValue": null
@@ -111029,7 +110965,7 @@
               "directives": []
             },
             {
-              "name": "provider",
+              "name": "providerId",
               "description": null,
               "args": [],
               "type": {
@@ -111944,6 +111880,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "0f64b870-b6a0-45a0-9e65-2811c2fe9e85"
+    "correlation_id": "77b4680b-1d50-465f-a644-967031accd00"
   }
 }

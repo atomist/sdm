@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 export interface FingerprintValue {
     name: string;

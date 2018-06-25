@@ -1,6 +1,0 @@
-#!/bin/bash
-
-apt-get -yqq update && apt-get install -yqq \
-    unzip \
-    default-jdk \
-    maven

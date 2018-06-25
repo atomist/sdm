@@ -15,7 +15,10 @@
  */
 
 import { Function1 } from "lodash";
-import { RepoContext, SdmContext } from "../context/SdmContext";
+import {
+    RepoContext,
+    SdmContext,
+} from "../context/SdmContext";
 
 export type ListenerInvocation = SdmContext;
 

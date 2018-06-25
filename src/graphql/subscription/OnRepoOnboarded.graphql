@@ -1,7 +1,0 @@
-subscription OnRepoOnboarded {
-  RepoOnboarded {
-    repo {
-      ...CoreRepoFieldsAndChannels
-    }
-  }
-}

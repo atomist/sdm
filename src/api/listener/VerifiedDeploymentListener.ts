@@ -15,7 +15,10 @@
  */
 
 import { StatusState } from "../../typings/types";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 export interface StatusInfo {
     state?: StatusState | null;

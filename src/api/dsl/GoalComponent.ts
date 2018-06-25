@@ -15,7 +15,10 @@
  */
 
 import { Goal } from "../goal/Goal";
-import { Goals, isGoals } from "../goal/Goals";
+import {
+    Goals,
+    isGoals,
+} from "../goal/Goals";
 
 /**
  * Type used in constructing goals

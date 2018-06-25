@@ -15,7 +15,10 @@
  */
 
 import { HandleCommand } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
+import {
+    commandHandlerFrom,
+    OnCommand,
+} from "@atomist/automation-client/onCommand";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { EmptyParameters } from "../../api/command/support/EmptyParameters";
