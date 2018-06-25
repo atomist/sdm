@@ -23,7 +23,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { SdmGoalState } from "../..";
+import { SdmGoalState } from "../../typings/types";
 import {
     Goal,
     hasPreconditions,

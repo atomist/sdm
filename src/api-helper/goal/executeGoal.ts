@@ -24,7 +24,7 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
-import { SdmGoalState } from "../..";
+import { SdmGoalState } from "../../typings/types";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {

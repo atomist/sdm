@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SdmGoalState } from "../..";
+import { SdmGoalState } from "../../typings/types";
 
 export const GoalRootType = "SdmGoal";
 
