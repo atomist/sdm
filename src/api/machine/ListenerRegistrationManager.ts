@@ -72,17 +72,17 @@ export interface ListenerRegistrationManager {
      * @param {RepoCreationListener} rcls
      * @return {this}
      */
-    addRepoCreationListener(rcls: RepoCreationListener): this;
+    addRepoCreationListener(rcl: RepoCreationListener): this;
 
-    addRepoOnboardingListener(rols: ProjectListener): this;
+    addRepoOnboardingListener(l: ProjectListener): this;
 
-    addNewRepoWithCodeAction(pls: PushListener): this;
+    addNewRepoWithCodeAction(pl: PushListener): this;
 
-    addPullRequestListener(pls: PullRequestListener): this;
+    addPullRequestListener(prl: PullRequestListener): this;
 
     addGoalsSetListener(l: GoalsSetListener): this;
 
-    addReviewerRegistration(reviewers: ReviewerRegistration): this;
+    addReviewerRegistration(r: ReviewerRegistration): this;
 
     /**
      * Add review listener. Will be invoked during execution of a ReviewGoal
@@ -94,10 +94,10 @@ export interface ListenerRegistrationManager {
     /**
      * Add a reaction to a push: That is, a function that runs during execution of a
      * PushReaction goal.
-     * @param {PushReactionRegistration} prrs
+     * @param {PushReactionRegistration} prr
      * @return {this}
      */
-    addPushReaction(prrs: PushReactionRegisterable): this;
+    addPushReaction(prr: PushReactionRegisterable): this;
 
     addArtifactListener(l: ArtifactListenerRegisterable): this;
 

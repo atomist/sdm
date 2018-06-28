@@ -19,7 +19,6 @@ import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operat
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
-import { RegistrationManagerSupport } from "../../api-helper/machine/RegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -46,6 +45,7 @@ import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
 import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
+import { CommandRegistrationManagerSupport } from "./CommandRegistrationManagerSupport";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
@@ -60,7 +60,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public readonly extensionPacks: ExtensionPack[] = [];
 
-    protected readonly registrationManager = new RegistrationManagerSupport(this);
+    protected readonly registrationManager = new CommandRegistrationManagerSupport(this);
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
 

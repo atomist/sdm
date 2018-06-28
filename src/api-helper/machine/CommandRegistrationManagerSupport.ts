@@ -28,7 +28,7 @@ import { MachineOrMachineOptions } from "./toMachineOptions";
  * Concrete implementation of CommandRegistrationManager and
  * HandlerRegistrationManager
  */
-export class RegistrationManagerSupport implements CommandRegistrationManager {
+export class CommandRegistrationManagerSupport implements CommandRegistrationManager {
 
     constructor(private readonly sdm: MachineOrMachineOptions) {
     }

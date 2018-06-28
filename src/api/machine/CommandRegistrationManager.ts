@@ -20,7 +20,7 @@ import { EditorRegistration } from "../registration/EditorRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
 
 /**
- * Manage command registrations using a higher level API
+ * Manage command registrations.
  */
 export interface CommandRegistrationManager {
 
