@@ -37,7 +37,12 @@ import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
-import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import {
+    AutofixRegisterable,
+    AutofixRegistration,
+    isEditorAutofixRegistration,
+    toAutofixRegistration,
+} from "../../api/registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
@@ -181,8 +186,9 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
      * Note: be sure that these editors check and don't cause
      * infinite recursion!!
      */
-    public addAutofix(fix: AutofixRegistration): this {
-        this.autofixRegistrations.push(fix);
+    public addAutofix(fix: AutofixRegisterable): this {
+        this.autofixRegistrations.push(
+            isEditorAutofixRegistration(fix) ? toAutofixRegistration(fix) : fix);
         return this;
     }
 

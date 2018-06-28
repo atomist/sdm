@@ -18,7 +18,7 @@ import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,
     AutofixRegistrationOptions,
-    editorAutofixRegistration,
+    toAutofixRegistration,
 } from "../../../api/registration/AutofixRegistration";
 import { localCommandsEditor } from "../../command/editor/localCommandsEditor";
 import { SpawnCommand } from "../../misc/spawned";
@@ -32,7 +32,7 @@ export function spawnedCommandAutofix(name: string,
                                       options: AutofixRegistrationOptions,
                                       command1: SpawnCommand,
                                       ...additionalCommands: SpawnCommand[]): AutofixRegistration {
-    return editorAutofixRegistration({
+    return toAutofixRegistration({
         name,
         editor: localCommandsEditor([command1].concat(additionalCommands)),
         pushTest,

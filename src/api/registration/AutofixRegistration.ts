@@ -20,11 +20,11 @@ import {
     EditResult,
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
-import { PushTest } from "../mapping/PushTest";
 import {
     PushReactionRegistration,
     SelectiveCodeActionOptions,
 } from "./PushReactionRegistration";
+import { PushSelector } from "./PushRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
 
@@ -37,6 +37,19 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
 
 }
 
+export interface EditorAutofixRegistration extends PushSelector {
+    editor: AnyProjectEditor;
+    options?: AutofixRegistrationOptions;
+    parameters?: any;
+}
+
+export function isEditorAutofixRegistration(r: AutofixRegisterable): r is EditorAutofixRegistration {
+    const maybe = r as EditorAutofixRegistration;
+    return !!maybe.editor;
+}
+
+export type AutofixRegisterable = AutofixRegistration | EditorAutofixRegistration;
+
 /**
  * Create an autofix from an existing editor. An editor for autofix
  * should not rely on parameters being passed in. An existing editor can be wrapped
@@ -45,13 +58,7 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
  * linked channels as autofixes are normally invoked in an EventHandler and EventHandlers
  * do not support respond. Be sure to set parameters if they are required by your editor.
  */
-export function editorAutofixRegistration(use: {
-    name: string,
-    editor: AnyProjectEditor,
-    pushTest?: PushTest,
-    options?: AutofixRegistrationOptions,
-    parameters?: any,
-}): AutofixRegistration {
+export function toAutofixRegistration(use: EditorAutofixRegistration): AutofixRegistration {
     const editorToUse = toEditor(use.editor);
     return {
         name: use.name,

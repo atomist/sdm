@@ -16,14 +16,17 @@
 
 import { PushTest } from "../mapping/PushTest";
 
-/**
- * Superclass for registering actions or listeners associated with a push
- */
-export interface PushRegistration<A> {
+export interface PushSelector {
 
     name: string;
 
     pushTest?: PushTest;
+}
+
+/**
+ * Superclass for registering actions or listeners associated with a push
+ */
+export interface PushRegistration<A> extends PushSelector {
 
     action: A;
 
