@@ -32,5 +32,5 @@ export function metadata(name?: string): ExtensionPackMetadata {
         name: name ? `${pj.name}-${name.toLocaleLowerCase()}` : pj.name,
         vendor: pj.author,
         version: pj.version,
-    }
+    };
 }
