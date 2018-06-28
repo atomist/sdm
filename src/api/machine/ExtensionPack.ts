@@ -17,6 +17,15 @@
 import { GoalSetter } from "../mapping/GoalSetter";
 import { MachineConfigurer } from "./MachineConfigurer";
 
+export interface ExtensionPackMetadata {
+
+    name: string;
+
+    vendor: string;
+
+    version: string;
+}
+
 /**
  * Primary unit of extensibility in SDMs.
  * Implemented to expose a capability that can be added to a
@@ -25,13 +34,7 @@ import { MachineConfigurer } from "./MachineConfigurer";
  * For example, a Node module can export an ExtensionPack.
  * ExtensionPacks can optional contribute goal setting, which will be added to existing goal setting.
  */
-export interface ExtensionPack extends MachineConfigurer {
-
-    name: string;
-
-    vendor: string;
-
-    version: string;
+export interface ExtensionPack extends MachineConfigurer, ExtensionPackMetadata {
 
     /**
      * Human-readable description of this extension pack
