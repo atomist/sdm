@@ -49,14 +49,14 @@ describe("executing the goal", () => {
             configuration: {
                 goal: {
                     hooks: true,
-                }
-            }
-        }
-    })
+                },
+            },
+        };
+    });
 
     after(() => {
         delete (global as any).__runningAutomationClient;
-    })
+    });
 
     it("calls a pre-hook and sends output to the log", done => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());

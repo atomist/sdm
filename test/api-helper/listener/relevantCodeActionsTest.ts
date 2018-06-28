@@ -22,10 +22,10 @@ import { relevantCodeActions } from "../../../src/api-helper/listener/relevantCo
 import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
 import {
     AutofixRegistration,
-    editorAutofixRegistration,
+    toAutofixRegistration,
 } from "../../../src/api/registration/AutofixRegistration";
 
-const SomePickyFix: AutofixRegistration = editorAutofixRegistration({
+const SomePickyFix: AutofixRegistration = toAutofixRegistration({
         name: "Some picky fix",
         editor: async i => i,
         pushTest: {
@@ -39,7 +39,7 @@ describe("relevantCodeActions", () => {
 
     it("should match action without push test", async () => {
         const pti: PushImpactListenerInvocation = null;
-        const autofixes: AutofixRegistration = editorAutofixRegistration({
+        const autofixes: AutofixRegistration = toAutofixRegistration({
             name: "License Fix",
             editor: async p => {
                 const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");

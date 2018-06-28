@@ -21,8 +21,8 @@ import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
+import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
-import { HandlerRegistrationManager } from "./HandlerRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
@@ -68,7 +68,7 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
     extends GoalDrivenMachine<O>,
         ListenerRegistrationManager,
         CommandRegistrationManager,
-        HandlerRegistrationManager {
+        FunctionalUnit {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 

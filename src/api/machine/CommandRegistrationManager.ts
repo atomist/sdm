@@ -14,38 +14,41 @@
  * limitations under the License.
  */
 
+import { HandleEvent } from "@atomist/automation-client";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../registration/EditorRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
 
 /**
- * Manage command registrations using a higher level API
+ * Manage command registrations.
  */
 export interface CommandRegistrationManager {
 
     /**
-     * Add commands to this machine
+     * Add a command to this machine
      * @return {this}
      */
-    addCommands(...commands: CommandHandlerRegistration[]): this;
+    addCommand<PARAMS>(command: CommandHandlerRegistration<PARAMS>): this;
 
     /**
-     * Add generators to this machine to enable project creation
+     * Add a generator to this machine to enable project creation
      * @return {this}
      */
-    addGenerators(...gens: Array<GeneratorRegistration<any>>): this;
-
-    /**
-     * Add editors to this machine
-     * @return {this}
-     * @deprecated because in TS 2.9.1 this only works for EditorRegistration<EmptyParameters>
-     */
-    addEditors(...eds: EditorRegistration[]): this;
+    addGenerator<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
 
     /**
      * Add an editor to this machine
      * @return {this}
      */
-    addEditor<P>(ed: EditorRegistration<P>): this;
+    addEditor<PARAMS>(ed: EditorRegistration<PARAMS>): this;
+
+    /**
+     * @deprecated
+     * @param {Maker<HandleEvent<any>>} e
+     * @return {this}
+     */
+    addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this;
 
 }

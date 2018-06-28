@@ -16,9 +16,8 @@
 
 import * as assert from "power-assert";
 import {DelimitedWriteProgressLogDecorator} from "../../../src/api-helper/log/DelimitedWriteProgressLogDecorator";
-import { ProgressLog } from "../../../src/spi/log/ProgressLog";
 import { createEphemeralProgressLog } from "../../../src/api-helper/log/EphemeralProgressLog";
-import { HandlerContext } from "@atomist/automation-client";
+import { ProgressLog } from "../../../src/spi/log/ProgressLog";
 
 class ListProgressLog implements ProgressLog {
 
@@ -98,6 +97,6 @@ describe("DelimitedWriteProgressLogDecorator", () => {
         assert.deepEqual(log.log,
             "I'm a lumberjack and I'm OK\nI sleep all night and I work all day",
         );
-    })
+    });
 
 });

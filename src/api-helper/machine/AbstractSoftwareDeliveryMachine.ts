@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    logger,
-} from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
-import { RegistrationManagerSupport } from "../../api-helper/machine/RegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
@@ -30,12 +26,7 @@ import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import {
-    BuildGoal,
-    JustBuildGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../../api/machine/wellKnownGoals";
+import { BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -52,11 +43,9 @@ import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../goal/executeBuild";
 import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
-import {
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../listener/executeVerifyEndpoint";
+import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
+import { CommandRegistrationManagerSupport } from "./CommandRegistrationManagerSupport";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
@@ -71,7 +60,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public readonly extensionPacks: ExtensionPack[] = [];
 
-    protected readonly registrationManager = new RegistrationManagerSupport(this);
+    protected readonly registrationManager = new CommandRegistrationManagerSupport(this);
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
 
@@ -155,33 +144,18 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         this.disposalGoalSetters.push(...goalSetters);
         return this;
     }
-    public addCommands(...cmds: CommandHandlerRegistration[]): this {
-        this.registrationManager.addCommands(...cmds);
+    public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {
+        this.registrationManager.addCommand(cmd);
         return this;
     }
 
-    public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
-        this.registrationManager.addGenerators(...gens);
-        return this;
-    }
-
-    public addEditors(...eds: EditorRegistration[]): this {
-        this.registrationManager.addEditors(...eds);
+    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+        this.registrationManager.addGenerator(gen);
         return this;
     }
 
     public addEditor<P>(ed: EditorRegistration<P>): this {
         this.registrationManager.addEditor<P>(ed);
-        return this;
-    }
-
-    public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
-        this.registrationManager.addSupportingCommands(...e);
-        return this;
-    }
-
-    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
-        this.registrationManager.addSupportingEvents(...e);
         return this;
     }
 
@@ -230,6 +204,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                 },
             );
         });
+        return this;
+    }
+
+    /**
+     * @deprecated will be new higher-level method for this
+     * @param {Maker<HandleEvent<any>>} e
+     * @return {this}
+     */
+    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
+        this.registrationManager.addSupportingEvents(...e);
         return this;
     }
 

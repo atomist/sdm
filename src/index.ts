@@ -51,7 +51,6 @@ export * from "./api/machine/CommandRegistrationManager";
 export * from "./api/machine/ExtensionPack";
 export * from "./api/machine/FunctionalUnit";
 export * from "./api/machine/GoalDrivenMachine";
-export * from "./api/machine/HandlerRegistrationManager";
 export * from "./api/machine/ListenerRegistrationManager";
 export * from "./api/machine/MachineConfiguration";
 export * from "./api/machine/MachineConfigurer";
