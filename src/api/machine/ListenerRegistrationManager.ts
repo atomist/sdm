@@ -46,87 +46,87 @@ import { ReviewerRegistration } from "../registration/ReviewerRegistration";
  */
 export interface ListenerRegistrationManager {
 
-    addNewIssueListeners(...e: NewIssueListener[]): this;
+    addNewIssueListener(l: NewIssueListener): this;
 
-    addUpdatedIssueListeners(...e: UpdatedIssueListener[]);
+    addUpdatedIssueListener(l: UpdatedIssueListener);
 
     /**
      * These are invoked when a goal reaches status "failure" or "success"
-     * @param {GoalCompletionListener} e
+     * @param {GoalCompletionListener} l
      * @returns {this}
      */
-    addGoalCompletionListeners(...e: GoalCompletionListener[]);
+    addGoalCompletionListener(l: GoalCompletionListener);
 
-    addClosedIssueListeners(...e: ClosedIssueListener[]): this;
+    addClosedIssueListener(l: ClosedIssueListener): this;
 
-    addTagListeners(...e: TagListener[]): this;
+    addTagListener(l: TagListener): this;
 
-    addChannelLinkListeners(...e: ChannelLinkListener[]);
+    addChannelLinkListener(l: ChannelLinkListener);
 
-    addBuildListeners(...e: BuildListener[]);
+    addBuildListener(l: BuildListener);
 
     /**
-     * You probably mean to use addNewRepoWithCodeActions!
+     * You probably mean to use addNewRepoWithCodeAction!
      * This responds to a repo creation, but there may be no
      * code in it.
      * @param {RepoCreationListener} rcls
      * @return {this}
      */
-    addRepoCreationListeners(...rcls: RepoCreationListener[]): this;
+    addRepoCreationListener(rcls: RepoCreationListener): this;
 
-    addRepoOnboardingListeners(...rols: ProjectListener[]): this;
+    addRepoOnboardingListener(rols: ProjectListener): this;
 
-    addNewRepoWithCodeActions(...pls: PushListener[]): this;
+    addNewRepoWithCodeAction(pls: PushListener): this;
 
-    addPullRequestListeners(...pls: PullRequestListener[]): this;
+    addPullRequestListener(pls: PullRequestListener): this;
 
-    addGoalsSetListeners(...listeners: GoalsSetListener[]): this;
+    addGoalsSetListener(l: GoalsSetListener): this;
 
-    addReviewerRegistrations(...reviewers: ReviewerRegistration[]): this;
+    addReviewerRegistration(reviewers: ReviewerRegistration): this;
 
     /**
-     * Add review listeners. Will be invoked during a ReviewGoal
-     * @param {ReviewListener} listeners
+     * Add review listener. Will be invoked during execution of a ReviewGoal
+     * @param {ReviewListener} l
      * @return {this}
      */
-    addReviewListeners(...listeners: ReviewListener[]): this;
+    addReviewListener(l: ReviewListener): this;
 
     /**
-     * Add reactions to a push: That is, functions that run during execution of a
+     * Add a reaction to a push: That is, a function that runs during execution of a
      * PushReaction goal.
      * @param {PushReactionRegistration} prrs
      * @return {this}
      */
-    addPushReactions(...prrs: PushReactionRegisterable[]): this;
+    addPushReaction(prrs: PushReactionRegisterable): this;
 
-    addArtifactListeners(...alrs: ArtifactListenerRegisterable[]): this;
+    addArtifactListener(l: ArtifactListenerRegisterable): this;
 
     /**
-     * Editors automatically invoked on eligible commits.
-     * Note: be sure that these editors check and don't cause
+     * Add an editor automatically invoked on eligible commits.
+     * Note: be sure that the editor checks and don't cause
      * infinite recursion!!
      */
-    addAutofixes(...ars: AutofixRegistration[]): this;
+    addAutofix(fix: AutofixRegistration): this;
 
     autofixRegistrations: AutofixRegistration[];
 
-    addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this;
+    addFingerprinterRegistration(f: FingerprinterRegistration): this;
 
     fingerprinterRegistrations: FingerprinterRegistration[];
 
-    addFingerprintListeners(...l: FingerprintListener[]): this;
+    addFingerprintListener(l: FingerprintListener): this;
 
     fingerprintListeners: FingerprintListener[];
 
-    addFingerprintDifferenceListeners(...fh: FingerprintDifferenceListener[]): this;
+    addFingerprintDifferenceListener(fh: FingerprintDifferenceListener): this;
 
-    addDeploymentListeners(...l: DeploymentListener[]): this;
+    addDeploymentListener(l: DeploymentListener): this;
 
-    addVerifiedDeploymentListeners(...l: VerifiedDeploymentListener[]): this;
+    addVerifiedDeploymentListener(l: VerifiedDeploymentListener): this;
 
-    addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this;
+    addEndpointVerificationListener(l: EndpointVerificationListener): this;
 
-    addUserJoiningChannelListeners(...l: UserJoiningChannelListener[]): this;
+    addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
 
     userJoiningChannelListeners: UserJoiningChannelListener[];
 

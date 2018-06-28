@@ -96,106 +96,83 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     protected readonly goalCompletionListeners: GoalCompletionListener[] = [];
 
-    public addNewIssueListeners(...e: NewIssueListener[]): this {
-        this.newIssueListeners.push(...e);
+    public addNewIssueListener(e: NewIssueListener): this {
+        this.newIssueListeners.push(e);
         return this;
     }
 
-    public addUpdatedIssueListeners(...e: UpdatedIssueListener[]): this {
-        this.updatedIssueListeners.push(...e);
+    public addUpdatedIssueListener(e: UpdatedIssueListener): this {
+        this.updatedIssueListeners.push(e);
         return this;
     }
 
-    /**
-     * These are invoked when a goal reaches status "failure" or "success"
-     * @param {GoalCompletionListener} e
-     * @returns {this}
-     */
-    public addGoalCompletionListeners(...e: GoalCompletionListener[]): this {
-        this.goalCompletionListeners.push(...e);
+    public addGoalCompletionListener(e: GoalCompletionListener): this {
+        this.goalCompletionListeners.push(e);
         return this;
     }
 
-    public addClosedIssueListeners(...e: ClosedIssueListener[]): this {
-        this.closedIssueListeners.push(...e);
+    public addClosedIssueListener(e: ClosedIssueListener): this {
+        this.closedIssueListeners.push(e);
         return this;
     }
 
-    public addTagListeners(...e: TagListener[]): this {
-        this.tagListeners.push(...e);
+    public addTagListener(e: TagListener): this {
+        this.tagListeners.push(e);
         return this;
     }
 
-    public addChannelLinkListeners(...e: ChannelLinkListener[]): this {
-        this.channelLinkListeners.push(...e);
+    public addChannelLinkListener(e: ChannelLinkListener): this {
+        this.channelLinkListeners.push(e);
         return this;
     }
 
-    public addBuildListeners(...e: BuildListener[]): this {
-        this.buildListeners.push(...e);
+    public addBuildListener(e: BuildListener): this {
+        this.buildListeners.push(e);
         return this;
     }
 
-    /**
-     * You probably mean to use addNewRepoWithCodeActions!
-     * This responds to a repo creation, but there may be no
-     * code in it.
-     * @param {RepoCreationListener} rcls
-     * @return {this}
-     */
-    public addRepoCreationListeners(...rcls: RepoCreationListener[]): this {
-        this.repoCreationListeners.push(...rcls);
+    public addRepoCreationListener(rcls: RepoCreationListener): this {
+        this.repoCreationListeners.push(rcls);
         return this;
     }
 
-    public addRepoOnboardingListeners(...rols: ProjectListener[]): this {
-        this.repoOnboardingListeners.push(...rols);
+    public addRepoOnboardingListener(rols: ProjectListener): this {
+        this.repoOnboardingListeners.push(rols);
         return this;
     }
 
-    public addNewRepoWithCodeActions(...pls: PushListener[]): this {
-        this.newRepoWithCodeActions.push(...pls);
+    public addNewRepoWithCodeAction(pls: PushListener): this {
+        this.newRepoWithCodeActions.push(pls);
         return this;
     }
 
-    public addPullRequestListeners(...pls: PullRequestListener[]): this {
-        this.pullRequestListeners.push(...pls);
+    public addPullRequestListener(pls: PullRequestListener): this {
+        this.pullRequestListeners.push(pls);
         return this;
     }
 
-    public addGoalsSetListeners(...listeners: GoalsSetListener[]): this {
-        this.goalsSetListeners.push(...listeners);
+    public addGoalsSetListener(l: GoalsSetListener): this {
+        this.goalsSetListeners.push(l);
         return this;
     }
 
-    public addReviewerRegistrations(...reviewers: ReviewerRegistration[]): this {
-        this.reviewerRegistrations.push(...reviewers);
+    public addReviewerRegistration(r: ReviewerRegistration): this {
+        this.reviewerRegistrations.push(r);
         return this;
     }
 
-    /**
-     * Add review listeners. Will be invoked during a ReviewGoal
-     * @param {ReviewListener} listeners
-     * @return {this}
-     */
-    public addReviewListeners(...listeners: ReviewListener[]): this {
-        this.reviewListeners.push(...listeners);
+    public addReviewListener(l: ReviewListener): this {
+        this.reviewListeners.push(l);
         return this;
     }
 
-    /**
-     * Add reactions to a push: That is, functions that run during execution of a
-     * PushReaction goal.
-     * @param {PushReactionRegistration} prrs
-     * @return {this}
-     */
-    public addPushReactions(...prrs: PushReactionRegisterable[]): this {
-        this.pushReactionRegistrations.push(...prrs);
+    public addPushReaction(r: PushReactionRegisterable): this {
+        this.pushReactionRegistrations.push(r);
         return this;
     }
 
-    public addArtifactListeners(...alrs: ArtifactListenerRegisterable[]): this {
-        this.artifactListenerRegistrations.push(...alrs);
+    public addArtifactListener(l: ArtifactListenerRegisterable): this {
+        this.artifactListenerRegistrations.push(l);
         return this;
     }
 
@@ -204,43 +181,43 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
      * Note: be sure that these editors check and don't cause
      * infinite recursion!!
      */
-    public addAutofixes(...ars: AutofixRegistration[]): this {
-        this.autofixRegistrations.push(...ars);
+    public addAutofix(fix: AutofixRegistration): this {
+        this.autofixRegistrations.push(fix);
         return this;
     }
 
-    public addFingerprinterRegistrations(...f: FingerprinterRegistration[]): this {
-        this.fingerprinterRegistrations.push(...f);
+    public addFingerprinterRegistration(f: FingerprinterRegistration): this {
+        this.fingerprinterRegistrations.push(f);
         return this;
     }
 
-    public addFingerprintListeners(...l: FingerprintListener[]): this {
-        this.fingerprintListeners.push(...l);
+    public addFingerprintListener(l: FingerprintListener): this {
+        this.fingerprintListeners.push(l);
         return this;
     }
 
-    public addFingerprintDifferenceListeners(...fh: FingerprintDifferenceListener[]): this {
-        this.fingerprintDifferenceListeners.push(...fh);
+    public addFingerprintDifferenceListener(fdl: FingerprintDifferenceListener): this {
+        this.fingerprintDifferenceListeners.push(fdl);
         return this;
     }
 
-    public addDeploymentListeners(...l: DeploymentListener[]): this {
-        this.deploymentListeners.push(...l);
+    public addDeploymentListener(l: DeploymentListener): this {
+        this.deploymentListeners.push(l);
         return this;
     }
 
-    public addVerifiedDeploymentListeners(...l: VerifiedDeploymentListener[]): this {
-        this.verifiedDeploymentListeners.push(...l);
+    public addVerifiedDeploymentListener(l: VerifiedDeploymentListener): this {
+        this.verifiedDeploymentListeners.push(l);
         return this;
     }
 
-    public addEndpointVerificationListeners(...l: EndpointVerificationListener[]): this {
-        this.endpointVerificationListeners.push(...l);
+    public addEndpointVerificationListener(l: EndpointVerificationListener): this {
+        this.endpointVerificationListeners.push(l);
         return this;
     }
 
-    public addUserJoiningChannelListeners(...l: UserJoiningChannelListener[]): this {
-        this.userJoiningChannelListeners.push(...l);
+    public addUserJoiningChannelListener(l: UserJoiningChannelListener): this {
+        this.userJoiningChannelListeners.push(l);
         return this;
     }
 
