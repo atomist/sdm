@@ -151,7 +151,6 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const { projectLoader } = rules;
     const { credentials, id, context, progressLog } = rwlc;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
-        const hook = goalToHookFile(sdmGoal, stage);
         progressLog.write("---");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
