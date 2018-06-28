@@ -20,15 +20,25 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
+import { EventRegistrationManager } from "../../api/registration/EventRegistrationManager";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { commandHandlerRegistrationToCommand, editorRegistrationToCommand, generatorRegistrationToCommand } from "./commandRegistrations";
+import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
+import { IngesterRegistrationManager } from "../../api/registration/IngesterRegistrationManager";
+import {
+    commandHandlerRegistrationToCommand,
+    editorRegistrationToCommand,
+    eventHandlerRegistrationToEvent,
+    generatorRegistrationToCommand,
+} from "./handlerRegistrations";
 import { MachineOrMachineOptions } from "./toMachineOptions";
 
 /**
  * Concrete implementation of CommandRegistrationManager and
  * HandlerRegistrationManager
  */
-export class CommandRegistrationManagerSupport implements CommandRegistrationManager {
+export class HandlerRegistrationManagerSupport
+    implements CommandRegistrationManager, EventRegistrationManager, IngesterRegistrationManager {
 
     constructor(private readonly sdm: MachineOrMachineOptions) {
     }
@@ -36,6 +46,8 @@ export class CommandRegistrationManagerSupport implements CommandRegistrationMan
     public commandHandlers: Array<Maker<HandleCommand>> = [];
 
     public eventHandlers: Array<Maker<HandleEvent<any>>> = [];
+
+    public ingesters: string[] = [];
 
     public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {
         const command = commandHandlerRegistrationToCommand(this.sdm, cmd);
@@ -55,8 +67,15 @@ export class CommandRegistrationManagerSupport implements CommandRegistrationMan
         return this;
     }
 
-    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
-        this.eventHandlers.push(...e);
+    public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {
+        const events = [eventHandlerRegistrationToEvent(this.sdm, e)];
+        this.eventHandlers = this.eventHandlers.concat(events);
+        return this;
+    }
+
+    public addIngester(i: IngesterRegistration): this {
+        const ingesters = [i.ingester];
+        this.ingesters = this.ingesters.concat(ingesters);
         return this;
     }
 

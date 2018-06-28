@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-} from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { EventHandlerRegistration } from "../registration/EventHandlerRegistration";
 
 /**
- * Unit of functionality that can be added to an Atomist automation.
+ * Manage event registrations.
  */
-export interface FunctionalUnit {
+export interface EventRegistrationManager {
 
-    readonly eventHandlers: Array<Maker<HandleEvent<any>>>;
+    /**
+     * Add an event to this machine.
+     * @param {EventHandlerRegistration<TYPE>} event
+     * @returns {this}
+     */
+    addEvent<TYPE, PARAMS>(event: EventHandlerRegistration<TYPE, PARAMS>): this;
 
-    readonly commandHandlers: Array<Maker<HandleCommand>>;
-
-    readonly ingesters: string[];
 }
