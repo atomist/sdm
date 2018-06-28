@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-} from "@atomist/automation-client";
+import { HandleCommand, HandleEvent } from "@atomist/automation-client";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
-import { HandlerRegistrationManager } from "../../api/machine/HandlerRegistrationManager";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import {
-    commandHandlerRegistrationToCommand,
-    editorRegistrationToCommand,
-    generatorRegistrationToCommand,
-} from "./commandRegistrations";
+import { commandHandlerRegistrationToCommand, editorRegistrationToCommand, generatorRegistrationToCommand } from "./commandRegistrations";
 import { MachineOrMachineOptions } from "./toMachineOptions";
 
 /**
  * Concrete implementation of CommandRegistrationManager and
  * HandlerRegistrationManager
  */
-export class RegistrationManagerSupport implements CommandRegistrationManager, HandlerRegistrationManager {
+export class RegistrationManagerSupport implements CommandRegistrationManager {
 
     constructor(private readonly sdm: MachineOrMachineOptions) {
     }
@@ -44,37 +37,21 @@ export class RegistrationManagerSupport implements CommandRegistrationManager, H
 
     public eventHandlers: Array<Maker<HandleEvent<any>>> = [];
 
-    public addCommands(...cmds: CommandHandlerRegistration[]): this {
-        const commands = cmds.map(c => commandHandlerRegistrationToCommand(this.sdm, c));
-        this.commandHandlers = this.commandHandlers.concat(commands);
+    public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {
+        const command = commandHandlerRegistrationToCommand(this.sdm, cmd);
+        this.commandHandlers.push(command);
         return this;
     }
 
-    public addGenerators(...gens: Array<GeneratorRegistration<any>>): this {
-        const commands = gens.map(g => generatorRegistrationToCommand(this.sdm, g));
-        this.commandHandlers = this.commandHandlers.concat(commands);
-        return this;
-    }
-
-    public addEditors(...eds: EditorRegistration[]): this {
-        const commands = eds.map(e => editorRegistrationToCommand(this.sdm, e));
-        this.commandHandlers = this.commandHandlers.concat(commands);
+    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+        const command = generatorRegistrationToCommand(this.sdm, gen);
+        this.commandHandlers.push(command);
         return this;
     }
 
     public addEditor<P>(ed: EditorRegistration<P>): this {
         const commands = [editorRegistrationToCommand(this.sdm, ed)];
         this.commandHandlers = this.commandHandlers.concat(commands);
-        return this;
-    }
-
-    public addSupportingCommands(...e: Array<Maker<HandleCommand>>): this {
-        this.commandHandlers.push(...e);
-        return this;
-    }
-
-    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
-        this.eventHandlers.push(...e);
         return this;
     }
 

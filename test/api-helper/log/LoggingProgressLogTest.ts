@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+import * as assert from "assert";
 import { LoggingProgressLog } from "../../../src/api-helper/log/LoggingProgressLog";
-import *  as assert from "assert";
 
 describe("The logging progress logger", () => {
 

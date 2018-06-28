@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../registration/EditorRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
@@ -24,28 +25,21 @@ import { GeneratorRegistration } from "../registration/GeneratorRegistration";
 export interface CommandRegistrationManager {
 
     /**
-     * Add commands to this machine
+     * Add a command to this machine
      * @return {this}
      */
-    addCommands(...commands: CommandHandlerRegistration[]): this;
+    addCommand<PARAMS>(command: CommandHandlerRegistration<PARAMS>): this;
 
     /**
-     * Add generators to this machine to enable project creation
+     * Add a generator to this machine to enable project creation
      * @return {this}
      */
-    addGenerators(...gens: Array<GeneratorRegistration<any>>): this;
-
-    /**
-     * Add editors to this machine
-     * @return {this}
-     * @deprecated because in TS 2.9.1 this only works for EditorRegistration<EmptyParameters>
-     */
-    addEditors(...eds: EditorRegistration[]): this;
+    addGenerator<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
 
     /**
      * Add an editor to this machine
      * @return {this}
      */
-    addEditor<P>(ed: EditorRegistration<P>): this;
+    addEditor<PARAMS>(ed: EditorRegistration<PARAMS>): this;
 
 }
