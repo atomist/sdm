@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { HandleEvent } from "@atomist/automation-client";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../registration/EditorRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
@@ -43,12 +41,4 @@ export interface CommandRegistrationManager {
      * @return {this}
      */
     addEditor<PARAMS>(ed: EditorRegistration<PARAMS>): this;
-
-    /**
-     * @deprecated
-     * @param {Maker<HandleEvent<any>>} e
-     * @return {this}
-     */
-    addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this;
-
 }

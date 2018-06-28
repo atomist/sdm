@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-} from "@atomist/automation-client";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { IngesterRegistration } from "../registration/IngesterRegistration";
 
 /**
- * Unit of functionality that can be added to an Atomist automation.
+ * Manage ingester registrations.
  */
-export interface FunctionalUnit {
+export interface IngesterRegistrationManager {
 
-    readonly eventHandlers: Array<Maker<HandleEvent<any>>>;
+    /**
+     * Add ingester to this machine.
+     * @param {IngesterRegistration} ingester
+     * @returns {this}
+     */
+    addIngester(ingester: IngesterRegistration): this;
 
-    readonly commandHandlers: Array<Maker<HandleCommand>>;
-
-    readonly ingesters: string[];
 }

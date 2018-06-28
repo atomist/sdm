@@ -16,18 +16,22 @@
 
 import {
     HandleCommand,
+    HandleEvent,
     logger,
     Success,
 } from "@atomist/automation-client";
 import { OnCommand } from "@atomist/automation-client/onCommand";
+import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as stringify from "json-stringify-safe";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
@@ -89,6 +93,17 @@ export function commandHandlerRegistrationToCommand(sdm: MachineOrMachineOptions
         c.name,
         c.paramsMaker,
         c,
+    );
+}
+
+export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e: EventHandlerRegistration<any, any>): Maker<HandleEvent> {
+    return () => eventHandlerFrom(
+        e.listener,
+        e.paramsMaker || NoParameters,
+        e.subscription,
+        e.name,
+        e.description,
+        e.tags,
     );
 }
 
