@@ -20,8 +20,10 @@ import { GoalSetter } from "../mapping/GoalSetter";
 import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
+import { EventRegistrationManager } from "./EventRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
+import { IngesterRegistrationManager } from "./IngesterRegistrationManager";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
@@ -66,7 +68,9 @@ import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineO
 export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfiguration = SoftwareDeliveryMachineConfiguration>
     extends GoalDrivenMachine<O>,
         ListenerRegistrationManager,
-        CommandRegistrationManager {
+        CommandRegistrationManager,
+        EventRegistrationManager,
+        IngesterRegistrationManager {
 
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 

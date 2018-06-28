@@ -36,7 +36,9 @@ import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
+import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
@@ -45,7 +47,7 @@ import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
 import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
-import { CommandRegistrationManagerSupport } from "./CommandRegistrationManagerSupport";
+import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
@@ -58,9 +60,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public abstract readonly eventHandlers: Array<Maker<HandleEvent<any>>>;
 
+    public abstract readonly ingesters: string[];
+
     public readonly extensionPacks: ExtensionPack[] = [];
 
-    protected readonly registrationManager = new CommandRegistrationManagerSupport(this);
+    protected readonly registrationManager = new HandlerRegistrationManagerSupport(this);
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
 
@@ -156,6 +160,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public addEditor<P>(ed: EditorRegistration<P>): this {
         this.registrationManager.addEditor<P>(ed);
+        return this;
+    }
+
+    public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {
+        this.registrationManager.addEvent<T, P>(e);
+        return this;
+    }
+
+    public addIngester(i: IngesterRegistration): this {
+        this.registrationManager.addIngester(i);
         return this;
     }
 
