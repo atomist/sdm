@@ -8,19 +8,19 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 
 | License | Count |
 |---------|-------|
-|AFLv2.1|1|
-|Apache-2.0|23|
-|Artistic-2.0|4|
-|BSD-2-Clause|13|
-|BSD-3-Clause|18|
-|BSD|4|
-|CC-BY-3.0|1|
-|CC0-1.0|3|
-|Custom: https://travis-ci.org/ember-cli/ember-cli.svg|1|
-|ISC|102|
-|MIT|324|
-|Unlicense|1|
-|WTFPL|3|
+|[AFLv2.1](#aflv21)|1|
+|[Apache-2.0](#apache-20)|23|
+|[Artistic-2.0](#artistic-20)|4|
+|[BSD-2-Clause](#bsd-2-clause)|13|
+|[BSD-3-Clause](#bsd-3-clause)|18|
+|[BSD](#bsd)|4|
+|[CC-BY-3.0](#cc-by-30)|1|
+|[CC0-1.0](#cc0-10)|3|
+|[Custom: https://travis-ci.org/ember-cli/ember-cli.svg](#custom-httpstravis-ciorgember-cliember-clisvg)|1|
+|[ISC](#isc)|102|
+|[MIT](#mit)|324|
+|[Unlicense](#unlicense)|1|
+|[WTFPL](#wtfpl)|3|
 
 #### AFLv2.1
 
