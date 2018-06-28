@@ -208,6 +208,16 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     /**
+     * @deprecated will be new higher-level method for this
+     * @param {Maker<HandleEvent<any>>} e
+     * @return {this}
+     */
+    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
+        this.registrationManager.addSupportingEvents(...e);
+        return this;
+    }
+
+    /**
      * Declare that a goal will become successful based on something outside.
      * For instance, ArtifactGoal succeeds because of an ImageLink event.
      * This tells the SDM that it does not need to run anything when this

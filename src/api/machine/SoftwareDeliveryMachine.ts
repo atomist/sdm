@@ -21,10 +21,10 @@ import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
+import { FunctionalUnit } from "./FunctionalUnit";
 import { GoalDrivenMachine } from "./GoalDrivenMachine";
 import { ListenerRegistrationManager } from "./ListenerRegistrationManager";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
-import { FunctionalUnit } from "./FunctionalUnit";
 
 /**
  * Class instantiated to create a **Software Delivery MachineConfiguration**.

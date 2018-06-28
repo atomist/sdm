@@ -55,4 +55,9 @@ export class CommandRegistrationManagerSupport implements CommandRegistrationMan
         return this;
     }
 
+    public addSupportingEvents(...e: Array<Maker<HandleEvent<any>>>): this {
+        this.eventHandlers.push(...e);
+        return this;
+    }
+
 }
