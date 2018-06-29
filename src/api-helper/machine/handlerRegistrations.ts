@@ -20,13 +20,14 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
+import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as stringify from "json-stringify-safe";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -47,6 +48,7 @@ export const EditorTag = "editor";
 
 export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, EditorTag);
+    addParametersDefinedInBuilder(e);
     const fun = e.editorCommandFactory || editorCommand;
     return () => fun(
         sdm,
@@ -77,6 +79,7 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
 
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, GeneratorTag);
+    addParametersDefinedInBuilder(e);
     return () => generatorCommand(
         sdm,
         toEditorFunction(e),
@@ -121,8 +124,9 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
     if (!!c.createCommand) {
         return c.createCommand;
     }
+    addParametersDefinedInBuilder(c);
     if (!!c.listener) {
-        return sdm => async (context, parameters) => {
+        return () => async (context, parameters) => {
             // const opts = toMachineOptions(sdm);
             // TODO will add this. Currently it doesn't work.
             const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
@@ -150,4 +154,26 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
         };
     }
     throw new Error(`Command '${c.name}' is invalid, as it does not specify a listener or createCommand function`);
+}
+
+function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
+    const oldMaker = c.paramsMaker;
+    if (!!c.paramsBuilder) {
+        c.paramsMaker = () => {
+            let paramsInstance;
+            if (!!oldMaker) {
+                paramsInstance = toFactory(oldMaker)();
+            } else {
+                paramsInstance = {};
+                paramsInstance.__kind = "command-handler";
+            }
+            c.paramsBuilder.parameters.forEach(p =>
+                declareParameter(paramsInstance, p.name, p));
+            c.paramsBuilder.mappedParameters.forEach(p =>
+                declareMappedParameter(paramsInstance, p.name, p.uri, p.required));
+            c.paramsBuilder.secrets.forEach(p =>
+                declareSecret(paramsInstance, p.name, p.uri));
+            return paramsInstance;
+        };
+    }
 }
