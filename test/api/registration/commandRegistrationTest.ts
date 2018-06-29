@@ -25,9 +25,9 @@ import {
 } from "../../../src/api-helper/machine/handlerRegistrations";
 import { SeedDrivenGeneratorParametersSupport } from "../../../src/api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandHandlerRegistration } from "../../../src/api/registration/CommandHandlerRegistration";
-import { addParameter } from "../../../src/api/registration/CommandRegistration";
 import { EditorRegistration } from "../../../src/api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
+import { addParameter } from "../../../src/api/registration/ParametersBuilder";
 
 describe("command registrations", () => {
 

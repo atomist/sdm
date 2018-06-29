@@ -80,6 +80,7 @@ export * from "./api/registration/FingerprinterRegistration";
 export * from "./api/registration/GeneratorRegistration";
 export * from "./api/registration/IngesterRegistration";
 export * from "./api/registration/IngesterRegistrationManager";
+export * from "./api/registration/ParametersBuilder";
 export * from "./api/registration/ProjectOperationRegistration";
 export * from "./api/registration/PushReactionRegistration";
 export * from "./api/registration/PushRegistration";
