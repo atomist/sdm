@@ -158,7 +158,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
 
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
     const oldMaker = c.paramsMaker;
-    if (!!c.paramsBuilder) {
+    if (!!c.parameters) {
         c.paramsMaker = () => {
             let paramsInstance;
             if (!!oldMaker) {
@@ -167,11 +167,11 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PAR
                 paramsInstance = {};
                 paramsInstance.__kind = "command-handler";
             }
-            c.paramsBuilder.parameters.forEach(p =>
+            c.parameters.parameters.forEach(p =>
                 declareParameter(paramsInstance, p.name, p));
-            c.paramsBuilder.mappedParameters.forEach(p =>
+            c.parameters.mappedParameters.forEach(p =>
                 declareMappedParameter(paramsInstance, p.name, p.uri, p.required));
-            c.paramsBuilder.secrets.forEach(p =>
+            c.parameters.secrets.forEach(p =>
                 declareSecret(paramsInstance, p.name, p.uri));
             return paramsInstance;
         };

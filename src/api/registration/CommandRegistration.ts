@@ -36,6 +36,6 @@ export interface CommandRegistration<PARAMS> extends Partial<CommandDetails> {
      * Define parameters used by this command. Alternative to using
      * paramsMaker: Do not supply both.
      */
-    paramsBuilder?: ParametersBuilder;
+    parameters?: ParametersBuilder;
 
 }

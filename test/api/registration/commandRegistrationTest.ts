@@ -34,7 +34,7 @@ describe("command registrations", () => {
     it("parameter builder should set parameters", () => {
         const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
-            paramsBuilder:
+            parameters:
                 addParameter({name: "foo"})
                     .addParameter({name: "bar", required: true}),
             listener: async ci => {
@@ -52,7 +52,7 @@ describe("command registrations", () => {
     it("parameter builder should set mapped parameters", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
-            paramsBuilder:
+            parameters:
                 addParameter({name: "foo"})
                     .addParameter({name: "bar", required: true})
                     .addMappedParameter({name: "x", uri: "http://thing"}),
@@ -72,7 +72,7 @@ describe("command registrations", () => {
     it("parameter builder should set secret", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
-            paramsBuilder:
+            parameters:
                 addParameter({name: "foo"})
                     .addParameter({name: "bar", required: true})
                     .addSecret({name: "x", uri: "http://thing"}),
@@ -93,7 +93,7 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
-            paramsBuilder:
+            parameters:
                 addParameter({name: "foo"})
                     .addParameter({name: "bar", required: true}),
             listener: async ci => {
@@ -113,7 +113,7 @@ describe("command registrations", () => {
         const reg: GeneratorRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
-            paramsBuilder:
+            parameters:
                 addParameter({name: "foo"})
                     .addParameter({name: "bar", required: true}),
             editor: async p => p,
@@ -140,7 +140,7 @@ describe("command registrations", () => {
         const reg: EditorRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
-            paramsBuilder:
+            parameters:
                 addParameter({name: "foo"})
                     .addParameter({name: "bar", required: true}),
             editor: async p => p,
