@@ -30,7 +30,7 @@ export function metadata(name?: string): ExtensionPackMetadata {
 
     return {
         name: name ? `${pj.name}:${name.toLocaleLowerCase()}` : pj.name,
-        vendor: pj.author,
-        version: pj.version,
+        vendor: pj.author && pj.author.name ? pj.author.name : "",
+        version: pj.version ? pj.version : "",
     };
 }
