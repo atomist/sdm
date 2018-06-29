@@ -26,10 +26,10 @@ import { ExtensionPackMetadata } from "../..";
  */
 export function metadata(name?: string): ExtensionPackMetadata {
     const pathToCallingFunction = trace.get()[1].getFileName();
-    const pj = findUp.sync("package.json", { cwd: path.resolve(path.dirname(pathToCallingFunction)) });
+    const pj = require(findUp.sync("package.json", { cwd: path.resolve(path.dirname(pathToCallingFunction)) }));
 
     return {
-        name: name ? `${pj.name}-${name.toLocaleLowerCase()}` : pj.name,
+        name: name ? `${pj.name}:${name.toLocaleLowerCase()}` : pj.name,
         vendor: pj.author,
         version: pj.version,
     };
