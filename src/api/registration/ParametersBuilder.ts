@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { NamedMappedParameter, NamedParameter, NamedSecret, ParametersDefinition } from "./ParametersDefinition";
+import { NamedMappedParameter, NamedParameter, NamedSecret, ParametersListing } from "./ParametersDefinition";
 
 /**
- * Fluent builder for parameters
+ * Fluent builder for command parameters. Similar to inquirer.js API.
  */
-export class ParametersBuilder implements ParametersDefinition {
+export class ParametersBuilder implements ParametersListing {
 
     public parameters: NamedParameter[] = [];
     public mappedParameters: NamedMappedParameter[] = [];

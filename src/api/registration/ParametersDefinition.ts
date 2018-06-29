@@ -16,10 +16,37 @@
 
 import { BaseParameter } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 
+export type ParametersDefinition = ParametersListing | ParametersObject;
+
+/**
+ * Object with properties defining parameters. Useful for combination
+ * via spreads.
+ */
+export interface ParametersObject {
+
+    [name: string]: BaseParameter | MappedParameterOrSecretDeclaration;
+}
+
+export enum DeclarationType {
+    mapped = "mapped",
+    secret = "secret",
+}
+
+export interface MappedParameterOrSecretDeclaration {
+
+    type: DeclarationType;
+
+    uri: string;
+    /**
+     * Only valid on mapped parameters
+     */
+    required?: boolean;
+}
+
 /**
  * Define parameters used in a command
  */
-export interface ParametersDefinition {
+export interface ParametersListing {
 
     readonly parameters: NamedParameter[];
 

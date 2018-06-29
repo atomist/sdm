@@ -28,6 +28,7 @@ import { CommandHandlerRegistration } from "../../../src/api/registration/Comman
 import { EditorRegistration } from "../../../src/api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../src/api/registration/ParametersBuilder";
+import { DeclarationType } from "../../../src/api/registration/ParametersDefinition";
 
 describe("command registrations", () => {
 
@@ -44,6 +45,30 @@ describe("command registrations", () => {
         const maker = commandHandlerRegistrationToCommand(null, reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
+        const bar = instance.parameters.find(p => p.name === "bar");
+        assert(bar.required);
+        const pi = instance.freshParametersInstance();
+        pi.name = "foo";
+        assert.equal(pi.name, "foo");
+    });
+
+    it("parameter builder should set parameters via indexed property", () => {
+        const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
+            name: "test",
+            parameters:
+                {
+                    foo: {},
+                    bar: {required: true},
+                },
+            listener: async ci => {
+                return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
+            },
+        };
+        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        assert.equal(instance.parameters.length, 2);
+        const bar = instance.parameters.find(p => p.name === "bar");
+        assert(bar.required);
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
@@ -84,6 +109,37 @@ describe("command registrations", () => {
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert.equal(instance.parameters.length, 2);
         assert.equal(instance.secrets.length, 1);
+        const pi = instance.freshParametersInstance();
+        pi.name = "foo";
+        assert.equal(pi.name, "foo");
+    });
+
+    it("parameter builder should set mapped parameter and secret via indexed property", () => {
+        const reg: CommandHandlerRegistration = {
+            name: "test",
+            parameters:
+                {
+                    foo: {},
+                    bar: {required: true},
+                    x: {type: DeclarationType.secret, uri: "http://thing1"},
+                    y: {type: DeclarationType.mapped, uri: "http://thing2", required: false},
+                },
+            listener: async ci => {
+                return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
+            },
+        };
+        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        assert.equal(instance.parameters.length, 2);
+        const bar = instance.parameters.find(p => p.name === "bar");
+        assert(bar.required);
+        assert.equal(instance.secrets.length, 1);
+        const x = instance.secrets.find(p => p.name === "x");
+        assert.equal(x.uri, "http://thing1");
+        assert.equal(instance.mapped_parameters.length, 1);
+        const y = instance.mapped_parameters.find(p => p.name === "y");
+        assert.equal(y.uri, "http://thing2");
+        assert(y.required === false);
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");

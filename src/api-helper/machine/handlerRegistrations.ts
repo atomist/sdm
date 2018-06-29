@@ -20,7 +20,12 @@ import {
     logger,
     Success,
 } from "@atomist/automation-client";
-import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
+import {
+    BaseParameter,
+    declareMappedParameter,
+    declareParameter,
+    declareSecret
+} from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
@@ -42,6 +47,13 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
+import {
+    DeclarationType,
+    MappedParameterOrSecretDeclaration,
+    ParametersDefinition,
+    ParametersListing
+} from "../../api/registration/ParametersDefinition";
+import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
 
 export const GeneratorTag = "generator";
 export const EditorTag = "editor";
@@ -167,13 +179,47 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PAR
                 paramsInstance = {};
                 paramsInstance.__kind = "command-handler";
             }
-            c.parameters.parameters.forEach(p =>
+            const paramListing = toParametersListing(c.parameters);
+            paramListing.parameters.forEach(p =>
                 declareParameter(paramsInstance, p.name, p));
-            c.parameters.mappedParameters.forEach(p =>
+            paramListing.mappedParameters.forEach(p =>
                 declareMappedParameter(paramsInstance, p.name, p.uri, p.required));
-            c.parameters.secrets.forEach(p =>
+            paramListing.secrets.forEach(p =>
                 declareSecret(paramsInstance, p.name, p.uri));
             return paramsInstance;
         };
     }
+}
+
+function isMappedParameterOrSecretDeclaration(x: any): x is MappedParameterOrSecretDeclaration {
+    const maybe = x as MappedParameterOrSecretDeclaration;
+    return !!maybe && !!maybe.type;
+}
+
+function isParametersListing(p: ParametersDefinition): p is ParametersListing {
+    const maybe = p as ParametersListing;
+    return maybe.parameters !== undefined && maybe.mappedParameters !== undefined;
+}
+
+function toParametersListing(p: ParametersDefinition): ParametersListing {
+    if (isParametersListing(p)) {
+        return p;
+    }
+    const builder = new ParametersBuilder();
+    for (const name of Object.getOwnPropertyNames(p)) {
+        const value = p[name];
+        if (isMappedParameterOrSecretDeclaration(value)) {
+            switch (value.type) {
+                case DeclarationType.mapped :
+                    builder.addMappedParameters({name, uri: value.uri, required: value.required});
+                    break;
+                case DeclarationType.secret :
+                    builder.addSecrets({name, uri: value.uri});
+                    break;
+            }
+        } else {
+            builder.addParameters({name, ...value});
+        }
+    }
+    return builder;
 }
