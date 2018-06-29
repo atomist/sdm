@@ -170,7 +170,7 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PAR
             c.paramsBuilder.parameters.forEach(p =>
                 declareParameter(paramsInstance, p.name, p));
             c.paramsBuilder.mappedParameters.forEach(p =>
-                declareMappedParameter(paramsInstance, p.name, p.uri, p.required !== false));
+                declareMappedParameter(paramsInstance, p.name, p.uri, p.required));
             c.paramsBuilder.secrets.forEach(p =>
                 declareSecret(paramsInstance, p.name, p.uri));
             return paramsInstance;
