@@ -21,10 +21,9 @@ import {
     Success,
 } from "@atomist/automation-client";
 import {
-    BaseParameter,
     declareMappedParameter,
     declareParameter,
-    declareSecret
+    declareSecret,
 } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
@@ -39,6 +38,13 @@ import { CommandHandlerRegistration } from "../../api/registration/CommandHandle
 import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
+import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
+import {
+    DeclarationType,
+    MappedParameterOrSecretDeclaration,
+    ParametersDefinition,
+    ParametersListing,
+} from "../../api/registration/ParametersDefinition";
 import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
@@ -47,13 +53,6 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
-import {
-    DeclarationType,
-    MappedParameterOrSecretDeclaration,
-    ParametersDefinition,
-    ParametersListing
-} from "../../api/registration/ParametersDefinition";
-import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
 
 export const GeneratorTag = "generator";
 export const EditorTag = "editor";

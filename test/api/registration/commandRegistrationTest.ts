@@ -139,7 +139,7 @@ describe("command registrations", () => {
         assert.equal(instance.mapped_parameters.length, 1);
         const y = instance.mapped_parameters.find(p => p.name === "y");
         assert.equal(y.uri, "http://thing2");
-        assert(y.required === false);
+        assert(!y.required);
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
