@@ -16,7 +16,7 @@
 
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { ParametersBuilder } from "./ParametersBuilder";
+import { ParametersDefinition } from "./ParametersDefinition";
 
 /**
  * Type for registering a project edit, which can encapsulate changes
@@ -36,6 +36,6 @@ export interface CommandRegistration<PARAMS> extends Partial<CommandDetails> {
      * Define parameters used by this command. Alternative to using
      * paramsMaker: Do not supply both.
      */
-    parameters?: ParametersBuilder;
+    parameters?: ParametersDefinition;
 
 }

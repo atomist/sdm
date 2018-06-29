@@ -14,90 +14,74 @@
  * limitations under the License.
  */
 
-import { BaseParameter } from "@atomist/automation-client/internal/metadata/decoratorSupport";
+import { NamedMappedParameter, NamedParameter, NamedSecret, ParametersDefinition } from "./ParametersDefinition";
 
 /**
  * Fluent builder for parameters
  */
-export class ParametersBuilder {
+export class ParametersBuilder implements ParametersDefinition {
 
-    public readonly parameters: NamedParameter[] = [];
-    public readonly mappedParameters: NamedMappedParameter[] = [];
-    public readonly secrets: NamedSecret[] = [];
+    public parameters: NamedParameter[] = [];
+    public mappedParameters: NamedMappedParameter[] = [];
+    public secrets: NamedSecret[] = [];
 
     /**
      * Declare a new parameter for a command
-     * @param {NamedParameter} p
      * @return {this}
      */
-    public addParameter(p: NamedParameter): this {
+    public addParameters(p: NamedParameter, ...more: NamedParameter[]): this {
         this.parameters.push(p);
+        this.parameters = this.parameters.concat(more);
         return this;
     }
 
     /**
      * Declare a new mapped parameter for a command
-     * @param {NamedMappedParameter} mp
      * @return {this}
      */
-    public addMappedParameter(mp: NamedMappedParameter): this {
+    public addMappedParameters(mp: NamedMappedParameter, ...more: NamedMappedParameter[]): this {
         this.mappedParameters.push(mp);
+        this.mappedParameters = this.mappedParameters.concat(more);
         return this;
     }
 
     /**
      * Declare a new secret for a command
-     * @param {NamedSecret} s
      * @return {this}
      */
-    public addSecret(s: NamedSecret): this {
+    public addSecrets(s: NamedSecret, ...more: NamedSecret[]): this {
         this.secrets.push(s);
+        this.mappedParameters = this.mappedParameters.concat(more);
         return this;
     }
 }
 
-export type NamedParameter = BaseParameter & { name: string };
-
-export interface NamedSecret {
-    name: string;
-    uri: string;
-}
-
-export interface NamedMappedParameter {
-    name: string;
-    uri: string;
-    required?: boolean;
-}
-
 /**
  * Declare a new parameter for the given command
- * @param {NamedParameter} p
  * @return {ParametersBuilder}
  */
-export function addParameter(p: NamedParameter): ParametersBuilder {
+export function addParameters(p: NamedParameter, ...more: NamedParameter[]): ParametersBuilder {
     const pb = new ParametersBuilder();
-    pb.parameters.push(p);
+    pb.addParameters(p, ...more);
     return pb;
 }
 
 /**
  * Declare a new mapped parameter for the given command
- * @param {NamedMappedParameter} p
  * @return {ParametersBuilder}
  */
-export function addMappedParameter(p: NamedMappedParameter): ParametersBuilder {
+export function addMappedParameters(p: NamedMappedParameter, ...more: NamedMappedParameter[]): ParametersBuilder {
     const pb = new ParametersBuilder();
-    pb.mappedParameters.push(p);
+    pb.addMappedParameters(p, ...more);
     return pb;
 }
 
 /**
  * Declare a new secret for the given command
- * @param {NamedSecret} s
  * @return {ParametersBuilder}
  */
-export function addSecret(s: NamedSecret): ParametersBuilder {
+export function addSecrets(s: NamedSecret, ...more: NamedSecret[]): ParametersBuilder {
     const pb = new ParametersBuilder();
-    pb.secrets.push(s);
+    pb.addSecrets(s, ...more);
     return pb;
 }

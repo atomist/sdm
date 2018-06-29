@@ -27,7 +27,7 @@ import { SeedDrivenGeneratorParametersSupport } from "../../../src/api/command/g
 import { CommandHandlerRegistration } from "../../../src/api/registration/CommandHandlerRegistration";
 import { EditorRegistration } from "../../../src/api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
-import { addParameter } from "../../../src/api/registration/ParametersBuilder";
+import { addParameters } from "../../../src/api/registration/ParametersBuilder";
 
 describe("command registrations", () => {
 
@@ -35,8 +35,8 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
             parameters:
-                addParameter({name: "foo"})
-                    .addParameter({name: "bar", required: true}),
+                addParameters({name: "foo"},
+                    {name: "bar", required: true}),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -53,9 +53,9 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
             parameters:
-                addParameter({name: "foo"})
-                    .addParameter({name: "bar", required: true})
-                    .addMappedParameter({name: "x", uri: "http://thing"}),
+                addParameters({name: "foo"},
+                    {name: "bar", required: true})
+                    .addMappedParameters({name: "x", uri: "http://thing"}),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -73,9 +73,9 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
             parameters:
-                addParameter({name: "foo"})
-                    .addParameter({name: "bar", required: true})
-                    .addSecret({name: "x", uri: "http://thing"}),
+                addParameters({name: "foo"})
+                    .addParameters({name: "bar", required: true})
+                    .addSecrets({name: "x", uri: "http://thing"}),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -94,8 +94,8 @@ describe("command registrations", () => {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
             parameters:
-                addParameter({name: "foo"})
-                    .addParameter({name: "bar", required: true}),
+                addParameters({name: "foo"})
+                    .addParameters({name: "bar", required: true}),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -114,8 +114,8 @@ describe("command registrations", () => {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
             parameters:
-                addParameter({name: "foo"})
-                    .addParameter({name: "bar", required: true}),
+                addParameters({name: "foo"})
+                    .addParameters({name: "bar", required: true}),
             editor: async p => p,
         };
         const maker = generatorRegistrationToCommand({
@@ -141,8 +141,8 @@ describe("command registrations", () => {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
             parameters:
-                addParameter({name: "foo"})
-                    .addParameter({name: "bar", required: true}),
+                addParameters({name: "foo"})
+                    .addParameters({name: "bar", required: true}),
             editor: async p => p,
         };
         const maker = editorRegistrationToCommand({
