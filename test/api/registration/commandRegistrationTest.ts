@@ -28,7 +28,7 @@ import { CommandHandlerRegistration } from "../../../src/api/registration/Comman
 import { EditorRegistration } from "../../../src/api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../src/api/registration/ParametersBuilder";
-import { DeclarationType } from "../../../src/api/registration/ParametersDefinition";
+import { DeclarationType, ParametersObject } from "../../../src/api/registration/ParametersDefinition";
 
 describe("command registrations", () => {
 
@@ -140,6 +140,48 @@ describe("command registrations", () => {
         const y = instance.mapped_parameters.find(p => p.name === "y");
         assert.equal(y.uri, "http://thing2");
         assert(!y.required);
+        const pi = instance.freshParametersInstance();
+        pi.name = "foo";
+        assert.equal(pi.name, "foo");
+    });
+
+    it("parameter builder should set mapped parameter and secret via indexed property, with spread", () => {
+        const halfOfParameters: ParametersObject = {
+            bar: {required: true},
+            x1: {type: DeclarationType.secret, uri: "http://thing1"},
+            y1: {type: DeclarationType.mapped, uri: "http://thing2", required: false},
+
+        };
+        const reg: CommandHandlerRegistration = {
+            name: "test",
+            parameters:
+                {
+                    foo: {},
+                    x2: {type: DeclarationType.secret, uri: "http://thing1"},
+                    y2: {type: DeclarationType.mapped, uri: "http://thing2", required: false},
+                    ...halfOfParameters,
+                },
+            listener: async ci => {
+                return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
+            },
+        };
+        const maker = commandHandlerRegistrationToCommand(null, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        assert.equal(instance.parameters.length, 2);
+        const bar = instance.parameters.find(p => p.name === "bar");
+        assert(bar.required);
+        assert.equal(instance.secrets.length, 2);
+        const x1 = instance.secrets.find(p => p.name === "x1");
+        assert.equal(x1.uri, "http://thing1");
+        assert.equal(instance.mapped_parameters.length, 2);
+        const y1 = instance.mapped_parameters.find(p => p.name === "y1");
+        assert.equal(y1.uri, "http://thing2");
+        assert(!y1.required);
+        const x2 = instance.secrets.find(p => p.name === "x2");
+        assert.equal(x2.uri, "http://thing1");
+        const y2 = instance.mapped_parameters.find(p => p.name === "y2");
+        assert.equal(y2.uri, "http://thing2");
+        assert(!y2.required);
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
