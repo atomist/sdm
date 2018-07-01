@@ -34,7 +34,7 @@ export function spawnedCommandAutofix(name: string,
                                       ...additionalCommands: SpawnCommand[]): AutofixRegistration {
     return toAutofixRegistration({
         name,
-        editor: localCommandsEditor([command1].concat(additionalCommands)),
+        transform: localCommandsEditor([command1].concat(additionalCommands)),
         pushTest,
         options,
     });
