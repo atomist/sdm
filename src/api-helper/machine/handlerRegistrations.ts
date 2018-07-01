@@ -54,10 +54,10 @@ import {
 } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
-export const EditorTag = "editor";
+export const TransformTag = "transform";
 
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
-    tagWith(e, EditorTag);
+    tagWith(e, TransformTag);
     addParametersDefinedInBuilder(e);
     const fun = e.transformCommandFactory || editorCommand;
     return () => fun(
