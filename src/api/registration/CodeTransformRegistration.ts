@@ -56,6 +56,12 @@ export interface CodeTransformRegistration<PARAMS = EmptyParameters> extends Par
      */
     transformCommandFactory?: EditorCommandFactory<PARAMS>;
 
+    /**
+     * @deprecated use transformCommandFactory
+     */
+    editorCommandFactory?: EditorCommandFactory<PARAMS>;
+
+
 }
 
 /**

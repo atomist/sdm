@@ -39,7 +39,8 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
 
 export interface CodeTransformAutofixRegistration extends PushSelector {
 
-    transform: CodeTransform;
+    // TODO will be required when editor is removed
+    transform?: CodeTransform;
 
     /**
      * @deprecated use transform
