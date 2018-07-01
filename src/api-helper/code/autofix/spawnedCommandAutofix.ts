@@ -20,7 +20,7 @@ import {
     AutofixRegistrationOptions,
     toAutofixRegistration,
 } from "../../../api/registration/AutofixRegistration";
-import { localCommandsEditor } from "../../command/editor/localCommandsEditor";
+import { localCommandsCodeTransform } from "../../command/editor/localCommandsCodeTransform";
 import { SpawnCommand } from "../../misc/spawned";
 
 /**
@@ -34,7 +34,7 @@ export function spawnedCommandAutofix(name: string,
                                       ...additionalCommands: SpawnCommand[]): AutofixRegistration {
     return toAutofixRegistration({
         name,
-        transform: localCommandsEditor([command1].concat(additionalCommands)),
+        transform: localCommandsCodeTransform([command1].concat(additionalCommands)),
         pushTest,
         options,
     });

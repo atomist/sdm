@@ -16,16 +16,15 @@
 
 import { logger } from "@atomist/automation-client";
 import {
-    AnyProjectEditor,
     EditResult,
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
+import { CodeTransform } from "./ProjectOperationRegistration";
 import {
     PushReactionRegistration,
     SelectiveCodeActionOptions,
 } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
-import { CodeTransform } from "./ProjectOperationRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
 

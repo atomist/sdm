@@ -19,8 +19,8 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import {
-    commandHandlerRegistrationToCommand,
     codeTransformRegistrationToCommand,
+    commandHandlerRegistrationToCommand,
     generatorRegistrationToCommand,
 } from "../../../src/api-helper/machine/handlerRegistrations";
 import { SeedDrivenGeneratorParametersSupport } from "../../../src/api/command/generator/SeedDrivenGeneratorParametersSupport";

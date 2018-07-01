@@ -26,8 +26,8 @@ import { GeneratorRegistration } from "../../api/registration/GeneratorRegistrat
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { IngesterRegistrationManager } from "../../api/registration/IngesterRegistrationManager";
 import {
-    commandHandlerRegistrationToCommand,
     codeTransformRegistrationToCommand,
+    commandHandlerRegistrationToCommand,
     eventHandlerRegistrationToEvent,
     generatorRegistrationToCommand,
 } from "./handlerRegistrations";
