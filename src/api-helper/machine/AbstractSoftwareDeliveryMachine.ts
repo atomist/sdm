@@ -35,7 +35,7 @@ import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
-import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
@@ -153,13 +153,13 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
-    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
-        this.registrationManager.addGenerator(gen);
+    public addGeneratorCommand<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+        this.registrationManager.addGeneratorCommand(gen);
         return this;
     }
 
-    public addEditor<P>(ed: EditorRegistration<P>): this {
-        this.registrationManager.addEditor<P>(ed);
+    public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {
+        this.registrationManager.addCodeTransformCommand<P>(ed);
         return this;
     }
 

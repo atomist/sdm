@@ -17,7 +17,7 @@
 import * as findUp from "find-up";
 import * as path from "path";
 import * as trace from "stack-trace";
-import { ExtensionPackMetadata } from "../..";
+import { ExtensionPackMetadata } from "../../api/machine/ExtensionPack";
 
 /**
  * Read ExtensionPackMetadata from the modules package.json.

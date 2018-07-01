@@ -25,10 +25,10 @@ import { EmptyParameters } from "../command/support/EmptyParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
- * Type for registering a project edit, which can encapsulate changes
- * to projects
+ * Type for registering a project transform, which can make changes
+ * across projects
  */
-export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<EditorCommandDetails>,
+export interface CodeTransformRegistration<PARAMS = EmptyParameters> extends Partial<EditorCommandDetails>,
     ProjectOperationRegistration<PARAMS> {
 
     /**

@@ -35,7 +35,7 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 import * as stringify from "json-stringify-safe";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
-import { EditorRegistration } from "../../api/registration/EditorRegistration";
+import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
@@ -57,7 +57,7 @@ import {
 export const GeneratorTag = "generator";
 export const EditorTag = "editor";
 
-export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: EditorRegistration<any>): Maker<HandleCommand> {
+export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(e, EditorTag);
     addParametersDefinedInBuilder(e);
     const fun = e.editorCommandFactory || editorCommand;

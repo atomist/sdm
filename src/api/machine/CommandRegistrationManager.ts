@@ -16,7 +16,7 @@
 
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
-import { EditorRegistration } from "../registration/EditorRegistration";
+import { CodeTransformRegistration } from "../registration/CodeTransformRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
 
 /**
@@ -25,7 +25,7 @@ import { GeneratorRegistration } from "../registration/GeneratorRegistration";
 export interface CommandRegistrationManager {
 
     /**
-     * Add a command to this machine
+     * Add a generic command to this machine
      * @return {this}
      */
     addCommand<PARAMS>(command: CommandHandlerRegistration<PARAMS>): this;
@@ -34,11 +34,11 @@ export interface CommandRegistrationManager {
      * Add a generator to this machine to enable project creation
      * @return {this}
      */
-    addGenerator<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
+    addGeneratorCommand<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
 
     /**
      * Add an editor to this machine
      * @return {this}
      */
-    addEditor<PARAMS>(ed: EditorRegistration<PARAMS>): this;
+    addCodeTransformCommand<PARAMS>(ed: CodeTransformRegistration<PARAMS>): this;
 }

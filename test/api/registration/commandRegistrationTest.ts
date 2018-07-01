@@ -25,7 +25,7 @@ import {
 } from "../../../src/api-helper/machine/handlerRegistrations";
 import { SeedDrivenGeneratorParametersSupport } from "../../../src/api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandHandlerRegistration } from "../../../src/api/registration/CommandHandlerRegistration";
-import { EditorRegistration } from "../../../src/api/registration/EditorRegistration";
+import { CodeTransformRegistration } from "../../../src/api/registration/CodeTransformRegistration";
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../src/api/registration/ParametersBuilder";
 import { DeclarationType, ParametersObject } from "../../../src/api/registration/ParametersDefinition";
@@ -235,7 +235,7 @@ describe("command registrations", () => {
     });
 
     it("should build on generator", () => {
-        const reg: EditorRegistration = {
+        const reg: CodeTransformRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
             parameters:
