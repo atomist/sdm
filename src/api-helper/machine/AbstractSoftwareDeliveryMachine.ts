@@ -158,9 +158,17 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
+    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+        return this.addGeneratorCommand(gen);
+    }
+
     public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {
         this.registrationManager.addCodeTransformCommand<P>(ed);
         return this;
+    }
+
+    public addEditor<P>(ed: CodeTransformRegistration<P>): this {
+        return this.addCodeTransformCommand(ed);
     }
 
     public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {

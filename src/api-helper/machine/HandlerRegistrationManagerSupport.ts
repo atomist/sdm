@@ -55,6 +55,10 @@ export class HandlerRegistrationManagerSupport
         return this;
     }
 
+    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+        return this.addGeneratorCommand(gen);
+    }
+
     public addGeneratorCommand<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
         const command = generatorRegistrationToCommand(this.sdm, gen);
         this.commandHandlers.push(command);
@@ -65,6 +69,10 @@ export class HandlerRegistrationManagerSupport
         const commands = [codeTransformRegistrationToCommand(this.sdm, ed)];
         this.commandHandlers = this.commandHandlers.concat(commands);
         return this;
+    }
+
+    public addEditor<P>(ed: CodeTransformRegistration<P>): this {
+        return this.addCodeTransformCommand(ed);
     }
 
     public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {

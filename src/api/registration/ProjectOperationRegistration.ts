@@ -40,4 +40,14 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
      * @return {AnyProjectEditor}
      */
     createTransform?: (params: PARAMS) => CodeTransform<PARAMS>;
+
+    /**
+     * @deprecated use transform
+     */
+    editor?: CodeTransform<PARAMS>;
+
+    /**
+     * @deprecated use createTransform
+     */
+    createEditor?: (params: PARAMS) => CodeTransform<PARAMS>;
 }

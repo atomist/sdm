@@ -41,6 +41,11 @@ export interface CodeTransformAutofixRegistration extends PushSelector {
 
     transform: CodeTransform;
 
+    /**
+     * @deprecated use transform
+     */
+    editor?: CodeTransform;
+
     options?: AutofixRegistrationOptions;
 
     parameters?: any;
@@ -48,10 +53,15 @@ export interface CodeTransformAutofixRegistration extends PushSelector {
 
 export function isCodeTransformAutofixRegistration(r: AutofixRegisterable): r is CodeTransformAutofixRegistration {
     const maybe = r as CodeTransformAutofixRegistration;
-    return !!maybe.transform;
+    return !!maybe.transform || !!maybe.editor;
 }
 
 export type AutofixRegisterable = AutofixRegistration | CodeTransformAutofixRegistration;
+
+/**
+ * @deprecated use CodeTransformAutofixRegistration
+ */
+export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
 
 /**
  * Create an autofix from an existing CodeTransform. A CodeTransform for autofix
@@ -62,7 +72,7 @@ export type AutofixRegisterable = AutofixRegistration | CodeTransformAutofixRegi
  * do not support respond. Be sure to set parameters if they are required by your transform.
  */
 export function toAutofixRegistration(use: CodeTransformAutofixRegistration): AutofixRegistration {
-    const transformToUse = toEditor(use.transform);
+    const transformToUse = toEditor(use.transform || use.editor);
     return {
         name: use.name,
         pushTest: use.pushTest,

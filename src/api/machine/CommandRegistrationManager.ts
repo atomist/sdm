@@ -37,8 +37,21 @@ export interface CommandRegistrationManager {
     addGeneratorCommand<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
 
     /**
-     * Add an editor to this machine
+     * @deprecated use addGeneratorCommand
+     * @param {GeneratorRegistration<PARAMS extends SeedDrivenGeneratorParameters>} generator
+     * @return {this}
+     */
+    addGenerator<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
+
+    /**
+     * Add a code transformation to this machine
      * @return {this}
      */
     addCodeTransformCommand<PARAMS>(ed: CodeTransformRegistration<PARAMS>): this;
+
+    /**
+     * @deprecated use add CodeTransformCommand
+     * @return {this}
+     */
+    addEditor<PARAMS>(ed: CodeTransformRegistration<PARAMS>): this;
 }

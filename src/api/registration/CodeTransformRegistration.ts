@@ -25,6 +25,11 @@ import { EmptyParameters } from "../command/support/EmptyParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
+ * @deprecated use CodeTransformRegistration
+ */
+export type EditorRegistration<PARAMS = EmptyParameters> = CodeTransformRegistration<PARAMS>;
+
+/**
  * Type for registering a project transform, which can make changes
  * across projects
  */

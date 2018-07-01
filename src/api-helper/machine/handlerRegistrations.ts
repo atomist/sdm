@@ -121,9 +121,11 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 }
 
 function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransform<PARAMS> {
+    por.transform = por.transform || por.editor;
     if (!!por.transform) {
         return () => por.transform;
     }
+    por.createTransform = por.createTransform || por.createEditor;
     if (!!por.createTransform) {
         return por.createTransform;
     }
