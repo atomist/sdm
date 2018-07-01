@@ -29,13 +29,12 @@ import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as stringify from "json-stringify-safe";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
@@ -45,7 +44,7 @@ import {
     ParametersDefinition,
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
-import { ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
+import { CodeTransform, ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
@@ -57,13 +56,13 @@ import {
 export const GeneratorTag = "generator";
 export const EditorTag = "editor";
 
-export function editorRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
+export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(e, EditorTag);
     addParametersDefinedInBuilder(e);
-    const fun = e.editorCommandFactory || editorCommand;
+    const fun = e.transformCommandFactory || editorCommand;
     return () => fun(
         sdm,
-        toEditorFunction(e),
+        toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
         e,
@@ -93,7 +92,7 @@ export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: 
     addParametersDefinedInBuilder(e);
     return () => generatorCommand(
         sdm,
-        toEditorFunction(e),
+        toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
         e,
@@ -121,12 +120,12 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
     );
 }
 
-function toEditorFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => AnyProjectEditor<PARAMS> {
-    if (!!por.editor) {
-        return () => por.editor;
+function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransform<PARAMS> {
+    if (!!por.transform) {
+        return () => por.transform;
     }
-    if (!!por.createEditor) {
-        return por.createEditor;
+    if (!!por.createTransform) {
+        return por.createTransform;
     }
     throw new Error(`Registration '${por.name}' is invalid, as it does not specify an editor or createEditor function`);
 }

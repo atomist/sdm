@@ -18,8 +18,8 @@ import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
-import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
+import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { EventRegistrationManager } from "../../api/registration/EventRegistrationManager";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
@@ -27,7 +27,7 @@ import { IngesterRegistration } from "../../api/registration/IngesterRegistratio
 import { IngesterRegistrationManager } from "../../api/registration/IngesterRegistrationManager";
 import {
     commandHandlerRegistrationToCommand,
-    editorRegistrationToCommand,
+    codeTransformRegistrationToCommand,
     eventHandlerRegistrationToEvent,
     generatorRegistrationToCommand,
 } from "./handlerRegistrations";
@@ -62,7 +62,7 @@ export class HandlerRegistrationManagerSupport
     }
 
     public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {
-        const commands = [editorRegistrationToCommand(this.sdm, ed)];
+        const commands = [codeTransformRegistrationToCommand(this.sdm, ed)];
         this.commandHandlers = this.commandHandlers.concat(commands);
         return this;
     }

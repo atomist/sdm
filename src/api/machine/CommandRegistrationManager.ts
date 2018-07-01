@@ -15,8 +15,8 @@
  */
 
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
-import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
 import { CodeTransformRegistration } from "../registration/CodeTransformRegistration";
+import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
 
 /**

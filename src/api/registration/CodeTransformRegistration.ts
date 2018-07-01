@@ -49,7 +49,7 @@ export interface CodeTransformRegistration<PARAMS = EmptyParameters> extends Par
      * an editor that waits for the build result to determine whether to raise a pull request
      * or issue. Default behavior is to create a branch and a PR.
      */
-    editorCommandFactory?: EditorCommandFactory<PARAMS>;
+    transformCommandFactory?: EditorCommandFactory<PARAMS>;
 
 }
 
