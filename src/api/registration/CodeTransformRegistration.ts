@@ -61,7 +61,6 @@ export interface CodeTransformRegistration<PARAMS = EmptyParameters> extends Par
      */
     editorCommandFactory?: EditorCommandFactory<PARAMS>;
 
-
 }
 
 /**
