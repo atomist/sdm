@@ -89,14 +89,17 @@ export class SeedDrivenGeneratorParametersSupport implements SeedDrivenGenerator
      * @return {RemoteLocator}
      */
     get source(): RemoteLocator {
+        if (!this.config) {
+            throw new Error("config must be supplied to get source from parameters object");
+        }
         const repoRef = this.config.seed();
         repoRef.repo = this.seed || repoRef.repo;
         repoRef.owner = this.seedOwner || repoRef.owner;
-        return {repoRef};
+        return { repoRef };
     }
 
-    public constructor(private readonly config: GeneratorConfig) {
-        if (config.addAtomistWebhook !== undefined) {
+    public constructor(private readonly config?: GeneratorConfig) {
+        if (!!config && config.addAtomistWebhook !== undefined) {
             this.addAtomistWebhook = config.addAtomistWebhook;
         }
     }

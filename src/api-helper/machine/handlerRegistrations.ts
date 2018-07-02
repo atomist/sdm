@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    logger,
-    Success,
-} from "@atomist/automation-client";
-import {
-    declareMappedParameter,
-    declareParameter,
-    declareSecret,
-} from "@atomist/automation-client/internal/metadata/decoratorSupport";
+import { HandleCommand, HandleEvent, logger, Success } from "@atomist/automation-client";
+import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import {
     Maker,
     toFactory,
 } from "@atomist/automation-client/util/constructionUtils";
+import { EmptyParameters, SeedDrivenGeneratorParametersSupport } from "../..";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -53,10 +47,7 @@ import {
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
-import {
-    MachineOrMachineOptions,
-    toMachineOptions,
-} from "./toMachineOptions";
+import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const TransformTag = "transform";
@@ -94,12 +85,20 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
 
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, GeneratorTag);
+    if (!e.paramsMaker) {
+        e.paramsMaker = SeedDrivenGeneratorParametersSupport;
+    }
+    if (e.startingPoint && isProject(e.startingPoint) && !e.startingPoint.id) {
+        // TODO should probably be handled in automation-client
+        e.startingPoint.id = new GitHubRepoRef("ignore", "this");
+    }
     addParametersDefinedInBuilder(e);
     return () => generatorCommand(
         sdm,
         toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
+        e.startingPoint,
         e,
     );
 }
@@ -174,7 +173,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
 }
 
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
-    const oldMaker = c.paramsMaker;
+    const oldMaker = c.paramsMaker || EmptyParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
             let paramsInstance;
