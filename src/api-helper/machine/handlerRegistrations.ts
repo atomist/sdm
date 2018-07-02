@@ -28,7 +28,9 @@ import {
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as stringify from "json-stringify-safe";
@@ -89,9 +91,14 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
 }
 
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
+    // TODO this side effects are questionable
     tagWith(e, GeneratorTag);
     if (!e.paramsMaker) {
         e.paramsMaker = SeedDrivenGeneratorParametersSupport;
+    }
+    if (e.startingPoint && isProject(e.startingPoint) && !e.startingPoint.id) {
+        // TODO should probably be handled in automation-client
+        e.startingPoint.id = new GitHubRepoRef("ignore", "this");
     }
     addParametersDefinedInBuilder(e);
     return () => generatorCommand(

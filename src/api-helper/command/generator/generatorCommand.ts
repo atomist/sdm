@@ -146,7 +146,7 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
         return repoLoader(params.source.repoRef);
     }
     if (isProject(startingPoint)) {
-        await ctx.messageClient.respond(`Using seed project specified in registration`);
+        await ctx.messageClient.respond(`Using starting point project specified in registration`);
         return startingPoint;
     } else {
         await ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`);
