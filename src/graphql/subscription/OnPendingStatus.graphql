@@ -1,5 +1,0 @@
-subscription OnPendingStatus($context: String!) {
-  Status(state: pending, context: $context) {
-    ...StatusForExecuteGoal
-  }
-}
