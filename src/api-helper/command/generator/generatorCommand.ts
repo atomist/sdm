@@ -37,8 +37,8 @@ import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { StartingPoint } from "../../..";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
+import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import {
     MachineOrMachineOptions,
@@ -142,14 +142,14 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
                                                                              details: GeneratorCommandDetails<any>,
                                                                              startingPoint: StartingPoint): Promise<Project> {
     if (!startingPoint) {
-        await ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`);
+        await ctx.messageClient.respond(`Cloning seed project from parameters: ${params.source.repoRef.url}`);
         return repoLoader(params.source.repoRef);
     }
     if (isProject(startingPoint)) {
         await ctx.messageClient.respond(`Using starting point project specified in registration`);
         return startingPoint;
     } else {
-        await ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`);
+        await ctx.messageClient.respond(`Cloning seed project from starting point: ${startingPoint.url}`);
         return repoLoader(startingPoint);
     }
 }
