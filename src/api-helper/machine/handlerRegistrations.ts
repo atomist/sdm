@@ -32,7 +32,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as stringify from "json-stringify-safe";
-import { SeedDrivenGeneratorParametersSupport } from "../..";
+import { EmptyParameters, SeedDrivenGeneratorParametersSupport } from "../..";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -174,7 +174,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
 }
 
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
-    const oldMaker = c.paramsMaker;
+    const oldMaker = c.paramsMaker || EmptyParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
             let paramsInstance;

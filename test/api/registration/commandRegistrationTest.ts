@@ -16,6 +16,8 @@
 
 import { SelfDescribingHandleCommand } from "@atomist/automation-client/HandleCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import {
@@ -260,6 +262,18 @@ describe("command registrations", () => {
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
+    });
+
+    it("should default parameters or in memory project without maker", async () => {
+        const g: GeneratorRegistration = {
+            name: "foo",
+            startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
+            transform: async p => p,
+        };
+        generatorRegistrationToCommand(null, g);
+        assert(!!g.paramsMaker, "paramsMaker should now be set");
+        const instance = toFactory(g.paramsMaker)() as SeedDrivenGeneratorParametersSupport;
+        assert(!!instance.version, "Should pick up default from parameters class");
     });
 
 });
