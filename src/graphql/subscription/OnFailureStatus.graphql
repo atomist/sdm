@@ -1,5 +1,0 @@
-subscription OnFailureStatus {
-  Status(state: failure) {
-    ...StatusForExecuteGoal
-  }
-}

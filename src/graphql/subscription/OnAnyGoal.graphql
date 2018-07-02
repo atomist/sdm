@@ -1,6 +1,0 @@
-subscription OnAnyGoal {
-  SdmGoal {
-    ...SdmGoalFields
-    ...SdmGoalRepo
-  }
-}
