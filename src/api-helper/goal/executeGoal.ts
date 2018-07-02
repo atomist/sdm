@@ -32,7 +32,6 @@ import {
     RunWithLogContext,
 } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
-import { SdmGoal } from "../../api/goal/SdmGoal";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -45,6 +44,7 @@ import {
     descriptionFromState,
     updateGoal,
 } from "./storeGoals";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 class GoalExecutionError extends Error {
     public readonly where: string;
@@ -77,7 +77,7 @@ class GoalExecutionError extends Error {
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
                                   execute: ExecuteGoalWithLog,
                                   rwlc: RunWithLogContext,
-                                  sdmGoal: SdmGoal,
+                                  sdmGoal: SdmGoalEvent,
                                   goal: Goal,
                                   logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
     const ctx = rwlc.context;
@@ -134,7 +134,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
 
 export async function executeHook(rules: { projectLoader: ProjectLoader },
                                   rwlc: RunWithLogContext,
-                                  sdmGoal: SdmGoal,
+                                  sdmGoal: SdmGoalEvent,
                                   stage: "post" | "pre"): Promise<HandlerResult> {
     const hook = goalToHookFile(sdmGoal, stage);
 
@@ -163,8 +163,8 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                     GITHUB_TOKEN: toToken(credentials),
                     ATOMIST_TEAM: context.teamId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
-                    ATOMIST_REPO: sdmGoal.repo.name,
-                    ATOMIST_OWNER: sdmGoal.repo.owner,
+                    ATOMIST_REPO: sdmGoal.push.repo.name,
+                    ATOMIST_OWNER: sdmGoal.push.repo.owner,
                 },
             };
 
@@ -193,13 +193,13 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     });
 }
 
-function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
+function goalToHookFile(sdmGoal: SdmGoalEvent, prefix: string): string {
     return `${prefix}-${sdmGoal.environment.toLocaleLowerCase().slice(2)}-${
         sdmGoal.name.toLocaleLowerCase().replace(" ", "_")}`;
 }
 
 export function markStatus(parameters: {
-    ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
+    ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, result: ExecuteGoalResult,
     error?: Error, progressLogUrl: string,
 }) {
     const { ctx, sdmGoal, goal, result, error, progressLogUrl } = parameters;
@@ -216,7 +216,7 @@ export function markStatus(parameters: {
         });
 }
 
-function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, progressLogUrl: string }) {
+function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, progressLogUrl: string }) {
     const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
     return updateGoal(ctx, sdmGoal, {
         url: progressLogUrl,

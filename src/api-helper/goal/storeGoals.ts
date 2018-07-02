@@ -27,15 +27,10 @@ import {
     Goal,
     hasPreconditions,
 } from "../../api/goal/Goal";
-import {
-    GoalRootType,
-    SdmGoal,
-    SdmGoalFulfillment,
-    SdmGoalKey,
-    SdmProvenance,
-} from "../../api/goal/SdmGoal";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { SdmGoalState } from "../../typings/types";
+import { GoalRootType, SdmGoalFulfillment, SdmGoalMessage, SdmGoalKey, SdmProvenance } from "../../api/goal/SdmGoalMessage";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
@@ -52,7 +47,7 @@ export interface UpdateSdmGoalParams {
 }
 
 export function updateGoal(ctx: HandlerContext,
-                           before: SdmGoal,
+                           before: SdmGoalEvent,
                            params: UpdateSdmGoalParams) {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) :
@@ -60,8 +55,8 @@ export function updateGoal(ctx: HandlerContext,
     const data = params.data ?
         params.data :
         !!before ? before.data : undefined;
-    const sdmGoal = {
-        ...before,
+    const sdmGoal: SdmGoalMessage = {
+        ...eventToMessage(before),
         state: params.state === "success" && !!before && before.approvalRequired ? "waiting_for_approval" : params.state,
         description,
         url: params.url,
@@ -71,12 +66,23 @@ export function updateGoal(ctx: HandlerContext,
         provenance: [constructProvenance(ctx)].concat(!!before ? before.provenance : []),
         error: _.get(params, "error.message"),
         data,
-    };
+    } as SdmGoalMessage;
     logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
-export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoal): boolean {
+function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
+    return {
+        ...event,
+        repo: {
+            name: event.push.repo.name,
+            owner: event.push.repo.owner,
+            providerId: event.push.repo.org.provider.providerId,
+        },
+    } as SdmGoalMessage;
+}
+
+export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoalKey): boolean {
     return goal.name === sdmGoal.name && environmentFromGoal(goal) === sdmGoal.environment;
 }
 
@@ -96,7 +102,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     providerId: string
     url?: string,
     fulfillment?: SdmGoalFulfillment,
-}): SdmGoal {
+}): SdmGoalMessage {
     const {goalSet, goal, goalSetId, state, id, providerId, url} = parameters;
     const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
 
@@ -144,7 +150,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     };
 }
 
-export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoal) {
+export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage) {
     logger.info("Storing goal: %j", sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);

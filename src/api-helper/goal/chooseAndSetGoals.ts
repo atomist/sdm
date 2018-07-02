@@ -33,10 +33,6 @@ import {
 } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
 import {
-    SdmGoal,
-    SdmGoalFulfillment,
-} from "../../api/goal/SdmGoal";
-import {
     isGoalImplementation,
     isSideEffect,
     SdmGoalImplementationMapper,
@@ -58,6 +54,7 @@ import {
     constructSdmGoalImplementation,
     storeGoal,
 } from "./storeGoals";
+import { SdmGoalFulfillment, SdmGoalMessage } from "../../api/goal/SdmGoalMessage";
 
 export interface ChooseAndSetGoalsRules {
     projectLoader: ProjectLoader;
@@ -121,7 +118,7 @@ export async function determineGoals(rules: {
                                          goalSetId: string,
                                      }): Promise<{
     determinedGoals: Goals | undefined,
-    goalsToSave: SdmGoal[],
+    goalsToSave: SdmGoalMessage[],
 }> {
     const {projectLoader, repoRefResolver, goalSetter, implementationMapping} = rules;
     const {credentials, id, context, push, addressChannels, goalSetId} = circumstances;
