@@ -30,8 +30,10 @@ import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import * as stringify from "json-stringify-safe";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -44,7 +46,10 @@ import {
     ParametersDefinition,
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
-import { CodeTransform, ProjectOperationRegistration } from "../../api/registration/ProjectOperationRegistration";
+import {
+    CodeTransform,
+    ProjectOperationRegistration,
+} from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
@@ -152,7 +157,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
                 credentials,
                 ids,
             };
-            logger.debug("Running command listener %s", stringify(cli));
+            logger.debug("Running command listener %s", cli.commandName);
             try {
                 await c.listener(cli);
                 return Success;
