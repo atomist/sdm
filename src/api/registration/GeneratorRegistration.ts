@@ -18,7 +18,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { Project } from "@atomist/automation-client/project/Project";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
@@ -40,10 +39,5 @@ export interface GeneratorRegistration<PARAMS extends SeedDrivenGeneratorParamet
      * The alternative is to get this from a config object.
      */
     startingPoint?: StartingPoint;
-
-    /**
-     * Create the parameters required by this generator
-     */
-    paramsMaker: Maker<PARAMS>;
 
 }

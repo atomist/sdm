@@ -32,6 +32,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as stringify from "json-stringify-safe";
+import { SeedDrivenGeneratorParametersSupport } from "../..";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -89,6 +90,9 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
 
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, GeneratorTag);
+    if (!e.paramsMaker) {
+        e.paramsMaker = SeedDrivenGeneratorParametersSupport;
+    }
     addParametersDefinedInBuilder(e);
     return () => generatorCommand(
         sdm,
