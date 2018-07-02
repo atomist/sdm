@@ -36,7 +36,10 @@ import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../listener/VerifiedDeploymentListener";
-import { AutofixRegisterable, AutofixRegistration } from "../registration/AutofixRegistration";
+import {
+    AutofixRegisterable,
+    AutofixRegistration,
+} from "../registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushReactionRegisterable } from "../registration/PushReactionRegistration";
 import { ReviewerRegistration } from "../registration/ReviewerRegistration";
