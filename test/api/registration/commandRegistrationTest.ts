@@ -276,4 +276,25 @@ describe("command registrations", () => {
         assert(!!instance.version, "Should pick up default from parameters class");
     });
 
+    it("should create command handler from generator", async () => {
+        const g: GeneratorRegistration = {
+            name: "foo",
+            startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
+            transform: async p => p,
+        };
+        generatorRegistrationToCommand(null, g);
+        const maker = codeTransformRegistrationToCommand({
+            artifactStore: null,
+            name: "test",
+            repoRefResolver: null,
+            projectLoader: null,
+            logFactory: null,
+            repoFinder: null,
+            projectPersister: null,
+            credentialsResolver: null,
+        }, g);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        instance.freshParametersInstance();
+    });
+
 });
