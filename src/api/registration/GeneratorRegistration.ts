@@ -14,10 +14,18 @@
  * limitations under the License.
  */
 
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { Project } from "@atomist/automation-client/project/Project";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
+
+/**
+ * Starting point before transformation. Normally the coordinates of a
+ * seed project, but can also be in memory.
+ */
+export type StartingPoint = Project | RemoteRepoRef;
 
 /**
  * Register a project creation operation
@@ -25,6 +33,13 @@ import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 export interface GeneratorRegistration<PARAMS extends SeedDrivenGeneratorParameters = SeedDrivenGeneratorParameters>
     extends Partial<GeneratorCommandDetails<PARAMS>>,
         ProjectOperationRegistration<PARAMS> {
+
+    /**
+     * Starting point before transformation. Normally the coordinates of a
+     * seed project, but can also be in memory.
+     * The alternative is to get this from a config object.
+     */
+    startingPoint?: StartingPoint;
 
     /**
      * Create the parameters required by this generator

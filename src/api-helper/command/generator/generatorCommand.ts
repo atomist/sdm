@@ -33,10 +33,11 @@ import { generate } from "@atomist/automation-client/operations/generate/generat
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { Project } from "@atomist/automation-client/project/Project";
+import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { StartingPoint } from "../../..";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import {
@@ -58,33 +59,33 @@ export function generatorCommand<P extends SeedDrivenGeneratorParameters>(sdm: M
                                                                           editorFactory: EditorFactory<P>,
                                                                           name: string,
                                                                           paramsMaker: Maker<P>,
+                                                                          startingPoint: StartingPoint,
                                                                           details: Partial<GeneratorCommandDetails<P>> = {}): HandleCommand {
     const detailsToUse: GeneratorCommandDetails<P> = {
         ...defaultDetails(toMachineOptions(sdm), name),
         ...details,
     };
-    return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse), paramsMaker, name,
+    return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse, startingPoint),
+        paramsMaker, name,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
 }
 
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
-                                                                 details: GeneratorCommandDetails<P>): OnCommand<P> {
+                                                                 details: GeneratorCommandDetails<P>,
+                                                                 startingPoint: StartingPoint): OnCommand<P> {
 
     return (ctx: HandlerContext, parameters: P) => {
-        return handle(ctx, editorFactory, parameters, details);
+        return handle(ctx, editorFactory, parameters, details, startingPoint);
     };
 }
 
 async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerContext,
                                                                editorFactory: EditorFactory<P>,
                                                                params: P,
-                                                               details: GeneratorCommandDetails<P>): Promise<RedirectResult> {
+                                                               details: GeneratorCommandDetails<P>,
+                                                               startingPoint: StartingPoint): Promise<RedirectResult> {
     const r = await generate(
-        startingPoint(params, ctx, details.repoLoader(params), details)
-            .then(p => {
-                return ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`)
-                    .then(() => p);
-            }),
+        computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint),
         ctx,
         params.target.credentials,
         editorFactory(params, ctx),
@@ -135,12 +136,22 @@ async function hasOrgWebhook(owner: string, ctx: HandlerContext): Promise<boolea
  * @param details command details
  * @return {Promise<Project>}
  */
-function startingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
-                                                                ctx: HandlerContext,
-                                                                repoLoader: RepoLoader,
-                                                                details: GeneratorCommandDetails<any>): Promise<Project> {
-
-    return repoLoader(params.source.repoRef);
+async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
+                                                                             ctx: HandlerContext,
+                                                                             repoLoader: RepoLoader,
+                                                                             details: GeneratorCommandDetails<any>,
+                                                                             startingPoint: StartingPoint): Promise<Project> {
+    if (!startingPoint) {
+        await ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`);
+        return repoLoader(params.source.repoRef);
+    }
+    if (isProject(startingPoint)) {
+        await ctx.messageClient.respond(`Using seed project specified in registration`);
+        return startingPoint;
+    } else {
+        await ctx.messageClient.respond(`Cloned seed project from ${params.source.repoRef.url}`);
+        return repoLoader(startingPoint);
+    }
 }
 
 function defaultDetails<P extends SeedDrivenGeneratorParameters>(opts: SoftwareDeliveryMachineOptions, name: string): GeneratorCommandDetails<P> {
