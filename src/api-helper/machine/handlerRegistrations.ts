@@ -91,7 +91,6 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
 }
 
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
-    // TODO this side effects are questionable
     tagWith(e, GeneratorTag);
     if (!e.paramsMaker) {
         e.paramsMaker = SeedDrivenGeneratorParametersSupport;
