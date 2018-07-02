@@ -40,7 +40,7 @@ import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrat
 import {
     AutofixRegisterable,
     AutofixRegistration,
-    isEditorAutofixRegistration,
+    isCodeTransformAutofixRegistration,
     toAutofixRegistration,
 } from "../../api/registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
@@ -188,7 +188,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
      */
     public addAutofix(fix: AutofixRegisterable): this {
         this.autofixRegistrations.push(
-            isEditorAutofixRegistration(fix) ? toAutofixRegistration(fix) : fix);
+            isCodeTransformAutofixRegistration(fix) ? toAutofixRegistration(fix) : fix);
         return this;
     }
 

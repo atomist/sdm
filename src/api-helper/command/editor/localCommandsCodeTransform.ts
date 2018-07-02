@@ -15,7 +15,6 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     ChildProcessResult,
@@ -24,18 +23,19 @@ import {
     stringifySpawnCommand,
 } from "@atomist/automation-client/util/spawned";
 import { SpawnOptions } from "child_process";
+import { CodeTransform } from "../../../api/registration/ProjectOperationRegistration";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 
 /**
- * Create a project editorCommand wrapping spawned local commands
+ * Create a code transform wrapping spawned local commands
  * run on the project. For example, allows use of tslint as an editorCommand.
  * @param {SpawnCommand[]} commands to execute
  * @param log progress log (optional, stream to console if not passed in)
  * @return {ProjectEditor}
  */
-export function localCommandsEditor(commands: SpawnCommand[],
-                                    log: ProgressLog = new LoggingProgressLog("commands")): ProjectEditor {
+export function localCommandsCodeTransform(commands: SpawnCommand[],
+                                           log: ProgressLog = new LoggingProgressLog("commands")): CodeTransform {
     return async (p: GitProject) => {
         const opts: SpawnOptions = {
             cwd: p.baseDir,

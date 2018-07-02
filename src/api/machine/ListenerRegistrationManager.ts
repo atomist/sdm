@@ -102,8 +102,8 @@ export interface ListenerRegistrationManager {
     addArtifactListener(l: ArtifactListenerRegisterable): this;
 
     /**
-     * Add an editor automatically invoked on eligible commits.
-     * Note: be sure that the editor checks and don't cause
+     * Add a transform automatically invoked on eligible commits.
+     * Note: be sure that the transform checks and cannot cause
      * infinite recursion!!
      */
     addAutofix(fix: AutofixRegisterable): this;

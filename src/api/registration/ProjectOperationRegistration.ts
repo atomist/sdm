@@ -18,6 +18,11 @@ import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/pro
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
+ * Function that can transform a project
+ */
+export type CodeTransform<P = any> = AnyProjectEditor<P>;
+
+/**
  * Superclass for all registrations of "project operations",
  * which can create or modify projects. Either an editor or a createEditor
  * function must be provided.
@@ -25,14 +30,24 @@ import { CommandRegistration } from "./CommandRegistration";
 export interface ProjectOperationRegistration<PARAMS> extends CommandRegistration<PARAMS> {
 
     /**
-     * Editor
+     * Function to transform the project
      */
-    editor?: AnyProjectEditor<PARAMS>;
+    transform?: CodeTransform<PARAMS>;
 
     /**
      * Create the editor function that can modify a project
      * @param {PARAMS} params
      * @return {AnyProjectEditor}
      */
-    createEditor?: (params: PARAMS) => AnyProjectEditor<PARAMS>;
+    createTransform?: (params: PARAMS) => CodeTransform<PARAMS>;
+
+    /**
+     * @deprecated use transform
+     */
+    editor?: CodeTransform<PARAMS>;
+
+    /**
+     * @deprecated use createTransform
+     */
+    createEditor?: (params: PARAMS) => CodeTransform<PARAMS>;
 }

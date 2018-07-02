@@ -19,13 +19,13 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import {
+    codeTransformRegistrationToCommand,
     commandHandlerRegistrationToCommand,
-    editorRegistrationToCommand,
     generatorRegistrationToCommand,
 } from "../../../src/api-helper/machine/handlerRegistrations";
 import { SeedDrivenGeneratorParametersSupport } from "../../../src/api/command/generator/SeedDrivenGeneratorParametersSupport";
+import { CodeTransformRegistration } from "../../../src/api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../../src/api/registration/CommandHandlerRegistration";
-import { EditorRegistration } from "../../../src/api/registration/EditorRegistration";
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../src/api/registration/ParametersBuilder";
 import { DeclarationType, ParametersObject } from "../../../src/api/registration/ParametersDefinition";
@@ -214,7 +214,7 @@ describe("command registrations", () => {
             parameters:
                 addParameters({name: "foo"})
                     .addParameters({name: "bar", required: true}),
-            editor: async p => p,
+            transform: async p => p,
         };
         const maker = generatorRegistrationToCommand({
             artifactStore: null,
@@ -235,15 +235,15 @@ describe("command registrations", () => {
     });
 
     it("should build on generator", () => {
-        const reg: EditorRegistration = {
+        const reg: CodeTransformRegistration = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
             parameters:
                 addParameters({name: "foo"})
                     .addParameters({name: "bar", required: true}),
-            editor: async p => p,
+            transform: async p => p,
         };
-        const maker = editorRegistrationToCommand({
+        const maker = codeTransformRegistrationToCommand({
             artifactStore: null,
             name: "test",
             repoRefResolver: null,

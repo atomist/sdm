@@ -25,10 +25,15 @@ import { EmptyParameters } from "../command/support/EmptyParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
- * Type for registering a project edit, which can encapsulate changes
- * to projects
+ * @deprecated use CodeTransformRegistration
  */
-export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<EditorCommandDetails>,
+export type EditorRegistration<PARAMS = EmptyParameters> = CodeTransformRegistration<PARAMS>;
+
+/**
+ * Type for registering a project transform, which can make changes
+ * across projects
+ */
+export interface CodeTransformRegistration<PARAMS = EmptyParameters> extends Partial<EditorCommandDetails>,
     ProjectOperationRegistration<PARAMS> {
 
     /**
@@ -48,6 +53,11 @@ export interface EditorRegistration<PARAMS = EmptyParameters> extends Partial<Ed
      * Typically used to enable a dry run editor: That is,
      * an editor that waits for the build result to determine whether to raise a pull request
      * or issue. Default behavior is to create a branch and a PR.
+     */
+    transformCommandFactory?: EditorCommandFactory<PARAMS>;
+
+    /**
+     * @deprecated use transformCommandFactory
      */
     editorCommandFactory?: EditorCommandFactory<PARAMS>;
 

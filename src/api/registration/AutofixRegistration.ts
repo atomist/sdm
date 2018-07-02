@@ -16,10 +16,10 @@
 
 import { logger } from "@atomist/automation-client";
 import {
-    AnyProjectEditor,
     EditResult,
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
+import { CodeTransform } from "./ProjectOperationRegistration";
 import {
     PushReactionRegistration,
     SelectiveCodeActionOptions,
@@ -37,36 +37,50 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
 
 }
 
-export interface EditorAutofixRegistration extends PushSelector {
-    editor: AnyProjectEditor;
+export interface CodeTransformAutofixRegistration extends PushSelector {
+
+    // TODO will be required when editor is removed
+    transform?: CodeTransform;
+
+    /**
+     * @deprecated use transform
+     */
+    editor?: CodeTransform;
+
     options?: AutofixRegistrationOptions;
+
     parameters?: any;
 }
 
-export function isEditorAutofixRegistration(r: AutofixRegisterable): r is EditorAutofixRegistration {
-    const maybe = r as EditorAutofixRegistration;
-    return !!maybe.editor;
+export function isCodeTransformAutofixRegistration(r: AutofixRegisterable): r is CodeTransformAutofixRegistration {
+    const maybe = r as CodeTransformAutofixRegistration;
+    return !!maybe.transform || !!maybe.editor;
 }
 
-export type AutofixRegisterable = AutofixRegistration | EditorAutofixRegistration;
+export type AutofixRegisterable = AutofixRegistration | CodeTransformAutofixRegistration;
 
 /**
- * Create an autofix from an existing editor. An editor for autofix
+ * @deprecated use CodeTransformAutofixRegistration
+ */
+export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
+
+/**
+ * Create an autofix from an existing CodeTransform. A CodeTransform for autofix
  * should not rely on parameters being passed in. An existing editor can be wrapped
  * to use predefined parameters.
- * Any use of MessageClient.respond in an editor used in an autofix will be redirected to
+ * Any use of MessageClient.respond in a transform used in an autofix will be redirected to
  * linked channels as autofixes are normally invoked in an EventHandler and EventHandlers
- * do not support respond. Be sure to set parameters if they are required by your editor.
+ * do not support respond. Be sure to set parameters if they are required by your transform.
  */
-export function toAutofixRegistration(use: EditorAutofixRegistration): AutofixRegistration {
-    const editorToUse = toEditor(use.editor);
+export function toAutofixRegistration(use: CodeTransformAutofixRegistration): AutofixRegistration {
+    const transformToUse = toEditor(use.transform || use.editor);
     return {
         name: use.name,
         pushTest: use.pushTest,
         options: use.options,
         action: async cri => {
-            logger.debug("About to edit using autofix editor %s", use.editor.toString());
-            return editorToUse(cri.project, cri.context, use.parameters);
+            logger.debug("About to edit using autofix code transform %s", use.transform.toString());
+            return transformToUse(cri.project, cri.context, use.parameters);
         },
     };
 }

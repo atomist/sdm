@@ -27,7 +27,7 @@ import {
 
 const SomePickyFix: AutofixRegistration = toAutofixRegistration({
         name: "Some picky fix",
-        editor: async i => i,
+        transform: async i => i,
         pushTest: {
             name: "has something",
             mapping: async pi => !!(await pi.project.getFile("something.txt")),
@@ -41,7 +41,7 @@ describe("relevantCodeActions", () => {
         const pti: PushImpactListenerInvocation = null;
         const autofixes: AutofixRegistration = toAutofixRegistration({
             name: "License Fix",
-            editor: async p => {
+            transform: async p => {
                 const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
                 return p.addFile("LICENSE", license.data);
             },

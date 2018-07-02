@@ -18,16 +18,16 @@ import { HandleCommand, HandleEvent } from "@atomist/automation-client";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
+import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
-import { EditorRegistration } from "../../api/registration/EditorRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { EventRegistrationManager } from "../../api/registration/EventRegistrationManager";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { IngesterRegistrationManager } from "../../api/registration/IngesterRegistrationManager";
 import {
+    codeTransformRegistrationToCommand,
     commandHandlerRegistrationToCommand,
-    editorRegistrationToCommand,
     eventHandlerRegistrationToEvent,
     generatorRegistrationToCommand,
 } from "./handlerRegistrations";
@@ -56,15 +56,23 @@ export class HandlerRegistrationManagerSupport
     }
 
     public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+        return this.addGeneratorCommand(gen);
+    }
+
+    public addGeneratorCommand<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
         const command = generatorRegistrationToCommand(this.sdm, gen);
         this.commandHandlers.push(command);
         return this;
     }
 
-    public addEditor<P>(ed: EditorRegistration<P>): this {
-        const commands = [editorRegistrationToCommand(this.sdm, ed)];
+    public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {
+        const commands = [codeTransformRegistrationToCommand(this.sdm, ed)];
         this.commandHandlers = this.commandHandlers.concat(commands);
         return this;
+    }
+
+    public addEditor<P>(ed: CodeTransformRegistration<P>): this {
+        return this.addCodeTransformCommand(ed);
     }
 
     public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {
