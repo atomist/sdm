@@ -141,7 +141,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         };
         return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
-            executeVerifyEndpoint(stagingVerification, this.configuration.sdm.repoRefResolver));
+            executeVerifyEndpoint(stagingVerification));
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {

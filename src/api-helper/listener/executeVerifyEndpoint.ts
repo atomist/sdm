@@ -37,10 +37,10 @@ export interface SdmVerification {
     requestApproval: boolean;
 }
 
-export function executeVerifyEndpoint(sdm: SdmVerification, repoRefResolver: RepoRefResolver): ExecuteGoal {
+export function executeVerifyEndpoint(sdm: SdmVerification): ExecuteGoal {
     return async (r: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { context, id, status } = r;
-        const sdmGoals = await fetchGoalsForCommit(context, id, repoRefResolver.providerIdFromStatus(status));
+        const { context, id, sdmGoal } = r;
+        const sdmGoals = await fetchGoalsForCommit(context, id, sdmGoal.repo.providerId);
         const endpointGoal = sdmGoals.find(sg => sg.externalKey === sdm.endpointGoal.context);
 
         if (!endpointGoal) {
