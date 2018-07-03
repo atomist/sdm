@@ -20,8 +20,8 @@ import {
     OnCommand,
 } from "@atomist/automation-client/onCommand";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters } from "../../api/command/support/EmptyParameters";
 import { MachineOrMachineOptions } from "../machine/toMachineOptions";
 
 /**
@@ -35,11 +35,11 @@ import { MachineOrMachineOptions } from "../machine/toMachineOptions";
  * @param details optional details to customize behavior
  * Add intent "edit <name>"
  */
-export function createCommand<PARAMS = EmptyParameters>(
+export function createCommand<PARAMS = NoParameters>(
     sdm: MachineOrMachineOptions,
     commandMaker: (sdm: MachineOrMachineOptions) => OnCommand<PARAMS>,
     name: string,
-    paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
+    paramsMaker: Maker<PARAMS> = NoParameters as Maker<PARAMS>,
     details: Partial<CommandDetails> = {}): HandleCommand<PARAMS> {
     const description = details.description || name;
     const detailsToUse: CommandDetails = {

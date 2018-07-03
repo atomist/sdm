@@ -25,14 +25,16 @@ import {
     editorHandler,
 } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { SmartParameters } from "@atomist/automation-client/SmartParameters";
+import {
+    NoParameters,
+    SmartParameters,
+} from "@atomist/automation-client/SmartParameters";
 import {
     Maker,
     toFactory,
 } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
 import { EditModeSuggestion } from "../../../api/command/editor/EditModeSuggestion";
-import { EmptyParameters } from "../../../api/command/support/EmptyParameters";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import {
     MachineOrMachineOptions,
@@ -52,11 +54,11 @@ import { chattyEditorFactory } from "./editorWrappers";
  * @param details optional details to customize behavior
  * Add intent "edit <name>"
  */
-export function editorCommand<PARAMS = EmptyParameters>(
+export function editorCommand<PARAMS = NoParameters>(
     sdm: MachineOrMachineOptions,
     edd: (params: PARAMS) => AnyProjectEditor,
     name: string,
-    paramsMaker: Maker<PARAMS> = EmptyParameters as Maker<PARAMS>,
+    paramsMaker: Maker<PARAMS> = NoParameters as Maker<PARAMS>,
     details: Partial<EditorCommandDetails> = {},
     targets: FallbackParams =
         new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {

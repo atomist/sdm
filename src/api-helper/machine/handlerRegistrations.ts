@@ -36,10 +36,7 @@ import {
     Maker,
     toFactory,
 } from "@atomist/automation-client/util/constructionUtils";
-import {
-    EmptyParameters,
-    SeedDrivenGeneratorParametersSupport,
-} from "../..";
+import { SeedDrivenGeneratorParametersSupport } from "../../api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -188,7 +185,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
 }
 
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
-    const oldMaker = c.paramsMaker || EmptyParameters;
+    const oldMaker = c.paramsMaker || NoParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
             let paramsInstance;

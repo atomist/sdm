@@ -14,17 +14,27 @@
  * limitations under the License.
  */
 
-import { enrichGoalSetters, goalContributors } from "../../../src/api/dsl/goalContribution";
-import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
-
 import * as assert from "power-assert";
-import { AutofixGoal, FingerprintGoal, onAnyPush, PushReactionGoal, ReviewGoal } from "../../../src";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
 import { GoalComponent } from "../../../src/api/dsl/GoalComponent";
+import {
+    enrichGoalSetters,
+    goalContributors,
+} from "../../../src/api/dsl/goalContribution";
+import {
+    onAnyPush,
+    whenPushSatisfies,
+} from "../../../src/api/dsl/goalDsl";
 import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
 import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
-import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
+import {
+    AutofixGoal,
+    BuildGoal,
+    FingerprintGoal,
+    PushReactionGoal,
+    ReviewGoal,
+} from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 

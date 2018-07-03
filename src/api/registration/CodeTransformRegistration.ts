@@ -19,9 +19,9 @@ import { EditOneOrAllParameters } from "@atomist/automation-client/operations/co
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { MachineOrMachineOptions } from "../../api-helper/machine/toMachineOptions";
-import { EmptyParameters } from "../command/support/EmptyParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 export { chainEditors as chainTransforms } from "@atomist/automation-client/operations/edit/projectEditorOps";
@@ -29,13 +29,13 @@ export { chainEditors as chainTransforms } from "@atomist/automation-client/oper
 /**
  * @deprecated use CodeTransformRegistration
  */
-export type EditorRegistration<PARAMS = EmptyParameters> = CodeTransformRegistration<PARAMS>;
+export type EditorRegistration<PARAMS = NoParameters> = CodeTransformRegistration<PARAMS>;
 
 /**
  * Type for registering a project transform, which can make changes
  * across projects
  */
-export interface CodeTransformRegistration<PARAMS = EmptyParameters> extends Partial<EditorCommandDetails>,
+export interface CodeTransformRegistration<PARAMS = NoParameters> extends Partial<EditorCommandDetails>,
     ProjectOperationRegistration<PARAMS> {
 
     /**
