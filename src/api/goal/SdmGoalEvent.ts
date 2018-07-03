@@ -36,6 +36,16 @@ export interface SdmGoalEvent extends SdmGoalKey {
         name: string;
     };
 
+    /*
+     * this is also available in the push, but leave it here
+     * for backwards compatibility
+     */
+    repo: {
+        owner: string,
+        name: string,
+        providerId: string,
+    }
+
     /**
      * Current description that goes with the current status
      */
