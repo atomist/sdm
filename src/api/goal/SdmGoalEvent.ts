@@ -50,7 +50,7 @@ export interface SdmGoalEvent extends SdmGoalKey {
         owner: string,
         name: string,
         providerId: string,
-    }
+    };
 
     /**
      * Current description that goes with the current status

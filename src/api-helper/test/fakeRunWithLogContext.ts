@@ -48,7 +48,6 @@ export function fakeRunWithLogContext(id: RemoteRepoRef): GoalInvocation {
     };
 }
 
-
 function fakeSdmGoal(id: RepoId): SdmGoalEvent {
     return {
         uniqueName: "hi",
@@ -61,7 +60,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
         environment: "0-code",
         fulfillment: {
             method: "other",
-            name: "something"
+            name: "something",
         },
         repo: {
             name: id.repo,
@@ -77,7 +76,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     owner: id.owner,
                     provider: {
                         providerId: "skdfjasd",
-                    }
+                    },
                 },
                 name: id.repo,
                 channels: [{
@@ -88,7 +87,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     },
                 }],
             },
-        }
+        },
     };
 }
 

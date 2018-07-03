@@ -22,10 +22,10 @@ import { createEphemeralProgressLog } from "../../../src/api-helper/log/Ephemera
 import { lastLinesLogInterpreter } from "../../../src/api-helper/log/logInterpreters";
 import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
 import { Goal } from "../../../src/api/goal/Goal";
-import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
+import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
+import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
 
 const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
     goalInvocation.progressLog.write("Hello world\n");
@@ -45,16 +45,16 @@ const fakePush = {
         org: {
             provider: {
                 providerId: "aldkfjdalkfj",
-            }
-        }
-    }
+            },
+        },
+    },
 };
 
 const fakeSdmGoal = {
     name: "test",
     fulfillment: { name: "HelloWorld" },
     environment: "0-code",
-    push: fakePush
+    push: fakePush,
 } as any as SdmGoalEvent;
 
 const fakeCredentials = { token: "NOT-A-TOKEN" };
