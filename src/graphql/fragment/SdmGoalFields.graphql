@@ -11,6 +11,11 @@ fragment SdmGoalFields on SdmGoal {
     method
     name
   }
+  repo {
+    name
+    owner
+    providerId
+  }
   description
   url
   externalUrl
