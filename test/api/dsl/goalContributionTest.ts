@@ -18,6 +18,7 @@ import { enrichGoalSetters, goalContributors } from "../../../src/api/dsl/goalCo
 import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 
 import * as assert from "power-assert";
+import { AutofixGoal, FingerprintGoal, onAnyPush, PushReactionGoal, ReviewGoal } from "../../../src";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
 import { GoalComponent } from "../../../src/api/dsl/GoalComponent";
 import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
@@ -25,6 +26,7 @@ import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { BuildGoal } from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
+import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
     uniqueName: "Fred",
@@ -82,11 +84,50 @@ describe("goalContribution", () => {
             // TODO what is the problem with MessageGoal and type checking??
             const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             const gs: GoalSetter = enrichGoalSetters(old,
-                whenPushSatisfies(() => true).setGoals(MessageGoal as any as GoalComponent));
+                onAnyPush().setGoals(MessageGoal as any as GoalComponent));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat(MessageGoal as any));
         });
 
+        it("should add two goals to some", async () => {
+            const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
+            let gs: GoalSetter = enrichGoalSetters(old,
+                onAnyPush().setGoals(MessageGoal as any as GoalComponent));
+            gs = enrichGoalSetters(gs,
+                onAnyPush().setGoals(FingerprintGoal as any as GoalComponent));
+            const p = fakePush();
+            const goals: Goals = await gs.mapping(p);
+            assert.equal(goals.goals.length, 3);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([MessageGoal, FingerprintGoal] as any));
+        });
+
+    });
+
+    describe("using SDM", () => {
+
+        it("should accept and add with () => true", async () => {
+            const sdm = new TestSoftwareDeliveryMachine("test");
+            sdm.addGoalContributions(goalContributors(
+                onAnyPush().setGoals(new Goals("Checks", ReviewGoal, PushReactionGoal, AutofixGoal))));
+            const p = fakePush();
+            const goals: Goals = await sdm.pushMapping.mapping(p);
+            assert.deepEqual(goals.goals.sort(), [ReviewGoal, PushReactionGoal, AutofixGoal].sort());
+            sdm.addGoalContributions(whenPushSatisfies(() => true).setGoals(FingerprintGoal));
+            const goals2: Goals = await sdm.pushMapping.mapping(p);
+            assert.deepEqual(goals2.goals.sort(), [ReviewGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort());
+        });
+
+        it("should accept and add with onAnyPush", async () => {
+            const sdm = new TestSoftwareDeliveryMachine("test");
+            sdm.addGoalContributions(goalContributors(
+                onAnyPush().setGoals(new Goals("Checks", ReviewGoal, PushReactionGoal, AutofixGoal))));
+            const p = fakePush();
+            const goals: Goals = await sdm.pushMapping.mapping(p);
+            assert.deepEqual(goals.goals.sort(), [ReviewGoal, PushReactionGoal, AutofixGoal].sort());
+            sdm.addGoalContributions(onAnyPush().setGoals(FingerprintGoal));
+            const goals2: Goals = await sdm.pushMapping.mapping(p);
+            assert.deepEqual(goals2.goals.sort(), [ReviewGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort());
+        });
     });
 });

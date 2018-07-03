@@ -59,4 +59,6 @@ export function whenPushSatisfies(
  * PushRule that matches every push
  * @type {GoalSetterMapping}
  */
-export const onAnyPush = new GoalSetterMapping(AnyPush, [], "On any push");
+export function onAnyPush() {
+    return new GoalSetterMapping(AnyPush, [], "On any push");
+}

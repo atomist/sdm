@@ -25,6 +25,11 @@ import {
  */
 export type GoalComponent = Goal | Goal[] | Goals;
 
+/**
+ * Convert a GoalComponent to Goals
+ * @param {GoalComponent} gc
+ * @return {Goals}
+ */
 export function toGoals(gc: GoalComponent): Goals {
     return isGoals(gc) ? gc :
         Array.isArray(gc) ? new Goals(gc.map(g => g.name).join("/"), ...gc) :

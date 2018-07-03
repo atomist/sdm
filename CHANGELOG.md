@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Rename "editor" to "codeTransform" for clarity [#424](https://github.com/atomist/sdm/issues/424)
+- **BREAKING** `onAnyPush` becomes a function to avoid side effects
 
 ### Added
 

@@ -39,16 +39,22 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
     private readonly contributors: Array<Mapping<F, Goal[]>> = [];
 
     constructor(public name: string, contributors: Array<GoalContribution<F>>) {
-        this.contributors = contributors.map(c => ({
-            name: c.name,
-            async mapping(p) {
-                const r = await c.mapping(p);
-                if (!r) {
-                    return r as any;
-                }
-                return toGoals(r).goals;
-            },
-        }));
+        this.contributors = contributors.map(c => {
+            logger.info("Creating contributor '%s' of %s", c.name, contributors.map(con => con.name));
+            return {
+                name: c.name,
+                async mapping(p) {
+                    const r = await c.mapping(p);
+                    logger.info("Contributor '%s' of [%s] returned %s",
+                        c.name,
+                        contributors.map(con => con.name), !!r ? toGoals(r).goals.map(g => g.name) : "undefined");
+                    if (!r) {
+                        return r as any;
+                    }
+                    return toGoals(r).goals;
+                },
+            };
+        });
     }
 
     public async mapping(p: F): Promise<NeverMatch | Goals | undefined> {
@@ -56,7 +62,12 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
             this.contributors.map(c => c.mapping(p)),
         );
         const uniqueGoals: Goal[] = _.uniq(_.flatten(contributorGoals.filter(x => !!x)));
-        logger.info("Unique goal names=[%s]: correlationId=%s", uniqueGoals.map(g => g.name), p.context.correlationId);
+        logger.info("%d contributors (%s): Contributor goal names=[%s]; Unique goal names=[%s]; correlationId=%s",
+            this.contributors.length,
+            this.contributors.map(c => c.name),
+            contributorGoals.map(a => !!a ? a.map(b => b.name).join() : "undefined").join(": "),
+            uniqueGoals.map(g => g.name),
+            p.context.correlationId);
         return uniqueGoals.length === 0 ?
             undefined :
             new Goals(this.name, ...uniqueGoals);
@@ -74,7 +85,8 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 export function goalContributors<F extends SdmContext = PushListenerInvocation>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
-    return new AdditiveGoalSetter("Contributed", [contributor].concat(contributors));
+    const all = [contributor].concat(contributors);
+    return new AdditiveGoalSetter("Contributed", all);
 }
 
 /**

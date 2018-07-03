@@ -148,6 +148,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         this.disposalGoalSetters.push(...goalSetters);
         return this;
     }
+
     public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {
         this.registrationManager.addCommand(cmd);
         return this;
@@ -248,7 +249,13 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     public addGoalContributions(goalContributions: GoalSetter): this {
-        this.pushMap = enrichGoalSetters(this.pushMap || new PushRules("Goal setters"), goalContributions);
+        if (!this.pushMap) {
+            logger.info("Setting sole pushMapping '%s'", goalContributions.name);
+            this.pushMap = goalContributions;
+        } else {
+            logger.info("Adding pushMapping '%s' to '%s'", goalContributions.name, this.pushMap.name);
+            this.pushMap = enrichGoalSetters(this.pushMap, goalContributions);
+        }
         return this;
     }
 
@@ -281,7 +288,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                           public readonly configuration: O,
                           goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
-
         // If we didn't get any goal setters don't register a mapping
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
