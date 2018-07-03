@@ -24,6 +24,8 @@ import { MachineOrMachineOptions } from "../../api-helper/machine/toMachineOptio
 import { EmptyParameters } from "../command/support/EmptyParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
+export { chainEditors as chainTransforms } from "@atomist/automation-client/operations/edit/projectEditorOps";
+
 /**
  * @deprecated use CodeTransformRegistration
  */
