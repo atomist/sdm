@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { configurationValue } from "@atomist/automation-client/configuration";
 import * as clientSpawned from "@atomist/automation-client/util/spawned";
 import {
     asSpawnCommand,
@@ -51,5 +52,11 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
                                     log: ProgressLog,
                                     spOpts: Partial<SpawnWatchOptions> = {}): Promise<ChildProcessResult> {
     const delimitedLog = new DelimitedWriteProgressLogDecorator(log, "\n");
+
+    // Set the goal default timeout to 10mins
+    if (!spOpts.timeout) {
+        spOpts.timeout = configurationValue<number>("sdm.goal.timeout", 1000 * 60 * 10);
+    }
+
     return clientSpawned.spawnAndWatch(spawnCommand, options, delimitedLog, spOpts);
 }
