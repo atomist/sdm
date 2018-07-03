@@ -22,10 +22,12 @@ import {
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import {
+    SdmGoalState,
     StatusForExecuteGoal,
     StatusState,
 } from "../../typings/types";
 import { fakeContext } from "./fakeContext";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 /**
  * Useful testing support
@@ -34,7 +36,7 @@ import { fakeContext } from "./fakeContext";
  */
 export function fakeRunWithLogContext(id: RemoteRepoRef): GoalInvocation {
     return {
-        credentials: {token: "foobar"},
+        credentials: { token: "foobar" },
         context: fakeContext("T1111"),
         id,
         addressChannels: async m => {
@@ -42,6 +44,43 @@ export function fakeRunWithLogContext(id: RemoteRepoRef): GoalInvocation {
         },
         status: fakeStatus(id),
         progressLog: new LoggingProgressLog("fake"),
+        sdmGoal: fakeSdmGoal(id),
+    };
+}
+
+
+function fakeSdmGoal(id: RepoId): SdmGoalEvent {
+    return {
+        uniqueName: "hi",
+        name: "Hello",
+        goalSet: "goal set",
+        goalSetId: "xuf",
+        ts: 42,
+        provenance: [],
+        preConditions: [],
+        environment: "0-code",
+        fulfillment: {
+            method: "other",
+            name: "something"
+        },
+        sha: "abc",
+        branch: "master",
+        state: SdmGoalState.requested,
+        push: {
+            repo: {
+                org: {
+                    owner: id.owner,
+                },
+                name: id.repo,
+                channels: [{
+                    name: "foo",
+                    id: "1",
+                    team: {
+                        id: "T357",
+                    },
+                }],
+            },
+        }
     };
 }
 
@@ -55,7 +94,7 @@ export function fakeStatus(id: RepoId): StatusForExecuteGoal.Fragment {
                     owner: id.owner,
                 },
                 name: id.repo,
-                channels: [ {
+                channels: [{
                     name: "foo",
                     id: "1",
                     team: {
