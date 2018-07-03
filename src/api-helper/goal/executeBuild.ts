@@ -32,8 +32,7 @@ import { StatusForExecuteGoal } from "../../typings/types";
 export function executeBuild(projectLoader: ProjectLoader,
                              builder: Builder): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const {status, credentials, id, context, progressLog, addressChannels} = goalInvocation;
-        const commit = status.commit;
+        const { sdmGoal, credentials, id, context, progressLog, addressChannels } = goalInvocation;
 
         logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
 
@@ -44,12 +43,12 @@ export function executeBuild(projectLoader: ProjectLoader,
             id,
             addressChannels,
             {
-                name: commit.repo.name,
-                owner: commit.repo.owner,
-                providerId: commit.repo.org.provider.providerId,
-                branch: branchFromCommit(commit),
-                defaultBranch: commit.repo.defaultBranch,
-                sha: commit.sha,
+                name: sdmGoal.repo.name,
+                owner: sdmGoal.repo.owner,
+                providerId: sdmGoal.repo.providerId,
+                branch: sdmGoal.branch,
+                defaultBranch: sdmGoal.push.repo.defaultBranch,
+                sha: sdmGoal.sha,
             },
             progressLog,
             context);
