@@ -58,7 +58,9 @@ export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
 const pushTestResultMemory = new LruCache<boolean>(1000);
 
 /**
- * Cache the PushTest results for this push
+ * Cache the PushTest results for this push. The results will be cached based
+ * on the name of the pushTest and the ID of the push. Make sure your push test
+ * has a unique name!
  * @param {PushTest} pt
  * @return {PushTest}
  */

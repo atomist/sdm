@@ -43,7 +43,7 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
     private reason: string;
 
     constructor(protected guard1: PushTest, protected guards: PushTest[], reason?: string) {
-        this.pushTest = allSatisfied(memoize(guard1), ...guards.map(memoize));
+        this.pushTest = allSatisfied(guard1, ...guards);
         this.reason = reason || this.pushTest.name;
     }
 
