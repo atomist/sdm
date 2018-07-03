@@ -27,10 +27,8 @@ import { Target } from "../../spi/deploy/Target";
 
 export function executeUndeploy(target: Target): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const {id, credentials, status, progressLog} = goalInvocation;
-        const commit = status.commit;
-        const pushBranch = commit.pushes[0].branch;
-        progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
+        const { id, credentials, sdmGoal, progressLog } = goalInvocation;
+        const pushBranch = sdmGoal.branch;
 
         const targetInfo = target.targeter(id, pushBranch);
         const deployments = await target.deployer.findDeployments(id, targetInfo, credentials);
