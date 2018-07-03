@@ -38,7 +38,7 @@ describe("spawned", () => {
         const sc: SpawnCommand = {command: "ls"};
         const r = await spawnAndWatch(sc, {},
             await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoal),
-            {});
+            { timeout: 10000 });
         assert.equal(r.error, false);
         assert.equal(r.error, false);
     });
@@ -49,6 +49,7 @@ describe("spawned", () => {
             await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoal),
             {
                 errorFinder: undefined,
+                timeout: 10000,
             });
         assert.equal(r.error, false);
         assert.equal(r.error, false);
@@ -60,6 +61,7 @@ describe("spawned", () => {
             await createEphemeralProgressLog(fakeContext(), { name: "test"} as SdmGoal),
             {
                 errorFinder: () => false,
+                timeout: 10000,
             });
         assert.equal(r.error, false);
         assert.equal(r.error, false);
