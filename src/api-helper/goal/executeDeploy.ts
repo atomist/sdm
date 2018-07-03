@@ -58,11 +58,9 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
         logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
-        // TODO CD the SdmGoal.push doesn't go to image.imageName
-        const artifactCheckout = await checkOutArtifact(_.get(sdmGoal, "image.imageName"),
+        const artifactCheckout = await checkOutArtifact(_.get(sdmGoal, "push.after.image.imageName"),
             artifactStore, id, credentials, progressLog);
 
-        // questionable
         artifactCheckout.id.branch = sdmGoal.branch;
         const deployments = await target.deployer.deploy(
             artifactCheckout,
