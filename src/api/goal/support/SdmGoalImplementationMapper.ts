@@ -19,7 +19,7 @@ import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../mapping/PushTest";
-import { ExecuteGoalWithLog } from "../ExecuteGoalWithLog";
+import { ExecuteGoal } from "../GoalInvocation";
 import { Goal } from "../Goal";
 import { IsolatedGoalLauncher } from "./IsolatedGoalLauncher";
 
@@ -28,7 +28,7 @@ export type GoalFulfillment = GoalImplementation | GoalSideEffect;
 export interface GoalImplementation {
     implementationName: string;
     goal: Goal;
-    goalExecutor: ExecuteGoalWithLog;
+    goalExecutor: ExecuteGoal;
     pushTest: PushTest;
     logInterpreter: InterpretLog;
 }

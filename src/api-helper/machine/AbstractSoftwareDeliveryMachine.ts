@@ -20,7 +20,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
-import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
+import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goal } from "../../api/goal/Goal";
 import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
@@ -107,14 +107,14 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      * to the same goal based on the code in the project.
      * @param {string} implementationName
      * @param {Goal} goal
-     * @param {ExecuteGoalWithLog} goalExecutor
+     * @param {ExecuteGoal} goalExecutor
      * @param options PushTest to narrow matching & InterpretLog that can handle
      * the log from the goalExecutor function
      * @return {this}
      */
     public addGoalImplementation(implementationName: string,
                                  goal: Goal,
-                                 goalExecutor: ExecuteGoalWithLog,
+                                 goalExecutor: ExecuteGoal,
                                  options?: Partial<{
                                      pushTest: PushTest,
                                      logInterpreter: InterpretLog,

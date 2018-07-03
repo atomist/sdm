@@ -26,7 +26,7 @@ import {
     AddressChannels,
     addressChannelsFor,
 } from "../../api/context/addressChannels";
-import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
+import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import {
     Goal,
     hasPreconditions,
@@ -174,7 +174,7 @@ async function fulfillment(rules: {
     return {method: "other", name: "unspecified-yo"};
 }
 
-export const executeImmaterial: ExecuteGoalWithLog = async () => {
+export const executeImmaterial: ExecuteGoal = async () => {
     logger.debug("Immaterial: Nothing to execute");
     return Success;
 };

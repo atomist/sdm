@@ -23,9 +23,9 @@ import { ProjectReview } from "@atomist/automation-client/operations/review/Revi
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { ReviewListener } from "../../api/listener/ReviewListener";
 import { PushReactionResponse } from "../../api/registration/PushReactionRegistration";
@@ -43,18 +43,18 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @param {ProjectLoader} projectLoader
  * @param {ReviewerRegistration[]} reviewerRegistrations
  * @param {ReviewListener[]} reviewListeners
- * @return {ExecuteGoalWithLog}
+ * @return {ExecuteGoal}
  */
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[],
-                              reviewListeners: ReviewListener[]): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext) => {
-        const {credentials, id, addressChannels} = rwlc;
+                              reviewListeners: ReviewListener[]): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation) => {
+        const {credentials, id, addressChannels} = goalInvocation;
         try {
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
                 return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
-                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
+                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers: [%s] of [%s]",
                         id, relevantReviewers.length,

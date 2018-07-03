@@ -18,18 +18,18 @@ import { Success } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
 import { ExecuteGoalResult } from "../ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../GoalInvocation";
 
 /***
  * Execute a goal by sending a message to the linked Slack channels
  * @param {string | SlackMessage} msg
- * @return {ExecuteGoalWithLog}
+ * @return {ExecuteGoal}
  */
-export function executeSendMessageToSlack(msg: string | SlackMessage): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        await rwlc.addressChannels(msg);
+export function executeSendMessageToSlack(msg: string | SlackMessage): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
+        await goalInvocation.addressChannels(msg);
         return Success;
     };
 }

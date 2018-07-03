@@ -20,7 +20,7 @@ import {
     RepoId,
 } from "@atomist/automation-client/operations/common/RepoId";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
-import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import {
     StatusForExecuteGoal,
     StatusState,
@@ -30,9 +30,9 @@ import { fakeContext } from "./fakeContext";
 /**
  * Useful testing support
  * @param {RemoteRepoRef} id
- * @return {RunWithLogContext}
+ * @return {GoalInvocation}
  */
-export function fakeRunWithLogContext(id: RemoteRepoRef): RunWithLogContext {
+export function fakeRunWithLogContext(id: RemoteRepoRef): GoalInvocation {
     return {
         credentials: {token: "foobar"},
         context: fakeContext("T1111"),

@@ -18,9 +18,9 @@ import { sprintf } from "sprintf-js";
 import { fetchGoalsForCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { Goal } from "../../api/goal/Goal";
 import {
     EndpointVerificationInvocation,
@@ -37,8 +37,8 @@ export interface SdmVerification {
     requestApproval: boolean;
 }
 
-export function executeVerifyEndpoint(sdm: SdmVerification, repoRefResolver: RepoRefResolver): ExecuteGoalWithLog {
-    return async (r: RunWithLogContext): Promise<ExecuteGoalResult> => {
+export function executeVerifyEndpoint(sdm: SdmVerification, repoRefResolver: RepoRefResolver): ExecuteGoal {
+    return async (r: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { context, id, status } = r;
         const sdmGoals = await fetchGoalsForCommit(context, id, repoRefResolver.providerIdFromStatus(status));
         const endpointGoal = sdmGoals.find(sg => sg.externalKey === sdm.endpointGoal.context);

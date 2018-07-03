@@ -25,9 +25,9 @@ import * as _ from "lodash";
 import { findSdmGoalOnCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoal } from "../../api/goal/SdmGoal";
 import {
@@ -50,11 +50,11 @@ import {
 export function executeDeploy(artifactStore: ArtifactStore,
                               repoRefResolver: RepoRefResolver,
                               endpointGoal: Goal,
-                              target: Target): ExecuteGoalWithLog {
+                              target: Target): ExecuteGoal {
 
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const commit = rwlc.status.commit;
-        const {credentials, id, context, progressLog} = rwlc;
+    return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
+        const commit = goalInvocation.status.commit;
+        const {credentials, id, context, progressLog} = goalInvocation;
         const atomistTeam = context.teamId;
 
         logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
@@ -72,7 +72,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
             atomistTeam);
 
         await Promise.all(deployments.map(deployment => setEndpointGoalOnSuccessfulDeploy(
-            {endpointGoal, rwlc, deployment, repoRefResolver})));
+            {endpointGoal, goalInvocation, deployment, repoRefResolver})));
 
         return Success;
     };
@@ -111,20 +111,20 @@ function sourceArtifact(id: RemoteRepoRef): DeployableArtifact {
 export async function setEndpointGoalOnSuccessfulDeploy(params: {
     repoRefResolver: RepoRefResolver,
     endpointGoal: Goal,
-    rwlc: RunWithLogContext,
+    goalInvocation: GoalInvocation,
     deployment: Deployment,
 }) {
-    const {rwlc, deployment, endpointGoal} = params;
-    const sdmGoal = await findSdmGoalOnCommit(rwlc.context, rwlc.id, params.repoRefResolver.providerIdFromStatus(rwlc.status), endpointGoal);
+    const {goalInvocation, deployment, endpointGoal} = params;
+    const sdmGoal = await findSdmGoalOnCommit(goalInvocation.context, goalInvocation.id, params.repoRefResolver.providerIdFromStatus(goalInvocation.status), endpointGoal);
     // Only update the endpoint goal if it actually exists in the goal set
     if (sdmGoal) {
         if (deployment.endpoint) {
             const newState = SdmGoalState.success;
-            await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
+            await markEndpointStatus({context: goalInvocation.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint});
         } else {
             const error = new Error("Deploy finished with success, but the endpoint was not found");
             const newState = SdmGoalState.failure;
-            await markEndpointStatus({context: rwlc.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
+            await markEndpointStatus({context: goalInvocation.context, sdmGoal, endpointGoal, newState, endpoint: deployment.endpoint, error});
         }
     }
 }

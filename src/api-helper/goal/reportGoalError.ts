@@ -19,9 +19,9 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { Goal } from "../../api/goal/Goal";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
@@ -60,8 +60,8 @@ export async function reportGoalError(parameters: {
     }
 }
 
-export function CompositeGoalExecutor(...goalImplementations: ExecuteGoalWithLog[]): ExecuteGoalWithLog {
-    return async (r: RunWithLogContext) => {
+export function CompositeGoalExecutor(...goalImplementations: ExecuteGoal[]): ExecuteGoal {
+    return async (r: GoalInvocation) => {
         let overallResult: ExecuteGoalResult = {
             code: 0,
         };

@@ -17,9 +17,9 @@
 import { logger } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { Builder } from "../../spi/build/Builder";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { StatusForExecuteGoal } from "../../typings/types";
@@ -30,9 +30,9 @@ import { StatusForExecuteGoal } from "../../typings/types";
  * @param builder builder to user
  */
 export function executeBuild(projectLoader: ProjectLoader,
-                             builder: Builder): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const {status, credentials, id, context, progressLog, addressChannels} = rwlc;
+                             builder: Builder): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
+        const {status, credentials, id, context, progressLog, addressChannels} = goalInvocation;
         const commit = status.commit;
 
         logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);

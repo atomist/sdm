@@ -15,7 +15,7 @@
  */
 
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { ExecuteGoalWithLog } from "../goal/ExecuteGoalWithLog";
+import { ExecuteGoal } from "../goal/GoalInvocation";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
@@ -53,14 +53,14 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * to the same goal based on the code in the project.
      * @param {string} implementationName
      * @param {Goal} goal
-     * @param {ExecuteGoalWithLog} goalExecutor
+     * @param {ExecuteGoal} goalExecutor
      * @param options PushTest to narrow matching & InterpretLog that can handle
      * the log from the goalExecutor function
      * @return {this}
      */
     addGoalImplementation(implementationName: string,
                           goal: Goal,
-                          goalExecutor: ExecuteGoalWithLog,
+                          goalExecutor: ExecuteGoal,
                           options?: Partial<{
                               pushTest: PushTest,
                               logInterpreter: InterpretLog,

@@ -22,13 +22,13 @@ import { createEphemeralProgressLog } from "../../../src/api-helper/log/Ephemera
 import { lastLinesLogInterpreter } from "../../../src/api-helper/log/logInterpreters";
 import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { RunWithLogContext } from "../../../src/api/goal/ExecuteGoalWithLog";
+import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
 import { Goal } from "../../../src/api/goal/Goal";
 import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
 
-const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
-    rwlc.progressLog.write("Hello world\n");
+const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
+    goalInvocation.progressLog.write("Hello world\n");
     return Success;
 };
 
@@ -67,7 +67,7 @@ describe("executing the goal", () => {
                 context: fakeContext(),
                 progressLog,
                 credentials: fakeCredentials,
-            } as any as RunWithLogContext;
+            } as any as GoalInvocation;
 
             return executeGoal({projectLoader},
                 helloWorldGoalExecutor,

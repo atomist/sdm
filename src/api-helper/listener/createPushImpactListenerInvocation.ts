@@ -21,7 +21,7 @@ import {
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { Destination } from "@atomist/automation-client/spi/message/MessageClient";
 import { messageDestinationsFor } from "../../api/context/addressChannels";
-import { RunWithLogContext } from "../../api/goal/ExecuteGoalWithLog";
+import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import {
     filesChangedSince,
@@ -32,13 +32,13 @@ import { filteredView } from "../misc/project/filteredView";
 /**
  * Create a PushImpactListenerInvocation from the given context.
  * Includes both the complete project and the changed files.
- * @param {RunWithLogContext} rwlc
+ * @param {GoalInvocation} goalInvocation
  * @param {GitProject} project
  * @return {Promise<PushImpactListenerInvocation>}
  */
-export async function createPushImpactListenerInvocation(rwlc: RunWithLogContext,
+export async function createPushImpactListenerInvocation(goalInvocation: GoalInvocation,
                                                          project: GitProject): Promise<PushImpactListenerInvocation> {
-    const {status, credentials, id, context, addressChannels} = rwlc;
+    const {status, credentials, id, context, addressChannels} = goalInvocation;
     const commit = status.commit;
     const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(commit.repo, context));
 

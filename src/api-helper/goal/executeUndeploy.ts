@@ -20,14 +20,14 @@ import {
 } from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { Target } from "../../spi/deploy/Target";
 
-export function executeUndeploy(target: Target): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext) => {
-        const {id, credentials, status, progressLog} = rwlc;
+export function executeUndeploy(target: Target): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation) => {
+        const {id, credentials, status, progressLog} = goalInvocation;
         const commit = status.commit;
         const pushBranch = commit.pushes[0].branch;
         progressLog.write(`Commit is on ${commit.pushes.length} pushes. Choosing the first one, branch ${pushBranch}`);
