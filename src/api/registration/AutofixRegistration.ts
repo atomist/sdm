@@ -79,7 +79,7 @@ export function toAutofixRegistration(use: CodeTransformAutofixRegistration): Au
         pushTest: use.pushTest,
         options: use.options,
         action: async cri => {
-            logger.debug("About to edit using autofix code transform '%s'", name);
+            logger.debug("About to edit using autofix code transform '%s'", use.name);
             return transformToUse(cri.project, cri.context, use.parameters);
         },
     };
