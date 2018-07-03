@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {logger} from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../PushTest";
 import {
@@ -69,7 +70,10 @@ export class PushRule<V = any> implements StaticPushMapping<V> {
 
     public async mapping(p: PushListenerInvocation): Promise<V | undefined> {
         if (await this.pushTest.mapping(p)) {
+            logger.info(`Push test passed: ${this.pushTest.name}`);
             return this.staticValue;
+        } else {
+            logger.info(`Push test failed: ${this.pushTest.name}`);
         }
     }
 
