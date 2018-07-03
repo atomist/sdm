@@ -21,6 +21,10 @@ fragment PushFields on Push {
         ...PersonFields
       }
     }
+    image {
+      image
+      imageName
+    }
   }
   repo {
     ...CoreRepoFieldsAndChannels

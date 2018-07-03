@@ -22,13 +22,13 @@ import { createEphemeralProgressLog } from "../../../src/api-helper/log/Ephemera
 import { lastLinesLogInterpreter } from "../../../src/api-helper/log/logInterpreters";
 import { fakeContext } from "../../../src/api-helper/test/fakeContext";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { RunWithLogContext } from "../../../src/api/goal/ExecuteGoalWithLog";
+import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
 import { Goal } from "../../../src/api/goal/Goal";
-import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { IndependentOfEnvironment } from "../../../src/api/goal/support/environment";
+import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
 
-const helloWorldGoalExecutor = async (rwlc: RunWithLogContext) => {
-    rwlc.progressLog.write("Hello world\n");
+const helloWorldGoalExecutor = async (goalInvocation: GoalInvocation) => {
+    goalInvocation.progressLog.write("Hello world\n");
     return Success;
 };
 
@@ -38,9 +38,26 @@ const fakeGoal = new Goal({
     orderedName: "0-yo",
 });
 
-const fakeSdmGoal = {name: "test", fulfillment: {name: "HelloWorld"}, environment: "0-code"} as SdmGoal;
+const fakePush = {
+    repo: {
+        name: "foo",
+        owner: "bar",
+        org: {
+            provider: {
+                providerId: "aldkfjdalkfj",
+            }
+        }
+    }
+};
 
-const fakeCredentials = {token: "NOT-A-TOKEN"};
+const fakeSdmGoal = {
+    name: "test",
+    fulfillment: { name: "HelloWorld" },
+    environment: "0-code",
+    push: fakePush
+} as any as SdmGoalEvent;
+
+const fakeCredentials = { token: "NOT-A-TOKEN" };
 
 describe("executing the goal", () => {
 
@@ -62,14 +79,14 @@ describe("executing the goal", () => {
         const projectLoader = new SingleProjectLoader(InMemoryProject.of());
 
         createEphemeralProgressLog(fakeContext(),
-            { name: "test"} as SdmGoal).then(progressLog => {
+            { name: "test" } as SdmGoalEvent).then(progressLog => {
             const fakeRWLC = {
                 context: fakeContext(),
                 progressLog,
                 credentials: fakeCredentials,
-            } as any as RunWithLogContext;
+            } as any as GoalInvocation;
 
-            return executeGoal({projectLoader},
+            return executeGoal({ projectLoader },
                 helloWorldGoalExecutor,
                 fakeRWLC,
                 fakeSdmGoal,
@@ -81,7 +98,7 @@ describe("executing the goal", () => {
                     assert.equal(result.code, 0, result.message);
                     assert(fakeRWLC.progressLog.log.includes("Hello world"));
                 });
-         }).then(done, done);
+        }).then(done, done);
     });
 
 });

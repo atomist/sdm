@@ -15,14 +15,15 @@
  */
 
 import { sprintf } from "sprintf-js";
-import {
-    SdmGoal,
-    SdmGoalKey,
-} from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
 
-export function isSdmGoal(a: object): a is SdmGoal {
-    const maybe = a as SdmGoal;
-    return !!maybe.goalSet && !!maybe.uniqueName && !!maybe.repo;
+/**
+ * @deprecated because I don't think we need this
+ */
+export function isSdmGoal(a: object): a is SdmGoalEvent {
+    const maybe = a as SdmGoalEvent;
+    return !!maybe.goalSet && !!maybe.uniqueName && !!maybe.name && !maybe.branch;
 }
 
 export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (k: SdmGoalKey) => T {

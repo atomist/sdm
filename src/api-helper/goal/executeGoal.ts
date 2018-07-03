@@ -27,12 +27,12 @@ import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -67,33 +67,33 @@ class GoalExecutionError extends Error {
 /**
  * Central function to execute a goal with progress logging
  * @param {{projectLoader: ProjectLoader}} rules
- * @param {ExecuteGoalWithLog} execute
- * @param {RunWithLogContext} rwlc
+ * @param {ExecuteGoal} execute
+ * @param {GoalInvocation} goalInvocation
  * @param {SdmGoal} sdmGoal
  * @param {Goal} goal
  * @param {InterpretLog} logInterpreter
  * @return {Promise<ExecuteGoalResult>}
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader },
-                                  execute: ExecuteGoalWithLog,
-                                  rwlc: RunWithLogContext,
-                                  sdmGoal: SdmGoal,
+                                  execute: ExecuteGoal,
+                                  goalInvocation: GoalInvocation,
+                                  sdmGoal: SdmGoalEvent,
                                   goal: Goal,
                                   logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
-    const ctx = rwlc.context;
-    const { addressChannels, progressLog, id } = rwlc;
+    const ctx = goalInvocation.context;
+    const { addressChannels, progressLog, id } = goalInvocation;
     const implementationName = sdmGoal.fulfillment.name;
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 
     await markGoalInProcess({ ctx, sdmGoal, goal, progressLogUrl: progressLog.url });
     try {
         // execute pre hook
-        let result: any = await executeHook(rules, rwlc, sdmGoal, "pre");
+        let result: any = await executeHook(rules, goalInvocation, sdmGoal, "pre");
         if (result.code !== 0) {
             throw new GoalExecutionError({ where: "executing pre-goal hook", result });
         }
         // execute the actual goal
-        const goalResult = (await execute(rwlc)
+        const goalResult = (await execute(goalInvocation)
             .catch(async err => {
                 progressLog.write("ERROR caught: " + err.message + "\n");
                 progressLog.write(err.stack);
@@ -107,7 +107,7 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         }
 
         // execute post hook
-        const hookResult = (await executeHook(rules, rwlc, sdmGoal, "post")) || Success;
+        const hookResult = (await executeHook(rules, goalInvocation, sdmGoal, "post")) || Success;
         if (hookResult.code !== 0) {
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
@@ -133,23 +133,23 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
 }
 
 export async function executeHook(rules: { projectLoader: ProjectLoader },
-                                  rwlc: RunWithLogContext,
-                                  sdmGoal: SdmGoal,
+                                  goalInvocation: GoalInvocation,
+                                  sdmGoal: SdmGoalEvent,
                                   stage: "post" | "pre"): Promise<HandlerResult> {
     const hook = goalToHookFile(sdmGoal, stage);
 
     // Check configuration to see if hooks should be skipped
     if (!configurationValue<boolean>("sdm.goal.hooks", true)) {
-        rwlc.progressLog.write("---");
-        rwlc.progressLog.write(`Invoking goal hook: ${hook}`);
-        rwlc.progressLog.write(`Result: skipped (hooks disabled in configuration)`);
-        rwlc.progressLog.write("---");
-        await rwlc.progressLog.flush();
+        goalInvocation.progressLog.write("---");
+        goalInvocation.progressLog.write(`Invoking goal hook: ${hook}`);
+        goalInvocation.progressLog.write(`Result: skipped (hooks disabled in configuration)`);
+        goalInvocation.progressLog.write("---");
+        await goalInvocation.progressLog.flush();
         return Success;
     }
 
     const { projectLoader } = rules;
-    const { credentials, id, context, progressLog } = rwlc;
+    const { credentials, id, context, progressLog } = goalInvocation;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
         progressLog.write("---");
         progressLog.write(`Invoking goal hook: ${hook}`);
@@ -163,8 +163,8 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                     GITHUB_TOKEN: toToken(credentials),
                     ATOMIST_TEAM: context.teamId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
-                    ATOMIST_REPO: sdmGoal.repo.name,
-                    ATOMIST_OWNER: sdmGoal.repo.owner,
+                    ATOMIST_REPO: sdmGoal.push.repo.name,
+                    ATOMIST_OWNER: sdmGoal.push.repo.owner,
                 },
             };
 
@@ -193,13 +193,13 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     });
 }
 
-function goalToHookFile(sdmGoal: SdmGoal, prefix: string): string {
+function goalToHookFile(sdmGoal: SdmGoalEvent, prefix: string): string {
     return `${prefix}-${sdmGoal.environment.toLocaleLowerCase().slice(2)}-${
         sdmGoal.name.toLocaleLowerCase().replace(" ", "_")}`;
 }
 
 export function markStatus(parameters: {
-    ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, result: ExecuteGoalResult,
+    ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, result: ExecuteGoalResult,
     error?: Error, progressLogUrl: string,
 }) {
     const { ctx, sdmGoal, goal, result, error, progressLogUrl } = parameters;
@@ -216,7 +216,7 @@ export function markStatus(parameters: {
         });
 }
 
-function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoal, goal: Goal, progressLogUrl: string }) {
+function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, progressLogUrl: string }) {
     const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
     return updateGoal(ctx, sdmGoal, {
         url: progressLogUrl,
@@ -270,8 +270,8 @@ async function reportGoalError(parameters: {
     }
 }
 
-export function CompositeGoalExecutor(...goalImplementations: ExecuteGoalWithLog[]): ExecuteGoalWithLog {
-    return async (r: RunWithLogContext) => {
+export function CompositeGoalExecutor(...goalImplementations: ExecuteGoal[]): ExecuteGoal {
+    return async (r: GoalInvocation) => {
         let overallResult: ExecuteGoalResult = {
             code: 0,
         };

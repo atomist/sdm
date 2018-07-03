@@ -17,9 +17,9 @@
 import { logger } from "@atomist/automation-client";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { Builder } from "../../spi/build/Builder";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { StatusForExecuteGoal } from "../../typings/types";
@@ -30,10 +30,9 @@ import { StatusForExecuteGoal } from "../../typings/types";
  * @param builder builder to user
  */
 export function executeBuild(projectLoader: ProjectLoader,
-                             builder: Builder): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const {status, credentials, id, context, progressLog, addressChannels} = rwlc;
-        const commit = status.commit;
+                             builder: Builder): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
+        const { sdmGoal, credentials, id, context, progressLog, addressChannels } = goalInvocation;
 
         logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
 
@@ -44,12 +43,12 @@ export function executeBuild(projectLoader: ProjectLoader,
             id,
             addressChannels,
             {
-                name: commit.repo.name,
-                owner: commit.repo.owner,
-                providerId: commit.repo.org.provider.providerId,
-                branch: branchFromCommit(commit),
-                defaultBranch: commit.repo.defaultBranch,
-                sha: commit.sha,
+                name: sdmGoal.repo.name,
+                owner: sdmGoal.repo.owner,
+                providerId: sdmGoal.repo.providerId,
+                branch: sdmGoal.branch,
+                defaultBranch: sdmGoal.push.repo.defaultBranch,
+                sha: sdmGoal.sha,
             },
             progressLog,
             context);

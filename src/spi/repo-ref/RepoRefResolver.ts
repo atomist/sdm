@@ -15,7 +15,7 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     CoreRepoFieldsAndChannels,
     OnPushToAnyBranch,
@@ -40,7 +40,13 @@ export interface RepoRefResolver {
 
     providerIdFromStatus(status: StatusForExecuteGoal.Fragment): string | null;
 
-    repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef;
+    /**
+     * get a repoRef from an SdmGoal.
+     * @param {SdmGoalEvent} sdmGoal
+     * @param {ScmProvider.ScmProvider} provider: No longer needed; the SdmGoalEvent now contains this information
+     * @returns {RemoteRepoRef}
+     */
+    repoRefFromSdmGoal(sdmGoal: SdmGoalEvent, provider?: ScmProvider.ScmProvider): RemoteRepoRef;
 
     /**
      * Convert GraphQL return to our remote repo ref, instantiating

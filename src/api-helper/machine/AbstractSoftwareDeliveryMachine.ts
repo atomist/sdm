@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
-import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import { Goal } from "../../api/goal/Goal";
+import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
+import {
+    BuildGoal,
+    JustBuildGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -45,7 +54,10 @@ import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../goal/executeBuild";
 import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
-import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
+import {
+    executeVerifyEndpoint,
+    SdmVerification,
+} from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 
@@ -107,14 +119,14 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      * to the same goal based on the code in the project.
      * @param {string} implementationName
      * @param {Goal} goal
-     * @param {ExecuteGoalWithLog} goalExecutor
+     * @param {ExecuteGoal} goalExecutor
      * @param options PushTest to narrow matching & InterpretLog that can handle
      * the log from the goalExecutor function
      * @return {this}
      */
     public addGoalImplementation(implementationName: string,
                                  goal: Goal,
-                                 goalExecutor: ExecuteGoalWithLog,
+                                 goalExecutor: ExecuteGoal,
                                  options?: Partial<{
                                      pushTest: PushTest,
                                      logInterpreter: InterpretLog,
@@ -141,7 +153,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         };
         return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
-            executeVerifyEndpoint(stagingVerification, this.configuration.sdm.repoRefResolver));
+            executeVerifyEndpoint(stagingVerification));
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {

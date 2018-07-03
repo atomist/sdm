@@ -19,9 +19,9 @@ import {
     Success,
 } from "@atomist/automation-client";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import {
     PushReactionRegisterable,
@@ -37,18 +37,18 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * Execute arbitrary code reactions against a codebase
  * @param {ProjectLoader} projectLoader
  * @param {PushReactionRegistration[]} registrations
- * @return {ExecuteGoalWithLog}
+ * @return {ExecuteGoal}
  */
 export function executePushReactions(projectLoader: ProjectLoader,
-                                     registrations: PushReactionRegisterable[]): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext) => {
+                                     registrations: PushReactionRegisterable[]): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation) => {
         if (registrations.length === 0) {
             return Success;
         }
 
-        const {credentials, id, context} = rwlc;
+        const {credentials, id, context} = goalInvocation;
         return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
-            const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
+            const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
             const relevantCodeReactions: PushReactionRegistration[] = await relevantCodeActions<PushReactionRegistration>(regs, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",

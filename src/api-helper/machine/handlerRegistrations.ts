@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger, Success } from "@atomist/automation-client";
-import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
+import {
+    HandleCommand,
+    HandleEvent,
+    logger,
+    Success,
+} from "@atomist/automation-client";
+import {
+    declareMappedParameter,
+    declareParameter,
+    declareSecret,
+} from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
@@ -27,7 +36,10 @@ import {
     Maker,
     toFactory,
 } from "@atomist/automation-client/util/constructionUtils";
-import { EmptyParameters, SeedDrivenGeneratorParametersSupport } from "../..";
+import {
+    EmptyParameters,
+    SeedDrivenGeneratorParametersSupport,
+} from "../..";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -47,7 +59,10 @@ import {
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
-import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
+import {
+    MachineOrMachineOptions,
+    toMachineOptions,
+} from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const TransformTag = "transform";

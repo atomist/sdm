@@ -4,9 +4,17 @@ fragment SdmGoalFields on SdmGoal {
   name
   sha
   branch
+  push {
+    ...PushFields
+  }
   fulfillment {
     method
     name
+  }
+  repo {
+    name
+    owner
+    providerId
   }
   description
   url

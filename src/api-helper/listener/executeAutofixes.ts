@@ -25,9 +25,9 @@ import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
-    ExecuteGoalWithLog,
-    RunWithLogContext,
-} from "../../api/goal/ExecuteGoalWithLog";
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
@@ -47,17 +47,16 @@ import { relevantCodeActions } from "./relevantCodeActions";
  */
 export function executeAutofixes(projectLoader: ProjectLoader,
                                  registrations: AutofixRegistration[],
-                                 repoRefResolver: RepoRefResolver ): ExecuteGoalWithLog {
-    return async (rwlc: RunWithLogContext): Promise<ExecuteGoalResult> => {
-        const {credentials, context, status, progressLog } = rwlc;
+                                 repoRefResolver: RepoRefResolver ): ExecuteGoal {
+    return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
+        const { sdmGoal, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));
         try {
-            const commit = status.commit;
             if (registrations.length === 0) {
                 return Success;
             }
-            const push = commit.pushes[0];
-            const editableRepoRef = repoRefResolver.toRemoteRepoRef(commit.repo, {branch: push.branch});
+            const push = sdmGoal.push;
+            const editableRepoRef = repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
             const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,
@@ -65,7 +64,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                     readOnly: false,
                 },
                 async project => {
-                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(rwlc, project);
+                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
                     progressLog.write(sprintf("Will apply %d relevant autofixes of %d to %j: [%s] of [%s]",
                         relevantAutofixes.length, registrations.length, cri.id,

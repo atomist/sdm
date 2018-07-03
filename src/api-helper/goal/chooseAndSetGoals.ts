@@ -26,16 +26,16 @@ import {
     AddressChannels,
     addressChannelsFor,
 } from "../../api/context/addressChannels";
-import { ExecuteGoalWithLog } from "../../api/goal/ExecuteGoalWithLog";
 import {
     Goal,
     hasPreconditions,
 } from "../../api/goal/Goal";
+import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import {
-    SdmGoal,
     SdmGoalFulfillment,
-} from "../../api/goal/SdmGoal";
+    SdmGoalMessage,
+} from "../../api/goal/SdmGoalMessage";
 import {
     isGoalImplementation,
     isSideEffect,
@@ -121,7 +121,7 @@ export async function determineGoals(rules: {
                                          goalSetId: string,
                                      }): Promise<{
     determinedGoals: Goals | undefined,
-    goalsToSave: SdmGoal[],
+    goalsToSave: SdmGoalMessage[],
 }> {
     const {projectLoader, repoRefResolver, goalSetter, implementationMapping} = rules;
     const {credentials, id, context, push, addressChannels, goalSetId} = circumstances;
@@ -177,7 +177,7 @@ async function fulfillment(rules: {
     return {method: "other", name: "unspecified-yo"};
 }
 
-export const executeImmaterial: ExecuteGoalWithLog = async () => {
+export const executeImmaterial: ExecuteGoal = async () => {
     logger.debug("Immaterial: Nothing to execute");
     return Success;
 };
