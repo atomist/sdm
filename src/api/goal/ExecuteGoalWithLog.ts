@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { ExecuteGoal, GoalInvocation } from "./GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "./GoalInvocation";
 
 /**
  * @deprecated use ExecuteGoal

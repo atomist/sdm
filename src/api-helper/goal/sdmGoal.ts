@@ -15,10 +15,8 @@
  */
 
 import { sprintf } from "sprintf-js";
-import {
-    SdmGoalKey,
-} from "../../api/goal/SdmGoalMessage";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
 
 /**
  * @deprecated because I don't think we need this

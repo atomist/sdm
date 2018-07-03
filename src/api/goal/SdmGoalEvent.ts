@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { PushFields, SdmGoalState } from "../../typings/types";
-import { SdmGoalKey, SdmProvenance } from "./SdmGoalMessage";
+import {
+    PushFields,
+    SdmGoalState,
+} from "../../typings/types";
+import {
+    SdmGoalKey,
+    SdmProvenance,
+} from "./SdmGoalMessage";
 
 /**
  * An SdmGoal event.

@@ -21,13 +21,13 @@ import {
 } from "@atomist/automation-client/operations/common/RepoId";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalState,
     StatusForExecuteGoal,
     StatusState,
 } from "../../typings/types";
 import { fakeContext } from "./fakeContext";
-import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 /**
  * Useful testing support

@@ -27,10 +27,16 @@ import {
     Goal,
     hasPreconditions,
 } from "../../api/goal/Goal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import {
+    GoalRootType,
+    SdmGoalFulfillment,
+    SdmGoalKey,
+    SdmGoalMessage,
+    SdmProvenance,
+} from "../../api/goal/SdmGoalMessage";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { SdmGoalState } from "../../typings/types";
-import { GoalRootType, SdmGoalFulfillment, SdmGoalMessage, SdmGoalKey, SdmProvenance } from "../../api/goal/SdmGoalMessage";
-import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least

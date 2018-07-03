@@ -27,11 +27,12 @@ import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
-import { Goal } from "../../api/goal/Goal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -44,7 +45,6 @@ import {
     descriptionFromState,
     updateGoal,
 } from "./storeGoals";
-import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 class GoalExecutionError extends Error {
     public readonly where: string;

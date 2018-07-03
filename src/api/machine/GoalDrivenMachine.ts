@@ -15,8 +15,8 @@
  */
 
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { ExecuteGoal } from "../goal/GoalInvocation";
 import { Goal } from "../goal/Goal";
+import { ExecuteGoal } from "../goal/GoalInvocation";
 import { Goals } from "../goal/Goals";
 import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../mapping/GoalSetter";

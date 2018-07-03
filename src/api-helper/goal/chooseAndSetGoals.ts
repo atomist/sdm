@@ -26,12 +26,16 @@ import {
     AddressChannels,
     addressChannelsFor,
 } from "../../api/context/addressChannels";
-import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import {
     Goal,
     hasPreconditions,
 } from "../../api/goal/Goal";
+import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
+import {
+    SdmGoalFulfillment,
+    SdmGoalMessage,
+} from "../../api/goal/SdmGoalMessage";
 import {
     isGoalImplementation,
     isSideEffect,
@@ -54,7 +58,6 @@ import {
     constructSdmGoalImplementation,
     storeGoal,
 } from "./storeGoals";
-import { SdmGoalFulfillment, SdmGoalMessage } from "../../api/goal/SdmGoalMessage";
 
 export interface ChooseAndSetGoalsRules {
     projectLoader: ProjectLoader;

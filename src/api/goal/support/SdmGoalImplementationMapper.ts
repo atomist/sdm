@@ -19,8 +19,8 @@ import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../mapping/PushTest";
-import { ExecuteGoal } from "../GoalInvocation";
 import { Goal } from "../Goal";
+import { ExecuteGoal } from "../GoalInvocation";
 import { IsolatedGoalLauncher } from "./IsolatedGoalLauncher";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
