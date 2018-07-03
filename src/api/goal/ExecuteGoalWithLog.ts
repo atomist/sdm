@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { ProgressLog } from "../../spi/log/ProgressLog";
-import { StatusForExecuteGoal } from "../../typings/types";
-import { RepoContext } from "../context/SdmContext";
-import { ExecuteGoalResult } from "./ExecuteGoalResult";
+import { ExecuteGoal, GoalInvocation } from "./GoalInvocation";
 
-export type ExecuteGoalWithLog = (r: RunWithLogContext) => Promise<ExecuteGoalResult>;
+/**
+ * @deprecated use ExecuteGoal
+ */
+export type ExecuteGoalWithLog = ExecuteGoal;
 
-export type PrepareForGoalExecution = (p: GitProject, r: RunWithLogContext) => Promise<ExecuteGoalResult>;
-
-export interface RunWithLogContext extends RepoContext {
-
-    status: StatusForExecuteGoal.Fragment;
-    progressLog: ProgressLog;
-
-}
+/**
+ * @deprecated use GoalInvocation
+ */
+export type RunWithLogContext = GoalInvocation;
