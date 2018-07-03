@@ -49,15 +49,14 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                                  registrations: AutofixRegistration[],
                                  repoRefResolver: RepoRefResolver ): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const {credentials, context, status, progressLog } = goalInvocation;
+        const { sdmGoal, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));
         try {
-            const commit = status.commit;
             if (registrations.length === 0) {
                 return Success;
             }
-            const push = commit.pushes[0];
-            const editableRepoRef = repoRefResolver.toRemoteRepoRef(commit.repo, {branch: push.branch});
+            const push = sdmGoal.push;
+            const editableRepoRef = repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
             const editResult = await projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,
