@@ -63,6 +63,11 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
             method: "other",
             name: "something"
         },
+        repo: {
+            name: id.repo,
+            owner: id.owner,
+            providerId: "asdfdas",
+        },
         sha: "abc",
         branch: "master",
         state: SdmGoalState.requested,
@@ -70,6 +75,9 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
             repo: {
                 org: {
                     owner: id.owner,
+                    provider: {
+                        providerId: "skdfjasd",
+                    }
                 },
                 name: id.repo,
                 channels: [{
