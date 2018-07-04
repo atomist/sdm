@@ -25,8 +25,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Do not memoize pre-emptively. [#431](https://github.com/atomist/sdm/issues/431)
 
-## [0.3.0](https://github.com/atomist/sdm/tree/HEAD)
+## [0.3.0](https://github.com/atomist/sdm/tree/HEAD) - 2018-06-16
 
-### Fixed - 2018-06-16
+### Changed
 
 -   **BREAKING** Broke out `sdm` and `sdm-core`.
