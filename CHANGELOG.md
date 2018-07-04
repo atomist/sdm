@@ -21,6 +21,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Rename to GoalInvocation; deprecate status [#426](https://github.com/atomist/sdm/issues/426)
 
+### Removed
+
+-   Do not memoize pre-emptively [#431](https://github.com/atomist/sdm/issues/431)
+
 ## [0.3.0](https://github.com/atomist/sdm/tree/HEAD)
 
 ### Fixed - 2018-06-16
