@@ -32,7 +32,7 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     /**
      * Function to transform the project
      */
-    transform?: CodeTransform<PARAMS>;
+    transform?: CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
 
     /**
      * Create the editor function that can modify a project

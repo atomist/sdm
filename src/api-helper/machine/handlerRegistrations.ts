@@ -38,7 +38,7 @@ import {
 } from "@atomist/automation-client/util/constructionUtils";
 import { SeedDrivenGeneratorParametersSupport } from "../../api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
+import { chainTransforms, CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
@@ -139,7 +139,11 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransform<PARAMS> {
     por.transform = por.transform || por.editor;
     if (!!por.transform) {
-        return () => por.transform;
+        if (Array.isArray(por.transform)) {
+            return () => chainTransforms(...por.transform as Array<CodeTransform<PARAMS>>);
+        } else {
+            return () => por.transform as CodeTransform<PARAMS>;
+        }
     }
     por.createTransform = por.createTransform || por.createEditor;
     if (!!por.createTransform) {
@@ -227,14 +231,14 @@ function toParametersListing(p: ParametersDefinition): ParametersListing {
         if (isMappedParameterOrSecretDeclaration(value)) {
             switch (value.type) {
                 case DeclarationType.mapped :
-                    builder.addMappedParameters({name, uri: value.uri, required: value.required});
+                    builder.addMappedParameters({ name, uri: value.uri, required: value.required });
                     break;
                 case DeclarationType.secret :
-                    builder.addSecrets({name, uri: value.uri});
+                    builder.addSecrets({ name, uri: value.uri });
                     break;
             }
         } else {
-            builder.addParameters({name, ...value});
+            builder.addParameters({ name, ...value });
         }
     }
     return builder;
