@@ -50,7 +50,7 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
-    CodeTransform,
+    CodeTransform, CodeTransformRegisterable,
     ProjectOperationRegistration,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
@@ -136,11 +136,11 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
     );
 }
 
-function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransform<PARAMS> {
+function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransformRegisterable<PARAMS> {
     por.transform = por.transform || por.editor;
     if (!!por.transform) {
         if (Array.isArray(por.transform)) {
-            return () => chainTransforms(...por.transform as Array<CodeTransform<PARAMS>>);
+            return () => chainTransforms(...por.transform as Array<CodeTransformRegisterable<PARAMS>>);
         } else {
             return () => por.transform as CodeTransform<PARAMS>;
         }

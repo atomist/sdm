@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { AnyProjectEditor, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
  * Function that can transform a project
  */
-export type CodeTransform<P = any> = AnyProjectEditor<P>;
+export type CodeTransform<P = any> = SimpleProjectEditor<P>;
+
+export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P>;
 
 /**
  * Superclass for all registrations of "project operations",
@@ -32,7 +34,7 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     /**
      * Function to transform the project
      */
-    transform?: CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
+    transform?: CodeTransformRegisterable<PARAMS> | Array<CodeTransformRegisterable<PARAMS>>;
 
     /**
      * Create the editor function that can modify a project

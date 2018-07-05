@@ -15,15 +15,9 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import {
-    EditResult,
-    toEditor,
-} from "@atomist/automation-client/operations/edit/projectEditor";
-import { CodeTransform } from "./ProjectOperationRegistration";
-import {
-    PushReactionRegistration,
-    SelectiveCodeActionOptions,
-} from "./PushReactionRegistration";
+import { EditResult, toEditor, } from "@atomist/automation-client/operations/edit/projectEditor";
+import { CodeTransform, CodeTransformRegisterable } from "./ProjectOperationRegistration";
+import { PushReactionRegistration, SelectiveCodeActionOptions, } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
@@ -40,12 +34,12 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
 export interface CodeTransformAutofixRegistration extends PushSelector {
 
     // TODO will be required when editor is removed
-    transform?: CodeTransform;
+    transform?: CodeTransformRegisterable;
 
     /**
      * @deprecated use transform
      */
-    editor?: CodeTransform;
+    editor?: CodeTransformRegisterable;
 
     options?: AutofixRegistrationOptions;
 
