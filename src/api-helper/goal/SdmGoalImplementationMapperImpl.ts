@@ -19,7 +19,7 @@ import { SdmGoal } from "../../api/goal/SdmGoal";
 import { IsolatedGoalLauncher } from "../../api/goal/support/IsolatedGoalLauncher";
 import {
     GoalFulfillment,
-    GoalFullfillmentCallback,
+    GoalFulfillmentCallback,
     GoalImplementation,
     GoalSideEffect,
     SdmGoalImplementationMapper,
@@ -33,7 +33,7 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
 
     private readonly implementations: GoalImplementation[] = [];
     private readonly sideEffects: GoalSideEffect[] = [];
-    private readonly callbacks: GoalFullfillmentCallback[] = [];
+    private readonly callbacks: GoalFulfillmentCallback[] = [];
 
     constructor(private readonly goalLauncher: IsolatedGoalLauncher) {
     }
@@ -62,7 +62,7 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
         return this;
     }
 
-    public addFullfillmentCallback(callback: GoalFullfillmentCallback): this {
+    public addFulfillmentCallback(callback: GoalFulfillmentCallback): this {
         this.callbacks.push(callback);
         return this;
     }
@@ -85,7 +85,7 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
         return undefined;
     }
 
-    public findFullfillmentCallbackForGoal(g: SdmGoal): GoalFullfillmentCallback[] {
+    public findFulfillmentCallbackForGoal(g: SdmGoal): GoalFulfillmentCallback[] {
         return this.callbacks.filter(c =>
             c.goal.name === g.name &&
             // This slice is required because environment is suffixed with /
