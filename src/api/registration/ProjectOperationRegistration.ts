@@ -15,6 +15,7 @@
  */
 
 import { AnyProjectEditor, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainTransforms } from "./CodeTransformRegistration";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
@@ -23,6 +24,19 @@ import { CommandRegistration } from "./CommandRegistration";
 export type CodeTransform<P = any> = SimpleProjectEditor<P>;
 
 export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P>;
+
+/**
+ * One or many CodeTransforms
+ */
+export type CodeTransformOrTransforms<PARAMS> = CodeTransformRegisterable<PARAMS> | Array<CodeTransformRegisterable<PARAMS>>;
+
+export function toCodeTransformRegisterable<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): CodeTransformRegisterable<PARAMS> {
+    if (Array.isArray(ctot)) {
+        return chainTransforms(...ctot);
+    } else {
+        return ctot as CodeTransform<PARAMS>;
+    }
+}
 
 /**
  * Superclass for all registrations of "project operations",
@@ -34,7 +48,7 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     /**
      * Function to transform the project
      */
-    transform?: CodeTransformRegisterable<PARAMS> | Array<CodeTransformRegisterable<PARAMS>>;
+    transform?: CodeTransformOrTransforms<PARAMS>;
 
     /**
      * Create the editor function that can modify a project
