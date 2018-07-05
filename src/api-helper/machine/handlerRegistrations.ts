@@ -96,6 +96,7 @@ export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: 
         toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
+        e.fallbackTarget,
         e.startingPoint,
         e,
     );

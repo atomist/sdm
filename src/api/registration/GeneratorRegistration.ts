@@ -16,8 +16,9 @@
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
 import { Project } from "@atomist/automation-client/project/Project";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
@@ -29,8 +30,8 @@ export type StartingPoint = Project | RemoteRepoRef;
 /**
  * Register a project creation operation
  */
-export interface GeneratorRegistration<PARAMS extends SeedDrivenGeneratorParameters = SeedDrivenGeneratorParameters>
-    extends Partial<GeneratorCommandDetails<PARAMS>>,
+export interface GeneratorRegistration<PARAMS = NoParameters>
+    extends Partial<GeneratorCommandDetails<any>>,
         ProjectOperationRegistration<PARAMS> {
 
     /**
@@ -40,4 +41,9 @@ export interface GeneratorRegistration<PARAMS extends SeedDrivenGeneratorParamet
      */
     startingPoint?: StartingPoint;
 
+    /**
+     * Allow customization of the target for this repo,
+     * e.g. to target a different source control system.
+     */
+    fallbackTarget?: NewRepoCreationParameters;
 }

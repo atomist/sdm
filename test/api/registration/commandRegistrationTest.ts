@@ -20,6 +20,7 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
+import { isSeedDrivenGeneratorParameters } from "../../../src/api-helper/command/generator/generatorCommand";
 import {
     codeTransformRegistrationToCommand,
     commandHandlerRegistrationToCommand,
@@ -38,8 +39,8 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration<{ foo: string, bar: string }> = {
             name: "test",
             parameters:
-                addParameters({name: "foo"},
-                    {name: "bar", required: true}),
+                addParameters({ name: "foo" },
+                    { name: "bar", required: true }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -60,7 +61,7 @@ describe("command registrations", () => {
             parameters:
                 {
                     foo: {},
-                    bar: {required: true},
+                    bar: { required: true },
                 },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
@@ -80,9 +81,9 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
             parameters:
-                addParameters({name: "foo"},
-                    {name: "bar", required: true})
-                    .addMappedParameters({name: "x", uri: "http://thing"}),
+                addParameters({ name: "foo" },
+                    { name: "bar", required: true })
+                    .addMappedParameters({ name: "x", uri: "http://thing" }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -100,9 +101,9 @@ describe("command registrations", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
             parameters:
-                addParameters({name: "foo"})
-                    .addParameters({name: "bar", required: true})
-                    .addSecrets({name: "x", uri: "http://thing"}),
+                addParameters({ name: "foo" })
+                    .addParameters({ name: "bar", required: true })
+                    .addSecrets({ name: "x", uri: "http://thing" }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -122,9 +123,9 @@ describe("command registrations", () => {
             parameters:
                 {
                     foo: {},
-                    bar: {required: true},
-                    x: {type: DeclarationType.secret, uri: "http://thing1"},
-                    y: {type: DeclarationType.mapped, uri: "http://thing2", required: false},
+                    bar: { required: true },
+                    x: { type: DeclarationType.secret, uri: "http://thing1" },
+                    y: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
                 },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
@@ -149,9 +150,9 @@ describe("command registrations", () => {
 
     it("parameter builder should set mapped parameter and secret via indexed property, with spread", () => {
         const halfOfParameters: ParametersObject = {
-            bar: {required: true},
-            x1: {type: DeclarationType.secret, uri: "http://thing1"},
-            y1: {type: DeclarationType.mapped, uri: "http://thing2", required: false},
+            bar: { required: true },
+            x1: { type: DeclarationType.secret, uri: "http://thing1" },
+            y1: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
 
         };
         const reg: CommandHandlerRegistration = {
@@ -159,8 +160,8 @@ describe("command registrations", () => {
             parameters:
                 {
                     foo: {},
-                    x2: {type: DeclarationType.secret, uri: "http://thing1"},
-                    y2: {type: DeclarationType.mapped, uri: "http://thing2", required: false},
+                    x2: { type: DeclarationType.secret, uri: "http://thing1" },
+                    y2: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
                     ...halfOfParameters,
                 },
             listener: async ci => {
@@ -192,10 +193,10 @@ describe("command registrations", () => {
     it("should combine builder and maker", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
-            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
+            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
             parameters:
-                addParameters({name: "foo"})
-                    .addParameters({name: "bar", required: true}),
+                addParameters({ name: "foo" })
+                    .addParameters({ name: "bar", required: true }),
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
             },
@@ -212,10 +213,10 @@ describe("command registrations", () => {
     it("should build on generator", () => {
         const reg: GeneratorRegistration = {
             name: "test",
-            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
+            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
             parameters:
-                addParameters({name: "foo"})
-                    .addParameters({name: "bar", required: true}),
+                addParameters({ name: "foo" })
+                    .addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand({
@@ -236,13 +237,45 @@ describe("command registrations", () => {
         assert.equal(pi.name, "foo");
     });
 
+    it("should build on generator using default parameters", () => {
+        const reg: GeneratorRegistration = {
+            name: "test",
+            startingPoint: new GitHubRepoRef("a", "b"),
+            parameters:
+                {
+                    foo: {},
+                    bar: { required: true },
+                },
+            transform: async p => p,
+        };
+        const maker = generatorRegistrationToCommand({
+            artifactStore: null,
+            name: "test",
+            repoRefResolver: null,
+            projectLoader: null,
+            logFactory: null,
+            repoFinder: null,
+            projectPersister: null,
+            credentialsResolver: null,
+        }, reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        const paramsInstance = instance.freshParametersInstance();
+        assert(isSeedDrivenGeneratorParameters(paramsInstance),
+            "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
+        assert(instance.parameters.some(p => p.name === "foo"));
+        assert(instance.parameters.some(p => p.name === "target.repo"));
+        const pi = instance.freshParametersInstance();
+        pi.name = "foo";
+        assert.equal(pi.name, "foo");
+    });
+
     it("should build on generator", () => {
         const reg: CodeTransformRegistration = {
             name: "test",
-            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({seed: () => new GitHubRepoRef("a", "b")}),
+            paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
             parameters:
-                addParameters({name: "foo"})
-                    .addParameters({name: "bar", required: true}),
+                addParameters({ name: "foo" })
+                    .addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
         const maker = codeTransformRegistrationToCommand({

@@ -30,6 +30,9 @@ import {
     GeneratorCommandDetails,
 } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
+import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
+import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
@@ -38,7 +41,7 @@ import {
     Project,
 } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
@@ -58,19 +61,47 @@ import { CachingProjectLoader } from "../../project/CachingProjectLoader";
  * @param {Partial<GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters>>} details
  * @return {HandleCommand}
  */
-export function generatorCommand<P extends SeedDrivenGeneratorParameters>(sdm: MachineOrMachineOptions,
-                                                                          editorFactory: EditorFactory<P>,
-                                                                          name: string,
-                                                                          paramsMaker: Maker<P>,
-                                                                          startingPoint: StartingPoint,
-                                                                          details: Partial<GeneratorCommandDetails<P>> = {}): HandleCommand {
-    const detailsToUse: GeneratorCommandDetails<P> = {
+export function generatorCommand<P>(sdm: MachineOrMachineOptions,
+                                    editorFactory: EditorFactory<P>,
+                                    name: string,
+                                    paramsMaker: Maker<P>,
+                                    fallbackTarget: NewRepoCreationParameters,
+                                    startingPoint: StartingPoint,
+                                    details: Partial<GeneratorCommandDetails<any>> = {}): HandleCommand {
+    const detailsToUse: GeneratorCommandDetails<any> = {
         ...defaultDetails(toMachineOptions(sdm), name),
         ...details,
     };
     return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse, startingPoint),
-        paramsMaker, name,
+        toGeneratorParametersMaker<P>(
+            paramsMaker,
+            fallbackTarget || new GitHubRepoCreationParameters()),
+        name,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
+}
+
+/**
+ * Return a parameters maker that is targeting aware
+ * @param {Maker<PARAMS>} paramsMaker
+ * @return {Maker<EditorOrReviewerParameters & PARAMS>}
+ */
+function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
+                                            target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
+    const sampleParams = toFactory(paramsMaker)();
+    return isSeedDrivenGeneratorParameters(sampleParams) ?
+        paramsMaker as Maker<SeedDrivenGeneratorParameters & PARAMS> as any :
+        () => {
+            // This way we won't bother with source
+            const rawParms: PARAMS = toFactory(paramsMaker)();
+            const allParms = rawParms as SeedDrivenGeneratorParameters & PARAMS;
+            allParms.target = target;
+            return allParms;
+        };
+}
+
+export function isSeedDrivenGeneratorParameters(p: any): p is SeedDrivenGeneratorParameters {
+    const maybe = p as SeedDrivenGeneratorParameters;
+    return !!maybe.target;
 }
 
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
