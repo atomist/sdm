@@ -15,15 +15,9 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import {
-    EditResult,
-    toEditor,
-} from "@atomist/automation-client/operations/edit/projectEditor";
-import { CodeTransform } from "./ProjectOperationRegistration";
-import {
-    PushReactionRegistration,
-    SelectiveCodeActionOptions,
-} from "./PushReactionRegistration";
+import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { CodeTransformOrTransforms, CodeTransformRegisterable, toCodeTransformRegisterable } from "./ProjectOperationRegistration";
+import { PushReactionRegistration, SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
@@ -40,12 +34,12 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
 export interface CodeTransformAutofixRegistration extends PushSelector {
 
     // TODO will be required when editor is removed
-    transform?: CodeTransform;
+    transform?: CodeTransformOrTransforms<any>;
 
     /**
      * @deprecated use transform
      */
-    editor?: CodeTransform;
+    editor?: CodeTransformRegisterable;
 
     options?: AutofixRegistrationOptions;
 
@@ -73,7 +67,7 @@ export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
  * do not support respond. Be sure to set parameters if they are required by your transform.
  */
 export function toAutofixRegistration(use: CodeTransformAutofixRegistration): AutofixRegistration {
-    const transformToUse = toEditor(use.transform || use.editor);
+    const transformToUse = toEditor(toCodeTransformRegisterable(use.transform || use.editor));
     return {
         name: use.name,
         pushTest: use.pushTest,

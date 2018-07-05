@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    logger,
-    Success,
-} from "@atomist/automation-client";
-import {
-    declareMappedParameter,
-    declareParameter,
-    declareSecret,
-} from "@atomist/automation-client/internal/metadata/decoratorSupport";
+import { HandleCommand, HandleEvent, logger, Success } from "@atomist/automation-client";
+import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
@@ -32,13 +23,10 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import {
-    Maker,
-    toFactory,
-} from "@atomist/automation-client/util/constructionUtils";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { SeedDrivenGeneratorParametersSupport } from "../../api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import { chainTransforms, CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
+import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
@@ -50,16 +38,14 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
-    CodeTransform,
+    CodeTransformRegisterable,
     ProjectOperationRegistration,
+    toCodeTransformRegisterable,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
-import {
-    MachineOrMachineOptions,
-    toMachineOptions,
-} from "./toMachineOptions";
+import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const TransformTag = "transform";
@@ -136,14 +122,10 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
     );
 }
 
-function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransform<PARAMS> {
+function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransformRegisterable<PARAMS> {
     por.transform = por.transform || por.editor;
     if (!!por.transform) {
-        if (Array.isArray(por.transform)) {
-            return () => chainTransforms(...por.transform as Array<CodeTransform<PARAMS>>);
-        } else {
-            return () => por.transform as CodeTransform<PARAMS>;
-        }
+        return () => toCodeTransformRegisterable(por.transform);
     }
     por.createTransform = por.createTransform || por.createEditor;
     if (!!por.createTransform) {
