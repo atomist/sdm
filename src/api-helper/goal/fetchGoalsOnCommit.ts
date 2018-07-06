@@ -104,7 +104,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
                 providerId,
                 branch: id.branch,
                 sha: id.sha,
-            }
+            },
         });
         goals.forEach(g => (g as SdmGoalEvent).push = push.Push[0]);
     }
@@ -131,7 +131,7 @@ function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
 
 function sdmGoalOffsetQuery(id: RemoteRepoRef, goalSetId: string, providerId: string, ctx: HandlerContext) {
     return async (offset: number, size: number) => {
-        return await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
+        return ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
             name: "SdmGoalsForCommit",
             variables: {
                 owner: id.owner,
@@ -145,5 +145,5 @@ function sdmGoalOffsetQuery(id: RemoteRepoRef, goalSetId: string, providerId: st
             },
             options: QueryNoCacheOptions,
         });
-    }
+    };
 }
