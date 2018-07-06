@@ -264,6 +264,7 @@ describe("command registrations", () => {
             "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
+        assert(instance.parameters.some(p => p.name === "addAtomistWebhook"));
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
@@ -292,6 +293,7 @@ describe("command registrations", () => {
         assert(instance.parameters.some(p => p.name === "foo"));
         // From common
         assert(instance.parameters.some(p => p.name === "targets.repos"));
+        assert(instance.parameters.some(p => p.name === "addAtomistWebhook"));
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.name, "foo");
