@@ -238,6 +238,22 @@ describe("command registrations", () => {
         assert.equal(pi.name, "foo");
     });
 
+    it("should build on code transform", () => {
+        const reg: CodeTransformRegistration = {
+            name: "test",
+            parameters:
+                addParameters({ name: "foo" })
+                    .addParameters({ name: "bar", required: true }),
+            transform: async p => p,
+        };
+        const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        assert(instance.parameters.some(p => p.name === "foo"));
+        assert(instance.parameters.some(p => p.name === "targets.repos"));
+        const pi = instance.freshParametersInstance();
+        assert(!!pi);
+    });
+
     it("should build on generator", () => {
         const reg: GeneratorRegistration = {
             name: "test",
