@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/0.3.1...HEAD)
 
+### Added
+
+-   Add paging for goals. [#436](https://github.com/atomist/sdm/issues/436)
+
 ## [0.3.1](https://github.com/atomist/sdm/compare/0.3.0...0.3.1) - 2018-07-05
+
+### Added
+
+-   Timeout goals after 10mins or config value. [#427](https://github.com/atomist/sdm/issues/427)
+-   Allow generator registrations to specify a starting point. [#425](https://github.com/atomist/sdm/issues/425)
 
 ### Changed
 
@@ -15,11 +24,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** `onAnyPush` becomes a function to avoid side effects.
 -   **BREAKING** `CodeTransform` is now an alias for `SimpleProjectEditor` to make the commonest case natural. Use `CodeTransformRegisterable` to return an `EditResult`.
 -   Generators can now have parameter types that don't extend `SeedDrivenGeneratorParameters`, as this will be mixed in.
-
-### Added
-
--   Timeout goals after 10mins or config value. [#427](https://github.com/atomist/sdm/issues/427)
--   Allow generator registrations to specify a starting point. [#425](https://github.com/atomist/sdm/issues/425)
 
 ### Deprecated
 
