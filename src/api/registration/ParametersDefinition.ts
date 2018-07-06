@@ -18,13 +18,14 @@ import { BaseParameter } from "@atomist/automation-client/internal/metadata/deco
 
 export type ParametersDefinition = ParametersListing | ParametersObject;
 
+export interface DefaultValue { defaultValue?: any };
+
 /**
  * Object with properties defining parameters. Useful for combination
  * via spreads.
  */
 export interface ParametersObject {
-
-    [name: string]: BaseParameter | MappedParameterOrSecretDeclaration;
+    [name: string]: (BaseParameter & DefaultValue) | MappedParameterOrSecretDeclaration;
 }
 
 export enum DeclarationType {
@@ -55,7 +56,7 @@ export interface ParametersListing {
     readonly secrets: NamedSecret[];
 }
 
-export type NamedParameter = BaseParameter & { name: string };
+export type NamedParameter = BaseParameter & { name: string } & DefaultValue;
 
 export interface NamedSecret {
     name: string;
