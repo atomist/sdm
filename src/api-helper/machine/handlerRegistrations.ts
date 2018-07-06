@@ -24,7 +24,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { SeedDrivenGeneratorParametersSupport } from "../../api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -81,10 +80,10 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
     }
 }
 
-export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
+export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOptions, e: GeneratorRegistration<P>): Maker<HandleCommand<P>> {
     tagWith(e, GeneratorTag);
     if (!e.paramsMaker) {
-        e.paramsMaker = SeedDrivenGeneratorParametersSupport;
+        e.paramsMaker = NoParameters as any as Maker<P>;
     }
     if (e.startingPoint && isProject(e.startingPoint) && !e.startingPoint.id) {
         // TODO should probably be handled in automation-client
@@ -96,12 +95,14 @@ export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: 
         toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
+        e.fallbackTarget,
         e.startingPoint,
         e,
     );
 }
 
-export function commandHandlerRegistrationToCommand(sdm: MachineOrMachineOptions, c: CommandHandlerRegistration<any>): Maker<HandleCommand> {
+export function commandHandlerRegistrationToCommand<P = any>(sdm: MachineOrMachineOptions,
+                                                             c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
     return () => createCommand(
         sdm,
         toOnCommand(c),
@@ -182,8 +183,10 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PAR
                 paramsInstance.__kind = "command-handler";
             }
             const paramListing = toParametersListing(c.parameters);
-            paramListing.parameters.forEach(p =>
-                declareParameter(paramsInstance, p.name, p));
+            paramListing.parameters.forEach(p => {
+                paramsInstance[p.name] = p.defaultValue;
+                declareParameter(paramsInstance, p.name, p);
+            });
             paramListing.mappedParameters.forEach(p =>
                 declareMappedParameter(paramsInstance, p.name, p.uri, p.required));
             paramListing.secrets.forEach(p =>
