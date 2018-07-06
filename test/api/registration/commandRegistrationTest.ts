@@ -80,6 +80,31 @@ describe("command registrations", () => {
         assert.equal(pi.name, "foo");
     });
 
+    it("parameter builder should set default value of parameters", () => {
+        interface FooBar {
+            foo?: string;
+            bar: string;
+        }
+        const reg: CommandHandlerRegistration<FooBar> = {
+            name: "test",
+            parameters:
+                {
+                    foo: {},
+                    bar: {required: true, defaultValue: "carrot"},
+                },
+            listener: async ci => {
+                return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
+            },
+        };
+        const maker = commandHandlerRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
+        const commandInstance = toFactory(maker)() as SelfDescribingHandleCommand<FooBar>;
+        assert.equal(commandInstance.parameters.length, 2);
+        const bar = commandInstance.parameters.find(p => p.name === "bar");
+        assert(bar.required);
+        const pi = commandInstance.freshParametersInstance();
+        assert.equal(pi.bar, "carrot");
+    });
+
     it("parameter builder should set mapped parameters", () => {
         const reg: CommandHandlerRegistration = {
             name: "test",
@@ -232,25 +257,30 @@ describe("command registrations", () => {
     });
 
     it("should build on generator using default parameters", () => {
-        const reg: GeneratorRegistration = {
+        interface FooBar {
+            foo?: string;
+            bar: string;
+        }
+        const reg: GeneratorRegistration<FooBar> = {
             name: "test",
             startingPoint: new GitHubRepoRef("a", "b"),
             parameters:
                 {
                     foo: {},
-                    bar: { required: true },
+                    bar: { required: true, defaultValue: "carrot" },
                 },
             transform: async p => p,
         };
         const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
-        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand<FooBar>;
         const paramsInstance = instance.freshParametersInstance();
         assert(isSeedDrivenGeneratorParameters(paramsInstance),
             "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
         assert(!instance.mapped_parameters.some(p => p.name === "screenName"), "screenName parameter should not appear by magic");
-        const pi = instance.freshParametersInstance() as SeedDrivenGeneratorParameters;
+        const pi = instance.freshParametersInstance() as FooBar & SeedDrivenGeneratorParameters;
+        assert.equal(pi.bar, "carrot");
         assert.equal(pi.addAtomistWebhook, false);
     });
 
@@ -269,7 +299,7 @@ describe("command registrations", () => {
             parameters:
                 {
                     foo: {},
-                    bar: { required: true },
+                    bar: { required: true, defaultValue: "carrot" },
                 },
             transform: async p => p,
         };
@@ -284,6 +314,7 @@ describe("command registrations", () => {
         const pi = instance.freshParametersInstance();
         pi.name = "foo";
         assert.equal(pi.addAtomistWebhook, false);
+        assert.equal(pi.bar, "carrot");
         assert.equal(pi.name, "foo");
     });
 

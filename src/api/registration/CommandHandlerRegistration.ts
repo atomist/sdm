@@ -31,6 +31,9 @@ export interface CommandHandlerRegistration<PARAMS = any> extends CommandRegistr
      */
     createCommand?: (sdm: MachineOrMachineOptions) => OnCommand<PARAMS>;
 
+    /**
+     * Callback executing the command
+     */
     listener?: CommandListener<PARAMS>;
 
 }
