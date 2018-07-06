@@ -115,7 +115,12 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
             // Add the preCondition into the last added goals
             lastGoalsWithPreConditions.push(new GoalWithPrecondition(g.definition, ...newGoals));
             // Remove the previously added goals
-            this.goals.splice(this.goals.indexOf(g), 1);
+            const ix = this.goals.indexOf(g);
+            if (ix >= 0) {
+                this.goals.splice(ix, 1);
+            } else {
+                throw new Error("Unable to remove previously planned goal");
+            }
         });
 
         // Add the newly created goals with preConditions
