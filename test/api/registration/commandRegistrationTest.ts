@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { Parameter, Parameters } from "@atomist/automation-client";
 import { SelfDescribingHandleCommand } from "@atomist/automation-client/HandleCommand";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
@@ -32,7 +34,6 @@ import { CommandHandlerRegistration } from "../../../src/api/registration/Comman
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../src/api/registration/ParametersBuilder";
 import { DeclarationType, ParametersObject } from "../../../src/api/registration/ParametersDefinition";
-import { Parameter, Parameters } from "@atomist/automation-client";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 describe("command registrations", () => {
@@ -221,16 +222,7 @@ describe("command registrations", () => {
                     .addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
-        const maker = generatorRegistrationToCommand({
-            artifactStore: null,
-            name: "test",
-            repoRefResolver: null,
-            projectLoader: null,
-            logFactory: null,
-            repoFinder: null,
-            projectPersister: null,
-            credentialsResolver: null,
-        }, reg);
+        const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
@@ -257,10 +249,9 @@ describe("command registrations", () => {
             "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
         assert(instance.parameters.some(p => p.name === "foo"));
         assert(instance.parameters.some(p => p.name === "target.repo"));
-        assert(instance.parameters.some(p => p.name === "addAtomistWebhook"));
-        const pi = instance.freshParametersInstance();
-        pi.name = "foo";
-        assert.equal(pi.name, "foo");
+        assert(!instance.mapped_parameters.some(p => p.name === "screenName"), "screenName parameter should not appear by magic");
+        const pi = instance.freshParametersInstance() as SeedDrivenGeneratorParameters;
+        assert.equal(pi.addAtomistWebhook, false);
     });
 
     it("should build on generator using own parameters maker", () => {
@@ -322,10 +313,12 @@ describe("command registrations", () => {
             startingPoint: InMemoryProject.of(new InMemoryFile("a", "b")),
             transform: async p => p,
         };
-        generatorRegistrationToCommand(null, g);
-        assert(!!g.paramsMaker, "paramsMaker should now be set");
-        const instance = toFactory(g.paramsMaker)() as SeedDrivenGeneratorParametersSupport;
-        assert(!!instance.version, "Should pick up default from parameters class");
+        const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), g);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        // It's not actually of this concrete type, but we want to check
+        const paramsInstance = instance.freshParametersInstance() as SeedDrivenGeneratorParametersSupport;
+        assert.equal(paramsInstance.addAtomistWebhook, false, "Unexpected parameter object " + JSON.stringify(instance));
+        assert(!paramsInstance.version, "Should not magically pick up version");
     });
 
     it("should create command handler from generator", async () => {

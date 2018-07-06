@@ -24,7 +24,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { SeedDrivenGeneratorParametersSupport } from "../../api/command/generator/SeedDrivenGeneratorParametersSupport";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -84,7 +83,7 @@ function tagWith(e: Partial<CommandDetails>, tag: string) {
 export function generatorRegistrationToCommand(sdm: MachineOrMachineOptions, e: GeneratorRegistration<any>): Maker<HandleCommand> {
     tagWith(e, GeneratorTag);
     if (!e.paramsMaker) {
-        e.paramsMaker = SeedDrivenGeneratorParametersSupport;
+        e.paramsMaker = NoParameters;
     }
     if (e.startingPoint && isProject(e.startingPoint) && !e.startingPoint.id) {
         // TODO should probably be handled in automation-client
