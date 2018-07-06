@@ -22,10 +22,12 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
+import { SdmGoalEvent } from "../..";
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoal } from "../../api/goal/SdmGoal";
 import {
     CommitForSdmGoal,
+    PushForSdmGoal,
     SdmGoalFields,
     SdmGoalRepo,
     SdmGoalsForCommit,
@@ -65,36 +67,51 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
                                           id: RemoteRepoRef,
                                           providerId: string,
                                           goalSetId?: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
-    const result = await ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
-        name: "SdmGoalsForCommit",
-        variables: {
-            owner: id.owner,
-            repo: id.repo,
-            branch: id.branch,
-            sha: id.sha,
-            providerId,
-            qty: 200,
-        },
-        options: QueryNoCacheOptions,
-    });
-    if (!result || !result.SdmGoal) {
+
+    const result: SdmGoalsForCommit.SdmGoal[] = [];
+    const size = 50;
+    let offset = 0;
+
+    const query = sdmGoalOffsetQuery(id, goalSetId, providerId, ctx);
+
+    let pageResult = await query(offset, size);
+    while (pageResult && pageResult.SdmGoal && pageResult.SdmGoal.length > 0) {
+        result.push(...pageResult.SdmGoal);
+        offset += size;
+        pageResult = await query(offset, size);
+    }
+
+    if (!result) {
         throw new Error(`No result finding goals for commit ${providerId}/${id.owner}/${id.repo}#${id.sha} on ${id.branch}`);
     }
-    if (result.SdmGoal.length === 0) {
+    if (result.length === 0) {
         logger.warn("0 goals found for commit %j, provider %s", id, providerId);
     }
-    if (result.SdmGoal.some(g => !g)) {
+    if (result.some(g => !g)) {
         logger.warn("Null or undefined goal found for commit %j, provider %s", id, providerId);
-    }
-    if (result.SdmGoal.length === 200) {
-        logger.warn("Watch out! There may be more goals than this. We only retrieve 200.");
-        // automation-api#399 paging is not well-supported yet
     }
 
     // only maintain latest version of SdmGoals from the current goal set
-    const goals: SdmGoalsForCommit.SdmGoal[] =
-        sumSdmGoalEvents((result.SdmGoal as SdmGoal[]).filter(g => !goalSetId || g.goalSetId === goalSetId));
-    logger.debug("summed goals: ", stringify(goals));
+    const goals: SdmGoalsForCommit.SdmGoal[] = sumSdmGoalEvents((result as SdmGoal[]));
+
+    // query for the push and add it in
+    if (goals.length > 0) {
+        const push = await ctx.graphClient.query<PushForSdmGoal.Query, PushForSdmGoal.Variables>({
+            name: "PushForSdmGoal",
+            variables: {
+                owner: id.owner,
+                repo: id.repo,
+                providerId,
+                branch: goals[0].branch,
+                sha: goals[0].sha,
+            },
+        });
+        return goals.map(g => {
+            const goal = (_.cloneDeep(g) as SdmGoalEvent);
+            goal.push = push.Push[0];
+            return goal;
+        });
+    }
 
     return goals;
 }
@@ -114,4 +131,23 @@ function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
     // SUCCESS OVERRIDES ALL
     const success = events.find(e => e.state === "success");
     return success || _.maxBy(events, e => e.ts);
+}
+
+function sdmGoalOffsetQuery(id: RemoteRepoRef, goalSetId: string, providerId: string, ctx: HandlerContext) {
+    return async (offset: number, size: number) => {
+        return ctx.graphClient.query<SdmGoalsForCommit.Query, SdmGoalsForCommit.Variables>({
+            name: "SdmGoalsForCommit",
+            variables: {
+                owner: id.owner,
+                repo: id.repo,
+                branch: id.branch,
+                sha: id.sha,
+                providerId,
+                goalSetId,
+                qty: size,
+                offset,
+            },
+            options: QueryNoCacheOptions,
+        });
+    };
 }

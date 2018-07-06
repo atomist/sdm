@@ -4,9 +4,17 @@ query SdmGoalsForCommit(
   $repo: String!
   $owner: String!
   $providerId: String!
+  $goalSetId: String
   $qty: Int!
+  $offset: Int!
 ) {
-  SdmGoal(sha: [$sha], branch: [$branch], _first: $qty) {
+  SdmGoal(
+    sha: [$sha]
+    branch: [$branch]
+    goalSetId: [$goalSetId]
+    _first: $qty
+    _offset: $offset
+  ) {
     repo(name: [$repo], owner: [$owner], providerId: [$providerId]) @required {
       name
       owner
