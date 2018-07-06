@@ -1,0 +1,63 @@
+query PushForSdmGoal($owner: String!, $repo: String!, $providerId: String!, $branch: String!, $sha: String!) {
+    Push(branch: $branch) {
+        id
+        timestamp
+        branch
+        before {
+            sha
+            message
+            committer {
+                login
+                person {
+                    ...PersonFields
+                }
+            }
+        }
+        after(sha: $sha) @required {
+            sha
+            message
+            committer {
+                login
+                person {
+                    ...PersonFields
+                }
+            }
+            image {
+                image
+                imageName
+            }
+        }
+        commits {
+            sha
+            timestamp
+            message
+            author {
+                login
+                name
+            }
+        }
+        repo(owner: $owner, name: $repo) {
+            owner
+            name
+            org {
+                owner
+                ownerType
+                provider(providerId: $providerId) @required {
+                    providerId
+                    providerType
+                    apiUrl
+                    url
+                }
+            }
+            channels {
+                team {
+                    id
+                }
+                name
+                id
+            }
+            defaultBranch
+        }
+    }
+}
+
