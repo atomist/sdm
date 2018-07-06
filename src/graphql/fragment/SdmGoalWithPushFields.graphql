@@ -1,9 +1,12 @@
-fragment SdmGoalFields on SdmGoal {
+fragment SdmGoalWithPushFields on SdmGoal {
   environment
   uniqueName
   name
   sha
   branch
+  push {
+    ...PushFields
+  }
   fulfillment {
     method
     name

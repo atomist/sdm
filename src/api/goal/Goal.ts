@@ -118,6 +118,7 @@ export class GoalWithPrecondition extends Goal {
         super(definition);
         this.dependsOn = dependsOn;
     }
+
 }
 
 export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {
