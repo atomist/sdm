@@ -91,10 +91,11 @@ function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
     return isSeedDrivenGeneratorParameters(sampleParams) ?
         paramsMaker as Maker<SeedDrivenGeneratorParameters & PARAMS> as any :
         () => {
-            // This way we won't bother with source
+            // This way we won't bother with source, but rely on startingPoint
             const rawParms: PARAMS = toFactory(paramsMaker)();
             const allParms = rawParms as SeedDrivenGeneratorParameters & PARAMS;
             allParms.target = target;
+            allParms.addAtomistWebhook = allParms.addAtomistWebhook || false;
             return allParms;
         };
 }

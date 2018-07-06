@@ -32,6 +32,8 @@ import { CommandHandlerRegistration } from "../../../src/api/registration/Comman
 import { GeneratorRegistration } from "../../../src/api/registration/GeneratorRegistration";
 import { addParameters } from "../../../src/api/registration/ParametersBuilder";
 import { DeclarationType, ParametersObject } from "../../../src/api/registration/ParametersDefinition";
+import { Parameter, Parameters } from "@atomist/automation-client";
+import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 describe("command registrations", () => {
 
@@ -248,16 +250,7 @@ describe("command registrations", () => {
                 },
             transform: async p => p,
         };
-        const maker = generatorRegistrationToCommand({
-            artifactStore: null,
-            name: "test",
-            repoRefResolver: null,
-            projectLoader: null,
-            logFactory: null,
-            repoFinder: null,
-            projectPersister: null,
-            credentialsResolver: null,
-        }, reg);
+        const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         const paramsInstance = instance.freshParametersInstance();
         assert(isSeedDrivenGeneratorParameters(paramsInstance),
@@ -270,6 +263,39 @@ describe("command registrations", () => {
         assert.equal(pi.name, "foo");
     });
 
+    it("should build on generator using own parameters maker", () => {
+
+        @Parameters()
+        class FooParams {
+            @Parameter()
+            public something: string;
+        }
+
+        const reg: GeneratorRegistration = {
+            name: "test",
+            paramsMaker: FooParams,
+            startingPoint: new GitHubRepoRef("a", "b"),
+            parameters:
+                {
+                    foo: {},
+                    bar: { required: true },
+                },
+            transform: async p => p,
+        };
+        const maker = generatorRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
+        const instance = toFactory(maker)() as SelfDescribingHandleCommand;
+        const paramsInstance = instance.freshParametersInstance();
+        assert(isSeedDrivenGeneratorParameters(paramsInstance),
+            "Should have mixed in SeedDrivenGeneratorParameters: had " + JSON.stringify(paramsInstance));
+        assert(instance.parameters.some(p => p.name === "something"));
+        assert(instance.parameters.some(p => p.name === "foo"));
+        assert(instance.parameters.some(p => p.name === "target.repo"));
+        const pi = instance.freshParametersInstance();
+        pi.name = "foo";
+        assert.equal(pi.addAtomistWebhook, false);
+        assert.equal(pi.name, "foo");
+    });
+
     it("should build on generator", () => {
         const reg: CodeTransformRegistration = {
             name: "test",
@@ -279,16 +305,7 @@ describe("command registrations", () => {
                     .addParameters({ name: "bar", required: true }),
             transform: async p => p,
         };
-        const maker = codeTransformRegistrationToCommand({
-            artifactStore: null,
-            name: "test",
-            repoRefResolver: null,
-            projectLoader: null,
-            logFactory: null,
-            repoFinder: null,
-            projectPersister: null,
-            credentialsResolver: null,
-        }, reg);
+        const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), reg);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         assert(instance.parameters.some(p => p.name === "foo"));
         // From common
@@ -318,16 +335,7 @@ describe("command registrations", () => {
             transform: async p => p,
         };
         generatorRegistrationToCommand(null, g);
-        const maker = codeTransformRegistrationToCommand({
-            artifactStore: null,
-            name: "test",
-            repoRefResolver: null,
-            projectLoader: null,
-            logFactory: null,
-            repoFinder: null,
-            projectPersister: null,
-            credentialsResolver: null,
-        }, g);
+        const maker = codeTransformRegistrationToCommand(new TestSoftwareDeliveryMachine("test"), g);
         const instance = toFactory(maker)() as SelfDescribingHandleCommand;
         instance.freshParametersInstance();
     });
