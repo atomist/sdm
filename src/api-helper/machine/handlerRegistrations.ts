@@ -52,8 +52,7 @@ export const TransformTag = "transform";
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(e, TransformTag);
     addParametersDefinedInBuilder(e);
-    const fun = e.transformCommandFactory || e.editorCommandFactory || editorCommand;
-    return () => fun(
+    return () => editorCommand(
         sdm,
         toCodeTransformFunction(e),
         e.name,

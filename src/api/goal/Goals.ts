@@ -63,7 +63,7 @@ export interface GoalsAndPreConditionBuilder extends GoalsBuilder {
      * @param {Goal} goals
      * @returns {Goals & GoalsBuilder}
      */
-    after(...goals: Array<Goal>): Goals & GoalsBuilder;
+    after(...goals: Goal[]): Goals & GoalsBuilder;
 
 }
 
@@ -85,7 +85,7 @@ export function goals(name: string): Goals & GoalsBuilder {
 
 class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreConditionBuilder {
 
-    private lastGoals: Array<Goal> = [];
+    private lastGoals: Goal[] = [];
 
     constructor(public name: string) {
         super(name);
@@ -108,7 +108,7 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
         return this;
     }
 
-    public after(...newGoals: Array<Goal>): Goals & GoalsBuilder {
+    public after(...newGoals: Goal[]): Goals & GoalsBuilder {
         const lastGoalsWithPreConditions = [];
 
         this.lastGoals.forEach(g => {
