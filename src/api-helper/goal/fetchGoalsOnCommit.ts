@@ -22,9 +22,9 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
-import { SdmGoalEvent } from "../..";
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     CommitForSdmGoal,
     PushForSdmGoal,
