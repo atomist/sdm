@@ -16,13 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { BuildListener } from "../../../api/listener/BuildListener";
-import { DryRunMessage } from "./dryRun";
-import { DryRunOptions } from "./DryRunOptions";
+import { IssueCreationOptions } from "../../../spi/issue/IssueCreationOptions";
+import { DryRunMessage } from "./makeBuildAware";
 
 /**
  * React to result of a dry run build to raise a PR or issue
  */
-export function dryRunBuildListener(opts: DryRunOptions): BuildListener {
+export function dryRunBuildListener(opts: IssueCreationOptions): BuildListener {
     return async bu => {
         const build = bu.build;
         const branch = build.push.branch;

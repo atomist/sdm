@@ -4,10 +4,12 @@ import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from ".
 export const DryRunMessage = "[atomist-dry-run]";
 
 /**
- * Return a function wrapping a CodeTransform function to perform dry run editing
+ * Return a function wrapping a CodeTransform function to make
+ * it build aware: That is, perform a dry run branch push first
+ * and create a PR or issue depending on the build result.
  * @return {CodeTransformRegistration}
  */
-export const dryRun: CodeTransformRegistrationDecorator<any> =
+export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
     ctr => {
         // Works by putting in a special commit message
         const dryRunRegistration: CodeTransformRegistration<any> = {
