@@ -1,21 +1,15 @@
 import { toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
-import { IssueRouter } from "../../../spi/issue/IssueRouter";
 
 export const DryRunMessage = "[atomist-dry-run]";
-
-export interface DryRunOptions {
-    issueRouter: IssueRouter;
-}
 
 /**
  * Return a function wrapping a CodeTransform function to perform dry run editing
  * @return {CodeTransformRegistration}
  */
-export function dryRunDecorator<PARAMS>(opts: DryRunOptions): CodeTransformRegistrationDecorator<PARAMS> {
-    return ctr => {
+export const dryRun: CodeTransformRegistrationDecorator<any> =
+    ctr => {
         // Works by putting in a special commit message
-
         const dryRunRegistration: CodeTransformRegistration<any> = {
             ...ctr,
         };
@@ -38,4 +32,3 @@ export function dryRunDecorator<PARAMS>(opts: DryRunOptions): CodeTransformRegis
             return dryRunRegistration;
         }
     };
-}

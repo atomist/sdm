@@ -95,6 +95,7 @@ export * from "./spi/credentials/CredentialsResolver";
 export * from "./spi/deploy/Deployer";
 export * from "./spi/deploy/Deployment";
 export * from "./spi/deploy/Target";
+export * from "./spi/issue/IssueRouter";
 export * from "./spi/log/InterpretedLog";
 export * from "./spi/log/ProgressLog";
 export * from "./spi/project/ProjectLoader";

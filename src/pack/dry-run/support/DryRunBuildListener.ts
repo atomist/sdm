@@ -16,7 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import { BuildListener } from "../../../api/listener/BuildListener";
-import { DryRunMessage, DryRunOptions } from "./dryRunDecorator";
+import { DryRunMessage } from "./dryRun";
+import { DryRunOptions } from "./DryRunOptions";
 
 /**
  * React to result of a dry run build to raise a PR or issue
