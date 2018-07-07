@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
+import { EditMode, isEditMode, isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
 export const DryRunMessage = "[atomist-dry-run]";
@@ -31,27 +31,32 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
         const dryRunRegistration: CodeTransformRegistration<any> = {
             ...ctr,
         };
-        if (!!ctr.editMode) {
-            const registeredEm = toEditModeFactory(ctr.editMode);
-            dryRunRegistration.editMode = p => {
-                const em = registeredEm(p);
-                // Add a dry run message
-                em.message = `${em.message}\n\n${DryRunMessage}`;
-                if (isPullRequest(em)) {
-                    // Don't let it raise a PR if it wanted to.
-                    // It will remain a valid BranchCommit
-                    em.title = em.body = undefined;
-                }
-                return em;
-            };
-        } else {
-            // No edit mode was set. We need to set one that sets a branch:
-            // No PR for now
-            dryRunRegistration.editMode = () => {
+        dryRunRegistration.editMode = p => {
+            if (isEditMode(p)) {
+                // Parameters are edit mode. Change them
+                return dryRunOf(p);
+            }
+            if (!!ctr.editMode) {
+                const registeredEmf = toEditModeFactory(ctr.editMode);
+                return dryRunOf(registeredEmf(p));
+            } else {
+                // No edit mode was set. We need to set one that sets a branch:
+                // No PR for now
                 const branch = `${ctr.name}-${new Date().getTime()}`;
                 const message = `${ctr.name}\n\n${DryRunMessage}`;
                 return { branch, message };
-            };
-            return dryRunRegistration;
-        }
+            }
+        };
+        return dryRunRegistration;
     };
+
+function dryRunOf(em: EditMode): EditMode {
+    // Add dry run message suffix
+    em.message = `${em.message}\n\n${DryRunMessage}`;
+    if (isPullRequest(em)) {
+        // Don't let it raise a PR if it wanted to.
+        // It will remain a valid BranchCommit if it was a PR
+        em.title = em.body = undefined;
+    }
+    return em;
+}
