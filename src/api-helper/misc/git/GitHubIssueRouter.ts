@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-
-import { ProjectOperationCredentials, TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import {
+    isTokenCredentials,
+    ProjectOperationCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Issue, raiseIssue } from "@atomist/automation-client/util/gitHub";
 import { IssueRouter } from "../../../spi/issue/IssueRouter";
@@ -28,7 +30,10 @@ export class GitHubIssueRouter implements IssueRouter {
     public async raiseIssue(credentials: ProjectOperationCredentials,
                             id: RemoteRepoRef,
                             issue: Issue): Promise<any> {
-        return raiseIssue((credentials as TokenCredentials).token, id, issue);
+        if (!isTokenCredentials(credentials)) {
+            throw new Error("Only token credentials are supported");
+        }
+        return raiseIssue(credentials.token, id, issue);
     }
 
 }

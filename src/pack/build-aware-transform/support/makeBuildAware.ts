@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
