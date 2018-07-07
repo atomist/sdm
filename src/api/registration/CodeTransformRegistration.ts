@@ -31,8 +31,9 @@ export type EditorRegistration<PARAMS = NoParameters> = CodeTransformRegistratio
  * Type for registering a project transform, which can make changes
  * across projects
  */
-export interface CodeTransformRegistration<PARAMS = NoParameters> extends Partial<EditorCommandDetails>,
-    ProjectOperationRegistration<PARAMS> {
+export interface CodeTransformRegistration<PARAMS = NoParameters>
+    extends Partial<EditorCommandDetails>,
+        ProjectOperationRegistration<PARAMS> {
 
     /**
      * Create the parameters required by this editor.

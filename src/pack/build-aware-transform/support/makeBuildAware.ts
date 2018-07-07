@@ -43,20 +43,30 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
                 // No edit mode was set. We need to set one that sets a branch:
                 // No PR for now
                 const branch = `${ctr.name}-${new Date().getTime()}`;
-                const message = `${ctr.name}\n\n${DryRunMessage}`;
+                const message = dryRunMessage(ctr.description || ctr.name);
                 return { branch, message };
             }
         };
         return dryRunRegistration;
     };
 
+/**
+ * Return a dry run form of this EditMode:
+ * add the necessary dry run suffix and avoid it creating a PR if it wants to.
+ * @param {EditMode} em
+ * @return {EditMode}
+ */
 function dryRunOf(em: EditMode): EditMode {
     // Add dry run message suffix
-    em.message = `${em.message}\n\n${DryRunMessage}`;
+    em.message = dryRunMessage(em.message);
     if (isPullRequest(em)) {
         // Don't let it raise a PR if it wanted to.
         // It will remain a valid BranchCommit if it was a PR
         em.title = em.body = undefined;
     }
     return em;
+}
+
+function dryRunMessage(oldMessage: string): string {
+    return `Try to ${oldMessage}\n\n${DryRunMessage}`;
 }
