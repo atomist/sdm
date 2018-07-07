@@ -15,6 +15,7 @@
  */
 
 import { metadata } from "../../api-helper/misc/extensionPack";
+import { GitHubIssueRouter } from "../../api-helper/misc/git/GitHubIssueRouter";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { CodeTransformRegistrationDecorator } from "../../api/registration/CodeTransformRegistration";
 import { dryRunBuildListener } from "./support/DryRunBuildListener";
@@ -24,17 +25,26 @@ export { DryRunOptions } from "./support/dryRunDecorator";
 
 export interface DryRunExtensionPack extends ExtensionPack {
 
+    /**
+     * Decorator function to use to wrap CodeTransforms to make
+     * them exhibit dry run behavior
+     */
     dryRun: CodeTransformRegistrationDecorator<any>;
 }
 
 /**
- * Core extension pack to add dry run editing support. It's necessary to add this pack
+ * Core extension pack to add "dry run" editing support, where
+ * a branch is quietly created in the first instance,
+ * and an issue or PR is created in response to build status.
+ * It's necessary to add this pack
  * to have dry run editorCommand function respond to builds.
+ * Use the dryRun decorator function exposed by the pack to
+ * decorate CodeTransformRegistrations.
  */
 export function dryRunCodeTransforms(opts: Partial<DryRunOptions> = {}): DryRunExtensionPack {
     const optsToUse: DryRunOptions = {
         ...opts,
-        issueRouter: undefined,
+        issueRouter: new GitHubIssueRouter(),
     };
 
     return {

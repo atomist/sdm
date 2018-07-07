@@ -1,19 +1,8 @@
-import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
-import { Issue } from "@atomist/automation-client/util/gitHub";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
+import { IssueRouter } from "../../../spi/issue/IssueRouter";
 
 export const DryRunMessage = "[atomist-dry-run]";
-
-/**
- * Implemented by types that can raise issues
- */
-export interface IssueRouter {
-
-    raiseIssue(credentials: ProjectOperationCredentials, id: RemoteRepoRef,
-               issue: Issue): Promise<any>;
-}
 
 export interface DryRunOptions {
     issueRouter: IssueRouter;

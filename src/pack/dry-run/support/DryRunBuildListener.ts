@@ -29,12 +29,18 @@ export function dryRunBuildListener(opts: DryRunOptions): BuildListener {
         logger.debug("Assessing dry run for %j: Commit message=%s", bu.id, bu.build.commit.message);
         if (!bu.build.commit.message.includes(DryRunMessage)) {
             logger.info("Not a dry run commit: %j: Commit message=%s", bu.id, bu.build.commit.message);
+            return;
         }
 
         const description = bu.build.commit.message.replace(DryRunMessage, "").trim();
         switch (build.status) {
+            case "started" :
+                logger.info("Tracking dry run build on %j on branch %s,", bu.id, branch);
+                // Wait for conclusion
+                break;
+
             case "passed":
-                logger.info("Raising PR for successful dry run on %j", bu.id);
+                logger.info("Raising PR for successful dry run build on %j", bu.id);
                 const title = description;
                 const body = bu.build.commit.message;
                 await bu.id.raisePullRequest(
@@ -47,7 +53,7 @@ export function dryRunBuildListener(opts: DryRunOptions): BuildListener {
 
             case "failed" :
             case "broken":
-                logger.info("Raising issue for failed dry run on %j on branch %s,", bu.id, branch);
+                logger.info("Raising issue for failed dry run build on %j on branch %s,", bu.id, branch);
                 let issueBody = "Details:\n\n";
                 issueBody += !!build.buildUrl ? `[Build log](${build.buildUrl})` : "No build log available";
                 issueBody += `\n\n[Branch with failure](${bu.id.url}/tree/${branch} "Failing branch ${branch}")`;
@@ -58,7 +64,7 @@ export function dryRunBuildListener(opts: DryRunOptions): BuildListener {
                 break;
 
             default :
-                // Ignore it
+                logger.info("Unexpected build status [%s] issue for failed dry run on %j on branch %s,", bu.build.status, bu.id, branch);
                 break;
         }
     };
