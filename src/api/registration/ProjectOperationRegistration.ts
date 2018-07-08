@@ -14,27 +14,42 @@
  * limitations under the License.
  */
 
-import { AnyProjectEditor, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainTransforms } from "./CodeTransformRegistration";
+import { EditResult, failedEdit, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import { isProject, Project } from "@atomist/automation-client/project/Project";
+import { chainTransforms } from "../../api-helper/command/editor/chain";
+import { SdmContext } from "../context/SdmContext";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
  * Function that can transform a project
  */
-export type CodeTransform<P = any> = SimpleProjectEditor<P>;
+export type CodeTransform<P = any> = ExplicitCodeTransform<P> | SimpleCodeTransform<P>;
 
-export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P>;
+export type ExplicitCodeTransform<P = any> = (p: Project, ctx: SdmContext) => Promise<EditResult>;
+
+export type SimpleCodeTransform<P = any> = (p: Project, ctx: SdmContext) => Promise<Project>;
+
+export function toExplicitCodeTransform<P>(ct: CodeTransform<P>): ExplicitCodeTransform<P> {
+    return async (proj, ctx) => {
+        try {
+            const r: Project | EditResult = await ct(proj, ctx);
+            return isProject(r) ? successfulEdit(r, undefined) : r;
+        } catch (e) {
+            return failedEdit(proj, e);
+        }
+    };
+}
 
 /**
  * One or many CodeTransforms
  */
-export type CodeTransformOrTransforms<PARAMS> = CodeTransformRegisterable<PARAMS> | Array<CodeTransformRegisterable<PARAMS>>;
+export type CodeTransformOrTransforms<PARAMS> = CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
 
-export function toCodeTransformRegisterable<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): CodeTransformRegisterable<PARAMS> {
+export function toScalarCodeTransform<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): CodeTransform<PARAMS> {
     if (Array.isArray(ctot)) {
         return chainTransforms(...ctot);
     } else {
-        return ctot as CodeTransform<PARAMS>;
+        return ctot;
     }
 }
 
@@ -48,22 +63,6 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     /**
      * Function to transform the project
      */
-    transform?: CodeTransformOrTransforms<PARAMS>;
+    transform: CodeTransformOrTransforms<PARAMS>;
 
-    /**
-     * Create the editor function that can modify a project
-     * @param {PARAMS} params
-     * @return {AnyProjectEditor}
-     */
-    createTransform?: (params: PARAMS) => CodeTransform<PARAMS>;
-
-    /**
-     * @deprecated use transform
-     */
-    editor?: CodeTransform<PARAMS>;
-
-    /**
-     * @deprecated use createTransform
-     */
-    createEditor?: (params: PARAMS) => CodeTransform<PARAMS>;
 }

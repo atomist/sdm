@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
 import { EditMode, isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
-import { Project } from "@atomist/automation-client/project/Project";
 import { EditModeSuggestion } from "../../../api/command/editor/EditModeSuggestion";
+import { SdmContext } from "../../../api/context/SdmContext";
+import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
+import { CodeTransform, toScalarCodeTransform } from "../../../api/registration/ProjectOperationRegistration";
 
 export const DryRunMessage = "[atomist-dry-run]";
 
@@ -46,13 +47,19 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
                 return {
                     branch,
                     message: desiredCommitMessage + "\n\n" + DryRunMessage,
-                    afterPersist: afterPersistFactory({
-                        desiredCommitMessage,
-                        desiredPullRequestTitle: (p as EditModeSuggestion).desiredPullRequestTitle || desiredCommitMessage,
-                    }),
                 };
             }
         };
+        // Decorate the transform function to persist the necessary data
+        dryRunRegistration.transform = (async (p, sdmc) => {
+            const r = await (toScalarCodeTransform(ctr.transform))(p, sdmc);
+            const desiredCommitMessage = ((sdmc as CommandListenerInvocation).parameters as EditModeSuggestion).desiredCommitMessage ||
+                dryRunMessage(ctr.description || ctr.name);
+            const desiredPullRequestTitle = ((sdmc as CommandListenerInvocation).parameters as EditModeSuggestion).desiredPullRequestTitle ||
+                dryRunMessage(ctr.description || ctr.name);
+            await persistDryRun(sdmc, { desiredCommitMessage, desiredPullRequestTitle });
+            return r;
+        }) as CodeTransform;
         return dryRunRegistration;
     };
 
@@ -64,7 +71,6 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
  */
 function dryRunOf(em: EditMode): EditMode {
     // Add dry run message suffix
-    em.afterPersist = afterPersistFactory({ desiredCommitMessage: em.message, desiredPullRequestTitle: em.message });
     em.message = dryRunMessage(em.message) + "\n\n" + DryRunMessage;
     if (isPullRequest(em)) {
         // Don't let it raise a PR if it wanted to.
@@ -78,13 +84,11 @@ function dryRunMessage(oldMessage: string): string {
     return `Try to ${oldMessage}`;
 }
 
-function afterPersistFactory(ems: {
+async function persistDryRun(sdmc: SdmContext, ems: {
     desiredPullRequestTitle?: string,
     desiredCommitMessage?: string,
-}): (p: Project, ctx: HandlerContext) => Promise<any> {
-    return async (p: Project, ctx: HandlerContext) => {
-        // TODO raise custom event here using info on edit mode
-        process.stdout.write(`Persist custom event: message='${ems.desiredCommitMessage}', title='${ems.desiredPullRequestTitle}'\n`);
-        return undefined;
-    };
+}) {
+    // TODO raise custom event here using info on edit mode
+    process.stdout.write(`Persist custom event: message='${ems.desiredCommitMessage}', title='${ems.desiredPullRequestTitle}'\n`);
+    return undefined;
 }

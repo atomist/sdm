@@ -20,13 +20,18 @@ import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { SdmContext } from "../../api/context/SdmContext";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
+import { CommandRegistration } from "../../api/registration/CommandRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
@@ -37,29 +42,65 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
-    CodeTransformRegisterable,
-    ProjectOperationRegistration,
-    toCodeTransformRegisterable,
+    CodeTransform,
+    toExplicitCodeTransform,
+    toScalarCodeTransform,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
-import { editorCommand } from "../command/editor/editorCommand";
-import { generatorCommand } from "../command/generator/generatorCommand";
+import { codeTransformListener, toCodeTransformParametersMaker } from "../command/editor/codeTransformListener";
+import { generatorListener, toGeneratorParametersMaker } from "../command/generator/generatorListener";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const TransformTag = "transform";
 
-export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
+export function codeTransformRegistrationToCommand<P>(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(e, TransformTag);
-    addParametersDefinedInBuilder(e);
-    return () => editorCommand(
-        sdm,
-        toCodeTransformFunction(e),
-        e.name,
-        e.paramsMaker,
-        e,
-        e.targets || toMachineOptions(sdm).targets,
-    );
+    e.paramsMaker = e.paramsMaker || NoParameters;
+    e.paramsMaker = toCodeTransformParametersMaker(e.paramsMaker, e.targets || toMachineOptions(sdm).targets || new GitHubFallbackReposParameters());
+    return commandHandlerRegistrationToCommand(sdm, {
+        ...e as CommandRegistration<P>,
+        listener: ci =>
+            withSdmContext(ci, () => codeTransformListener(toScalarCodeTransform(e.transform), e.name, e)(ci)),
+    });
+}
+
+// tslint:disable-next-line:variable-name
+let __sdmContext: SdmContext;
+
+/**
+ * Bind the current context so it's accessible even when passed through old style editors
+ * @param {SdmContext} c
+ * @param {() => Promise<any>} todo
+ * @return {Promise<any>}
+ */
+export function withSdmContext(c: SdmContext, todo: () => Promise<any>): Promise<any> {
+    __sdmContext = c;
+    try {
+        return todo();
+    } finally {
+        __sdmContext = undefined;
+    }
+}
+
+function getSdmContext(): SdmContext {
+    if (!__sdmContext) {
+        throw new Error("Internal error: SDM context must be set");
+    }
+    return __sdmContext;
+}
+
+// This is nasty: We use this to fool our editors into working with the traditional API
+/**
+ * Convert a CodeTransform into an automation client project editor
+ * @param {CodeTransform<any>} ct
+ * @return {ProjectEditor<any>}
+ */
+export function toProjectEditor(ct: CodeTransform<any>): ProjectEditor<any> {
+    const ect = toExplicitCodeTransform(ct);
+    return async p => {
+        return ect(p, getSdmContext());
+    };
 }
 
 /**
@@ -88,16 +129,17 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
         // TODO should probably be handled in automation-client
         e.startingPoint.id = new GitHubRepoRef("ignore", "this");
     }
-    addParametersDefinedInBuilder(e);
-    return () => generatorCommand(
-        sdm,
-        toCodeTransformFunction(e),
-        e.name,
-        e.paramsMaker,
-        e.fallbackTarget,
-        e.startingPoint,
-        e,
-    );
+    e.paramsMaker = toGeneratorParametersMaker(e.paramsMaker, e.fallbackTarget || new GitHubRepoCreationParameters());
+    return commandHandlerRegistrationToCommand(sdm, {
+        ...e as CommandRegistration<P>,
+        // Invoke in SDM context so that new style CodeTransforms work
+        listener: ci => withSdmContext(ci,
+            () => generatorListener(sdm,
+                toScalarCodeTransform(e.transform),
+                e.name,
+                e.startingPoint,
+                e)(ci)),
+    });
 }
 
 export function commandHandlerRegistrationToCommand<P = any>(sdm: MachineOrMachineOptions,
@@ -120,18 +162,6 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
         e.description,
         e.tags,
     );
-}
-
-function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransformRegisterable<PARAMS> {
-    por.transform = por.transform || por.editor;
-    if (!!por.transform) {
-        return () => toCodeTransformRegisterable(por.transform);
-    }
-    por.createTransform = por.createTransform || por.createEditor;
-    if (!!por.createTransform) {
-        return por.createTransform;
-    }
-    throw new Error(`Registration '${por.name}' is invalid, as it does not specify an editor or createEditor function`);
 }
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {

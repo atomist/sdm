@@ -15,23 +15,15 @@
  */
 
 import {
-    HandleCommand,
     HandlerContext,
     RedirectResult,
 } from "@atomist/automation-client";
-import {
-    commandHandlerFrom,
-    OnCommand,
-} from "@atomist/automation-client/onCommand";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import {
-    EditorFactory,
     GeneratorCommandDetails,
 } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
-import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
 import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
@@ -43,8 +35,11 @@ import {
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { CommandListener, CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
+import { CodeTransform } from "../../../api/registration/ProjectOperationRegistration";
+import { toProjectEditor } from "../../machine/handlerRegistrations";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import {
     MachineOrMachineOptions,
@@ -55,29 +50,20 @@ import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 /**
  * Create a command handler for project generation
  * @param sdm this machine or its options
- * @param {EditorFactory<P extends SeedDrivenGeneratorParameters>} editorFactory to create editorCommand to perform transformation
- * @param {Maker<P extends SeedDrivenGeneratorParameters>} paramsMaker
  * @param {string} name
  * @param {Partial<GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters>>} details
  * @return {HandleCommand}
  */
-export function generatorCommand<P>(sdm: MachineOrMachineOptions,
-                                    editorFactory: EditorFactory<P>,
-                                    name: string,
-                                    paramsMaker: Maker<P>,
-                                    fallbackTarget: NewRepoCreationParameters,
-                                    startingPoint: StartingPoint,
-                                    details: Partial<GeneratorCommandDetails<any>> = {}): HandleCommand {
+export function generatorListener<P>(sdm: MachineOrMachineOptions,
+                                     transform: CodeTransform<P>,
+                                     name: string,
+                                     startingPoint: StartingPoint,
+                                     details: Partial<GeneratorCommandDetails<any>> = {}): CommandListener<P> {
     const detailsToUse: GeneratorCommandDetails<any> = {
         ...defaultDetails(toMachineOptions(sdm), name),
         ...details,
     };
-    return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse, startingPoint),
-        toGeneratorParametersMaker<P>(
-            paramsMaker,
-            fallbackTarget || new GitHubRepoCreationParameters()),
-        name,
-        detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
+    return handleGenerate(transform, detailsToUse, startingPoint);
 }
 
 /**
@@ -85,8 +71,8 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
  * @param {Maker<PARAMS>} paramsMaker
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
-function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                            target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
+export function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
+                                                   target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isSeedDrivenGeneratorParameters(sampleParams) ?
         paramsMaker as Maker<SeedDrivenGeneratorParameters & PARAMS> as any :
@@ -105,41 +91,40 @@ export function isSeedDrivenGeneratorParameters(p: any): p is SeedDrivenGenerato
     return !!maybe.target;
 }
 
-function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
+function handleGenerate<P extends SeedDrivenGeneratorParameters>(transform: CodeTransform<P>,
                                                                  details: GeneratorCommandDetails<P>,
-                                                                 startingPoint: StartingPoint): OnCommand<P> {
+                                                                 startingPoint: StartingPoint): CommandListener<P> {
 
-    return (ctx: HandlerContext, parameters: P) => {
-        return handle(ctx, editorFactory, parameters, details, startingPoint);
+    return ci => {
+        return handle(ci, transform, details, startingPoint);
     };
 }
 
-async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerContext,
-                                                               editorFactory: EditorFactory<P>,
-                                                               params: P,
+async function handle<P extends SeedDrivenGeneratorParameters>(ci: CommandListenerInvocation<P>,
+                                                               transform: CodeTransform<P>,
                                                                details: GeneratorCommandDetails<P>,
                                                                startingPoint: StartingPoint): Promise<RedirectResult> {
     const r = await generate(
-        computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint),
-        ctx,
-        params.target.credentials,
-        editorFactory(params, ctx),
+        computeStartingPoint(ci.parameters, ci.context, details.repoLoader(ci.parameters), details, startingPoint),
+        ci.context,
+        ci.parameters.target.credentials,
+        toProjectEditor(transform),
         details.projectPersister,
-        params.target.repoRef,
-        params,
+        ci.parameters.target.repoRef,
+        ci.parameters,
         details.afterAction,
     );
-    await ctx.messageClient.respond(`Created and pushed new project ${params.target.repoRef.url}`);
-    if (isGitHubRepoRef(r.target.id) && params.addAtomistWebhook) {
-        const webhookInstalled = await hasOrgWebhook(params.target.repoRef.owner, ctx);
+    await ci.addressChannels(`Created and pushed new project ${ci.parameters.target.repoRef.url}`);
+    if (isGitHubRepoRef(r.target.id) && ci.parameters.addAtomistWebhook) {
+        const webhookInstalled = await hasOrgWebhook(ci.parameters.target.repoRef.owner, ci.context);
         if (!webhookInstalled) {
-            await addAtomistWebhook((r.target as GitProject), params);
+            await addAtomistWebhook((r.target as GitProject), ci.parameters);
         }
     }
     return {
         code: 0,
         // Redirect to local project page
-        redirect: details.redirecter(params.target.repoRef),
+        redirect: details.redirecter(ci.parameters.target.repoRef),
     };
 }
 

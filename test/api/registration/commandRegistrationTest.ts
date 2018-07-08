@@ -22,7 +22,7 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as assert from "power-assert";
-import { isSeedDrivenGeneratorParameters } from "../../../src/api-helper/command/generator/generatorCommand";
+import { isSeedDrivenGeneratorParameters } from "../../../src/api-helper/command/generator/generatorListener";
 import {
     codeTransformRegistrationToCommand,
     commandHandlerRegistrationToCommand,

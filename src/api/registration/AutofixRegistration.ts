@@ -15,8 +15,9 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { CodeTransformOrTransforms, CodeTransformRegisterable, toCodeTransformRegisterable } from "./ProjectOperationRegistration";
+import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
+import { withSdmContext } from "../../api-helper/machine/handlerRegistrations";
+import { CodeTransformOrTransforms, toExplicitCodeTransform, toScalarCodeTransform } from "./ProjectOperationRegistration";
 import { PushReactionRegistration, SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 
@@ -33,13 +34,7 @@ export interface AutofixRegistration extends PushReactionRegistration<EditResult
 
 export interface CodeTransformAutofixRegistration extends PushSelector {
 
-    // TODO will be required when editor is removed
     transform?: CodeTransformOrTransforms<any>;
-
-    /**
-     * @deprecated use transform
-     */
-    editor?: CodeTransformRegisterable;
 
     options?: AutofixRegistrationOptions;
 
@@ -48,15 +43,10 @@ export interface CodeTransformAutofixRegistration extends PushSelector {
 
 export function isCodeTransformAutofixRegistration(r: AutofixRegisterable): r is CodeTransformAutofixRegistration {
     const maybe = r as CodeTransformAutofixRegistration;
-    return !!maybe.transform || !!maybe.editor;
+    return !!maybe.transform;
 }
 
 export type AutofixRegisterable = AutofixRegistration | CodeTransformAutofixRegistration;
-
-/**
- * @deprecated use CodeTransformAutofixRegistration
- */
-export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
 
 /**
  * Create an autofix from an existing CodeTransform. A CodeTransform for autofix
@@ -67,14 +57,14 @@ export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
  * do not support respond. Be sure to set parameters if they are required by your transform.
  */
 export function toAutofixRegistration(use: CodeTransformAutofixRegistration): AutofixRegistration {
-    const transformToUse = toEditor(toCodeTransformRegisterable(use.transform || use.editor));
+    const transformToUse = toExplicitCodeTransform(toScalarCodeTransform(use.transform));
     return {
         name: use.name,
         pushTest: use.pushTest,
         options: use.options,
         action: async cri => {
             logger.debug("About to edit using autofix code transform '%s'", use.name);
-            return transformToUse(cri.project, cri.context, use.parameters);
+            return withSdmContext(cri, () => transformToUse(cri.project, cri));
         },
     };
 }
