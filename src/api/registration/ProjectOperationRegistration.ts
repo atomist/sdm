@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Project } from "@atomist/automation-client/project/Project";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
- * Function that can transform a project
+ * Function that can transform a project. Mixing HandlerContext into second
+ * parameter, and third parameter are only for backward compatibility.
+ * New code should use (Project, Command ListenerInvocation).
  */
-export type CodeTransform<P = any> = (p: Project, sdmc: CommandListenerInvocation, params?: P) => Promise<Project | EditResult>;
+export type CodeTransform<P = any> = (p: Project, sdmc: CommandListenerInvocation & HandlerContext, params?: P) => Promise<Project | EditResult>;
 
 /**
  * One or many CodeTransforms
