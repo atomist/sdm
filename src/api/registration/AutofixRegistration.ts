@@ -15,8 +15,8 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { CodeTransformOrTransforms, CodeTransformRegisterable, toCodeTransformRegisterable } from "./ProjectOperationRegistration";
+import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
+import { CodeTransformOrTransforms, CodeTransform, toScalarProjectEditor } from "./ProjectOperationRegistration";
 import { PushReactionRegistration, SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 
@@ -39,7 +39,7 @@ export interface CodeTransformAutofixRegistration extends PushSelector {
     /**
      * @deprecated use transform
      */
-    editor?: CodeTransformRegisterable;
+    editor?: CodeTransform;
 
     options?: AutofixRegistrationOptions;
 
@@ -54,11 +54,6 @@ export function isCodeTransformAutofixRegistration(r: AutofixRegisterable): r is
 export type AutofixRegisterable = AutofixRegistration | CodeTransformAutofixRegistration;
 
 /**
- * @deprecated use CodeTransformAutofixRegistration
- */
-export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
-
-/**
  * Create an autofix from an existing CodeTransform. A CodeTransform for autofix
  * should not rely on parameters being passed in. An existing editor can be wrapped
  * to use predefined parameters.
@@ -67,7 +62,7 @@ export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
  * do not support respond. Be sure to set parameters if they are required by your transform.
  */
 export function toAutofixRegistration(use: CodeTransformAutofixRegistration): AutofixRegistration {
-    const transformToUse = toEditor(toCodeTransformRegisterable(use.transform || use.editor));
+    const transformToUse = toScalarProjectEditor(use.transform || use.editor);
     return {
         name: use.name,
         pushTest: use.pushTest,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger, Success } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
@@ -37,14 +37,15 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
-    CodeTransformRegisterable,
     ProjectOperationRegistration,
-    toCodeTransformRegisterable,
+    toScalarProjectEditor,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
 import { generatorCommand } from "../command/generator/generatorCommand";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { CommandRegistration } from "../../api/registration/CommandRegistration";
 
 export const GeneratorTag = "generator";
 export const TransformTag = "transform";
@@ -122,14 +123,14 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
     );
 }
 
-function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransformRegisterable<PARAMS> {
+function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => AnyProjectEditor<PARAMS> {
     por.transform = por.transform || por.editor;
     if (!!por.transform) {
-        return () => toCodeTransformRegisterable(por.transform);
+        return () => toScalarProjectEditor(por.transform);
     }
     por.createTransform = por.createTransform || por.createEditor;
     if (!!por.createTransform) {
-        return por.createTransform;
+        return p => toScalarProjectEditor(por.createTransform(p));
     }
     throw new Error(`Registration '${por.name}' is invalid, as it does not specify an editor or createEditor function`);
 }
@@ -142,18 +143,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
     if (!!c.listener) {
         return () => async (context, parameters) => {
             // const opts = toMachineOptions(sdm);
-            // TODO will add this. Currently it doesn't work.
-            const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
-            // TODO do a look up for associated channels
-            const ids: RemoteRepoRef[] = undefined;
-            const cli: CommandListenerInvocation = {
-                commandName: c.name,
-                context,
-                parameters,
-                addressChannels: (msg, opts) => context.messageClient.respond(msg, opts),
-                credentials,
-                ids,
-            };
+            const cli = toCommandListenerInvocation(c, context, parameters);
             logger.debug("Running command listener %s", cli.commandName);
             try {
                 await c.listener(cli);
@@ -168,6 +158,21 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
         };
     }
     throw new Error(`Command '${c.name}' is invalid, as it does not specify a listener or createCommand function`);
+}
+
+export function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
+    // TODO will add this. Currently it doesn't work.
+    const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+    // TODO do a look up for associated channels
+    const ids: RemoteRepoRef[] = undefined;
+    return {
+        commandName: c.name,
+        context,
+        parameters,
+        addressChannels: (msg, opts) => context.messageClient.respond(msg, opts),
+        credentials,
+        ids,
+    };
 }
 
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {

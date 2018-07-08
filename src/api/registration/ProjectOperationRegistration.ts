@@ -14,32 +14,52 @@
  * limitations under the License.
  */
 
-import { AnyProjectEditor, EditResult, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import {
+    AnyProjectEditor,
+    EditResult, failedEdit,
+    ProjectEditor,
+    SimpleProjectEditor,
+    successfulEdit
+} from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainTransforms } from "./CodeTransformRegistration";
 import { CommandRegistration } from "./CommandRegistration";
-import { Project } from "@atomist/automation-client/project/Project";
+import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { SdmContext } from "../context/SdmContext";
+import { toCommandListenerInvocation } from "../../api-helper/machine/handlerRegistrations";
+import { HandlerContext } from "@atomist/automation-client";
+import { successOn } from "@atomist/automation-client/action/ActionResult";
 
 /**
  * Function that can transform a project
  */
-export type CodeTransform<P = any> = SimpleProjectEditor<P>;
-
-export type ModernCodeTransform<P = any> = (p: Project, sdmc: SdmContext) => Promise<Project | EditResult>;
-
-export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P> | ModernCodeTransform<P>;
+export type CodeTransform<P = any> = (p: Project, sdmc: SdmContext & HandlerContext, params?: P) => Promise<Project | EditResult>;
 
 /**
  * One or many CodeTransforms
  */
-export type CodeTransformOrTransforms<PARAMS> = CodeTransformRegisterable<PARAMS> | Array<CodeTransformRegisterable<PARAMS>>;
+export type CodeTransformOrTransforms<PARAMS> = CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
 
-export function toCodeTransformRegisterable<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): CodeTransformRegisterable<PARAMS> {
+export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
     if (Array.isArray(ctot)) {
-        return chainTransforms(...ctot);
+        return chainTransforms(...ctot.map(toProjectEditor));
     } else {
-        return ctot as CodeTransform<PARAMS>;
+        return toProjectEditor(ctot);
     }
+}
+
+function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
+    return async (p, ctx, params) => {
+        const ci = toCommandListenerInvocation(p, ctx, params) as SdmContext;
+        const r = await ct(p, {
+            ...ci,
+            ...ctx,
+        }, params);
+        try {
+            return isProject(r) ? successfulEdit(r, undefined) : r;
+        } catch (e) {
+            return failedEdit(p, e);
+        }
+    };
 }
 
 /**
@@ -55,6 +75,7 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     transform?: CodeTransformOrTransforms<PARAMS>;
 
     /**
+     * @deprecated use transform
      * Create the editor function that can modify a project
      * @param {PARAMS} params
      * @return {AnyProjectEditor}
@@ -67,7 +88,7 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     editor?: CodeTransform<PARAMS>;
 
     /**
-     * @deprecated use createTransform
+     * @deprecated use transform
      */
     createEditor?: (params: PARAMS) => CodeTransform<PARAMS>;
 }
