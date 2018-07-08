@@ -27,3 +27,8 @@ export interface EditModeSuggestion {
     desiredCommitMessage?: string;
 
 }
+
+export function isEditModeSuggestion(p: object): p is EditModeSuggestion {
+    const maybe = p as EditModeSuggestion;
+    return !!maybe.desiredBranchName;
+}

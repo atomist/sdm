@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-import { AnyProjectEditor, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { AnyProjectEditor, EditResult, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainTransforms } from "./CodeTransformRegistration";
 import { CommandRegistration } from "./CommandRegistration";
+import { Project } from "@atomist/automation-client/project/Project";
+import { SdmContext } from "../context/SdmContext";
 
 /**
  * Function that can transform a project
  */
 export type CodeTransform<P = any> = SimpleProjectEditor<P>;
 
-export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P>;
+export type ModernCodeTransform<P = any> = (p: Project, sdmc: SdmContext) => Promise<Project | EditResult>;
+
+export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P> | ModernCodeTransform<P>;
 
 /**
  * One or many CodeTransforms
