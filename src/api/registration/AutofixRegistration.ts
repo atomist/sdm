@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CodeTransform, CodeTransformOrTransforms } from "./ProjectOperationRegistration";
+import { CodeTransformOrTransforms } from "./ProjectOperationRegistration";
 import { SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 
@@ -29,13 +29,7 @@ export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
  */
 export interface AutofixRegistration<P = any> extends PushSelector {
 
-    // TODO will be required when editor is removed
-    transform?: CodeTransformOrTransforms<P>;
-
-    /**
-     * @deprecated use transform
-     */
-    editor?: CodeTransform;
+    transform: CodeTransformOrTransforms<P>;
 
     options?: AutofixRegistrationOptions;
 

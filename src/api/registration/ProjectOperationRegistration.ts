@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Project } from "@atomist/automation-client/project/Project";
 import { CommandListenerInvocation } from "../listener/CommandListener";
@@ -23,7 +22,7 @@ import { CommandRegistration } from "./CommandRegistration";
 /**
  * Function that can transform a project
  */
-export type CodeTransform<P = any> = (p: Project, sdmc: CommandListenerInvocation & HandlerContext, params?: P) => Promise<Project | EditResult>;
+export type CodeTransform<P = any> = (p: Project, sdmc: CommandListenerInvocation, params?: P) => Promise<Project | EditResult>;
 
 /**
  * One or many CodeTransforms
@@ -32,8 +31,7 @@ export type CodeTransformOrTransforms<PARAMS> = CodeTransform<PARAMS> | Array<Co
 
 /**
  * Superclass for all registrations of "project operations",
- * which can create or modify projects. Either an editor or a createEditor
- * function must be provided.
+ * which can create or modify projects. Supply a transform function.
  */
 export interface ProjectOperationRegistration<PARAMS> extends CommandRegistration<PARAMS> {
 
@@ -50,13 +48,4 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
      */
     createTransform?: (params: PARAMS) => CodeTransform<PARAMS>;
 
-    /**
-     * @deprecated use transform
-     */
-    editor?: CodeTransform<PARAMS>;
-
-    /**
-     * @deprecated use transform
-     */
-    createEditor?: (params: PARAMS) => CodeTransform<PARAMS>;
 }

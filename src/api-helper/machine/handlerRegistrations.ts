@@ -124,11 +124,9 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 }
 
 function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => AnyProjectEditor<PARAMS> {
-    por.transform = por.transform || por.editor;
     if (!!por.transform) {
         return () => toScalarProjectEditor(por.transform);
     }
-    por.createTransform = por.createTransform || por.createEditor;
     if (!!por.createTransform) {
         return p => toScalarProjectEditor(por.createTransform(p));
     }
@@ -241,13 +239,17 @@ export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PA
     }
 }
 
+// Convert to an old style, automation-client, ProjectEditor to allow
+// underlying code to work for now
 function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
     return async (p, ctx, params) => {
         const ci = toCommandListenerInvocation(p, ctx, params);
+        // Mix in handler context for old style callers
         const r = await ct(p, {
-            ...ci,
-            ...ctx,
-        }, params);
+                ...ci,
+                ...ctx,
+            } as CommandListenerInvocation & HandlerContext,
+            params);
         try {
             return isProject(r) ? successfulEdit(r, undefined) : r;
         } catch (e) {
