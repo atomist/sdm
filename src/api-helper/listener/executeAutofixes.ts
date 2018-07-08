@@ -30,6 +30,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { toScalarProjectEditor } from "../../api/registration/ProjectOperationRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
@@ -103,7 +104,7 @@ async function runOne(cri: PushImpactListenerInvocation,
     const project = cri.project;
     progressLog.write(sprintf("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name));
     try {
-        const tentativeEditResult = await autofix.action(cri);
+        const tentativeEditResult = await toScalarProjectEditor(autofix.transform)(project, cri.context, autofix.parameters);
         const editResult = await confirmEditedness(tentativeEditResult);
 
         if (!editResult.success) {

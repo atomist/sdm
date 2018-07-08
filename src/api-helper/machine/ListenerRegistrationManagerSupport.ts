@@ -38,10 +38,7 @@ import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChanne
 import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
 import {
-    AutofixRegisterable,
     AutofixRegistration,
-    isCodeTransformAutofixRegistration,
-    toAutofixRegistration,
 } from "../../api/registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
@@ -186,9 +183,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
      * Note: be sure that these editors check and don't cause
      * infinite recursion!!
      */
-    public addAutofix(fix: AutofixRegisterable): this {
-        this.autofixRegistrations.push(
-            isCodeTransformAutofixRegistration(fix) ? toAutofixRegistration(fix) : fix);
+    public addAutofix(fix: AutofixRegistration): this {
+        this.autofixRegistrations.push(fix);
         return this;
     }
 

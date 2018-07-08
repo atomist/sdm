@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-import {
-    AnyProjectEditor,
-    EditResult, failedEdit,
-    ProjectEditor,
-    SimpleProjectEditor,
-    successfulEdit
-} from "@atomist/automation-client/operations/edit/projectEditor";
+import { HandlerContext } from "@atomist/automation-client";
+import { EditResult, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import { isProject, Project } from "@atomist/automation-client/project/Project";
+import { toCommandListenerInvocation } from "../../api-helper/machine/handlerRegistrations";
+import { CommandListenerInvocation } from "../listener/CommandListener";
 import { chainTransforms } from "./CodeTransformRegistration";
 import { CommandRegistration } from "./CommandRegistration";
-import { isProject, Project } from "@atomist/automation-client/project/Project";
-import { SdmContext } from "../context/SdmContext";
-import { toCommandListenerInvocation } from "../../api-helper/machine/handlerRegistrations";
-import { HandlerContext } from "@atomist/automation-client";
-import { successOn } from "@atomist/automation-client/action/ActionResult";
 
 /**
  * Function that can transform a project
  */
-export type CodeTransform<P = any> = (p: Project, sdmc: SdmContext & HandlerContext, params?: P) => Promise<Project | EditResult>;
+export type CodeTransform<P = any> = (p: Project, sdmc: CommandListenerInvocation & HandlerContext, params?: P) => Promise<Project | EditResult>;
 
 /**
  * One or many CodeTransforms
@@ -49,7 +42,7 @@ export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PA
 
 function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
     return async (p, ctx, params) => {
-        const ci = toCommandListenerInvocation(p, ctx, params) as SdmContext;
+        const ci = toCommandListenerInvocation(p, ctx, params);
         const r = await ct(p, {
             ...ci,
             ...ctx,

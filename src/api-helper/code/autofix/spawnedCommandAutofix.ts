@@ -18,7 +18,6 @@ import { PushTest } from "../../../api/mapping/PushTest";
 import {
     AutofixRegistration,
     AutofixRegistrationOptions,
-    toAutofixRegistration,
 } from "../../../api/registration/AutofixRegistration";
 import { localCommandsCodeTransform } from "../../command/editor/localCommandsCodeTransform";
 import { SpawnCommand } from "../../misc/spawned";
@@ -32,10 +31,10 @@ export function spawnedCommandAutofix(name: string,
                                       options: AutofixRegistrationOptions,
                                       command1: SpawnCommand,
                                       ...additionalCommands: SpawnCommand[]): AutofixRegistration {
-    return toAutofixRegistration({
+    return {
         name,
         transform: localCommandsCodeTransform([command1].concat(additionalCommands)),
         pushTest,
         options,
-    });
+    };
 }

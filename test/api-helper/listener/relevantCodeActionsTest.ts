@@ -22,30 +22,28 @@ import { relevantCodeActions } from "../../../src/api-helper/listener/relevantCo
 import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
 import {
     AutofixRegistration,
-    toAutofixRegistration,
 } from "../../../src/api/registration/AutofixRegistration";
 
-const SomePickyFix: AutofixRegistration = toAutofixRegistration({
-        name: "Some picky fix",
-        transform: async i => i,
-        pushTest: {
-            name: "has something",
-            mapping: async pi => !!(await pi.project.getFile("something.txt")),
-        },
+const SomePickyFix: AutofixRegistration = {
+    name: "Some picky fix",
+    transform: async i => i,
+    pushTest: {
+        name: "has something",
+        mapping: async pi => !!(await pi.project.getFile("something.txt")),
     },
-);
+};
 
 describe("relevantCodeActions", () => {
 
     it("should match action without push test", async () => {
         const pti: PushImpactListenerInvocation = null;
-        const autofixes: AutofixRegistration = toAutofixRegistration({
+        const autofixes: AutofixRegistration = {
             name: "License Fix",
             transform: async p => {
                 const license = await axios.get("https://www.apache.org/licenses/LICENSE-2.0.txt");
                 return p.addFile("LICENSE", license.data);
             },
-        });
+        };
         const relevant = await relevantCodeActions([autofixes], pti);
         assert.equal(relevant.length, 1);
     });

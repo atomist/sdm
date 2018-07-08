@@ -37,7 +37,6 @@ import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../listener/VerifiedDeploymentListener";
 import {
-    AutofixRegisterable,
     AutofixRegistration,
 } from "../registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
@@ -72,7 +71,7 @@ export interface ListenerRegistrationManager {
      * You probably mean to use addNewRepoWithCodeAction!
      * This responds to a repo creation, but there may be no
      * code in it.
-     * @param {RepoCreationListener} rcls
+     * @param {RepoCreationListener} rcl
      * @return {this}
      */
     addRepoCreationListener(rcl: RepoCreationListener): this;
@@ -109,7 +108,7 @@ export interface ListenerRegistrationManager {
      * Note: be sure that the transform checks and cannot cause
      * infinite recursion!!
      */
-    addAutofix(fix: AutofixRegisterable): this;
+    addAutofix(fix: AutofixRegistration): this;
 
     autofixRegistrations: AutofixRegistration[];
 
