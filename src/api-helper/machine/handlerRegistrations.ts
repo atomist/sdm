@@ -43,8 +43,8 @@ import {
     ProjectOperationRegistration,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
-import { editorCommand } from "../command/editor/editorCommand";
-import { generatorCommand } from "../command/generator/generatorCommand";
+import { editorCommand, isTransformParameters } from "../command/editor/editorCommand";
+import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
@@ -158,16 +158,23 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
     throw new Error(`Command '${c.name}' is invalid, as it does not specify a listener or createCommand function`);
 }
 
-export function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
-    // TODO will add this. Currently it doesn't work.
-    const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
+    let credentials; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+    let ids: RemoteRepoRef[];
+    if (isSeedDrivenGeneratorParameters(parameters)) {
+        credentials = parameters.target.credentials;
+        ids = [parameters.target.repoRef];
+    } else if (isTransformParameters(parameters)) {
+        credentials = parameters.targets.credentials;
+        ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
+    }
     // TODO do a look up for associated channels
-    const ids: RemoteRepoRef[] = undefined;
+    const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
     return {
         commandName: c.name,
         context,
         parameters,
-        addressChannels: (msg, opts) => context.messageClient.respond(msg, opts),
+        addressChannels,
         credentials,
         ids,
     };
