@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client";
 import { EditMode, isEditMode, isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
+import { Project } from "@atomist/automation-client/project/Project";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
 export const DryRunMessage = "[atomist-dry-run]";
@@ -44,7 +46,15 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
                 // No PR for now
                 const branch = `${ctr.name}-${new Date().getTime()}`;
                 const message = dryRunMessage(ctr.description || ctr.name);
-                return { branch, message };
+                return {
+                    branch,
+                    message,
+                    afterPersist: afterPersistFactory({
+                        message,
+                        title: message,
+                        body: message,
+                    }),
+                };
             }
         };
         return dryRunRegistration;
@@ -59,6 +69,7 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
 function dryRunOf(em: EditMode): EditMode {
     // Add dry run message suffix
     em.message = dryRunMessage(em.message);
+    em.afterPersist = afterPersistFactory(em);
     if (isPullRequest(em)) {
         // Don't let it raise a PR if it wanted to.
         // It will remain a valid BranchCommit if it was a PR
@@ -69,4 +80,11 @@ function dryRunOf(em: EditMode): EditMode {
 
 function dryRunMessage(oldMessage: string): string {
     return `Try to ${oldMessage}\n\n${DryRunMessage}`;
+}
+
+function afterPersistFactory(em: { message: string, title?: string, body?: string }): (p: Project, ctx: HandlerContext) => Promise<any> {
+    return async (p: Project, ctx: HandlerContext) => {
+        // TODO raise custom event here using info on edit mode
+        return undefined;
+    };
 }
