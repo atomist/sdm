@@ -15,11 +15,9 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { EditResult, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
-import { isProject, Project } from "@atomist/automation-client/project/Project";
-import { toCommandListenerInvocation } from "../../api-helper/machine/handlerRegistrations";
+import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
+import { Project } from "@atomist/automation-client/project/Project";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { chainTransforms } from "./CodeTransformRegistration";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
@@ -31,29 +29,6 @@ export type CodeTransform<P = any> = (p: Project, sdmc: CommandListenerInvocatio
  * One or many CodeTransforms
  */
 export type CodeTransformOrTransforms<PARAMS> = CodeTransform<PARAMS> | Array<CodeTransform<PARAMS>>;
-
-export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
-    if (Array.isArray(ctot)) {
-        return chainTransforms(...ctot.map(toProjectEditor));
-    } else {
-        return toProjectEditor(ctot);
-    }
-}
-
-function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
-    return async (p, ctx, params) => {
-        const ci = toCommandListenerInvocation(p, ctx, params);
-        const r = await ct(p, {
-            ...ci,
-            ...ctx,
-        }, params);
-        try {
-            return isProject(r) ? successfulEdit(r, undefined) : r;
-        } catch (e) {
-            return failedEdit(p, e);
-        }
-    };
-}
 
 /**
  * Superclass for all registrations of "project operations",

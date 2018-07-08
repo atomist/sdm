@@ -14,27 +14,21 @@
  * limitations under the License.
  */
 
-import {
-    logger,
-    Success,
-} from "@atomist/automation-client";
+import { logger, Success } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import {
-    ExecuteGoal,
-    GoalInvocation,
-} from "../../api/goal/GoalInvocation";
+import { ExecuteGoal, GoalInvocation } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { toScalarProjectEditor } from "../../api/registration/ProjectOperationRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { confirmEditedness } from "../command/editor/confirmEditedness";
+import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 

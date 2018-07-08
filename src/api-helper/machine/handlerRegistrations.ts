@@ -21,12 +21,12 @@ import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
+import { chainTransforms, CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { CommandRegistration } from "../../api/registration/CommandRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
@@ -39,8 +39,8 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
+    CodeTransform, CodeTransformOrTransforms,
     ProjectOperationRegistration,
-    toScalarProjectEditor,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand } from "../command/editor/editorCommand";
@@ -231,4 +231,27 @@ function toParametersListing(p: ParametersDefinition): ParametersListing {
         }
     }
     return builder;
+}
+
+export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
+    if (Array.isArray(ctot)) {
+        return chainTransforms(...ctot.map(toProjectEditor));
+    } else {
+        return toProjectEditor(ctot);
+    }
+}
+
+function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
+    return async (p, ctx, params) => {
+        const ci = toCommandListenerInvocation(p, ctx, params);
+        const r = await ct(p, {
+            ...ci,
+            ...ctx,
+        }, params);
+        try {
+            return isProject(r) ? successfulEdit(r, undefined) : r;
+        } catch (e) {
+            return failedEdit(p, e);
+        }
+    };
 }
