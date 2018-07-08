@@ -102,7 +102,7 @@ function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
 
 export function isSeedDrivenGeneratorParameters(p: any): p is SeedDrivenGeneratorParameters {
     const maybe = p as SeedDrivenGeneratorParameters;
-    return !!maybe.target;
+    return !!maybe && !!maybe.target;
 }
 
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,

@@ -105,7 +105,7 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
 }
 
 export function isTransformParameters(p: any): p is EditorOrReviewerParameters {
-    return !!(p as EditorOrReviewerParameters).targets;
+    return !!p && !!(p as EditorOrReviewerParameters).targets;
 }
 
 function validate(targets: FallbackParams) {
