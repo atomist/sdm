@@ -40,6 +40,7 @@ export function fakeContext(teamId: string = "T123"): HandlerContext & Automatio
             invocationId: "inv-id",
             ts: new Date().getTime(),
             correlationId,
+            messageClient: new DevNullMessageClient(),
         },
         trigger: {} as CommandIncoming,
     };
