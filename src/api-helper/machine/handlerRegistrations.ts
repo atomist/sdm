@@ -88,7 +88,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 ci.parameters, repoFinder, cir.repoFilter,
                 repoLoader(cir.parameters));
             if (!!cir.react) {
-                await cir.react(results);
+                await cir.react(results, ci);
             } else {
                 logger.info("No react function to react to results of code inspection '%s'", cir.name);
             }
