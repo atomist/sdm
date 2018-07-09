@@ -22,6 +22,7 @@ import { CommandDetails } from "@atomist/automation-client/operations/CommandDet
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
 import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
@@ -51,7 +52,6 @@ import { editorCommand, isTransformParameters, toEditorOrReviewerParametersMaker
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
-import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
