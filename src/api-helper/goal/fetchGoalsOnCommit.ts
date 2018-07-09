@@ -65,7 +65,7 @@ export async function fetchCommitForSdmGoal(ctx: HandlerContext,
 export async function fetchGoalsForCommit(ctx: HandlerContext,
                                           id: RemoteRepoRef,
                                           providerId: string,
-                                          goalSetId?: string): Promise<SdmGoalsForCommit.SdmGoal[]> {
+                                          goalSetId?: string): Promise<SdmGoalEvent[]> {
 
     const result: SdmGoalsForCommit.SdmGoal[] = [];
     const size = 50;
@@ -112,7 +112,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
         });
     }
 
-    return goals;
+    return goals as SdmGoalEvent[];
 }
 
 export function sumSdmGoalEvents(some: SdmGoalEvent[]): SdmGoalEvent[] {
