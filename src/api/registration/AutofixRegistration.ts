@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CodeTransformOrTransforms } from "./ProjectOperationRegistration";
+import { CodeTransformOrTransforms } from "./CodeTransform";
 import { SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 

@@ -26,6 +26,7 @@ export class Goals {
 
     public readonly goals: Goal[];
 
+    // tslint:disable-next-line:no-shadowed-variable
     constructor(public name: string, ...goals: Goal[]) {
         this.goals = goals;
     }

@@ -22,11 +22,13 @@ import { CommandDetails } from "@atomist/automation-client/operations/CommandDet
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
-import { chainTransforms, CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
+import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
+import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { CommandRegistration } from "../../api/registration/CommandRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
@@ -39,7 +41,6 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
-    CodeTransform, CodeTransformOrTransforms,
     ProjectOperationRegistration,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
@@ -240,7 +241,7 @@ function toParametersListing(p: ParametersDefinition): ParametersListing {
 
 export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
     if (Array.isArray(ctot)) {
-        return chainTransforms(...ctot.map(toProjectEditor));
+        return chainEditors(...ctot.map(toProjectEditor));
     } else {
         return toProjectEditor(ctot);
     }

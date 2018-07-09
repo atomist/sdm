@@ -20,8 +20,6 @@ import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
-export { chainEditors as chainTransforms } from "@atomist/automation-client/operations/edit/projectEditorOps";
-
 /**
  * @deprecated use CodeTransformRegistration
  */
