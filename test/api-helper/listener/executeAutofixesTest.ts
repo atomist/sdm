@@ -23,7 +23,7 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
 import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
-import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
+import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
@@ -93,7 +93,7 @@ describe("executeAutofixes", () => {
         const pl = new SingleProjectLoader({ id } as any);
         const r = await executeAutofixes(pl,
             [],
-            FakeRepoRefResolver)(fakeRunWithLogContext(id));
+            FakeRepoRefResolver)(fakeGoalInvocation(id));
         assert.equal(r.code, 0);
     });
 
@@ -105,7 +105,7 @@ describe("executeAutofixes", () => {
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes(pl,
             [AddThingAutofix],
-            FakeRepoRefResolver)(fakeRunWithLogContext(id));
+            FakeRepoRefResolver)(fakeGoalInvocation(id));
         assert.equal(r.code, 0);
         assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
@@ -120,7 +120,7 @@ describe("executeAutofixes", () => {
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes(pl,
             [AddThingAutofix],
-            FakeRepoRefResolver)(fakeRunWithLogContext(id));
+            FakeRepoRefResolver)(fakeGoalInvocation(id));
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");

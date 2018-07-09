@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    logger,
-} from "@atomist/automation-client";
-import * as stringify from "json-stringify-safe";
+import { HandlerContext } from "@atomist/automation-client";
+import { Destination, MessageClient, MessageOptions, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
+import { SlackMessage } from "@atomist/slack-messages";
 
 /**
  * Convenient function to allow creating fake contexts.
@@ -29,17 +27,27 @@ import * as stringify from "json-stringify-safe";
 export function fakeContext(teamId: string = "T123"): HandlerContext {
     return {
         teamId,
-        messageClient: {
-            respond(m) {
-                logger.info("respond > " + m);
-                return Promise.resolve({});
-            },
-            send(event) {
-                logger.debug("send > " + stringify(event));
-                return Promise.resolve({});
-            },
-        },
+        messageClient: new DevNullMessageClient(),
         correlationId: "foo",
-        context: {name: "fakeContextName", version: "v0.0", operation: "fakeOperation" },
-    } as any as HandlerContext;
+    };
+}
+
+class DevNullMessageClient implements MessageClient, SlackMessageClient {
+
+    public addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<any> {
+        return undefined;
+    }
+
+    public addressUsers(msg: string | SlackMessage, users: string | string[], options?: MessageOptions): Promise<any> {
+        return undefined;
+    }
+
+    public respond(msg: any, options?: MessageOptions): Promise<any> {
+        return undefined;
+    }
+
+    public send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<any> {
+        return undefined;
+    }
+
 }
