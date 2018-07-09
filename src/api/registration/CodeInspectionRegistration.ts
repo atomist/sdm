@@ -20,6 +20,7 @@ import { RepoFilter } from "@atomist/automation-client/operations/common/repoFil
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { CommandRegistration } from "./CommandRegistration";
 
@@ -47,7 +48,7 @@ export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
     /**
      * Allow customization of the repositories that an inspection targets.
      */
-    targets?: FallbackParams;
+    targets?: Maker<FallbackParams>;
 
     repoFilter?: RepoFilter;
 

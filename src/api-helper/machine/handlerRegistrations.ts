@@ -27,6 +27,7 @@ import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoa
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
 import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
@@ -67,7 +68,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
         e.name,
         e.paramsMaker,
         e,
-        e.targets || toMachineOptions(sdm).targets,
+        e.targets || toMachineOptions(sdm).targets || GitHubFallbackReposParameters,
     );
 }
 
@@ -76,7 +77,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
     addParametersDefinedInBuilder(cir);
     cir.paramsMaker = toEditorOrReviewerParametersMaker(
         cir.paramsMaker || NoParameters,
-        cir.targets || new GitHubFallbackReposParameters());
+        cir.targets || GitHubFallbackReposParameters);
     const asCommand: CommandHandlerRegistration = {
         ...cir as CommandRegistration<any>,
         listener: async ci => {
@@ -141,7 +142,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
         toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
-        e.fallbackTarget,
+        e.fallbackTarget || GitHubRepoCreationParameters,
         e.startingPoint,
         e,
     );

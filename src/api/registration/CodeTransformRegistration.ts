@@ -17,6 +17,7 @@
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
@@ -35,7 +36,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
     /**
      * Allow customization of the repositories a transform targets.
      */
-    targets?: FallbackParams;
+    targets?: Maker<FallbackParams>;
 
 }
 

@@ -14,42 +14,24 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandlerContext,
-    RedirectResult,
-} from "@atomist/automation-client";
-import {
-    commandHandlerFrom,
-    OnCommand,
-} from "@atomist/automation-client/onCommand";
+import { HandleCommand, HandlerContext, RedirectResult } from "@atomist/automation-client";
+import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import {
-    EditorFactory,
-    GeneratorCommandDetails,
-} from "@atomist/automation-client/operations/generate/generatorToCommand";
+import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
-import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
-import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
 import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import {
-    isProject,
-    Project,
-} from "@atomist/automation-client/project/Project";
+import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
-import {
-    MachineOrMachineOptions,
-    toMachineOptions,
-} from "../../machine/toMachineOptions";
+import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 
 /**
@@ -65,7 +47,7 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
                                     editorFactory: EditorFactory<P>,
                                     name: string,
                                     paramsMaker: Maker<P>,
-                                    fallbackTarget: NewRepoCreationParameters,
+                                    fallbackTarget: Maker<RepoCreationParameters>,
                                     startingPoint: StartingPoint,
                                     details: Partial<GeneratorCommandDetails<any>> = {}): HandleCommand {
     const detailsToUse: GeneratorCommandDetails<any> = {
@@ -75,7 +57,7 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
     return commandHandlerFrom(handleGenerate(editorFactory, detailsToUse, startingPoint),
         toGeneratorParametersMaker<P>(
             paramsMaker,
-            fallbackTarget || new GitHubRepoCreationParameters()),
+            toFactory(fallbackTarget)()),
         name,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
 }

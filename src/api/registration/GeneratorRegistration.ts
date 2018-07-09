@@ -16,9 +16,10 @@
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
-import { NewRepoCreationParameters } from "@atomist/automation-client/operations/generate/NewRepoCreationParameters";
+import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
@@ -45,5 +46,5 @@ export interface GeneratorRegistration<PARAMS = NoParameters>
      * Allow customization of the target for this repo,
      * e.g. to target a different source control system.
      */
-    fallbackTarget?: NewRepoCreationParameters;
+    fallbackTarget?: Maker<RepoCreationParameters>;
 }
