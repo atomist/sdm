@@ -108,7 +108,7 @@ export interface ListenerRegistrationManager {
      * Note: be sure that the transform checks and cannot cause
      * infinite recursion!!
      */
-    addAutofix(fix: AutofixRegistration): this;
+    addAutofix<P>(fix: AutofixRegistration<P>): this;
 
     autofixRegistrations: AutofixRegistration[];
 

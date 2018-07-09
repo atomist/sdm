@@ -71,7 +71,7 @@ export interface HandlerContextMethods {
  * New code should use (Project, Command ListenerInvocation).
  */
 export type CodeTransform<P = any> = (p: Project,
-                                      sdmc: CommandListenerInvocation & HandlerContextMethods,
+                                      sdmc: CommandListenerInvocation<P> & HandlerContextMethods,
                                       params?: P) => Promise<Project | EditResult>;
 
 /**

@@ -183,7 +183,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
      * Note: be sure that these editors check and don't cause
      * infinite recursion!!
      */
-    public addAutofix(fix: AutofixRegistration): this {
+    public addAutofix<P>(fix: AutofixRegistration<P>): this {
         this.autofixRegistrations.push(fix);
         return this;
     }
