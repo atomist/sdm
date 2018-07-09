@@ -19,7 +19,7 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ParametersDefinition } from "./ParametersDefinition";
 
 /**
- * Type for registering a project edit, which can encapsulate changes
+ * Type for registering a project transform, which can make changes
  * to projects
  */
 export interface CommandRegistration<PARAMS> extends Partial<CommandDetails> {

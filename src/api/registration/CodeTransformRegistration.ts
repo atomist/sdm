@@ -17,7 +17,6 @@
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
@@ -32,13 +31,6 @@ export type EditorRegistration<PARAMS = NoParameters> = CodeTransformRegistratio
 export interface CodeTransformRegistration<PARAMS = NoParameters>
     extends Partial<EditorCommandDetails>,
         ProjectOperationRegistration<PARAMS> {
-
-    /**
-     * Create the parameters required by this editor.
-     * Editors do not require parameters.
-     * Empty parameters will be returned by default.
-     */
-    paramsMaker?: Maker<PARAMS>;
 
     /**
      * Allow customization of the repositories an editor targets.
