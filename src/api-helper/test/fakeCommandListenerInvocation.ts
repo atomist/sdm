@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { AddressNoChannels } from "../../api/context/addressChannels";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { fakeContext } from "./fakeContext";

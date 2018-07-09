@@ -32,7 +32,7 @@ export function fakePush(project?: Project, pli: Partial<PushListenerInvocation>
         project: project as GitProject,
         context: fakeContext(),
         addressChannels: AddressNoChannels,
-        credentials: { "fake-token"},
+        credentials: { token: "fake-token" },
         ...pli,
     };
 }
