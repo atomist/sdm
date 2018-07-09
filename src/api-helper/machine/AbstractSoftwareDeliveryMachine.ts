@@ -43,6 +43,7 @@ import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
+import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
@@ -177,6 +178,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {
         this.registrationManager.addCodeTransformCommand<P>(ed);
+        return this;
+    }
+
+    public addCodeInspectionCommand<R, P>(cir: CodeInspectionRegistration<R, P>): this {
+        this.registrationManager.addCodeInspectionCommand<R, P>(cir);
         return this;
     }
 

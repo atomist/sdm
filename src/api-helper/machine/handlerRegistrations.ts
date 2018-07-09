@@ -20,13 +20,19 @@ import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
+import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
+import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
 import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
-import { isProject } from "@atomist/automation-client/project/Project";
+import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
+import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
+import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -44,11 +50,13 @@ import {
     ProjectOperationRegistration,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
-import { editorCommand, isTransformParameters } from "../command/editor/editorCommand";
+import { editorCommand, isTransformParameters, toEditorOrReviewerParametersMaker } from "../command/editor/editorCommand";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
+import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
+export const InspectionTag = "inspection";
 export const TransformTag = "transform";
 
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
@@ -60,8 +68,46 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
         e.name,
         e.paramsMaker,
         e,
-        e.targets || toMachineOptions(sdm).targets,
+        e.targets || toMachineOptions(sdm).targets || GitHubFallbackReposParameters,
     );
+}
+
+export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
+    tagWith(cir, InspectionTag);
+    addParametersDefinedInBuilder(cir);
+    cir.paramsMaker = toEditorOrReviewerParametersMaker(
+        cir.paramsMaker || NoParameters,
+        cir.targets || GitHubFallbackReposParameters);
+    const asCommand: CommandHandlerRegistration = {
+        ...cir as CommandRegistration<any>,
+        listener: async ci => {
+            const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
+                return { repoId: p.id, result: await cir.inspection(p, ci) };
+            };
+            const repoFinder: RepoFinder = !!ci.parameters.targets.repoRef ?
+                () => Promise.resolve([ci.parameters.targets.repoRef]) :
+                cir.repoFinder || toMachineOptions(sdm).repoFinder;
+            const repoLoader: RepoLoader = !!cir.repoLoader ?
+                cir.repoLoader(ci.parameters) :
+                projectLoaderRepoLoader(
+                    toMachineOptions(sdm).projectLoader,
+                    ci.parameters.targets.credentials);
+            const results = await doWithAllRepos<InspectionResult<R>, any>(
+                ci.context,
+                ci.credentials,
+                action,
+                ci.parameters,
+                repoFinder,
+                cir.repoFilter,
+                repoLoader);
+            if (!!cir.react) {
+                await cir.react(results, ci);
+            } else {
+                logger.info("No react function to react to results of code inspection '%s'", cir.name);
+            }
+        },
+    };
+    return commandHandlerRegistrationToCommand(sdm, asCommand);
 }
 
 /**
@@ -96,7 +142,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
         toCodeTransformFunction(e),
         e.name,
         e.paramsMaker,
-        e.fallbackTarget,
+        e.fallbackTarget || GitHubRepoCreationParameters,
         e.startingPoint,
         e,
     );

@@ -32,7 +32,7 @@ import { fakeContext } from "./fakeContext";
  * @param {RemoteRepoRef} id
  * @return {GoalInvocation}
  */
-export function fakeRunWithLogContext(id: RemoteRepoRef): GoalInvocation {
+export function fakeGoalInvocation(id: RemoteRepoRef): GoalInvocation {
     return {
         credentials: { token: "foobar" },
         context: fakeContext("T1111"),

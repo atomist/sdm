@@ -21,6 +21,7 @@ import {
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
@@ -74,7 +75,7 @@ export interface SoftwareDeliveryMachineOptions {
      * Allow customization of editor targeting at per-SDM level.
      * If set, can still be overridden by individual editor registrations.
      */
-    targets?: FallbackParams;
+    targets?: Maker<FallbackParams>;
 
 }
 

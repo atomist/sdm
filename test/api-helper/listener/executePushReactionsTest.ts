@@ -20,7 +20,7 @@ import { TruePushTest } from "../../api/mapping/support/pushTestUtilsTest";
 
 import * as assert from "power-assert";
 import { executePushReactions } from "../../../src/api-helper/listener/executePushReactions";
-import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
+import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { PushReactionRegistration, PushReactionResponse } from "../../../src/api/registration/PushReactionRegistration";
@@ -45,7 +45,7 @@ describe("executePushReactions", () => {
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
         const ge = executePushReactions(new SingleProjectLoader(p), [react(invocations, true)]);
-        const r = await ge(fakeRunWithLogContext(id));
+        const r = await ge(fakeGoalInvocation(id));
         assert.equal(invocations.length, 1);
         assert(!r.requireApproval);
         assert.equal(r.code, 1);
@@ -56,7 +56,7 @@ describe("executePushReactions", () => {
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
         const ge = executePushReactions(new SingleProjectLoader(p), [react(invocations, false)]);
-        const r = await ge(fakeRunWithLogContext(id));
+        const r = await ge(fakeGoalInvocation(id));
         assert.equal(invocations.length, 1);
         assert.equal(r.code, 0);
         assert(!r.requireApproval);

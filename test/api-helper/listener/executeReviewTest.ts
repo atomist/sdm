@@ -26,7 +26,7 @@ import { TruePushTest } from "../../api/mapping/support/pushTestUtilsTest";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import * as assert from "power-assert";
 import { executeReview } from "../../../src/api-helper/listener/executeReview";
-import { fakeRunWithLogContext } from "../../../src/api-helper/test/fakeRunWithLogContext";
+import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { PushReactionResponse } from "../../../src/api/registration/PushReactionRegistration";
 
@@ -87,7 +87,7 @@ describe("executeReview", () => {
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
-        const r = await ge(fakeRunWithLogContext(id));
+        const r = await ge(fakeGoalInvocation(id));
         assert.equal(r.code, 0);
         assert(!r.requireApproval);
         assert.equal(reviewEvents.length, 1);
@@ -100,7 +100,7 @@ describe("executeReview", () => {
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
-        const rwlc = fakeRunWithLogContext(id);
+        const rwlc = fakeGoalInvocation(id);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
@@ -115,7 +115,7 @@ describe("executeReview", () => {
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithoutApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
-        const rwlc = fakeRunWithLogContext(id);
+        const rwlc = fakeGoalInvocation(id);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
@@ -130,7 +130,7 @@ describe("executeReview", () => {
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
         const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne], [l]);
-        const rwlc = fakeRunWithLogContext(id);
+        const rwlc = fakeGoalInvocation(id);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 2);

@@ -18,7 +18,6 @@ import { HandleCommand } from "@atomist/automation-client";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
-import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import {
     EditorCommandDetails,
@@ -60,8 +59,7 @@ export function editorCommand<PARAMS = NoParameters>(
     name: string,
     paramsMaker: Maker<PARAMS> = NoParameters as Maker<PARAMS>,
     details: Partial<EditorCommandDetails> = {},
-    targets: FallbackParams =
-        new GitHubFallbackReposParameters()): HandleCommand<EditOneOrAllParameters> {
+    targets: Maker<FallbackParams>): HandleCommand<EditOneOrAllParameters> {
     const description = details.description || name;
     const detailsToUse: EditorCommandDetails = {
         description,
@@ -89,16 +87,17 @@ export function editorCommand<PARAMS = NoParameters>(
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
 export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                                          targets: FallbackParams): Maker<EditorOrReviewerParameters & PARAMS> {
+                                                          targets: Maker<FallbackParams>): Maker<EditorOrReviewerParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isTransformParameters(sampleParams) ?
         paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
             const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-            allParms.targets = targets;
+            const targetsInstance: FallbackParams = toFactory(targets)();
+            allParms.targets = targetsInstance;
             allParms.bindAndValidate = () => {
-                validate(targets);
+                validate(targetsInstance);
             };
             return allParms;
         };
