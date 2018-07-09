@@ -33,7 +33,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
         ProjectOperationRegistration<PARAMS> {
 
     /**
-     * Allow customization of the repositories an editor targets.
+     * Allow customization of the repositories a transform targets.
      */
     targets?: FallbackParams;
 

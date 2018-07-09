@@ -15,6 +15,7 @@
  */
 
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { CodeInspectionRegistration } from "../registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
 import { GeneratorRegistration } from "../registration/GeneratorRegistration";
@@ -47,7 +48,13 @@ export interface CommandRegistrationManager {
      * Add a code transformation to this machine
      * @return {this}
      */
-    addCodeTransformCommand<PARAMS>(ed: CodeTransformRegistration<PARAMS>): this;
+    addCodeTransformCommand<PARAMS>(ctr: CodeTransformRegistration<PARAMS>): this;
+
+    /**
+     * Add a code transformation to this machine
+     * @return {this}
+     */
+    addCodeInspectionCommand<R, PARAMS>(cir: CodeInspectionRegistration<R, PARAMS>): this;
 
     /**
      * @deprecated use add CodeTransformCommand
