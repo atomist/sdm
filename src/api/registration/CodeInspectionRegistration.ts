@@ -39,6 +39,10 @@ export interface InspectionResult<R> {
     result: R;
 }
 
+/**
+ * Register a CodeInspection that can run against any number of projects.
+ * Include an optional react method that can react to review results.
+ */
 export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
     extends Partial<CommandDetails>,
         CommandRegistration<PARAMS> {
