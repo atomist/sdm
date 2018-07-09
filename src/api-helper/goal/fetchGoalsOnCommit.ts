@@ -23,7 +23,6 @@ import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphC
 import * as stringify from "json-stringify-safe";
 import * as _ from "lodash";
 import { Goal } from "../../api/goal/Goal";
-import { SdmGoal } from "../../api/goal/SdmGoal";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     CommitForSdmGoal,
@@ -35,8 +34,8 @@ import {
 import { goalKeyString } from "./sdmGoal";
 import { goalCorrespondsToSdmGoal } from "./storeGoals";
 
-export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoal> {
-    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId) as SdmGoal[];
+export async function findSdmGoalOnCommit(ctx: HandlerContext, id: RemoteRepoRef, providerId: string, goal: Goal): Promise<SdmGoalEvent> {
+    const sdmGoals = await fetchGoalsForCommit(ctx, id, providerId) as SdmGoalEvent[];
     const matches = sdmGoals.filter(g => goalCorrespondsToSdmGoal(goal, g));
     if (matches && matches.length > 1) {
         logger.warn("More than one match found for %s/%s; they are %j", goal.environment, goal.name, matches);
@@ -92,7 +91,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
     }
 
     // only maintain latest version of SdmGoals from the current goal set
-    const goals: SdmGoalsForCommit.SdmGoal[] = sumSdmGoalEvents((result as SdmGoal[]));
+    const goals: SdmGoalsForCommit.SdmGoal[] = sumSdmGoalEvents((result as SdmGoalEvent[]));
 
     // query for the push and add it in
     if (goals.length > 0) {
@@ -108,7 +107,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
         });
         return goals.map(g => {
             const goal = (_.cloneDeep(g) as SdmGoalEvent);
-            goal.push = push.Push[0];
+            goal.push = push.Commit[0].pushes[0];
             return goal;
         });
     }
@@ -116,7 +115,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
     return goals;
 }
 
-export function sumSdmGoalEvents(some: SdmGoal[]): SdmGoal[] {
+export function sumSdmGoalEvents(some: SdmGoalEvent[]): SdmGoalEvent[] {
     // For some reason this won't compile with the obvious fix
     // tslint:disable-next-line:no-unnecessary-callback-wrapper
     const byKey = _.groupBy(some, sg => goalKeyString(sg));
@@ -124,7 +123,7 @@ export function sumSdmGoalEvents(some: SdmGoal[]): SdmGoal[] {
     return summedGoals;
 }
 
-function sumEventsForOneSdmGoal(events: SdmGoal[]): SdmGoal {
+function sumEventsForOneSdmGoal(events: SdmGoalEvent[]): SdmGoalEvent {
     if (events.length === 1) {
         return events[0];
     }
