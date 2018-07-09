@@ -17,6 +17,7 @@
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
+import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
@@ -28,6 +29,14 @@ import { CommandRegistration } from "./CommandRegistration";
  */
 export type CodeInspection<R, P = any> = (p: Project,
                                           sdmc: CommandListenerInvocation<P>) => Promise<R>;
+
+/**
+ * Result of inspecting a single project
+ */
+export interface InspectionResult<R> {
+    repoId: RepoRef;
+    result: R;
+}
 
 export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
     extends Partial<CommandDetails>,
@@ -48,6 +57,6 @@ export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
      * @param ci context
      * @return {Promise<any>}
      */
-    react?(results: R[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    react?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 
 }
