@@ -10,6 +10,8 @@ subscription OnTag {
       timestamp
     }
     commit {
+      sha
+      message
       repo {
         ...CoreRepoFieldsAndChannels
       }
