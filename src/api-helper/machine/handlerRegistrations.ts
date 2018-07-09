@@ -21,6 +21,7 @@ import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
+import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
@@ -73,7 +74,6 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
     addParametersDefinedInBuilder(cir);
-    const repoFinder = cir.repoFinder || toMachineOptions(sdm).repoFinder;
     const asCommand: CommandHandlerRegistration = {
         ...cir as CommandRegistration<any>,
         paramsMaker: toEditorOrReviewerParametersMaker(
@@ -83,9 +83,14 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };
-            const repoLoader: RepoLoader = cir.repoLoader(ci.parameters) || projectLoaderRepoLoader(
-                toMachineOptions(sdm).projectLoader,
-                ci.parameters.targets.credentials);
+            const repoFinder: RepoFinder = !!cir.targets.repoRef ?
+                () => Promise.resolve([cir.targets.repoRef]) :
+                cir.repoFinder || toMachineOptions(sdm).repoFinder;
+            const repoLoader: RepoLoader = !!cir.repoLoader ?
+                cir.repoLoader(ci.parameters) :
+                projectLoaderRepoLoader(
+                    toMachineOptions(sdm).projectLoader,
+                    ci.parameters.targets.credentials);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
