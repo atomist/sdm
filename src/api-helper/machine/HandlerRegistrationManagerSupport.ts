@@ -18,7 +18,7 @@ import {
     HandleCommand,
     HandleEvent,
 } from "@atomist/automation-client";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandRegistrationManager } from "../../api/machine/CommandRegistrationManager";
 import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
@@ -60,11 +60,7 @@ export class HandlerRegistrationManagerSupport
         return this;
     }
 
-    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
-        return this.addGeneratorCommand(gen);
-    }
-
-    public addGeneratorCommand<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+    public addGeneratorCommand<P = NoParameters>(gen: GeneratorRegistration<P>): this {
         const command = generatorRegistrationToCommand(this.sdm, gen);
         this.commandHandlers.push(command);
         return this;
@@ -76,7 +72,7 @@ export class HandlerRegistrationManagerSupport
         return this;
     }
 
-    public addCodeInspectionCommand<R, P = any>(cir: CodeInspectionRegistration<R, P>): this {
+    public addCodeInspectionCommand<R, P = NoParameters>(cir: CodeInspectionRegistration<R, P>): this {
         const commands = [codeInspectionRegistrationToCommand(this.sdm, cir)];
         this.commandHandlers = this.commandHandlers.concat(commands);
         return this;

@@ -1,4 +1,10 @@
-query PushForSdmGoal($owner: String!, $repo: String!, $providerId: String!, $branch: String!, $sha: String!) {
+query PushForSdmGoal(
+  $owner: String!
+  $repo: String!
+  $providerId: String!
+  $branch: String!
+  $sha: String!
+) {
   Commit(sha: $sha) {
     pushes(branch: $branch) {
       id
@@ -10,7 +16,7 @@ query PushForSdmGoal($owner: String!, $repo: String!, $providerId: String!, $bra
         committer {
           login
           person {
-            ... PersonFields
+            ...PersonFields
           }
         }
       }
@@ -20,7 +26,7 @@ query PushForSdmGoal($owner: String!, $repo: String!, $providerId: String!, $bra
         committer {
           login
           person {
-            ... PersonFields
+            ...PersonFields
           }
         }
       }
@@ -58,4 +64,3 @@ query PushForSdmGoal($owner: String!, $repo: String!, $providerId: String!, $bra
     }
   }
 }
-

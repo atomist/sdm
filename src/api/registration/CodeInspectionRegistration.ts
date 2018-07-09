@@ -28,8 +28,8 @@ import { CommandRegistration } from "./CommandRegistration";
  * Function that can run against a project without mutating it to
  * compute a value.
  */
-export type CodeInspection<R, P = any> = (p: Project,
-                                          sdmc: CommandListenerInvocation<P>) => Promise<R>;
+export type CodeInspection<R, P = NoParameters> = (p: Project,
+                                                   sdmc: CommandListenerInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project

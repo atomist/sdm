@@ -19,7 +19,7 @@ import {
     HandleEvent,
     logger,
 } from "@atomist/automation-client";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
@@ -167,13 +167,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
-    public addGeneratorCommand<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
+    public addGeneratorCommand<P = NoParameters>(gen: GeneratorRegistration<P>): this {
         this.registrationManager.addGeneratorCommand(gen);
         return this;
-    }
-
-    public addGenerator<P extends SeedDrivenGeneratorParameters>(gen: GeneratorRegistration<P>): this {
-        return this.addGeneratorCommand(gen);
     }
 
     public addCodeTransformCommand<P>(ed: CodeTransformRegistration<P>): this {

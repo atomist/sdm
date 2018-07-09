@@ -20,6 +20,7 @@ import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
@@ -84,14 +85,14 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };
-            const repoFinder: RepoFinder = !!ci.parameters.targets.repoRef ?
-                () => Promise.resolve([ci.parameters.targets.repoRef]) :
+            const repoFinder: RepoFinder = !!(ci.parameters as EditorOrReviewerParameters).targets.repoRef ?
+                () => Promise.resolve([(ci.parameters as EditorOrReviewerParameters).targets.repoRef]) :
                 cir.repoFinder || toMachineOptions(sdm).repoFinder;
             const repoLoader: RepoLoader = !!cir.repoLoader ?
                 cir.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
                     toMachineOptions(sdm).projectLoader,
-                    ci.parameters.targets.credentials);
+                    (ci.parameters as EditorOrReviewerParameters).targets.credentials);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
@@ -148,8 +149,8 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
     );
 }
 
-export function commandHandlerRegistrationToCommand<P = any>(sdm: MachineOrMachineOptions,
-                                                             c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
+export function commandHandlerRegistrationToCommand<P = NoParameters>(sdm: MachineOrMachineOptions,
+                                                                      c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
     return () => createCommand(
         sdm,
         toOnCommand(c),
@@ -180,7 +181,7 @@ function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAM
     throw new Error(`Registration '${por.name}' is invalid, as it does not specify a transform or createTransform function`);
 }
 
-function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
+function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
     if (!!c.createCommand) {
         return c.createCommand;
     }
@@ -302,7 +303,7 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         const r = await ct(p, {
                 ...ci,
                 ...ctx,
-            } as CommandListenerInvocation & HandlerContext,
+            } as CommandListenerInvocation<P> & HandlerContext,
             params);
         try {
             return isProject(r) ? successfulEdit(r, undefined) : r;

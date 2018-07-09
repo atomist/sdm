@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CodeTransformOrTransforms } from "./CodeTransform";
 import { SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
@@ -27,7 +28,7 @@ export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
  * Register an autofix. This is a transform run on every commit that will make a
  * commit if necessary to the same branch.
  */
-export interface AutofixRegistration<P = any> extends PushSelector {
+export interface AutofixRegistration<P = NoParameters> extends PushSelector {
 
     transform: CodeTransformOrTransforms<P>;
 

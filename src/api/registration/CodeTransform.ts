@@ -18,6 +18,7 @@ import { HandlerLifecycle } from "@atomist/automation-client/HandlerContext";
 import { Source } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Project } from "@atomist/automation-client/project/Project";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
 import { MessageClient, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
 import { CommandListenerInvocation } from "../listener/CommandListener";
@@ -70,9 +71,9 @@ export interface HandlerContextMethods {
  * parameter, and third parameter are only for backward compatibility.
  * New code should use (Project, Command ListenerInvocation).
  */
-export type CodeTransform<P = any> = (p: Project,
-                                      sdmc: CommandListenerInvocation<P> & HandlerContextMethods,
-                                      params?: P) => Promise<Project | EditResult>;
+export type CodeTransform<P = NoParameters> = (p: Project,
+                                               sdmc: CommandListenerInvocation<P> & HandlerContextMethods,
+                                               params?: P) => Promise<Project | EditResult>;
 
 /**
  * One or many CodeTransforms
