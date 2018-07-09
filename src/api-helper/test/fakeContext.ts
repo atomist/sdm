@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
+import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
+import { CommandIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { Destination, MessageClient, MessageOptions, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
@@ -24,30 +25,42 @@ import { SlackMessage } from "@atomist/slack-messages";
  * @param {string} teamId
  * @return {any}
  */
-export function fakeContext(teamId: string = "T123"): HandlerContext {
+export function fakeContext(teamId: string = "T123"): HandlerContext & AutomationContextAware {
+    const correlationId = "foo";
     return {
         teamId,
         messageClient: new DevNullMessageClient(),
-        correlationId: "foo",
+        correlationId,
+        context: {
+            name: "test-context",
+            teamId,
+            teamName: teamId,
+            operation: "operation",
+            version: "0.1.0",
+            invocationId: "inv-id",
+            ts: new Date().getTime(),
+            correlationId,
+        },
+        trigger: {} as CommandIncoming,
     };
 }
 
 class DevNullMessageClient implements MessageClient, SlackMessageClient {
 
-    public addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<any> {
-        return undefined;
+    public async addressChannels(msg: string | SlackMessage, channels: string | string[], options?: MessageOptions): Promise<any> {
+        return {};
     }
 
-    public addressUsers(msg: string | SlackMessage, users: string | string[], options?: MessageOptions): Promise<any> {
-        return undefined;
+    public async addressUsers(msg: string | SlackMessage, users: string | string[], options?: MessageOptions): Promise<any> {
+        return {};
     }
 
-    public respond(msg: any, options?: MessageOptions): Promise<any> {
-        return undefined;
+    public async respond(msg: any, options?: MessageOptions): Promise<any> {
+        return {};
     }
 
-    public send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<any> {
-        return undefined;
+    public async send(msg: any, destinations: Destination | Destination[], options?: MessageOptions): Promise<any> {
+        return {};
     }
 
 }
