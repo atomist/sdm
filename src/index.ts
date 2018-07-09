@@ -74,6 +74,7 @@ export * from "./api/mapping/support/predicateUtils";
 export * from "./api/mapping/support/projectPredicateUtils";
 export * from "./api/mapping/support/pushTestUtils";
 export * from "./api/registration/AutofixRegistration";
+export * from "./api/registration/CodeInspectionRegistration";
 export * from "./api/registration/CodeTransform";
 export * from "./api/registration/CodeTransformRegistration";
 export * from "./api/registration/CommandHandlerRegistration";
