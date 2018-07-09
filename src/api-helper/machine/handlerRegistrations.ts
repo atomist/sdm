@@ -130,7 +130,7 @@ function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAM
     if (!!por.createTransform) {
         return p => toScalarProjectEditor(por.createTransform(p));
     }
-    throw new Error(`Registration '${por.name}' is invalid, as it does not specify an editor or createEditor function`);
+    throw new Error(`Registration '${por.name}' is invalid, as it does not specify a transform or createTransform function`);
 }
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
