@@ -20,7 +20,6 @@ import {
     CoreRepoFieldsAndChannels,
     OnPushToAnyBranch,
     ScmProvider,
-    StatusForExecuteGoal,
 } from "../../typings/types";
 
 /**
@@ -37,8 +36,6 @@ export interface RepoRefResolver {
     repoRefFromPush(push: OnPushToAnyBranch.Push): RemoteRepoRef;
 
     providerIdFromPush(push: OnPushToAnyBranch.Push): string | null;
-
-    providerIdFromStatus(status: StatusForExecuteGoal.Fragment): string | null;
 
     /**
      * get a repoRef from an SdmGoal.

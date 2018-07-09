@@ -24,8 +24,6 @@ import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     SdmGoalState,
-    StatusForExecuteGoal,
-    StatusState,
 } from "../../typings/types";
 import { fakeContext } from "./fakeContext";
 
@@ -42,7 +40,6 @@ export function fakeRunWithLogContext(id: RemoteRepoRef): GoalInvocation {
         addressChannels: async m => {
             logger.info("channels > " + m);
         },
-        status: fakeStatus(id),
         progressLog: new LoggingProgressLog("fake"),
         sdmGoal: fakeSdmGoal(id),
     };
@@ -87,35 +84,6 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     },
                 }],
             },
-        },
-    };
-}
-
-export function fakeStatus(id: RepoId): StatusForExecuteGoal.Fragment {
-    return {
-        context: "fake",
-        state: StatusState.pending,
-        commit: {
-            repo: {
-                org: {
-                    owner: id.owner,
-                },
-                name: id.repo,
-                channels: [{
-                    name: "foo",
-                    id: "1",
-                    team: {
-                        id: "T357",
-                    },
-                },
-                ],
-            },
-            pushes: [
-                {
-                    id: "121",
-                    branch: "foo",
-                },
-            ],
         },
     };
 }
