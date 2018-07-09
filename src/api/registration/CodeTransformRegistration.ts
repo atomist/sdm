@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
-import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
-import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
-import { MachineOrMachineOptions } from "../../api-helper/machine/toMachineOptions";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
-
-export { chainEditors as chainTransforms } from "@atomist/automation-client/operations/edit/projectEditorOps";
 
 /**
  * @deprecated use CodeTransformRegistration
@@ -35,8 +29,9 @@ export type EditorRegistration<PARAMS = NoParameters> = CodeTransformRegistratio
  * Type for registering a project transform, which can make changes
  * across projects
  */
-export interface CodeTransformRegistration<PARAMS = NoParameters> extends Partial<EditorCommandDetails>,
-    ProjectOperationRegistration<PARAMS> {
+export interface CodeTransformRegistration<PARAMS = NoParameters>
+    extends Partial<EditorCommandDetails>,
+        ProjectOperationRegistration<PARAMS> {
 
     /**
      * Create the parameters required by this editor.
@@ -50,29 +45,11 @@ export interface CodeTransformRegistration<PARAMS = NoParameters> extends Partia
      */
     targets?: FallbackParams;
 
-    /**
-     * Should this be a custom editor creation function?
-     * Typically used to enable a dry run editor: That is,
-     * an editor that waits for the build result to determine whether to raise a pull request
-     * or issue. Default behavior is to create a branch and a PR.
-     */
-    transformCommandFactory?: EditorCommandFactory<PARAMS>;
-
-    /**
-     * @deprecated use transformCommandFactory
-     */
-    editorCommandFactory?: EditorCommandFactory<PARAMS>;
-
 }
 
 /**
- * Function providing the ability to create a custom editor command
- * to change default behavior.
+ * Signature of a decorator function that can add additional behavior
+ * to a CodeTransformRegistration.
  */
-export type EditorCommandFactory<PARAMS> = (
-    sdm: MachineOrMachineOptions,
-    edd: (params: PARAMS) => AnyProjectEditor,
-    name: string,
-    paramsMaker?: Maker<PARAMS>,
-    details?: Partial<EditorCommandDetails<PARAMS>>,
-    targets?: FallbackParams) => HandleCommand<EditOneOrAllParameters>;
+export type CodeTransformRegistrationDecorator<PARAMS> =
+    (ctr: CodeTransformRegistration<PARAMS>) => CodeTransformRegistration<PARAMS>;

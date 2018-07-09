@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { EditResult, toEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { CodeTransformOrTransforms, CodeTransformRegisterable, toCodeTransformRegisterable } from "./ProjectOperationRegistration";
-import { PushReactionRegistration, SelectiveCodeActionOptions } from "./PushReactionRegistration";
+import { CodeTransformOrTransforms } from "./CodeTransform";
+import { SelectiveCodeActionOptions } from "./PushReactionRegistration";
 import { PushSelector } from "./PushRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
@@ -25,56 +23,18 @@ export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {
     ignoreFailure: boolean;
 }
 
-export interface AutofixRegistration extends PushReactionRegistration<EditResult> {
+/**
+ * Register an autofix. This is a transform run on every commit that will make a
+ * commit if necessary to the same branch.
+ */
+export interface AutofixRegistration<P = any> extends PushSelector {
+
+    transform: CodeTransformOrTransforms<P>;
 
     options?: AutofixRegistrationOptions;
-
-}
-
-export interface CodeTransformAutofixRegistration extends PushSelector {
-
-    // TODO will be required when editor is removed
-    transform?: CodeTransformOrTransforms<any>;
 
     /**
-     * @deprecated use transform
+     * Parameters used for all transforms
      */
-    editor?: CodeTransformRegisterable;
-
-    options?: AutofixRegistrationOptions;
-
-    parameters?: any;
-}
-
-export function isCodeTransformAutofixRegistration(r: AutofixRegisterable): r is CodeTransformAutofixRegistration {
-    const maybe = r as CodeTransformAutofixRegistration;
-    return !!maybe.transform || !!maybe.editor;
-}
-
-export type AutofixRegisterable = AutofixRegistration | CodeTransformAutofixRegistration;
-
-/**
- * @deprecated use CodeTransformAutofixRegistration
- */
-export type EditorAutofixRegistration = CodeTransformAutofixRegistration;
-
-/**
- * Create an autofix from an existing CodeTransform. A CodeTransform for autofix
- * should not rely on parameters being passed in. An existing editor can be wrapped
- * to use predefined parameters.
- * Any use of MessageClient.respond in a transform used in an autofix will be redirected to
- * linked channels as autofixes are normally invoked in an EventHandler and EventHandlers
- * do not support respond. Be sure to set parameters if they are required by your transform.
- */
-export function toAutofixRegistration(use: CodeTransformAutofixRegistration): AutofixRegistration {
-    const transformToUse = toEditor(toCodeTransformRegisterable(use.transform || use.editor));
-    return {
-        name: use.name,
-        pushTest: use.pushTest,
-        options: use.options,
-        action: async cri => {
-            logger.debug("About to edit using autofix code transform '%s'", use.name);
-            return transformToUse(cri.project, cri.context, use.parameters);
-        },
-    };
+    parameters?: P;
 }

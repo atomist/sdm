@@ -14,34 +14,12 @@
  * limitations under the License.
  */
 
-import { AnyProjectEditor, SimpleProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { chainTransforms } from "./CodeTransformRegistration";
+import { CodeTransform, CodeTransformOrTransforms } from "./CodeTransform";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
- * Function that can transform a project
- */
-export type CodeTransform<P = any> = SimpleProjectEditor<P>;
-
-export type CodeTransformRegisterable<P = any> = AnyProjectEditor<P>;
-
-/**
- * One or many CodeTransforms
- */
-export type CodeTransformOrTransforms<PARAMS> = CodeTransformRegisterable<PARAMS> | Array<CodeTransformRegisterable<PARAMS>>;
-
-export function toCodeTransformRegisterable<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): CodeTransformRegisterable<PARAMS> {
-    if (Array.isArray(ctot)) {
-        return chainTransforms(...ctot);
-    } else {
-        return ctot as CodeTransform<PARAMS>;
-    }
-}
-
-/**
  * Superclass for all registrations of "project operations",
- * which can create or modify projects. Either an editor or a createEditor
- * function must be provided.
+ * which can create or modify projects. Supply a transform function.
  */
 export interface ProjectOperationRegistration<PARAMS> extends CommandRegistration<PARAMS> {
 
@@ -51,19 +29,11 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     transform?: CodeTransformOrTransforms<PARAMS>;
 
     /**
+     * @deprecated use transform
      * Create the editor function that can modify a project
      * @param {PARAMS} params
      * @return {AnyProjectEditor}
      */
     createTransform?: (params: PARAMS) => CodeTransform<PARAMS>;
 
-    /**
-     * @deprecated use transform
-     */
-    editor?: CodeTransform<PARAMS>;
-
-    /**
-     * @deprecated use createTransform
-     */
-    createEditor?: (params: PARAMS) => CodeTransform<PARAMS>;
 }

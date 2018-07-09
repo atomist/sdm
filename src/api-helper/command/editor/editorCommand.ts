@@ -91,7 +91,7 @@ export function editorCommand<PARAMS = NoParameters>(
 export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
                                                           targets: FallbackParams): Maker<EditorOrReviewerParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
-    return isEditorOrReviewerParameters(sampleParams) ?
+    return isTransformParameters(sampleParams) ?
         paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
@@ -104,8 +104,8 @@ export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PAR
         };
 }
 
-function isEditorOrReviewerParameters(p: any): p is EditorOrReviewerParameters {
-    return !!(p as EditorOrReviewerParameters).targets;
+export function isTransformParameters(p: any): p is EditorOrReviewerParameters {
+    return !!p && !!(p as EditorOrReviewerParameters).targets;
 }
 
 function validate(targets: FallbackParams) {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import * as assert from "power-assert";
 import {
     AutofixGoal,

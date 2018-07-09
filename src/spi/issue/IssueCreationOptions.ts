@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
+import { IssueRouter } from "./IssueRouter";
+
 /**
- * Interface that can be implemented by editor parameters that can suggest EditMode to present them
- * to users.
+ * Options for anything that can raise issues.
  */
-export interface EditModeSuggestion {
+export interface IssueCreationOptions {
 
-    desiredBranchName: string;
-
-    desiredPullRequestTitle?: string;
-
-    desiredCommitMessage?: string;
-
-}
-
-export function isEditModeSuggestion(p: object): p is EditModeSuggestion {
-    const maybe = p as EditModeSuggestion;
-    return !!maybe.desiredBranchName;
+    issueRouter: IssueRouter;
 }

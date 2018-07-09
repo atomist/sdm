@@ -18,7 +18,7 @@ import { logger } from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { ChildProcessResult, spawnAndWatch, SpawnCommand, stringifySpawnCommand } from "@atomist/automation-client/util/spawned";
 import { SpawnOptions } from "child_process";
-import { CodeTransformRegisterable } from "../../../api/registration/ProjectOperationRegistration";
+import { CodeTransform } from "../../../api/registration/CodeTransform";
 import { ProgressLog } from "../../../spi/log/ProgressLog";
 import { LoggingProgressLog } from "../../log/LoggingProgressLog";
 
@@ -30,7 +30,7 @@ import { LoggingProgressLog } from "../../log/LoggingProgressLog";
  * @return {ProjectEditor}
  */
 export function localCommandsCodeTransform(commands: SpawnCommand[],
-                                           log: ProgressLog = new LoggingProgressLog("commands")): CodeTransformRegisterable {
+                                           log: ProgressLog = new LoggingProgressLog("commands")): CodeTransform {
     return async (p: GitProject) => {
         const opts: SpawnOptions = {
             cwd: p.baseDir,

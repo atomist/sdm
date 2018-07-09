@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger, Success } from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, HandlerContext, logger, Success } from "@atomist/automation-client";
 import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { isProject } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
+import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
+import { CommandRegistration } from "../../api/registration/CommandRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { ParametersBuilder } from "../../api/registration/ParametersBuilder";
@@ -37,13 +41,11 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import {
-    CodeTransformRegisterable,
     ProjectOperationRegistration,
-    toCodeTransformRegisterable,
 } from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
-import { editorCommand } from "../command/editor/editorCommand";
-import { generatorCommand } from "../command/generator/generatorCommand";
+import { editorCommand, isTransformParameters } from "../command/editor/editorCommand";
+import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
@@ -52,8 +54,7 @@ export const TransformTag = "transform";
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(e, TransformTag);
     addParametersDefinedInBuilder(e);
-    const fun = e.transformCommandFactory || e.editorCommandFactory || editorCommand;
-    return () => fun(
+    return () => editorCommand(
         sdm,
         toCodeTransformFunction(e),
         e.name,
@@ -123,16 +124,14 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
     );
 }
 
-function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => CodeTransformRegisterable<PARAMS> {
-    por.transform = por.transform || por.editor;
+function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => AnyProjectEditor<PARAMS> {
     if (!!por.transform) {
-        return () => toCodeTransformRegisterable(por.transform);
+        return () => toScalarProjectEditor(por.transform);
     }
-    por.createTransform = por.createTransform || por.createEditor;
     if (!!por.createTransform) {
-        return por.createTransform;
+        return p => toScalarProjectEditor(por.createTransform(p));
     }
-    throw new Error(`Registration '${por.name}' is invalid, as it does not specify an editor or createEditor function`);
+    throw new Error(`Registration '${por.name}' is invalid, as it does not specify a transform or createTransform function`);
 }
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
@@ -143,18 +142,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
     if (!!c.listener) {
         return () => async (context, parameters) => {
             // const opts = toMachineOptions(sdm);
-            // TODO will add this. Currently it doesn't work.
-            const credentials = undefined; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
-            // TODO do a look up for associated channels
-            const ids: RemoteRepoRef[] = undefined;
-            const cli: CommandListenerInvocation = {
-                commandName: c.name,
-                context,
-                parameters,
-                addressChannels: (msg, opts) => context.messageClient.respond(msg, opts),
-                credentials,
-                ids,
-            };
+            const cli = toCommandListenerInvocation(c, context, parameters);
             logger.debug("Running command listener %s", cli.commandName);
             try {
                 await c.listener(cli);
@@ -169,6 +157,28 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<PARAMS>): (sdm: Machi
         };
     }
     throw new Error(`Command '${c.name}' is invalid, as it does not specify a listener or createCommand function`);
+}
+
+function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
+    let credentials; // opts.credentialsResolver.commandHandlerCredentials(context, undefined);
+    let ids: RemoteRepoRef[];
+    if (isSeedDrivenGeneratorParameters(parameters)) {
+        credentials = parameters.target.credentials;
+        ids = [parameters.target.repoRef];
+    } else if (isTransformParameters(parameters)) {
+        credentials = parameters.targets.credentials;
+        ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
+    }
+    // TODO do a look up for associated channels
+    const addressChannels = (msg, opts) => context.messageClient.respond(msg, opts);
+    return {
+        commandName: c.name,
+        context,
+        parameters,
+        addressChannels,
+        credentials,
+        ids,
+    };
 }
 
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
@@ -227,4 +237,31 @@ function toParametersListing(p: ParametersDefinition): ParametersListing {
         }
     }
     return builder;
+}
+
+export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
+    if (Array.isArray(ctot)) {
+        return chainEditors(...ctot.map(toProjectEditor));
+    } else {
+        return toProjectEditor(ctot);
+    }
+}
+
+// Convert to an old style, automation-client, ProjectEditor to allow
+// underlying code to work for now
+function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
+    return async (p, ctx, params) => {
+        const ci = toCommandListenerInvocation(p, ctx, params);
+        // Mix in handler context for old style callers
+        const r = await ct(p, {
+                ...ci,
+                ...ctx,
+            } as CommandListenerInvocation & HandlerContext,
+            params);
+        try {
+            return isProject(r) ? successfulEdit(r, undefined) : r;
+        } catch (e) {
+            return failedEdit(p, e);
+        }
+    };
 }
