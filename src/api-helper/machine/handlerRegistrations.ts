@@ -51,6 +51,7 @@ import { editorCommand, isTransformParameters, toEditorOrReviewerParametersMaker
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
+import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
@@ -73,9 +74,6 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
     tagWith(cir, InspectionTag);
     addParametersDefinedInBuilder(cir);
     const repoFinder = cir.repoFinder || toMachineOptions(sdm).repoFinder;
-    const repoLoader = cir.repoLoader || (p => projectLoaderRepoLoader(
-        toMachineOptions(sdm).projectLoader,
-        p.targets.credentials));
     const asCommand: CommandHandlerRegistration = {
         ...cir as CommandRegistration<any>,
         paramsMaker: toEditorOrReviewerParametersMaker(
@@ -85,6 +83,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };
+            const repoLoader: RepoLoader = cir.repoLoader(ci.parameters) || projectLoaderRepoLoader(
+                toMachineOptions(sdm).projectLoader,
+                ci.parameters.targets.credentials);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
@@ -92,7 +93,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 ci.parameters,
                 repoFinder,
                 cir.repoFilter,
-                repoLoader(cir.parameters));
+                repoLoader);
             if (!!cir.react) {
                 await cir.react(results, ci);
             } else {
