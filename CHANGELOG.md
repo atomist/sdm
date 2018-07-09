@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add paging for goals. [#436](https://github.com/atomist/sdm/issues/436)
 -   Add DSL for creating Goals. [#437](https://github.com/atomist/sdm/issues/437)
 -   Add "build aware" code transform support. Replaces "dry run" support presently in `sdm-core`.
+-   `CodeTransform` now takes a second argument of type `CommandListenerInvocation` for consistency and to expose more context to transforms
 
 ## [0.3.1](https://github.com/atomist/sdm/compare/0.3.0...0.3.1) - 2018-07-05
 
