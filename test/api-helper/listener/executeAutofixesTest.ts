@@ -38,9 +38,32 @@ export const AddThingAutofix: AutofixRegistration = {
         "Is TypeScript",
         async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
     ),
-    transform: async project => {
+    transform: async (project, ci) => {
         await project.addFile("thing", "1");
+        assert(!!ci.teamId);
+        assert(!ci.parameters);
         return { edited: true, success: true, target: project };
+    },
+};
+
+interface BirdParams {
+    bird: string;
+}
+
+export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
+    name: "AddThing",
+    pushTest: pushTest(
+        "Is TypeScript",
+        async (pi: PushListenerInvocation) => fileExists(pi.project, "**/*.ts", () => true),
+    ),
+    transform: async (project, ci) => {
+        await project.addFile("bird", ci.parameters.bird);
+        assert(!!ci.teamId);
+        assert(!ci.parameters);
+        return { edited: true, success: true, target: project };
+    },
+    parameters: {
+        bird: "ibis",
     },
 };
 
@@ -126,6 +149,24 @@ describe("executeAutofixes", () => {
         const foundFile = p.findFileSync("thing");
         assert(!!foundFile);
         assert.equal(foundFile.getContentSync(), "1");
+    });
+
+    it("should execute with parameter and find a match and add a header", async () => {
+        const id = new GitHubRepoRef("a", "b");
+        const initialContent = "public class Thing {}";
+        const f = new InMemoryFile("src/Thing.ts", initialContent);
+        const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
+        (p as any as GitProject).revert = async () => null;
+        (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
+        const pl = new SingleProjectLoader(p);
+        const r = await executeAutofixes(pl,
+            [AddThingWithParamAutofix],
+            FakeRepoRefResolver)(fakeGoalInvocation(id));
+        assert.equal(r.code, 0);
+        assert(!!p);
+        const foundFile = p.findFileSync("bird");
+        assert(!!foundFile);
+        assert.equal(foundFile.getContentSync(), "ibis");
     });
 
 });
