@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import * as _ from "lodash";
 import {
     Goal,
+    GoalDefinition,
     GoalWithPrecondition,
 } from "./Goal";
 
@@ -43,15 +45,15 @@ export interface GoalsBuilder {
 
     /**
      * Plan the given goal or goals to this Goals instance.
-     * @param {Goal | Goals} goals
+     * @param {GoalDefinition | Goal | Goals} goals
      * @returns {Goals & GoalsAndPreConditionBuilder}
      */
-    plan(...goals: Array<Goal | Goals>): Goals & GoalsAndPreConditionBuilder;
+    plan(...goals: Array<GoalDefinition| Goal | Goals>): Goals & GoalsAndPreConditionBuilder;
 
 }
 
 /**
- * Extension to GoalsBuilder allowing to add preConditions,
+ * Extension to GoalsBuilder allowing to add preConditions.
  */
 export interface GoalsAndPreConditionBuilder extends GoalsBuilder {
 
@@ -64,7 +66,7 @@ export interface GoalsAndPreConditionBuilder extends GoalsBuilder {
      * @param {Goal} goals
      * @returns {Goals & GoalsBuilder}
      */
-    after(...goals: Goal[]): Goals & GoalsBuilder;
+    after(...goals: Array<GoalDefinition | Goal>): Goals & GoalsBuilder;
 
 }
 
@@ -92,11 +94,11 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
         super(name);
     }
 
-    public plan(...newGoals: Array<Goal | Goals>): Goals & GoalsAndPreConditionBuilder {
+    public plan(...newGoals: Array<GoalDefinition | Goal | Goals>): Goals & GoalsAndPreConditionBuilder {
         const currentGoals = [];
 
         // Keep track of what goals where last added so that we can add the preConditions later
-        newGoals.forEach(g => {
+        convertToGoals(...newGoals).forEach(g => {
             if (isGoals(g)) {
                 currentGoals.push(...g.goals);
             } else {
@@ -109,12 +111,12 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
         return this;
     }
 
-    public after(...newGoals: Goal[]): Goals & GoalsBuilder {
+    public after(...newGoals: Array<GoalDefinition | Goal>): Goals & GoalsBuilder {
         const lastGoalsWithPreConditions = [];
 
         this.lastGoals.forEach(g => {
             // Add the preCondition into the last added goals
-            lastGoalsWithPreConditions.push(new GoalWithPrecondition(g.definition, ...newGoals));
+            lastGoalsWithPreConditions.push(new GoalWithPrecondition(g.definition, ...convertToGoals(...newGoals)));
             // Remove the previously added goals
             const ix = this.goals.indexOf(g);
             if (ix >= 0) {
@@ -131,4 +133,16 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
         return this;
     }
 
+}
+
+function convertToGoals(...goals: Array<GoalDefinition | Goal | Goals>): Goal[] {
+    return _.flatten<Goal>(goals.map(g => {
+        if (g instanceof Goal) {
+            return g as Goal;
+        } else if (isGoals(g)) {
+            return g.goals;
+        } else {
+            return new Goal(g as GoalDefinition);
+        }
+    }));
 }

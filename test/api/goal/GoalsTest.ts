@@ -38,7 +38,7 @@ describe("GoalBuilder", () => {
 
     it("should construct simple goal set with one pre condition", () => {
         const simpleGoals = goals("Simple Goals")
-            .plan(BuildGoal, AutofixGoal)
+            .plan(BuildGoal.definition, AutofixGoal)
             .plan(StagingEndpointGoal).after(BuildGoal);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
@@ -54,9 +54,9 @@ describe("GoalBuilder", () => {
     it("should construct goal set with pre conditions", () => {
         const simpleGoals = goals("Simple Goals")
             .plan(ReviewGoal)
-            .plan(BuildGoal, AutofixGoal).after(ReviewGoal)
+            .plan(BuildGoal, AutofixGoal.definition).after(ReviewGoal)
             .plan(StagingEndpointGoal).after(BuildGoal)
-            .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal);
+            .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal.definition);
 
         assert.strictEqual(simpleGoals.name, "Simple Goals");
         assert.strictEqual(simpleGoals.goals.length, 5);
