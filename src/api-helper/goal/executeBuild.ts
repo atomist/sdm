@@ -22,7 +22,6 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { Builder } from "../../spi/build/Builder";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { StatusForExecuteGoal } from "../../typings/types";
 
 /**
  * Execute build with the appropriate builder
@@ -53,12 +52,4 @@ export function executeBuild(projectLoader: ProjectLoader,
             progressLog,
             context);
     };
-}
-
-export function branchFromCommit(commit: StatusForExecuteGoal.Commit): string {
-    const allBranchesThisCommitIsOn = commit.pushes.map(p => p.branch);
-    const theDefaultBranchIfThisCommitIsOnIt = allBranchesThisCommitIsOn.find(b => b === commit.repo.defaultBranch);
-    const someBranchIDoNotReallyCare = allBranchesThisCommitIsOn.find(b => true);
-    const branchToMarkTheBuildWith = theDefaultBranchIfThisCommitIsOnIt || someBranchIDoNotReallyCare || "master";
-    return branchToMarkTheBuildWith;
 }

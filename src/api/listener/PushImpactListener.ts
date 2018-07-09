@@ -15,7 +15,7 @@
  */
 
 import { Project } from "@atomist/automation-client/project/Project";
-import { StatusForExecuteGoal } from "../../typings/types";
+import { PushFields } from "../../typings/types";
 import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
 
@@ -33,7 +33,7 @@ export interface PushImpactListenerInvocation extends PushListenerInvocation {
     /**
      * Head commit on push
      */
-    commit: StatusForExecuteGoal.Commit;
+    commit: PushFields.Commits;
 
     /**
      * Project of affected files. May be the same as project, if we can't tell

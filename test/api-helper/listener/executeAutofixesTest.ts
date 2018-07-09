@@ -30,7 +30,7 @@ import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { pushTest } from "../../../src/api/mapping/PushTest";
 import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
 import { RepoRefResolver } from "../../../src/spi/repo-ref/RepoRefResolver";
-import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider, StatusForExecuteGoal } from "../../../src/typings/types";
+import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider } from "../../../src/typings/types";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
@@ -50,10 +50,6 @@ const FakeRepoRefResolver: RepoRefResolver = {
     },
 
     providerIdFromPush(push: OnPushToAnyBranch.Push): string | null {
-        throw new Error("Not implemented");
-    },
-
-    providerIdFromStatus(status: StatusForExecuteGoal.Fragment): string | null {
         throw new Error("Not implemented");
     },
 
