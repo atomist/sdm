@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
