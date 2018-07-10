@@ -49,9 +49,4 @@ export interface CommandRegistrationManager {
      */
     addCodeInspectionCommand<R, PARAMS>(cir: CodeInspectionRegistration<R, PARAMS>): this;
 
-    /**
-     * @deprecated use add CodeTransformCommand
-     * @return {this}
-     */
-    addEditor<PARAMS>(ed: CodeTransformRegistration<PARAMS>): this;
 }

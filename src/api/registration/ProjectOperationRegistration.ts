@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { CodeTransform, CodeTransformOrTransforms } from "./CodeTransform";
+import { CodeTransformOrTransforms } from "./CodeTransform";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
@@ -26,14 +26,6 @@ export interface ProjectOperationRegistration<PARAMS> extends CommandRegistratio
     /**
      * Function to transform the project
      */
-    transform?: CodeTransformOrTransforms<PARAMS>;
-
-    /**
-     * @deprecated use transform
-     * Create the editor function that can modify a project
-     * @param {PARAMS} params
-     * @return {AnyProjectEditor}
-     */
-    createTransform?: (params: PARAMS) => CodeTransform<PARAMS>;
+    transform: CodeTransformOrTransforms<PARAMS>;
 
 }

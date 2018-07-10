@@ -26,7 +26,7 @@ import { RepoFinder } from "@atomist/automation-client/operations/common/repoFin
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
-import { AnyProjectEditor, failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import { failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { isProject, Project } from "@atomist/automation-client/project/Project";
@@ -47,9 +47,6 @@ import {
     ParametersDefinition,
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
-import {
-    ProjectOperationRegistration,
-} from "../../api/registration/ProjectOperationRegistration";
 import { createCommand } from "../command/createCommand";
 import { editorCommand, isTransformParameters, toEditorOrReviewerParametersMaker } from "../command/editor/editorCommand";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
@@ -65,7 +62,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
     addParametersDefinedInBuilder(e);
     return () => editorCommand(
         sdm,
-        toCodeTransformFunction(e),
+        () => toScalarProjectEditor(e.transform),
         e.name,
         e.paramsMaker,
         e,
@@ -140,7 +137,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
     addParametersDefinedInBuilder(e);
     return () => generatorCommand(
         sdm,
-        toCodeTransformFunction(e),
+        () => toScalarProjectEditor(e.transform),
         e.name,
         e.paramsMaker,
         e.fallbackTarget || GitHubRepoCreationParameters,
@@ -169,16 +166,6 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
         e.description,
         e.tags,
     );
-}
-
-function toCodeTransformFunction<PARAMS>(por: ProjectOperationRegistration<PARAMS>): (params: PARAMS) => AnyProjectEditor<PARAMS> {
-    if (!!por.transform) {
-        return () => toScalarProjectEditor(por.transform);
-    }
-    if (!!por.createTransform) {
-        return p => toScalarProjectEditor(por.createTransform(p));
-    }
-    throw new Error(`Registration '${por.name}' is invalid, as it does not specify a transform or createTransform function`);
 }
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {

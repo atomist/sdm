@@ -182,10 +182,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
-    public addEditor<P>(ed: CodeTransformRegistration<P>): this {
-        return this.addCodeTransformCommand(ed);
-    }
-
     public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {
         this.registrationManager.addEvent<T, P>(e);
         return this;
