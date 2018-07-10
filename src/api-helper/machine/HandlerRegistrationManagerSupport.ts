@@ -78,10 +78,6 @@ export class HandlerRegistrationManagerSupport
         return this;
     }
 
-    public addEditor<P>(ed: CodeTransformRegistration<P>): this {
-        return this.addCodeTransformCommand(ed);
-    }
-
     public addEvent<T, P>(e: EventHandlerRegistration<T, P>): this {
         const events = [eventHandlerRegistrationToEvent(this.sdm, e)];
         this.eventHandlers = this.eventHandlers.concat(events);

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CodeInspectionRegistration } from "../registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../registration/CommandHandlerRegistration";
@@ -29,29 +29,25 @@ export interface CommandRegistrationManager {
      * Add a generic command to this machine
      * @return {this}
      */
-    addCommand<PARAMS>(command: CommandHandlerRegistration<PARAMS>): this;
+    addCommand<PARAMS = NoParameters>(command: CommandHandlerRegistration<PARAMS>): this;
 
     /**
      * Add a generator to this machine to enable project creation
      * @return {this}
      */
-    addGeneratorCommand<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
+    addGeneratorCommand<PARAMS = NoParameters>(generator: GeneratorRegistration<PARAMS>): this;
 
     /**
-     * Add a code transformation to this machine
+     * Add a code transformation to this machine.
      * @return {this}
      */
-    addCodeTransformCommand<PARAMS>(ctr: CodeTransformRegistration<PARAMS>): this;
+    addCodeTransformCommand<PARAMS = NoParameters>(ctr: CodeTransformRegistration<PARAMS>): this;
 
     /**
-     * Add a code transformation to this machine
+     * Add a code inspection to this machine.
+     * Unlike code transformations, code inspections cannot mutate projects.
      * @return {this}
      */
-    addCodeInspectionCommand<R, PARAMS>(cir: CodeInspectionRegistration<R, PARAMS>): this;
+    addCodeInspectionCommand<R, PARAMS = NoParameters>(cir: CodeInspectionRegistration<R, PARAMS>): this;
 
-    /**
-     * @deprecated use add CodeTransformCommand
-     * @return {this}
-     */
-    addEditor<PARAMS>(ed: CodeTransformRegistration<PARAMS>): this;
 }
