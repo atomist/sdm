@@ -135,14 +135,14 @@ class DefaultGoalsBuilder extends Goals implements GoalsBuilder, GoalsAndPreCond
 
 }
 
-function convertToGoals(...goals: Array<GoalDefinition | Goal | Goals>): Goal[] {
-    return _.flatten<Goal>(goals.map(g => {
+function convertToGoals(...pgoals: Array<GoalDefinition | Goal | Goals>): Goal[] {
+    return _.flatten<Goal>(pgoals.map(g => {
         if (g instanceof Goal) {
-            return g as Goal;
+            return g;
         } else if (isGoals(g)) {
             return g.goals;
         } else {
-            return new Goal(g as GoalDefinition);
+            return new Goal(g);
         }
     }));
 }

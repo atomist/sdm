@@ -38,13 +38,6 @@ export interface CommandRegistrationManager {
     addGeneratorCommand<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
 
     /**
-     * @deprecated use addGeneratorCommand
-     * @param {GeneratorRegistration<PARAMS extends SeedDrivenGeneratorParameters>} generator
-     * @return {this}
-     */
-    addGenerator<PARAMS extends SeedDrivenGeneratorParameters>(generator: GeneratorRegistration<PARAMS>): this;
-
-    /**
      * Add a code transformation to this machine
      * @return {this}
      */

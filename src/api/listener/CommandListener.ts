@@ -15,13 +15,14 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { SdmContext } from "../context/SdmContext";
 import { SdmListener } from "./Listener";
 
 /**
  * Context for a commmand
  */
-export interface CommandListenerInvocation<PARAMS = any> extends SdmContext {
+export interface CommandListenerInvocation<PARAMS = NoParameters> extends SdmContext {
 
     commandName: string;
 
@@ -37,5 +38,5 @@ export interface CommandListenerInvocation<PARAMS = any> extends SdmContext {
 
 }
 
-export type CommandListener<PARAMS = any> =
+export type CommandListener<PARAMS = NoParameters> =
     SdmListener<CommandListenerInvocation<PARAMS>>;

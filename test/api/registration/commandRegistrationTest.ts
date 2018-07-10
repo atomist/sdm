@@ -106,7 +106,7 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set mapped parameters", () => {
-        const reg: CommandHandlerRegistration = {
+        const reg: CommandHandlerRegistration<{foo: string, bar: string}> = {
             name: "test",
             parameters:
                 addParameters({ name: "foo" },
@@ -126,7 +126,7 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set secret", () => {
-        const reg: CommandHandlerRegistration = {
+        const reg: CommandHandlerRegistration<{foo: string, bar: string}> = {
             name: "test",
             parameters:
                 addParameters({ name: "foo" })
@@ -146,7 +146,7 @@ describe("command registrations", () => {
     });
 
     it("parameter builder should set mapped parameter and secret via indexed property", () => {
-        const reg: CommandHandlerRegistration = {
+        const reg: CommandHandlerRegistration<any> = {
             name: "test",
             parameters:
                 {
@@ -183,7 +183,7 @@ describe("command registrations", () => {
             y1: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
 
         };
-        const reg: CommandHandlerRegistration = {
+        const reg: CommandHandlerRegistration<any> = {
             name: "test",
             parameters:
                 {
@@ -219,7 +219,7 @@ describe("command registrations", () => {
     });
 
     it("should combine builder and maker", () => {
-        const reg: CommandHandlerRegistration = {
+        const reg: CommandHandlerRegistration<any> = {
             name: "test",
             paramsMaker: () => new SeedDrivenGeneratorParametersSupport({ seed: () => new GitHubRepoRef("a", "b") }),
             parameters:

@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   `CodeTransform` now takes a second argument of type `CommandListenerInvocation` for consistency and to expose more context to transforms
 -   `CodeInspecton` registration to run a non-mutating command against one or more repositories
 
+### Changed
+
+-   Command handler and autofix registrations are now strongly typed, defaulting to `NoParameters` rather than `any`. 
+This may require updates, but avoids potential errors.
+
 ## [0.3.1](https://github.com/atomist/sdm/compare/0.3.0...0.3.1) - 2018-07-05
 
 ### Added
