@@ -89,7 +89,8 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 cir.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
                     toMachineOptions(sdm).projectLoader,
-                    (ci.parameters as EditorOrReviewerParameters).targets.credentials);
+                    (ci.parameters as EditorOrReviewerParameters).targets.credentials,
+                    true);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,

@@ -66,7 +66,10 @@ export function editorCommand<PARAMS = NoParameters>(
         intent: `edit ${name}`,
         repoFinder: toMachineOptions(sdm).repoFinder,
         repoLoader:
-            p => projectLoaderRepoLoader(toMachineOptions(sdm).projectLoader, p.targets.credentials),
+            p => projectLoaderRepoLoader(
+                toMachineOptions(sdm).projectLoader,
+                p.targets.credentials,
+                false),
         editMode: ((params: PARAMS) => new PullRequest(
             (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
             (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),
