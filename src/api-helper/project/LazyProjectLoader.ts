@@ -33,8 +33,8 @@ import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../.
 import { save } from "./CachingProjectLoader";
 
 /**
- * Create a lazy view of the given project.
- * Changes to the filtered view will affect the source project.
+ * Create a lazy view of the given project, which will materialize
+ * the remote project (usually by cloning) only if needed.
  */
 export class LazyProjectLoader implements ProjectLoader {
 
@@ -147,9 +147,8 @@ class LazyProject extends AbstractProject implements GitProject {
                 path);
             return !!content ? new InMemoryFile(path, content) : undefined;
         }
-        return null;
-        // await this.materializeIfNecessary();
-        // return this.materializedProject.getFile(path) as any;
+        await this.materializeIfNecessary();
+        return this.materializedProject.getFile(path) as any;
     }
 
     public async makeExecutable(path: string): Promise<this> {
