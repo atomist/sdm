@@ -29,7 +29,7 @@ import * as stream from "stream";
  * @param filter function to filter file paths
  * @return {Promise<LocalProject>}
  */
-export function filteredView<P extends Project = Project>(p: Project,
+export function filteredView<P extends Project = Project>(p: P,
                                                           filter: (path: string) => boolean): P {
     // Use an ES6 proxy to bring back memories of Spring AOP
     const handler = {
@@ -82,7 +82,7 @@ class FilteredProject implements Partial<Project> {
      */
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const filter = this.filter;
-        const onlyIncludedFilters = new stream.Transform({objectMode: true});
+        const onlyIncludedFilters = new stream.Transform({ objectMode: true });
         onlyIncludedFilters._transform = function(f, encoding, done) {
             if (filter(f.path)) {
                 this.push(f);

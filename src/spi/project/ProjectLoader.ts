@@ -46,4 +46,8 @@ export interface ProjectLoader {
      */
     doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T>;
 
+    /**
+     * Return true if it's necessary to release this project
+     */
+    mustRelease?: boolean;
 }
