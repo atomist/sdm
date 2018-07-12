@@ -21,7 +21,6 @@ import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
-import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
@@ -48,9 +47,11 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
-import { editorCommand, isTransformParameters, toEditorOrReviewerParametersMaker } from "../command/editor/editorCommand";
+import { editorCommand, toRepoTargetingParametersMaker } from "../command/editor/editorCommand";
+import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
+import { isRepoTargetingParameters } from "./RepoTargetingParameters";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
@@ -66,16 +67,16 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
         e.name,
         e.paramsMaker,
         e,
-        e.targets || toMachineOptions(sdm).targets || GitHubFallbackReposParameters,
+        e.targets || toMachineOptions(sdm).targets || GitHubRepoTargets,
     );
 }
 
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
     addParametersDefinedInBuilder(cir);
-    cir.paramsMaker = toEditorOrReviewerParametersMaker(
+    cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
-        cir.targets || GitHubFallbackReposParameters);
+        cir.targets || GitHubRepoTargets);
     const asCommand: CommandHandlerRegistration = {
         ...cir as CommandRegistration<any>,
         listener: async ci => {
@@ -199,7 +200,7 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
     if (isSeedDrivenGeneratorParameters(parameters)) {
         credentials = parameters.target.credentials;
         ids = [parameters.target.repoRef];
-    } else if (isTransformParameters(parameters)) {
+    } else if (isRepoTargetingParameters(parameters)) {
         credentials = parameters.targets.credentials;
         ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
     }

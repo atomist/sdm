@@ -25,13 +25,15 @@ import { FallbackParams } from "@atomist/automation-client/operations/common/par
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { RepoTargets } from "../../machine/RepoTargets";
+import * as assert from "assert";
 
 /**
- * Base parameters for working with GitHub repo(s).
+ * Targets for working with BitBucket repo(s).
  * Allows use of regex.
  */
 @Parameters()
-export class BitBucketTargetsParams extends TargetsParams implements FallbackParams {
+export class BitBucketRepoTargets extends TargetsParams implements FallbackParams, RepoTargets {
 
     @MappedParameter(MappedParameters.GitHubApiUrl, false)
     public apiUrl: string;
@@ -69,5 +71,13 @@ export class BitBucketTargetsParams extends TargetsParams implements FallbackPar
                 this.sha) :
             undefined;
     }
+
+    public bindAndValidate() {
+        if (!this.repo) {
+            assert(!!this.repos, "Must set repos or repo");
+            this.repo = this.repos;
+        }
+    }
+
 
 }

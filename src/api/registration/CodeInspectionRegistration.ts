@@ -15,13 +15,13 @@
  */
 
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../listener/CommandListener";
+import { RepoTargets } from "../machine/RepoTargets";
 import { CommandRegistration } from "./CommandRegistration";
 
 /**
@@ -52,8 +52,11 @@ export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
     /**
      * Allow customization of the repositories that an inspection targets.
      */
-    targets?: Maker<FallbackParams>;
+    targets?: Maker<RepoTargets>;
 
+    /**
+     * Additionally, programmatically target repositories to inspect
+     */
     repoFilter?: RepoFilter;
 
     /**

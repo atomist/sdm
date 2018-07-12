@@ -17,28 +17,16 @@
 import { HandleCommand } from "@atomist/automation-client";
 import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { EditOneOrAllParameters } from "@atomist/automation-client/operations/common/params/EditOneOrAllParameters";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
-import {
-    EditorCommandDetails,
-    editorHandler,
-} from "@atomist/automation-client/operations/edit/editorToCommand";
+import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import {
-    NoParameters,
-    SmartParameters,
-} from "@atomist/automation-client/SmartParameters";
-import {
-    Maker,
-    toFactory,
-} from "@atomist/automation-client/util/constructionUtils";
-import * as assert from "power-assert";
-import { EditModeSuggestion } from "../../../api/command/editor/EditModeSuggestion";
+import { NoParameters, SmartParameters } from "@atomist/automation-client/SmartParameters";
+import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { EditModeSuggestion } from "../../../api/command/target/EditModeSuggestion";
+import { RepoTargets } from "../../../api/machine/RepoTargets";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
-import {
-    MachineOrMachineOptions,
-    toMachineOptions,
-} from "../../machine/toMachineOptions";
+import { isRepoTargetingParameters, RepoTargetingParameters } from "../../machine/RepoTargetingParameters";
+import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
 import { chattyEditorFactory } from "./editorWrappers";
 
 /**
@@ -59,7 +47,7 @@ export function editorCommand<PARAMS = NoParameters>(
     name: string,
     paramsMaker: Maker<PARAMS> = NoParameters as Maker<PARAMS>,
     details: Partial<EditorCommandDetails> = {},
-    targets: Maker<FallbackParams>): HandleCommand<EditOneOrAllParameters> {
+    targets: Maker<RepoTargets>): HandleCommand<EditOneOrAllParameters> {
     const description = details.description || name;
     const detailsToUse: EditorCommandDetails = {
         description,
@@ -75,7 +63,7 @@ export function editorCommand<PARAMS = NoParameters>(
 
     return editorHandler(
         chattyEditorFactory(name, edd) as any,
-        toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker, targets),
+        toRepoTargetingParametersMaker<PARAMS>(paramsMaker, targets) as any as Maker<EditorOrReviewerParameters>,
         name,
         detailsToUse);
 }
@@ -86,30 +74,21 @@ export function editorCommand<PARAMS = NoParameters>(
  * @param targets targets parameters to set if necessary
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
-export function toEditorOrReviewerParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                                          targets: Maker<FallbackParams>): Maker<EditorOrReviewerParameters & PARAMS> {
+export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
+                                                       targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
-    return isTransformParameters(sampleParams) ?
-        paramsMaker as Maker<EditorOrReviewerParameters & PARAMS> :
+    return isRepoTargetingParameters(sampleParams) ?
+        paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
-            const allParms = rawParms as EditorOrReviewerParameters & PARAMS & SmartParameters;
-            const targetsInstance: FallbackParams = toFactory(targets)();
+            const allParms = rawParms as RepoTargetingParameters & PARAMS & SmartParameters;
+            const targetsInstance: RepoTargets = toFactory(targets)();
             allParms.targets = targetsInstance;
-            allParms.bindAndValidate = () => {
-                validate(targetsInstance);
-            };
+            if (!!allParms.targets.bindAndValidate) {
+                allParms.bindAndValidate = () => {
+                    allParms.targets.bindAndValidate();
+                };
+            }
             return allParms;
         };
-}
-
-export function isTransformParameters(p: any): p is EditorOrReviewerParameters {
-    return !!p && !!(p as EditorOrReviewerParameters).targets;
-}
-
-function validate(targets: FallbackParams) {
-    if (!targets.repo) {
-        assert(!!targets.repos, "Must set repos or repo");
-        targets.repo = targets.repos;
-    }
 }
