@@ -16,11 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   `CodeInspecton` registration to run a non-mutating command against one or more repositories
 -   Add goal set completion listener. [#275](https://github.com/atomist/sdm/issues/275)
 -   Support BitBucket. [#225](https://github.com/atomist/sdm/issues/225)
+-   `CodeTransform` registration can now specify a `react` method to run after transforms are complete.
 
 ### Changed
 
 -   **BREAKING** Command handler and autofix registrations are now strongly typed, defaulting to `NoParameters` rather than `any`. 
--   **BREAKING** Remove deprecated `addEditor` SDM method, and deprecated `createTransform`
+-   **BREAKING** Remove deprecated `addEditor` SDM method, and deprecated `createTransform` method on `ProjectOperationRegistration`.
 
 ### Fixed
 
