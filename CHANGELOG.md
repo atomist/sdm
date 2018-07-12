@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   `CodeTransform` now takes a second argument of type `CommandListenerInvocation` for consistency and to expose more context to transforms
 -   `CodeInspecton` registration to run a non-mutating command against one or more repositories
 -   Add goal set completion listener. [#275](https://github.com/atomist/sdm/issues/275)
+-   Support BitBucket. [#225](https://github.com/atomist/sdm/issues/225)
 
 ### Changed
 
