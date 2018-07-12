@@ -84,7 +84,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const targets = (ci.parameters as RepoTargetingParameters).targets;
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
-                return ci.addressChannels(`Invalid parameters to code inspection: _${vr.message}_`);
+                return ci.addressChannels(`:no_entry: Invalid parameters to code inspection: ${vr.message}`);
             }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 return { repoId: p.id, result: await cir.inspection(p, ci) };

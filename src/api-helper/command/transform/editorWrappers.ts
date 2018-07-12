@@ -51,11 +51,6 @@ function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): P
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
-            const targets = (parms as RepoTargetingParameters).targets;
-            const vr = targets.bindAndValidate();
-            if (isValidationError(vr)) {
-                return context.messageClient.respond(`Invalid parameters to code transform: _${vr.message}_`);
-            }
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
             const editResult = await confirmEditedness(tentativeEditResult);
             logger.debug("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);
@@ -66,7 +61,7 @@ function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): P
         } catch (err) {
             await context.messageClient.respond(`*${editorName}*: Nothing done on \`${id.url}\``);
             logger.warn("Editor error acting on %j: %s", project.id, err);
-            return {target: project, edited: false, success: false} as EditResult;
+            return { target: project, edited: false, success: false } as EditResult;
         }
     };
 }

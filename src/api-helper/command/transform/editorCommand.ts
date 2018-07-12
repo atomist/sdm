@@ -20,7 +20,7 @@ import { EditOneOrAllParameters } from "@atomist/automation-client/operations/co
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import { NoParameters, SmartParameters } from "@atomist/automation-client/SmartParameters";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
 import { RepoTargets } from "../../../api/machine/RepoTargets";
@@ -81,7 +81,7 @@ export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS
         paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
         () => {
             const rawParms: PARAMS = toFactory(paramsMaker)();
-            const allParms = rawParms as RepoTargetingParameters & PARAMS & SmartParameters;
+            const allParms = rawParms as RepoTargetingParameters & PARAMS;
             const targetsInstance: RepoTargets = toFactory(targets)();
             allParms.targets = targetsInstance;
             return allParms;
