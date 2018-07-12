@@ -84,11 +84,6 @@ export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS
             const allParms = rawParms as RepoTargetingParameters & PARAMS & SmartParameters;
             const targetsInstance: RepoTargets = toFactory(targets)();
             allParms.targets = targetsInstance;
-            if (!!allParms.targets.bindAndValidate) {
-                allParms.bindAndValidate = () => {
-                    allParms.targets.bindAndValidate();
-                };
-            }
             return allParms;
         };
 }

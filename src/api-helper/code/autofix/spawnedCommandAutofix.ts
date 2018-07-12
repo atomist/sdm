@@ -19,7 +19,7 @@ import {
     AutofixRegistration,
     AutofixRegistrationOptions,
 } from "../../../api/registration/AutofixRegistration";
-import { localCommandsCodeTransform } from "../../command/editor/localCommandsCodeTransform";
+import { localCommandsCodeTransform } from "../../command/transform/localCommandsCodeTransform";
 import { SpawnCommand } from "../../misc/spawned";
 
 /**

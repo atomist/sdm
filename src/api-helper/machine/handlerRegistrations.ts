@@ -31,6 +31,7 @@ import { GitHubRepoCreationParameters } from "@atomist/automation-client/operati
 import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { isValidationError } from "../..";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
@@ -48,10 +49,10 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
-import { editorCommand, toRepoTargetingParametersMaker } from "../command/editor/editorCommand";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
+import { editorCommand, toRepoTargetingParametersMaker } from "../command/transform/editorCommand";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
-import { isRepoTargetingParameters } from "./RepoTargetingParameters";
+import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
@@ -80,6 +81,11 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
     const asCommand: CommandHandlerRegistration = {
         ...cir as CommandRegistration<any>,
         listener: async ci => {
+            const targets = (ci.parameters as RepoTargetingParameters).targets;
+            const vr = targets.bindAndValidate();
+            if (isValidationError(vr)) {
+                return ci.addressChannels(`Invalid parameters to code inspection: _${vr.message}_`);
+            }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };

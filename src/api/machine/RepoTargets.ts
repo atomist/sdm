@@ -17,6 +17,13 @@
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ValidationError } from "@atomist/automation-client/SmartParameters";
+
+export interface ValidationError {
+    message: string;
+}
+
+export type ValidationResult = void | ValidationError;
 
 /**
  * Defines repo targeting for a code inspection or transform
@@ -38,8 +45,13 @@ export interface RepoTargets {
     test: RepoFilter;
 
     /**
-     * Throw an exception if invalid
+     * Optional method to populate and validate
      */
-    bindAndValidate?(): void;
+    bindAndValidate(): ValidationResult;
 
+}
+
+export function isValidationError(vr: ValidationResult): vr is ValidationError {
+    const maybe = vr as ValidationError;
+    return !!maybe.message;
 }
