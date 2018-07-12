@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
+import { successOn } from "@atomist/automation-client/action/ActionResult";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
+import { InMemoryFile } from "../../../node_modules/@atomist/automation-client/project/mem/InMemoryFile";
 import { save } from "../../../src/api-helper/project/CachingProjectLoader";
 import { CloningProjectLoader } from "../../../src/api-helper/project/cloningProjectLoader";
 import { LazyProjectLoader } from "../../../src/api-helper/project/LazyProjectLoader";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { InMemoryFile } from "../../../node_modules/@atomist/automation-client/project/mem/InMemoryFile";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { successOn } from "@atomist/automation-client/action/ActionResult";
 
 const credentials = {
     token: process.env.GITHUB_TOKEN,
