@@ -25,7 +25,11 @@ export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackPa
     public bindAndValidate(): ValidationResult {
         if (!this.repo) {
             if (!this.repos) {
-                return { message: "Must set repos or repo" };
+                return {
+                    message:
+                    "If not executing in a mapped channel, must identify a repo via: `targets.owner` and `targets.repo`, " +
+                    "or a repo name regex via `targets.repos`",
+                };
             }
             this.repo = this.repos;
         }
