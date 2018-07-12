@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    AnyOptions,
-    Configuration,
-} from "@atomist/automation-client/configuration";
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
+import { AnyOptions, Configuration } from "@atomist/automation-client/configuration";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
@@ -27,6 +23,11 @@ import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { RepoTargets } from "./RepoTargets";
+
+/**
+ * Parameters for targeting transforms or inspections to repos
+ */
 
 /**
  * Infrastructure options common to all SoftwareDeliveryMachines.
@@ -75,7 +76,7 @@ export interface SoftwareDeliveryMachineOptions {
      * Allow customization of editor targeting at per-SDM level.
      * If set, can still be overridden by individual editor registrations.
      */
-    targets?: Maker<FallbackParams>;
+    targets?: Maker<RepoTargets>;
 
 }
 

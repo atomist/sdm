@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
+import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { RepoTargets } from "../machine/RepoTargets";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
-
-/**
- * @deprecated use CodeTransformRegistration
- */
-export type EditorRegistration<PARAMS = NoParameters> = CodeTransformRegistration<PARAMS>;
 
 /**
  * Type for registering a project transform, which can make changes
@@ -36,7 +32,12 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
     /**
      * Allow customization of the repositories a transform targets.
      */
-    targets?: Maker<FallbackParams>;
+    targets?: Maker<RepoTargets>;
+
+    /**
+     * Additionally, programmatically target repositories to transform
+     */
+    repoFilter?: RepoFilter;
 
 }
 

@@ -17,7 +17,7 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { EditMode, isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
-import { EditModeSuggestion } from "../../../api/command/editor/EditModeSuggestion";
+import { EditModeSuggestion } from "../../../api/command/target/EditModeSuggestion";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
 export const DryRunMessage = "[atomist-dry-run]";
