@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { GoalInvocation } from "../GoalInvocation";
 
 export interface Progress {
