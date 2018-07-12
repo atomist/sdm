@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";

@@ -25,8 +25,8 @@ import { FallbackParams } from "@atomist/automation-client/operations/common/par
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { RepoTargets } from "../../machine/RepoTargets";
 import * as assert from "assert";
+import { RepoTargets } from "../../machine/RepoTargets";
 
 /**
  * Targets for working with BitBucket repo(s).
@@ -78,6 +78,5 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
             this.repo = this.repos;
         }
     }
-
 
 }

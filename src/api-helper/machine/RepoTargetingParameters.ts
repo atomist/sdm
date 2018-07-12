@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { RepoTargets } from "../../api/machine/RepoTargets";
 
 export interface RepoTargetingParameters {
