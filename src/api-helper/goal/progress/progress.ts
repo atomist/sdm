@@ -16,7 +16,7 @@
 
 import { ReportProgress } from "../../../api/goal/progress/ReportProgress";
 
-interface ProgressTest {
+export interface ProgressTest {
     test: RegExp;
     label: string;
 }
