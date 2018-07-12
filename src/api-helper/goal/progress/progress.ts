@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { ReportProgress } from "../../../api/goal/progress/ReportProgress";
 
 interface ProgressTest {
