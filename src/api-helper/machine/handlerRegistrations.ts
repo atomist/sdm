@@ -90,12 +90,12 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 const tms = ci.parameters;
                 editMode = () => new PullRequest(
                     tms.desiredBranchName,
-                    tms.desiredPullRequestTitle || ctr.description);
+                    tms.desiredPullRequestTitle || ctr.description || ctr.name);
             } else if (!editMode) {
                 // Default it if not supplied
                 editMode = () => new PullRequest(
                     `transform-${ctr.name}-${Date.now()}`,
-                    ctr.description);
+                    ctr.description || ctr.name);
             }
             const results = await editAll<any, any>(
                 ci.context,
