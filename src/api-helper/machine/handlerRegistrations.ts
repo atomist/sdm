@@ -26,14 +26,15 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
-import { EditMode, PullRequest } from "@atomist/automation-client/operations/edit/editModes";
+import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
+import { EditModeOrFactory } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { isValidationError, RepoTargets } from "../..";
+import { isTransformModeSuggestion, isValidationError, RepoTargets } from "../..";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { TransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
@@ -83,9 +84,19 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 projectLoaderRepoLoader(
                     toMachineOptions(sdm).projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials);
-            const editMode: (params) => EditMode = ((params: any) => new PullRequest(
-                (params as TransformModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
-                (params as TransformModeSuggestion).desiredPullRequestTitle || ctr.description));
+            let editMode: EditModeOrFactory<any> = ctr.editMode;
+            // Get EditMode from parameters if possible
+            if (isTransformModeSuggestion(ci.parameters)) {
+                const tms = ci.parameters;
+                editMode = () => new PullRequest(
+                    tms.desiredBranchName,
+                    tms.desiredPullRequestTitle || ctr.description);
+            } else if (!editMode) {
+                // Default it if not supplied
+                editMode = () => new PullRequest(
+                    `transform-${name}-${Date.now()}`,
+                    ctr.description);
+            }
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
