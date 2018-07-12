@@ -94,7 +94,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             } else if (!editMode) {
                 // Default it if not supplied
                 editMode = () => new PullRequest(
-                    `transform-${name}-${Date.now()}`,
+                    `transform-${ctr.name}-${Date.now()}`,
                     ctr.description);
             }
             const results = await editAll<any, any>(
