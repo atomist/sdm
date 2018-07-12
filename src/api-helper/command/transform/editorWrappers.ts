@@ -23,8 +23,6 @@ import {
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { isValidationError } from "../../../index";
-import { RepoTargetingParameters } from "../../machine/RepoTargetingParameters";
 import { confirmEditedness } from "./confirmEditedness";
 
 /**

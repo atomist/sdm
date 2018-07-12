@@ -16,8 +16,10 @@
 
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
+import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { CommandListenerInvocation } from "../listener/CommandListener";
 import { RepoTargets } from "../machine/RepoTargets";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
@@ -38,6 +40,14 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * Additionally, programmatically target repositories to transform
      */
     repoFilter?: RepoFilter;
+
+    /**
+     * React to results from running edits across one or more projects
+     * @param results
+     * @param ci context
+     * @return {Promise<any>}
+     */
+    react?(results: EditResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 
 }
 
