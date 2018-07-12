@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithFiles } from "@atomist/automation-client/project/util/projectUtils";
@@ -75,5 +74,18 @@ describe("LazyProjectLoader", () => {
             assert(!!f.getContentSync());
         });
         assert(count > 0);
+    }).timeout(10000);
+
+    it("should materialize once", async () => {
+        // Look at log output
+        const id = new GitHubRepoRef("spring-team", "spring-rest-seed");
+        const lpl = new LazyProjectLoader(CloningProjectLoader);
+        const p: Project = await save(lpl, { credentials, id, readOnly: false });
+        const f1 = await p.getFile("not-there");
+        assert(!f1);
+        await Promise.all([1, 2, 3].map(() => doWithFiles(p, "**", f => {
+            // tslint:disable-next-line:no-console
+            assert(!!f.getContentSync());
+        })));
     }).timeout(10000);
 });

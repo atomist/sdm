@@ -48,11 +48,11 @@ export class LazyProjectLoader implements ProjectLoader {
 }
 
 /**
- * Just the methods we can cache
+ * Lazy project that loads remote project and forwards to it only if necessary.
  */
 class LazyProject extends AbstractProject implements GitProject {
 
-    private materializedProject: GitProject;
+    private projectPromise: QueryablePromise<GitProject>;
 
     constructor(id: RemoteRepoRef,
                 private readonly delegate: ProjectLoader,
@@ -60,21 +60,25 @@ class LazyProject extends AbstractProject implements GitProject {
         super(id);
     }
 
+    get materializing(): boolean {
+        return !!this.projectPromise;
+    }
+
     get materialized(): boolean {
-        return !!this.materializedProject;
+        return this.projectPromise && !!this.projectPromise.result;
     }
 
     get provenance(): string {
-        return this.materialized ? this.materializedProject.provenance : "unavailable";
+        return this.materialized ? this.projectPromise.result.provenance : "unavailable";
     }
 
     public release: ReleaseFunction = () => undefined;
 
     get baseDir(): string {
-        if (!this.materializedProject) {
+        if (!this.materialized) {
             throw new Error("baseDir not supported until materialized");
         }
-        return this.materializedProject.baseDir;
+        return this.projectPromise.result.baseDir;
     }
 
     public branch = this.id.branch;
@@ -83,12 +87,12 @@ class LazyProject extends AbstractProject implements GitProject {
 
     public async addDirectory(path: string): Promise<this> {
         await this.materializeIfNecessary(`addDirectory${path}`);
-        return this.materializedProject.addDirectory(path) as any;
+        return this.projectPromise.then(mp => mp.addDirectory(path)) as any;
     }
 
     public async addFile(path: string, content: string): Promise<this> {
         await this.materializeIfNecessary(`addFile(${path})`);
-        return this.materializedProject.addFile(path, content) as any;
+        return this.projectPromise.then(mp => mp.addFile(path, content)) as any;
     }
 
     public addFileSync(path: string, content: string): void {
@@ -97,7 +101,7 @@ class LazyProject extends AbstractProject implements GitProject {
 
     public async deleteDirectory(path: string): Promise<this> {
         await this.materializeIfNecessary(`deleteDirectory(${path})`);
-        return this.materializedProject.deleteDirectory(path) as any;
+        return this.projectPromise.then(mp => mp.deleteDirectory(path)) as any;
     }
 
     public deleteDirectorySync(path: string): void {
@@ -106,7 +110,7 @@ class LazyProject extends AbstractProject implements GitProject {
 
     public async deleteFile(path: string): Promise<this> {
         await this.materializeIfNecessary(`deleteFile(${path})`);
-        return this.materializedProject.deleteFile(path) as any;
+        return this.projectPromise.then(mp => mp.deleteFile(path)) as any;
     }
 
     public deleteFileSync(path: string): void {
@@ -134,8 +138,8 @@ class LazyProject extends AbstractProject implements GitProject {
     }
 
     public async getFile(path: string): Promise<File | undefined> {
-        if (this.materialized) {
-            return this.materializedProject.getFile(path) as any;
+        if (this.materializing) {
+            return this.projectPromise.then(mp => mp.getFile(path)) as any;
         }
         // TODO we need this to work for other gits
         if (isGitHubRepoRef(this.id) && GitHubDotComBase.includes(this.id.apiBase)) {
@@ -148,12 +152,12 @@ class LazyProject extends AbstractProject implements GitProject {
             return !!content ? new InMemoryFile(path, content) : undefined;
         }
         await this.materializeIfNecessary(`getFile(${path})`);
-        return this.materializedProject.getFile(path) as any;
+        return this.projectPromise.then(mp => mp.getFile(path)) as any;
     }
 
     public async makeExecutable(path: string): Promise<this> {
         await this.materializeIfNecessary(`makeExecutable(${path})`);
-        return this.materializedProject.makeExecutable(path) as any;
+        return this.projectPromise.then(mp => mp.makeExecutable(path)) as any;
     }
 
     public makeExecutableSync(path: string): void {
@@ -161,96 +165,154 @@ class LazyProject extends AbstractProject implements GitProject {
     }
 
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
-        const toFileTransform = new stream.Transform({ objectMode: true });
-
-        toFileTransform._transform = function(chunk, encoding, done) {
+        const resultStream = new stream.Transform({ objectMode: true });
+        resultStream._transform = function(chunk, encoding, done) {
             // tslint:disable-next-line:no-invalid-this
             this.push(chunk);
             done();
         };
         this.materializeIfNecessary(`streamFilesRaw`)
-            .then(() => {
-                const stream = this.materializedProject.streamFilesRaw(globPatterns, opts) as any;
-                stream.pipe(toFileTransform);
+            .then(async () => {
+                const underlyingStream = await this.projectPromise.then(mp => mp.streamFilesRaw(globPatterns, opts)) as any;
+                // tslint:disable-next-line:no-floating-promises
+                underlyingStream.pipe(resultStream);
             });
-        return toFileTransform;
+        return resultStream;
     }
 
     public async checkout(sha: string): Promise<ActionResult<this>> {
         await this.materializeIfNecessary(`checkout(${sha})`);
-        return this.materializedProject.checkout(sha) as any;
+        return this.projectPromise.then(mp => mp.checkout(sha)) as any;
     }
 
     public async commit(message: string): Promise<ActionResult<this>> {
         await this.materializeIfNecessary(`commit(${message})`);
-        return this.materializedProject.commit(message) as any;
+        return this.projectPromise.then(mp => mp.commit(message)) as any;
     }
 
     public async configureFromRemote(): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("configureFromRemote");
-        return this.materializedProject.configureFromRemote() as any;
+        return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
     public async createAndSetRemote(gid: RemoteRepoRef, description: string, visibility): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("createAndSetRemote");
-        return this.materializedProject.createAndSetRemote(gid, description, visibility) as any;
+        return this.projectPromise.then(mp => mp.createAndSetRemote(gid, description, visibility)) as any;
     }
 
     public async createBranch(name: string): Promise<ActionResult<this>> {
         await this.materializeIfNecessary(`createBranch(${name})`);
-        return this.materializedProject.createBranch(name) as any;
+        return this.projectPromise.then(mp => mp.createBranch(name)) as any;
     }
 
     public async gitStatus(): Promise<GitStatus> {
         await this.materializeIfNecessary("gitStatus");
-        return this.materializedProject.gitStatus();
+        return this.projectPromise.then(mp => mp.gitStatus());
     }
 
     public async hasBranch(name: string): Promise<boolean> {
         await this.materializeIfNecessary(`hasBranch(${name})`);
-        return this.materializedProject.hasBranch(name);
+        return this.projectPromise.then(mp => mp.hasBranch(name));
     }
 
     public async init(): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("init");
-        return this.materializedProject.init() as any;
+        return this.projectPromise.then(mp => mp.init()) as any;
     }
 
     public async isClean(): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("isClean");
-        return this.materializedProject.isClean() as any;
+        return this.projectPromise.then(mp => mp.isClean()) as any;
     }
 
     public async push(options?: GitPushOptions): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("push");
-        return this.materializedProject.configureFromRemote() as any;
+        return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
     public async raisePullRequest(title: string, body: string): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("raisePullRequest");
-        return this.materializedProject.raisePullRequest(title, body) as any;
+        return this.projectPromise.then(mp => mp.raisePullRequest(title, body)) as any;
     }
 
     public async revert(): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("revert");
-        return this.materializedProject.revert() as any;
+        return this.projectPromise.then(mp => mp.revert()) as any;
     }
 
     public async setRemote(remote: string): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("setRemote");
-        return this.materializedProject.setRemote(remote) as any;
+        return this.projectPromise.then(mp => mp.setRemote(remote)) as any;
     }
 
     public async setUserConfig(user: string, email: string): Promise<ActionResult<this>> {
         await this.materializeIfNecessary("setUserConfig");
-        return this.materializedProject.setUserConfig(user, email) as any;
+        return this.projectPromise.then(mp => mp.setUserConfig(user, email)) as any;
     }
 
     private async materializeIfNecessary(why: string) {
-        if (!this.materialized) {
+        if (!this.materializing) {
             logger.info("Materializing project %j because of %s", this.id, why);
-            this.materializedProject = await save(this.delegate, this.params);
+            this.projectPromise = makeQueryablePromise(save(this.delegate, this.params));
         }
     }
 
+}
+
+interface QueryablePromise<T> extends Promise<T> {
+
+    isResolved: boolean;
+    isFulfilled: boolean;
+    isRejected: boolean;
+
+    result: T;
+}
+
+/**
+ * Based on https://ourcodeworld.com/articles/read/317/how-to-check-if-a-javascript-promise-has-been-fulfilled-rejected-or-resolved
+ * This function allow you to modify a JS Promise by adding some status properties.
+ * Based on: http://stackoverflow.com/questions/21485545/is-there-a-way-to-tell-if-an-es6-promise-is-fulfilled-rejected-resolved
+ * But modified according to the specs of promises : https://promisesaplus.com/
+ */
+function makeQueryablePromise<T>(ppromise: Promise<any>): QueryablePromise<T> {
+    const promise = ppromise as any;
+    // Don't modify any promise that has been already modified.
+    if (promise.isResolved) {
+        return promise;
+    }
+
+    // Set initial state
+    let isPending = true;
+    let isRejected = false;
+    let isFulfilled = false;
+    let result: T;
+
+    // Observe the promise, saving the fulfillment in a closure scope.
+    const qp = promise.then(
+        v => {
+            isFulfilled = true;
+            isPending = false;
+            result = v;
+            return v;
+        },
+        e => {
+            isRejected = true;
+            isPending = false;
+            throw e;
+        },
+    );
+
+    qp.isFulfilled = () => {
+        return isFulfilled;
+    };
+    qp.isPending = () => {
+        return isPending;
+    };
+    qp.isRejected = () => {
+        return isRejected;
+    };
+    qp.result = () => {
+        return result;
+    };
+    return qp;
 }
