@@ -18,9 +18,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   **BREAKING** Command handler and autofix registrations are now strongly typed, defaulting to `NoParameters` rather than `any`. 
-This may require updates, but avoids potential errors.
 -   **BREAKING** Remove deprecated `addEditor` SDM method, and deprecated `createTransform`
-method on `ProjectOperationRegistration`.
+
+### Fixed
+
+-   Make a better workaround for not getting org token on custom events. [#279](https://github.com/atomist/sdm/issues/279)
 
 ## [0.3.1](https://github.com/atomist/sdm/compare/0.3.0...0.3.1) - 2018-07-05
 
