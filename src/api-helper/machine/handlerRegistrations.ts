@@ -68,8 +68,9 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
         ctr.targets || GitHubRepoTargets);
+    const description = ctr.description || ctr.name;
     const asCommand: CommandHandlerRegistration = {
-        description: ctr.name,
+        description,
         ...ctr as CommandRegistration<any>,
         listener: async ci => {
             const targets = (ci.parameters as RepoTargetingParameters).targets;
@@ -91,12 +92,12 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 const tms = ci.parameters;
                 editMode = () => new PullRequest(
                     tms.desiredBranchName,
-                    tms.desiredPullRequestTitle || ctr.description);
+                    tms.desiredPullRequestTitle || description);
             } else if (!editMode) {
                 // Default it if not supplied
                 editMode = () => new PullRequest(
                     `transform-${ctr.name}-${Date.now()}`,
-                    ctr.description);
+                    description);
             }
             const results = await editAll<any, any>(
                 ci.context,
@@ -123,8 +124,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
     cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
         cir.targets || GitHubRepoTargets);
+    const description = cir.description || cir.name;
     const asCommand: CommandHandlerRegistration = {
-        description: cir.name,
+        description,
         ...cir as CommandRegistration<any>,
         listener: async ci => {
             const targets = (ci.parameters as RepoTargetingParameters).targets;
