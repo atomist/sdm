@@ -21,6 +21,7 @@ import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../../mapping/PushTest";
 import { Goal } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
+import { ReportProgress } from "../progress/ReportProgress";
 import { IsolatedGoalLauncher } from "./IsolatedGoalLauncher";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
@@ -31,6 +32,7 @@ export interface GoalImplementation {
     goalExecutor: ExecuteGoal;
     pushTest: PushTest;
     logInterpreter: InterpretLog;
+    progressReporter?: ReportProgress;
 }
 
 export function isGoalImplementation(f: GoalFulfillment): f is GoalImplementation {

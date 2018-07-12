@@ -32,11 +32,13 @@ import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
+import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { SdmGoalState } from "../../typings/types";
+import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
@@ -50,6 +52,7 @@ class GoalExecutionError extends Error {
     public readonly where: string;
     public readonly result?: HandlerResult;
     public readonly cause?: Error;
+
     constructor(params: { where: string, result?: HandlerResult, cause?: Error }) {
         super("Failure in " + params.where);
         this.where = params.where;
@@ -79,10 +82,19 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
                                   goalInvocation: GoalInvocation,
                                   sdmGoal: SdmGoalEvent,
                                   goal: Goal,
-                                  logInterpreter: InterpretLog): Promise<ExecuteGoalResult> {
+                                  logInterpreter: InterpretLog,
+                                  progressReporter: ReportProgress): Promise<ExecuteGoalResult> {
+    if (progressReporter) {
+        goalInvocation.progressLog = new WriteToAllProgressLog(
+            sdmGoal.name,
+            goalInvocation.progressLog,
+            new ProgressReportingProgressLog(progressReporter, sdmGoal, goalInvocation.context),
+        );
+    }
     const ctx = goalInvocation.context;
     const { addressChannels, progressLog, id } = goalInvocation;
     const implementationName = sdmGoal.fulfillment.name;
+
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 
     await markGoalInProcess({ ctx, sdmGoal, goal, progressLogUrl: progressLog.url });
@@ -211,6 +223,7 @@ export function markStatus(parameters: {
             url: progressLogUrl,
             externalUrl: result.targetUrl,
             state: newState,
+            phase: sdmGoal.phase,
             description: descriptionFromState(goal, newState),
             error,
         });
@@ -218,6 +231,9 @@ export function markStatus(parameters: {
 
 function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, progressLogUrl: string }) {
     const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
+    sdmGoal.state = SdmGoalState.in_process;
+    sdmGoal.description = goal.inProcessDescription;
+    sdmGoal.url = progressLogUrl;
     return updateGoal(ctx, sdmGoal, {
         url: progressLogUrl,
         description: goal.inProcessDescription,
@@ -232,13 +248,13 @@ function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoalEv
  * @return {Promise<void>}
  */
 async function reportGoalError(parameters: {
-    goal: Goal,
-    implementationName: string,
-    addressChannels: AddressChannels,
-    progressLog: ProgressLog,
-    id: RemoteRepoRef,
-    logInterpreter: InterpretLog,
-},
+                                   goal: Goal,
+                                   implementationName: string,
+                                   addressChannels: AddressChannels,
+                                   progressLog: ProgressLog,
+                                   id: RemoteRepoRef,
+                                   logInterpreter: InterpretLog,
+                               },
                                err: GoalExecutionError) {
     const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
@@ -290,4 +306,53 @@ export function CompositeGoalExecutor(...goalImplementations: ExecuteGoal[]): Ex
         }
         return overallResult;
     };
+}
+
+class ProgressReportingProgressLog implements ProgressLog {
+
+    public log: string;
+    public readonly name: string;
+    public url: string;
+
+    constructor(private readonly progressReporter: ReportProgress,
+                private readonly sdmGoal: SdmGoalEvent,
+                private readonly context: HandlerContext) {
+        this.name = sdmGoal.name;
+    }
+
+    public close(): Promise<any> {
+        return Promise.resolve();
+    }
+
+    public flush(): Promise<any> {
+        return Promise.resolve();
+    }
+
+    public isAvailable(): Promise<boolean> {
+        return Promise.resolve(true);
+    }
+
+    public write(what: string): void {
+        const progress = this.progressReporter(what, this.sdmGoal);
+        if (progress && progress.phase) {
+            if (this.sdmGoal.phase !== progress.phase) {
+                this.sdmGoal.phase = progress.phase;
+                updateGoal(
+                    this.context,
+                    this.sdmGoal,
+                    {
+                        state: this.sdmGoal.state,
+                        phase: progress.phase,
+                        description: this.sdmGoal.description,
+                        url: this.sdmGoal.url,
+                    }).then(() => {
+                    // Intentionally empty
+                })
+                    .catch(err => {
+                        logger.warn(`Error occurred reporting progress: %s`, err.message);
+                    });
+            }
+        }
+    }
+
 }

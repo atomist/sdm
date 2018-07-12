@@ -27,7 +27,6 @@ import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoa
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
-import { EditModeOrFactory } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
@@ -36,7 +35,6 @@ import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
 import { isTransformModeSuggestion, isValidationError, RepoTargets } from "../..";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
-import { TransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
@@ -54,6 +52,7 @@ import {
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
+import { chattyEditor } from "../command/transform/chattyEditor";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
@@ -86,23 +85,12 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 projectLoaderRepoLoader(
                     toMachineOptions(sdm).projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials);
-            let editMode: EditModeOrFactory<any> = ctr.editMode;
-            // Get EditMode from parameters if possible
-            if (isTransformModeSuggestion(ci.parameters)) {
-                const tms = ci.parameters;
-                editMode = () => new PullRequest(
-                    tms.desiredBranchName,
-                    tms.desiredPullRequestTitle || description);
-            } else if (!editMode) {
-                // Default it if not supplied
-                editMode = () => new PullRequest(
-                    `transform-${ctr.name}-${Date.now()}`,
-                    description);
-            }
+
+            const editMode = toEditModeOrFactory(ctr, ci);
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                toScalarProjectEditor(ctr.transform),
+                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform)),
                 editMode,
                 ci.parameters,
                 repoFinder,
@@ -270,6 +258,10 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
     };
 }
 
+/**
+ * Add to the existing ParametersMaker any parameters defined in the builder itself
+ * @param {CommandHandlerRegistration<PARAMS>} c
+ */
 function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
     const oldMaker = c.paramsMaker || NoParameters;
     if (!!c.parameters) {
@@ -343,8 +335,8 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         const ci = toCommandListenerInvocation(p, ctx, params);
         // Mix in handler context for old style callers
         const r = await ct(p, {
-                ...ci,
                 ...ctx,
+                ...ci,
             } as CommandListenerInvocation<P> & HandlerContext,
             params);
         try {
@@ -373,4 +365,22 @@ export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS
             allParms.targets = targetsInstance;
             return allParms;
         };
+}
+
+function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandListenerInvocation<P>) {
+    const description = ctr.description || ctr.name;
+    if (!!ctr.transformPresentation) {
+        return (p: Project) => ctr.transformPresentation(ci, p);
+    }
+    // Get EditMode from parameters if possible
+    if (isTransformModeSuggestion(ci.parameters)) {
+        const tms = ci.parameters;
+        return new PullRequest(
+            tms.desiredBranchName,
+            tms.desiredPullRequestTitle || description);
+    }
+    // Default it if not supplied
+    return new PullRequest(
+        `transform-${ctr.name}-${Date.now()}`,
+        description);
 }

@@ -18,6 +18,7 @@ import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { Goal } from "../goal/Goal";
 import { ExecuteGoal } from "../goal/GoalInvocation";
 import { Goals } from "../goal/Goals";
+import { ReportProgress } from "../goal/progress/ReportProgress";
 import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
@@ -64,6 +65,7 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
                           options?: Partial<{
                               pushTest: PushTest,
                               logInterpreter: InterpretLog,
+                              progressReporter: ReportProgress,
                           }>): this;
 
     /**

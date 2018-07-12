@@ -28,7 +28,7 @@ import * as assert from "power-assert";
 import { executeReview } from "../../../src/api-helper/listener/executeReview";
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
-import { PushReactionResponse } from "../../../src/api/registration/PushReactionRegistration";
+import { PushReactionResponse } from "../../../src/api/registration/PushImpactListenerRegistration";
 
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",

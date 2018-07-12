@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
+import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
+import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { ParametersDefinition } from "./ParametersDefinition";
 
@@ -22,9 +23,11 @@ import { ParametersDefinition } from "./ParametersDefinition";
  * Type for registering a project transform, which can make changes
  * to projects
  */
-export interface CommandRegistration<PARAMS> extends Partial<CommandDetails> {
+export interface CommandRegistration<PARAMS> {
 
     name: string;
+
+    description?: string;
 
     /**
      * Function to create a parameters object used by this command.
@@ -37,5 +40,12 @@ export interface CommandRegistration<PARAMS> extends Partial<CommandDetails> {
      * paramsMaker: Do not supply both.
      */
     parameters?: ParametersDefinition;
+
+    intent?: string | string[];
+    tags?: string | string[];
+
+    repoFinder?: RepoFinder;
+
+    repoLoader?: (p: PARAMS) => RepoLoader;
 
 }

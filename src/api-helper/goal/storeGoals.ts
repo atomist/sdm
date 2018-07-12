@@ -50,6 +50,7 @@ export interface UpdateSdmGoalParams {
     approved?: boolean;
     error?: Error;
     data?: string;
+    phase?: string;
 }
 
 export function updateGoal(ctx: HandlerContext,
@@ -64,6 +65,7 @@ export function updateGoal(ctx: HandlerContext,
     const sdmGoal: SdmGoalMessage = {
         ...eventToMessage(before),
         state: params.state === "success" && !!before && before.approvalRequired ? "waiting_for_approval" : params.state,
+        phase: params.phase,
         description,
         url: params.url,
         externalUrl: params.externalUrl,

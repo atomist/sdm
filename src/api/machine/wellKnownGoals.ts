@@ -46,7 +46,7 @@ export const FingerprintGoal = new Goal({
     uniqueName: "Fingerprint",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-fingerprint",
-    workingDescription: "Running fingerprint calculations...",
+    workingDescription: "Running fingerprint calculations",
     completedDescription: "Fingerprinted",
 });
 
@@ -59,7 +59,7 @@ export const AutofixGoal = new Goal({
     uniqueName: "Autofix",
     environment: IndependentOfEnvironment,
     orderedName: "0.2-autofix",
-    workingDescription: "Running autofixes...",
+    workingDescription: "Running autofixes",
     completedDescription: "Autofixed",
     failedDescription: "Autofixes applied",
     isolated: true,
@@ -73,7 +73,7 @@ export const ReviewGoal = new Goal({
     uniqueName: "Review",
     environment: IndependentOfEnvironment,
     orderedName: "1-review",
-    workingDescription: "Running code reviews...",
+    workingDescription: "Running code reviews",
     completedDescription: "Code review passed",
     waitingForApprovalDescription: "Manual approval needed",
 });
@@ -86,7 +86,7 @@ export const PushReactionGoal = new Goal({
     uniqueName: "CodeReaction",
     environment: IndependentOfEnvironment,
     orderedName: "1.5-react",
-    workingDescription: "Running code reactions...",
+    workingDescription: "Running code reactions",
     completedDescription: "Code reactions passed",
 });
 
@@ -99,7 +99,7 @@ export const JustBuildGoal = new Goal({
     environment: IndependentOfEnvironment,
     orderedName: "2-just-build ",
     displayName: "build",
-    workingDescription: "Building...",
+    workingDescription: "Building",
     completedDescription: "Build successful",
     failedDescription: "Build failed",
     retryFeasible: true,
@@ -110,7 +110,7 @@ export const BuildGoal = new GoalWithPrecondition({
     environment: IndependentOfEnvironment,
     orderedName: "2-build",
     displayName: "build",
-    workingDescription: "Building...",
+    workingDescription: "Building",
     completedDescription: "Build successful",
     failedDescription: "Build failed",
     isolated: true,
