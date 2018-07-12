@@ -53,5 +53,5 @@ export interface RepoTargets {
 
 export function isValidationError(vr: ValidationResult): vr is ValidationError {
     const maybe = vr as ValidationError;
-    return !!maybe.message;
+    return !!maybe && !!maybe.message;
 }
