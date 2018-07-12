@@ -24,7 +24,6 @@
     "archiver": "^2.1.1",
     "axios": "^0.18.0",
     "base64-js": "^1.2.3",
-    "cf-client": "^0.13.26",
     "copyfiles": "^1.2.0",
     "dateformat": "^3.0.3",
     "form-data": "^2.3.2",
