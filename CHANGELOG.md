@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Make a better workaround for not getting org token on custom events. [#279](https://github.com/atomist/sdm/issues/279)
+-   Link is missing on npm publish goal. [#447](https://github.com/atomist/sdm/issues/447)
 
 ## [0.3.1](https://github.com/atomist/sdm/compare/0.3.0...0.3.1) - 2018-07-05
 
