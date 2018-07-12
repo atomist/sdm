@@ -69,6 +69,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
         ctr.paramsMaker || NoParameters,
         ctr.targets || GitHubRepoTargets);
     const asCommand: CommandHandlerRegistration = {
+        description: ctr.name,
         ...ctr as CommandRegistration<any>,
         listener: async ci => {
             const targets = (ci.parameters as RepoTargetingParameters).targets;
@@ -123,6 +124,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
         cir.paramsMaker || NoParameters,
         cir.targets || GitHubRepoTargets);
     const asCommand: CommandHandlerRegistration = {
+        description: cir.name,
         ...cir as CommandRegistration<any>,
         listener: async ci => {
             const targets = (ci.parameters as RepoTargetingParameters).targets;
