@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    MappedParameter,
-    MappedParameters,
-    Parameter,
-    Parameters,
-} from "@atomist/automation-client";
+import { MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
 import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import * as assert from "assert";
+import { ValidationResult } from "../../..";
 import { RepoTargets } from "../../machine/RepoTargets";
 
 /**
@@ -72,9 +67,11 @@ export class BitBucketRepoTargets extends TargetsParams implements FallbackParam
             undefined;
     }
 
-    public bindAndValidate() {
+    public bindAndValidate(): ValidationResult {
         if (!this.repo) {
-            assert(!!this.repos, "Must set repos or repo");
+            if (!this.repos) {
+                return { message: "Must set repos or repo" };
+            }
             this.repo = this.repos;
         }
     }

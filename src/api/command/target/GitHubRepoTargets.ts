@@ -5,7 +5,7 @@ import { MappedParameter, MappedParameters, Parameter } from "@atomist/automatio
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { GitHubTargetsParams } from "@atomist/automation-client/operations/common/params/GitHubTargetsParams";
-import * as assert from "assert";
+import { ValidationResult } from "../../../index";
 import { RepoTargets } from "../../machine/RepoTargets";
 
 export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackParams, RepoTargets {
@@ -22,9 +22,11 @@ export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackPa
     @Parameter({ description: "regex", required: false })
     public repos: string;
 
-    public bindAndValidate() {
+    public bindAndValidate(): ValidationResult {
         if (!this.repo) {
-            assert(!!this.repos, "Must set repos or repo");
+            if (!this.repos) {
+                return { message: "Must set repos or repo" };
+            }
             this.repo = this.repos;
         }
     }

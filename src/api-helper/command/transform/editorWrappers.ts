@@ -23,6 +23,8 @@ import {
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { isValidationError } from "../../../index";
+import { RepoTargetingParameters } from "../../machine/RepoTargetingParameters";
 import { confirmEditedness } from "./confirmEditedness";
 
 /**
@@ -44,12 +46,16 @@ export function chattyEditorFactory<PARAMS>(editorName: string, f: (params: PARA
  * Slack if there's nothing to do
  * @param editorName name of the editor
  * @param {AnyProjectEditor} underlyingEditor
- * @return {(project: GitProject, context, parms) => Promise<any | EditResult>}
  */
-export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
+function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
+            const targets = (parms as RepoTargetingParameters).targets;
+            const vr = targets.bindAndValidate();
+            if (isValidationError(vr)) {
+                return context.messageClient.respond(`Invalid parameters to code transform: _${vr.message}_`);
+            }
             const tentativeEditResult = await toEditor(underlyingEditor)(project, context, parms);
             const editResult = await confirmEditedness(tentativeEditResult);
             logger.debug("chattyEditor %s: git status on %j is %j: editResult=%j", editorName, project.id, await project.gitStatus(), editResult);

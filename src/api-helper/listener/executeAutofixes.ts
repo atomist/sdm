@@ -27,7 +27,7 @@ import { AutofixRegistration } from "../../api/registration/AutofixRegistration"
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { confirmEditedness } from "../command/editor/confirmEditedness";
+import { confirmEditedness } from "../command/transform/confirmEditedness";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
