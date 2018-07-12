@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-import {
-    MappedParameter,
-    MappedParameters,
-    Parameter,
-    Parameters,
-} from "@atomist/automation-client";
+import { MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
 import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
+import { ValidationResult } from "../../..";
+import { RepoTargets } from "../../machine/RepoTargets";
 
 /**
- * Base parameters for working with GitHub repo(s).
+ * Targets for working with BitBucket repo(s).
  * Allows use of regex.
  */
 @Parameters()
-export class BitBucketTargetsParams extends TargetsParams implements FallbackParams {
+export class BitBucketRepoTargets extends TargetsParams implements FallbackParams, RepoTargets {
 
     @MappedParameter(MappedParameters.GitHubApiUrl, false)
     public apiUrl: string;
@@ -68,6 +65,19 @@ export class BitBucketTargetsParams extends TargetsParams implements FallbackPar
                 true,
                 this.sha) :
             undefined;
+    }
+
+    public bindAndValidate(): ValidationResult {
+        if (!this.repo) {
+            if (!this.repos) {
+                return {
+                    message:
+                    "If not executing in a mapped channel, must identify a repo via: `targets.owner` and `targets.repo`, " +
+                    "or a repo name regex via `targets.repos`",
+                };
+            }
+            this.repo = this.repos;
+        }
     }
 
 }

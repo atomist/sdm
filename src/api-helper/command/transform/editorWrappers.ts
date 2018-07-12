@@ -44,9 +44,8 @@ export function chattyEditorFactory<PARAMS>(editorName: string, f: (params: PARA
  * Slack if there's nothing to do
  * @param editorName name of the editor
  * @param {AnyProjectEditor} underlyingEditor
- * @return {(project: GitProject, context, parms) => Promise<any | EditResult>}
  */
-export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
+function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
@@ -60,7 +59,7 @@ export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEdi
         } catch (err) {
             await context.messageClient.respond(`*${editorName}*: Nothing done on \`${id.url}\``);
             logger.warn("Editor error acting on %j: %s", project.id, err);
-            return {target: project, edited: false, success: false} as EditResult;
+            return { target: project, edited: false, success: false } as EditResult;
         }
     };
 }

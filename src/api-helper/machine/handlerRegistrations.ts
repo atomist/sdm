@@ -20,18 +20,23 @@ import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { EditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
-import { GitHubFallbackReposParameters } from "@atomist/automation-client/operations/common/params/GitHubFallbackReposParameters";
+import { andFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
+import { editAll } from "@atomist/automation-client/operations/edit/editAll";
+import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
+import { EditModeOrFactory } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
 import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { isTransformModeSuggestion, isValidationError, RepoTargets } from "../..";
+import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
+import { TransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
@@ -48,55 +53,105 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
-import { editorCommand, isTransformParameters, toEditorOrReviewerParametersMaker } from "../command/editor/editorCommand";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
+import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
 export const TransformTag = "transform";
 
-export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, e: CodeTransformRegistration<any>): Maker<HandleCommand> {
-    tagWith(e, TransformTag);
-    addParametersDefinedInBuilder(e);
-    return () => editorCommand(
-        sdm,
-        () => toScalarProjectEditor(e.transform),
-        e.name,
-        e.paramsMaker,
-        e,
-        e.targets || toMachineOptions(sdm).targets || GitHubFallbackReposParameters,
-    );
+export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
+    tagWith(ctr, TransformTag);
+    addParametersDefinedInBuilder(ctr);
+    ctr.paramsMaker = toRepoTargetingParametersMaker(
+        ctr.paramsMaker || NoParameters,
+        ctr.targets || GitHubRepoTargets);
+    const description = ctr.description || ctr.name;
+    const asCommand: CommandHandlerRegistration = {
+        description,
+        ...ctr as CommandRegistration<any>,
+        listener: async ci => {
+            const targets = (ci.parameters as RepoTargetingParameters).targets;
+            const vr = targets.bindAndValidate();
+            if (isValidationError(vr)) {
+                return ci.addressChannels(`:no_entry: Invalid parameters to code transform: ${vr.message}`);
+            }
+            const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
+                () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
+                ctr.repoFinder || toMachineOptions(sdm).repoFinder;
+            const repoLoader: RepoLoader = !!ctr.repoLoader ?
+                ctr.repoLoader(ci.parameters) :
+                projectLoaderRepoLoader(
+                    toMachineOptions(sdm).projectLoader,
+                    (ci.parameters as RepoTargetingParameters).targets.credentials);
+            let editMode: EditModeOrFactory<any> = ctr.editMode;
+            // Get EditMode from parameters if possible
+            if (isTransformModeSuggestion(ci.parameters)) {
+                const tms = ci.parameters;
+                editMode = () => new PullRequest(
+                    tms.desiredBranchName,
+                    tms.desiredPullRequestTitle || description);
+            } else if (!editMode) {
+                // Default it if not supplied
+                editMode = () => new PullRequest(
+                    `transform-${ctr.name}-${Date.now()}`,
+                    description);
+            }
+            const results = await editAll<any, any>(
+                ci.context,
+                ci.credentials,
+                toScalarProjectEditor(ctr.transform),
+                editMode,
+                ci.parameters,
+                repoFinder,
+                andFilter(targets.test, ctr.repoFilter),
+                repoLoader);
+            if (!!ctr.react) {
+                await ctr.react(results, ci);
+            } else {
+                logger.info("No react function to react to results of code transformation '%s'", ctr.name);
+            }
+        },
+    };
+    return commandHandlerRegistrationToCommand(sdm, asCommand);
 }
 
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
     addParametersDefinedInBuilder(cir);
-    cir.paramsMaker = toEditorOrReviewerParametersMaker(
+    cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
-        cir.targets || GitHubFallbackReposParameters);
+        cir.targets || GitHubRepoTargets);
+    const description = cir.description || cir.name;
     const asCommand: CommandHandlerRegistration = {
+        description,
         ...cir as CommandRegistration<any>,
         listener: async ci => {
+            const targets = (ci.parameters as RepoTargetingParameters).targets;
+            const vr = targets.bindAndValidate();
+            if (isValidationError(vr)) {
+                return ci.addressChannels(`:no_entry: Invalid parameters to code inspection: ${vr.message}`);
+            }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };
-            const repoFinder: RepoFinder = !!(ci.parameters as EditorOrReviewerParameters).targets.repoRef ?
-                () => Promise.resolve([(ci.parameters as EditorOrReviewerParameters).targets.repoRef]) :
+            const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
+                () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
                 cir.repoFinder || toMachineOptions(sdm).repoFinder;
             const repoLoader: RepoLoader = !!cir.repoLoader ?
                 cir.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
                     toMachineOptions(sdm).projectLoader,
-                    (ci.parameters as EditorOrReviewerParameters).targets.credentials);
+                    (ci.parameters as RepoTargetingParameters).targets.credentials);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
                 action,
                 ci.parameters,
                 repoFinder,
-                cir.repoFilter,
+                andFilter(targets.test, cir.repoFilter),
                 repoLoader);
             if (!!cir.react) {
                 await cir.react(results, ci);
@@ -199,7 +254,7 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
     if (isSeedDrivenGeneratorParameters(parameters)) {
         credentials = parameters.target.credentials;
         ids = [parameters.target.repoRef];
-    } else if (isTransformParameters(parameters)) {
+    } else if (isRepoTargetingParameters(parameters)) {
         credentials = parameters.targets.credentials;
         ids = !!parameters.targets.repoRef ? [parameters.targets.repoRef] : undefined;
     }
@@ -298,4 +353,24 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
             return failedEdit(p, e);
         }
     };
+}
+
+/**
+ * Return a parameters maker that is targeting aware
+ * @param {Maker<PARAMS>} paramsMaker
+ * @param targets targets parameters to set if necessary
+ * @return {Maker<EditorOrReviewerParameters & PARAMS>}
+ */
+export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
+                                                       targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
+    const sampleParams = toFactory(paramsMaker)();
+    return isRepoTargetingParameters(sampleParams) ?
+        paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
+        () => {
+            const rawParms: PARAMS = toFactory(paramsMaker)();
+            const allParms = rawParms as RepoTargetingParameters & PARAMS;
+            const targetsInstance: RepoTargets = toFactory(targets)();
+            allParms.targets = targetsInstance;
+            return allParms;
+        };
 }

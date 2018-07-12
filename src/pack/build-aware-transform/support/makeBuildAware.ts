@@ -17,7 +17,7 @@
 import { HandlerContext } from "@atomist/automation-client";
 import { EditMode, isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
 import { Project } from "@atomist/automation-client/project/Project";
-import { EditModeSuggestion } from "../../../api/command/editor/EditModeSuggestion";
+import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
 export const DryRunMessage = "[atomist-dry-run]";
@@ -41,14 +41,14 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
             } else {
                 // No edit mode was set. We need to set one that sets a branch:
                 // No PR for now
-                const branch = (p as EditModeSuggestion).desiredBranchName || `${ctr.name}-${new Date().getTime()}`;
-                const desiredCommitMessage = (p as EditModeSuggestion).desiredCommitMessage || dryRunMessage(ctr.description || ctr.name);
+                const branch = (p as TransformModeSuggestion).desiredBranchName || `${ctr.name}-${new Date().getTime()}`;
+                const desiredCommitMessage = (p as TransformModeSuggestion).desiredCommitMessage || dryRunMessage(ctr.description || ctr.name);
                 return {
                     branch,
                     message: desiredCommitMessage + "\n\n" + DryRunMessage,
                     afterPersist: afterPersistFactory({
                         desiredCommitMessage,
-                        desiredPullRequestTitle: (p as EditModeSuggestion).desiredPullRequestTitle || desiredCommitMessage,
+                        desiredPullRequestTitle: (p as TransformModeSuggestion).desiredPullRequestTitle || desiredCommitMessage,
                     }),
                 };
             }

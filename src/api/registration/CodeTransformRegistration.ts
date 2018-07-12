@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
+import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
+import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { CommandListenerInvocation } from "../listener/CommandListener";
+import { RepoTargets } from "../machine/RepoTargets";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
-
-/**
- * @deprecated use CodeTransformRegistration
- */
-export type EditorRegistration<PARAMS = NoParameters> = CodeTransformRegistration<PARAMS>;
 
 /**
  * Type for registering a project transform, which can make changes
@@ -36,7 +34,20 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
     /**
      * Allow customization of the repositories a transform targets.
      */
-    targets?: Maker<FallbackParams>;
+    targets?: Maker<RepoTargets>;
+
+    /**
+     * Additionally, programmatically target repositories to transform
+     */
+    repoFilter?: RepoFilter;
+
+    /**
+     * React to results from running edits across one or more projects
+     * @param results
+     * @param ci context
+     * @return {Promise<any>}
+     */
+    react?(results: EditResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 
 }
 

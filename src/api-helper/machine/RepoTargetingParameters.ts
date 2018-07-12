@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-/**
- * Interface that can be implemented by editor parameters that can suggest EditMode to present them
- * to users.
- */
-export interface EditModeSuggestion {
+import { RepoTargets } from "../../api/machine/RepoTargets";
 
-    desiredBranchName: string;
+export interface RepoTargetingParameters {
 
-    desiredPullRequestTitle?: string;
-
-    desiredCommitMessage?: string;
-
+    targets: RepoTargets;
 }
 
-export function isEditModeSuggestion(p: object): p is EditModeSuggestion {
-    const maybe = p as EditModeSuggestion;
-    return !!maybe.desiredBranchName;
+export function isRepoTargetingParameters(p: any): p is RepoTargetingParameters {
+    return !!p && !!(p as RepoTargetingParameters).targets;
 }
