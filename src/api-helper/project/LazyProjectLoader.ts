@@ -85,13 +85,13 @@ class LazyProject extends AbstractProject implements GitProject {
     public newRepo: boolean = false;
     public remote: string = (this.id as RemoteRepoRef).url;
 
-    public async addDirectory(path: string): Promise<this> {
-        await this.materializeIfNecessary(`addDirectory${path}`);
+    public addDirectory(path: string): Promise<this> {
+        this.materializeIfNecessary(`addDirectory${path}`);
         return this.projectPromise.then(mp => mp.addDirectory(path)) as any;
     }
 
-    public async addFile(path: string, content: string): Promise<this> {
-        await this.materializeIfNecessary(`addFile(${path})`);
+    public addFile(path: string, content: string): Promise<this> {
+        this.materializeIfNecessary(`addFile(${path})`);
         return this.projectPromise.then(mp => mp.addFile(path, content)) as any;
     }
 
@@ -99,8 +99,8 @@ class LazyProject extends AbstractProject implements GitProject {
         throw new Error("sync methods not supported");
     }
 
-    public async deleteDirectory(path: string): Promise<this> {
-        await this.materializeIfNecessary(`deleteDirectory(${path})`);
+    public deleteDirectory(path: string): Promise<this> {
+        this.materializeIfNecessary(`deleteDirectory(${path})`);
         return this.projectPromise.then(mp => mp.deleteDirectory(path)) as any;
     }
 
@@ -108,8 +108,8 @@ class LazyProject extends AbstractProject implements GitProject {
         throw new Error("sync methods not supported");
     }
 
-    public async deleteFile(path: string): Promise<this> {
-        await this.materializeIfNecessary(`deleteFile(${path})`);
+    public deleteFile(path: string): Promise<this> {
+        this.materializeIfNecessary(`deleteFile(${path})`);
         return this.projectPromise.then(mp => mp.deleteFile(path)) as any;
     }
 
@@ -151,12 +151,12 @@ class LazyProject extends AbstractProject implements GitProject {
                 path);
             return !!content ? new InMemoryFile(path, content) : undefined;
         }
-        await this.materializeIfNecessary(`getFile(${path})`);
+        this.materializeIfNecessary(`getFile(${path})`);
         return this.projectPromise.then(mp => mp.getFile(path)) as any;
     }
 
-    public async makeExecutable(path: string): Promise<this> {
-        await this.materializeIfNecessary(`makeExecutable(${path})`);
+    public makeExecutable(path: string): Promise<this> {
+        this.materializeIfNecessary(`makeExecutable(${path})`);
         return this.projectPromise.then(mp => mp.makeExecutable(path)) as any;
     }
 
@@ -180,81 +180,82 @@ class LazyProject extends AbstractProject implements GitProject {
         return resultStream;
     }
 
-    public async checkout(sha: string): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary(`checkout(${sha})`);
+    public checkout(sha: string): Promise<ActionResult<this>> {
+        this.materializeIfNecessary(`checkout(${sha})`);
         return this.projectPromise.then(mp => mp.checkout(sha)) as any;
     }
 
-    public async commit(message: string): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary(`commit(${message})`);
+    public commit(message: string): Promise<ActionResult<this>> {
+        this.materializeIfNecessary(`commit(${message})`);
         return this.projectPromise.then(mp => mp.commit(message)) as any;
     }
 
-    public async configureFromRemote(): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("configureFromRemote");
+    public configureFromRemote(): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("configureFromRemote");
         return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
-    public async createAndSetRemote(gid: RemoteRepoRef, description: string, visibility): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("createAndSetRemote");
+    public createAndSetRemote(gid: RemoteRepoRef, description: string, visibility): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("createAndSetRemote");
         return this.projectPromise.then(mp => mp.createAndSetRemote(gid, description, visibility)) as any;
     }
 
-    public async createBranch(name: string): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary(`createBranch(${name})`);
+    public createBranch(name: string): Promise<ActionResult<this>> {
+        this.materializeIfNecessary(`createBranch(${name})`);
         return this.projectPromise.then(mp => mp.createBranch(name)) as any;
     }
 
-    public async gitStatus(): Promise<GitStatus> {
-        await this.materializeIfNecessary("gitStatus");
+    public gitStatus(): Promise<GitStatus> {
+        this.materializeIfNecessary("gitStatus");
         return this.projectPromise.then(mp => mp.gitStatus());
     }
 
-    public async hasBranch(name: string): Promise<boolean> {
-        await this.materializeIfNecessary(`hasBranch(${name})`);
+    public hasBranch(name: string): Promise<boolean> {
+        this.materializeIfNecessary(`hasBranch(${name})`);
         return this.projectPromise.then(mp => mp.hasBranch(name));
     }
 
-    public async init(): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("init");
+    public init(): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("init");
         return this.projectPromise.then(mp => mp.init()) as any;
     }
 
-    public async isClean(): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("isClean");
+    public isClean(): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("isClean");
         return this.projectPromise.then(mp => mp.isClean()) as any;
     }
 
-    public async push(options?: GitPushOptions): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("push");
+    public push(options?: GitPushOptions): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("push");
         return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
-    public async raisePullRequest(title: string, body: string): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("raisePullRequest");
+    public raisePullRequest(title: string, body: string): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("raisePullRequest");
         return this.projectPromise.then(mp => mp.raisePullRequest(title, body)) as any;
     }
 
-    public async revert(): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("revert");
+    public revert(): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("revert");
         return this.projectPromise.then(mp => mp.revert()) as any;
     }
 
-    public async setRemote(remote: string): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("setRemote");
+    public setRemote(remote: string): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("setRemote");
         return this.projectPromise.then(mp => mp.setRemote(remote)) as any;
     }
 
-    public async setUserConfig(user: string, email: string): Promise<ActionResult<this>> {
-        await this.materializeIfNecessary("setUserConfig");
+    public setUserConfig(user: string, email: string): Promise<ActionResult<this>> {
+        this.materializeIfNecessary("setUserConfig");
         return this.projectPromise.then(mp => mp.setUserConfig(user, email)) as any;
     }
 
-    private async materializeIfNecessary(why: string) {
+    private materializeIfNecessary(why: string) {
         if (!this.materializing) {
             logger.info("Materializing project %j because of %s", this.id, why);
             this.projectPromise = makeQueryablePromise(save(this.delegate, this.params));
         }
+        return this.projectPromise;
     }
 
 }

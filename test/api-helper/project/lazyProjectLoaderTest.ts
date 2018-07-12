@@ -21,6 +21,11 @@ import * as assert from "power-assert";
 import { save } from "../../../src/api-helper/project/CachingProjectLoader";
 import { CloningProjectLoader } from "../../../src/api-helper/project/cloningProjectLoader";
 import { LazyProjectLoader } from "../../../src/api-helper/project/LazyProjectLoader";
+import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { InMemoryFile } from "../../../node_modules/@atomist/automation-client/project/mem/InMemoryFile";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { successOn } from "@atomist/automation-client/action/ActionResult";
 
 const credentials = {
     token: process.env.GITHUB_TOKEN,
@@ -88,4 +93,29 @@ describe("LazyProjectLoader", () => {
             assert(!!f.getContentSync());
         })));
     }).timeout(10000);
+
+    it("should commit and push", async () => {
+        const id = new GitHubRepoRef("this.is.invalid", "nonsense");
+        const raw = InMemoryProject.from(id, new InMemoryFile("a", "b")) as any as GitProject;
+        let commits = 0;
+        let pushes = 0;
+        raw.commit = async () => {
+            ++commits;
+            return successOn(raw);
+        };
+        raw.push = async () => {
+            ++pushes;
+            return successOn(raw);
+        };
+        const lpl = new SingleProjectLoader(raw);
+        const p: GitProject = await save(lpl, { credentials, id, readOnly: false });
+        assert.equal(p.name, id.repo);
+        assert.equal(p.id, id);
+        await p.commit("foo bar").then(x => x.target.push());
+        assert.equal(commits, 1);
+        assert.equal(pushes, 1);
+        await p.commit("foo baz").then(() => p.push());
+        assert.equal(commits, 2);
+        assert.equal(pushes, 2);
+    });
 });
