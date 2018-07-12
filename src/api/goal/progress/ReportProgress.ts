@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { GoalInvocation } from "../GoalInvocation";
+import { SdmGoalEvent } from "../SdmGoalEvent";
 
 export interface Progress {
 
@@ -24,6 +24,6 @@ export interface Progress {
 
 export interface ReportProgress {
 
-    report(log: string, gi: GoalInvocation): Promise<Progress>;
+    report(log: string, sdmGoal: SdmGoalEvent): Promise<Progress>;
 
 }
