@@ -23,4 +23,3 @@ export interface Progress {
 }
 
 export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;
-
