@@ -22,4 +22,5 @@ export interface Progress {
 
 }
 
-export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Promise<Progress>;
+export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;
+
