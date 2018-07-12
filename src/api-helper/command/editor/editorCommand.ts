@@ -22,7 +22,7 @@ import { EditorCommandDetails, editorHandler } from "@atomist/automation-client/
 import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { NoParameters, SmartParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { EditModeSuggestion } from "../../../api/command/target/EditModeSuggestion";
+import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
 import { RepoTargets } from "../../../api/machine/RepoTargets";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
 import { isRepoTargetingParameters, RepoTargetingParameters } from "../../machine/RepoTargetingParameters";
@@ -56,8 +56,8 @@ export function editorCommand<PARAMS = NoParameters>(
         repoLoader:
             p => projectLoaderRepoLoader(toMachineOptions(sdm).projectLoader, p.targets.credentials),
         editMode: ((params: PARAMS) => new PullRequest(
-            (params as any as EditModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
-            (params as any as EditModeSuggestion).desiredPullRequestTitle || description)),
+            (params as any as TransformModeSuggestion).desiredBranchName || `edit-${name}-${Date.now()}`,
+            (params as any as TransformModeSuggestion).desiredPullRequestTitle || description)),
         ...details,
     };
 
