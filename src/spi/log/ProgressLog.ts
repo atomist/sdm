@@ -15,7 +15,7 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../..";
 
 /**
  * Log abstraction for output of a specific activity. Not intended as a long-running log
@@ -57,4 +57,4 @@ export interface ProgressLog {
 /**
  * Function to create a ProgressLog for a given goal execution
  */
-export type ProgressLogFactory = (context: HandlerContext, sdmGoal: SdmGoal) => Promise<ProgressLog>;
+export type ProgressLogFactory = (context: HandlerContext, sdmGoal: SdmGoalEvent) => Promise<ProgressLog>;

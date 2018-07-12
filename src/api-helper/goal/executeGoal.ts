@@ -342,6 +342,7 @@ class ProgressReportingProgressLog implements ProgressLog {
                     {
                         state: this.sdmGoal.state,
                         description: `${this.sdmGoal.description} | ${progress.message}`,
+                        url: this.sdmGoal.url,
                     }).then(() => {
                     // Intentionally empty
                 })
