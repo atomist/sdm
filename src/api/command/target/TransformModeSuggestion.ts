@@ -15,10 +15,15 @@
  */
 
 /**
- * Interface that can be implemented by editor parameters that can suggest EditMode to present them
- * to users.
+ * @deprecated use TransformModeSuggestion
  */
-export interface EditModeSuggestion {
+export type EditModeSuggestion = TransformModeSuggestion;
+
+/**
+ * Interface that can be implemented by CodeTransform parameters that can suggest the mode
+ * to present changes to users.
+ */
+export interface TransformModeSuggestion {
 
     desiredBranchName: string;
 
@@ -28,7 +33,7 @@ export interface EditModeSuggestion {
 
 }
 
-export function isEditModeSuggestion(p: object): p is EditModeSuggestion {
-    const maybe = p as EditModeSuggestion;
+export function isTransformModeSuggestion(p: object): p is TransformModeSuggestion {
+    const maybe = p as TransformModeSuggestion;
     return !!maybe.desiredBranchName;
 }
