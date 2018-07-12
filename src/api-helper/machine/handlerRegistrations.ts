@@ -31,6 +31,7 @@ import { GitHubRepoCreationParameters } from "@atomist/automation-client/operati
 import { isProject, Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
@@ -48,7 +49,6 @@ import {
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
 import { editorCommand, toRepoTargetingParametersMaker } from "../command/editor/editorCommand";
-import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { isRepoTargetingParameters } from "./RepoTargetingParameters";
