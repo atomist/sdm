@@ -20,6 +20,7 @@ import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { andFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
@@ -53,7 +54,6 @@ import { editorCommand, toRepoTargetingParametersMaker } from "../command/transf
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
-import { andFilter } from "@atomist/automation-client/operations/common/repoFilter";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
