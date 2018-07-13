@@ -223,6 +223,7 @@ export function markStatus(parameters: {
             url: progressLogUrl,
             externalUrl: result.targetUrl,
             state: newState,
+            phase: sdmGoal.phase,
             description: descriptionFromState(goal, newState),
             error,
         });
@@ -335,6 +336,7 @@ class ProgressReportingProgressLog implements ProgressLog {
         const progress = this.progressReporter(what, this.sdmGoal);
         if (progress && progress.phase) {
             if (this.sdmGoal.phase !== progress.phase) {
+                this.sdmGoal.phase = progress.phase;
                 updateGoal(
                     this.context,
                     this.sdmGoal,
