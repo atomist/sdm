@@ -61,6 +61,7 @@ export interface SdmGoalEvent extends SdmGoalKey {
     goalSet: string;
     goalSetId: string;
     state: SdmGoalState;
+    phase?: string;
 
     /**
      * Timestamp

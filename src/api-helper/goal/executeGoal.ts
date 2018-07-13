@@ -334,14 +334,14 @@ class ProgressReportingProgressLog implements ProgressLog {
     public write(what: string): void {
         const progress = this.progressReporter(what, this.sdmGoal);
         if (progress && progress.message) {
-            const newDescription = `${this.sdmGoal.description.split("|")[ 0 ].trim()} | ${progress.message}`;
-            if (newDescription !== this.sdmGoal.description) {
+            if (this.sdmGoal.phase !== progress.message) {
                 updateGoal(
                     this.context,
                     this.sdmGoal,
                     {
                         state: this.sdmGoal.state,
-                        description: `${this.sdmGoal.description} | ${progress.message}`,
+                        phase: progress.message,
+                        description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
                     // Intentionally empty
