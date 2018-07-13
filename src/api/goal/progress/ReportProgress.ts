@@ -18,7 +18,7 @@ import { SdmGoalEvent } from "../SdmGoalEvent";
 
 export interface Progress {
 
-    message?: string;
+    phase?: string;
 
 }
 
