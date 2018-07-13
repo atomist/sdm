@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
@@ -44,8 +43,7 @@ export interface InspectionResult<R> {
  * Include an optional react method that can react to review results.
  */
 export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
-    extends Partial<CommandDetails>,
-        CommandRegistration<PARAMS> {
+    extends CommandRegistration<PARAMS> {
 
     inspection: CodeInspection<R, PARAMS>;
 
