@@ -16,7 +16,6 @@
 
 import { Project } from "@atomist/automation-client/project/Project";
 import { PushFields } from "../../typings/types";
-import { SdmListener } from "./Listener";
 import { PushListenerInvocation } from "./PushListener";
 
 /**
@@ -41,5 +40,3 @@ export interface PushImpactListenerInvocation extends PushListenerInvocation {
      */
     impactedSubProject: Project;
 }
-
-export type PushImpactListener = SdmListener<PushImpactListenerInvocation>;

@@ -52,7 +52,7 @@ export interface HasCodeActionResponse {
  * Can optionally return a response that
  * determines whether to ask for approval or terminate current delivery flow.
  */
-export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
+export type PushImpactListener<R> = (i: PushImpactListenerInvocation) => Promise<R & HasCodeActionResponse>;
 
 /**
  * Used to register actions on a push that can potentially
@@ -60,24 +60,24 @@ export type PushReaction<R> = (i: PushImpactListenerInvocation) => Promise<R & H
  * been set for the given push.
  * Use ReviewerRegistration if you want to return a structured review.
  */
-export type PushReactionRegistration<R = any> = PushRegistration<PushReaction<R>>;
+export type PushImpactListenerRegistration<R = any> = PushRegistration<PushImpactListener<R>>;
 
 /**
  * Something we can register as a push reaction
  */
-export type PushReactionRegisterable<R = any> = PushReactionRegistration | PushReaction<R>;
+export type PushImpactListenerRegisterable<R = any> = PushImpactListenerRegistration | PushImpactListener<R>;
 
-function isPushReactionRegistration(a: PushReactionRegisterable<any>): a is PushReactionRegistration {
+function isPushReactionRegistration(a: PushImpactListenerRegisterable<any>): a is PushImpactListenerRegistration {
     const maybe = a as PushRegistration<any>;
     return !!maybe.name && !!maybe.action;
 }
 
 /**
- * Convert an action function to a PushReaction if necessary
- * @param {PushReactionRegisterable<any>} prr
- * @return {PushReactionRegistration}
+ * Convert an action function to a PushImpactListener if necessary
+ * @param {PushImpactListenerRegisterable<any>} prr
+ * @return {PushImpactListenerRegistration}
  */
-export function toPushReactionRegistration(prr: PushReactionRegisterable<any>): PushReactionRegistration {
+export function toPushReactionRegistration(prr: PushImpactListenerRegisterable<any>): PushImpactListenerRegistration {
     return isPushReactionRegistration(prr) ? prr : {
         name: "Raw push reaction",
         action: prr,

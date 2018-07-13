@@ -40,7 +40,7 @@ import {
     AutofixRegistration,
 } from "../registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../registration/PushReactionRegistration";
+import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 
 /**
@@ -48,6 +48,11 @@ import { ReviewerRegistration } from "../registration/ReviewerRegistration";
  */
 export interface ListenerRegistrationManager {
 
+    /**
+     * Add a listener that reacts to new issues
+     * @param {NewIssueListener} l
+     * @return {this}
+     */
     addNewIssueListener(l: NewIssueListener): this;
 
     addUpdatedIssueListener(l: UpdatedIssueListener);
@@ -65,10 +70,15 @@ export interface ListenerRegistrationManager {
 
     addChannelLinkListener(l: ChannelLinkListener);
 
+    /**
+     * Add a listener that react to builds. Listeners will get multiple
+     * calls for each build as builds start and complete.
+     * @param {BuildListener} l
+     */
     addBuildListener(l: BuildListener);
 
     /**
-     * You probably mean to use addNewRepoWithCodeAction!
+     * You probably mean to use addNewRepoWithCodeListener!
      * This responds to a repo creation, but there may be no
      * code in it.
      * @param {RepoCreationListener} rcl
@@ -76,9 +86,21 @@ export interface ListenerRegistrationManager {
      */
     addRepoCreationListener(rcl: RepoCreationListener): this;
 
+    /**
+     * Register a listener that reacts to a repo being
+     * brought to Atomist's notice
+     * @param {ProjectListener} l
+     * @return {this}
+     */
     addRepoOnboardingListener(l: ProjectListener): this;
 
-    addNewRepoWithCodeAction(pl: PushListener): this;
+    /**
+     * Register a listener that reacts to a new repo appearing with
+     * content
+     * @param {PushListener} pl
+     * @return {this}
+     */
+    addNewRepoWithCodeListener(pl: PushListener): this;
 
     addPullRequestListener(prl: PullRequestListener): this;
 
@@ -94,12 +116,12 @@ export interface ListenerRegistrationManager {
     addReviewListener(l: ReviewListener): this;
 
     /**
-     * Add a reaction to a push: That is, a function that runs during execution of a
+     * Add listener to pushes: That is, a function that runs during execution of a
      * PushReaction goal.
-     * @param {PushReactionRegistration} prr
+     * @param {PushImpactListenerRegistration} prr
      * @return {this}
      */
-    addPushReaction(prr: PushReactionRegisterable): this;
+    addPushImpactListener(prr: PushImpactListenerRegisterable): this;
 
     addArtifactListener(l: ArtifactListenerRegisterable): this;
 
@@ -146,7 +168,7 @@ export interface ListenerRegistrationManager {
 
     pullRequestListeners: PullRequestListener[];
 
-    newRepoWithCodeActions: PushListener[];
+    newRepoWithCodeListeners: PushListener[];
 
     channelLinkListeners: ChannelLinkListener[];
 
@@ -156,7 +178,7 @@ export interface ListenerRegistrationManager {
 
     reviewListeners: ReviewListener[];
 
-    pushReactionRegistrations: PushReactionRegisterable[];
+    pushImpactListenerRegistrations: PushImpactListenerRegisterable[];
 
     artifactListenerRegistrations: ArtifactListenerRegisterable[];
 
