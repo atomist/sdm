@@ -52,6 +52,7 @@ import {
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
 import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
+import { chattyEditor } from "../command/transform/chattyEditor";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
 import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
@@ -89,7 +90,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                toScalarProjectEditor(ctr.transform),
+                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform)),
                 editMode,
                 ci.parameters,
                 repoFinder,
