@@ -15,7 +15,7 @@
  */
 
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
+import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
@@ -32,8 +32,7 @@ export type StartingPoint = Project | RemoteRepoRef;
  * Register a project creation operation
  */
 export interface GeneratorRegistration<PARAMS = NoParameters>
-    extends Partial<GeneratorCommandDetails<any>>,
-        ProjectOperationRegistration<PARAMS> {
+    extends ProjectOperationRegistration<PARAMS> {
 
     /**
      * Starting point before transformation. Normally the coordinates of a
@@ -41,6 +40,11 @@ export interface GeneratorRegistration<PARAMS = NoParameters>
      * The alternative is to get this from a config object.
      */
     startingPoint?: StartingPoint;
+
+    /**
+     * Strategy for persisting projects. Useful in testing.
+     */
+    projectPersister?: ProjectPersister;
 
     /**
      * Allow customization of the target for this repo,

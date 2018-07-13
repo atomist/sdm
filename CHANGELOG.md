@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** Remove deprecated `addEditor` SDM method, and deprecated `createTransform` method on `ProjectOperationRegistration`.
 -   **BREAKING** `addPushReaction` renamed `addPushImpactListener` for consistency
 -   **BREAKING** `addNewRepoWithCodeAction` renamed `addNewRepoWithCodeListener` for consistency
+-   **BREAKING**  `CodeTransformRegistration.editMode` is replaced by `transformPresentation`
 
 ### Fixed
 
