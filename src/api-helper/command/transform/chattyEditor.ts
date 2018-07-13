@@ -26,26 +26,12 @@ import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { confirmEditedness } from "./confirmEditedness";
 
 /**
- * Decorate an editor factory to make editors it creates chatty, so they respond to
- * Slack if there's nothing for them to do
- * @param editorName name of the editor
- * @param {(params: PARAMS) => AnyProjectEditor} f
- * @return {(params: PARAMS) => AnyProjectEditor}
- */
-export function chattyEditorFactory<PARAMS>(editorName: string, f: (params: PARAMS) => AnyProjectEditor): (params: PARAMS) => ProjectEditor {
-    return params => {
-        const underlyingEditor: AnyProjectEditor = f(params);
-        return chattyEditor(editorName, underlyingEditor);
-    };
-}
-
-/**
  * Wrap this editor to make it chatty, so it responds to
  * Slack if there's nothing to do
  * @param editorName name of the editor
  * @param {AnyProjectEditor} underlyingEditor
  */
-function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
+export function chattyEditor(editorName: string, underlyingEditor: AnyProjectEditor): ProjectEditor {
     return async (project: GitProject, context, parms) => {
         const id = project.id as RemoteRepoRef;
         try {
