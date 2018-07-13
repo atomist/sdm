@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
-import { EditMode, isPullRequest, toEditModeFactory } from "@atomist/automation-client/operations/edit/editModes";
-import { Project } from "@atomist/automation-client/project/Project";
+import { EditMode, isPullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
@@ -34,22 +32,18 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
         const dryRunRegistration: CodeTransformRegistration<any> = {
             ...ctr,
         };
-        dryRunRegistration.editMode = p => {
-            if (!!ctr.editMode) {
-                const registeredEmf = toEditModeFactory(ctr.editMode);
-                return dryRunOf(registeredEmf(p));
+        dryRunRegistration.transformPresentation = (ci, p) => {
+            if (!!ctr.transformPresentation) {
+                return dryRunOf(ctr.transformPresentation(ci, p));
             } else {
-                // No edit mode was set. We need to set one that sets a branch:
+                // No edit mode was set explicitly. We need to set one that sets a branch:
                 // No PR for now
-                const branch = (p as TransformModeSuggestion).desiredBranchName || `${ctr.name}-${new Date().getTime()}`;
-                const desiredCommitMessage = (p as TransformModeSuggestion).desiredCommitMessage || dryRunMessage(ctr.description || ctr.name);
+                const branch = (ci.parameters as TransformModeSuggestion).desiredBranchName || `${ctr.name}-${new Date().getTime()}`;
+                const desiredCommitMessage = (ci.parameters as TransformModeSuggestion).desiredCommitMessage
+                    || dryRunMessage(ctr.description || ctr.name);
                 return {
                     branch,
                     message: desiredCommitMessage + "\n\n" + DryRunMessage,
-                    afterPersist: afterPersistFactory({
-                        desiredCommitMessage,
-                        desiredPullRequestTitle: (p as TransformModeSuggestion).desiredPullRequestTitle || desiredCommitMessage,
-                    }),
                 };
             }
         };
@@ -64,7 +58,6 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
  */
 function dryRunOf(em: EditMode): EditMode {
     // Add dry run message suffix
-    em.afterPersist = afterPersistFactory({ desiredCommitMessage: em.message, desiredPullRequestTitle: em.message });
     em.message = dryRunMessage(em.message) + "\n\n" + DryRunMessage;
     if (isPullRequest(em)) {
         // Don't let it raise a PR if it wanted to.
@@ -76,15 +69,4 @@ function dryRunOf(em: EditMode): EditMode {
 
 function dryRunMessage(oldMessage: string): string {
     return `Try to ${oldMessage}`;
-}
-
-function afterPersistFactory(ems: {
-    desiredPullRequestTitle?: string,
-    desiredCommitMessage?: string,
-}): (p: Project, ctx: HandlerContext) => Promise<any> {
-    return async (p: Project, ctx: HandlerContext) => {
-        // TODO raise custom event here using info on edit mode
-        process.stdout.write(`Persist custom event: message='${ems.desiredCommitMessage}', title='${ems.desiredPullRequestTitle}'\n`);
-        return undefined;
-    };
 }

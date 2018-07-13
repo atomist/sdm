@@ -15,8 +15,9 @@
  */
 
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
-import { EditorCommandDetails } from "@atomist/automation-client/operations/edit/editorToCommand";
+import { EditMode } from "@atomist/automation-client/operations/edit/editModes";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
+import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../listener/CommandListener";
@@ -28,13 +29,19 @@ import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
  * across projects
  */
 export interface CodeTransformRegistration<PARAMS = NoParameters>
-    extends Partial<EditorCommandDetails>,
-        ProjectOperationRegistration<PARAMS> {
+    extends ProjectOperationRegistration<PARAMS> {
 
     /**
      * Allow customization of the repositories a transform targets.
      */
     targets?: Maker<RepoTargets>;
+
+    /**
+     * How to present the transformation
+     * @param {CommandListenerInvocation<PARAMS>} ci
+     * @return {EditMode}
+     */
+    transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
 
     /**
      * Additionally, programmatically target repositories to transform

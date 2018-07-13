@@ -33,7 +33,7 @@ export interface TransformModeSuggestion {
 
 }
 
-export function isTransformModeSuggestion(p: object): p is TransformModeSuggestion {
+export function isTransformModeSuggestion(p: any): p is TransformModeSuggestion {
     const maybe = p as TransformModeSuggestion;
     return !!maybe.desiredBranchName;
 }
