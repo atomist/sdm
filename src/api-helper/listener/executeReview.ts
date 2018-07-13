@@ -28,7 +28,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { ReviewListener } from "../../api/listener/ReviewListener";
-import { PushReactionResponse } from "../../api/registration/PushReactionRegistration";
+import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
 import {
     formatReviewerError,
     ReviewerError,

@@ -16,7 +16,7 @@
 
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CodeTransformOrTransforms } from "./CodeTransform";
-import { SelectiveCodeActionOptions } from "./PushReactionRegistration";
+import { SelectiveCodeActionOptions } from "./PushImpactListenerRegistration";
 import { PushSelector } from "./PushRegistration";
 
 export interface AutofixRegistrationOptions extends SelectiveCodeActionOptions {

@@ -34,7 +34,7 @@ import {
 } from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
-import { PushReactionResponse } from "../../../api/registration/PushReactionRegistration";
+import { PushReactionResponse } from "../../../api/registration/PushImpactListenerRegistration";
 
 /**
  * Strategy for deep linking to a source control system.

@@ -41,7 +41,7 @@ import {
     AutofixRegistration,
 } from "../../api/registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
-import { PushReactionRegisterable } from "../../api/registration/PushReactionRegistration";
+import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 
 /**
@@ -74,7 +74,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly pullRequestListeners: PullRequestListener[] = [];
 
-    public readonly newRepoWithCodeActions: PushListener[] = [];
+    public readonly newRepoWithCodeListeners: PushListener[] = [];
 
     public readonly channelLinkListeners: ChannelLinkListener[] = [];
 
@@ -84,7 +84,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly reviewListeners: ReviewListener[] = [];
 
-    public readonly pushReactionRegistrations: PushReactionRegisterable[] = [];
+    public readonly pushImpactListenerRegistrations: PushImpactListenerRegisterable[] = [];
 
     public readonly artifactListenerRegistrations: ArtifactListenerRegisterable[] = [];
 
@@ -143,8 +143,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addNewRepoWithCodeAction(pls: PushListener): this {
-        this.newRepoWithCodeActions.push(pls);
+    public addNewRepoWithCodeListener(pls: PushListener): this {
+        this.newRepoWithCodeListeners.push(pls);
         return this;
     }
 
@@ -168,8 +168,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addPushReaction(r: PushReactionRegisterable): this {
-        this.pushReactionRegistrations.push(r);
+    public addPushImpactListener(r: PushImpactListenerRegisterable): this {
+        this.pushImpactListenerRegistrations.push(r);
         return this;
     }
 

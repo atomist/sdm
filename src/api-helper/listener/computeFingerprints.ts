@@ -19,16 +19,16 @@ import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fing
 import * as _ from "lodash";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { FingerprinterResult } from "../../api/registration/FingerprinterRegistration";
-import { PushReaction } from "../../api/registration/PushReactionRegistration";
+import { PushImpactListener } from "../../api/registration/PushImpactListenerRegistration";
 
 /**
  * Compute fingerprints on this invocation with the given fingerprinters
  * @param {PushImpactListenerInvocation} pli
- * @param {Array<PushReaction<FingerprinterResult>>} fingerprinters
+ * @param {Array<PushImpactListener<FingerprinterResult>>} fingerprinters
  * @return {Promise<Fingerprint[]>}
  */
 export async function computeFingerprints(pli: PushImpactListenerInvocation,
-                                          fingerprinters: Array<PushReaction<FingerprinterResult>>): Promise<Fingerprint[]> {
+                                          fingerprinters: Array<PushImpactListener<FingerprinterResult>>): Promise<Fingerprint[]> {
     const results: Fingerprint[][] = await Promise.all(
         fingerprinters.map(async fp => {
             logger.info("Using fingerprinter %s to fingerprint %j", fp.name, pli.id);

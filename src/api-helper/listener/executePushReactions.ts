@@ -24,11 +24,11 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import {
-    PushReactionRegisterable,
-    PushReactionRegistration,
+    PushImpactListenerRegisterable,
+    PushImpactListenerRegistration,
     PushReactionResponse,
     toPushReactionRegistration,
-} from "../../api/registration/PushReactionRegistration";
+} from "../../api/registration/PushImpactListenerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
@@ -36,11 +36,11 @@ import { relevantCodeActions } from "./relevantCodeActions";
 /**
  * Execute arbitrary code reactions against a codebase
  * @param {ProjectLoader} projectLoader
- * @param {PushReactionRegistration[]} registrations
+ * @param {PushImpactListenerRegistration[]} registrations
  * @return {ExecuteGoal}
  */
 export function executePushReactions(projectLoader: ProjectLoader,
-                                     registrations: PushReactionRegisterable[]): ExecuteGoal {
+                                     registrations: PushImpactListenerRegisterable[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         if (registrations.length === 0) {
             return Success;
@@ -50,7 +50,7 @@ export function executePushReactions(projectLoader: ProjectLoader,
         return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
-            const relevantCodeReactions: PushReactionRegistration[] = await relevantCodeActions<PushReactionRegistration>(regs, cri);
+            const relevantCodeReactions: PushImpactListenerRegistration[] = await relevantCodeActions<PushImpactListenerRegistration>(regs, cri);
             logger.info("Will invoke %d eligible code reactions of %d to %j: [%s] of [%s]",
                 relevantCodeReactions.length, registrations.length, cri.id,
                 relevantCodeReactions.map(a => a.name).join(),
