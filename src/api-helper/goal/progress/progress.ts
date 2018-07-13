@@ -18,14 +18,14 @@ import { ReportProgress } from "../../../api/goal/progress/ReportProgress";
 
 export interface ProgressTest {
     test: RegExp;
-    label: string;
+    phase: string;
 }
 
 export function testProgressReporter(...tests: ProgressTest[]): ReportProgress {
     return log => {
         const match = tests.find(t => t.test.test(log));
         if (match) {
-            return { message: match.label };
+            return { phase: match.phase };
         }
         return {};
     };
