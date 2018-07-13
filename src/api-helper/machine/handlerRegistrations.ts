@@ -334,8 +334,8 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         const ci = toCommandListenerInvocation(p, ctx, params);
         // Mix in handler context for old style callers
         const r = await ct(p, {
-                ...ci,
                 ...ctx,
+                ...ci,
             } as CommandListenerInvocation<P> & HandlerContext,
             params);
         try {
