@@ -23,9 +23,9 @@ import { executePushReactions } from "../../../src/api-helper/listener/executePu
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
-import { PushReactionRegistration, PushReactionResponse } from "../../../src/api/registration/PushReactionRegistration";
+import { PushImpactListenerRegistration, PushReactionResponse } from "../../../src/api/registration/PushImpactListenerRegistration";
 
-function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushReactionRegistration {
+function react(invocations: PushListenerInvocation[], stopTheWorld: boolean): PushImpactListenerRegistration {
     return {
         name: "hatred",
         pushTest: TruePushTest,

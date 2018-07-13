@@ -23,9 +23,9 @@ import * as assert from "power-assert";
 import { computeShaOf } from "../../../src/api-helper/misc/sha";
 import { PushImpactListenerInvocation } from "../../../src/api/listener/PushImpactListener";
 import { FingerprinterResult } from "../../../src/api/registration/FingerprinterRegistration";
-import { PushReaction } from "../../../src/api/registration/PushReactionRegistration";
+import { PushImpactListener } from "../../../src/api/registration/PushImpactListenerRegistration";
 
-const SomeFingerprinter: PushReaction<FingerprinterResult> = async pli => {
+const SomeFingerprinter: PushImpactListener<FingerprinterResult> = async pli => {
     return [];
 };
 
