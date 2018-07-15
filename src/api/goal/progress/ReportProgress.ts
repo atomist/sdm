@@ -16,10 +16,24 @@
 
 import { SdmGoalEvent } from "../SdmGoalEvent";
 
+/**
+ * Signals a certain phase was entered during Goal execution.
+ */
 export interface Progress {
 
+    /** Simple string label indicating the phase */
     phase?: string;
 
 }
 
+/**
+ * Report on the Progress of a Goal execution based on given log extract.
+ * Usually this is the most current log line produced by the Goal execution.
+ *
+ * The returned Progress.phase will be stored on the Goal and overridden when
+ * a new phase has been reported.
+ *
+ * If the foal fails, the failing phase is preserved. In all other cases the
+ * phase will be reset on goal completion. 
+ */
 export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;

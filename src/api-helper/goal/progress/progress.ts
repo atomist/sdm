@@ -16,13 +16,22 @@
 
 import { ReportProgress } from "../../../api/goal/progress/ReportProgress";
 
+/**
+ * Simple test to map between a RegExp and a phase.
+ */
 export interface ProgressTest {
     test: RegExp;
     phase: string;
 }
 
+/**
+ * ReportProgress implementation that uses RexExp tests to extract progess
+ * @param {ProgressTest} tests
+ * @returns {ReportProgress}
+ */
 export function testProgressReporter(...tests: ProgressTest[]): ReportProgress {
     return log => {
+        // TODO CD we could add match groups and markers in the label
         const match = tests.find(t => t.test.test(log));
         if (match) {
             return { phase: match.phase };
