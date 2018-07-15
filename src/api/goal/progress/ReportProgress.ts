@@ -34,6 +34,6 @@ export interface Progress {
  * a new phase has been reported.
  *
  * If the foal fails, the failing phase is preserved. In all other cases the
- * phase will be reset on goal completion. 
+ * phase will be reset on goal completion.
  */
 export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;
