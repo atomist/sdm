@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-import { logger, Success } from "@atomist/automation-client";
+import {
+    logger,
+    Success,
+} from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
-import { ExecuteGoal, GoalInvocation } from "../../api/goal/GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
@@ -42,7 +48,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
  */
 export function executeAutofixes(projectLoader: ProjectLoader,
                                  registrations: AutofixRegistration[],
-                                 repoRefResolver: RepoRefResolver ): ExecuteGoal {
+                                 repoRefResolver: RepoRefResolver): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { sdmGoal, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));
@@ -60,7 +66,8 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 },
                 async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
-                    const relevantAutofixes: AutofixRegistration[] = await relevantCodeActions(registrations, cri);
+                    const relevantAutofixes: AutofixRegistration[] =
+                        filterImmediateAutofixes(await relevantCodeActions(registrations, cri), goalInvocation);
                     progressLog.write(sprintf("Will apply %d relevant autofixes of %d to %j: [%s] of [%s]",
                         relevantAutofixes.length, registrations.length, cri.id,
                         relevantAutofixes.map(a => a.name).join(),
@@ -81,7 +88,7 @@ export function executeAutofixes(projectLoader: ProjectLoader,
                 });
             if (editResult.edited) {
                 // Send back an error code, because we want to stop execution of goals after this
-                return {code: 1, message: "Edited"};
+                return { code: 1, message: "Edited" };
             }
             return Success;
         } catch (err) {
@@ -109,10 +116,10 @@ async function runOne(cri: PushImpactListenerInvocation,
                 (project.id as RemoteRepoRef).url, autofix.name, editResult.edited));
             if (!!autofix.options && autofix.options.ignoreFailure) {
                 // Say we didn't edit and can keep going
-                return {target: project, edited: false, success: false};
+                return { target: project, edited: false, success: false };
             }
         } else if (editResult.edited) {
-            await project.commit(`Autofix: ${autofix.name}\n\n[atomist:generated]`);
+            await project.commit(generateCommitMessageForAutofix(autofix));
         } else {
             logger.debug("No changes were made by autofix %s", autofix.name);
         }
@@ -126,6 +133,28 @@ async function runOne(cri: PushImpactListenerInvocation,
             err.message, (project.id as RemoteRepoRef).url, autofix.name);
         progressLog.write(sprintf("Ignoring editor failure %s on %s with autofix %s",
             err.message, (project.id as RemoteRepoRef).url, autofix.name));
-        return {target: project, success: false, edited: false};
+        return { target: project, success: false, edited: false };
     }
+}
+
+/**
+ * Filter any provided autofixes whose results were included in the commits of the current push.
+ * @param {AutofixRegistration[]} autofixes
+ * @param {GoalInvocation} gi
+ * @returns {AutofixRegistration[]}
+ */
+export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
+                                         gi: GoalInvocation): AutofixRegistration[] {
+    return autofixes.filter(
+        af => !(gi.sdmGoal.push.commits || [])
+            .some(c => c.message === generateCommitMessageForAutofix(af)));
+}
+
+/**
+ * Generate a commit message for the provided autofix.
+ * @param {AutofixRegistration} autofix
+ * @returns {string}
+ */
+export function generateCommitMessageForAutofix(autofix: AutofixRegistration): string {
+    return `Autofix: ${autofix.name}\n\n[atomist:generated] [atomist:autofix=${autofix.name}]`;
 }
