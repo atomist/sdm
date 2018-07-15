@@ -22,7 +22,12 @@ import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemory
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
-import { executeAutofixes } from "../../../src/api-helper/listener/executeAutofixes";
+import { GoalInvocation } from "../../../src";
+import {
+    executeAutofixes,
+    filterImmediateAutofixes,
+    generateCommitMessageForAutofix,
+} from "../../../src/api-helper/listener/executeAutofixes";
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { SdmGoal } from "../../../src/api/goal/SdmGoal";
@@ -169,4 +174,56 @@ describe("executeAutofixes", () => {
         assert.equal(foundFile.getContentSync(), "ibis");
     });
 
+    describe("filterImmediateAutofixes", () => {
+
+        it("should correctly filter applied autofix", () => {
+            const autofix = {
+                name: "test-autofix",
+            } as any as AutofixRegistration;
+
+            const push = {
+                commits: [{
+                    message: "foo",
+                }, {
+                    message: generateCommitMessageForAutofix(autofix),
+                }, {
+                    message: "bar",
+                }],
+            };
+
+            const filterAutofixes = filterImmediateAutofixes([autofix], { sdmGoal: {
+                    push,
+                } } as any as GoalInvocation);
+
+            assert.strictEqual(filterAutofixes.length, 0);
+        });
+
+        it("should correctly filter applied autofix but leave other", () => {
+            const autofix1 = {
+                name: "test-autofix1",
+            } as any as AutofixRegistration;
+
+            const autofix2 = {
+                name: "test-autofix2",
+            } as any as AutofixRegistration;
+
+            const push = {
+                commits: [{
+                    message: "foo",
+                }, {
+                    message: generateCommitMessageForAutofix(autofix1),
+                }, {
+                    message: "bar",
+                }],
+            };
+
+            const filterAutofixes = filterImmediateAutofixes([autofix1, autofix2], { sdmGoal: {
+                    push,
+                } } as any as GoalInvocation);
+
+            assert.strictEqual(filterAutofixes.length, 1);
+            assert.strictEqual(filterAutofixes[0].name, autofix2.name);
+        });
+
+    });
 });
