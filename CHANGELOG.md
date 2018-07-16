@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add goal set completion listener. [#275](https://github.com/atomist/sdm/issues/275)
 -   Support BitBucket. [#225](https://github.com/atomist/sdm/issues/225)
 -   `CodeTransform` registration can now specify a `react` method to run after transforms are complete.
+-   Add ability to extract and report goal Progress. [#455](https://github.com/atomist/sdm/issues/455)
 
 ### Changed
 
