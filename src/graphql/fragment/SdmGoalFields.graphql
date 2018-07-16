@@ -12,6 +12,7 @@ fragment SdmGoalFields on SdmGoal {
   url
   externalUrl
   state
+  phase
   externalKey
   goalSet
   goalSetId

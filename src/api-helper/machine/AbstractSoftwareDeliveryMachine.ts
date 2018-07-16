@@ -27,6 +27,7 @@ import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
+import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
@@ -131,6 +132,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                  options?: Partial<{
                                      pushTest: PushTest,
                                      logInterpreter: InterpretLog,
+                                     progressReporter: ReportProgress,
                                  }>): this {
         const optsToUse = {
             pushTest: AnyPush,
@@ -141,6 +143,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             implementationName, goal, goalExecutor,
             pushTest: optsToUse.pushTest,
             logInterpreter: optsToUse.logInterpreter,
+            progressReporter: optsToUse.progressReporter,
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
         return this;

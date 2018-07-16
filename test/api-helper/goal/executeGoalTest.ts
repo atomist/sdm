@@ -91,7 +91,8 @@ describe("executing the goal", () => {
                 fakeRWLC,
                 fakeSdmGoal,
                 fakeGoal,
-                lastLinesLogInterpreter("hi"))
+                lastLinesLogInterpreter("hi"),
+                null)
                 .then(async result => {
                     await fakeRWLC.progressLog.close();
                     //   const result = Success;
