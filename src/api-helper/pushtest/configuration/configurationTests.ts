@@ -17,7 +17,6 @@
 import {
     pushTest,
     PushTest,
-    SoftwareDeliveryMachine,
 } from "../../..";
 import { projectConfigurationValue } from "../../project/configuration/projectConfiguration";
 
@@ -25,15 +24,15 @@ import { projectConfigurationValue } from "../../project/configuration/projectCo
  * Is this SDM enabled on the current project.
  * Checks the .atomist/config.json at key sdm.enabled to see if the current SDM is listed.
  */
-export function isSdmEnabled(sdm: SoftwareDeliveryMachine): PushTest {
+export function isSdmEnabled(name: string): PushTest {
     return pushTest(
-        `Is ${sdm.configuration.name} enabled`,
+        `Is ${name} enabled`,
         async p => {
             const enabled = await projectConfigurationValue("sdm.enabled", p.project, []);
             if (!Array.isArray(enabled)) {
-                return enabled === sdm.configuration.name;
+                return enabled === name;
             } else {
-                return enabled.some(e => e === sdm.configuration.name);
+                return enabled.some(e => e === name);
             }
         });
 }
