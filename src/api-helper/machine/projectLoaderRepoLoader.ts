@@ -23,14 +23,18 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
  * Adapter from newer ProjectLoader to older RepoLoader for use in editors
  * @param pl ProjectLoader
  * @param credentials credentials to use to load projects
+ * @param readOnly is the use read only?
  * @return {RepoLoader}
  */
-export function projectLoaderRepoLoader(pl: ProjectLoader, credentials: ProjectOperationCredentials): RepoLoader {
+export function projectLoaderRepoLoader(pl: ProjectLoader,
+                                        credentials: ProjectOperationCredentials,
+                                        readOnly: boolean): RepoLoader {
     return async id => {
         let project;
-        await pl.doWithProject({id: id as RemoteRepoRef, credentials, readOnly: false}, async p => {
-            project = p;
-        });
+        await pl.doWithProject({ id: id as RemoteRepoRef, credentials, readOnly },
+            async p => {
+                project = p;
+            });
         return project;
     };
 }
