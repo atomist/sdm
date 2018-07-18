@@ -15,15 +15,11 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs";
 import { promisify } from "util";
-import {
-    ProjectLoader,
-    ProjectLoadingParameters,
-    WithLoadedProject,
-} from "../../spi/project/ProjectLoader";
+import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
+import { CloningProjectLoader } from "./cloningProjectLoader";
 import { cacheKeyForSha } from "./support/cacheKey";
 import { LruCache } from "./support/LruCache";
 import { SimpleCache } from "./support/SimpleCache";
@@ -35,16 +31,10 @@ export class CachingProjectLoader implements ProjectLoader {
 
     private readonly cache: SimpleCache<GitProject>;
 
-    // TODO should be expressed in terms of another ProjectLoader, not cloning
-
-    constructor(maxEntries: number = 20) {
-        this.cache = new LruCache<GitProject>(maxEntries);
-    }
-
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         if (!params.readOnly) {
             logger.info("CachingProjectLoader: Forcing fresh clone for non readonly use of %j", params.id);
-            const p = await GitCommandGitProject.cloned(params.credentials, params.id);
+            const p = await save(this.delegate, params);
             return action(p);
         }
 
@@ -63,7 +53,7 @@ export class CachingProjectLoader implements ProjectLoader {
         }
 
         if (!project) {
-            project = await GitCommandGitProject.cloned(params.credentials, params.id);
+            project = await save(this.delegate, params);
             logger.info("Caching project %j", project.id);
             this.cache.put(key, project);
         }
@@ -72,4 +62,17 @@ export class CachingProjectLoader implements ProjectLoader {
         return action(project);
     }
 
+    constructor(
+        private readonly delegate: ProjectLoader = CloningProjectLoader,
+        maxEntries: number = 20) {
+        this.cache = new LruCache<GitProject>(maxEntries);
+    }
+
+}
+
+export function save(pl: ProjectLoader, params: ProjectLoadingParameters): Promise<GitProject> {
+    let p: GitProject;
+    return pl.doWithProject(params, async loaded => {
+        p = loaded;
+    }).then(() => p);
 }
