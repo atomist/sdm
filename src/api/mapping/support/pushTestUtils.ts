@@ -41,7 +41,7 @@ export type PushTestOrProjectPredicate = PushTest | ProjectPredicate;
  */
 export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
     const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
-    return pred.all(...asPushTests);
+    return pred.all(asPushTests);
 }
 
 /**
@@ -52,7 +52,7 @@ export function allSatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTe
  */
 export function anySatisfied(...pushTests: PushTestOrProjectPredicate[]): PushTest {
     const asPushTests = pushTests.map(p => isMapping(p) ? p : predicatePushTest(p.name, p));
-    return pred.any(...asPushTests);
+    return pred.any(asPushTests);
 }
 
 const pushTestResultMemory = new LruCache<boolean>(1000);

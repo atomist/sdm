@@ -29,6 +29,8 @@ export const TrueProjectPredicate: ProjectPredicate = async () => true;
 
 export const FalseProjectPredicate: ProjectPredicate = async () => false;
 
+export const BigProject: ProjectPredicate = async p => (await p.totalFileCount()) > 100;
+
 const id = new GitHubRepoRef("atomist", "github-sdm");
 
 describe("pushTestUtilsTest", () => {
