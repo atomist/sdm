@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { logger } from "@atomist/automation-client";
 import { PredicateMapping } from "../PredicateMapping";
 import { ExpectedPredicateMappingCost, PredicateMappingCostAnalyzer } from "./PredicateMappingCostAnalyzer";
