@@ -33,7 +33,7 @@ export function notPredicate(t: ProjectPredicate): ProjectPredicate {
  * @return {ProjectPredicate}
  */
 export function allPredicatesSatisfied(...predicates: ProjectPredicate[]): ProjectPredicate {
-    return all(...predicates.map(toPredicateMapping)).mapping;
+    return all(predicates.map(toPredicateMapping)).mapping;
 }
 
 /**
@@ -43,7 +43,7 @@ export function allPredicatesSatisfied(...predicates: ProjectPredicate[]): Proje
  * @return {ProjectPredicate}
  */
 export function anyPredicateSatisfied(...predicates: ProjectPredicate[]): ProjectPredicate {
-    return any(...predicates.map(toPredicateMapping)).mapping;
+    return any(predicates.map(toPredicateMapping)).mapping;
 }
 
 function toPredicateMapping(p: ProjectPredicate, i: number): PredicateMapping<Project> {

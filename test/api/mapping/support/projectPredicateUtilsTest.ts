@@ -17,12 +17,13 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { Project } from "@atomist/automation-client/project/Project";
 
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import {
     allPredicatesSatisfied,
     anyPredicateSatisfied, notPredicate,
 } from "../../../../src/api/mapping/support/projectPredicateUtils";
-import { FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtilsTest";
+import { BigProject, FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtilsTest";
 
 const id = new GitHubRepoRef("atomist", "github-sdm");
 
@@ -31,12 +32,12 @@ describe("projectPredicatesUtilsTest", () => {
     describe("not", () => {
 
         it("should handle one true", async () => {
-            const r = await notPredicate(TrueProjectPredicate)({id} as any as Project);
+            const r = await notPredicate(TrueProjectPredicate)({ id } as any as Project);
             assert(!r);
         });
 
         it("should handle one false", async () => {
-            const r = await notPredicate(FalseProjectPredicate)({id} as any as Project);
+            const r = await notPredicate(FalseProjectPredicate)({ id } as any as Project);
             assert(r);
         });
 
@@ -44,43 +45,62 @@ describe("projectPredicatesUtilsTest", () => {
 
     describe("allPredicatesSatisfied", () => {
 
-            it("should handle one true", async () => {
-                const r = await allPredicatesSatisfied(TrueProjectPredicate)({id} as any as Project);
-                assert(r);
-            });
-
-            it("should handle two true", async () => {
-                const r = await allPredicatesSatisfied(TrueProjectPredicate, TrueProjectPredicate)({id} as any as Project);
-                assert(r);
-            });
-
-            it("should handle one true and one false", async () => {
-                const r = await allPredicatesSatisfied(TrueProjectPredicate, FalseProjectPredicate)({id} as any as Project);
-                assert(!r);
-            });
+        it("should handle one true", async () => {
+            const r = await allPredicatesSatisfied(TrueProjectPredicate)({ id } as any as Project);
+            assert(r);
         });
+
+        it("should handle two true", async () => {
+            const r = await allPredicatesSatisfied(TrueProjectPredicate, TrueProjectPredicate)({ id } as any as Project);
+            assert(r);
+        });
+
+        it("should handle one true and one false", async () => {
+            const r = await allPredicatesSatisfied(TrueProjectPredicate, FalseProjectPredicate)({ id } as any as Project);
+            assert(!r);
+        });
+
+        it("should handle one true and one false, and not evaluate slow predicate that will fail", async () => {
+            const r = await allPredicatesSatisfied(
+                TrueProjectPredicate,
+                FalseProjectPredicate,
+                BigProject)({ id } as any as Project);
+            assert(!r);
+        });
+
+        it("should eventually evaluate slow predicate", async () => {
+            const p = InMemoryProject.from(id);
+            for (let i = 0; i < 500; i++) {
+                p.addFileSync(`path-${i}`, "content");
+            }
+            const r = await allPredicatesSatisfied(
+                TrueProjectPredicate,
+                BigProject)(p);
+            assert(r);
+        });
+    });
 
     describe("anyPredicateSatisfied", () => {
 
-            it("should handle one true", async () => {
-                const r = await anyPredicateSatisfied(TrueProjectPredicate)({id} as any as Project);
-                assert(r);
-            });
+        it("should handle one true", async () => {
+            const r = await anyPredicateSatisfied(TrueProjectPredicate)({ id } as any as Project);
+            assert(r);
+        });
 
-            it("should handle two true", async () => {
-                const r = await anyPredicateSatisfied(TrueProjectPredicate, TrueProjectPredicate)({id} as any as Project);
-                assert(r);
-            });
+        it("should handle two true", async () => {
+            const r = await anyPredicateSatisfied(TrueProjectPredicate, TrueProjectPredicate)({ id } as any as Project);
+            assert(r);
+        });
 
-            it("should handle one true and one false", async () => {
-                const r = await anyPredicateSatisfied(TrueProjectPredicate, FalseProjectPredicate)({id} as any as Project);
-                assert(r);
-            });
+        it("should handle one true and one false", async () => {
+            const r = await anyPredicateSatisfied(TrueProjectPredicate, FalseProjectPredicate)({ id } as any as Project);
+            assert(r);
+        });
 
-            it("should handle two false", async () => {
-                const r = await anyPredicateSatisfied(FalseProjectPredicate, FalseProjectPredicate)({id} as any as Project);
-                assert(!r);
-            });
+        it("should handle two false", async () => {
+            const r = await anyPredicateSatisfied(FalseProjectPredicate, FalseProjectPredicate)({ id } as any as Project);
+            assert(!r);
+        });
 
     });
 
