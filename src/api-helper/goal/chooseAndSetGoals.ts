@@ -171,7 +171,7 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
 
 async function fulfillment(rules: {
     implementationMapping: SdmGoalImplementationMapper,
-}, g: Goal, inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
+},                         g: Goal, inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const { implementationMapping } = rules;
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {

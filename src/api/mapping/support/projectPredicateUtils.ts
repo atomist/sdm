@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
+import { Project } from "@atomist/automation-client/project/Project";
+import { PredicateMapping } from "../PredicateMapping";
 import { ProjectPredicate } from "../PushTest";
+import { all, any } from "./predicateUtils";
 
 /**
  * Return the opposite of this ProjectPredicate
@@ -31,16 +33,7 @@ export function notPredicate(t: ProjectPredicate): ProjectPredicate {
  * @return {ProjectPredicate}
  */
 export function allPredicatesSatisfied(...predicates: ProjectPredicate[]): ProjectPredicate {
-    return async p => {
-        const allResults: boolean[] = await Promise.all(
-            predicates.map(async pt => {
-                const result = await pt(p);
-                logger.debug(`Result of ProjectPredicate '${pt.name}' was ${result}`);
-                return result;
-            }),
-        );
-        return !allResults.includes(false);
-    };
+    return all(...predicates.map(toPredicateMapping)).mapping;
 }
 
 /**
@@ -50,14 +43,12 @@ export function allPredicatesSatisfied(...predicates: ProjectPredicate[]): Proje
  * @return {ProjectPredicate}
  */
 export function anyPredicateSatisfied(...predicates: ProjectPredicate[]): ProjectPredicate {
-    return async p => {
-        const allResults: boolean[] = await Promise.all(
-            predicates.map(async pt => {
-                const result = await pt(p);
-                logger.debug(`Result of ProjectPredicate '${pt.name}' was ${result}`);
-                return result;
-            }),
-        );
-        return allResults.includes(true);
+    return any(...predicates.map(toPredicateMapping)).mapping;
+}
+
+function toPredicateMapping(p: ProjectPredicate, i: number): PredicateMapping<Project> {
+    return {
+        name: `p_${i}`,
+        mapping: p,
     };
 }
