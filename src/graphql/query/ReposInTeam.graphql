@@ -1,9 +1,10 @@
-query ReposInTeam($teamId: ID!, $offset: Int!) {
-  ChatTeam(id: $teamId) {
+query ReposInTeam($offset: Int!, $size: Int!) {
+  ChatTeam {
     orgs {
-      repo(first: 100, offset: $offset) {
-        ...CoreRepoFieldsAndChannels
+      repo(first: $size, offset: $offset) {
+        name
       }
     }
   }
 }
+

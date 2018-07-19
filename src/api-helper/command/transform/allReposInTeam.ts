@@ -22,7 +22,6 @@ import * as _ from "lodash";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { ReposInTeam } from "../../../typings/types";
 
-// Hard-coded limit in GraphQL queries. Not sure why we can't pass this
 const PageSize = 100;
 
 /**
@@ -50,7 +49,7 @@ export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
 function queryForPage(rrr: RepoRefResolver, context: HandlerContext, offset: number): Promise<RemoteRepoRef[]> {
     return context.graphClient.query<ReposInTeam.Query, ReposInTeam.Variables>({
         name: "ReposInTeam",
-        variables: {teamId: context.teamId, offset},
+        variables: { offset, size: PageSize },
     })
         .then(result => {
             return _.flatMap(result.ChatTeam[0].orgs, org =>
