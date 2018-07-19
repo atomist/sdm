@@ -7,4 +7,3 @@ query ReposInTeam($offset: Int!, $size: Int!) {
     }
   }
 }
-
