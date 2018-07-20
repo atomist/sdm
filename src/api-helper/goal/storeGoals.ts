@@ -17,7 +17,6 @@
 import {
     AutomationContextAware,
     HandlerContext,
-    logger,
 } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
@@ -37,6 +36,7 @@ import {
 } from "../../api/goal/SdmGoalMessage";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { SdmGoalState } from "../../typings/types";
+import { OnAnyRequestedSdmGoal, OnPushToAnyBranch } from "../../typings/types";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
@@ -74,8 +74,8 @@ export function updateGoal(ctx: HandlerContext,
         provenance: [constructProvenance(ctx)].concat(!!before ? before.provenance : []),
         error: _.get(params, "error.message"),
         data,
+        push: before.push,
     } as SdmGoalMessage;
-    logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
@@ -158,8 +158,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     };
 }
 
-export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage) {
-    logger.info("Storing goal: %j", sdmGoal);
+export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage, push: OnPushToAnyBranch.Push) {
+    (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).push = push;
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);
 }

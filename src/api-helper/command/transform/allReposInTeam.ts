@@ -42,6 +42,7 @@ export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
 
 /**
  * Recursively query for repos from the present offset
+ * @param rrr repo ref resolver to use
  * @param {HandlerContext} context
  * @param {number} offset
  * @return {Promise<RepoRef[]>}
