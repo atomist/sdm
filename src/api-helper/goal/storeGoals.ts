@@ -17,7 +17,6 @@
 import {
     AutomationContextAware,
     HandlerContext,
-    logger,
 } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
