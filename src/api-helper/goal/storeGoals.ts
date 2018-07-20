@@ -77,7 +77,6 @@ export function updateGoal(ctx: HandlerContext,
         data,
         push: before.push,
     } as SdmGoalMessage;
-    logger.debug("Updating SdmGoal %s to %s: %j", sdmGoal.externalKey, sdmGoal.state, sdmGoal);
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType));
 }
 
@@ -161,7 +160,6 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
 }
 
 export function storeGoal(ctx: HandlerContext, sdmGoal: SdmGoalMessage, push: OnPushToAnyBranch.Push) {
-    logger.info("Storing goal: %j", sdmGoal);
     (sdmGoal as OnAnyRequestedSdmGoal.SdmGoal).push = push;
     return ctx.messageClient.send(sdmGoal, addressEvent(GoalRootType))
         .then(() => sdmGoal);
