@@ -23,7 +23,6 @@ import { RemoteRepoRef } from "@atomist/automation-client/operations/common/Repo
 import { addressEvent } from "@atomist/automation-client/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import { OnAnyRequestedSdmGoal, OnPushToAnyBranch } from "../..";
 import {
     Goal,
     hasPreconditions,
@@ -38,6 +37,7 @@ import {
 } from "../../api/goal/SdmGoalMessage";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
 import { SdmGoalState } from "../../typings/types";
+import { OnAnyRequestedSdmGoal, OnPushToAnyBranch } from "../../typings/types";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
