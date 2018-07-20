@@ -98,7 +98,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
             credentials, id, context, push, addressChannels, goalSetId,
         });
 
-    await Promise.all(goalsToSave.map(g => storeGoal(context, g)));
+    await Promise.all(goalsToSave.map(g => storeGoal(context, g, push)));
 
     // Let GoalSetListeners know even if we determined no goals.
     // This is not an error

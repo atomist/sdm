@@ -42,6 +42,7 @@ export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
 
 /**
  * Recursively query for repos from the present offset
+ * @param rrr repo ref resolver to use
  * @param {HandlerContext} context
  * @param {number} offset
  * @return {Promise<RepoRef[]>}
@@ -49,7 +50,7 @@ export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
 function queryForPage(rrr: RepoRefResolver, context: HandlerContext, offset: number): Promise<RemoteRepoRef[]> {
     return context.graphClient.query<ReposInTeam.Query, ReposInTeam.Variables>({
         name: "ReposInTeam",
-        variables: { offset, size: PageSize },
+        variables: { offset, size: PageSize, teamId: context.teamId },
     })
         .then(result => {
             return _.flatMap(result.ChatTeam[0].orgs, org =>
