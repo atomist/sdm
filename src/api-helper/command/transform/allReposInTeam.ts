@@ -50,7 +50,7 @@ export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
 function queryForPage(rrr: RepoRefResolver, context: HandlerContext, offset: number): Promise<RemoteRepoRef[]> {
     return context.graphClient.query<ReposInTeam.Query, ReposInTeam.Variables>({
         name: "ReposInTeam",
-        variables: { offset, size: PageSize, teamId: context.teamId },
+        variables: { offset, size: PageSize },
     })
         .then(result => {
             return _.flatMap(result.ChatTeam[0].orgs, org =>
