@@ -32,8 +32,10 @@ export interface SdmContext {
     context: HandlerContext;
 
     /**
-     * If available, provides a way to address the channel(s) related to this event.
-     * This is usually, but not always, the channels linked to a
+     * Provides a way to address the channel(s) related to this action:
+     * usually, an event or command invocation.
+     * In an event handler, these are usually the channel(s) linked to a repo.
+     * In a command handler, the behavior will be the same as that of `MessageClient.respond`.
      * In some cases, such as repo creation or a push to a repo where there is no linked channel,
      * addressChannels will go to dev/null without error.
      */
