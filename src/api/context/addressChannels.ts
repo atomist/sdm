@@ -19,6 +19,7 @@ import {
     addressSlackChannels,
     Destination,
     MessageOptions,
+    SlackFileMessage,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
@@ -26,7 +27,7 @@ import { SlackMessage } from "@atomist/slack-messages";
  * Allows us to address channels for a particular repo or any GraphQL
  * type with channels
  */
-export type AddressChannels = (msg: string | SlackMessage, opts?: MessageOptions) => Promise<any>;
+export type AddressChannels = (msg: string | SlackMessage | SlackFileMessage, opts?: MessageOptions) => Promise<any>;
 
 /**
  * Throw away contents. Use when we know that there can be no linked channels.
