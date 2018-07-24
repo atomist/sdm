@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { EditMode } from "@atomist/automation-client/operations/edit/editModes";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { RepoTargets } from "../machine/RepoTargets";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
+import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 
 /**
  * Type for registering a project transform, which can make changes
  * across projects
  */
 export interface CodeTransformRegistration<PARAMS = NoParameters>
-    extends ProjectOperationRegistration<PARAMS> {
-
-    /**
-     * Allow customization of the repositories a transform targets.
-     */
-    targets?: Maker<RepoTargets>;
+    extends ProjectOperationRegistration<PARAMS>, ProjectsOperationRegistration<PARAMS> {
 
     /**
      * How to present the transformation
@@ -42,11 +35,6 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * @return {EditMode}
      */
     transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
-
-    /**
-     * Additionally, programmatically target repositories to transform
-     */
-    repoFilter?: RepoFilter;
 
     /**
      * React to results from running edits across one or more projects

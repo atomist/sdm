@@ -92,7 +92,6 @@ export * from "./api/registration/IngesterRegistration";
 export * from "./api/registration/IngesterRegistrationManager";
 export * from "./api/registration/ParametersBuilder";
 export * from "./api/registration/ParametersDefinition";
-export * from "./api/registration/ProjectOperationRegistration";
 export * from "./api/registration/PushImpactListenerRegistration";
 export * from "./api/registration/PushRegistration";
 export * from "./api/registration/ReviewerError";

@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { RepoTargets } from "../machine/RepoTargets";
-import { CommandRegistration } from "./CommandRegistration";
+import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 
 /**
  * Function that can run against a project without mutating it to
@@ -43,19 +40,9 @@ export interface InspectionResult<R> {
  * Include an optional react method that can react to review results.
  */
 export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
-    extends CommandRegistration<PARAMS> {
+    extends ProjectsOperationRegistration<PARAMS> {
 
     inspection: CodeInspection<R, PARAMS>;
-
-    /**
-     * Allow customization of the repositories that an inspection targets.
-     */
-    targets?: Maker<RepoTargets>;
-
-    /**
-     * Additionally, programmatically target repositories to inspect
-     */
-    repoFilter?: RepoFilter;
 
     /**
      * React to computed values from running across one or more projects
