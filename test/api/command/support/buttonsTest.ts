@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import * as assert from "assert";
 import { toFlattenedProperties } from "../../../../src/api/command/support/buttons";
 
