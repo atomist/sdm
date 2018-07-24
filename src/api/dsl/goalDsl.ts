@@ -30,13 +30,19 @@ import {
 
 export class GoalSetterMapping extends PushRule<Goals> {
 
+    private goalsName: string;
+
+    public get label(): string {
+        return this.goalsName;
+    }
+
     constructor(guard1: PushTest, guards: PushTest[], reason?: string) {
         super(guard1, guards, reason);
     }
 
     public setGoals(goals: GoalComponent): this {
-        if (!goals) {
-            return this.set(goals as Goals);
+        if (goals && (goals as Goals).name) {
+            this.goalsName = (goals as Goals).name;
         }
         return this.set(toGoals(goals));
     }

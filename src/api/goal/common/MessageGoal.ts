@@ -22,9 +22,10 @@ import { IndependentOfEnvironment } from "../support/environment";
  */
 export class MessageGoal extends Goal {
 
-    constructor(uniqueName: string) {
+    constructor(uniqueName: string, name?: string) {
         super({
             uniqueName,
+            displayName: name ? name : uniqueName,
             environment: IndependentOfEnvironment,
             orderedName: `0-message-${uniqueName}`,
             completedDescription: "Sent",

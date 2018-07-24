@@ -59,6 +59,7 @@ describe("goalContribution", () => {
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, [BuildGoal]);
+            assert.equal(goals.name, "build");
         });
 
         it("should set goals from one goals", async () => {
@@ -68,6 +69,7 @@ describe("goalContribution", () => {
             assert.equal(await r.mapping(p), SomeGoalSet);
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
+            assert.equal(goals.name, "SomeGoalSet");
         });
 
     });
@@ -88,28 +90,32 @@ describe("goalContribution", () => {
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.deepEqual(goals.goals, SomeGoalSet.goals);
+            assert.equal(goals.name, "SomeGoalSet");
         });
 
         it("should add goal to some", async () => {
-            // TODO what is the problem with MessageGoal and type checking??
+            const mg = new MessageGoal("sendSomeMessage", "Sending message");
             const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             const gs: GoalSetter = enrichGoalSetters(old,
-                onAnyPush().setGoals(MessageGoal as any as GoalComponent));
+                onAnyPush().setGoals(mg));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
-            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat(MessageGoal as any));
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat(mg));
+            assert.equal(goals.name, "SomeGoalSet, Sending message");
         });
 
         it("should add two goals to some", async () => {
+            const mg = new MessageGoal("sendSomeMessage", "Sending message");
             const old: GoalSetter = whenPushSatisfies(() => true).itMeans("thing").setGoals(SomeGoalSet);
             let gs: GoalSetter = enrichGoalSetters(old,
-                onAnyPush().setGoals(MessageGoal as any as GoalComponent));
+                onAnyPush().setGoals(mg));
             gs = enrichGoalSetters(gs,
-                onAnyPush().setGoals(FingerprintGoal as any as GoalComponent));
+                onAnyPush().setGoals(FingerprintGoal));
             const p = fakePush();
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals.goals.length, 3);
-            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([MessageGoal, FingerprintGoal] as any));
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
+            assert.equal(goals.name, "SomeGoalSet, Sending message, Fingerprint");
         });
 
     });
