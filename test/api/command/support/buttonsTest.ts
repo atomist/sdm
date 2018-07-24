@@ -15,27 +15,38 @@
  */
 
 import * as assert from "assert";
-import { toFlattenedProperties } from "../../../../src/api/command/support/buttons";
+import { actionableButton } from "../../../../src";
 
-describe("toFlattenedProperties", () => {
+describe("actionableButton", () => {
 
     it("should handle undefined", () => {
-        const props = toFlattenedProperties(undefined);
-        assert.deepEqual(props, {});
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }) as any;
+        assert.deepEqual(button.command.parameters, {});
+        assert.equal(button.command.name, "someCommand");
     });
 
     it("should handle simple property", () => {
-        const props = toFlattenedProperties({ name: "Fred" });
-        assert.deepEqual(props, { name: "Fred" });
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }, { name: "Fred" }) as any;
+        assert.deepEqual(button.command.parameters, { name: "Fred" });
     });
 
     it("should handle nested property", () => {
-        const props = toFlattenedProperties({ name: "Fred", address: { street: "somewhere" } });
-        assert.deepEqual(props, { "name": "Fred", "address.street": "somewhere" });
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }, {
+            name: "Fred",
+            address: { street: "somewhere" },
+        }) as any;
+        assert.deepEqual(button.command.parameters, { "name": "Fred", "address.street": "somewhere" });
     });
 
     it("should handle nested nested property", () => {
-        const props = toFlattenedProperties({ name: "Fred", address: { street: "somewhere", zip: { code: "12345" } } });
-        assert.deepEqual(props, { "name": "Fred", "address.street": "somewhere", "address.zip.code": "12345" });
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }, {
+            name: "Fred",
+            address: { street: "somewhere", zip: { code: "12345" } },
+        }) as any;
+        assert.deepEqual(button.command.parameters, {
+            "name": "Fred",
+            "address.street": "somewhere",
+            "address.zip.code": "12345",
+        });
     });
 });
