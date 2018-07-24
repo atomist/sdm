@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { CommandRegistration } from "./CommandRegistration";
 import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
-import { RepoTargets } from "../machine/RepoTargets";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { RepoTargets } from "../machine/RepoTargets";
+import { ProjectPredicate } from "../mapping/PushTest";
+import { CommandRegistration } from "./CommandRegistration";
 
 /**
  * Superclass for all registrations that can apply to one or more projects.
@@ -30,8 +31,14 @@ export interface ProjectsOperationRegistration<PARAMS> extends CommandRegistrati
     targets?: Maker<RepoTargets>;
 
     /**
-     * Additionally, programmatically target repositories to inspect
+     * Additionally, programmatically limit repositories to inspect, by id
      */
     repoFilter?: RepoFilter;
+
+    /**
+     * Programmatically limit repositories to inspect, by a project predicate.
+     * This can look inside project.
+     */
+    projectTest?: ProjectPredicate;
 
 }

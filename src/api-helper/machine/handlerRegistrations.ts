@@ -36,6 +36,7 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 import { isTransformModeSuggestion, isValidationError, RepoTargets } from "../..";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
+import { ProjectPredicate } from "../../api/mapping/PushTest";
 import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
@@ -91,7 +92,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform)),
+                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
                 editMode,
                 ci.parameters,
                 repoFinder,
@@ -124,6 +125,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 return ci.addressChannels(`:no_entry: Invalid parameters to code inspection: ${vr.message}`);
             }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
+                if (!!cir.projectTest && !cir.projectTest(p)) {
+                    return { repoId: p.id, result: undefined };
+                }
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
@@ -322,12 +326,19 @@ function toParametersListing(p: ParametersDefinition): ParametersListing {
     return builder;
 }
 
-export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
-    if (Array.isArray(ctot)) {
-        return chainEditors(...ctot.map(toProjectEditor));
-    } else {
-        return toProjectEditor(ctot);
+export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>, projectPredicate?: ProjectPredicate): ProjectEditor<PARAMS> {
+    const unguarded = Array.isArray(ctot) ?
+        chainEditors(...ctot.map(toProjectEditor)) :
+        toProjectEditor(ctot);
+    if (!!projectPredicate) {
+        // Filter out this project if it doesn't match the predicate
+        return (p, context, params) => {
+            return projectPredicate(p) ?
+                unguarded(p, context, params) :
+                Promise.resolve({ success: true, edited: false, target: p });
+        };
     }
+    return unguarded;
 }
 
 // Convert to an old style, automation-client, ProjectEditor to allow

@@ -25,14 +25,20 @@ import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
  * compute a value.
  */
 export type CodeInspection<R, P = NoParameters> = (p: Project,
-                                                   sdmc: CommandListenerInvocation<P>) => Promise<R>;
+                                                   cli: CommandListenerInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project
  */
 export interface InspectionResult<R> {
+
     repoId: RepoRef;
-    result: R;
+
+    /**
+     * Inspection result can be undefined if a repo was returned by an all repo query but the
+     * inspection was not run on that repo because it did not match the project predicate specified in the registration.
+     */
+    result: R | undefined;
 }
 
 /**
