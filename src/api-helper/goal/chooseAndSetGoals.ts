@@ -199,7 +199,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                                            pi: PushListenerInvocation): Promise<Goals> {
     const { goalSetter } = rules;
     const { push, id, addressChannels } = pi;
-                
+
     try {
         const determinedGoals: Goals = await goalSetter.mapping(pi);
 
