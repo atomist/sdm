@@ -125,7 +125,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 return ci.addressChannels(`:no_entry: Invalid parameters to code inspection: ${vr.message}`);
             }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
-                if (!!cir.projectTest && !cir.projectTest(p)) {
+                if (!!cir.projectTest && !(await cir.projectTest(p))) {
                     return { repoId: p.id, result: undefined };
                 }
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
@@ -332,8 +332,8 @@ export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PA
         toProjectEditor(ctot);
     if (!!projectPredicate) {
         // Filter out this project if it doesn't match the predicate
-        return (p, context, params) => {
-            return projectPredicate(p) ?
+        return async (p, context, params) => {
+            return (await projectPredicate(p)) ?
                 unguarded(p, context, params) :
                 Promise.resolve({ success: true, edited: false, target: p });
         };
