@@ -28,6 +28,7 @@ import {
 } from "../../api/context/addressChannels";
 import {
     Goal,
+    GoalWithPrecondition,
     hasPreconditions,
 } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
@@ -198,15 +199,38 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
                                            pi: PushListenerInvocation): Promise<Goals> {
     const { goalSetter } = rules;
     const { push, id, addressChannels } = pi;
-
+                
     try {
         const determinedGoals: Goals = await goalSetter.mapping(pi);
+
         if (!determinedGoals) {
             logger.info("No goals set by push to %s:%s on %s", id.owner, id.repo, push.branch);
+            return determinedGoals;
         } else {
+            const filteredGoals: Goal[] = [];
+            determinedGoals.goals.forEach(g => {
+                if ((g as any).dependsOn) {
+                    const preConditions = (g as any).dependsOn as Goal[];
+                    if (preConditions) {
+                        const filteredPreConditions = preConditions.filter(pc => determinedGoals.goals.some(ag =>
+                            ag.name === pc.name &&
+                            ag.environment === pc.environment));
+                        if (filteredPreConditions.length > 0) {
+                            filteredGoals.push(new GoalWithPrecondition(g.definition, ...filteredPreConditions));
+                        } else {
+                            filteredGoals.push(new Goal(g.definition));
+                        }
+                    } else {
+                        filteredGoals.push(g);
+                    }
+                } else {
+                    filteredGoals.push(g);
+                }
+            });
             logger.info("Goals for push on %j are %s", id, determinedGoals.name);
+            return new Goals(determinedGoals.name, ...filteredGoals);
         }
-        return determinedGoals;
+
     } catch (err) {
         logger.error("Error determining goals: %s", err);
         await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
