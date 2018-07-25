@@ -68,7 +68,7 @@ export async function fetchGoalsForCommit(ctx: HandlerContext,
                                           goalSetId?: string): Promise<SdmGoalEvent[]> {
 
     const result: SdmGoalsForCommit.SdmGoal[] = [];
-    const size = 50;
+    const size = 200;
     let offset = 0;
 
     const query = sdmGoalOffsetQuery(id, goalSetId, providerId, ctx);

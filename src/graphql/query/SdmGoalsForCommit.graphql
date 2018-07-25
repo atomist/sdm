@@ -15,6 +15,7 @@ query SdmGoalsForCommit(
     _first: $qty
     _offset: $offset
     _orderBy: "ts"
+    _ordering: asc
   ) {
     repo(name: [$repo], owner: [$owner], providerId: [$providerId]) @required {
       name
