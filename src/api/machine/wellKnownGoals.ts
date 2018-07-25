@@ -44,6 +44,7 @@ export const NoGoal = new Goal({
  */
 export const FingerprintGoal = new Goal({
     uniqueName: "Fingerprint",
+    displayName: "Fingerprint",
     environment: IndependentOfEnvironment,
     orderedName: "0.1-fingerprint",
     workingDescription: "Running fingerprint calculations",

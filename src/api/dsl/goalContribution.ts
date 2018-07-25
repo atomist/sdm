@@ -38,11 +38,17 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
     private readonly contributors: Array<Mapping<F, Goal[]>> = [];
 
+    private get label(): string {
+        return this.contributors.filter(c => (c as any).label)
+            .map(c => (c as any).label).join(", ");
+    }
+
     constructor(public name: string, contributors: Array<GoalContribution<F>>) {
         this.contributors = contributors.map(c => {
             logger.info("Creating contributor '%s' of %s", c.name, contributors.map(con => con.name));
             return {
                 name: c.name,
+                label: (c as any).label,
                 async mapping(p) {
                     const r = await c.mapping(p);
                     logger.info("Contributor '%s' of [%s] returned %s",
@@ -58,9 +64,21 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
     }
 
     public async mapping(p: F): Promise<NeverMatch | Goals | undefined> {
-        const contributorGoals: Goal[][] = await Promise.all(
-            this.contributors.map(c => c.mapping(p)),
-        );
+        const names = [];
+        const contributorGoals: Goal[][] = [];
+
+        for (const c of this.contributors) {
+            const mapping = await c.mapping(p);
+            if (mapping && mapping.length > 0) {
+                if ((c as any).label) {
+                    names.push((c as any).label);
+                } else {
+                    names.push(c.name);
+                }
+            }
+            contributorGoals.push(mapping);
+        }
+
         const uniqueGoals: Goal[] = _.uniq(_.flatten(contributorGoals.filter(x => !!x)));
         logger.info("%d contributors (%s): Contributor goal names=[%s]; Unique goal names=[%s]; correlationId=%s",
             this.contributors.length,
@@ -70,7 +88,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
             p.context.correlationId);
         return uniqueGoals.length === 0 ?
             undefined :
-            new Goals(this.name, ...uniqueGoals);
+            new Goals(names.join(", "), ...uniqueGoals);
     }
 
 }
