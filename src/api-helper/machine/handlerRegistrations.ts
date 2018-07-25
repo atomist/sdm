@@ -64,10 +64,11 @@ export const TransformTag = "transform";
 
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(ctr, TransformTag);
+    const mo = toMachineOptions(sdm);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
-        ctr.targets || GitHubRepoTargets);
+        ctr.targets || mo.targets || GitHubRepoTargets);
     const description = ctr.description || ctr.name;
     const asCommand: CommandHandlerRegistration = {
         description,
@@ -84,7 +85,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const repoLoader: RepoLoader = !!ctr.repoLoader ?
                 ctr.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
-                    toMachineOptions(sdm).projectLoader,
+                    mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     false);
 
@@ -110,10 +111,11 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
 
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
+    const mo = toMachineOptions(sdm);
     addParametersDefinedInBuilder(cir);
     cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
-        cir.targets || GitHubRepoTargets);
+        cir.targets || mo.targets || GitHubRepoTargets);
     const description = cir.description || cir.name;
     const asCommand: CommandHandlerRegistration = {
         description,
@@ -136,7 +138,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const repoLoader: RepoLoader = !!cir.repoLoader ?
                 cir.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
-                    toMachineOptions(sdm).projectLoader,
+                    mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
