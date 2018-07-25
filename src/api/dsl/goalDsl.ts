@@ -44,6 +44,9 @@ export class GoalSetterMapping extends PushRule<Goals> {
         if (goals && (goals as Goals).name) {
             this.goalsName = (goals as Goals).name;
         }
+        if (!goals) {
+            return this.set(goals as Goals);
+        }
         return this.set(toGoals(goals));
     }
 
