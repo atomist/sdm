@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** `addPushReaction` renamed `addPushImpactListener` for consistency.
 -   **BREAKING** `addNewRepoWithCodeAction` renamed `addNewRepoWithCodeListener` for consistency.
 -   **BREAKING**  `CodeTransformRegistration.editMode` is replaced by `transformPresentation`.
+-   **BREAKING** `CommandHandler` registrations must now specify a `listener`. `createCommand` alternative is removed.
 
 ### Fixed
 

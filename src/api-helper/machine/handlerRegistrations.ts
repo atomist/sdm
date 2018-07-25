@@ -36,6 +36,7 @@ import { Maker, toFactory } from "@atomist/automation-client/util/constructionUt
 import { isTransformModeSuggestion, isValidationError, RepoTargets } from "../..";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
+import { ProjectPredicate } from "../../api/mapping/PushTest";
 import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
@@ -63,10 +64,11 @@ export const TransformTag = "transform";
 
 export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions, ctr: CodeTransformRegistration<any>): Maker<HandleCommand> {
     tagWith(ctr, TransformTag);
+    const mo = toMachineOptions(sdm);
     addParametersDefinedInBuilder(ctr);
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
-        ctr.targets || GitHubRepoTargets);
+        ctr.targets || mo.targets || GitHubRepoTargets);
     const description = ctr.description || ctr.name;
     const asCommand: CommandHandlerRegistration = {
         description,
@@ -83,7 +85,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const repoLoader: RepoLoader = !!ctr.repoLoader ?
                 ctr.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
-                    toMachineOptions(sdm).projectLoader,
+                    mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     false);
 
@@ -91,7 +93,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform)),
+                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
                 editMode,
                 ci.parameters,
                 repoFinder,
@@ -109,10 +111,11 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
 
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
     tagWith(cir, InspectionTag);
+    const mo = toMachineOptions(sdm);
     addParametersDefinedInBuilder(cir);
     cir.paramsMaker = toRepoTargetingParametersMaker(
         cir.paramsMaker || NoParameters,
-        cir.targets || GitHubRepoTargets);
+        cir.targets || mo.targets || GitHubRepoTargets);
     const description = cir.description || cir.name;
     const asCommand: CommandHandlerRegistration = {
         description,
@@ -124,6 +127,9 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 return ci.addressChannels(`:no_entry: Invalid parameters to code inspection: ${vr.message}`);
             }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
+                if (!!cir.projectTest && !(await cir.projectTest(p))) {
+                    return { repoId: p.id, result: undefined };
+                }
                 return { repoId: p.id, result: await cir.inspection(p, ci) };
             };
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
@@ -132,7 +138,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const repoLoader: RepoLoader = !!cir.repoLoader ?
                 cir.repoLoader(ci.parameters) :
                 projectLoaderRepoLoader(
-                    toMachineOptions(sdm).projectLoader,
+                    mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
@@ -214,28 +220,22 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 }
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
-    if (!!c.createCommand) {
-        return c.createCommand;
-    }
     addParametersDefinedInBuilder(c);
-    if (!!c.listener) {
-        return () => async (context, parameters) => {
-            // const opts = toMachineOptions(sdm);
-            const cli = toCommandListenerInvocation(c, context, parameters);
-            logger.debug("Running command listener %s", cli.commandName);
-            try {
-                await c.listener(cli);
-                return Success;
-            } catch (err) {
-                logger.error("Error executing command '%s': %s", cli.commandName, err.message);
-                return {
-                    code: 1,
-                    message: err.message,
-                };
-            }
-        };
-    }
-    throw new Error(`Command '${c.name}' is invalid, as it does not specify a listener or createCommand function`);
+    return () => async (context, parameters) => {
+        // const opts = toMachineOptions(sdm);
+        const cli = toCommandListenerInvocation(c, context, parameters);
+        logger.debug("Running command listener %s", cli.commandName);
+        try {
+            await c.listener(cli);
+            return Success;
+        } catch (err) {
+            logger.error("Error executing command '%s': %s", cli.commandName, err.message);
+            return {
+                code: 1,
+                message: err.message,
+            };
+        }
+    };
 }
 
 function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
@@ -264,7 +264,7 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
  * Add to the existing ParametersMaker any parameters defined in the builder itself
  * @param {CommandHandlerRegistration<PARAMS>} c
  */
-function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
+function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
     const oldMaker = c.paramsMaker || NoParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
@@ -322,12 +322,19 @@ function toParametersListing(p: ParametersDefinition): ParametersListing {
     return builder;
 }
 
-export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>): ProjectEditor<PARAMS> {
-    if (Array.isArray(ctot)) {
-        return chainEditors(...ctot.map(toProjectEditor));
-    } else {
-        return toProjectEditor(ctot);
+export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>, projectPredicate?: ProjectPredicate): ProjectEditor<PARAMS> {
+    const unguarded = Array.isArray(ctot) ?
+        chainEditors(...ctot.map(toProjectEditor)) :
+        toProjectEditor(ctot);
+    if (!!projectPredicate) {
+        // Filter out this project if it doesn't match the predicate
+        return async (p, context, params) => {
+            return (await projectPredicate(p)) ?
+                unguarded(p, context, params) :
+                Promise.resolve({ success: true, edited: false, target: p });
+        };
     }
+    return unguarded;
 }
 
 // Convert to an old style, automation-client, ProjectEditor to allow

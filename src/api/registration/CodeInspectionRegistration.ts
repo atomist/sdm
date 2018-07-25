@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-import { RepoFilter } from "@atomist/automation-client/operations/common/repoFilter";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { RepoTargets } from "../machine/RepoTargets";
-import { CommandRegistration } from "./CommandRegistration";
+import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 
 /**
  * Function that can run against a project without mutating it to
  * compute a value.
  */
 export type CodeInspection<R, P = NoParameters> = (p: Project,
-                                                   sdmc: CommandListenerInvocation<P>) => Promise<R>;
+                                                   cli: CommandListenerInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project
  */
 export interface InspectionResult<R> {
+
     repoId: RepoRef;
-    result: R;
+
+    /**
+     * Inspection result can be undefined if a repo was returned by an all repo query but the
+     * inspection was not run on that repo because it did not match the project predicate specified in the registration.
+     */
+    result: R | undefined;
 }
 
 /**
@@ -43,19 +46,9 @@ export interface InspectionResult<R> {
  * Include an optional react method that can react to review results.
  */
 export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
-    extends CommandRegistration<PARAMS> {
+    extends ProjectsOperationRegistration<PARAMS> {
 
     inspection: CodeInspection<R, PARAMS>;
-
-    /**
-     * Allow customization of the repositories that an inspection targets.
-     */
-    targets?: Maker<RepoTargets>;
-
-    /**
-     * Additionally, programmatically target repositories to inspect
-     */
-    repoFilter?: RepoFilter;
 
     /**
      * React to computed values from running across one or more projects

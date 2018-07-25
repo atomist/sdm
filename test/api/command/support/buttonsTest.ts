@@ -16,22 +16,23 @@
 
 import * as assert from "assert";
 import { actionableButton } from "../../../../src";
+import { CommandHandlerRegistration } from "../../../../src/api/registration/CommandHandlerRegistration";
 
 describe("actionableButton", () => {
 
     it("should handle undefined", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }) as any;
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration) as any;
         assert.deepEqual(button.command.parameters, {});
         assert.equal(button.command.name, "someCommand");
     });
 
     it("should handle simple property", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }, { name: "Fred" }) as any;
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, { name: "Fred" }) as any;
         assert.deepEqual(button.command.parameters, { name: "Fred" });
     });
 
     it("should handle nested property", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }, {
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, {
             name: "Fred",
             address: { street: "somewhere" },
         }) as any;
@@ -39,7 +40,7 @@ describe("actionableButton", () => {
     });
 
     it("should handle nested nested property", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" }, {
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration, {
             name: "Fred",
             address: { street: "somewhere", zip: { code: "12345" } },
         }) as any;
