@@ -220,28 +220,22 @@ export function eventHandlerRegistrationToEvent(sdm: MachineOrMachineOptions, e:
 }
 
 function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineOrMachineOptions) => OnCommand<PARAMS> {
-    if (!!c.createCommand) {
-        return c.createCommand;
-    }
     addParametersDefinedInBuilder(c);
-    if (!!c.listener) {
-        return () => async (context, parameters) => {
-            // const opts = toMachineOptions(sdm);
-            const cli = toCommandListenerInvocation(c, context, parameters);
-            logger.debug("Running command listener %s", cli.commandName);
-            try {
-                await c.listener(cli);
-                return Success;
-            } catch (err) {
-                logger.error("Error executing command '%s': %s", cli.commandName, err.message);
-                return {
-                    code: 1,
-                    message: err.message,
-                };
-            }
-        };
-    }
-    throw new Error(`Command '${c.name}' is invalid, as it does not specify a listener or createCommand function`);
+    return () => async (context, parameters) => {
+        // const opts = toMachineOptions(sdm);
+        const cli = toCommandListenerInvocation(c, context, parameters);
+        logger.debug("Running command listener %s", cli.commandName);
+        try {
+            await c.listener(cli);
+            return Success;
+        } catch (err) {
+            logger.error("Error executing command '%s': %s", cli.commandName, err.message);
+            return {
+                code: 1,
+                message: err.message,
+            };
+        }
+    };
 }
 
 function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: HandlerContext, parameters: P): CommandListenerInvocation {
@@ -270,7 +264,7 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
  * Add to the existing ParametersMaker any parameters defined in the builder itself
  * @param {CommandHandlerRegistration<PARAMS>} c
  */
-function addParametersDefinedInBuilder<PARAMS>(c: CommandHandlerRegistration<PARAMS>) {
+function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
     const oldMaker = c.paramsMaker || NoParameters;
     if (!!c.parameters) {
         c.paramsMaker = () => {
