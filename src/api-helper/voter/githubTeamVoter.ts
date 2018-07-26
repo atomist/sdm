@@ -1,14 +1,14 @@
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { isGitHubTeamMember } from "@atomist/automation-client/secured";
+import * as _ from "lodash";
 import {
     GitHubLogin,
     GoalApprovalRequestVote,
     GoalApprovalRequestVoteResult,
     GoalApprovalRequestVoterRegistration,
 } from "../..";
-import * as _ from "lodash";
 
-function gitHubTeamGoalVote(team: string): GoalApprovalRequestVote {
+function gitHubTeamVote(team: string): GoalApprovalRequestVote {
     return async gai => {
         const approval = gai.goal.approval;
 
@@ -32,8 +32,8 @@ function gitHubTeamGoalVote(team: string): GoalApprovalRequestVote {
     };
 }
 
-export function gitHubTeamGoal(team: string = "atomist-automation"): GoalApprovalRequestVoterRegistration {
+export function gitHubTeam(team: string = "atomist-automation"): GoalApprovalRequestVoterRegistration {
     return {
-        vote: gitHubTeamGoalVote(team),
+        vote: gitHubTeamVote(team),
     };
 }
