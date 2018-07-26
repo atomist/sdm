@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { SdmGoalEvent } from "../../index";
+import {
+    RepoContext,
+    SdmGoalEvent,
+} from "../../index";
 
 /**
  * Result from executing GoalApprovalRequestVoter.
@@ -39,9 +42,21 @@ export enum GoalApprovalRequestVoteResult {
 }
 
 /**
+ * Invocation of a GoalApprovalRequestVote
+ */
+export interface GoalApprovalRequestVoteInvocation extends RepoContext {
+
+    /**
+     * Goal that was requested to get approved.
+     */
+    goal: SdmGoalEvent;
+}
+
+/**
  * Vote on a request to approve a goal.
  */
-export type GoalApprovalRequestVote = (goal: SdmGoalEvent) => Promise<GoalApprovalRequestVoteResult>;
+export type GoalApprovalRequestVote =
+    (garvi: GoalApprovalRequestVoteInvocation) => Promise<GoalApprovalRequestVoteResult>;
 
 /**
  * Type to register GoalApprovalRequestVoter instances with the SDM.
