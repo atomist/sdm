@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { isGitHubTeamMember } from "@atomist/automation-client/secured";
 import * as _ from "lodash";
