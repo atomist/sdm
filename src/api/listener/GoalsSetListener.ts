@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../..";
+import { PushFields } from "../../typings/types";
 import { Goals } from "../goal/Goals";
 import {
     RepoListenerInvocation,
@@ -31,14 +32,39 @@ export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
      */
     goalSet: Goals | null;
 
+    /**
+     * The id of the goal set
+     */
     goalSetId: string;
+
+    /**
+     * The name of the goal set
+     */
+    goalSetName: string;
+
+    /**
+     * The Push that the triggered scheduling of these goals
+     */
+    push: PushFields.Fragment;
 }
 
 export type GoalsSetListener = SdmListener<GoalsSetListenerInvocation>;
 
+/**
+ * Invokes when a single goal completes.
+ * Note: to determine if the goal failed, use completedGoal.state.
+ */
 export interface GoalCompletionListenerInvocation extends RepoListenerInvocation {
-    completedGoal: SdmGoal;
-    allGoals: SdmGoal[];
+
+    /**
+     * The goal that completed
+     */
+    completedGoal: SdmGoalEvent;
+
+    /**
+     * All goals in the goal set
+     */
+    allGoals: SdmGoalEvent[];
 }
 
 export type GoalCompletionListener = SdmListener<GoalCompletionListenerInvocation>;

@@ -109,7 +109,9 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         credentials,
         addressChannels,
         goalSetId,
+        goalSetName: determinedGoals.name,
         goalSet: determinedGoals,
+        push,
     };
     await Promise.all(goalsListeners.map(l => l(gsi)));
     return determinedGoals;
