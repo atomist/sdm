@@ -90,6 +90,7 @@ export * from "./api/registration/EventHandlerRegistration";
 export * from "./api/registration/EventRegistrationManager";
 export * from "./api/registration/FingerprinterRegistration";
 export * from "./api/registration/GeneratorRegistration";
+export * from "./api/registration/GoalApprovalRequestVoter";
 export * from "./api/registration/IngesterRegistration";
 export * from "./api/registration/IngesterRegistrationManager";
 export * from "./api/registration/ParametersBuilder";

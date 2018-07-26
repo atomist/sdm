@@ -23,6 +23,7 @@ import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementati
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
+import { GoalApprovalRequestVoterRegistration } from "../registration/GoalApprovalRequestVoter";
 import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
@@ -88,5 +89,11 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * @param goalContributions contributions to goals
      */
     addGoalContributions(goalContributions: GoalSetter): this;
+
+    /**
+     * Add goal approval voter that we vote on approval requests for goals.
+     * @param goalApprovalVoter
+     */
+    addGoalApprovalRequestVoter(goalApprovalRequestVoter: GoalApprovalRequestVoterRegistration): this;
 
 }
