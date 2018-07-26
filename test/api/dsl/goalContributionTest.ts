@@ -16,7 +16,6 @@
 
 import * as assert from "power-assert";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
-import { GoalComponent } from "../../../src/api/dsl/GoalComponent";
 import {
     enrichGoalSetters,
     goalContributors,

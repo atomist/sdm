@@ -38,7 +38,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
     private readonly contributors: Array<Mapping<F, Goal[]>> = [];
 
-    private get label(): string {
+    public get label(): string {
         return this.contributors.filter(c => (c as any).label)
             .map(c => (c as any).label).join(", ");
     }
