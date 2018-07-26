@@ -22,6 +22,7 @@ import {
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
+import { GoalApprovalRequestVoterRegistration } from "../..";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
@@ -82,6 +83,8 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     protected readonly registrationManager = new HandlerRegistrationManagerSupport(this);
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
+
+    protected readonly goalApprovalRequestVoters: GoalApprovalRequestVoterRegistration[] = [];
 
     private pushMap: GoalSetter;
 
@@ -147,6 +150,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             progressReporter: optsToUse.progressReporter,
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
+        return this;
+    }
+
+    public addGoalApprovalRequestVoter(goalApprovalRequestVoter: GoalApprovalRequestVoterRegistration): this {
+        this.goalApprovalRequestVoters.push(goalApprovalRequestVoter);
         return this;
     }
 
