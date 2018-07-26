@@ -2946,6 +2946,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -3032,6 +3042,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -3279,6 +3303,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -3483,6 +3517,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -3751,6 +3799,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -3767,6 +3825,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -9253,6 +9325,145 @@
               ]
             },
             {
+              "name": "SentryAlert",
+              "description": "Auto-generated query for SentryAlert",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SentryAlert"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SentryAlert",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "culprit",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "level",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "message",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "project",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "project_name",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "url",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "SdmGoal",
               "description": "Auto-generated query for SdmGoal",
               "type": {
@@ -9833,6 +10044,97 @@
               ]
             },
             {
+              "name": "SdmGoalSetBadge",
+              "description": "Auto-generated query for SdmGoalSetBadge",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoalSetBadge"
+                }
+              },
+              "args": [
+                {
+                  "name": "id",
+                  "description": "The ID of this SdmGoalSetBadge",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "ID"
+                  }
+                },
+                {
+                  "name": "_offset",
+                  "description": "Paging offset (default 0)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_first",
+                  "description": "Return the first X results (default 10)",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Int"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_orderBy",
+                  "description": "Name of property to sort on",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "_ordering",
+                  "description": "Direction of ordering",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "_Ordering"
+                  }
+                },
+                {
+                  "name": "_search",
+                  "description": "Elastic Search simple full text search syntax",
+                  "defaultValue": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String"
+                  }
+                },
+                {
+                  "name": "sdm",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "token",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "AtomistLog",
               "description": "Auto-generated query for AtomistLog",
               "type": {
@@ -9936,6 +10238,18 @@
                 {
                   "name": "message",
                   "description": "Log message",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "category",
+                  "description": "Grouping, namespace etc.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -10643,6 +10957,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -10659,6 +10983,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -10728,6 +11066,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -10744,6 +11092,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -10994,6 +11356,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -11010,6 +11382,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -11127,6 +11513,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -11143,6 +11539,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -11986,6 +12396,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -12072,6 +12492,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -13126,6 +13560,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -13330,6 +13774,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -13571,6 +14029,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -13775,6 +14243,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -18560,6 +19042,26 @@
               "defaultValue": null
             },
             {
+              "name": "archived",
+              "description": "archived",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "archived_not",
+              "description": "archived_not",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
               "name": "createdBy",
               "description": "createdBy",
               "type": {
@@ -21989,6 +22491,162 @@
             {
               "name": "name_not_ends_with",
               "description": "name_not_ends_with",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar",
+              "description": "avatar",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_not",
+              "description": "avatar_not",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_in",
+              "description": "avatar_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_not_in",
+              "description": "avatar_not_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_lt",
+              "description": "avatar_lt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_lte",
+              "description": "avatar_lte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_gt",
+              "description": "avatar_gt",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_gte",
+              "description": "avatar_gte",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_contains",
+              "description": "avatar_contains",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_not_contains",
+              "description": "avatar_not_contains",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_starts_with",
+              "description": "avatar_starts_with",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_not_starts_with",
+              "description": "avatar_not_starts_with",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_ends_with",
+              "description": "avatar_ends_with",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "avatar_not_ends_with",
+              "description": "avatar_not_ends_with",
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
@@ -41961,6 +42619,62 @@
               "defaultValue": null
             },
             {
+              "name": "mergeStatus",
+              "description": "mergeStatus",
+              "type": {
+                "kind": "ENUM",
+                "name": "MergeStatus",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "mergeStatus_not",
+              "description": "mergeStatus_not",
+              "type": {
+                "kind": "ENUM",
+                "name": "MergeStatus",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "mergeStatus_in",
+              "description": "mergeStatus_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  }
+                }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "mergeStatus_not_in",
+              "description": "mergeStatus_not_in",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  }
+                }
+              },
+              "defaultValue": null
+            },
+            {
               "name": "repo",
               "description": "repo",
               "type": {
@@ -42923,6 +43637,35 @@
           ],
           "interfaces": null,
           "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "MergeStatus",
+          "description": "Enum for MergeStatus",
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "can_be_merged",
+              "description": "Value for can_be_merged",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "unchecked",
+              "description": "Value for unchecked",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "cannot_be_merged",
+              "description": "Value for cannot_be_merged",
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
           "possibleTypes": null
         },
         {
@@ -60817,6 +61560,18 @@
               "deprecationReason": null
             },
             {
+              "name": "archived",
+              "description": "archived of  ChatChannel",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "createdBy",
               "description": "ChatChannel createdBy ChatId",
               "args": [
@@ -62227,6 +62982,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -62313,6 +63078,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -62770,6 +63549,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -62856,6 +63645,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -63202,6 +64005,18 @@
               "description": "Descending sort for botInvitedSelf",
               "isDeprecated": false,
               "deprecationReason": null
+            },
+            {
+              "name": "archived_asc",
+              "description": "Ascending sort for archived",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "archived_desc",
+              "description": "Descending sort for archived",
+              "isDeprecated": false,
+              "deprecationReason": null
             }
           ],
           "possibleTypes": null
@@ -63260,6 +64075,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -63276,6 +64101,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -63853,6 +64692,18 @@
             {
               "name": "name",
               "description": "name of  SCMId",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "avatar",
+              "description": "avatar of  SCMId",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -65970,6 +66821,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -65986,6 +66847,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -66717,6 +67592,18 @@
             {
               "name": "name_desc",
               "description": "Descending sort for name",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "avatar_asc",
+              "description": "Ascending sort for avatar",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "avatar_desc",
+              "description": "Descending sort for avatar",
               "isDeprecated": false,
               "deprecationReason": null
             }
@@ -71463,6 +72350,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -71549,6 +72446,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -72340,6 +73251,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -72426,6 +73347,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -73117,6 +74052,18 @@
               "deprecationReason": null
             },
             {
+              "name": "mergeStatus",
+              "description": "mergeStatus of  PullRequest",
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "MergeStatus",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "repo",
               "description": "PullRequest repo Repo",
               "args": [
@@ -73721,6 +74668,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -73737,6 +74694,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -73806,6 +74777,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -73822,6 +74803,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -73891,6 +74886,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -73907,6 +74912,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -75086,6 +76105,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -75102,6 +76131,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -75219,6 +76262,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -75235,6 +76288,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -76964,6 +78031,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -76980,6 +78057,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -77049,6 +78140,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -77065,6 +78166,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -78204,6 +79319,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -78408,6 +79533,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -79483,6 +80622,19 @@
               },
               "isDeprecated": false,
               "deprecationReason": null
+            },
+            {
+              "name": "sentryAlerts",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SentryAlert"
+                }
+              }
             }
           ],
           "inputFields": null,
@@ -80216,6 +81368,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -80420,6 +81582,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -82586,6 +83762,18 @@
             {
               "name": "mergedAt_desc",
               "description": "Descending sort for mergedAt",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "mergeStatus_asc",
+              "description": "Ascending sort for mergeStatus",
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "mergeStatus_desc",
+              "description": "Descending sort for mergeStatus",
               "isDeprecated": false,
               "deprecationReason": null
             }
@@ -89507,6 +90695,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -89711,6 +90909,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -90012,6 +91224,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -90028,6 +91250,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -90733,6 +91969,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -90937,6 +92183,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -91791,6 +93051,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -92001,6 +93271,20 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "orderBy",
                   "description": null,
                   "type": {
@@ -92058,6 +93342,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -92074,6 +93368,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -92956,6 +94264,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -93160,6 +94478,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -96015,6 +97347,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -96219,6 +97561,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -97414,6 +98770,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -97500,6 +98866,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -102193,6 +103573,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "archived",
+                  "description": "archived of ChatChannel",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of ChatChannel",
                   "type": {
@@ -102279,6 +103669,20 @@
                 {
                   "name": "botInvitedSelfs",
                   "description": "botInvitedSelfs is list variant of botInvitedSelf of ChatChannel",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "Boolean",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "archiveds",
+                  "description": "archiveds is list variant of archived of ChatChannel",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -102526,6 +103930,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "mergeStatus",
+                  "description": "mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "MergeStatus",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "ids",
                   "description": "ids is list variant of id of PullRequest",
                   "type": {
@@ -102730,6 +104144,20 @@
                     "ofType": {
                       "kind": "SCALAR",
                       "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "mergeStatuss",
+                  "description": "mergeStatuss is list variant of mergeStatus of PullRequest",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "ENUM",
+                      "name": "MergeStatus",
                       "ofType": null
                     }
                   },
@@ -102998,6 +104426,16 @@
                   "defaultValue": null
                 },
                 {
+                  "name": "avatar",
+                  "description": "avatar of SCMId",
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
+                {
                   "name": "logins",
                   "description": "logins is list variant of login of SCMId",
                   "type": {
@@ -103014,6 +104452,20 @@
                 {
                   "name": "names",
                   "description": "names is list variant of name of SCMId",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "avatars",
+                  "description": "avatars is list variant of avatar of SCMId",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -108235,6 +109687,92 @@
               ]
             },
             {
+              "name": "SentryAlert",
+              "description": "Auto-generated subscription for SentryAlert",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SentryAlert"
+                }
+              },
+              "args": [
+                {
+                  "name": "culprit",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "level",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "message",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "project",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "project_name",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "url",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "SdmGoal",
               "description": "Auto-generated subscription for SdmGoal",
               "type": {
@@ -108603,6 +110141,44 @@
               ]
             },
             {
+              "name": "SdmGoalSetBadge",
+              "description": "Auto-generated subscription for SdmGoalSetBadge",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "SdmGoalSetBadge"
+                }
+              },
+              "args": [
+                {
+                  "name": "sdm",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "token",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                }
+              ]
+            },
+            {
               "name": "AtomistLog",
               "description": "Auto-generated subscription for AtomistLog",
               "type": {
@@ -108653,6 +110229,18 @@
                 {
                   "name": "message",
                   "description": "Log message",
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String"
+                    }
+                  }
+                },
+                {
+                  "name": "category",
+                  "description": "Grouping, namespace etc.",
                   "type": {
                     "kind": "LIST",
                     "name": null,
@@ -111179,6 +112767,402 @@
         {
           "description": null,
           "interfaces": [],
+          "name": "SentryEvent",
+          "fields": [
+            {
+              "name": "event_id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "extra",
+              "description": null,
+              "args": [
+                {
+                  "name": "git_sha",
+                  "description": null,
+                  "type": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SentryEventExtra",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": []
+        },
+        {
+          "description": null,
+          "interfaces": [],
+          "name": "SentryAlert",
+          "fields": [
+            {
+              "name": "commit",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Commit",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": [
+                {
+                  "name": "linkTo",
+                  "args": [
+                    {
+                      "name": "queryName",
+                      "value": "commitBySha"
+                    },
+                    {
+                      "name": "variables",
+                      "value": [
+                        {
+                          "name": "sha",
+                          "path": "$.event.extra.git_sha"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "linkFrom",
+                  "args": [
+                    {
+                      "name": "field",
+                      "value": {
+                        "kind": "LIST",
+                        "name": "sentryAlerts"
+                      }
+                    },
+                    {
+                      "name": "query",
+                      "value": "query sentryAlert($sha: String!) { SentryAlert {id event {extra(git_sha: $sha) {git_sha} } } }"
+                    },
+                    {
+                      "name": "variables",
+                      "value": [
+                        {
+                          "name": "sha",
+                          "path": "$.sha"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "culprit",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "event",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SentryEvent",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "level",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "message",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": [
+                {
+                  "name": "searchable",
+                  "args": []
+                }
+              ]
+            },
+            {
+              "name": "project",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "project_name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "url",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SentryAlert",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
+              },
+              "args": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": [
+            {
+              "name": "rootType",
+              "args": []
+            }
+          ]
+        },
+        {
+          "description": null,
+          "interfaces": [],
+          "name": "SentryEventExtra",
+          "fields": [
+            {
+              "name": "artifact",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "correlation_id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "environment",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "git_owner",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "git_repo",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "git_sha",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "invocation_id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "operation_name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "operation_type",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "team_id",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "team_name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "version",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": []
+        },
+        {
+          "description": null,
+          "interfaces": [],
           "name": "SdmCondition",
           "fields": [
             {
@@ -111776,6 +113760,12 @@
             },
             {
               "name": "requested",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "approved",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null
@@ -112416,6 +114406,165 @@
           "directives": []
         },
         {
+          "description": null,
+          "interfaces": [],
+          "name": "SdmGoalSetBadge",
+          "fields": [
+            {
+              "name": "repo",
+              "description": null,
+              "args": [
+                {
+                  "name": "name",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "owner",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                },
+                {
+                  "name": "providerId",
+                  "description": null,
+                  "type": {
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "SCALAR",
+                      "name": "String",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "SdmGoalSetBadgeRepository",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "sdm",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "token",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "id",
+              "description": "The ID of this SdmGoalSetBadge",
+              "type": {
+                "kind": "SCALAR",
+                "name": "ID"
+              },
+              "args": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": [
+            {
+              "name": "rootType",
+              "args": []
+            }
+          ]
+        },
+        {
+          "description": null,
+          "interfaces": [],
+          "name": "SdmGoalSetBadgeRepository",
+          "fields": [
+            {
+              "name": "name",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "owner",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            },
+            {
+              "name": "providerId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null,
+              "directives": []
+            }
+          ],
+          "possibleTypes": null,
+          "kind": "OBJECT",
+          "enumValues": null,
+          "inputFields": null,
+          "directives": []
+        },
+        {
           "kind": "OBJECT",
           "name": "AtomistLog",
           "description": "Atomist log messages",
@@ -112459,6 +114608,15 @@
                   "name": "searchable"
                 }
               ],
+              "args": []
+            },
+            {
+              "name": "category",
+              "description": "Grouping, namespace etc.",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String"
+              },
               "args": []
             },
             {
@@ -112915,6 +115073,6 @@
     }
   },
   "extensions": {
-    "correlation_id": "1e7e441a-6150-4a14-888c-9dbc0a830683"
+    "correlation_id": "7424e18b-7ff0-4ed7-8412-c2c08cabdb27"
   }
 }
