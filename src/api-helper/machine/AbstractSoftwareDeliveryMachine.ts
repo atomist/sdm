@@ -49,6 +49,7 @@ import { CodeTransformRegistration } from "../../api/registration/CodeTransformR
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
+import { GoalApprovalRequestVote } from "../../api/registration/GoalApprovalRequestVote";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
@@ -82,6 +83,8 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     protected readonly registrationManager = new HandlerRegistrationManagerSupport(this);
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
+
+    protected readonly goalApprovalRequestVotes: GoalApprovalRequestVote[] = [];
 
     private pushMap: GoalSetter;
 
@@ -147,6 +150,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             progressReporter: optsToUse.progressReporter,
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
+        return this;
+    }
+
+    public addGoalApprovalRequestVote(vote: GoalApprovalRequestVote): this {
+        this.goalApprovalRequestVotes.push(vote);
         return this;
     }
 
