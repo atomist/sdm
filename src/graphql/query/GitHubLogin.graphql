@@ -1,19 +1,18 @@
 query GitHubLogin($userId: String!, $owner: String!, $providerId: String!) {
-    Team {
-        chatTeams {
-            members(userId: $userId) @required {
-                person @required {
-                    gitHubId {
-                        login
-                    }
-                }
-            }
+  Team {
+    chatTeams {
+      members(userId: $userId) @required {
+        person @required {
+          gitHubId {
+            login
+          }
         }
-        orgs(owner: $owner) @required {
-            provider(providerId: $providerId) @required {
-                apiUrl
-            }
-        }
+      }
     }
+    orgs(owner: $owner) @required {
+      provider(providerId: $providerId) @required {
+        apiUrl
+      }
+    }
+  }
 }
-
