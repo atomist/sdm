@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { SdmGoalEvent } from "../../index";
 
 /**
@@ -53,5 +52,5 @@ export interface GoalApprovalRequestVoterRegistration  {
     /**
      * Function to vote on the approval request.
      */
-    vote: GoalApprovalRequestVote
+    vote: GoalApprovalRequestVote;
 }
