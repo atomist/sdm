@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+import { Configuration } from "@atomist/automation-client";
+import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import * as findUp from "find-up";
+import * as _ from "lodash";
 import * as path from "path";
 import * as trace from "stack-trace";
-import { ExtensionPackMetadata } from "../../api/machine/ExtensionPack";
+import {
+    ExtensionPack,
+    ExtensionPackMetadata,
+} from "../../api/machine/ExtensionPack";
 
 /**
  * Read ExtensionPackMetadata from the modules package.json.
@@ -33,4 +39,24 @@ export function metadata(name?: string): ExtensionPackMetadata {
         vendor: pj.author && pj.author.name ? pj.author.name : pj.author,
         version: pj.version ? pj.version : "",
     };
+}
+
+/**
+ * Validate the specified required configuration values from the extension pack are present in
+ * the configuration.
+ * @param {Configuration}
+ * @param {ExtensionPack}
+ */
+export function validateRequiredConfigurationValues(config: Configuration, pack: ExtensionPack) {
+    const missingValues = [];
+    toStringArray(pack.requiredConfigurationValues).forEach(v => {
+        if (!_.get(config, v)) {
+            missingValues.push(v);
+        }
+    });
+    if (missingValues.length > 0) {
+        throw new Error(
+            `Missing configuration values. Please add the following values to your client configuration: '${
+                missingValues.join(", ")}'`);
+    }
 }

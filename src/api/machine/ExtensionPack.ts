@@ -47,4 +47,10 @@ export interface ExtensionPack extends MachineConfigurer, ExtensionPackMetadata 
      */
     goalContributions?: GoalSetter;
 
+    /**
+     * Optional configuration value paths that this extension pack requires to
+     * be present on the Configuration instance.
+     */
+    requiredConfigurationValues?: string | string[];
+
 }

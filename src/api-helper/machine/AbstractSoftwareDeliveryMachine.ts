@@ -61,6 +61,7 @@ import {
     SdmVerification,
 } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
+import { validateRequiredConfigurationValues } from "../misc/extensionPack";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 
 /**
@@ -285,6 +286,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     private addExtensionPack(pack: ExtensionPack): this {
         logger.info("Adding extension pack '%s' version %s from %s",
             pack.name, pack.version, pack.vendor);
+        validateRequiredConfigurationValues(this.configuration, pack);
         pack.configure(this);
         this.extensionPacks.push(pack);
         return this;
