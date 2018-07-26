@@ -35,7 +35,7 @@ describe("extensionPack", () => {
                         },
                     } as any as Configuration,
                     {
-                        requiredConfigurationValues: [ "sdm.foo.bar", "sdm.bar.foo" ]
+                        requiredConfigurationValues: [ "sdm.foo.bar", "sdm.bar.foo" ],
                     } as any as ExtensionPack);
                 fail();
             } catch (err) {
