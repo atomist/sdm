@@ -5,8 +5,10 @@ import { MappedParameter, MappedParameters, Parameter } from "@atomist/automatio
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { GitHubTargetsParams } from "@atomist/automation-client/operations/common/params/GitHubTargetsParams";
-import { ValidationResult } from "../../../index";
-import { RepoTargets } from "../../machine/RepoTargets";
+import {
+    RepoTargets,
+    ValidationResult,
+} from "../../machine/RepoTargets";
 
 export class GitHubRepoTargets extends GitHubTargetsParams implements FallbackParams, RepoTargets {
 

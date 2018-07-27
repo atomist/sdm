@@ -18,11 +18,9 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
-import { GoalInvocation } from "../../../src";
 import {
     executeAutofixes,
     filterImmediateAutofixes,
@@ -30,6 +28,7 @@ import {
 } from "../../../src/api-helper/listener/executeAutofixes";
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
+import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
 import { SdmGoal } from "../../../src/api/goal/SdmGoal";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { pushTest } from "../../../src/api/mapping/PushTest";

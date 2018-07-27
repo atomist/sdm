@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, HandlerContext, logger, Success } from "@atomist/automation-client";
-import { declareMappedParameter, declareParameter, declareSecret } from "@atomist/automation-client/internal/metadata/decoratorSupport";
+import {
+    HandleCommand,
+    HandleEvent,
+    HandlerContext,
+    logger,
+    Success,
+} from "@atomist/automation-client";
+import {
+    declareMappedParameter,
+    declareParameter,
+    declareSecret,
+} from "@atomist/automation-client/internal/metadata/decoratorSupport";
 import { OnCommand } from "@atomist/automation-client/onCommand";
 import { eventHandlerFrom } from "@atomist/automation-client/onEvent";
 import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
@@ -27,18 +37,38 @@ import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoa
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
-import { failedEdit, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
+import {
+    failedEdit,
+    ProjectEditor,
+    successfulEdit,
+} from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
-import { isProject, Project } from "@atomist/automation-client/project/Project";
+import {
+    isProject,
+    Project,
+} from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
-import { isTransformModeSuggestion, isValidationError, RepoTargets } from "../..";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/util/constructionUtils";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
+import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
+import {
+    isValidationError,
+    RepoTargets,
+} from "../../api/machine/RepoTargets";
 import { ProjectPredicate } from "../../api/mapping/PushTest";
-import { CodeInspectionRegistration, InspectionResult } from "../../api/registration/CodeInspectionRegistration";
-import { CodeTransform, CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
+import {
+    CodeInspectionRegistration,
+    InspectionResult,
+} from "../../api/registration/CodeInspectionRegistration";
+import {
+    CodeTransform,
+    CodeTransformOrTransforms,
+} from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { CommandRegistration } from "../../api/registration/CommandRegistration";
@@ -52,11 +82,20 @@ import {
     ParametersListing,
 } from "../../api/registration/ParametersDefinition";
 import { createCommand } from "../command/createCommand";
-import { generatorCommand, isSeedDrivenGeneratorParameters } from "../command/generator/generatorCommand";
+import {
+    generatorCommand,
+    isSeedDrivenGeneratorParameters,
+} from "../command/generator/generatorCommand";
 import { chattyEditor } from "../command/transform/chattyEditor";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
-import { isRepoTargetingParameters, RepoTargetingParameters } from "./RepoTargetingParameters";
-import { MachineOrMachineOptions, toMachineOptions } from "./toMachineOptions";
+import {
+    isRepoTargetingParameters,
+    RepoTargetingParameters,
+} from "./RepoTargetingParameters";
+import {
+    MachineOrMachineOptions,
+    toMachineOptions,
+} from "./toMachineOptions";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";

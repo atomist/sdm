@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import { MappedParameter, MappedParameters, Parameter, Parameters } from "@atomist/automation-client";
+import {
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+    Parameters,
+} from "@atomist/automation-client";
 import { BitBucketServerRepoRef } from "@atomist/automation-client/operations/common/BitBucketServerRepoRef";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { TargetsParams } from "@atomist/automation-client/operations/common/params/TargetsParams";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
-import { ValidationResult } from "../../..";
-import { RepoTargets } from "../../machine/RepoTargets";
+import {
+    RepoTargets,
+    ValidationResult,
+} from "../../machine/RepoTargets";
 
 /**
  * Targets for working with BitBucket repo(s).

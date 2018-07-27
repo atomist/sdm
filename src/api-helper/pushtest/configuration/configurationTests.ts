@@ -17,7 +17,7 @@
 import {
     pushTest,
     PushTest,
-} from "../../..";
+} from "../../../api/mapping/PushTest";
 import { projectConfigurationValue } from "../../project/configuration/projectConfiguration";
 
 /**

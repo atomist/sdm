@@ -15,7 +15,7 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { SdmGoalEvent } from "../..";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 
 /**
  * Log abstraction for output of a specific activity. Not intended as a long-running log

@@ -17,8 +17,8 @@
 import { Configuration } from "@atomist/automation-client";
 import { fail } from "power-assert";
 import * as assert from "power-assert";
-import { ExtensionPack } from "../../../src";
 import { validateRequiredConfigurationValues } from "../../../src/api-helper/misc/extensionPack";
+import { ExtensionPack } from "../../../src/api/machine/ExtensionPack";
 
 describe("extensionPack", () => {
 

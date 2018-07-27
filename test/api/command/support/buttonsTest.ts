@@ -15,7 +15,7 @@
  */
 
 import * as assert from "assert";
-import { actionableButton } from "../../../../src";
+import { actionableButton } from "../../../../src/api/command/support/buttons";
 import { CodeTransformRegistration } from "../../../../src/api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../../../src/api/registration/CommandHandlerRegistration";
 
