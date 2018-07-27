@@ -109,7 +109,7 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
         credentials,
         addressChannels,
         goalSetId,
-        goalSetName: determinedGoals.name,
+        goalSetName: determinedGoals ? determinedGoals.name : undefined,
         goalSet: determinedGoals,
         push,
     };
