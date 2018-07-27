@@ -22,10 +22,11 @@ import { DeploymentListener } from "../listener/DeploymentListener";
 import { EndpointVerificationListener } from "../listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
+import { GoalCompletionListener } from "../listener/GoalCompletionListener";
 import {
-    GoalCompletionListener,
     GoalsSetListener,
 } from "../listener/GoalsSetListener";
+import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import { NewIssueListener } from "../listener/NewIssueListener";
 import { ProjectListener } from "../listener/ProjectListener";
 import { PullRequestListener } from "../listener/PullRequestListener";
@@ -58,11 +59,10 @@ export interface ListenerRegistrationManager {
     addUpdatedIssueListener(l: UpdatedIssueListener);
 
     /**
-     * These are invoked when a goal reaches status "failure" or "success"
-     * @param {GoalCompletionListener} l
+     * Invoked when a goal state changes
      * @returns {this}
      */
-    addGoalCompletionListener(l: GoalCompletionListener);
+    addGoalExecutionListener(l: GoalExecutionListener);
 
     addClosedIssueListener(l: ClosedIssueListener): this;
 
@@ -106,6 +106,8 @@ export interface ListenerRegistrationManager {
 
     addGoalsSetListener(l: GoalsSetListener): this;
 
+    addGoalCompletionListener(l: GoalCompletionListener): this;
+
     addReviewerRegistration(r: ReviewerRegistration): this;
 
     /**
@@ -142,6 +144,8 @@ export interface ListenerRegistrationManager {
 
     fingerprintListeners: FingerprintListener[];
 
+    goalExecutionListeners: GoalExecutionListener[];
+
     addFingerprintDifferenceListener(fh: FingerprintDifferenceListener): this;
 
     addDeploymentListener(l: DeploymentListener): this;
@@ -173,6 +177,8 @@ export interface ListenerRegistrationManager {
     channelLinkListeners: ChannelLinkListener[];
 
     goalsSetListeners: GoalsSetListener[];
+
+    goalCompletionListeners: GoalCompletionListener[];
 
     reviewerRegistrations: ReviewerRegistration[];
 

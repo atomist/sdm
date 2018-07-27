@@ -86,7 +86,7 @@ describe("executing the goal", () => {
                 credentials: fakeCredentials,
             } as any as GoalInvocation;
 
-            return executeGoal({ projectLoader },
+            return executeGoal({ projectLoader, goalExecutionListeners: [] },
                 helloWorldGoalExecutor,
                 fakeRWLC,
                 fakeSdmGoal,

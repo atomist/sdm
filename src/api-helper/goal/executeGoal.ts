@@ -34,6 +34,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { GoalExecutionListener, GoalExecutionListenerInvocation } from "../../api/listener/GoalStatusListener";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -75,29 +76,43 @@ class GoalExecutionError extends Error {
  * @param {SdmGoal} sdmGoal
  * @param {Goal} goal
  * @param {InterpretLog} logInterpreter
+ * @param progressReporter
  * @return {Promise<ExecuteGoalResult>}
  */
-export async function executeGoal(rules: { projectLoader: ProjectLoader },
+export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   execute: ExecuteGoal,
                                   goalInvocation: GoalInvocation,
                                   sdmGoal: SdmGoalEvent,
                                   goal: Goal,
                                   logInterpreter: InterpretLog,
                                   progressReporter: ReportProgress): Promise<ExecuteGoalResult> {
-    if (progressReporter) {
+    if (!!progressReporter) {
         goalInvocation.progressLog = new WriteToAllProgressLog(
             sdmGoal.name,
             goalInvocation.progressLog,
             new ProgressReportingProgressLog(progressReporter, sdmGoal, goalInvocation.context),
         );
     }
-    const ctx = goalInvocation.context;
-    const { addressChannels, progressLog, id } = goalInvocation;
+    const { addressChannels, progressLog, id, context, credentials } = goalInvocation;
     const implementationName = sdmGoal.fulfillment.name;
 
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 
-    await markGoalInProcess({ ctx, sdmGoal, goal, progressLogUrl: progressLog.url });
+    async function notifyGoalExecutionListeners(goalEvent: SdmGoalEvent, error?: Error) {
+        const inProcessGoalExecutionListenerInvocation: GoalExecutionListenerInvocation = {
+            id,
+            context,
+            addressChannels,
+            credentials,
+            goalEvent,
+            error,
+        };
+        await Promise.all(rules.goalExecutionListeners.map(gel => gel(inProcessGoalExecutionListenerInvocation)));
+    }
+
+    const inProcessGoal = await markGoalInProcess({ ctx: context, sdmGoal, goal, progressLogUrl: progressLog.url });
+    await notifyGoalExecutionListeners(inProcessGoal);
+
     try {
         // execute pre hook
         let result: any = await executeHook(rules, goalInvocation, sdmGoal, "pre");
@@ -124,6 +139,11 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
             throw new GoalExecutionError({ where: "executing post-goal hooks", result: hookResult });
         }
 
+        await notifyGoalExecutionListeners({
+            ...inProcessGoal,
+            state: SdmGoalState.success,
+        });
+
         result = {
             ...result,
             ...goalResult,
@@ -131,15 +151,19 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader },
         };
 
         logger.info("ExecuteGoal: result of %s: %j", implementationName, result);
-        await markStatus({ ctx, sdmGoal, goal, result, progressLogUrl: progressLog.url });
+        await markStatus({ context, sdmGoal, goal, result, progressLogUrl: progressLog.url });
         return Success;
     } catch (err) {
         logger.warn("Error executing %s on %s: %s", implementationName, sdmGoal.sha, err.message);
         logger.warn(err.stack);
+        await notifyGoalExecutionListeners({
+            ...inProcessGoal,
+            state: SdmGoalState.failure,
+        }, err);
         await reportGoalError({
             goal, implementationName, addressChannels, progressLog, id, logInterpreter,
         }, err);
-        await markStatus({ ctx, sdmGoal, goal, result: { code: 1 }, error: err, progressLogUrl: progressLog.url });
+        await markStatus({ context, sdmGoal, goal, result: { code: 1 }, error: err, progressLogUrl: progressLog.url });
         return failure(err);
     }
 }
@@ -211,14 +235,14 @@ function goalToHookFile(sdmGoal: SdmGoalEvent, prefix: string): string {
 }
 
 export function markStatus(parameters: {
-    ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, result: ExecuteGoalResult,
+    context: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, result: ExecuteGoalResult,
     error?: Error, progressLogUrl: string,
 }) {
-    const { ctx, sdmGoal, goal, result, error, progressLogUrl } = parameters;
+    const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
     const newState = result.code !== 0 ? SdmGoalState.failure :
         result.requireApproval ? SdmGoalState.waiting_for_approval : SdmGoalState.success;
 
-    return updateGoal(ctx, sdmGoal,
+    return updateGoal(context, sdmGoal,
         {
             url: progressLogUrl,
             externalUrl: result.targetUrl,
@@ -229,18 +253,26 @@ export function markStatus(parameters: {
         });
 }
 
-function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, progressLogUrl: string }) {
+async function markGoalInProcess(parameters: {
+    ctx: HandlerContext,
+    sdmGoal: SdmGoalEvent,
+    goal: Goal,
+    progressLogUrl: string,
+}): Promise<SdmGoalEvent> {
     const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
     sdmGoal.state = SdmGoalState.in_process;
     sdmGoal.description = goal.inProcessDescription;
     sdmGoal.url = progressLogUrl;
-    return updateGoal(ctx, sdmGoal, {
-        url: progressLogUrl,
-        description: goal.inProcessDescription,
-        state: SdmGoalState.in_process,
-    }).catch(err =>
-        logger.warn("Failed to update %s goal to tell people we are working on it", goal.name));
-
+    try {
+        await updateGoal(ctx, sdmGoal, {
+            url: progressLogUrl,
+            description: goal.inProcessDescription,
+            state: SdmGoalState.in_process,
+        });
+    } catch (err) {
+        logger.warn("Failed to update %s goal to tell people we are working on it", goal.name);
+    }
+    return sdmGoal;
 }
 
 /**

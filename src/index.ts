@@ -38,6 +38,8 @@ export * from "./api/listener/DeploymentListener";
 export * from "./api/listener/EndpointVerificationListener";
 export * from "./api/listener/FingerprintDifferenceListener";
 export * from "./api/listener/FingerprintListener";
+export * from "./api/listener/GoalCompletionListener";
+export * from "./api/listener/GoalStatusListener";
 export * from "./api/listener/GoalsSetListener";
 export * from "./api/listener/IssueListenerInvocation";
 export * from "./api/listener/Listener";

@@ -22,10 +22,11 @@ import { DeploymentListener } from "../../api/listener/DeploymentListener";
 import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
+import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import {
-    GoalCompletionListener,
     GoalsSetListener,
 } from "../../api/listener/GoalsSetListener";
+import { GoalExecutionListener } from "../../api/listener/GoalStatusListener";
 import { NewIssueListener } from "../../api/listener/NewIssueListener";
 import { ProjectListener } from "../../api/listener/ProjectListener";
 import { PullRequestListener } from "../../api/listener/PullRequestListener";
@@ -80,6 +81,10 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalsSetListeners: GoalsSetListener[] = [];
 
+    public readonly goalCompletionListeners: GoalCompletionListener[] = [];
+
+    public readonly goalExecutionListeners: GoalExecutionListener[] = [];
+
     public readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
     public readonly reviewListeners: ReviewListener[] = [];
@@ -96,8 +101,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     protected readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
-    protected readonly goalCompletionListeners: GoalCompletionListener[] = [];
-
     public addNewIssueListener(e: NewIssueListener): this {
         this.newIssueListeners.push(e);
         return this;
@@ -108,8 +111,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addGoalCompletionListener(e: GoalCompletionListener): this {
-        this.goalCompletionListeners.push(e);
+    public addGoalExecutionListener(e: GoalExecutionListener): this {
+        this.goalExecutionListeners.push(e);
         return this;
     }
 
@@ -155,6 +158,11 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addGoalsSetListener(l: GoalsSetListener): this {
         this.goalsSetListeners.push(l);
+        return this;
+    }
+
+    public addGoalCompletionListener(l: GoalCompletionListener): this {
+        this.goalCompletionListeners.push(l);
         return this;
     }
 
