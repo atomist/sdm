@@ -1,5 +1,5 @@
-import { RepoListenerInvocation, SdmListener } from "./Listener";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
+import { RepoListenerInvocation, SdmListener } from "./Listener";
 
 /**
  * Invokes when an event occurs relating to execution of a goal
@@ -8,14 +8,12 @@ import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 export interface GoalExecutionListenerInvocation extends RepoListenerInvocation {
 
     /**
-     * The goal that completed
+     * The goal that changed state
      */
-    completedGoal: SdmGoalEvent;
+    goalEvent: SdmGoalEvent;
 
-    /**
-     * All goals in the goal set
-     */
-    allGoals: SdmGoalEvent[];
+    error?: Error;
+
 }
 
 export type GoalExecutionListener = SdmListener<GoalExecutionListenerInvocation>;

@@ -25,6 +25,7 @@ import { FingerprintListener } from "../listener/FingerprintListener";
 import {
     GoalsSetListener,
 } from "../listener/GoalsSetListener";
+import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import { NewIssueListener } from "../listener/NewIssueListener";
 import { ProjectListener } from "../listener/ProjectListener";
 import { PullRequestListener } from "../listener/PullRequestListener";
@@ -41,7 +42,6 @@ import {
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../registration/ReviewerRegistration";
-import { GoalExecutionListener } from "../listener/GoalStatusListener";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.

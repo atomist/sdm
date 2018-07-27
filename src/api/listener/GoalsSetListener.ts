@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { SdmGoalEvent } from "../..";
 import { PushFields } from "../../typings/types";
 import { Goals } from "../goal/Goals";
 import {
