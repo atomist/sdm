@@ -15,10 +15,10 @@
  */
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
 import * as assert from "power-assert";
 import {

@@ -195,7 +195,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         if (typeof i === "string") {
             this.registrationManager.addIngester({
                 ingester: i,
-            })
+            });
         } else {
             this.registrationManager.addIngester(i);
         }
