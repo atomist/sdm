@@ -28,7 +28,7 @@ import { GitHubLogin } from "../../typings/types";
  * person who is requesting the approval.
  * @param {string} team
  */
-export function gitHubTeamVote(team: string): GoalApprovalRequestVote {
+export function gitHubTeamVote(team: string = "atomist-automation"): GoalApprovalRequestVote {
     return async gai => {
         const approval = gai.goal.approval;
         const repo = gai.goal.repo;
