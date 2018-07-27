@@ -16,12 +16,13 @@
 
 import * as assert from "assert";
 import { actionableButton } from "../../../../src";
+import { CodeTransformRegistration } from "../../../../src/api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../../../src/api/registration/CommandHandlerRegistration";
 
 describe("actionableButton", () => {
 
     it("should handle undefined", () => {
-        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CommandHandlerRegistration) as any;
+        const button = actionableButton({ text: "Ok" }, { name: "someCommand" } as any as CodeTransformRegistration) as any;
         assert.deepEqual(button.command.parameters, {});
         assert.equal(button.command.name, "someCommand");
     });

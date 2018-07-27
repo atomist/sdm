@@ -20,7 +20,7 @@ import {
     mergeParameters,
 } from "@atomist/automation-client/spi/message/MessageClient";
 import { Action } from "@atomist/slack-messages";
-import { CommandHandlerRegistration } from "../../..";
+import { CommandRegistration } from "../../registration/CommandRegistration";
 
 /**
  * Create an actionable button invoking the given command
@@ -31,7 +31,7 @@ import { CommandHandlerRegistration } from "../../..";
  */
 export function actionableButton<T>(
     buttonSpec: ButtonSpecification,
-    commandHandlerRegistration: CommandHandlerRegistration<T>,
+    commandHandlerRegistration: CommandRegistration<T>,
     parameters?: Partial<T>): Action {
     return buttonForCommand(buttonSpec,
         commandHandlerRegistration.name,
