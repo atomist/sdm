@@ -22,6 +22,7 @@ import { DeploymentListener } from "../listener/DeploymentListener";
 import { EndpointVerificationListener } from "../listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
+import { GoalCompletionListener } from "../listener/GoalCompletionListener";
 import {
     GoalsSetListener,
 } from "../listener/GoalsSetListener";
@@ -105,6 +106,8 @@ export interface ListenerRegistrationManager {
 
     addGoalsSetListener(l: GoalsSetListener): this;
 
+    addGoalCompletionListener(l: GoalCompletionListener): this;
+
     addReviewerRegistration(r: ReviewerRegistration): this;
 
     /**
@@ -174,6 +177,8 @@ export interface ListenerRegistrationManager {
     channelLinkListeners: ChannelLinkListener[];
 
     goalsSetListeners: GoalsSetListener[];
+
+    goalCompletionListeners: GoalCompletionListener[];
 
     reviewerRegistrations: ReviewerRegistration[];
 

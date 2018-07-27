@@ -22,6 +22,7 @@ import { DeploymentListener } from "../../api/listener/DeploymentListener";
 import { EndpointVerificationListener } from "../../api/listener/EndpointVerificationListener";
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
+import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
 import {
     GoalsSetListener,
 } from "../../api/listener/GoalsSetListener";
@@ -79,6 +80,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
     public readonly channelLinkListeners: ChannelLinkListener[] = [];
 
     public readonly goalsSetListeners: GoalsSetListener[] = [];
+
+    public readonly goalCompletionListeners: GoalCompletionListener[] = [];
 
     public readonly goalExecutionListeners: GoalExecutionListener[] = [];
 
@@ -155,6 +158,11 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public addGoalsSetListener(l: GoalsSetListener): this {
         this.goalsSetListeners.push(l);
+        return this;
+    }
+
+    public addGoalCompletionListener(l: GoalCompletionListener): this {
+        this.goalCompletionListeners.push(l);
         return this;
     }
 
