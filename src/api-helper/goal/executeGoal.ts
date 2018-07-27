@@ -257,7 +257,7 @@ async function markGoalInProcess(parameters: {
     ctx: HandlerContext,
     sdmGoal: SdmGoalEvent,
     goal: Goal,
-    progressLogUrl: string
+    progressLogUrl: string,
 }): Promise<SdmGoalEvent> {
     const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
     sdmGoal.state = SdmGoalState.in_process;
