@@ -253,18 +253,26 @@ export function markStatus(parameters: {
         });
 }
 
-function markGoalInProcess(parameters: { ctx: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, progressLogUrl: string }) {
+async function markGoalInProcess(parameters: {
+    ctx: HandlerContext,
+    sdmGoal: SdmGoalEvent,
+    goal: Goal,
+    progressLogUrl: string
+}): Promise<SdmGoalEvent> {
     const { ctx, sdmGoal, goal, progressLogUrl } = parameters;
     sdmGoal.state = SdmGoalState.in_process;
     sdmGoal.description = goal.inProcessDescription;
     sdmGoal.url = progressLogUrl;
-    return updateGoal(ctx, sdmGoal, {
-        url: progressLogUrl,
-        description: goal.inProcessDescription,
-        state: SdmGoalState.in_process,
-    }).catch(err =>
-        logger.warn("Failed to update %s goal to tell people we are working on it", goal.name));
-
+    try {
+        await updateGoal(ctx, sdmGoal, {
+            url: progressLogUrl,
+            description: goal.inProcessDescription,
+            state: SdmGoalState.in_process,
+        });
+    } catch (err) {
+        logger.warn("Failed to update %s goal to tell people we are working on it", goal.name);
+    }
+    return sdmGoal;
 }
 
 /**

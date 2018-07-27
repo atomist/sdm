@@ -55,7 +55,7 @@ export interface UpdateSdmGoalParams {
 
 export function updateGoal(ctx: HandlerContext,
                            before: SdmGoalEvent,
-                           params: UpdateSdmGoalParams) {
+                           params: UpdateSdmGoalParams): Promise<void> {
     const description = params.description;
     const approval = params.approved ? constructProvenance(ctx) :
         !!before ? before.approval : undefined;
