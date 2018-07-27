@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 import { RepoListenerInvocation, SdmListener } from "./Listener";
 
