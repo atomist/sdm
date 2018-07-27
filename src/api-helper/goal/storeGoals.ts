@@ -87,6 +87,7 @@ function eventToMessage(event: SdmGoalEvent): SdmGoalMessage {
             owner: event.push.repo.owner,
             providerId: event.push.repo.org.provider.providerId,
         },
+        id: undefined,
     } as SdmGoalMessage;
 }
 

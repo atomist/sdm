@@ -17,6 +17,7 @@ query SdmGoalsForCommit(
     _orderBy: "ts"
     _ordering: asc
   ) {
+    id
     repo(name: [$repo], owner: [$owner], providerId: [$providerId]) @required {
       name
       owner
