@@ -75,6 +75,7 @@ class GoalExecutionError extends Error {
  * @param {SdmGoal} sdmGoal
  * @param {Goal} goal
  * @param {InterpretLog} logInterpreter
+ * @param progressReporter
  * @return {Promise<ExecuteGoalResult>}
  */
 export async function executeGoal(rules: { projectLoader: ProjectLoader },

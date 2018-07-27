@@ -23,7 +23,6 @@ import { EndpointVerificationListener } from "../../api/listener/EndpointVerific
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import {
-    GoalCompletionListener,
     GoalsSetListener,
 } from "../../api/listener/GoalsSetListener";
 import { NewIssueListener } from "../../api/listener/NewIssueListener";
@@ -43,6 +42,7 @@ import {
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
+import { GoalExecutionListener } from "../../api/listener/GoalStatusListener";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -80,6 +80,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalsSetListeners: GoalsSetListener[] = [];
 
+    public readonly goalExecutionListeners: GoalExecutionListener[] = [];
+
     public readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
     public readonly reviewListeners: ReviewListener[] = [];
@@ -96,8 +98,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     protected readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
 
-    protected readonly goalCompletionListeners: GoalCompletionListener[] = [];
-
     public addNewIssueListener(e: NewIssueListener): this {
         this.newIssueListeners.push(e);
         return this;
@@ -108,8 +108,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addGoalCompletionListener(e: GoalCompletionListener): this {
-        this.goalCompletionListeners.push(e);
+    public addGoalExecutionListener(e: GoalExecutionListener): this {
+        this.goalExecutionListeners.push(e);
         return this;
     }
 

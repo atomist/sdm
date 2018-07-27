@@ -49,22 +49,3 @@ export interface GoalsSetListenerInvocation extends RepoListenerInvocation {
 }
 
 export type GoalsSetListener = SdmListener<GoalsSetListenerInvocation>;
-
-/**
- * Invokes when a single goal completes.
- * Note: to determine if the goal failed, use completedGoal.state.
- */
-export interface GoalCompletionListenerInvocation extends RepoListenerInvocation {
-
-    /**
-     * The goal that completed
-     */
-    completedGoal: SdmGoalEvent;
-
-    /**
-     * All goals in the goal set
-     */
-    allGoals: SdmGoalEvent[];
-}
-
-export type GoalCompletionListener = SdmListener<GoalCompletionListenerInvocation>;

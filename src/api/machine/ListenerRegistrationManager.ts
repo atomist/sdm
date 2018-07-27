@@ -23,7 +23,6 @@ import { EndpointVerificationListener } from "../listener/EndpointVerificationLi
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
 import {
-    GoalCompletionListener,
     GoalsSetListener,
 } from "../listener/GoalsSetListener";
 import { NewIssueListener } from "../listener/NewIssueListener";
@@ -42,6 +41,7 @@ import {
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../registration/ReviewerRegistration";
+import { GoalExecutionListener } from "../listener/GoalStatusListener";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -58,11 +58,10 @@ export interface ListenerRegistrationManager {
     addUpdatedIssueListener(l: UpdatedIssueListener);
 
     /**
-     * These are invoked when a goal reaches status "failure" or "success"
-     * @param {GoalCompletionListener} l
+     * Invoked when a goal state changes
      * @returns {this}
      */
-    addGoalCompletionListener(l: GoalCompletionListener);
+    addGoalExecutionListener(l: GoalExecutionListener);
 
     addClosedIssueListener(l: ClosedIssueListener): this;
 
@@ -141,6 +140,8 @@ export interface ListenerRegistrationManager {
     addFingerprintListener(l: FingerprintListener): this;
 
     fingerprintListeners: FingerprintListener[];
+
+    goalExecutionListeners: GoalExecutionListener[];
 
     addFingerprintDifferenceListener(fh: FingerprintDifferenceListener): this;
 
