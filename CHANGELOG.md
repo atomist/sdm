@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add predicate mapping cost analyzer. [#459](https://github.com/atomist/sdm/issues/459)
 -   Collect names of Goal and Goals instances in contributor model. [#461](https://github.com/atomist/sdm/issues/461)
 -   Add `GoalExecutionListener` to track goal execution within an SDM
+-   Add support voting on goal approval in an SDM. [#465](https://github.com/atomist/sdm/issues/465)
 
 ### Changed
 
