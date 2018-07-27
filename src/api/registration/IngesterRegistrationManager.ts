@@ -26,6 +26,6 @@ export interface IngesterRegistrationManager {
      * @param {IngesterRegistration} ingester
      * @returns {this}
      */
-    addIngester(ingester: IngesterRegistration): this;
+    addIngester(ingester: string | IngesterRegistration): this;
 
 }

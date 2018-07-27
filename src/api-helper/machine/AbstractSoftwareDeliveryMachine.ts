@@ -191,8 +191,14 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
-    public addIngester(i: IngesterRegistration): this {
-        this.registrationManager.addIngester(i);
+    public addIngester(i: string | IngesterRegistration): this {
+        if (typeof i === "string") {
+            this.registrationManager.addIngester({
+                ingester: i,
+            })
+        } else {
+            this.registrationManager.addIngester(i);
+        }
         return this;
     }
 
