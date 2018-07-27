@@ -52,4 +52,3 @@ export function gitHubTeamVote(team: string): GoalApprovalRequestVote {
         }
     };
 }
-

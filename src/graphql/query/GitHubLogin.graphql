@@ -16,4 +16,3 @@ query GitHubLogin($userId: String!, $owner: String!, $providerId: String!) {
     }
   }
 }
-

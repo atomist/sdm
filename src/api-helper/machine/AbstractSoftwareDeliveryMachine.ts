@@ -22,7 +22,6 @@ import {
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
-import { GoalApprovalRequestVote } from "../../api/registration/GoalApprovalRequestVote";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
@@ -50,6 +49,7 @@ import { CodeTransformRegistration } from "../../api/registration/CodeTransformR
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
+import { GoalApprovalRequestVote } from "../../api/registration/GoalApprovalRequestVote";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
