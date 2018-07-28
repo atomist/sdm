@@ -48,6 +48,7 @@ import {
     descriptionFromState,
     updateGoal,
 } from "./storeGoals";
+import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
 
 class GoalExecutionError extends Error {
     public readonly where: string;
@@ -216,7 +217,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 result = Success;
             }
 
-            progressLog.write(`Result: ${JSON.stringify(result)}`);
+            progressLog.write(`Result: ${JSON.stringify(result, possibleAxiosObjectReplacer, 2)}`);
             progressLog.write("---");
             await progressLog.flush();
             return result;
