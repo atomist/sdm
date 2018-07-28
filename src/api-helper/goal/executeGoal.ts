@@ -22,6 +22,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { configurationValue } from "@atomist/automation-client/configuration";
+import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
@@ -48,7 +49,6 @@ import {
     descriptionFromState,
     updateGoal,
 } from "./storeGoals";
-import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
 
 class GoalExecutionError extends Error {
     public readonly where: string;
