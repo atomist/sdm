@@ -22,6 +22,8 @@ import {
 
 /**
  * Superinterface for all event invocations concerning a repo.
+ * Note: addressChannels will not result in any output on this event
+ * as any channel mapping will not have been set up.
  */
 export interface RepoCreationListenerInvocation extends RepoListenerInvocation {
 

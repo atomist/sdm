@@ -80,7 +80,8 @@ export interface ListenerRegistrationManager {
     /**
      * You probably mean to use addNewRepoWithCodeListener!
      * This responds to a repo creation, but there may be no
-     * code in it.
+     * code in it. The invocation's addressChannels method with have no effect:
+     * use the context if you want to send messages
      * @param {RepoCreationListener} rcl
      * @return {this}
      */
@@ -96,7 +97,9 @@ export interface ListenerRegistrationManager {
 
     /**
      * Register a listener that reacts to a new repo appearing with
-     * content
+     * content. The invocation's addressChannels will DM the
+     * creator of the project if possible, as any channel mapping
+     * will not have been set up.
      * @param {PushListener} pl
      * @return {this}
      */
