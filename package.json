@@ -43,10 +43,10 @@
     "xml2js": "^0.4.19"
   },
   "peerDependencies": {
-    "@atomist/automation-client": "0.18.1-nortissej.elide-axios-response.20180728191922"
+    "@atomist/automation-client": "*"
   },
   "devDependencies": {
-    "@atomist/automation-client": "0.18.1-nortissej.elide-axios-response.20180728191922",
+    "@atomist/automation-client": "0.18.1-20180728225753",
     "@types/lodash": "^4.14.109",
     "@types/mocha": "^2.2.48",
     "@types/node": "^8.10.17",
