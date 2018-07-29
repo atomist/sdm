@@ -85,8 +85,8 @@ export function executeReview(projectLoader: ProjectLoader,
                         try {
                             return l.listener(rli);
                         } catch (err) {
-                            await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: \n\`\`\`${
-                                err.stack}\n\`\`\`:\n Please see logs`);
+                            logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
+                            await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
                             return PushReactionResponse.failGoals;
                         }
                     }));
