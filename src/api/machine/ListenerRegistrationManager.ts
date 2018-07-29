@@ -32,7 +32,6 @@ import { ProjectListener } from "../listener/ProjectListener";
 import { PullRequestListener } from "../listener/PullRequestListener";
 import { PushListener } from "../listener/PushListener";
 import { RepoCreationListener } from "../listener/RepoCreationListener";
-import { ReviewListener } from "../listener/ReviewListener";
 import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
@@ -43,6 +42,7 @@ import {
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../registration/ReviewerRegistration";
+import { ReviewListenerRegistration } from "../registration/ReviewListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -114,11 +114,11 @@ export interface ListenerRegistrationManager {
     addReviewerRegistration(r: ReviewerRegistration): this;
 
     /**
-     * Add review listener. Will be invoked during execution of a ReviewGoal
-     * @param {ReviewListener} l
+     * Add a registration to listen to reviews. Will be invoked during execution of a ReviewGoal
+     * @param r registration
      * @return {this}
      */
-    addReviewListener(l: ReviewListener): this;
+    addReviewListenerRegistration(r: ReviewListenerRegistration): this;
 
     /**
      * Add listener to pushes: That is, a function that runs during execution of a
@@ -185,7 +185,7 @@ export interface ListenerRegistrationManager {
 
     reviewerRegistrations: ReviewerRegistration[];
 
-    reviewListeners: ReviewListener[];
+    reviewListenerRegistrations: ReviewListenerRegistration[];
 
     pushImpactListenerRegistrations: PushImpactListenerRegisterable[];
 
