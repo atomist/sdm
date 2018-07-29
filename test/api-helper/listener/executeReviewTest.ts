@@ -44,7 +44,7 @@ const HatesTheWorld: ReviewerRegistration = {
                     offset: -1,
                 })),
     }),
-    options: {considerOnlyChangedFiles: false},
+    options: { considerOnlyChangedFiles: false },
 };
 
 const JustTheOne: ReviewerRegistration = {
@@ -61,7 +61,7 @@ const JustTheOne: ReviewerRegistration = {
                     offset: -1,
                 })],
     }),
-    options: {considerOnlyChangedFiles: false},
+    options: { considerOnlyChangedFiles: false },
 };
 
 function loggingReviewListenerWithApproval(saveTo: ReviewListenerInvocation[]): ReviewListener {
@@ -86,7 +86,10 @@ describe("executeReview", () => {
         const p = InMemoryProject.from(id);
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [{
+            name: "thing",
+            listener: l,
+        }]);
         const r = await ge(fakeGoalInvocation(id));
         assert.equal(r.code, 0);
         assert(!r.requireApproval);
@@ -99,7 +102,10 @@ describe("executeReview", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [{
+            name: "thing",
+            listener: l,
+        }]);
         const rwlc = fakeGoalInvocation(id);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
@@ -113,8 +119,11 @@ describe("executeReview", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
-        const l = loggingReviewListenerWithoutApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [l]);
+        const listener = loggingReviewListenerWithoutApproval(reviewEvents);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [{
+            name: "thing",
+            listener,
+        }]);
         const rwlc = fakeGoalInvocation(id);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
@@ -128,8 +137,12 @@ describe("executeReview", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
-        const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne], [l]);
+        const listener = loggingReviewListenerWithApproval(reviewEvents);
+        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne],
+            [{
+                name: "thing",
+                listener,
+            }]);
         const rwlc = fakeGoalInvocation(id);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);

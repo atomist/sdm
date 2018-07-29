@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** `addNewRepoWithCodeAction` renamed `addNewRepoWithCodeListener` for consistency.
 -   **BREAKING**  `CodeTransformRegistration.editMode` is replaced by `transformPresentation`.
 -   **BREAKING** `CommandHandler` registrations must now specify a `listener`. `createCommand` alternative is removed.
+-   **BREAKING** Review listeners must now have names. Introduced `ReviewListenerRegistration`
 
 ### Fixed
 

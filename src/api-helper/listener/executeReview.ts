@@ -27,13 +27,13 @@ import {
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
-import { ReviewListener } from "../../api/listener/ReviewListener";
 import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
 import {
     formatReviewerError,
     ReviewerError,
 } from "../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
+import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
@@ -47,13 +47,13 @@ import { relevantCodeActions } from "./relevantCodeActions";
  */
 export function executeReview(projectLoader: ProjectLoader,
                               reviewerRegistrations: ReviewerRegistration[],
-                              reviewListeners: ReviewListener[]): ExecuteGoal {
+                              reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const {credentials, id, addressChannels} = goalInvocation;
+        const { credentials, id, addressChannels } = goalInvocation;
         try {
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
-                return projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+                return projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers: [%s] of [%s]",
@@ -65,8 +65,8 @@ export function executeReview(projectLoader: ProjectLoader,
                         await Promise.all(relevantReviewers
                             .map(reviewer => {
                                 return reviewer.action(cri)
-                                    .then(rvw => ({review: rvw}),
-                                        error => ({error}));
+                                    .then(rvw => ({ review: rvw }),
+                                        error => ({ error }));
                             }));
                     const reviews = reviewsAndErrors.filter(r => !!r.review)
                         .map(r => r.review);
@@ -81,7 +81,15 @@ export function executeReview(projectLoader: ProjectLoader,
                         review,
                     };
                     sendErrorsToSlack(reviewerErrors, addressChannels);
-                    const reviewResponses = await Promise.all(reviewListeners.map(l => l(rli)));
+                    const reviewResponses = await Promise.all(reviewListeners.map(async l => {
+                        try {
+                            return l.listener(rli);
+                        } catch (err) {
+                            await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: \n\`\`\`${
+                                err.stack}\n\`\`\`:\n Please see logs`);
+                            return PushReactionResponse.failGoals;
+                        }
+                    }));
                     const result = {
                         code: reviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
                         requireApproval: reviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed),
@@ -91,7 +99,7 @@ export function executeReview(projectLoader: ProjectLoader,
                 });
             } else {
                 // No reviewers
-                return {code: 0, requireApproval: false};
+                return { code: 0, requireApproval: false };
             }
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: $s",

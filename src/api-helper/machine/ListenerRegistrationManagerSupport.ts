@@ -23,27 +23,23 @@ import { EndpointVerificationListener } from "../../api/listener/EndpointVerific
 import { FingerprintDifferenceListener } from "../../api/listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import { GoalCompletionListener } from "../../api/listener/GoalCompletionListener";
-import {
-    GoalsSetListener,
-} from "../../api/listener/GoalsSetListener";
+import { GoalsSetListener } from "../../api/listener/GoalsSetListener";
 import { GoalExecutionListener } from "../../api/listener/GoalStatusListener";
 import { NewIssueListener } from "../../api/listener/NewIssueListener";
 import { ProjectListener } from "../../api/listener/ProjectListener";
 import { PullRequestListener } from "../../api/listener/PullRequestListener";
 import { PushListener } from "../../api/listener/PushListener";
 import { RepoCreationListener } from "../../api/listener/RepoCreationListener";
-import { ReviewListener } from "../../api/listener/ReviewListener";
 import { TagListener } from "../../api/listener/TagListener";
 import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
-import {
-    AutofixRegistration,
-} from "../../api/registration/AutofixRegistration";
+import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
+import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -87,7 +83,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly reviewerRegistrations: ReviewerRegistration[] = [];
 
-    public readonly reviewListeners: ReviewListener[] = [];
+    public readonly reviewListenerRegistrations: ReviewListenerRegistration[] = [];
 
     public readonly pushImpactListenerRegistrations: PushImpactListenerRegisterable[] = [];
 
@@ -171,8 +167,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addReviewListener(l: ReviewListener): this {
-        this.reviewListeners.push(l);
+    public addReviewListenerRegistration(r: ReviewListenerRegistration): this {
+        this.reviewListenerRegistrations.push(r);
         return this;
     }
 
