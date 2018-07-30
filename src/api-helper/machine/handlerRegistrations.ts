@@ -338,7 +338,7 @@ function isParametersListing(p: ParametersDefinition): p is ParametersListing {
     return maybe.parameters !== undefined && maybe.mappedParameters !== undefined;
 }
 
-function toParametersListing(p: ParametersDefinition): ParametersListing {
+export function toParametersListing(p: ParametersDefinition): ParametersListing {
     if (isParametersListing(p)) {
         return p;
     }
