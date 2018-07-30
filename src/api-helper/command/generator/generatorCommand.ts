@@ -159,6 +159,10 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
                                                                              details: GeneratorCommandDetails<any>,
                                                                              startingPoint: StartingPoint): Promise<Project> {
     if (!startingPoint) {
+        if (!params.source || !params.source.repoRef) {
+            throw new Error("If startingPoint is not provided in GeneratorRegistration, parameters.source must specify seed project location: " +
+                `Offending registration had intent ${details.intent}`);
+        }
         await ctx.messageClient.respond(`Cloning seed project from parameters: ${params.source.repoRef.url}`);
         return repoLoader(params.source.repoRef);
     }
