@@ -79,6 +79,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
                 contributorGoals.push(mapping.filter(g => g !== LockingGoal));
                 // If we find the special locking goal, don't add any further goals
                 if (mapping.includes(LockingGoal)) {
+                    logger.info("Stopping goal contribution analysis, because %s has locked the goal set", c.name);
                     break;
                 }
             }
