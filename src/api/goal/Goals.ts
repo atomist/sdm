@@ -28,6 +28,27 @@ export class Goals {
 
     public readonly goals: Goal[];
 
+    private sealedFlag: boolean;
+
+    /**
+     * Are these goals sealed? That is, should we prevent any more goals being set
+     * if a push includes these goals.
+     * This applies in the contributor model of `goalContributors`.
+     */
+    get sealed(): boolean {
+        return this.sealedFlag;
+    }
+
+    /**
+     * Return a sealed form of these goals
+     * @return {this}
+     */
+    public andSeal(): Goals {
+        const sealedGoals = new Goals(this.name, ...this.goals);
+        sealedGoals.sealedFlag = true;
+        return sealedGoals;
+    }
+
     // tslint:disable-next-line:no-shadowed-variable
     constructor(public name: string, ...goals: Goal[]) {
         this.goals = goals;

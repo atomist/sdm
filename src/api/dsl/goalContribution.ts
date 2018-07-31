@@ -36,7 +36,7 @@ export type GoalContribution<F> = Mapping<F, GoalComponent>;
  */
 class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
-    private readonly contributors: Array<Mapping<F, Goal[]>> = [];
+    private readonly contributors: Array<Mapping<F, Goals>> = [];
 
     public get label(): string {
         return this.contributors.filter(c => (c as any).label)
@@ -57,7 +57,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
                     if (!r) {
                         return r as any;
                     }
-                    return toGoals(r).goals;
+                    return toGoals(r);
                 },
             };
         });
@@ -65,25 +65,31 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
     public async mapping(p: F): Promise<NeverMatch | Goals | undefined> {
         const names = [];
-        const contributorGoals: Goal[][] = [];
+        const contributorGoals: Goals[] = [];
 
         for (const c of this.contributors) {
-            const mapping = await c.mapping(p);
-            if (mapping && mapping.length > 0) {
+            const goals = await c.mapping(p);
+            if (!!goals && goals.goals.length > 0) {
                 if ((c as any).label) {
                     names.push((c as any).label);
                 } else {
                     names.push(c.name);
                 }
             }
-            contributorGoals.push(mapping);
+            if (!!goals) {
+                contributorGoals.push(goals);
+                if (goals.sealed) {
+                    logger.info("Sealing goals after sealed goal with name '%s'", goals.name);
+                    break;
+                }
+            }
         }
 
-        const uniqueGoals: Goal[] = _.uniq(_.flatten(contributorGoals.filter(x => !!x)));
+        const uniqueGoals: Goal[] = _.uniq(_.flatten(contributorGoals.filter(x => !!x).map(g => g.goals)));
         logger.info("%d contributors (%s): Contributor goal names=[%s]; Unique goal names=[%s]; correlationId=%s",
             this.contributors.length,
             this.contributors.map(c => c.name),
-            contributorGoals.map(a => !!a ? a.map(b => b.name).join() : "undefined").join(": "),
+            contributorGoals.map(a => !!a ? a.goals.map(b => b.name).join() : "undefined").join(": "),
             uniqueGoals.map(g => g.name),
             p.context.correlationId);
         return uniqueGoals.length === 0 ?
