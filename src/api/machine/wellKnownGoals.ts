@@ -26,7 +26,7 @@ import {
 } from "../goal/support/environment";
 
 /**
- * Goals referenced in TheSoftwareDeliveryMachine
+ * Goals referenced in SoftwareDeliveryMachine methods such addPushImpactListener
  */
 
 export const NoGoal = new Goal({
@@ -35,6 +35,19 @@ export const NoGoal = new Goal({
     orderedName: "1-immaterial",
     displayName: "immaterial",
     completedDescription: "No material changes",
+});
+
+/**
+ * Special goal that locks a goal set so no further goals
+ * can be added. This goal is never actually emitted.
+ * @type {Goal}
+ */
+export const LockingGoal = new Goal({
+    uniqueName: "Lock",
+    environment: IndependentOfEnvironment,
+    orderedName: "1-locking",
+    displayName: "lock",
+    completedDescription: "Lock goals",
 });
 
 /**

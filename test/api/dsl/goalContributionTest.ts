@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
 import {
@@ -30,7 +32,7 @@ import { Goals } from "../../../src/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
-    FingerprintGoal,
+    FingerprintGoal, LockingGoal,
     PushReactionGoal,
     ReviewGoal,
 } from "../../../src/api/machine/wellKnownGoals";
@@ -115,6 +117,36 @@ describe("goalContribution", () => {
             assert.equal(goals.goals.length, 3);
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
             assert.equal(goals.name, "SomeGoalSet, Sending message, Fingerprint");
+        });
+
+        it("should respect sealed goals", async () => {
+            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const old: GoalSetter = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet.andLock());
+            const gs: GoalSetter = enrichGoalSetters(old,
+                onAnyPush().setGoals(mg));
+            const p = fakePush();
+            const goals: Goals = await gs.mapping(p);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals);
+            assert.equal(goals.name, "SomeGoalSet+lock");
+        });
+
+        it("should respect sealed goals in one case", async () => {
+            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const old: GoalSetter = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet);
+            let gs: GoalSetter = enrichGoalSetters(old,
+                onAnyPush().setGoals([mg, LockingGoal]));
+            gs = enrichGoalSetters(old,
+                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg));
+            const p = fakePush();
+            const goals: Goals = await gs.mapping(p);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg] as any));
+            const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what")));
+            const barGoals: Goals = await gs.mapping(barPush);
+            assert.deepEqual(barGoals.goals, SomeGoalSet.goals);
         });
 
     });

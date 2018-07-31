@@ -20,6 +20,7 @@ import { SdmContext } from "../context/SdmContext";
 import { Goal } from "../goal/Goal";
 import { Goals } from "../goal/Goals";
 import { PushListenerInvocation } from "../listener/PushListener";
+import { LockingGoal } from "../machine/wellKnownGoals";
 import {
     Mapping,
     NeverMatch,
@@ -75,8 +76,12 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
                 } else {
                     names.push(c.name);
                 }
+                contributorGoals.push(mapping.filter(g => g !== LockingGoal));
+                // If we find the special locking goal, don't add any further goals
+                if (mapping.includes(LockingGoal)) {
+                    break;
+                }
             }
-            contributorGoals.push(mapping);
         }
 
         const uniqueGoals: Goal[] = _.uniq(_.flatten(contributorGoals.filter(x => !!x)));
