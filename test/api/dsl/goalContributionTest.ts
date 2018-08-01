@@ -132,7 +132,7 @@ describe("goalContribution", () => {
             assert.equal(goals.name, "SomeGoalSet+lock");
         });
 
-        it("should respect sealed goals in one case", async () => {
+        it("should respect sealed goals after adding additional goal", async () => {
             // we create a goal setter that always sets a Fred goal
             const old: GoalSetter = whenPushSatisfies(() => true)
                 .itMeans("thing")
@@ -140,22 +140,19 @@ describe("goalContribution", () => {
 
             // the we create a different goal setter that always sets the MessageGoal + Locks it
             const mg = new MessageGoal("sendSomeMessage", "Sending message");
-            let gs: GoalSetter = enrichGoalSetters(old,
+            const gs: GoalSetter = enrichGoalSetters(old,
                 onAnyPush().setGoals([mg, LockingGoal]));
-            // maybe we're testing that this enrich setting does not update the original goal setter
-
-            // but then we ignore that one, and add a possible message goal to the original one, without locking
-            gs = enrichGoalSetters(old,
+            const gs1 = enrichGoalSetters(gs,
                 whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg));
 
             const p = fakePush(); // this does not have an owner of "bar" so it does qualify for the MessageGoal above
-            const goals: Goals = await gs.mapping(p); // we match it against the second value of `gs`
+            const goals: Goals = await gs1.mapping(p); // we match it against the second value of `gs`
 
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg] as any)); // and now it has accepted the addition of the MessageGoal
 
             const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
-            const barGoals: Goals = await gs.mapping(barPush); // then it does not get the Message Goal because it doesn't pass the push test.
-            assert.deepEqual(barGoals.goals, SomeGoalSet.goals);
+            const barGoals: Goals = await gs1.mapping(barPush); // then it does not get the Message Goal because it doesn't pass the push test.
+            assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg));
         });
 
     });
