@@ -37,31 +37,12 @@ export type GoalContribution<F> = Mapping<F, GoalComponent>;
  */
 class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
-    private readonly contributors: Array<Mapping<F, Goal[]>> = [];
-
     public get label(): string {
         return this.contributors.filter(c => (c as any).label)
             .map(c => (c as any).label).join(", ");
     }
 
-    constructor(public name: string, contributors: Array<GoalContribution<F>>) {
-        this.contributors = contributors.map(c => {
-            logger.info("Creating contributor '%s' of %s", c.name, contributors.map(con => con.name));
-            return {
-                name: c.name,
-                label: (c as any).label,
-                async mapping(p) {
-                    const r = await c.mapping(p);
-                    logger.info("Contributor '%s' of [%s] returned %s",
-                        c.name,
-                        contributors.map(con => con.name), !!r ? toGoals(r).goals.map(g => g.name) : "undefined");
-                    if (!r) {
-                        return r as any;
-                    }
-                    return toGoals(r).goals;
-                },
-            };
-        });
+    constructor(public readonly name: string, public readonly contributors: Array<GoalContribution<F>>) {
     }
 
     public async mapping(p: F): Promise<NeverMatch | Goals | undefined> {
@@ -70,15 +51,16 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 
         for (const c of this.contributors) {
             const mapping = await c.mapping(p);
-            if (mapping && mapping.length > 0) {
+            if (mapping) {
+                const goals = toGoals(mapping);
                 if ((c as any).label) {
                     names.push((c as any).label);
                 } else {
                     names.push(c.name);
                 }
-                contributorGoals.push(mapping.filter(g => g !== LockingGoal));
+                contributorGoals.push(goals.goals.filter(g => g !== LockingGoal));
                 // If we find the special locking goal, don't add any further goals
-                if (mapping.includes(LockingGoal)) {
+                if (goals.goals.includes(LockingGoal)) {
                     logger.info("Stopping goal contribution analysis, because %s has locked the goal set", c.name);
                     break;
                 }
@@ -109,8 +91,13 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
 export function goalContributors<F extends SdmContext = PushListenerInvocation>(
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
-    const all = [contributor].concat(contributors);
-    return new AdditiveGoalSetter("Contributed", all);
+    if (contributors.length === 0) {
+        return {
+            name: contributor.name,
+            mapping: async f => toGoals(await contributor.mapping(f)),
+        };
+    }
+    return enrichGoalSetters(contributor, contributors[0], ...contributors.slice(1));
 }
 
 /**
@@ -124,5 +111,17 @@ export function enrichGoalSetters<F extends SdmContext = PushListenerInvocation>
     mapping: GoalContribution<F>,
     contributor: GoalContribution<F>,
     ...contributors: Array<GoalContribution<F>>): Mapping<F, Goals> {
-    return new AdditiveGoalSetter(`${mapping.name}-enriched`, [mapping, contributor].concat(contributors));
+    if (isAdditiveGoalSetter(mapping)) {
+        return new AdditiveGoalSetter(`${mapping.name}-enriched`,
+            mapping.contributors.concat([contributor]).concat(contributors),
+        );
+    }
+    return new AdditiveGoalSetter(`${mapping.name}-enriched`,
+        [mapping, contributor].concat(contributors),
+    );
+}
+
+function isAdditiveGoalSetter(a: GoalContribution<any>): a is AdditiveGoalSetter<any> {
+    const maybe = a as AdditiveGoalSetter<any>;
+    return !!maybe && !!maybe.contributors && !!maybe.mapping;
 }

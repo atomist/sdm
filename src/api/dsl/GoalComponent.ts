@@ -31,7 +31,10 @@ export type GoalComponent = Goal | Goal[] | Goals;
  * @return {Goals}
  */
 export function toGoals(gc: GoalComponent): Goals {
+    if (!gc) {
+        return undefined;
+    }
     return isGoals(gc) ? gc :
         Array.isArray(gc) ? new Goals(gc.map(g => g.name).join("/"), ...gc) :
-            new Goals("Solely " + gc.name, gc);
+            new Goals(gc.name, gc);
 }
