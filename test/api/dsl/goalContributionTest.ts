@@ -139,20 +139,23 @@ describe("goalContribution", () => {
                 .setGoals(SomeGoalSet);
 
             // the we create a different goal setter that always sets the MessageGoal + Locks it
-            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const mg1 = new MessageGoal("sendSomeMessage1", "Sending message1");
+            const mg2 = new MessageGoal("sendSomeMessage2", "Sending message2");
+
             const gs: GoalSetter = enrichGoalSetters(old,
-                onAnyPush().setGoals([mg, LockingGoal]));
+                onAnyPush().setGoals([mg1, LockingGoal]));
             const gs1 = enrichGoalSetters(gs,
-                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg));
+                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
 
             const p = fakePush(); // this does not have an owner of "bar" so it does qualify for the MessageGoal above
             const goals: Goals = await gs1.mapping(p); // we match it against the second value of `gs`
 
-            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg] as any)); // and now it has accepted the addition of the MessageGoal
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg1] as any),
+                "Goals found were " + goals.goals.map(g => g.name)); // and now it has accepted the addition of the MessageGoal
 
             const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
             const barGoals: Goals = await gs1.mapping(barPush); // then it does not get the Message Goal because it doesn't pass the push test.
-            assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg));
+            assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1));
         });
 
     });
@@ -181,6 +184,35 @@ describe("goalContribution", () => {
             sdm.addGoalContributions(onAnyPush().setGoals(FingerprintGoal));
             const goals2: Goals = await sdm.pushMapping.mapping(p);
             assert.deepEqual(goals2.goals.sort(), [ReviewGoal, PushReactionGoal, AutofixGoal, FingerprintGoal].sort());
+        });
+
+        it("should respect sealed goals after adding additional goal", async () => {
+            // we create a goal setter that always sets a Fred goal
+            const sdm = new TestSoftwareDeliveryMachine("test");
+            const old: GoalSetter = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet);
+
+            sdm.addGoalContributions(old);
+
+            // the we create a different goal setter that always sets the MessageGoal + Locks it
+            const mg1 = new MessageGoal("sendSomeMessage", "Sending message1");
+            const mg2 = new MessageGoal("sendOtherMessage", "Sending message2");
+
+            sdm.addGoalContributions(
+                onAnyPush().setGoals([mg1, LockingGoal]));
+            sdm.addGoalContributions(
+                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg2));
+
+            const p = fakePush(); // this does not have an owner of "bar" so it does qualify for the MessageGoal above
+            const goals: Goals = await sdm.pushMapping.mapping(p); // we match it against the second value of `gs`
+
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg1] as any),
+                "Goals found were " + goals.goals.map(g => g.name)); // and now it has accepted the addition of the MessageGoal
+            const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
+            const barGoals: Goals = await sdm.pushMapping.mapping(barPush);
+            assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1),
+                "Goals found were " + goals.goals.map(g => g.name));
         });
     });
 });
