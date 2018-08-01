@@ -15,6 +15,7 @@
  */
 
 import * as _ from "lodash";
+import { LockingGoal } from "../machine/wellKnownGoals";
 import {
     Goal,
     GoalDefinition,
@@ -27,6 +28,25 @@ import {
 export class Goals {
 
     public readonly goals: Goal[];
+
+    /**
+     * Return a Goal set that contains these goals and one more goal,
+     * with an appropriate name
+     * @param {Goal} g goal to add
+     * @return {Goals}
+     */
+    public and(g: Goal): Goals {
+        return new Goals(this.name + "+" + g.name, ...this.goals.concat(g));
+    }
+
+    /**
+     * Return a form of these goals that is locked, so that more goals cannot be
+     * added through contribution model
+     * @return {Goals}
+     */
+    public andLock(): Goals {
+        return this.and(LockingGoal);
+    }
 
     // tslint:disable-next-line:no-shadowed-variable
     constructor(public name: string, ...goals: Goal[]) {

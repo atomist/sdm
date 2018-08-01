@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
 import {
@@ -30,7 +32,7 @@ import { Goals } from "../../../src/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
-    FingerprintGoal,
+    FingerprintGoal, LockingGoal,
     PushReactionGoal,
     ReviewGoal,
 } from "../../../src/api/machine/wellKnownGoals";
@@ -115,6 +117,42 @@ describe("goalContribution", () => {
             assert.equal(goals.goals.length, 3);
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
             assert.equal(goals.name, "SomeGoalSet, Sending message, Fingerprint");
+        });
+
+        it("should respect sealed goals", async () => {
+            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const old: GoalSetter = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet.andLock());
+            const gs: GoalSetter = enrichGoalSetters(old,
+                onAnyPush().setGoals(mg));
+            const p = fakePush();
+            const goals: Goals = await gs.mapping(p);
+            assert.deepEqual(goals.goals, SomeGoalSet.goals);
+            assert.equal(goals.name, "SomeGoalSet+lock");
+        });
+
+        it("should respect sealed goals after adding additional goal", async () => {
+            // we create a goal setter that always sets a Fred goal
+            const old: GoalSetter = whenPushSatisfies(() => true)
+                .itMeans("thing")
+                .setGoals(SomeGoalSet);
+
+            // the we create a different goal setter that always sets the MessageGoal + Locks it
+            const mg = new MessageGoal("sendSomeMessage", "Sending message");
+            const gs: GoalSetter = enrichGoalSetters(old,
+                onAnyPush().setGoals([mg, LockingGoal]));
+            const gs1 = enrichGoalSetters(gs,
+                whenPushSatisfies(async pu => pu.id.owner !== "bar").setGoals(mg));
+
+            const p = fakePush(); // this does not have an owner of "bar" so it does qualify for the MessageGoal above
+            const goals: Goals = await gs1.mapping(p); // we match it against the second value of `gs`
+
+            assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg] as any)); // and now it has accepted the addition of the MessageGoal
+
+            const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
+            const barGoals: Goals = await gs1.mapping(barPush); // then it does not get the Message Goal because it doesn't pass the push test.
+            assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg));
         });
 
     });

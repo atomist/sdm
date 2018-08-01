@@ -14,7 +14,7 @@
     "curly": true,
     "cyclomatic-complexity": [
       true,
-      10
+      12
     ],
     "interface-name": [
       true,
