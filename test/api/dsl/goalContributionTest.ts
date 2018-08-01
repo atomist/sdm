@@ -243,5 +243,23 @@ describe("goalContribution", () => {
             assert.deepEqual(goals.goals, [ReviewGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
                 "Goals found were " + goals.goals.map(g => g.name));
         });
+
+        it("should handle real-world example: single block", async () => {
+            const sdm = new TestSoftwareDeliveryMachine("test");
+            sdm.addGoalContributions(goalContributors(
+                onAnyPush().setGoals(new Goals("Checks", ReviewGoal, PushReactionGoal)),
+                whenPushSatisfies(IsSdm, async pu => isGitHubRepoRef(pu.id))
+                    .setGoals(new Goals("delivery", SdmDeliveryGoal, AutofixGoal).andLock()),
+                whenPushSatisfies(anySatisfied(async pu => pu.id.owner === "bar", IsSdm))
+                    .setGoals(FingerprintGoal),
+                whenPushSatisfies(async () => true)
+                    .setGoals(JustBuildGoal),
+            ));
+            const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
+                new InMemoryFile("src/atomist.config.ts", "content")));
+            const goals: Goals = await sdm.pushMapping.mapping(push);
+            assert.deepEqual(goals.goals, [ReviewGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
+                "Goals found were " + goals.goals.map(g => g.name));
+        });
     });
 });
