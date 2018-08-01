@@ -29,11 +29,14 @@ export function fakeContext(teamId: string = "T123"): HandlerContext & Automatio
     const correlationId = "foo";
     return {
         teamId,
+        workspaceId: teamId,
         messageClient: new DevNullMessageClient(),
         correlationId,
         context: {
             name: "test-context",
             teamId,
+            workspaceId: teamId,
+            workspaceName: teamId,
             teamName: teamId,
             operation: "operation",
             version: "0.1.0",
