@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitHubRepoRef, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
@@ -26,17 +27,20 @@ import {
     onAnyPush,
     whenPushSatisfies,
 } from "../../../src/api/dsl/goalDsl";
+import { GenericGoal } from "../../../src/api/goal/common/GenericGoal";
 import { MessageGoal } from "../../../src/api/goal/common/MessageGoal";
 import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
-    FingerprintGoal, LockingGoal,
+    FingerprintGoal, JustBuildGoal, LockingGoal,
     PushReactionGoal,
     ReviewGoal,
 } from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
+import { predicatePushTest } from "../../../src/api/mapping/PushTest";
+import { anySatisfied } from "../../../src/api/mapping/support/pushTestUtils";
 import { TestSoftwareDeliveryMachine } from "../../api-helper/TestSoftwareDeliveryMachine";
 
 const SomeGoalSet = new Goals("SomeGoalSet", new Goal({
@@ -212,6 +216,31 @@ describe("goalContribution", () => {
             const barPush = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"))); // but if the owner IS bar
             const barGoals: Goals = await sdm.pushMapping.mapping(barPush);
             assert.deepEqual(barGoals.goals, SomeGoalSet.goals.concat(mg1),
+                "Goals found were " + goals.goals.map(g => g.name));
+        });
+
+        const IsSdm = predicatePushTest("IsSDM",
+            async p => !!(await p.getFile("src/atomist.config.ts")));
+
+        const SdmDeliveryGoal = new GenericGoal({ uniqueName: "sdmDelivery" },
+            "Deliver SDM");
+
+        it("should handle real-world example", async () => {
+            const sdm = new TestSoftwareDeliveryMachine("test");
+            sdm.addGoalContributions(
+                onAnyPush().setGoals(new Goals("Checks", ReviewGoal, PushReactionGoal)));
+            sdm.addGoalContributions(
+                whenPushSatisfies(IsSdm, async pu => isGitHubRepoRef(pu.id)).setGoals(
+                    new Goals("delivery", SdmDeliveryGoal, AutofixGoal).andLock()));
+            sdm.addGoalContributions(goalContributors(
+                whenPushSatisfies(anySatisfied(async pu => pu.id.owner === "bar", IsSdm))
+                    .setGoals(FingerprintGoal),
+                whenPushSatisfies(async () => true)
+                    .setGoals(JustBuildGoal)));
+            const push = fakePush(InMemoryProject.from(new GitHubRepoRef("bar", "what"),
+                new InMemoryFile("src/atomist.config.ts", "content")));
+            const goals: Goals = await sdm.pushMapping.mapping(push);
+            assert.deepEqual(goals.goals, [ReviewGoal, PushReactionGoal, SdmDeliveryGoal, AutofixGoal],
                 "Goals found were " + goals.goals.map(g => g.name));
         });
     });
