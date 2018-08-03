@@ -18,7 +18,6 @@ import { logger } from "@atomist/automation-client";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import {
     AnyProjectEditor,
-    EditResult,
     ProjectEditor,
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";

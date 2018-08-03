@@ -38,10 +38,10 @@ import { doWithAllRepos } from "@atomist/automation-client/operations/common/rep
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import {
+    EditResult,
     failedEdit,
     ProjectEditor,
     successfulEdit,
-    EditResult,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
