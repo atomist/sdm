@@ -3,6 +3,13 @@ query ReposInTeam($offset: Int!, $size: Int!) {
     orgs {
       repo(first: $size, offset: $offset) {
         name
+        owner
+        org {
+          provider {
+            providerType
+            apiUrl
+          }
+        }
       }
     }
   }
