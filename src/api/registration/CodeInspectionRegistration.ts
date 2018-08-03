@@ -51,7 +51,8 @@ export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
     inspection: CodeInspection<R, PARAMS>;
 
     /**
-     * React to computed values from running across one or more projects
+     * React to computed values from running across one or more projects.
+     * If not provided, a default will be used: the results will be summarized to ci.addressChannels.
      * @param {R[]} results
      * @param ci context
      * @return {Promise<any>}
