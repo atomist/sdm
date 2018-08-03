@@ -41,6 +41,7 @@ import {
     failedEdit,
     ProjectEditor,
     successfulEdit,
+    EditResult,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
@@ -138,14 +139,40 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 repoFinder,
                 andFilter(targets.test, ctr.repoFilter),
                 repoLoader);
-            if (!!ctr.react) {
-                await ctr.react(results, ci);
-            } else {
-                logger.info("No react function to react to results of code transformation '%s'", ctr.name);
+            const reactionToResults = ctr.react || defaultTransformReaction;
+            try {
+                await reactionToResults(results, ci);
+                return {
+                    code: 0,
+                    message: `Editors ${allSucceeded(results) ? "did" : "did not"} all succeed.`,
+                };
+            } catch (err) {
+                logger.error("Failure in reaction: " + err.stack);
+                return {
+                    code: 1,
+                    message: `Editors ${allSucceeded(results) ? "did" : "did not"} succeed. Reaction failed with ${err.message}`, err,
+                };
             }
         },
     };
     return commandHandlerRegistrationToCommand(sdm, asCommand);
+}
+
+const defaultTransformReaction = (results: EditResult[], ci: CommandListenerInvocation) => {
+    const transformedProjects = results.filter(r => r.success && r.edited).map(describeTarget);
+    const nothingToDo = results.filter(r => r.success && !r.edited).map(describeTarget);
+    const failed = results.filter(r => !r.success).map(describeTarget);
+    return ci.addressChannels(`${ci.commandName}: transformed ${transformedProjects.length} projects: ${transformedProjects.join("\n")}
+    Ignored ${nothingToDo.length} projects
+    Failed on ${failed.length} projects: ${failed.join("\n")}`);
+};
+
+function describeTarget(r: EditResult) {
+    return `${r.target.id.owner}/${r.target.id.repo}`;
+}
+
+function allSucceeded(er: EditResult[]): boolean {
+    return !er.find(r => !r.success);
 }
 
 export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOptions, cir: CodeInspectionRegistration<R, any>): Maker<HandleCommand> {
