@@ -97,6 +97,7 @@ export * from "./api/registration/ParametersBuilder";
 export * from "./api/registration/ParametersDefinition";
 export * from "./api/registration/PushImpactListenerRegistration";
 export * from "./api/registration/PushRegistration";
+export * from "./api/registration/ReviewListenerRegistration";
 export * from "./api/registration/ReviewerError";
 export * from "./api/registration/ReviewerRegistration";
 export * from "./spi/artifact/ArtifactStore";
