@@ -17,6 +17,7 @@
 import { HandleCommand, HandlerContext, RedirectResult } from "@atomist/automation-client";
 import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { isRemoteRepoRef, RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
 import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
 import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
@@ -48,7 +49,7 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
                                     name: string,
                                     paramsMaker: Maker<P>,
                                     fallbackTarget: Maker<RepoCreationParameters>,
-                                    startingPoint: StartingPoint,
+                                    startingPoint: StartingPoint<P>,
                                     details: Partial<GeneratorCommandDetails<any>> = {}): HandleCommand {
     const detailsToUse: GeneratorCommandDetails<any> = {
         ...defaultDetails(toMachineOptions(sdm), name),
@@ -89,7 +90,7 @@ export function isSeedDrivenGeneratorParameters(p: any): p is SeedDrivenGenerato
 
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
                                                                  details: GeneratorCommandDetails<P>,
-                                                                 startingPoint: StartingPoint): OnCommand<P> {
+                                                                 startingPoint: StartingPoint<P>): OnCommand<P> {
 
     return (ctx: HandlerContext, parameters: P) => {
         return handle(ctx, editorFactory, parameters, details, startingPoint);
@@ -100,7 +101,7 @@ async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerConte
                                                                editorFactory: EditorFactory<P>,
                                                                params: P,
                                                                details: GeneratorCommandDetails<P>,
-                                                               startingPoint: StartingPoint): Promise<RedirectResult> {
+                                                               startingPoint: StartingPoint<P>): Promise<RedirectResult> {
     const r = await generate(
         computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint),
         ctx,
@@ -157,7 +158,7 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
                                                                              ctx: HandlerContext,
                                                                              repoLoader: RepoLoader,
                                                                              details: GeneratorCommandDetails<any>,
-                                                                             startingPoint: StartingPoint): Promise<Project> {
+                                                                             startingPoint: StartingPoint<P>): Promise<Project> {
     if (!startingPoint) {
         if (!params.source || !params.source.repoRef) {
             throw new Error("If startingPoint is not provided in GeneratorRegistration, parameters.source must specify seed project location: " +
@@ -169,9 +170,19 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
     if (isProject(startingPoint)) {
         await ctx.messageClient.respond(`Using starting point project specified in registration`);
         return startingPoint;
+    } else if (isRemoteRepoRef(startingPoint as RepoRef)) {
+        await ctx.messageClient.respond(`Cloning seed project from starting point: ${(startingPoint as RemoteRepoRef).url}`);
+        return repoLoader(startingPoint as RemoteRepoRef);
     } else {
-        await ctx.messageClient.respond(`Cloning seed project from starting point: ${startingPoint.url}`);
-        return repoLoader(startingPoint);
+        // It's a function that takes the parameters and returns either a project or a RemoteRepoRef
+        const rr: RemoteRepoRef | Project = (startingPoint as any)(params);
+        if (isProject(rr)) {
+            await ctx.messageClient.respond(`Using dynamically chosen starting point project \`${rr.id.owner}:${rr.id.repo}\``);
+            return rr;
+        } else {
+            await ctx.messageClient.respond(`Cloning dynamically chosen starting point from ${rr.url}`);
+            return repoLoader(rr);
+        }
     }
 }
 

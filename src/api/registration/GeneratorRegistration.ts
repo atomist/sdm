@@ -24,9 +24,10 @@ import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 
 /**
  * Starting point before transformation. Normally the coordinates of a
- * seed project, but can also be in memory.
+ * seed project, but can also be an in memory project or a function that
+ * computes a RemoteRepoRef or Project from the parameters.
  */
-export type StartingPoint = Project | RemoteRepoRef;
+export type StartingPoint<PARAMS> = Project | RemoteRepoRef | ((parameters: PARAMS) => (RemoteRepoRef | Project));
 
 /**
  * Register a project creation operation
@@ -39,7 +40,7 @@ export interface GeneratorRegistration<PARAMS = NoParameters>
      * seed project, but can also be in memory.
      * The alternative is to get this from a config object.
      */
-    startingPoint?: StartingPoint;
+    startingPoint?: StartingPoint<PARAMS>;
 
     /**
      * Strategy for persisting projects. Useful in testing.
