@@ -15,11 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   Fixed name of OnIssueAction GraphQL subscription
+-   Fixed name of OnIssueAction GraphQL subscription.
 
 ### Deprecated
 
--   OnNewIssue GraphQL subscription
+-   OnNewIssue GraphQL subscription.
 
 ## [0.4.0](https://github.com/atomist/sdm/compare/0.3.1...0.4.0) - 2018-08-07
 
