@@ -83,7 +83,7 @@ function optimizedAndEvaluation<F>(predicates: Array<PredicateMapping<F>>,
             remaining.push(p);
         }
     }
-    logger.info("Cheap: [%j], remaining: [%j]", cheap, remaining);
+    logger.debug("Cheap: [%j], remaining: [%j]", cheap, remaining);
 
     return async pci => {
         const cheapResults = await gatherResults(cheap)(pci);

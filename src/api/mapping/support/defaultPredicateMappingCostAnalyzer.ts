@@ -42,10 +42,10 @@ export const DefaultPredicateMappingCostAnalyzer: PredicateMappingCostAnalyzer<a
     pm => {
         const mappingCode = pm.mapping.toString();
         if (ExpensiveSigns.some(sign => sign(pm))) {
-            logger.info("Expected cost of [%s] is expensive", mappingCode);
+            logger.debug("Expected cost of [%s] is expensive", mappingCode);
             return ExpectedPredicateMappingCost.expensive;
         }
-        logger.info("Expected cost of [%s] is unknown", mappingCode);
+        logger.debug("Expected cost of [%s] is unknown", mappingCode);
         return ExpectedPredicateMappingCost.unknown;
     };
 
