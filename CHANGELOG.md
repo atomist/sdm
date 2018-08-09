@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   By default, address channels on a transform. [#474](https://github.com/atomist/sdm/issues/474)
 
+### Changed
+
+-   Fixed name of OnIssueAction GraphQL subscription
+
+### Deprecated
+
+-   OnNewIssue GraphQL subscription
+
 ## [0.4.0](https://github.com/atomist/sdm/compare/0.3.1...0.4.0) - 2018-08-07
 
 ### Added

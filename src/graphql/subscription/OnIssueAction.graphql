@@ -1,5 +1,4 @@
-# deprecated, use OnIssueAction
-subscription OnNewIssue {
+subscription OnIssueAction {
   Issue {
     number
     title
