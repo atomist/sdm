@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   By default, address channels on a transform. [#474](https://github.com/atomist/sdm/issues/474)
--   Key types from `automation-client` are now exported by this module, which serves as the main Atomist API
+-   Key types from `automation-client` are now exported by this module, which serves as the main Atomist API.
 
 ### Changed
 
