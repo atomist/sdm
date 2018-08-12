@@ -18,6 +18,10 @@ export { logger } from "@atomist/automation-client";
 
 export { MessageClient } from "@atomist/automation-client/spi/message/MessageClient";
 
+export { ButtonSpecification } from "@atomist/automation-client/spi/message/MessageClient";
+
+export * from "@atomist/automation-client/spi/graph/GraphClient";
+
 export {
     ProjectOperationCredentials, TokenCredentials, isTokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
