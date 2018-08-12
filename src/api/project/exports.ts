@@ -47,3 +47,5 @@ export {
 
 import * as validationPatterns from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 export { validationPatterns };
+
+export { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";

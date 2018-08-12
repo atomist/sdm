@@ -14,4 +14,10 @@
  * limitations under the License.
  */
 
+export { logger } from "@atomist/automation-client";
+
 export { MessageClient } from "@atomist/automation-client/spi/message/MessageClient";
+
+export {
+    ProjectOperationCredentials, TokenCredentials, isTokenCredentials,
+} from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
