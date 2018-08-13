@@ -49,3 +49,5 @@ import * as validationPatterns from "@atomist/automation-client/operations/commo
 export { validationPatterns };
 
 export { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
+
+export { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";

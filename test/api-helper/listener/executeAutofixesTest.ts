@@ -66,7 +66,7 @@ export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
         assert(!ci.parameters);
         return { edited: true, success: true, target: project };
     },
-    parameters: {
+    parametersInstance: {
         bird: "ibis",
     },
 };
