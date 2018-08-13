@@ -21,6 +21,7 @@ import { PushRule } from "../mapping/support/PushRule";
 import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { EventRegistrationManager } from "../registration/EventRegistrationManager";
 import { IngesterRegistrationManager } from "../registration/IngesterRegistrationManager";
+import { EnforceableProjectInvariantRegistration } from "../registration/ProjectInvariantRegistration";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
@@ -77,6 +78,16 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
     addDisposalRules(...goalSetters: GoalSetter[]): this;
 
     addVerifyImplementation(): this;
+
+    /**
+     * Add an enforceable invariant registration. This will export
+     * a CodeTransform, CodeInspection and Autofix.
+     * If a ProjectInvariant is not enforceable, it can be
+     * registered with addCodeInspection.
+     * @param {EnforceableProjectInvariantRegistration<PARAMS>} eir
+     * @return {this}
+     */
+    addEnforceableInvariant<PARAMS>(eir: EnforceableProjectInvariantRegistration<PARAMS>): this;
 
     /**
      * Add capabilities from these extension packs.

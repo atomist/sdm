@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    logger,
-} from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
@@ -31,12 +28,7 @@ import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import {
-    BuildGoal,
-    JustBuildGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../../api/machine/wellKnownGoals";
+import { BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -44,6 +36,7 @@ import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
+import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -51,16 +44,14 @@ import { EventHandlerRegistration } from "../../api/registration/EventHandlerReg
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { GoalApprovalRequestVote } from "../../api/registration/GoalApprovalRequestVote";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
+import { EnforceableProjectInvariantRegistration, InvarianceAssessment } from "../../api/registration/ProjectInvariantRegistration";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../goal/executeBuild";
 import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
-import {
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../listener/executeVerifyEndpoint";
+import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { validateRequiredConfigurationValues } from "../misc/extensionPack";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
@@ -167,6 +158,26 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
             executeVerifyEndpoint(stagingVerification));
+    }
+
+    public addEnforceableInvariant<PARAMS>(eir: EnforceableProjectInvariantRegistration<PARAMS>): this {
+        const ctr: CodeTransformRegistration = {
+            ...eir,
+            name: `transform-${eir.name}`,
+            intent: !!eir.intent ? toStringArray(eir.intent).map(i => `transform ${i}`) : `transform ${eir.name}`,
+        } as CodeTransformRegistration;
+        this.addCodeTransformCommand(ctr);
+        const afr: AutofixRegistration = {
+            ...eir,
+            name: `autofix-${eir.name}`,
+        } as AutofixRegistration;
+        this.addAutofix(afr);
+        const cir: CodeInspectionRegistration<InvarianceAssessment, PARAMS> = {
+            ...eir,
+            name: `inspect-${eir.name}`,
+            intent: !!eir.intent ? toStringArray(eir.intent).map(i => `inspect ${i}`) : `inspect ${eir.name}`,
+        } as CodeInspectionRegistration<InvarianceAssessment, PARAMS>;
+        return this.addCodeInspectionCommand(cir);
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {

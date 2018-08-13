@@ -56,6 +56,6 @@ export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
      * @param ci context
      * @return {Promise<any>}
      */
-    react?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    reactToResults?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 
 }

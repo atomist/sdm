@@ -37,5 +37,5 @@ export interface AutofixRegistration<P = NoParameters> extends PushSelector {
     /**
      * Parameters used for all transforms
      */
-    parameters?: P;
+    parametersInstance?: P;
 }
