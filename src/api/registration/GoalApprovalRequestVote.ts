@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    RepoContext,
-    SdmGoalEvent,
-} from "../../index";
+import { RepoContext } from "../context/SdmContext";
+import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 
 /**
  * Result from executing GoalApprovalRequestVoter.
  */
+
 export enum GoalApprovalRequestVoteResult {
 
     /**
