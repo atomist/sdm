@@ -16,6 +16,7 @@
 
 export {
     EventHandler,
+    CommandHandler,
     MappedParameter,
     MappedParameters,
     Parameter,
