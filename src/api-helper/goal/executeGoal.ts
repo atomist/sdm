@@ -271,7 +271,7 @@ async function markGoalInProcess(parameters: {
             state: SdmGoalState.in_process,
         });
     } catch (err) {
-        logger.warn("Failed to update %s goal to tell people we are working on it", goal.name);
+        logger.warn("Failed to update %s goal to tell people we are working on it: \n%s", goal.name, err.stack);
     }
     return sdmGoal;
 }
