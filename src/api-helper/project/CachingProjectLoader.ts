@@ -58,7 +58,7 @@ export class CachingProjectLoader implements ProjectLoader {
             this.cache.put(key, project);
         }
 
-        logger.info("CachingProjectLoader: About to invoke action. Cache stats: %j", this.cache.stats);
+        logger.debug("CachingProjectLoader: About to invoke action. Cache stats: %j", this.cache.stats);
         return action(project);
     }
 

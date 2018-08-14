@@ -68,7 +68,7 @@ class AdditiveGoalSetter<F extends SdmContext> implements Mapping<F, Goals> {
         }
 
         const uniqueGoals: Goal[] = _.uniq(_.flatten(contributorGoals.filter(x => !!x)));
-        logger.info("%d contributors (%s): Contributor goal names=[%s]; Unique goal names=[%s]; correlationId=%s",
+        logger.debug("%d contributors (%s): Contributor goal names=[%s]; Unique goal names=[%s]; correlationId=%s",
             this.contributors.length,
             this.contributors.map(c => c.name),
             contributorGoals.map(a => !!a ? a.map(b => b.name).join() : "undefined").join(": "),
