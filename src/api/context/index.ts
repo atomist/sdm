@@ -16,15 +16,34 @@
 
 export { logger } from "@atomist/automation-client";
 
-export { MessageClient, Destination, SlackDestination, isSlackMessage } from "@atomist/automation-client/spi/message/MessageClient";
+export {
+    MessageClient,
+    Destination,
+    SlackDestination,
+    isSlackMessage,
+    addressEvent,
+    addressSlackChannels,
+    addressSlackChannelsFromContext,
+    addressSlackUsers,
+    addressSlackUsersFromContext,
+} from "@atomist/automation-client/spi/message/MessageClient";
 
 import * as slack from "@atomist/slack-messages";
+
 export { slack };
 
-export { ButtonSpecification } from "@atomist/automation-client/spi/message/MessageClient";
+export {
+    ButtonSpecification,
+    MenuSpecification,
+    DataSource,
+    ActionConfirmation,
+    SelectOption,
+} from "@atomist/automation-client/spi/message/MessageClient";
 
 export * from "@atomist/automation-client/spi/graph/GraphClient";
 
 export {
-    ProjectOperationCredentials, TokenCredentials, isTokenCredentials,
+    ProjectOperationCredentials,
+    TokenCredentials,
+    isTokenCredentials,
 } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
