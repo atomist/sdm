@@ -237,7 +237,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
 }
 
 export function commandHandlerRegistrationToCommand<P = NoParameters>(sdm: MachineOrMachineOptions,
-    c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
+                                                                      c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
     return () => createCommand(
         sdm,
         toOnCommand(c),
@@ -402,7 +402,7 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
 export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-    targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
+                                                       targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isRepoTargetingParameters(sampleParams) ?
         paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
