@@ -434,5 +434,5 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
 }
 
 function gitBranchCompatible(name: string) {
-    return name.replace(" ", "_"); // What else??
+    return name.replace(/\s+/g, "_"); // What else??
 }
