@@ -86,6 +86,16 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
     /**
      * Add goal setting contributions that will be added into SDM goal setting.
      * Decorates other goal setting behavior.
+     *
+     * For example, always do fingerprints:
+     *   sdm.addGoalContributions(onAnyPush().setGoals(FingerprintGoal))
+     *
+     * Or, sometimes do a custom local deploy goal:
+     *   sdm.addGoalContributions(
+     *       whenPushSatisfies(IsSdm, IsInLocalMode).setGoals(
+     *          new Goals("delivery", LocalSdmDeliveryGoal)));
+     *   sdm.addGoalImplementation("SDM CD", LocalSdmDeliveryGoal,
+     *          executeLocalSdmDelivery(options)); // tell it how to execute that custom goal
      * @param goalContributions contributions to goals
      */
     addGoalContributions(goalContributions: GoalSetter): this;
