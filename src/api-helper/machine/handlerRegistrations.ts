@@ -347,10 +347,10 @@ export function toParametersListing(p: ParametersDefinition): ParametersListing 
         const value = p[name];
         if (isMappedParameterOrSecretDeclaration(value)) {
             switch (value.type) {
-                case DeclarationType.mapped :
+                case DeclarationType.mapped:
                     builder.addMappedParameters({ name, uri: value.uri, required: value.required });
                     break;
-                case DeclarationType.secret :
+                case DeclarationType.secret:
                     builder.addSecrets({ name, uri: value.uri });
                     break;
             }
@@ -383,9 +383,9 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         const ci = toCommandListenerInvocation(p, ctx, params);
         // Mix in handler context for old style callers
         const r = await ct(p, {
-                ...ctx,
-                ...ci,
-            } as CommandListenerInvocation<P> & HandlerContext,
+            ...ctx,
+            ...ci,
+        } as CommandListenerInvocation<P> & HandlerContext,
             params);
         try {
             return isProject(r) ? successfulEdit(r, undefined) : r;
@@ -429,6 +429,10 @@ function toEditModeOrFactory<P>(ctr: CodeTransformRegistration<P>, ci: CommandLi
     }
     // Default it if not supplied
     return new PullRequest(
-        `transform-${ctr.name}-${Date.now()}`,
+        `transform-${gitBranchCompatible(ctr.name)}-${Date.now()}`,
         description);
+}
+
+function gitBranchCompatible(name: string) {
+    return name.replace(" ", "_"); // What else??
 }
