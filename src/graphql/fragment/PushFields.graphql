@@ -25,6 +25,15 @@ fragment PushFields on Push {
       image
       imageName
     }
+    tags {
+      name
+      description
+      timestamp
+      release {
+        name
+        timestamp
+      }
+    }
   }
   repo {
     ...CoreRepoFieldsAndChannels
