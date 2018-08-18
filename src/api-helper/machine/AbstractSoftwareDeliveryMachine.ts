@@ -16,6 +16,7 @@
 
 import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { toStringArray } from "@atomist/automation-client/internal/util/string";
+import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
@@ -37,7 +38,8 @@ import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
+import { CodeInspection, CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
+import { CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
@@ -55,6 +57,7 @@ import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerif
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { validateRequiredConfigurationValues } from "../misc/extensionPack";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
+import { toScalarProjectEditor } from "./handlerRegistrations";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
@@ -172,12 +175,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             name: `autofix-${eir.name}`,
         } as AutofixRegistration;
         this.addAutofix(afr);
-        const cir: CodeInspectionRegistration<InvarianceAssessment, PARAMS> = {
-            ...eir,
-            name: `inspect-${eir.name}`,
-            intent: !!eir.intent ? toStringArray(eir.intent).map(i => `inspect ${i}`) : `inspect ${eir.name}`,
-        } as CodeInspectionRegistration<InvarianceAssessment, PARAMS>;
-        return this.addCodeInspectionCommand(cir);
+        return this.addCodeInspectionCommand(toCodeInspectionCommand(eir));
     }
 
     public addDisposalRules(...goalSetters: GoalSetter[]): this {
@@ -334,4 +332,40 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         }
     }
 
+}
+
+function toCodeInspectionCommand<PARAMS>(
+    eir: EnforceableProjectInvariantRegistration<PARAMS>): CodeInspectionRegistration<InvarianceAssessment, PARAMS> {
+    return {
+        name: `verify-${eir.name}`,
+        intent: !!eir.intent ? toStringArray(eir.intent).map(i => `verify ${i}`) : `verify ${eir.name}`,
+        parameters: eir.parameters,
+        projectTest: eir.projectTest,
+        reactToResults: eir.reactToResults,
+        description: eir.description,
+        tags: eir.tags,
+        targets: eir.targets,
+        repoFinder: eir.repoFinder,
+        repoFilter: eir.repoFilter,
+        repoLoader: eir.repoLoader,
+        inspection: eir.inspection || transformToInspection(eir.transform),
+    };
+}
+
+/**
+ * Return a CodeInspection that runs a transform and sees whether or it made
+ * an edit
+ * @param {CodeTransformOrTransforms<PARAMS>} transform
+ * @return {CodeInspection<InvarianceAssessment, PARAMS>}
+ */
+function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARAMS>): CodeInspection<InvarianceAssessment, PARAMS> {
+    const editor = toScalarProjectEditor(transform);
+    return async (p, i) => {
+        const result = await editor(p, i.context, i.parameters);
+        return {
+            id: p.id as RemoteRepoRef,
+            holds: result.edited,
+            details: "Transform return edited true",
+        };
+    };
 }

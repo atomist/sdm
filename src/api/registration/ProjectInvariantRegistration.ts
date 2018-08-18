@@ -17,7 +17,7 @@
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { ProjectReview, RemoteRepoRef } from "../project/exports";
 import { AutofixRegistration } from "./AutofixRegistration";
-import { CodeInspectionRegistration } from "./CodeInspectionRegistration";
+import { CodeInspectionRegistration, InspectionActions } from "./CodeInspectionRegistration";
 import { CodeTransformRegistration } from "./CodeTransformRegistration";
 
 /**
@@ -29,20 +29,29 @@ export interface ProjectInvariantRegistration<PARAMS = NoParameters>
 }
 
 /**
- * An invariant that can be enforced.
- * 3-in-1: Inspection, CodeTransform and Autofix. Emits all
+ * An invariant that can be enforced via an autofix.
+ * Based around a CodeTransform which can be used as a command or an autofix.
+ * If the CodeInspection isn't specified,
+ * a CodeInspection will be created based on running the transform and seeing if
+ * it makes changes.
  */
 export interface EnforceableProjectInvariantRegistration<PARAMS = NoParameters>
-    extends ProjectInvariantRegistration<PARAMS>,
+    extends Partial<InspectionActions<InvarianceAssessment, PARAMS>>,
         CodeTransformRegistration<PARAMS>,
         AutofixRegistration<PARAMS> {
 
 }
 
+/**
+ * Result of assessing an invariant against a repo
+ */
 export interface InvarianceAssessment {
+
     id: RemoteRepoRef;
 
     holds: boolean;
 
     review?: ProjectReview;
+
+    details?: string;
 }
