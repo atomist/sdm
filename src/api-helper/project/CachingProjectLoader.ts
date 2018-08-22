@@ -62,7 +62,7 @@ export class CachingProjectLoader implements ProjectLoader {
 
         if (!project) {
             project = await save(this.delegate, params);
-            logger.info("Caching project '%j'", project.id);
+            logger.info("Caching project '%j' at '%s'", project.id, project.baseDir);
             this.cache.put(key, project);
         }
 
@@ -78,8 +78,8 @@ export class CachingProjectLoader implements ProjectLoader {
 }
 
 function cleanUp(p: GitProject): void {
-    logger.debug(`Evicting project '%j'`, p.id);
     if (p.baseDir && fs.accessSync(p.baseDir)) {
+        logger.debug(`Evicting project '%j' at '$s'`, p.id, p.baseDir);
         try {
             fs.removeSync(p.baseDir);
         } catch (err) {
