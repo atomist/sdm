@@ -43,7 +43,6 @@ export class LruCache<T> implements SimpleCache<T> {
             ++this.hits;
             // Peek the entry, re-insert for LRU strategy
             entry = this.values.get(key);
-            this.evict(key);
             this.values.set(key, entry);
         }
         return entry;
