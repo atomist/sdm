@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/0.4.3...HEAD)
 
+### Fixed
+
+-   CachingProjectLoader doesn’t clean file system resources. [#482](https://github.com/atomist/sdm/issues/482)
+
 ## [0.4.3](https://github.com/atomist/sdm/compare/0.4.2...0.4.3) - 2018-08-21
 
 ## [0.4.2](https://github.com/atomist/sdm/compare/0.4.1...0.4.2) - 2018-08-17
