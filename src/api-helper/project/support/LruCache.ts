@@ -27,7 +27,8 @@ export class LruCache<T> implements SimpleCache<T> {
 
     private readonly values: Map<string, T> = new Map<string, T>();
 
-    constructor(private readonly maxEntries: number = 200) {
+    constructor(private readonly maxEntries: number = 200,
+                private readonly evictCallback: (t: T) => void = () => { /** intentionally left empty */}) {
     }
 
     get stats() {
@@ -42,7 +43,7 @@ export class LruCache<T> implements SimpleCache<T> {
             ++this.hits;
             // Peek the entry, re-insert for LRU strategy
             entry = this.values.get(key);
-            this.values.delete(key);
+            this.evict(key);
             this.values.set(key, entry);
         }
         return entry;
@@ -52,12 +53,13 @@ export class LruCache<T> implements SimpleCache<T> {
         if (this.values.size >= this.maxEntries) {
             // least-recently used cache eviction strategy
             const keyToDelete = this.values.keys().next().value;
-            this.values.delete(keyToDelete);
+            this.evict(keyToDelete);
         }
         this.values.set(key, value);
     }
 
     public evict(key: string) {
+        this.evictCallback(this.values.get(key));
         return this.values.delete(key);
     }
 

@@ -16,9 +16,13 @@
 
 import { logger } from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import { promisify } from "util";
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
+import {
+    ProjectLoader,
+    ProjectLoadingParameters,
+    WithLoadedProject,
+} from "../../spi/project/ProjectLoader";
 import { CloningProjectLoader } from "./cloningProjectLoader";
 import { cacheKeyForSha } from "./support/cacheKey";
 import { LruCache } from "./support/LruCache";
@@ -33,12 +37,16 @@ export class CachingProjectLoader implements ProjectLoader {
 
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         if (!params.readOnly) {
-            logger.info("CachingProjectLoader: Forcing fresh clone for non readonly use of %j", params.id);
+            logger.info("Forcing fresh clone for non readonly use of '%j'", params.id);
             const p = await save(this.delegate, params);
-            return action(p);
+            return action(p)
+                .then(result => {
+                    cleanUp(p);
+                    return result;
+                });
         }
 
-        logger.debug("CachingProjectLoader: Hoping to reuse clone for readonly use of %j", params.id);
+        logger.debug("Attempting to reuse clone for readonly use of '%j'", params.id);
         const key = cacheKeyForSha(params.id);
         let project = this.cache.get(key);
         if (!!project) {
@@ -47,27 +55,37 @@ export class CachingProjectLoader implements ProjectLoader {
                 await promisify(fs.access)(project.baseDir);
             } catch {
                 this.cache.evict(key);
-                logger.warn("CachingProjectLoader: Invalid cache entry %s", key);
+                logger.warn("Invalid cache entry '%s'", key);
                 project = undefined;
             }
         }
 
         if (!project) {
             project = await save(this.delegate, params);
-            logger.info("Caching project %j", project.id);
+            logger.info("Caching project '%j'", project.id);
             this.cache.put(key, project);
         }
 
-        logger.debug("CachingProjectLoader: About to invoke action. Cache stats: %j", this.cache.stats);
+        logger.debug("About to invoke action. Cache stats: %j", this.cache.stats);
         return action(project);
     }
 
     constructor(
         private readonly delegate: ProjectLoader = CloningProjectLoader,
         maxEntries: number = 20) {
-        this.cache = new LruCache<GitProject>(maxEntries);
+        this.cache = new LruCache<GitProject>(maxEntries, cleanUp);
     }
+}
 
+function cleanUp(p: GitProject): void {
+    logger.debug(`Evicting project '%j'`, p.id);
+    if (p.baseDir && fs.accessSync(p.baseDir)) {
+        try {
+            fs.removeSync(p.baseDir);
+        } catch (err) {
+            logger.warn(err);
+        }
+    }
 }
 
 export function save(pl: ProjectLoader, params: ProjectLoadingParameters): Promise<GitProject> {
