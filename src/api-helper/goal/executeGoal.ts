@@ -217,7 +217,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 result = Success;
             }
 
-            progressLog.write(`Result: ${JSON.stringify(result, possibleAxiosObjectReplacer, 2)}`);
+            progressLog.write(`Result: ${JSON.stringify(result, possibleAxiosObjectReplacer, 0)}`);
             progressLog.write("---");
             await progressLog.flush();
             return result;
