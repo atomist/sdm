@@ -79,7 +79,7 @@ export class CachingProjectLoader implements ProjectLoader {
 
 function cleanUp(p: GitProject): void {
     if (p && p.baseDir && fs.existsSync(p.baseDir)) {
-        logger.debug(`Evicting project '%j' at '$s'`, p.id, p.baseDir);
+        logger.debug(`Evicting project '%j' at '%s'`, p.id, p.baseDir);
         try {
             fs.removeSync(p.baseDir);
         } catch (err) {
