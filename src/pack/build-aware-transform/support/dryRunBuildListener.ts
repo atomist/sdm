@@ -33,7 +33,7 @@ export function dryRunBuildListener(opts: IssueCreationOptions): BuildListener {
             return;
         }
 
-        const body = bu.build.commit.message.replace(DryRunMessage, "").trim();
+        const body = bu.build.commit.message.replace(DryRunMessage, "").trim() + "\n\n[atomist:generated]";
         const description = body.split("\n")[0];
         switch (build.status) {
             case "started" :
