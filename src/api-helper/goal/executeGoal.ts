@@ -177,10 +177,10 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
 
     // Check configuration to see if hooks should be skipped
     if (!configurationValue<boolean>("sdm.goal.hooks", true)) {
-        goalInvocation.progressLog.write("---");
+        goalInvocation.progressLog.write("/--");
         goalInvocation.progressLog.write(`Invoking goal hook: ${hook}`);
         goalInvocation.progressLog.write(`Result: skipped (hooks disabled in configuration)`);
-        goalInvocation.progressLog.write("---");
+        goalInvocation.progressLog.write("\\--");
         await goalInvocation.progressLog.flush();
         return Success;
     }
@@ -188,7 +188,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     const { projectLoader } = rules;
     const { credentials, id, context, progressLog } = goalInvocation;
     return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async p => {
-        progressLog.write("---");
+        progressLog.write("/--");
         progressLog.write(`Invoking goal hook: ${hook}`);
 
         if (p.fileExistsSync(path.join(".atomist", "hooks", hook))) {
@@ -218,12 +218,12 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
             }
 
             progressLog.write(`Result: ${JSON.stringify(result, possibleAxiosObjectReplacer, 0)}`);
-            progressLog.write("---");
+            progressLog.write("\\--");
             await progressLog.flush();
             return result;
         } else {
             progressLog.write(`Result: skipped (not provided)`);
-            progressLog.write("---");
+            progressLog.write("\\--");
             await progressLog.flush();
             return Success;
         }
