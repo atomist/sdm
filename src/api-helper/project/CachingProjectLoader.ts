@@ -91,6 +91,9 @@ async function saveAndRunAction<T>(delegate: ProjectLoader,
     const p = await save(delegate, params);
     if (params.context && params.context.lifecycle) {
         params.context.lifecycle.registerDisposable(async () => cleanUp(p));
+    } else {
+        // schedule a cleanup timer but don't block the Node.js event loop for this
+        setTimeout(() => cleanUp(p), 10000).unref();
     }
     return action(p);
 }
