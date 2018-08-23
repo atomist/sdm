@@ -89,7 +89,9 @@ async function saveAndRunAction<T>(delegate: ProjectLoader,
                                    params: ProjectLoadingParameters,
                                    action: WithLoadedProject): Promise<T> {
     const p = await save(delegate, params);
-    params.context.lifecycle.registerDisposable(async () => cleanUp(p));
+    if (params.context && params.context.lifecycle) {
+        params.context.lifecycle.registerDisposable(async () => cleanUp(p));
+    }
     return action(p);
 }
 

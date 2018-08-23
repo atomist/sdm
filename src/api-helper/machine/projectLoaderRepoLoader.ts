@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
@@ -28,10 +29,11 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
  */
 export function projectLoaderRepoLoader(pl: ProjectLoader,
                                         credentials: ProjectOperationCredentials,
-                                        readOnly: boolean): RepoLoader {
+                                        readOnly: boolean,
+                                        context?: HandlerContext): RepoLoader {
     return async id => {
         let project;
-        await pl.doWithProject({ id: id as RemoteRepoRef, credentials, readOnly },
+        await pl.doWithProject({ id: id as RemoteRepoRef, credentials, readOnly, context },
             async p => {
                 project = p;
             });

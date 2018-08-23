@@ -126,7 +126,8 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 projectLoaderRepoLoader(
                     mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
-                    false);
+                    false,
+                    ci.context);
 
             const editMode = toEditModeOrFactory(ctr, ci);
             const results = await editAll<any, any>(
@@ -179,7 +180,8 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 projectLoaderRepoLoader(
                     mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
-                    true);
+                    true,
+                    ci.context,);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
