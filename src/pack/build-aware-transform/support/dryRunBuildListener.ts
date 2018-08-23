@@ -33,7 +33,7 @@ export function dryRunBuildListener(opts: IssueCreationOptions): BuildListener {
             return;
         }
 
-        const description = bu.build.commit.message.replace(DryRunMessage, "").trim();
+        const description = bu.build.commit.message.replace(DryRunMessage, "").trim().split("\n")[0];
         switch (build.status) {
             case "started" :
                 logger.info("Tracking dry run build on %j on branch %s,", bu.id, branch);
