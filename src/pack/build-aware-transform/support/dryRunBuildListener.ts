@@ -33,7 +33,8 @@ export function dryRunBuildListener(opts: IssueCreationOptions): BuildListener {
             return;
         }
 
-        const description = bu.build.commit.message.replace(DryRunMessage, "").trim().split("\n")[0];
+        const body = bu.build.commit.message.replace(DryRunMessage, "").trim();
+        const description = body.split("\n")[0];
         switch (build.status) {
             case "started" :
                 logger.info("Tracking dry run build on %j on branch %s,", bu.id, branch);
@@ -43,7 +44,6 @@ export function dryRunBuildListener(opts: IssueCreationOptions): BuildListener {
             case "passed":
                 logger.info("Raising PR for successful dry run build on %j", bu.id);
                 const title = description;
-                const body = bu.build.commit.message;
                 await bu.id.raisePullRequest(
                     bu.credentials,
                     title,
