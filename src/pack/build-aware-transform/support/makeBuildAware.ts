@@ -18,7 +18,7 @@ import { EditMode, isPullRequest } from "@atomist/automation-client/operations/e
 import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
 import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
 
-export const DryRunMessage = "[atomist-dry-run]";
+export const DryRunMessage = "[atomist:dry-run]";
 
 /**
  * Return a function wrapping a CodeTransform registration to make
