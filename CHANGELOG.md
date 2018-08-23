@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/atomist/sdm/compare/0.4.4...HEAD)
+## [Unreleased](https://github.com/atomist/sdm/compare/0.4.5...HEAD)
+
+## [0.4.5](https://github.com/atomist/sdm/compare/0.4.4...0.4.5) - 2018-08-23
 
 ## [0.4.4](https://github.com/atomist/sdm/compare/0.4.3...0.4.4) - 2018-08-22
 
