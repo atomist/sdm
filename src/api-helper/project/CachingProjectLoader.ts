@@ -75,7 +75,7 @@ export class CachingProjectLoader implements ProjectLoader {
     constructor(
         private readonly delegate: ProjectLoader = CloningProjectLoader,
         maxEntries: number = 20) {
-        this.cache = new LruCache<GitProject>(maxEntries, cleanUp);
+        this.cache = new LruCache<GitProject>(maxEntries, p => cleanUp(p, "eviction"));
     }
 }
 
@@ -86,14 +86,14 @@ export class CachingProjectLoader implements ProjectLoader {
  * @param action
  */
 async function saveAndRunAction<T>(delegate: ProjectLoader,
-                                   params: ProjectLoadingParameters,
-                                   action: WithLoadedProject): Promise<T> {
+    params: ProjectLoadingParameters,
+    action: WithLoadedProject): Promise<T> {
     const p = await save(delegate, params);
     if (params.context && params.context.lifecycle) {
-        params.context.lifecycle.registerDisposable(async () => cleanUp(p));
+        params.context.lifecycle.registerDisposable(async () => cleanUp(p, "disposal"));
     } else {
         // schedule a cleanup timer but don't block the Node.js event loop for this
-        setTimeout(() => cleanUp(p), 10000).unref();
+        setTimeout(() => cleanUp(p, "timeout"), 10000).unref();
     }
     return action(p);
 }
@@ -102,9 +102,13 @@ async function saveAndRunAction<T>(delegate: ProjectLoader,
  * Eviction callback to clean up file system resources.
  * @param p
  */
-function cleanUp(p: GitProject): void {
+function cleanUp(p: GitProject, reason: "timeout" | "disposal" | "eviction"): void {
     if (p && p.baseDir && fs.existsSync(p.baseDir)) {
-        logger.debug(`Deleting project '%j' at '%s'`, p.id, p.baseDir);
+        if (reason === "timeout") {
+            logger.info(`Deleting project  '%j' at '%s' because a timeout passed`, p.id, p.baseDir);
+        } else {
+            logger.debug(`Deleting project '%j' at '%s' because %s was triggered`, p.id, p.baseDir, reason);
+        }
         try {
             fs.removeSync(p.baseDir);
         } catch (err) {
