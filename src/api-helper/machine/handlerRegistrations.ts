@@ -181,7 +181,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                     mo.projectLoader,
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true,
-                    ci.context,);
+                    ci.context);
             const results = await doWithAllRepos<InspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
