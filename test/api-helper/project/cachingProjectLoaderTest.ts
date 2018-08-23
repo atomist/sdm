@@ -23,7 +23,7 @@ import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectL
 describe("cachingProjectLoader", () => {
 
     it("should load project", async () => {
-        const id = new GitHubRepoRef("a", "b");
+        const id = new GitHubRepoRef("a", "b", "master");
         const p = InMemoryProject.from(id);
         const pl = new SingleProjectLoader(p);
         const cp = new CachingProjectLoader(pl);

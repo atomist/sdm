@@ -25,6 +25,7 @@
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
     "lodash": "^4.17.10",
+    "sha-regex": "^1.0.2",
     "sprintf-js": "^1.1.1"
   },
   "peerDependencies": {
