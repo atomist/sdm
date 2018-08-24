@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/0.4.7...HEAD)
 
+### Added
+
+-   Specific logging on cleanup of cached project. [#483](https://github.com/atomist/sdm/issues/483)
+
 ## [0.4.7](https://github.com/atomist/sdm/compare/0.4.6...0.4.7) - 2018-08-24
 
 ## [0.4.6](https://github.com/atomist/sdm/compare/0.4.5...0.4.6) - 2018-08-24
