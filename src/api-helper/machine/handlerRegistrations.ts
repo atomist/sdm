@@ -87,6 +87,7 @@ import {
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
 import { chattyEditor } from "../command/transform/chattyEditor";
+import { error } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
     isRepoTargetingParameters,
@@ -116,7 +117,10 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const targets = (ci.parameters as RepoTargetingParameters).targets;
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
-                return ci.addressChannels(`:no_entry: Invalid parameters to code transform: ${vr.message}`);
+                return ci.addressChannels(
+                    error(
+                        `Code Transform`,
+                        `Invalid parameters to code transform '${ci.commandName}': \n\n${vr.message}`, ci.context));
             }
             const repoFinder: RepoFinder = !!(ci.parameters as RepoTargetingParameters).targets.repoRef ?
                 () => Promise.resolve([(ci.parameters as RepoTargetingParameters).targets.repoRef]) :
@@ -164,7 +168,10 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
             const targets = (ci.parameters as RepoTargetingParameters).targets;
             const vr = targets.bindAndValidate();
             if (isValidationError(vr)) {
-                return ci.addressChannels(`:no_entry: Invalid parameters to code inspection: ${vr.message}`);
+                return ci.addressChannels(
+                    error(
+                        `Code Inspection`,
+                        `Invalid parameters to code inspection '${ci.commandName}': \n\n${vr.message}`, ci.context));
             }
             const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
