@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-import { EditMode, isPullRequest } from "@atomist/automation-client/operations/edit/editModes";
+import {
+    EditMode,
+    isPullRequest,
+} from "@atomist/automation-client/operations/edit/editModes";
 import { TransformModeSuggestion } from "../../../api/command/target/TransformModeSuggestion";
-import { CodeTransformRegistration, CodeTransformRegistrationDecorator } from "../../../api/registration/CodeTransformRegistration";
+import {
+    CodeTransformRegistration,
+    CodeTransformRegistrationDecorator,
+} from "../../../api/registration/CodeTransformRegistration";
 
-export const DryRunMessage = "[atomist:dry-run]";
+export const DryRunMessage = "[atomist:build-aware]";
 
 /**
  * Return a function wrapping a CodeTransform registration to make
@@ -38,7 +44,7 @@ export const makeBuildAware: CodeTransformRegistrationDecorator<any> =
             } else {
                 // No edit mode was set explicitly. We need to set one that sets a branch:
                 // No PR for now
-                const branch = (ci.parameters as TransformModeSuggestion).desiredBranchName || `${ctr.name}-${new Date().getTime()}`;
+                const branch = (ci.parameters as TransformModeSuggestion).desiredBranchName || `${ctr.name}-${Date.now()}`;
                 const desiredCommitMessage = (ci.parameters as TransformModeSuggestion).desiredCommitMessage
                     || dryRunMessage(ctr.description || ctr.name);
                 return {

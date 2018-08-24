@@ -18,7 +18,7 @@ import { metadata } from "../../api-helper/misc/extensionPack";
 import { GitHubIssueRouter } from "../../api-helper/misc/git/GitHubIssueRouter";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { IssueCreationOptions } from "../../spi/issue/IssueCreationOptions";
-import { dryRunBuildListener } from "./support/dryRunBuildListener";
+import { buildAwareBuildListener } from "./support/buildAwareBuildListener";
 
 export { makeBuildAware } from "./support/makeBuildAware";
 
@@ -31,14 +31,14 @@ export { makeBuildAware } from "./support/makeBuildAware";
  */
 export function buildAwareCodeTransforms(opts: Partial<IssueCreationOptions> = {}): ExtensionPack {
     const optsToUse: IssueCreationOptions = {
-        ...opts,
         issueRouter: new GitHubIssueRouter(),
+        ...opts,
     };
 
     return {
         ...metadata("build-aware-code-transforms"),
         configure: sdm => {
-            sdm.addBuildListener(dryRunBuildListener(optsToUse));
+            sdm.addBuildListener(buildAwareBuildListener(optsToUse));
         },
     };
 }
