@@ -16,7 +16,7 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 |[Custom: https://github.com/douglascrockford/JSON-js](#custom-httpsgithubcomdouglascrockfordjson-js)|1|
 |[GPL-3.0](#gpl-30)|4|
 |[ISC](#isc)|35|
-|[MIT](#mit)|449|
+|[MIT](#mit)|450|
 |[Public Domain](#public-domain)|1|
 |[Unlicense](#unlicense)|1|
 
@@ -247,6 +247,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`babel-runtime`|`6.26.0`|Sebastian McKenzie|[https://github.com/babel/babel/tree/master/packages/babel-runtime](https://github.com/babel/babel/tree/master/packages/babel-runtime)|
 |`balanced-match`|`1.0.0`|Julian Gruber|[https://github.com/juliangruber/balanced-match](https://github.com/juliangruber/balanced-match)|
 |`base-64`|`0.1.0`|Mathias Bynens|[https://github.com/mathiasbynens/base64](https://github.com/mathiasbynens/base64)|
+|`base64-js`|`1.3.0`|T. Jameson Little|[https://github.com/beatgammit/base64-js](https://github.com/beatgammit/base64-js)|
 |`bluebird`|`3.5.1`|Petka Antonov|[https://github.com/petkaantonov/bluebird](https://github.com/petkaantonov/bluebird)|
 |`body-parser`|`1.18.2`||[https://github.com/expressjs/body-parser](https://github.com/expressjs/body-parser)|
 |`body-parser`|`1.18.3`||[https://github.com/expressjs/body-parser](https://github.com/expressjs/body-parser)|
