@@ -105,7 +105,7 @@ async function saveAndRunAction<T>(delegate: ProjectLoader,
 function cleanUp(p: GitProject, reason: "timeout" | "disposal" | "eviction"): void {
     if (p && p.baseDir && fs.existsSync(p.baseDir)) {
         if (reason === "timeout") {
-            logger.info(`Deleting project  '%j' at '%s' because a timeout passed`, p.id, p.baseDir);
+            logger.info(`Deleting project '%j' at '%s' because a timeout passed`, p.id, p.baseDir);
         } else {
             logger.debug(`Deleting project '%j' at '%s' because %s was triggered`, p.id, p.baseDir, reason);
         }
