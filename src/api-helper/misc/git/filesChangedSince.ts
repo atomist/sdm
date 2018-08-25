@@ -44,8 +44,10 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
         try {
             const gs = await project.gitStatus();
             logger.warn("Git status sha = %s, branch = %s" + gs.sha, gs.branch);
+            const timeOfLastChange = await runCommand("ls -ltr .", { cwd: project.baseDir });
+            logger.info("Files with dates: " + timeOfLastChange.stdout);
         } catch (err) {
-            logger.warn("Further errors: " + err.stack);
+            logger.warn("Error while trying extra logging: " + err.stack);
         }
         return undefined;
     }
