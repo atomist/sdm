@@ -33,7 +33,7 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
 
     const command = `git diff --name-only ${sha}`;
     try {
-        const cr = await runCommand(command, {cwd: project.baseDir});
+        const cr = await runCommand(command, { cwd: project.baseDir });
         // stdout is nothing but a list of files, one per line
         logger.debug(`$Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
         return cr.stdout.split("\n")
@@ -48,14 +48,7 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
 // we're using this to list changes for code reactions, and that should include all changes in the push.
 export async function filesChangedSinceParentCommit(project: GitProject): Promise<string[] | undefined> {
     try {
-        const command = `git show --name-only ${(await project.gitStatus()).sha}^`;
-        const cr = await runCommand(command, {cwd: project.baseDir});
-        // stdout starts with a line like this:
-        // commit acd5f89cb2c3e96fa47ef85b32b2028ea2e045fb (origin/master, origin/HEAD)
-        logger.debug(`$Output from filesChangedSinceParent on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
-        const matches = /commit ([a-f0-9]{40})/.exec(cr.stdout);
-        const sha = matches[1];
-        return filesChangedSince(project, sha);
+        return filesChangedSince(project, "HEAD^");
     } catch (err) {
         logger.warn("Error diffing project %j finding parent: %s", project.id, err.message);
         return undefined;
@@ -79,10 +72,10 @@ export class Rename implements Change {
 
 export async function changesSince(project: GitProject, sha: string): Promise<string[]> {
     const command = `git diff --name-status ${sha}`;
-    const cr = await runCommand(command, {cwd: project.baseDir});
+    const cr = await runCommand(command, { cwd: project.baseDir });
     // stdout is nothing but a list of files, one per line
     logger.debug(`$Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
-    if (1 === 1 ) {
+    if (1 === 1) {
         throw new Error("Not yet implemented");
     }
     return cr.stdout.split("\n")
