@@ -40,6 +40,13 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
             .filter(n => !!n);
     } catch (err) {
         logger.warn("Error diffing project %j since %s: %s", project.id, sha, err.message);
+        logger.warn("Project sha = %s, branch = %s", project.id.sha);
+        try {
+            const gs = await project.gitStatus();
+            logger.warn("Git status sha = %s, branch = %s" + gs.sha, gs.branch);
+        } catch (err) {
+            logger.warn("Further errors: " + err.stack);
+        }
         return undefined;
     }
 }
