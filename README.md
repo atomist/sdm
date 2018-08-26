@@ -1,4 +1,4 @@
-# <img src="docs/SDM-Logo-Dark.png" width="26" height="26"> Software Delivery Machine (SDM) framework
+# <img src="docs/SDM-Logo-Dark.png" width="26" height="26"> Software Delivery Machine - @atomist/sdm
 
 This is the home of the Software Delivery Machine (SDM) framework and related projects.
 
@@ -24,6 +24,43 @@ Please see [docs.atomist.com](https://docs.atomist.com) for [developer](https://
 
 Follow [@atomist](https://twitter.com/atomist) and [The Composition](https://the-composition.com) blog related to SDM.
 
+## Support
+
+General support questions should be discussed in the `#support`
+channel in the [Atomist community Slack workspace][slack].
+
+If you find a problem, please create an [issue][].
+
+[issue]: https://github.com/atomist/sdm-pack-spring/issues
+
+## Development
+
+You will need to install [node][] to build and test this project.
+
+[node]: https://nodejs.org/ (Node.js)
+
+### Build and test
+
+Use the following package scripts to build, test, and perform other
+development tasks.
+
+Command | Reason
+------- | ------
+`npm install` | install project dependencies
+`npm run build` | compile, test, lint, and generate docs
+`npm run lint` | run TSLint against the TypeScript
+`npm run compile` | generate types from GraphQL and compile TypeScript
+`npm test` | run tests
+`npm run autotest` | run tests every time a file changes
+`npm run clean` | remove files generated during build
+
+### Release
+
+Releases are handled via the [Atomist SDM][atomist-sdm].  Just press
+the 'Approve' button in the Atomist dashboard or Slack.
+
+[atomist-sdm]: https://github.com/atomist/atomist-sdm (Atomist Software Delivery Machine)
+
 ---
 
 Created by [Atomist][atomist].
@@ -31,3 +68,4 @@ Need Help?  [Join our Slack workspace][slack].
 
 [atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
 [slack]: https://join.atomist.com/ (Atomist Community Slack)
+
