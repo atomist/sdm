@@ -1,4 +1,4 @@
-# <img src="docs/SDM-Logo-Dark.png" width="32" height="32"> Software Delivery Machine
+# <img src="docs/SDM-Logo-Dark.png" width="20" height="20"> Software Delivery Machine
 
 [![@atomist/sdm](https://badge.fury.io/js/%40atomist%2Fsdm.svg)](https://badge.fury.io/js/%40atomist%2Fsdm)
 
