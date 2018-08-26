@@ -1,4 +1,4 @@
-# <img src="docs/SDM-Logo-Dark.png" width="26" height="26"> Software Delivery Machine
+# <img src="docs/SDM-Logo-Dark.png" width="26" height="26">  Software Delivery Machine
 
 This is the home of the Software Delivery Machine (SDM) framework and related projects.
 
