@@ -1,7 +1,5 @@
 # <img src="docs/SDM-Logo-Dark.png" width="26" height="26"> Software Delivery Machine
 
-[![@atomist/sdm](https://badge.fury.io/js/%40atomist%2Fsdm.svg)](https://badge.fury.io/js/%40atomist%2Fsdm)
-
 This is the home of the Software Delivery Machine (SDM) framework and related projects.
 
 The SDM framework enables you to control your delivery process in code. Think of it as an API for your software delivery. See this [introduction](https://docs.atomist.com/) for more information on the concept of a Software Delivery Machine and how to create and develop on an SDM.
@@ -25,3 +23,11 @@ Please see [docs.atomist.com](https://docs.atomist.com) for [developer](https://
 ## Connect
 
 Follow [@atomist](https://twitter.com/atomist) and [The Composition](https://the-composition.com) blog related to SDM.
+
+---
+
+Created by [Atomist][atomist].
+Need Help?  [Join our Slack team][slack].
+
+[atomist]: https://atomist.com/ (Atomist - Development Automation)
+[slack]: https://join.atomist.com/ (Atomist Community Slack)
