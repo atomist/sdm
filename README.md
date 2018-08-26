@@ -1,4 +1,8 @@
-# <img src="docs/SDM-Logo-Dark.png" width="26" height="26"> Software Delivery Machine - @atomist/sdm
+<p align="center">
+  <img src="docs/SDM-Logo-Dark.png"> 
+</p>  
+
+# Software Delivery Machine - @atomist/sdm
 
 This is the home of the Software Delivery Machine (SDM) framework and related projects.
 
