@@ -147,7 +147,7 @@ async function hasOrgWebhook(owner: string, ctx: HandlerContext): Promise<boolea
 }
 
 /**
- * Retrieve a seed
+ * Retrieve a seed. Set the seed location on the parameters if possible and necessary.
  * @param {HandlerContext} ctx
  * @param {RepoLoader} repoLoader
  * @param {P} params
@@ -172,15 +172,19 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
         return startingPoint;
     } else if (isRemoteRepoRef(startingPoint as RepoRef)) {
         await ctx.messageClient.respond(`Cloning seed project from starting point: ${(startingPoint as RemoteRepoRef).url}`);
-        return repoLoader(startingPoint as RemoteRepoRef);
+        const repoRef = startingPoint as RemoteRepoRef;
+        params.source = { repoRef };
+        return repoLoader(repoRef);
     } else {
         // It's a function that takes the parameters and returns either a project or a RemoteRepoRef
         const rr: RemoteRepoRef | Project = (startingPoint as any)(params);
         if (isProject(rr)) {
             await ctx.messageClient.respond(`Using dynamically chosen starting point project \`${rr.id.owner}:${rr.id.repo}\``);
+            // params.source will remain undefined in this case
             return rr;
         } else {
             await ctx.messageClient.respond(`Cloning dynamically chosen starting point from ${rr.url}`);
+            params.source = { repoRef: rr };
             return repoLoader(rr);
         }
     }
