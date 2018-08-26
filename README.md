@@ -4,7 +4,7 @@ This is the home of the Software Delivery Machine (SDM) framework and related pr
 
 The SDM framework enables you to control your delivery process in code. Think of it as an API for your software delivery. See this [introduction](https://docs.atomist.com/) for more information on the concept of a Software Delivery Machine and how to create and develop on an SDM.
 
-## Get Started
+## Getting Started
 
 See the [Developer Quick Start](https://docs.atomist.com/quick-start/) to jump straight to creating an SDM.
 
