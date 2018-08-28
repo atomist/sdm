@@ -49,6 +49,9 @@ export interface InvarianceAssessment {
 
     id: RemoteRepoRef;
 
+    /**
+     * Does the invariant hold for this project?
+     */
     holds: boolean;
 
     review?: ProjectReview;
