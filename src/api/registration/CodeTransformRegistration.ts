@@ -42,7 +42,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * @param ci context
      * @return {Promise<any>}
      */
-    react?(results: EditResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onTransformResults?(results: EditResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 
 }
 

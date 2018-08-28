@@ -84,6 +84,8 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
      * a CodeTransform, CodeInspection and Autofix.
      * If a ProjectInvariant is not enforceable, it can be
      * registered with addCodeInspection.
+     * The transform command is exposed via "transform <intent>"
+     * The inspection command is exposed via "verify <intent>"
      * @param {EnforceableProjectInvariantRegistration<PARAMS>} eir
      * @return {this}
      */

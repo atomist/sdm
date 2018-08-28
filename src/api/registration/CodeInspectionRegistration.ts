@@ -46,6 +46,9 @@ export interface InspectionResult<R> {
  */
 export interface InspectionActions<R, PARAMS> {
 
+    /**
+     * Inspection function to run on each project
+     */
     inspection: CodeInspection<R, PARAMS>;
 
     /**
@@ -54,7 +57,7 @@ export interface InspectionActions<R, PARAMS> {
      * @param ci context
      * @return {Promise<any>}
      */
-    reactToResults?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onInspectionResults?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 }
 
 /**

@@ -143,8 +143,8 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 repoFinder,
                 andFilter(targets.test, ctr.repoFilter),
                 repoLoader);
-            if (!!ctr.react) {
-                await ctr.react(results, ci);
+            if (!!ctr.onTransformResults) {
+                await ctr.onTransformResults(results, ci);
             } else {
                 logger.info("No react function to react to results of code transformation '%s'", ctr.name);
             }
@@ -197,8 +197,8 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                 repoFinder,
                 andFilter(targets.test, cir.repoFilter),
                 repoLoader);
-            if (!!cir.reactToResults) {
-                await cir.reactToResults(results, ci);
+            if (!!cir.onInspectionResults) {
+                await cir.onInspectionResults(results, ci);
             } else {
                 logger.info("No react function to react to results of code inspection '%s'", cir.name);
             }

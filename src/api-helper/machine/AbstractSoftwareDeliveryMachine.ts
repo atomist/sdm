@@ -166,6 +166,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     public addEnforceableInvariant<PARAMS>(eir: EnforceableProjectInvariantRegistration<PARAMS>): this {
         const ctr: CodeTransformRegistration = {
             ...eir,
+            // Update the name and set an intent
             name: `transform-${eir.name}`,
             intent: !!eir.intent ? toStringArray(eir.intent).map(i => `transform ${i}`) : `transform ${eir.name}`,
         } as CodeTransformRegistration;
@@ -341,7 +342,7 @@ function toCodeInspectionCommand<PARAMS>(
         intent: !!eir.intent ? toStringArray(eir.intent).map(i => `verify ${i}`) : `verify ${eir.name}`,
         parameters: eir.parameters,
         projectTest: eir.projectTest,
-        reactToResults: eir.reactToResults,
+        onInspectionResults: eir.onInspectionResults,
         description: eir.description,
         tags: eir.tags,
         targets: eir.targets,
