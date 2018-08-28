@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-M.1...HEAD)
 
+### Added
+
+-   Added `EnforceableProjectInvariantRegistration`
+
+### Changed
+
+-   **BREAKING* `AutofixRegistration.parameters` method renamed to `parametersInstance`
+-   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`
+-   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`
+
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
 ## [0.4.8](https://github.com/atomist/sdm/compare/0.4.7...0.4.8) - 2018-08-27
@@ -64,7 +74,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add `GoalExecutionListener` to track goal execution within an SDM.
 -   Add support voting on goal approval in an SDM. [#465](https://github.com/atomist/sdm/issues/465)
 -   Add goal locking model through `LockingGoal` and `Goals.andLock()`
--   Added `EnforceableProjectInvariantRegistration`
 
 ### Changed
 
@@ -75,8 +84,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING**  `CodeTransformRegistration.editMode` is replaced by `transformPresentation`.
 -   **BREAKING** `CommandHandler` registrations must now specify a `listener`. `createCommand` alternative is removed.
 -   **BREAKING** Review listeners must now have names. Introduced `ReviewListenerRegistration`
--   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`
--   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`
 
 ### Fixed
 
