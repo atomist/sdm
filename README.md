@@ -1,32 +1,57 @@
 <p align="center">
-  <img src="docs/SDM-Logo-Dark.png"> 
-</p>  
+  <img src="docs/SDM-Logo-Dark.png">
+</p>
 
 # Software Delivery Machine - `@atomist/sdm`
 
-This is the home of the Software Delivery Machine (SDM) framework and related projects.
+[![atomist sdm goals](http://badge.atomist.com/T29E48P34/atomist/sdm/64ac86ca-3c46-4742-9e41-a42c14560af9)](https://app.atomist.com/workspace/T29E48P34)
+[![npm version](https://img.shields.io/npm/v/@atomist/sdm.svg)](https://www.npmjs.com/package/@atomist/sdm)
 
-The SDM framework enables you to control your delivery process in code. Think of it as an API for your software delivery. See this [introduction](https://docs.atomist.com/) for more information on the concept of a Software Delivery Machine and how to create and develop on an SDM.
+This is the home of the Software Delivery Machine (SDM) framework and
+related projects.
+
+The SDM framework enables you to control your delivery process in
+code.  Think of it as an API for your software delivery.  See this
+[introduction][atomist-doc] for more information on the concept of a
+Software Delivery Machine and how to create and develop on an SDM.
+
+[atomist-doc]: https://docs.atomist.com/ (Atomist Documentation)
 
 ## Getting Started
 
-See the [Developer Quick Start](https://docs.atomist.com/quick-start/) to jump straight to creating an SDM.
+See the [Developer Quick Start][atomist-quick] to jump straight to
+creating an SDM.
+
+[atomist-quick]: https://docs.atomist.com/quick-start/ (Atomist - Developer Quick Start)
 
 ## Contributing
 
-Contributions to this project from community members are encouraged and appreciated. Please review the [Contributing Guidelines](CONTRIBUTING.md) for more information. Also see the [Development](#development) section in this document.
+Contributions to this project from community members are encouraged
+and appreciated. Please review the [Contributing
+Guidelines](CONTRIBUTING.md) for more information. Also see the
+[Development](#development) section in this document.
 
-## Code of Conduct
+## Code of conduct
 
-This project is governed by the [Code of Conduct](CODE_OF_CONDUCT.md). You are expected to act in accordance with this code by participating. Please report any unacceptable behavior to code-of-conduct@atomist.com.
+This project is governed by the [Code of
+Conduct](CODE_OF_CONDUCT.md). You are expected to act in accordance
+with this code by participating. Please report any unacceptable
+behavior to code-of-conduct@atomist.com.
 
 ## Documentation
 
-Please see [docs.atomist.com](https://docs.atomist.com) for [developer](https://docs.atomist.com/developer/sdm/) documentation.
+Please see [docs.atomist.com][atomist-doc] for
+[developer][atomist-sdm] documentation.
+
+[atomist-sdm]: https://docs.atomist.com/developer/sdm/ (Atomist - SDM)
 
 ## Connect
 
-Follow [@atomist](https://twitter.com/atomist) and [The Composition](https://the-composition.com) blog related to SDM.
+Follow [@atomist][atomist-twitter] and [The Composition][atomist-blog]
+blog related to SDM.
+
+[atomist-twitter]: https://twitter.com/atomist (Atomist on Twitter)
+[atomist-blog]: https://the-composition.com/ (The Composition - The Official Atomist Blog)
 
 ## Support
 
@@ -39,24 +64,25 @@ If you find a problem, please create an [issue][].
 
 ## Development
 
-You will need to install [node][] to build and test this project.
+You will need to install [Node.js][node] to build and test this
+project.
 
 [node]: https://nodejs.org/ (Node.js)
 
 ### Build and test
 
-Use the following package scripts to build, test, and perform other
-development tasks.
+Install dependencies.
 
-Command | Reason
-------- | ------
-`npm install` | install project dependencies
-`npm run build` | compile, test, lint, and generate docs
-`npm run lint` | run TSLint against the TypeScript
-`npm run compile` | generate types from GraphQL and compile TypeScript
-`npm test` | run tests
-`npm run autotest` | run tests every time a file changes
-`npm run clean` | remove files generated during build
+```
+$ npm install
+```
+
+Use the `build` package script to compile, test, lint, and build the
+documentation.
+
+```
+$ npm run build
+```
 
 ### Release
 
@@ -72,4 +98,3 @@ Need Help?  [Join our Slack workspace][slack].
 
 [atomist]: https://atomist.com/ (Atomist - How Teams Deliver Software)
 [slack]: https://join.atomist.com/ (Atomist Community Slack)
-

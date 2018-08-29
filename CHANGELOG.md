@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
+### Changed
+
+-   Prepare for 1.0.0 release.
+
 ## [0.4.8](https://github.com/atomist/sdm/compare/0.4.7...0.4.8) - 2018-08-27
 
 ### Added
@@ -77,7 +81,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   **BREAKING** Command handler and autofix registrations are now strongly typed, defaulting to `NoParameters` rather than `any`. 
+-   **BREAKING** Command handler and autofix registrations are now strongly typed, defaulting to `NoParameters` rather than `any`.
 -   **BREAKING** Remove deprecated `addEditor` SDM method, and deprecated `createTransform` method on `ProjectOperationRegistration`.
 -   **BREAKING** `addPushReaction` renamed `addPushImpactListener` for consistency.
 -   **BREAKING** `addNewRepoWithCodeAction` renamed `addNewRepoWithCodeListener` for consistency.
@@ -112,7 +116,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Do not memoize pre-emptively. [#431](https://github.com/atomist/sdm/issues/431)
 
-## [0.3.0](https://github.com/atomist/sdm/tree/HEAD) - 2018-06-16
+## [0.3.0](https://github.com/atomist/sdm/tree/0.3.0) - 2018-06-16
 
 ### Changed
 
