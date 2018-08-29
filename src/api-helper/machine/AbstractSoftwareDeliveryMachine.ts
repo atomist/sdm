@@ -365,7 +365,7 @@ function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARA
         const result = await editor(p, i.context, i.parameters);
         return {
             id: p.id as RemoteRepoRef,
-            holds: result.edited,
+            holds: !result.edited,
             details: "Transform return edited true",
         };
     };
