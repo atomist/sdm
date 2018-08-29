@@ -2,7 +2,11 @@
   "name": "@atomist/sdm",
   "version": "1.0.0",
   "description": "Atomist Software Delivery Machine API",
-  "author": "Atomist, Inc.",
+  "author": {
+    "name": "Atomist",
+    "email": "support@atomist.com",
+    "url": "https://atomist.com/"
+  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
