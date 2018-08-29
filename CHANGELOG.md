@@ -9,13 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Added `EnforceableProjectInvariantRegistration`
+-   Added `EnforceableProjectInvariantRegistration`.
 
 ### Changed
 
--   **BREAKING** `AutofixRegistration.parameters` method renamed to `parametersInstance`
--   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`
--   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`
+-   **BREAKING** `AutofixRegistration.parameters` method renamed to `parametersInstance`.
+-   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`.
+-   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`.
 
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
