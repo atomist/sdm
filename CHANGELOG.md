@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   **BREAKING* `AutofixRegistration.parameters` method renamed to `parametersInstance`
+-   **BREAKING** `AutofixRegistration.parameters` method renamed to `parametersInstance`
 -   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`
 -   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`
 
