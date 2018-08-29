@@ -16,6 +16,9 @@
 
 import { PushTest } from "../mapping/PushTest";
 
+/**
+ * Extended by any object that can react to a subset of pushes.
+ */
 export interface PushSelector {
 
     name: string;

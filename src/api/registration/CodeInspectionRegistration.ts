@@ -42,12 +42,13 @@ export interface InspectionResult<R> {
 }
 
 /**
- * Register a CodeInspection that can run against any number of projects.
- * Include an optional react method that can react to review results.
+ * Actions added by inspections. For internal use.
  */
-export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
-    extends ProjectsOperationRegistration<PARAMS> {
+export interface InspectionActions<R, PARAMS> {
 
+    /**
+     * Inspection function to run on each project
+     */
     inspection: CodeInspection<R, PARAMS>;
 
     /**
@@ -56,6 +57,15 @@ export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
      * @param ci context
      * @return {Promise<any>}
      */
-    react?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onInspectionResults?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+}
+
+/**
+ * Register a CodeInspection that can run against any number of projects.
+ * Include an optional react method that can react to review results.
+ */
+export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
+    extends ProjectsOperationRegistration<PARAMS>,
+        InspectionActions<R, PARAMS> {
 
 }

@@ -19,6 +19,9 @@ import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import { AbstractSoftwareDeliveryMachine } from "../../src/api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { GoalSetter } from "../../src/api/mapping/GoalSetter";
 
+/**
+ * SDM instance for use in tests
+ */
 export class TestSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
     public readonly commandHandlers: Array<Maker<HandleCommand>>;
