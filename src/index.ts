@@ -21,7 +21,6 @@ export * from "./api/goal/GitHubContext";
 export * from "./api/goal/Goal";
 export * from "./api/goal/GoalInvocation";
 export * from "./api/goal/Goals";
-export * from "./api/goal/SdmGoal";
 export * from "./api/goal/SdmGoalEvent";
 export * from "./api/goal/SdmGoalMessage";
 export * from "./api/goal/common/GenericGoal";
