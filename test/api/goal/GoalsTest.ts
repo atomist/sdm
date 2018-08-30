@@ -20,8 +20,8 @@ import { goals } from "../../../src/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
-    ProductionDeploymentGoal,
     CodeInspectionGoal,
+    ProductionDeploymentGoal,
     StagingEndpointGoal,
 } from "../../../src/api/machine/wellKnownGoals";
 
