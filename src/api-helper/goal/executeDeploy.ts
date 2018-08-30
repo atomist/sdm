@@ -29,7 +29,7 @@ import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     ArtifactStore,
     DeployableArtifact,
@@ -128,7 +128,7 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
 }
 
 function markEndpointStatus(parameters: {
-    context: HandlerContext, sdmGoal: SdmGoal, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
+    context: HandlerContext, sdmGoal: SdmGoalEvent, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
     error?: Error,
 }) {
     const {context, sdmGoal, endpointGoal, newState, endpoint, error} = parameters;
