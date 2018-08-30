@@ -25,6 +25,11 @@ import { PushRegistration } from "./PushRegistration";
 export enum PushReactionResponse {
 
     /**
+     * Everything's good. Keep going.
+     */
+    proceed = "proceed",
+
+    /**
      * Fail execution of the present goalset. Any dependent goals will stop.
      * Will not stop execution of non-dependent goals.
      */

@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { SdmListener } from "./Listener";
-import { ParametersInvocation } from "./ParametersInvocation";
+import { SdmContext } from "../context/SdmContext";
 
 /**
- * Context for a commmand
+ * Context for anything with parameters. All commands
+ * have parameters, as do autofixes and auto inspections.
  */
-export interface CommandListenerInvocation<PARAMS = NoParameters> extends ParametersInvocation<PARAMS> {
-
-    commandName: string;
+export interface ParametersInvocation<PARAMS> extends SdmContext {
 
     /**
-     * The repos this command relates to, if available.
+     * Parameters, if any were supplied
      */
-    ids?: RemoteRepoRef[];
+    parameters?: PARAMS;
 
 }
-
-export type CommandListener<PARAMS = NoParameters> =
-    SdmListener<CommandListenerInvocation<PARAMS>>;

@@ -18,6 +18,7 @@ import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
+import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 
 /**
@@ -25,7 +26,7 @@ import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
  * compute a value.
  */
 export type CodeInspection<R, P = NoParameters> = (p: Project,
-                                                   cli: CommandListenerInvocation<P>) => Promise<R>;
+                                                   cli: ParametersInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project

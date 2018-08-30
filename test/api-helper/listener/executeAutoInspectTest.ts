@@ -25,7 +25,7 @@ import { TruePushTest } from "../../api/mapping/support/pushTestUtilsTest";
 
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import * as assert from "power-assert";
-import { executeReview } from "../../../src/api-helper/listener/executeReview";
+import { executeAutoInspects } from "../../../src/api-helper/listener/executeAutoInspects";
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { PushReactionResponse } from "../../../src/api/registration/PushImpactListenerRegistration";
@@ -33,9 +33,9 @@ import { PushReactionResponse } from "../../../src/api/registration/PushImpactLi
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
     pushTest: TruePushTest,
-    action: async cri => ({
-        repoId: cri.project.id,
-        comments: await saveFromFiles(cri.project, "**/*", f =>
+    inspection: async project => ({
+        repoId: project.id,
+        comments: await saveFromFiles(project, "**/*", f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {
@@ -50,8 +50,8 @@ const HatesTheWorld: ReviewerRegistration = {
 const JustTheOne: ReviewerRegistration = {
     name: "justOne",
     pushTest: TruePushTest,
-    action: async cri => ({
-        repoId: cri.project.id,
+    inspection: async project => ({
+        repoId: project.id,
         comments: [
             new DefaultReviewComment("info", "justOne",
                 `One thing`,
@@ -79,14 +79,14 @@ function loggingReviewListenerWithoutApproval(saveTo: ReviewListenerInvocation[]
     };
 }
 
-describe("executeReview", () => {
+describe("executeAutoInspects", () => {
 
     it("should be clean on empty", async () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [{
+        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld], [{
             name: "thing",
             listener: l,
         }]);
@@ -102,7 +102,7 @@ describe("executeReview", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [{
+        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld], [{
             name: "thing",
             listener: l,
         }]);
@@ -120,7 +120,7 @@ describe("executeReview", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithoutApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld], [{
+        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld], [{
             name: "thing",
             listener,
         }]);
@@ -138,7 +138,7 @@ describe("executeReview", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeReview(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne],
+        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne],
             [{
                 name: "thing",
                 listener,

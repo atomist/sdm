@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
 import { BuildListener } from "../../api/listener/BuildListener";
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
@@ -36,6 +37,7 @@ import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChanne
 import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
@@ -81,7 +83,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalExecutionListeners: GoalExecutionListener[] = [];
 
-    public readonly reviewerRegistrations: ReviewerRegistration[] = [];
+    public readonly autoInspectRegistrations: Array<AutoInspectRegistration<any, any>> = [];
 
     public readonly reviewListenerRegistrations: ReviewListenerRegistration[] = [];
 
@@ -162,8 +164,13 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addReviewerRegistration(r: ReviewerRegistration): this {
-        this.reviewerRegistrations.push(r);
+    public addReviewerRegistration<PARAMS = NoParameters>(r: ReviewerRegistration<PARAMS>): this {
+        this.autoInspectRegistrations.push(r);
+        return this;
+    }
+
+    public addAutoInspectRegistration<R, PARAMS = NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this {
+        this.autoInspectRegistrations.push(r);
         return this;
     }
 

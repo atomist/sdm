@@ -19,7 +19,6 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import * as assert from "power-assert";
 import { patternMatchReviewer } from "../../../../src/api-helper/code/review/patternMatchReviewer";
-import { PushImpactListenerInvocation } from "../../../../src/api/listener/PushImpactListener";
 import { ReviewerRegistration } from "../../../../src/api/registration/ReviewerRegistration";
 
 describe("patternMatchReviewer", () => {
@@ -33,7 +32,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("a", "b"));
-        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
+        const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 0);
     });
 
@@ -46,7 +45,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
-        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
+        const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });
@@ -60,7 +59,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("thing", "b test"));
-        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
+        const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 0);
     });
 
@@ -73,7 +72,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("thing", "b frogs suck test"));
-        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
+        const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });
@@ -87,7 +86,7 @@ describe("patternMatchReviewer", () => {
                 comment: "something else",
             });
         const project = InMemoryProject.of(new InMemoryFile("thing", "b frogs /[&(* suck test"));
-        const rr = await rer.action({project} as any as PushImpactListenerInvocation);
+        const rr = await rer.inspection(project, null);
         assert.equal(rr.comments.length, 1);
         assert.equal(rr.comments[0].sourceLocation.path, "thing");
     });

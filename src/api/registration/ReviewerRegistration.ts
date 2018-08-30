@@ -15,14 +15,13 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import {
-    PushImpactListenerRegistration,
-    SelectiveCodeActionOptions,
-} from "./PushImpactListenerRegistration";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { AutoInspectRegistration } from "./AutoInspectRegistration";
 
-export type ReviewerRegistrationOptions = SelectiveCodeActionOptions;
+/**
+ * Register a reviewer. This can return structured data based on a project.
+ */
+export interface ReviewerRegistration<PARAMS = NoParameters>
+    extends AutoInspectRegistration<ProjectReview, PARAMS> {
 
-export interface ReviewerRegistration extends PushImpactListenerRegistration<ProjectReview> {
-
-    options?: ReviewerRegistrationOptions;
 }
