@@ -19,13 +19,14 @@ import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
+import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 /**
  * Function that can run against a project without mutating it to
  * compute a value.
  */
 export type CodeInspection<R, P = NoParameters> = (p: Project,
-                                                   cli: CommandListenerInvocation<P>) => Promise<R>;
+                                                   cli: ParametersInvocation<P>) => Promise<R>;
 
 /**
  * Result of inspecting a single project

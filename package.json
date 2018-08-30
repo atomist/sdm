@@ -80,7 +80,7 @@
     "fmt:gql": "prettier --write \"**/*.graphql\"",
     "clean:barrels": "rimraf src/index.ts",
     "generate:barrels": "npm-run-all clean:barrels generate:cleaned-barrels",
-    "generate:cleaned-barrels": "barrelsby -d src --i 'api/.*' --i 'spi/.*' --i typings/.* --e CommandRegistration.* -e ProjectsOperationRegistration.* -e ProjectOperationRegistration.*",
+    "generate:cleaned-barrels": "barrelsby -d src --i 'api/.*' --i 'spi/.*' --i typings/.* -e CommandRegistration.* -e ParametersInvocation.* -e ProjectsOperationRegistration.* -e ProjectOperationRegistration.*",
     "git:info": "atm-git-info",
     "gql:copy": "copyfiles \"./src/**/*.graphql\" build",
     "gql:gen": "atm-gql-gen",

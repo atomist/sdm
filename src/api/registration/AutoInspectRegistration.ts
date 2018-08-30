@@ -19,6 +19,7 @@ import { CodeInspection } from "./CodeInspectionRegistration";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { PushSelector } from "./PushRegistration";
 import { CommandListenerInvocation } from "../listener/CommandListener";
+import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 export type AutoInspectRegistrationOptions = SelectiveCodeActionOptions;
 
@@ -45,5 +46,5 @@ export interface AutoInspectRegistration<R, PARAMS = NoParameters> extends PushS
      * @param {CommandListenerInvocation<PARAMS>} ci
      * @return {Promise<any>}
      */
-    onInspectionResult?(result: R, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onInspectionResult?(result: R, ci: ParametersInvocation<PARAMS>): Promise<any>;
 }

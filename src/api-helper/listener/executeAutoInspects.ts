@@ -44,10 +44,7 @@ export function executeAutoInspects(projectLoader: ProjectLoader,
             if (autoInspectRegistrations.length > 0) {
                 logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
                 return projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
-                    const cri = {
-                        ...await createPushImpactListenerInvocation(goalInvocation, project),
-                        commandName: "autoInspection",
-                    };
+                    const cri = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant AutoInspects: [%s] of [%s]",
                         id, relevantAutoInspects.length,

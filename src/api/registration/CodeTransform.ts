@@ -20,11 +20,8 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import {
-    MessageClient,
-    SlackMessageClient,
-} from "@atomist/automation-client/spi/message/MessageClient";
-import { CommandListenerInvocation } from "../listener/CommandListener";
+import { MessageClient, SlackMessageClient, } from "@atomist/automation-client/spi/message/MessageClient";
+import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 /**
  * This interface contains methods from HandlerContext.
@@ -80,7 +77,7 @@ export interface HandlerContextMethods {
  * New code should use (Project, Command ListenerInvocation).
  */
 export type CodeTransform<P = NoParameters> = (p: Project,
-                                               sdmc: CommandListenerInvocation<P> & HandlerContextMethods,
+                                               sdmc: ParametersInvocation<P> & HandlerContextMethods,
                                                params?: P) => Promise<Project | EditResult>;
 
 /**
