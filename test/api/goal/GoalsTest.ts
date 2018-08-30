@@ -21,7 +21,7 @@ import {
     AutofixGoal,
     BuildGoal,
     ProductionDeploymentGoal,
-    ReviewGoal,
+    CodeInspectionGoal,
     StagingEndpointGoal,
 } from "../../../src/api/machine/wellKnownGoals";
 
@@ -53,8 +53,8 @@ describe("GoalBuilder", () => {
 
     it("should construct goal set with pre conditions", () => {
         const simpleGoals = goals("Simple Goals")
-            .plan(ReviewGoal)
-            .plan(BuildGoal, AutofixGoal.definition).after(ReviewGoal)
+            .plan(CodeInspectionGoal)
+            .plan(BuildGoal, AutofixGoal.definition).after(CodeInspectionGoal)
             .plan(StagingEndpointGoal).after(BuildGoal)
             .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal.definition);
 
@@ -64,12 +64,12 @@ describe("GoalBuilder", () => {
         const buildGoal = simpleGoals.goals.find(g => g.name === BuildGoal.name) as GoalWithPrecondition;
         assert.strictEqual(buildGoal.name, BuildGoal.name);
         assert.strictEqual(buildGoal.dependsOn.length, 1);
-        assert.strictEqual(buildGoal.dependsOn[0].name, ReviewGoal.name);
+        assert.strictEqual(buildGoal.dependsOn[0].name, CodeInspectionGoal.name);
 
         const autofixGoal = simpleGoals.goals.find(g => g.name === AutofixGoal.name) as GoalWithPrecondition;
         assert.strictEqual(autofixGoal.name, AutofixGoal.name);
         assert.strictEqual(autofixGoal.dependsOn.length, 1);
-        assert.strictEqual(autofixGoal.dependsOn[0].name, ReviewGoal.name);
+        assert.strictEqual(autofixGoal.dependsOn[0].name, CodeInspectionGoal.name);
 
         const stagingGoal = simpleGoals.goals.find(g => g.name === StagingEndpointGoal.name) as GoalWithPrecondition;
         assert.strictEqual(stagingGoal.name, StagingEndpointGoal.name);

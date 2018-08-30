@@ -94,8 +94,8 @@ export interface GoalsAndPreConditionBuilder extends GoalsBuilder {
  * Create Goals instance using a fluent API.
  *
  *  const simpleGoals = goals("Simple Goals")
- *     .plan(ReviewGoal)
- *     .plan(BuildGoal, AutofixGoal).after(ReviewGoal)
+ *     .plan(CodeInspectionGoal)
+ *     .plan(BuildGoal, AutofixGoal).after(CodeInspectionGoal)
  *     .plan(StagingEndpointGoal).after(BuildGoal)
  *     .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal);
  *

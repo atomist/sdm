@@ -117,14 +117,7 @@ export interface ListenerRegistrationManager {
     addAutoInspectRegistration<R, PARAMS= NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this;
 
     /**
-     * @deprecated use addAutoInspectRegistration
-     * @param {ReviewerRegistration} r
-     * @return {this}
-     */
-    addReviewerRegistration(r: ReviewerRegistration): this;
-
-    /**
-     * Add a registration to listen to reviews. Will be invoked during execution of a ReviewGoal
+     * Add a registration to listen to reviews. Will be invoked during execution of a CodeInspectionGoal
      * @param r registration
      * @return {this}
      */

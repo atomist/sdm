@@ -80,16 +80,15 @@ export const AutofixGoal = new Goal({
 });
 
 /**
- * Goal to run code reviews
+ * Goal to run code inspections
  * @type {Goal}
  */
-export const ReviewGoal = new Goal({
-    uniqueName: "Review",
+export const CodeInspectionGoal = new Goal({
+    uniqueName: "CodeInspection",
     environment: IndependentOfEnvironment,
-    orderedName: "1-review",
-    workingDescription: "Running code reviews",
-    completedDescription: "Code review passed",
-    waitingForApprovalDescription: "Manual approval needed",
+    orderedName: "1-inspects",
+    workingDescription: "Running code inspections",
+    completedDescription: "Code inspections passed",
 });
 
 /**
