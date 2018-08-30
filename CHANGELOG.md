@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** Evaluate pushTest when selecting goal implementations. [#493](https://github.com/atomist/sdm/issues/493)
 -   Push tests for adding a goal implementation are not run. [#490](https://github.com/atomist/sdm/issues/490)
 
+### Fixed
+
+-   Fix incorrect print statement. [#497](https://github.com/atomist/sdm/issues/497)
+
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
 ### Changed
