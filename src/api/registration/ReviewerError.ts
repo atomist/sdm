@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import * as slack from "@atomist/slack-messages/SlackMessages";
+import * as slack from "@atomist/slack-messages";
 
 export class ReviewerError extends Error {
     constructor(public reviewerName: string, msg: string, public stderr: string) {
