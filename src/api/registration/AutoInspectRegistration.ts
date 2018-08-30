@@ -15,10 +15,12 @@
  */
 
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 import { CodeInspection } from "./CodeInspectionRegistration";
-import { PushReactionResponse, SelectiveCodeActionOptions } from "./PushImpactListenerRegistration";
+import {
+    PushReactionResponse,
+    SelectiveCodeActionOptions,
+} from "./PushImpactListenerRegistration";
 import { PushSelector } from "./PushRegistration";
 
 export type AutoInspectRegistrationOptions = SelectiveCodeActionOptions;
