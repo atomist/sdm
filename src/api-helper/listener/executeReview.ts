@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    failure,
-    logger,
-} from "@atomist/automation-client";
+import { failure, logger, } from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
-import {
-    ExecuteGoal,
-    GoalInvocation,
-} from "../../api/goal/GoalInvocation";
-import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
+import { ExecuteGoal, GoalInvocation, } from "../../api/goal/GoalInvocation";
 import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
-import {
-    formatReviewerError,
-    ReviewerError,
-} from "../../api/registration/ReviewerError";
+import { formatReviewerError, ReviewerError, } from "../../api/registration/ReviewerError";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -54,7 +44,10 @@ export function executeReview(projectLoader: ProjectLoader,
             if (reviewerRegistrations.length > 0) {
                 logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
                 return projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
-                    const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
+                    const cri = {
+                        ...await createPushImpactListenerInvocation(goalInvocation, project),
+                        commandName: "autoInspection",
+                    };
                     const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant reviewers: [%s] of [%s]",
                         id, relevantReviewers.length,
@@ -64,7 +57,7 @@ export function executeReview(projectLoader: ProjectLoader,
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                         await Promise.all(relevantReviewers
                             .map(reviewer => {
-                                return reviewer.action(cri)
+                                return reviewer.inspection(project, cri)
                                     .then(rvw => ({ review: rvw }),
                                         error => ({ error }));
                             }));

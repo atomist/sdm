@@ -33,9 +33,9 @@ import { PushReactionResponse } from "../../../src/api/registration/PushImpactLi
 const HatesTheWorld: ReviewerRegistration = {
     name: "hatred",
     pushTest: TruePushTest,
-    action: async cri => ({
-        repoId: cri.project.id,
-        comments: await saveFromFiles(cri.project, "**/*", f =>
+    inspection: async project => ({
+        repoId: project.id,
+        comments: await saveFromFiles(project, "**/*", f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {
@@ -50,8 +50,8 @@ const HatesTheWorld: ReviewerRegistration = {
 const JustTheOne: ReviewerRegistration = {
     name: "justOne",
     pushTest: TruePushTest,
-    action: async cri => ({
-        repoId: cri.project.id,
+    inspection: async project => ({
+        repoId: project.id,
         comments: [
             new DefaultReviewComment("info", "justOne",
                 `One thing`,

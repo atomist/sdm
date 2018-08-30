@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { AutoInspectionRegistration } from "./AutoInspectionRegistration";
+import { SelectiveCodeActionOptions, } from "./PushImpactListenerRegistration";
+import { CodeInspection } from "./CodeInspectionRegistration";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
+import { PushSelector } from "./PushRegistration";
+
+export type AutoInspectionRegistrationOptions = SelectiveCodeActionOptions;
 
 /**
- * Register a reviewer. This can return structured data based on a project.
+ * Register an automatic inspection.
  */
-export interface ReviewerRegistration<PARAMS = NoParameters>
-    extends AutoInspectionRegistration<ProjectReview, PARAMS> {
+export interface AutoInspectionRegistration<R, PARAMS = NoParameters> extends PushSelector {
 
+    options?: AutoInspectionRegistrationOptions;
+
+    /**
+     * Inspection function to run on each project
+     */
+    inspection: CodeInspection<R, PARAMS>;
+
+    /**
+     * Parameters used for all inspections
+     */
+    parametersInstance?: PARAMS;
 }
