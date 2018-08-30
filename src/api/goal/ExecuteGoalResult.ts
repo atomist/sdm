@@ -16,7 +16,23 @@
 
 import { HandlerResult } from "@atomist/automation-client";
 
+/**
+ * Result from goal execution
+ */
 export interface ExecuteGoalResult extends HandlerResult {
+
+    /**
+     * Optional description to be set on the goal
+     */
+    description?: string;
+
+    /**
+     * Optional targetUrl to be set on the goal as externalUrl
+     */
     targetUrl?: string;
+
+    /**
+     * Optional flag to indicate if this goal requires approval now
+     */
     requireApproval?: boolean;
 }
