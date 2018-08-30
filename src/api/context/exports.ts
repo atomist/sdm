@@ -19,6 +19,7 @@ export { logger } from "@atomist/automation-client";
 export { MessageClient, Destination, SlackDestination, isSlackMessage } from "@atomist/automation-client/spi/message/MessageClient";
 
 import * as slack from "@atomist/slack-messages";
+
 export { slack };
 
 export { ButtonSpecification } from "@atomist/automation-client/spi/message/MessageClient";

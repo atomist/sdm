@@ -39,7 +39,6 @@ import { AutofixRegistration } from "../registration/AutofixRegistration";
 import { AutoInspectRegistration } from "../registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
-import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../registration/ReviewListenerRegistration";
 
 /**
@@ -115,13 +114,6 @@ export interface ListenerRegistrationManager {
      * @return {this}
      */
     addAutoInspectRegistration<R, PARAMS= NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this;
-
-    /**
-     * @deprecated use addAutoInspectRegistration
-     * @param {ReviewerRegistration} r
-     * @return {this}
-     */
-    addReviewerRegistration(r: ReviewerRegistration): this;
 
     /**
      * Add a registration to listen to reviews. Will be invoked during execution of a ReviewGoal

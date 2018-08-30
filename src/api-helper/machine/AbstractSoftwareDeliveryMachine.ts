@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
@@ -29,7 +33,12 @@ import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { BuildGoal, JustBuildGoal, StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
+import {
+    BuildGoal,
+    JustBuildGoal,
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -38,7 +47,10 @@ import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import { CodeInspection, CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
+import {
+    CodeInspection,
+    CodeInspectionRegistration,
+} from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -46,14 +58,20 @@ import { EventHandlerRegistration } from "../../api/registration/EventHandlerReg
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { GoalApprovalRequestVote } from "../../api/registration/GoalApprovalRequestVote";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
-import { EnforceableProjectInvariantRegistration, InvarianceAssessment } from "../../api/registration/ProjectInvariantRegistration";
+import {
+    EnforceableProjectInvariantRegistration,
+    InvarianceAssessment,
+} from "../../api/registration/ProjectInvariantRegistration";
 import { Builder } from "../../spi/build/Builder";
 import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { executeBuild } from "../goal/executeBuild";
 import { executeDeploy } from "../goal/executeDeploy";
 import { executeUndeploy } from "../goal/executeUndeploy";
-import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
+import {
+    executeVerifyEndpoint,
+    SdmVerification,
+} from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { validateRequiredConfigurationValues } from "../misc/extensionPack";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-import {logger} from "@atomist/automation-client";
+import { logger } from "@atomist/automation-client";
 import { PushListenerInvocation } from "../../listener/PushListener";
 import { PushTest } from "../PushTest";
-import {
-    allSatisfied,
-} from "./pushTestUtils";
+import { allSatisfied } from "./pushTestUtils";
 import { StaticPushMapping } from "./StaticPushMapping";
 
 /**
