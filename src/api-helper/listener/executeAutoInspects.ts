@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-import { failure, logger } from "@atomist/automation-client";
+import {
+    failure,
+    logger,
+} from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
-import { ExecuteGoal, GoalInvocation } from "../../api/goal/GoalInvocation";
+import {
+    ExecuteGoal,
+    GoalInvocation,
+} from "../../api/goal/GoalInvocation";
 import { ParametersInvocation } from "../../api/listener/ParametersInvocation";
 import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
-import { formatReviewerError, ReviewerError } from "../../api/registration/ReviewerError";
+import {
+    formatReviewerError,
+    ReviewerError,
+} from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";

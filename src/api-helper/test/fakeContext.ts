@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
+import {
+    AutomationContextAware,
+    HandlerContext,
+} from "@atomist/automation-client";
 import { CommandIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
-import { Destination, MessageClient, MessageOptions, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    Destination,
+    MessageClient,
+    MessageOptions,
+    SlackMessageClient,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
 /**

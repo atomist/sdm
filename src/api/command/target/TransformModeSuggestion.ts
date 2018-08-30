@@ -15,11 +15,6 @@
  */
 
 /**
- * @deprecated use TransformModeSuggestion
- */
-export type EditModeSuggestion = TransformModeSuggestion;
-
-/**
  * Interface that can be implemented by CodeTransform parameters that can suggest the mode
  * to present changes to users.
  */

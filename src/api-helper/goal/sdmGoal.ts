@@ -15,16 +15,7 @@
  */
 
 import { sprintf } from "sprintf-js";
-import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
-
-/**
- * @deprecated because I don't think we need this
- */
-export function isSdmGoal(a: object): a is SdmGoalEvent {
-    const maybe = a as SdmGoalEvent;
-    return !!maybe.goalSet && !!maybe.uniqueName && !!maybe.name && !maybe.branch;
-}
 
 export function mapKeyToGoal<T extends SdmGoalKey>(goals: T[]): (k: SdmGoalKey) => T {
     return (keyToFind: SdmGoalKey) => {

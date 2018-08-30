@@ -35,7 +35,10 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
-import { GoalExecutionListener, GoalExecutionListenerInvocation } from "../../api/listener/GoalStatusListener";
+import {
+    GoalExecutionListener,
+    GoalExecutionListenerInvocation,
+} from "../../api/listener/GoalStatusListener";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";

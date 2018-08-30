@@ -16,10 +16,8 @@
 
 import { logger } from "@atomist/automation-client";
 import { sprintf } from "sprintf-js";
-import {
-    SdmGoal,
-    SdmGoalKey,
-} from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { SdmGoalKey } from "../../api/goal/SdmGoalMessage";
 import {
     goalKeyString,
     mapKeyToGoal,
@@ -29,9 +27,7 @@ import {
  * Right now the only preconditions supported are other goals.
  * The intention is that others will be expressed, such as requiring an image.
  */
-export function preconditionsAreMet(goal: SdmGoal, info: {
-    goalsForCommit: SdmGoal[], // I would like to make this optional and fetch if needed not provided
-}): boolean {
+export function preconditionsAreMet(goal: SdmGoalEvent, info: { goalsForCommit: SdmGoalEvent[]} ): boolean {
     if (!goal.preConditions || goal.preConditions.length === 0) {
         return true;
     }
@@ -44,11 +40,9 @@ export function preconditionsAreMet(goal: SdmGoal, info: {
     return true;
 }
 
-function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoal[]): boolean {
+function satisfied(preconditionKey: SdmGoalKey, goalsForCommit: SdmGoalEvent[]): boolean {
     const preconditionGoal = mapKeyToGoal(goalsForCommit)(preconditionKey);
     if (!preconditionGoal) {
-        // TODO CD I'd suggest that goals that have a precondition that doesn't exist in the goal set
-        // are satisfied
         logger.error("Precondition %s not found on commit", goalKeyString(preconditionKey));
         return true;
     }

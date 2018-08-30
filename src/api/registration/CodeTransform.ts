@@ -20,7 +20,10 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import { MessageClient, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    MessageClient,
+    SlackMessageClient,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 /**
