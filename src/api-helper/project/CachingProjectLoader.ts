@@ -126,7 +126,7 @@ export class CachingProjectLoader implements ProjectLoader {
 
         registerShutdownHook(async () => {
             if (this.deleteOnExit.length > 0) {
-                logger.debug"Deleting cached projects");
+                logger.debug("Deleting cached projects");
             }
             this.deleteOnExit.forEach(p => {
                 this.cleanUp(p, "shutdown");
