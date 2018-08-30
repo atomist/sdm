@@ -170,6 +170,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
     }
 
     public addAutoInspectRegistration<R, PARAMS = NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this {
+        this.autoInspectRegistrations.push(r);
         return this;
     }
 
