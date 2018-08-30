@@ -24,14 +24,18 @@
     "url": "https://github.com/atomist/sdm/issues"
   },
   "dependencies": {
+    "@atomist/slack-messages": "^1.0.0",
     "axios": "^0.18.0",
     "base64-js": "^1.3.0",
     "copyfiles": "^2.0.0",
+    "find-up": "^3.0.0",
+    "fs-extra": "^7.0.0",
     "json-stringify-safe": "^5.0.1",
     "jssha": "^2.3.1",
     "lodash": "^4.17.10",
     "sha-regex": "^1.0.2",
-    "sprintf-js": "^1.1.1"
+    "sprintf-js": "^1.1.1",
+    "stack-trace": "0.0.10"
   },
   "peerDependencies": {
     "@atomist/automation-client": "*"
