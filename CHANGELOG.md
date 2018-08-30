@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fix incorrect print statement. [#497](https://github.com/atomist/sdm/issues/497)
+-   SDM doesn't start with 1.0.0-M.1. [#495](https://github.com/atomist/sdm/issues/495)
 
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
