@@ -40,7 +40,7 @@ export enum DeclarationType {
 
 export interface MappedParameterOrSecretDeclaration {
 
-    type: DeclarationType;
+    declarationType: DeclarationType;
 
     uri: string;
     /**
