@@ -17,7 +17,10 @@
 import { Project } from "@atomist/automation-client/project/Project";
 import { PredicateMapping } from "../PredicateMapping";
 import { ProjectPredicate } from "../PushTest";
-import { all, any } from "./predicateUtils";
+import {
+    all,
+    any,
+} from "./predicateUtils";
 
 /**
  * Return the opposite of this ProjectPredicate

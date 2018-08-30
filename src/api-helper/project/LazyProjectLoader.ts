@@ -14,22 +14,31 @@
  * limitations under the License.
  */
 
-import { File } from "@atomist/automation-client/project/File";
-import { FileStream } from "@atomist/automation-client/project/Project";
-import * as stream from "stream";
-
 import { logger } from "@atomist/automation-client";
 import { ActionResult } from "@atomist/automation-client/action/ActionResult";
-import { GitHubDotComBase, isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import {
+    GitHubDotComBase,
+    isGitHubRepoRef,
+} from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { TokenCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
-import { GitProject, GitPushOptions } from "@atomist/automation-client/project/git/GitProject";
+import { File } from "@atomist/automation-client/project/File";
+import {
+    GitProject,
+    GitPushOptions,
+} from "@atomist/automation-client/project/git/GitProject";
 import { GitStatus } from "@atomist/automation-client/project/git/gitStatus";
 import { ReleaseFunction } from "@atomist/automation-client/project/local/LocalProject";
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
+import { FileStream } from "@atomist/automation-client/project/Project";
 import { AbstractProject } from "@atomist/automation-client/project/support/AbstractProject";
 import { fileContent } from "@atomist/automation-client/util/gitHub";
-import { ProjectLoader, ProjectLoadingParameters, WithLoadedProject } from "../../spi/project/ProjectLoader";
+import * as stream from "stream";
+import {
+    ProjectLoader,
+    ProjectLoadingParameters,
+    WithLoadedProject,
+} from "../../spi/project/ProjectLoader";
 import { save } from "./CachingProjectLoader";
 
 /**

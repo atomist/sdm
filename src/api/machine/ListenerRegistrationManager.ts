@@ -39,7 +39,6 @@ import { AutofixRegistration } from "../registration/AutofixRegistration";
 import { AutoInspectRegistration } from "../registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
-import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../registration/ReviewListenerRegistration";
 
 /**

@@ -22,9 +22,7 @@ import {
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
-import {
-    SdmGoalState,
-} from "../../typings/types";
+import { SdmGoalState } from "../../typings/types";
 import { fakeContext } from "./fakeContext";
 
 /**

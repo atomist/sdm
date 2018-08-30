@@ -16,7 +16,6 @@ export * from "./api/dsl/decisionTree";
 export * from "./api/dsl/goalContribution";
 export * from "./api/dsl/goalDsl";
 export * from "./api/goal/ExecuteGoalResult";
-export * from "./api/goal/ExecuteGoalWithLog";
 export * from "./api/goal/GitHubContext";
 export * from "./api/goal/Goal";
 export * from "./api/goal/GoalInvocation";

@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { AnyOptions, Configuration } from "@atomist/automation-client/configuration";
+import {
+    AnyOptions,
+    Configuration,
+} from "@atomist/automation-client/configuration";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";

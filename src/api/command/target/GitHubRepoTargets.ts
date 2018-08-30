@@ -1,7 +1,11 @@
 /**
  * Resolve from a Mapped parameter or from a supplied repos regex if no repo mapping
  */
-import { MappedParameter, MappedParameters, Parameter } from "@atomist/automation-client";
+import {
+    MappedParameter,
+    MappedParameters,
+    Parameter,
+} from "@atomist/automation-client";
 import { FallbackParams } from "@atomist/automation-client/operations/common/params/FallbackParams";
 import { GitBranchRegExp } from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import { GitHubTargetsParams } from "@atomist/automation-client/operations/common/params/GitHubTargetsParams";

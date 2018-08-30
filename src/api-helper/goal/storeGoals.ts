@@ -35,8 +35,11 @@ import {
     SdmProvenance,
 } from "../../api/goal/SdmGoalMessage";
 import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
-import { SdmGoalState } from "../../typings/types";
-import { OnAnyRequestedSdmGoal, OnPushToAnyBranch } from "../../typings/types";
+import {
+    OnAnyRequestedSdmGoal,
+    OnPushToAnyBranch,
+    SdmGoalState,
+} from "../../typings/types";
 
 export function environmentFromGoal(goal: Goal) {
     return goal.definition.environment.replace(/\/$/, ""); // remove trailing slash at least
