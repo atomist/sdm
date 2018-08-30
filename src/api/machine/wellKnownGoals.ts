@@ -86,7 +86,7 @@ export const AutofixGoal = new Goal({
 export const CodeInspectionGoal = new Goal({
     uniqueName: "CodeInspection",
     environment: IndependentOfEnvironment,
-    orderedName: "1-inspects",
+    orderedName: "1-inspect",
     workingDescription: "Running code inspections",
     completedDescription: "Code inspections passed",
 });
