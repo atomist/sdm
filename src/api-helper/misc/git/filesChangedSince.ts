@@ -40,10 +40,10 @@ export async function filesChangedSince(project: GitProject, sha: string): Promi
             .filter(n => !!n);
     } catch (err) {
         logger.warn("Error diffing project %j since %s: %s", project.id, sha, err.message);
-        logger.warn("Project sha = %s, branch = %s", project.id.sha);
+        logger.warn("Project sha = %s, branch = %s", project.id.sha, project.id.branch);
         try {
             const gs = await project.gitStatus();
-            logger.warn("Git status sha = %s, branch = %s" + gs.sha, gs.branch);
+            logger.warn("Git status sha = %s, branch = %s", gs.sha, gs.branch);
             const timeOfLastChange = await runCommand("ls -ltr .", { cwd: project.baseDir });
             logger.info("Files with dates: " + timeOfLastChange.stdout);
         } catch (err) {
