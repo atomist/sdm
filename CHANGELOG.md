@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** `ReviewerRegistration.action` renamed `inspect`.
 -   **BREAKING** Rename `ReviewGoal` -> \`CodeInspectionGoal. [#e30b6c1](https://github.com/atomist/sdm/commit/e30b6c15ffc3b35bf1fc09cd822f9a6fee1ee5a6)
 -   **BREAKING** Evaluate pushTest when selecting goal implementations. [#493](https://github.com/atomist/sdm/issues/493)
+-   Push tests for adding a goal implementation are not run. [#490](https://github.com/atomist/sdm/issues/490)
 
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
