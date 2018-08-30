@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Added `AutoInspectRegistration`.
 -   Register shutdown hooks to clean up cloned directories. [#494](https://github.com/atomist/sdm/issues/494)
 -   Allow to set description from a `ExecuteGoal`. [#1d18bf9](https://github.com/atomist/sdm/commit/1d18bf9a7da13a103d5364b4d5edb5aec6bb10c5)
+-   Add `IsPushToPullRequest` push test. [#496](https://github.com/atomist/sdm/issues/496)
 
 ### Changed
 
