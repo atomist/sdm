@@ -15,13 +15,13 @@
  */
 
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
-import { AutoInspectionRegistration } from "./AutoInspectionRegistration";
+import { AutoInspectRegistration } from "./AutoInspectRegistration";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 
 /**
  * Register a reviewer. This can return structured data based on a project.
  */
 export interface ReviewerRegistration<PARAMS = NoParameters>
-    extends AutoInspectionRegistration<ProjectReview, PARAMS> {
+    extends AutoInspectRegistration<ProjectReview, PARAMS> {
 
 }

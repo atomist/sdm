@@ -22,46 +22,56 @@ import { AddressChannels } from "../../api/context/addressChannels";
 import { ExecuteGoal, GoalInvocation, } from "../../api/goal/GoalInvocation";
 import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
 import { formatReviewerError, ReviewerError, } from "../../api/registration/ReviewerError";
-import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
+import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 
 /**
- * Execute reviews and route or react to results using review listeners
+ * Execute auto inspections and route or react to review results using review listeners
  * @param {ProjectLoader} projectLoader
- * @param {ReviewerRegistration[]} reviewerRegistrations
+ * @param autoInspectRegistrations
  * @param {ReviewListener[]} reviewListeners
  * @return {ExecuteGoal}
  */
-export function executeReview(projectLoader: ProjectLoader,
-                              reviewerRegistrations: ReviewerRegistration[],
-                              reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+export function executeAutoInspects(projectLoader: ProjectLoader,
+                                    autoInspectRegistrations: AutoInspectRegistration<any, any>[],
+                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { credentials, id, addressChannels } = goalInvocation;
         try {
-            if (reviewerRegistrations.length > 0) {
-                logger.info("Planning review of %j with %d reviewers", id, reviewerRegistrations.length);
+            if (autoInspectRegistrations.length > 0) {
+                logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
                 return projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
                     const cri = {
                         ...await createPushImpactListenerInvocation(goalInvocation, project),
                         commandName: "autoInspection",
                     };
-                    const relevantReviewers = await relevantCodeActions(reviewerRegistrations, cri);
-                    logger.info("Executing review of %j with %d relevant reviewers: [%s] of [%s]",
-                        id, relevantReviewers.length,
-                        relevantReviewers.map(a => a.name).join(),
-                        reviewerRegistrations.map(a => a.name).join());
+                    const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
+                    logger.info("Executing review of %j with %d relevant AutoInspects: [%s] of [%s]",
+                        id, relevantAutoInspects.length,
+                        relevantAutoInspects.map(a => a.name).join(),
+                        autoInspectRegistrations.map(a => a.name).join());
 
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
-                        await Promise.all(relevantReviewers
-                            .map(reviewer => {
-                                return reviewer.inspection(project, cri)
-                                    .then(rvw => ({ review: rvw }),
+                        await Promise.all(relevantAutoInspects
+                            .map(autoInspect => {
+                                return autoInspect.inspection(project, cri)
+                                    .then(async result => {
+                                            try {
+                                                if (!!autoInspect.onInspectionResult) {
+                                                    await autoInspect.onInspectionResult(result, cri);
+                                                }
+                                            } catch {
+                                                // Ignore errors
+                                            }
+                                            // Suppress non reviews
+                                            return { review: isProjectReview(result) ? result : undefined };
+                                        },
                                         error => ({ error }));
                             }));
-                    const reviews = reviewsAndErrors.filter(r => !!r.review)
+                    const reviews: ProjectReview[] = reviewsAndErrors.filter(r => !!r.review)
                         .map(r => r.review);
                     const reviewerErrors = reviewsAndErrors.filter(e => !!e.error)
                         .map(e => e.error);
@@ -96,10 +106,15 @@ export function executeReview(projectLoader: ProjectLoader,
             }
         } catch (err) {
             logger.error("Error executing review of %j with %d reviewers: $s",
-                id, reviewerRegistrations.length, err.message);
+                id, autoInspectRegistrations.length, err.message);
             return failure(err);
         }
     };
+}
+
+function isProjectReview(o: any): o is ProjectReview {
+    const r = o as ProjectReview;
+    return !!r.repoId && r.comments !== undefined;
 }
 
 function consolidate(reviews: ProjectReview[], repoId: RepoRef): ProjectReview {

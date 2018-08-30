@@ -18,15 +18,16 @@ import { SelectiveCodeActionOptions, } from "./PushImpactListenerRegistration";
 import { CodeInspection } from "./CodeInspectionRegistration";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { PushSelector } from "./PushRegistration";
+import { CommandListenerInvocation } from "../listener/CommandListener";
 
-export type AutoInspectionRegistrationOptions = SelectiveCodeActionOptions;
+export type AutoInspectRegistrationOptions = SelectiveCodeActionOptions;
 
 /**
  * Register an automatic inspection.
  */
-export interface AutoInspectionRegistration<R, PARAMS = NoParameters> extends PushSelector {
+export interface AutoInspectRegistration<R, PARAMS = NoParameters> extends PushSelector {
 
-    options?: AutoInspectionRegistrationOptions;
+    options?: AutoInspectRegistrationOptions;
 
     /**
      * Inspection function to run on each project
@@ -37,4 +38,12 @@ export interface AutoInspectionRegistration<R, PARAMS = NoParameters> extends Pu
      * Parameters used for all inspections
      */
     parametersInstance?: PARAMS;
+
+    /**
+     * Invoked after each inspection result, if provided
+     * @param {R} result
+     * @param {CommandListenerInvocation<PARAMS>} ci
+     * @return {Promise<any>}
+     */
+    onInspectionResult?(result: R, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 }

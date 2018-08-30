@@ -40,6 +40,8 @@ import { FingerprinterRegistration } from "../../api/registration/FingerprinterR
 import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
+import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -81,7 +83,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalExecutionListeners: GoalExecutionListener[] = [];
 
-    public readonly reviewerRegistrations: ReviewerRegistration[] = [];
+    public readonly autoInspectRegistrations: AutoInspectRegistration<any, any>[] = [];
 
     public readonly reviewListenerRegistrations: ReviewListenerRegistration[] = [];
 
@@ -162,10 +164,15 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addReviewerRegistration(r: ReviewerRegistration): this {
-        this.reviewerRegistrations.push(r);
+    public addReviewerRegistration<PARAMS = NoParameters>(r: ReviewerRegistration<PARAMS>): this {
+        this.autoInspectRegistrations.push(r);
         return this;
     }
+
+    public addAutoInspectRegistration<R, PARAMS = NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this {
+        return this;
+    }
+
 
     public addReviewListenerRegistration(r: ReviewListenerRegistration): this {
         this.reviewListenerRegistrations.push(r);
