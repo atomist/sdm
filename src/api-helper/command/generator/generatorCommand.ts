@@ -196,7 +196,9 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
     }
 }
 
-export declare function isProjectPromise(a: any): a is Promise<Project>;
+export function isProjectPromise(a: any): a is Promise<Project> {
+    return !!a.then;
+}
 
 function defaultDetails<P extends SeedDrivenGeneratorParameters>(opts: SoftwareDeliveryMachineOptions, name: string): GeneratorCommandDetails<P> {
     return {
