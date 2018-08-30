@@ -1,0 +1,10 @@
+query PullRequestsForBranch($owner: String!, $repo: String!, $branch: String!) {
+  Repo(owner: $owner, name: $repo) {
+    branches(name: $branch) {
+      name
+      pullRequests {
+        state
+      }
+    }
+  }
+}

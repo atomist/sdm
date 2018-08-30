@@ -15,6 +15,10 @@
  */
 
 import { fileExists } from "@atomist/automation-client/project/util/projectUtils";
+import * as _ from "lodash";
+import {
+    PullRequestsForBranch,
+} from "../../../typings/types";
 import {
     PredicatePushTest,
     predicatePushTest,
@@ -91,3 +95,25 @@ export function hasFileWithExtension(extension: string): PredicatePushTest {
     return predicatePushTest(`HasFileWithExtension(${extensionToUse}})`,
         async p => fileExists(p, `**/*${extensionToUse}`, () => true));
 }
+
+/**
+ * Is this push to a non-default branch that has an open pull request?
+ */
+export const IsPushToBranchWithPullRequest: PushTest = pushTest("Push to branch with open pull request", async p => {
+    if (p.push.branch === p.push.repo.defaultBranch) {
+        return false;
+    }
+    const result = await p.context.graphClient.query<PullRequestsForBranch.Query, PullRequestsForBranch.Variables>({
+        name: "PullRequestsForBranch",
+        variables: {
+            repo: p.push.repo.name,
+            owner: p.push.repo.owner,
+            branch: p.push.branch,
+        },
+    });
+    const branch: PullRequestsForBranch.Branches = _.get(result, "Repo[0].branches[0]");
+    if (branch && branch.pullRequests && branch.pullRequests.some(pr => pr.state === "open")) {
+        return true;
+    }
+    return false;
+});
