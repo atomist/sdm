@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`.
 -   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`.
 -   **BREAKING** `ReviewerRegistration.action` renamed `inspect`.
+-   Rename ReviewGoal -> CodeInspectionGoal. [#03fa809](https://github.com/atomist/sdm/commit/03fa8093093e8760d83f17e40cef379693f9b9a9)
 
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 
