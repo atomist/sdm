@@ -34,9 +34,9 @@ import { Goals } from "../../../src/api/goal/Goals";
 import {
     AutofixGoal,
     BuildGoal,
-    FingerprintGoal, JustBuildGoal, LockingGoal,
+    CodeInspectionGoal, FingerprintGoal, JustBuildGoal,
+    LockingGoal,
     PushReactionGoal,
-    CodeInspectionGoal,
 } from "../../../src/api/machine/wellKnownGoals";
 import { GoalSetter } from "../../../src/api/mapping/GoalSetter";
 import { predicatePushTest } from "../../../src/api/mapping/PushTest";
