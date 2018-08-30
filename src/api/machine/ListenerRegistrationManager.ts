@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { ArtifactListenerRegisterable } from "../listener/ArtifactListener";
 import { BuildListener } from "../listener/BuildListener";
 import { ChannelLinkListener } from "../listener/ChannelLinkListenerInvocation";
@@ -23,7 +24,7 @@ import { EndpointVerificationListener } from "../listener/EndpointVerificationLi
 import { FingerprintDifferenceListener } from "../listener/FingerprintDifferenceListener";
 import { FingerprintListener } from "../listener/FingerprintListener";
 import { GoalCompletionListener } from "../listener/GoalCompletionListener";
-import { GoalsSetListener, } from "../listener/GoalsSetListener";
+import { GoalsSetListener } from "../listener/GoalsSetListener";
 import { GoalExecutionListener } from "../listener/GoalStatusListener";
 import { NewIssueListener } from "../listener/NewIssueListener";
 import { ProjectListener } from "../listener/ProjectListener";
@@ -34,13 +35,12 @@ import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
 import { VerifiedDeploymentListener } from "../listener/VerifiedDeploymentListener";
-import { AutofixRegistration, } from "../registration/AutofixRegistration";
+import { AutofixRegistration } from "../registration/AutofixRegistration";
+import { AutoInspectRegistration } from "../registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../registration/ReviewListenerRegistration";
-import { AutoInspectRegistration } from "../registration/AutoInspectRegistration";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -114,7 +114,7 @@ export interface ListenerRegistrationManager {
      * @param {AutoInspectRegistration<R, PARAMS>} r
      * @return {this}
      */
-    addAutoInspectRegistration<R, PARAMS=NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this;
+    addAutoInspectRegistration<R, PARAMS= NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this;
 
     /**
      * @deprecated use addAutoInspectRegistration
@@ -193,7 +193,7 @@ export interface ListenerRegistrationManager {
 
     goalCompletionListeners: GoalCompletionListener[];
 
-    autoInspectRegistrations: AutoInspectRegistration<any, any>[];
+    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>;
 
     reviewListenerRegistrations: ReviewListenerRegistration[];
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { SelectiveCodeActionOptions, } from "./PushImpactListenerRegistration";
-import { CodeInspection } from "./CodeInspectionRegistration";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { PushSelector } from "./PushRegistration";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
+import { CodeInspection } from "./CodeInspectionRegistration";
+import { PushReactionResponse, SelectiveCodeActionOptions } from "./PushImpactListenerRegistration";
+import { PushSelector } from "./PushRegistration";
 
 export type AutoInspectRegistrationOptions = SelectiveCodeActionOptions;
 
@@ -41,10 +41,12 @@ export interface AutoInspectRegistration<R, PARAMS = NoParameters> extends PushS
     parametersInstance?: PARAMS;
 
     /**
-     * Invoked after each inspection result, if provided
+     * Invoked after each inspection result, if provided.
+     * A void return means keep processing this push. Return a
+     * PushReactionResponse to demand approval or fail goals.
      * @param {R} result
-     * @param {CommandListenerInvocation<PARAMS>} ci
+     * @param {ParametersInvocation<PARAMS>} ci
      * @return {Promise<any>}
      */
-    onInspectionResult?(result: R, ci: ParametersInvocation<PARAMS>): Promise<any>;
+    onInspectionResult?(result: R, ci: ParametersInvocation<PARAMS>): Promise<PushReactionResponse | void>;
 }

@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { failure, logger, } from "@atomist/automation-client";
+import { failure, logger } from "@atomist/automation-client";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
 import * as _ from "lodash";
 import { AddressChannels } from "../../api/context/addressChannels";
-import { ExecuteGoal, GoalInvocation, } from "../../api/goal/GoalInvocation";
+import { ExecuteGoal, GoalInvocation } from "../../api/goal/GoalInvocation";
+import { ParametersInvocation } from "../../api/listener/ParametersInvocation";
+import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 import { PushReactionResponse } from "../../api/registration/PushImpactListenerRegistration";
-import { formatReviewerError, ReviewerError, } from "../../api/registration/ReviewerError";
+import { formatReviewerError, ReviewerError } from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
@@ -36,7 +37,7 @@ import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegis
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(projectLoader: ProjectLoader,
-                                    autoInspectRegistrations: AutoInspectRegistration<any, any>[],
+                                    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
                                     reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { credentials, id, addressChannels } = goalInvocation;
@@ -51,20 +52,30 @@ export function executeAutoInspects(projectLoader: ProjectLoader,
                         relevantAutoInspects.map(a => a.name).join(),
                         autoInspectRegistrations.map(a => a.name).join());
 
+                    const responsesFromOnInspectionResult: PushReactionResponse[] = [];
                     const reviewsAndErrors: Array<{ review?: ProjectReview, error?: ReviewerError }> =
                         await Promise.all(relevantAutoInspects
                             .map(autoInspect => {
-                                return autoInspect.inspection(project, cri)
-                                    .then(async result => {
+                                const cli: ParametersInvocation<any> = {
+                                    addressChannels: goalInvocation.addressChannels,
+                                    context: goalInvocation.context,
+                                    credentials: goalInvocation.credentials,
+                                    parameters: autoInspect.parametersInstance,
+                                };
+                                return autoInspect.inspection(project, cli)
+                                    .then(async inspectionResult => {
                                             try {
                                                 if (!!autoInspect.onInspectionResult) {
-                                                    await autoInspect.onInspectionResult(result, cri);
+                                                    const r = await autoInspect.onInspectionResult(inspectionResult, cli);
+                                                    if (!!r) {
+                                                        responsesFromOnInspectionResult.push(r);
+                                                    }
                                                 }
                                             } catch {
                                                 // Ignore errors
                                             }
                                             // Suppress non reviews
-                                            return { review: isProjectReview(result) ? result : undefined };
+                                            return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
                                         },
                                         error => ({ error }));
                             }));
@@ -81,20 +92,21 @@ export function executeAutoInspects(projectLoader: ProjectLoader,
                         review,
                     };
                     sendErrorsToSlack(reviewerErrors, addressChannels);
-                    const reviewResponses = await Promise.all(reviewListeners.map(async l => {
+                    const responsesFromReviewListeners = await Promise.all(reviewListeners.map(async l => {
                         try {
-                            return l.listener(rli);
+                            return (await l.listener(rli)) || PushReactionResponse.proceed;
                         } catch (err) {
                             logger.error("Review listener %s failed. Stack: %s", l.name, err.stack);
                             await rli.addressChannels(`:crying_cat_face: Review listener '${l.name}' failed: ${err.message}`);
                             return PushReactionResponse.failGoals;
                         }
                     }));
+                    const allReviewResponses = responsesFromOnInspectionResult.concat(responsesFromReviewListeners);
                     const result = {
-                        code: reviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
-                        requireApproval: reviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed),
+                        code: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.failGoals) ? 1 : 0,
+                        requireApproval: allReviewResponses.some(rr => !!rr && rr === PushReactionResponse.requireApprovalToProceed),
                     };
-                    logger.info("Review responses are %j, result=%j", reviewResponses, result);
+                    logger.info("Review responses are %j, result=%j", responsesFromReviewListeners, result);
                     return result;
                 });
             } else {

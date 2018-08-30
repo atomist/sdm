@@ -20,7 +20,7 @@ import { EditResult } from "@atomist/automation-client/operations/edit/projectEd
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import { MessageClient, SlackMessageClient, } from "@atomist/automation-client/spi/message/MessageClient";
+import { MessageClient, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
 
 /**
@@ -74,7 +74,7 @@ export interface HandlerContextMethods {
 /**
  * Function that can transform a project. Mixing HandlerContextMethods into second
  * parameter, and third parameter are only for backward compatibility.
- * New code should use (Project, Command ListenerInvocation).
+ * New code should use (Project, Command ParametersInvocation).
  */
 export type CodeTransform<P = NoParameters> = (p: Project,
                                                sdmc: ParametersInvocation<P> & HandlerContextMethods,

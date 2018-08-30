@@ -18,8 +18,8 @@ import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
-import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
+import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
 
 /**
  * Function that can run against a project without mutating it to

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { ArtifactListenerRegisterable } from "../../api/listener/ArtifactListener";
 import { BuildListener } from "../../api/listener/BuildListener";
 import { ChannelLinkListener } from "../../api/listener/ChannelLinkListenerInvocation";
@@ -36,12 +37,11 @@ import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChanne
 import { VerifiedDeploymentListener } from "../../api/listener/VerifiedDeploymentListener";
 import { ListenerRegistrationManager } from "../../api/machine/ListenerRegistrationManager";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
+import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../../api/registration/PushImpactListenerRegistration";
 import { ReviewerRegistration } from "../../api/registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
-import { AutoInspectRegistration } from "../../api/registration/AutoInspectRegistration";
-import { NoParameters } from "@atomist/automation-client/SmartParameters";
 
 /**
  * Listener management offering a fluent builder pattern for registrations.
@@ -83,7 +83,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly goalExecutionListeners: GoalExecutionListener[] = [];
 
-    public readonly autoInspectRegistrations: AutoInspectRegistration<any, any>[] = [];
+    public readonly autoInspectRegistrations: Array<AutoInspectRegistration<any, any>> = [];
 
     public readonly reviewListenerRegistrations: ReviewListenerRegistration[] = [];
 
@@ -172,7 +172,6 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
     public addAutoInspectRegistration<R, PARAMS = NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this {
         return this;
     }
-
 
     public addReviewListenerRegistration(r: ReviewListenerRegistration): this {
         this.reviewListenerRegistrations.push(r);
