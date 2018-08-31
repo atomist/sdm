@@ -56,7 +56,7 @@ import { CodeTransformRegistration } from "../../api/registration/CodeTransformR
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
-import { GoalApprovalRequestVote } from "../../api/registration/GoalApprovalRequestVote";
+import { GoalApprovalRequestVoter } from "../../api/registration/GoalApprovalRequestVoter";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
 import {
     EnforceableProjectInvariantRegistration,
@@ -96,7 +96,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     protected readonly disposalGoalSetters: GoalSetter[] = [];
 
-    protected readonly goalApprovalRequestVotes: GoalApprovalRequestVote[] = [];
+    protected readonly goalApprovalRequestVoters: GoalApprovalRequestVoter[] = [];
 
     private pushMap: GoalSetter;
 
@@ -165,8 +165,8 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this;
     }
 
-    public addGoalApprovalRequestVote(vote: GoalApprovalRequestVote): this {
-        this.goalApprovalRequestVotes.push(vote);
+    public addGoalApprovalRequestVoter(vote: GoalApprovalRequestVoter): this {
+        this.goalApprovalRequestVoters.push(vote);
         return this;
     }
 
@@ -235,54 +235,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         } else {
             this.registrationManager.addIngester(i);
         }
-        return this;
-    }
-
-    public addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this {
-        this.mightMutate = rules.length > 0;
-        _.flatten(rules).forEach(r =>
-            this.addGoalImplementation(r.name, BuildGoal,
-                executeBuild(this.configuration.sdm.projectLoader, r.value),
-                {
-                    pushTest: r.pushTest,
-                    logInterpreter: r.value.logInterpreter,
-                })
-                .addGoalImplementation(r.name, JustBuildGoal,
-                    executeBuild(this.configuration.sdm.projectLoader, r.value),
-                    {
-                        pushTest: r.pushTest,
-                        logInterpreter:
-                        r.value.logInterpreter,
-                    },
-                ));
-        return this;
-    }
-
-    public addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this {
-        this.mightMutate = rules.length > 0;
-        _.flatten(rules).forEach(r => {
-            // deploy
-            this.addGoalImplementation(r.name, r.value.deployGoal, executeDeploy(
-                this.configuration.sdm.artifactStore,
-                this.configuration.sdm.repoRefResolver,
-                r.value.endpointGoal, r.value),
-                {
-                    pushTest: r.pushTest,
-                    logInterpreter: r.value.deployer.logInterpreter,
-                },
-            );
-            // endpoint
-            this.addKnownSideEffect(
-                r.value.endpointGoal,
-                r.value.deployGoal.definition.displayName);
-            // undeploy
-            this.addGoalImplementation(r.name, r.value.undeployGoal, executeUndeploy(r.value),
-                {
-                    pushTest: r.pushTest,
-                    logInterpreter: r.value.deployer.logInterpreter,
-                },
-            );
-        });
         return this;
     }
 

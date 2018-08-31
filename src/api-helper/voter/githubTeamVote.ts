@@ -19,8 +19,8 @@ import { isGitHubTeamMember } from "@atomist/automation-client/secured";
 import * as _ from "lodash";
 import {
     GoalApprovalRequestVote,
-    GoalApprovalRequestVoteResult,
-} from "../../api/registration/GoalApprovalRequestVote";
+    GoalApprovalRequestVoter,
+} from "../../api/registration/GoalApprovalRequestVoter";
 import { GitHubLogin } from "../../typings/types";
 
 /**
@@ -28,7 +28,7 @@ import { GitHubLogin } from "../../typings/types";
  * person who is requesting the approval.
  * @param {string} team
  */
-export function gitHubTeamVote(team: string = "atomist-automation"): GoalApprovalRequestVote {
+export function gitHubTeamVote(team: string = "atomist-automation"): GoalApprovalRequestVoter {
     return async gai => {
         const approval = gai.goal.approval;
         const repo = gai.goal.repo;
@@ -46,9 +46,14 @@ export function gitHubTeamVote(team: string = "atomist-automation"): GoalApprova
         const apiUrl = _.get(result, "Team[0].orgs[0].provider.apiUrl");
 
         if (await isGitHubTeamMember(repo.owner, login, team, (gai.credentials as TokenCredentials).token, apiUrl)) {
-            return GoalApprovalRequestVoteResult.Granted;
+            return {
+                vote: GoalApprovalRequestVote.Granted,
+            };
         } else {
-            return GoalApprovalRequestVoteResult.Denied;
+            return {
+                vote: GoalApprovalRequestVote.Denied,
+                reason: `User ${login} not in GitHub team ${team}`,
+            };
         }
     };
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-/**
- * Result from executing GoalApprovalRequestVote.
- */
 import { RepoContext } from "../context/SdmContext";
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
 
-export enum GoalApprovalRequestVoteResult {
+/**
+ * Represents a vote on a approval request.
+ */
+export enum GoalApprovalRequestVote {
 
     /**
      * Voter decided to abstain from voting.
@@ -39,9 +39,25 @@ export enum GoalApprovalRequestVoteResult {
 }
 
 /**
- * Invocation of a GoalApprovalRequestVote
+ * Result from executing GoalApprovalRequestVoter.
  */
-export interface GoalApprovalRequestVoteInvocation extends RepoContext {
+export interface GoalApprovalRequestVoteResult {
+
+    /**
+     * The vote
+     */
+    vote: GoalApprovalRequestVote;
+
+    /**
+     * Optional text describing why the decision was being made
+     */
+    reason?: string;
+}
+
+/**
+ * Invocation of a GoalApprovalRequestVoter
+ */
+export interface GoalApprovalRequestVoterInvocation extends RepoContext {
 
     /**
      * Goal that was requested for approval.
@@ -50,7 +66,7 @@ export interface GoalApprovalRequestVoteInvocation extends RepoContext {
 }
 
 /**
- * Vote on a request to approve a goal.
+ * Voter on a request to approve a goal.
  */
-export type GoalApprovalRequestVote =
-    (garvi: GoalApprovalRequestVoteInvocation) => Promise<GoalApprovalRequestVoteResult>;
+export type GoalApprovalRequestVoter =
+    (garvi: GoalApprovalRequestVoterInvocation) => Promise<GoalApprovalRequestVoteResult>;
