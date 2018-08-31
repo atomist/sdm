@@ -235,6 +235,7 @@ async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
 
     } catch (err) {
         logger.error("Error determining goals: %s", err);
+        logger.error(err.stack);
         await addressChannels(`Serious error trying to determine goals. Please check SDM logs: ${err}`);
         throw err;
     }
