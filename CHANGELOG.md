@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Register shutdown hooks to clean up cloned directories. [#494](https://github.com/atomist/sdm/issues/494)
 -   Allow to set description from a `ExecuteGoal`. [#1d18bf9](https://github.com/atomist/sdm/commit/1d18bf9a7da13a103d5364b4d5edb5aec6bb10c5)
 -   Add `IsPushToPullRequest` push test. [#496](https://github.com/atomist/sdm/issues/496)
+-   Add reason to a goal approval vote. [#eaf2f60](https://github.com/atomist/sdm/commit/eaf2f60cecc51f2b8c057307397721f7d3c0cb96)
 
 ### Changed
 
