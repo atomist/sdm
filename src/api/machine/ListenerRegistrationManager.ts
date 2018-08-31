@@ -75,7 +75,7 @@ export interface ListenerRegistrationManager {
     addBuildListener(l: BuildListener);
 
     /**
-     * You probably mean to use addNewRepoWithCodeListener!
+     * You probably mean to use addFirstPushListener!
      * This responds to a repo creation, but there may be no
      * code in it. The invocation's addressChannels method with have no effect:
      * use the context if you want to send messages
@@ -100,7 +100,7 @@ export interface ListenerRegistrationManager {
      * @param {PushListener} pl
      * @return {this}
      */
-    addNewRepoWithCodeListener(pl: PushListener): this;
+    addFirstPushListener(pl: PushListener): this;
 
     addPullRequestListener(prl: PullRequestListener): this;
 
@@ -177,7 +177,7 @@ export interface ListenerRegistrationManager {
 
     pullRequestListeners: PullRequestListener[];
 
-    newRepoWithCodeListeners: PushListener[];
+    firstPushListeners: PushListener[];
 
     channelLinkListeners: ChannelLinkListener[];
 
