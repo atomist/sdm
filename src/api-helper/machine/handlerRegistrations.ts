@@ -278,6 +278,7 @@ function toOnCommand<PARAMS>(c: CommandHandlerRegistration<any>): (sdm: MachineO
             return Success;
         } catch (err) {
             logger.error("Error executing command '%s': %s", cli.commandName, err.message);
+            logger.error(err.stack);
             return {
                 code: 1,
                 message: err.message,
