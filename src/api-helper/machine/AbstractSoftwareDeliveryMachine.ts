@@ -62,12 +62,7 @@ import {
     EnforceableProjectInvariantRegistration,
     InvarianceAssessment,
 } from "../../api/registration/ProjectInvariantRegistration";
-import { Builder } from "../../spi/build/Builder";
-import { Target } from "../../spi/deploy/Target";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { executeBuild } from "../goal/executeBuild";
-import { executeDeploy } from "../goal/executeDeploy";
-import { executeUndeploy } from "../goal/executeUndeploy";
 import {
     executeVerifyEndpoint,
     SdmVerification,
@@ -100,9 +95,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     private pushMap: GoalSetter;
 
-    // Maintained depending on whether this SDM might mutate
-    private mightMutate: boolean = false;
-
     /**
      * Return the PushMapping that will be used on pushes.
      * Useful in testing goal setting.
@@ -110,19 +102,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      */
     get pushMapping(): PushMapping<Goals> {
         return this.pushMap;
-    }
-
-    /**
-     * Return if this SDM purely observes, rather than changes an org.
-     * Note that this cannot be 100% reliable, as arbitrary event handlers
-     * could be making commits, initiating deployments etc.
-     * @return {boolean}
-     */
-    get observesOnly(): boolean {
-        if (this.mightMutate) {
-            return false;
-        }
-        return this.autofixRegistrations.length === 0;
     }
 
     /*
