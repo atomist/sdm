@@ -22,7 +22,6 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { configurationValue } from "@atomist/automation-client/configuration";
-import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
@@ -47,6 +46,7 @@ import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
+import { serializeResult } from "../misc/result";
 import { spawnAndWatch } from "../misc/spawned";
 import {
     descriptionFromState,
@@ -220,7 +220,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 result = Success;
             }
 
-            progressLog.write(`Result: ${JSON.stringify(result, possibleAxiosObjectReplacer, 0)}`);
+            progressLog.write(`Result: ${serializeResult(result)}`);
             progressLog.write("\\--");
             await progressLog.flush();
             return result;
