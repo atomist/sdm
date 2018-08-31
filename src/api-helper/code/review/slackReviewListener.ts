@@ -27,10 +27,10 @@ import {
 } from "@atomist/automation-client/operations/review/ReviewResult";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink as githubDeepLink } from "@atomist/automation-client/util/gitHub";
-import * as slack from "@atomist/slack-messages";
 import {
     Attachment,
     SlackMessage,
+    url as slackUrl,
 } from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
@@ -76,8 +76,8 @@ async function sendReviewToSlack(title: string,
 }
 
 function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLink: DeepLink): Attachment {
-    const link = rc.sourceLocation ? slack.url(deepLink(grr, rc.sourceLocation), "jump to") :
-        slack.url(grr.url + "/tree/" + grr.sha, "source");
+    const link = rc.sourceLocation ? slackUrl(deepLink(grr, rc.sourceLocation), "jump to") :
+        slackUrl(grr.url + "/tree/" + grr.sha, "source");
 
     return {
         color: "#ff0000",
@@ -87,7 +87,7 @@ function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLi
         mrkdwn_in: ["text"],
         fallback: "error",
         actions: !!rc.fix ? [
-            buttonForCommand({text: "Fix"}, rc.fix.command, rc.fix.params),
+            buttonForCommand({ text: "Fix" }, rc.fix.command, rc.fix.params),
         ] : [],
     };
 }
