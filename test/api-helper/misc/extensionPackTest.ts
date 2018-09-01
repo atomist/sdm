@@ -15,7 +15,6 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
-import { fail } from "power-assert";
 import * as assert from "power-assert";
 import { validateRequiredConfigurationValues } from "../../../src/api-helper/misc/extensionPack";
 import { ExtensionPack } from "../../../src/api/machine/ExtensionPack";
@@ -37,7 +36,7 @@ describe("extensionPack", () => {
                     {
                         requiredConfigurationValues: [ "sdm.foo.bar", "sdm.bar.foo" ],
                     } as any as ExtensionPack);
-                fail();
+                assert.fail();
             } catch (err) {
                 assert.equal(err.message,
                     "Missing configuration values. Please add the following values to your client configuration: 'sdm.bar.foo'");

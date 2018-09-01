@@ -44,6 +44,7 @@ import {
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import {
     isProject,
     Project,
@@ -97,7 +98,6 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
