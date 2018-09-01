@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** Evaluate pushTest when selecting goal implementations. [#493](https://github.com/atomist/sdm/issues/493)
 -   Push tests for adding a goal implementation are not run. [#490](https://github.com/atomist/sdm/issues/490)
 -   Transform-testNaming. [#502](https://github.com/atomist/sdm/issues/502)
+-   **BREAKING** Remove unimplemented property observesOnly. [#501](https://github.com/atomist/sdm/issues/501)
 
 ### Fixed
 
