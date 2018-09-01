@@ -18,7 +18,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 
 import * as assert from "power-assert";
 import { PushRule } from "../../../../src/api/mapping/support/PushRule";
-import { TruePushTest } from "./pushTestUtilsTest";
+import { TruePushTest } from "./pushTestUtils.test";
 
 describe("PushRule", () => {
 
