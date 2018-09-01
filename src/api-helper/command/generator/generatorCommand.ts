@@ -30,11 +30,7 @@ import {
     RepoRef,
 } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import {
-    EditorFactory,
-    GeneratorCommandDetails,
-} from "@atomist/automation-client/operations/generate/generatorToCommand";
-import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { generate, ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
@@ -57,6 +53,9 @@ import {
     toMachineOptions,
 } from "../../machine/toMachineOptions";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
+import { ProjectAction } from "@atomist/automation-client/operations/common/projectAction";
+import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 
 /**
  * Create a command handler for project generation
@@ -68,12 +67,12 @@ import { CachingProjectLoader } from "../../project/CachingProjectLoader";
  * @return {HandleCommand}
  */
 export function generatorCommand<P>(sdm: MachineOrMachineOptions,
-                                    editorFactory: EditorFactory<P>,
-                                    name: string,
-                                    paramsMaker: Maker<P>,
-                                    fallbackTarget: Maker<RepoCreationParameters>,
-                                    startingPoint: StartingPoint<P>,
-                                    details: Partial<GeneratorCommandDetails<any>> = {}): HandleCommand {
+    editorFactory: EditorFactory<P>,
+    name: string,
+    paramsMaker: Maker<P>,
+    fallbackTarget: Maker<RepoCreationParameters>,
+    startingPoint: StartingPoint<P>,
+    details: Partial<GeneratorCommandDetails<any>> = {}): HandleCommand {
     const detailsToUse: GeneratorCommandDetails<any> = {
         ...defaultDetails(toMachineOptions(sdm), name),
         ...details,
@@ -86,13 +85,21 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
 }
 
+export type EditorFactory<P> = (params: P, ctx: HandlerContext) => AnyProjectEditor<P>;
+interface GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters> extends CommandDetails {
+
+    redirecter: (r: RepoRef) => string;
+    projectPersister?: ProjectPersister;
+    afterAction?: ProjectAction<P>;
+}
+
 /**
  * Return a parameters maker that is targeting aware
  * @param {Maker<PARAMS>} paramsMaker
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
 function toGeneratorParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                            target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
+    target: RepoCreationParameters): Maker<SeedDrivenGeneratorParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isSeedDrivenGeneratorParameters(sampleParams) ?
         paramsMaker as Maker<SeedDrivenGeneratorParameters & PARAMS> as any :
@@ -112,8 +119,8 @@ export function isSeedDrivenGeneratorParameters(p: any): p is SeedDrivenGenerato
 }
 
 function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: EditorFactory<P>,
-                                                                 details: GeneratorCommandDetails<P>,
-                                                                 startingPoint: StartingPoint<P>): OnCommand<P> {
+    details: GeneratorCommandDetails<P>,
+    startingPoint: StartingPoint<P>): OnCommand<P> {
 
     return (ctx: HandlerContext, parameters: P) => {
         return handle(ctx, editorFactory, parameters, details, startingPoint);
@@ -121,10 +128,10 @@ function handleGenerate<P extends SeedDrivenGeneratorParameters>(editorFactory: 
 }
 
 async function handle<P extends SeedDrivenGeneratorParameters>(ctx: HandlerContext,
-                                                               editorFactory: EditorFactory<P>,
-                                                               params: P,
-                                                               details: GeneratorCommandDetails<P>,
-                                                               startingPoint: StartingPoint<P>): Promise<RedirectResult> {
+    editorFactory: EditorFactory<P>,
+    params: P,
+    details: GeneratorCommandDetails<P>,
+    startingPoint: StartingPoint<P>): Promise<RedirectResult> {
     const r = await generate(
         computeStartingPoint(params, ctx, details.repoLoader(params), details, startingPoint),
         ctx,
@@ -178,10 +185,10 @@ async function hasOrgWebhook(owner: string, ctx: HandlerContext): Promise<boolea
  * @return {Promise<Project>}
  */
 async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(params: P,
-                                                                             ctx: HandlerContext,
-                                                                             repoLoader: RepoLoader,
-                                                                             details: GeneratorCommandDetails<any>,
-                                                                             startingPoint: StartingPoint<P>): Promise<Project> {
+    ctx: HandlerContext,
+    repoLoader: RepoLoader,
+    details: GeneratorCommandDetails<any>,
+    startingPoint: StartingPoint<P>): Promise<Project> {
     if (!startingPoint) {
         if (!params.source || !params.source.repoRef) {
             throw new Error("If startingPoint is not provided in GeneratorRegistration, parameters.source must specify seed project location: " +
