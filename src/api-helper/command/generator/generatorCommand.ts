@@ -23,18 +23,17 @@ import {
     commandHandlerFrom,
     OnCommand,
 } from "@atomist/automation-client/onCommand";
+import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { ProjectAction } from "@atomist/automation-client/operations/common/projectAction";
 import {
     isRemoteRepoRef,
     RemoteRepoRef,
     RepoRef,
 } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import {
-    EditorFactory,
-    GeneratorCommandDetails,
-} from "@atomist/automation-client/operations/generate/generatorToCommand";
-import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { generate, ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
@@ -84,6 +83,14 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
             toFactory(fallbackTarget)()),
         name,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
+}
+
+export type EditorFactory<P> = (params: P, ctx: HandlerContext) => AnyProjectEditor<P>;
+interface GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters> extends CommandDetails {
+
+    redirecter: (r: RepoRef) => string;
+    projectPersister?: ProjectPersister;
+    afterAction?: ProjectAction<P>;
 }
 
 /**

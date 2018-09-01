@@ -54,7 +54,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { sdmGoal, credentials, id, context, progressLog } = goalInvocation;
-        const atomistTeam = context.teamId;
+        const atomistTeam = context.workspaceId;
 
         logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
