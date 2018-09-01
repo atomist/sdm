@@ -49,9 +49,15 @@ import { EventHandlerRegistration } from "../../api/registration/EventHandlerReg
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { GoalApprovalRequestVoter } from "../../api/registration/GoalApprovalRequestVoter";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
-import { EnforceableProjectInvariantRegistration, InvarianceAssessment } from "../../api/registration/ProjectInvariantRegistration";
+import {
+    EnforceableProjectInvariantRegistration,
+    InvarianceAssessment,
+} from "../../api/registration/ProjectInvariantRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
-import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
+import {
+    executeVerifyEndpoint,
+    SdmVerification,
+} from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { validateRequiredConfigurationValues } from "../misc/extensionPack";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
@@ -80,9 +86,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     private pushMap: GoalSetter;
 
-    // Maintained depending on whether this SDM might mutate
-    private readonly mightMutate: boolean = false;
-
     /**
      * Return the PushMapping that will be used on pushes.
      * Useful in testing goal setting.
@@ -90,19 +93,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      */
     get pushMapping(): PushMapping<Goals> {
         return this.pushMap;
-    }
-
-    /**
-     * Return if this SDM purely observes, rather than changes an org.
-     * Note that this cannot be 100% reliable, as arbitrary event handlers
-     * could be making commits, initiating deployments etc.
-     * @return {boolean}
-     */
-    get observesOnly(): boolean {
-        if (this.mightMutate) {
-            return false;
-        }
-        return this.autofixRegistrations.length === 0;
     }
 
     /*
@@ -126,10 +116,10 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                  goal: Goal,
                                  goalExecutor: ExecuteGoal,
                                  options?: Partial<{
-                                     pushTest: PushTest,
-                                     logInterpreter: InterpretLog,
-                                     progressReporter: ReportProgress,
-                                 }>): this {
+            pushTest: PushTest,
+            logInterpreter: InterpretLog,
+            progressReporter: ReportProgress,
+        }>): this {
         const optsToUse = {
             pushTest: AnyPush,
             logInterpreter: lastLinesLogInterpreter(implementationName, 10),

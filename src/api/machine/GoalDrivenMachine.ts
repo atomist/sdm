@@ -41,14 +41,6 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
     pushMapping: PushMapping<Goals>;
 
     /**
-     * Return if this SDM purely observes, rather than changes things in an org.
-     * Note that this cannot be 100% reliable, as arbitrary event handlers
-     * could be making commits, initiating deployments etc.
-     * @return {boolean}
-     */
-    observesOnly: boolean;
-
-    /**
      * Provide the implementation for a goal.
      * The SDM will run it as soon as the goal is ready (all preconditions are met).
      * If you provide a PushTest, then the SDM can assign different implementations

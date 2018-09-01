@@ -23,7 +23,7 @@ describe("extensionPack", () => {
 
     describe("validateRequiredConfigurationValues", () => {
 
-        it("should validate missing values",  done => {
+        it("should validate missing values", done => {
             try {
                 validateRequiredConfigurationValues(
                     {
@@ -34,7 +34,7 @@ describe("extensionPack", () => {
                         },
                     } as any as Configuration,
                     {
-                        requiredConfigurationValues: [ "sdm.foo.bar", "sdm.bar.foo" ],
+                        requiredConfigurationValues: ["sdm.foo.bar", "sdm.bar.foo"],
                     } as any as ExtensionPack);
                 assert.fail();
             } catch (err) {
