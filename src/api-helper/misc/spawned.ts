@@ -15,12 +15,13 @@
  */
 
 import { configurationValue } from "@atomist/automation-client/configuration";
+import * as clientSpawned from "@atomist/automation-client/util/spawned";
+// tslint:disable-next-line:no-duplicate-imports
 import {
     asSpawnCommand,
     ChildProcessResult,
     ErrorFinder,
     poisonAndWait,
-    spawnAndWatch as clientSpawnAndWatch,
     SpawnCommand,
     SpawnWatchOptions,
     stringifySpawnCommand,
@@ -58,5 +59,5 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
         spOpts.timeout = configurationValue<number>("sdm.goal.timeout", 1000 * 60 * 10);
     }
 
-    return clientSpawnAndWatch(spawnCommand, options, delimitedLog, spOpts);
+    return clientSpawned.spawnAndWatch(spawnCommand, options, delimitedLog, spOpts);
 }

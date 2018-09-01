@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    HandlerContext,
-    Success,
-} from "@atomist/automation-client";
+import { HandlerContext, Success } from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { SourceLocation } from "@atomist/automation-client/operations/common/SourceLocation";
-import {
-    ProjectReview,
-    ReviewComment,
-} from "@atomist/automation-client/operations/review/ReviewResult";
+import { ProjectReview, ReviewComment } from "@atomist/automation-client/operations/review/ReviewResult";
 import { buttonForCommand } from "@atomist/automation-client/spi/message/MessageClient";
 import { deepLink as githubDeepLink } from "@atomist/automation-client/util/gitHub";
-import {
-    Attachment,
-    SlackMessage,
-    url as slackUrl,
-} from "@atomist/slack-messages";
+import * as slack from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";
 import { PushReactionResponse } from "../../../api/registration/PushImpactListenerRegistration";
@@ -67,7 +57,7 @@ async function sendReviewToSlack(title: string,
                                  ctx: HandlerContext,
                                  addressChannels: AddressChannels,
                                  deepLink: DeepLink) {
-    const mesg: SlackMessage = {
+    const mesg: slack.SlackMessage = {
         text: `*${title} on ${pr.repoId.owner}/${pr.repoId.repo}*`,
         attachments: pr.comments.map(c => reviewCommentToAttachment(pr.repoId as GitHubRepoRef, c, deepLink)),
     };
@@ -75,9 +65,9 @@ async function sendReviewToSlack(title: string,
     return Success;
 }
 
-function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLink: DeepLink): Attachment {
-    const link = rc.sourceLocation ? slackUrl(deepLink(grr, rc.sourceLocation), "jump to") :
-        slackUrl(grr.url + "/tree/" + grr.sha, "source");
+function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLink: DeepLink): slack.Attachment {
+    const link = rc.sourceLocation ? slack.url(deepLink(grr, rc.sourceLocation), "jump to") :
+        slack.url(grr.url + "/tree/" + grr.sha, "source");
 
     return {
         color: "#ff0000",
@@ -87,7 +77,7 @@ function reviewCommentToAttachment(grr: GitHubRepoRef, rc: ReviewComment, deepLi
         mrkdwn_in: ["text"],
         fallback: "error",
         actions: !!rc.fix ? [
-            buttonForCommand({ text: "Fix" }, rc.fix.command, rc.fix.params),
+            buttonForCommand({text: "Fix"}, rc.fix.command, rc.fix.params),
         ] : [],
     };
 }

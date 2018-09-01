@@ -16,7 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
-import { TruePushTest } from "../../api/mapping/support/pushTestUtilsTest";
+import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
 
 import * as assert from "power-assert";
 import { executePushReactions } from "../../../src/api-helper/listener/executePushReactions";

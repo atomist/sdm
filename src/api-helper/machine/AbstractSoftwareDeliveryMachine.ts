@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    logger,
-} from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
@@ -30,26 +26,21 @@ import { Goal } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
+import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import {
-    BuildGoal,
-    JustBuildGoal,
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../../api/machine/wellKnownGoals";
+import { StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
-import { PushRule } from "../../api/mapping/support/PushRule";
 import { PushRules } from "../../api/mapping/support/PushRules";
-import { StaticPushMapping } from "../../api/mapping/support/StaticPushMapping";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import {
     CodeInspection,
     CodeInspectionRegistration,
+    InspectionResult,
 } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
@@ -125,10 +116,10 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                                  goal: Goal,
                                  goalExecutor: ExecuteGoal,
                                  options?: Partial<{
-                                     pushTest: PushTest,
-                                     logInterpreter: InterpretLog,
-                                     progressReporter: ReportProgress,
-                                 }>): this {
+            pushTest: PushTest,
+            logInterpreter: InterpretLog,
+            progressReporter: ReportProgress,
+        }>): this {
         const optsToUse = {
             pushTest: AnyPush,
             logInterpreter: lastLinesLogInterpreter(implementationName, 10),
@@ -291,7 +282,7 @@ function toCodeInspectionCommand<PARAMS>(
         intent: !!eir.intent ? toStringArray(eir.intent).map(i => `verify ${i}`) : `verify ${eir.name}`,
         parameters: eir.parameters,
         projectTest: eir.projectTest,
-        onInspectionResults: eir.onInspectionResults,
+        onInspectionResults: eir.onInspectionResults || defaultOnInspectionResults(eir.name),
         description: eir.description,
         tags: eir.tags,
         targets: eir.targets,
@@ -299,6 +290,15 @@ function toCodeInspectionCommand<PARAMS>(
         repoFilter: eir.repoFilter,
         repoLoader: eir.repoLoader,
         inspection: eir.inspection || transformToInspection(eir.transform),
+    };
+}
+
+function defaultOnInspectionResults<PARAMS>(name: string) {
+    return async (results: Array<InspectionResult<InvarianceAssessment>>, ci: CommandListenerInvocation<PARAMS>) => {
+        const messages = results.map(r =>
+            // TODO cast will go with automation-client upgrade
+            `${(r.repoId as RemoteRepoRef).url}: Satisfies invariant _${name}_: \`${r.result.holds}\``);
+        return ci.addressChannels(messages.join("\n"));
     };
 }
 
@@ -315,7 +315,7 @@ function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARA
         return {
             id: p.id as RemoteRepoRef,
             holds: !result.edited,
-            details: "Transform return edited true",
+            details: `Transform result edited returned ${result.edited}`,
         };
     };
 }

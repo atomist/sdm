@@ -15,7 +15,6 @@
  */
 
 import { HandlerContext } from "@atomist/automation-client";
-import { twoTierDirectoryRepoFinder } from "@atomist/automation-client/operations/common/localRepoFinder";
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as _ from "lodash";
@@ -25,17 +24,12 @@ import { ReposInTeam } from "../../../typings/types";
 const PageSize = 100;
 
 /**
- * Use a GraphQL query to find all repos for the current team,
- * or look locally if appropriate, in current working directory
+ * Use a GraphQL query to find all repos for the current team
  * @param rrr RepoRefResolver used to find RepoRef from GraphQL result
- * @param cwd directory to look in if this is local
  * @constructor
  */
-export function allReposInTeam(rrr: RepoRefResolver, cwd?: string): RepoFinder {
+export function allReposInTeam(rrr: RepoRefResolver): RepoFinder {
     return (context: HandlerContext) => {
-        if (cwd) {
-            return twoTierDirectoryRepoFinder(cwd)(context);
-        }
         return queryForPage(rrr, context, 0);
     };
 }
