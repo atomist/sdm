@@ -97,6 +97,7 @@ import {
     MachineOrMachineOptions,
     toMachineOptions,
 } from "./toMachineOptions";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 
 export const GeneratorTag = "generator";
 export const InspectionTag = "inspection";
@@ -398,11 +399,28 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
         } as CommandListenerInvocation<P> & HandlerContext,
             params);
         try {
-            return isProject(r) ? successfulEdit(r, undefined) : r;
+            return isProject(r) ? successfulEdit(r, await isDirty(r)) : r;
         } catch (e) {
             return failedEdit(p, e);
         }
     };
+}
+
+async function isDirty(p: Project): Promise<boolean> {
+    if (isGitProject(p)) {
+        try {
+            const status = await p.gitStatus();
+            return !status.isClean;
+        } catch {
+            // Ignore
+        }
+    }
+    return undefined;
+}
+
+function isGitProject(p: Project): p is GitProject {
+    const maybe = p as GitProject;
+    return !!maybe.gitStatus;
 }
 
 /**
