@@ -59,8 +59,8 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  */
 export abstract class FulfillableGoal extends GoalWithPrecondition implements Registrable {
 
-    private fulfillments: Fulfillment[] = [];
-    private callbacks: GoalFulfillmentCallback[] = [];
+    private readonly fulfillments: Fulfillment[] = [];
+    private readonly callbacks: GoalFulfillmentCallback[] = [];
     private sdm: SoftwareDeliveryMachine;
 
     constructor(public definition: GoalDefinition) {
