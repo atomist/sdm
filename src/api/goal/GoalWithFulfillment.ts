@@ -59,8 +59,8 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  */
 export abstract class FulfillableGoal extends GoalWithPrecondition implements Registrable {
 
-    private fulfillments: Fulfillment[] = [];
-    private callbacks: GoalFulfillmentCallback[] = [];
+    private readonly fulfillments: Fulfillment[] = [];
+    private readonly callbacks: GoalFulfillmentCallback[] = [];
 
     constructor(public definition: GoalDefinition) {
         super(definition);
@@ -82,7 +82,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
             } else if (isSideEffect(fulfillment)) {
                 sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);
             }
-        })
+        });
         this.callbacks.forEach(cb => sdm.goalFulfillmentMapper.addFulfillmentCallback(cb));
     }
 

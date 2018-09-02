@@ -326,4 +326,3 @@ function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARA
         };
     };
 }
-
