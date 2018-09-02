@@ -14,25 +14,47 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandlerContext, RedirectResult } from "@atomist/automation-client";
-import { commandHandlerFrom, OnCommand } from "@atomist/automation-client/onCommand";
+import {
+    HandleCommand,
+    HandlerContext,
+    RedirectResult,
+} from "@atomist/automation-client";
+import {
+    commandHandlerFrom,
+    OnCommand,
+} from "@atomist/automation-client/onCommand";
+import { CommandDetails } from "@atomist/automation-client/operations/CommandDetails";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
-import { isRemoteRepoRef, RemoteRepoRef, RepoRef } from "@atomist/automation-client/operations/common/RepoId";
+import { ProjectAction } from "@atomist/automation-client/operations/common/projectAction";
+import {
+    isRemoteRepoRef,
+    RemoteRepoRef,
+    RepoRef,
+} from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { EditorFactory, GeneratorCommandDetails } from "@atomist/automation-client/operations/generate/generatorToCommand";
-import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { AnyProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { generate, ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { RepoCreationParameters } from "@atomist/automation-client/operations/generate/RepoCreationParameters";
 import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";
 import { addAtomistWebhook } from "@atomist/automation-client/operations/generate/support/addAtomistWebhook";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { isProject, Project } from "@atomist/automation-client/project/Project";
+import {
+    isProject,
+    Project,
+} from "@atomist/automation-client/project/Project";
 import { QueryNoCacheOptions } from "@atomist/automation-client/spi/graph/GraphClient";
-import { Maker, toFactory } from "@atomist/automation-client/util/constructionUtils";
+import {
+    Maker,
+    toFactory,
+} from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";
 import { projectLoaderRepoLoader } from "../../machine/projectLoaderRepoLoader";
-import { MachineOrMachineOptions, toMachineOptions } from "../../machine/toMachineOptions";
+import {
+    MachineOrMachineOptions,
+    toMachineOptions,
+} from "../../machine/toMachineOptions";
 import { CachingProjectLoader } from "../../project/CachingProjectLoader";
 
 /**
@@ -61,6 +83,14 @@ export function generatorCommand<P>(sdm: MachineOrMachineOptions,
             toFactory(fallbackTarget)()),
         name,
         detailsToUse.description, detailsToUse.intent, detailsToUse.tags);
+}
+
+export type EditorFactory<P> = (params: P, ctx: HandlerContext) => AnyProjectEditor<P>;
+interface GeneratorCommandDetails<P extends SeedDrivenGeneratorParameters> extends CommandDetails {
+
+    redirecter: (r: RepoRef) => string;
+    projectPersister?: ProjectPersister;
+    afterAction?: ProjectAction<P>;
 }
 
 /**

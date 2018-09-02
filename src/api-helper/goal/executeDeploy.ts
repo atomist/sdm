@@ -29,7 +29,7 @@ import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     ArtifactStore,
     DeployableArtifact,
@@ -54,7 +54,7 @@ export function executeDeploy(artifactStore: ArtifactStore,
 
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { sdmGoal, credentials, id, context, progressLog } = goalInvocation;
-        const atomistTeam = context.teamId;
+        const atomistTeam = context.workspaceId;
 
         logger.info("Deploying project %s:%s with target [%j]", id.owner, id.repo, target);
 
@@ -128,7 +128,7 @@ export async function setEndpointGoalOnSuccessfulDeploy(params: {
 }
 
 function markEndpointStatus(parameters: {
-    context: HandlerContext, sdmGoal: SdmGoal, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
+    context: HandlerContext, sdmGoal: SdmGoalEvent, endpointGoal: Goal, newState: SdmGoalState, endpoint?: string,
     error?: Error,
 }) {
     const {context, sdmGoal, endpointGoal, newState, endpoint, error} = parameters;

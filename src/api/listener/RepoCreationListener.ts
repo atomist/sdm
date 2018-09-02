@@ -33,6 +33,6 @@ export interface RepoCreationListenerInvocation extends RepoListenerInvocation {
 /**
  * Respond to the creation of a new repo.
  * Note that it may not have code in it, so you may want to use
- * a PushListener! See SoftwareDeliveryMachine.addNewRepoWithCodeActions
+ * a PushListener! See SoftwareDeliveryMachine.addFirstPushListener
  */
 export type RepoCreationListener = SdmListener<RepoCreationListenerInvocation>;

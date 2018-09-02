@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { SdmGoal } from "../../../api/goal/SdmGoal";
 import { InterpretLog } from "../../../spi/log/InterpretedLog";
 import { RepoContext } from "../../context/SdmContext";
 import { PushListenerInvocation } from "../../listener/PushListener";
@@ -22,6 +21,7 @@ import { PushTest } from "../../mapping/PushTest";
 import { Goal } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
 import { ReportProgress } from "../progress/ReportProgress";
+import { SdmGoalEvent } from "../SdmGoalEvent";
 import { IsolatedGoalLauncher } from "./IsolatedGoalLauncher";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
@@ -56,7 +56,7 @@ export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
  */
 export interface GoalFulfillmentCallback {
     goal: Goal;
-    callback: (goal: SdmGoal, context: RepoContext) => Promise<SdmGoal>;
+    callback: (goal: SdmGoalEvent, context: RepoContext) => Promise<SdmGoalEvent>;
 }
 
 /**
@@ -68,12 +68,12 @@ export interface SdmGoalImplementationMapper {
 
     addFulfillmentCallback(callback: GoalFulfillmentCallback): this;
 
-    findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation;
+    findImplementationBySdmGoal(goal: SdmGoalEvent, inv: PushListenerInvocation): Promise<GoalImplementation>;
 
     getIsolatedGoalLauncher(): IsolatedGoalLauncher;
 
     findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined>;
 
-    findFulfillmentCallbackForGoal(g: SdmGoal): GoalFulfillmentCallback[];
+    findFulfillmentCallbackForGoal(g: SdmGoalEvent): GoalFulfillmentCallback[];
 
 }

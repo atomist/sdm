@@ -16,6 +16,7 @@
 
 import { configurationValue } from "@atomist/automation-client/configuration";
 import * as clientSpawned from "@atomist/automation-client/util/spawned";
+// tslint:disable-next-line:no-duplicate-imports
 import {
     asSpawnCommand,
     ChildProcessResult,

@@ -15,6 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { registerShutdownHook } from "@atomist/automation-client/internal/util/shutdown";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import * as fs from "fs-extra";
 import * as sha from "sha-regex";
@@ -35,17 +36,18 @@ import { SimpleCache } from "./support/SimpleCache";
 export class CachingProjectLoader implements ProjectLoader {
 
     private readonly cache: SimpleCache<GitProject>;
+    private readonly deleteOnExit: string[] = [];
 
     public async doWithProject<T>(params: ProjectLoadingParameters, action: WithLoadedProject<T>): Promise<T> {
         // read-only == false means the consumer is going to make changes; don't cache such projects
         if (!params.readOnly) {
             logger.info("Forcing fresh clone for non readonly use of '%j'", params.id);
-            return saveAndRunAction<T>(this.delegate, params, action);
+            return this.saveAndRunAction<T>(this.delegate, params, action);
         }
         // Caching projects by branch references is wrong as the branch might change; give out new versions
         if (!sha({ exact: true }).test(params.id.sha)) {
             logger.info("Forcing fresh clone for branch use of '%j'", params.id);
-            return saveAndRunAction<T>(this.delegate, params, action);
+            return this.saveAndRunAction<T>(this.delegate, params, action);
         }
 
         logger.debug("Attempting to reuse clone for readonly use of '%j'", params.id);
@@ -72,48 +74,65 @@ export class CachingProjectLoader implements ProjectLoader {
         return action(project);
     }
 
+    /**
+     * Save project and run provided WithLoadedProject action on it.
+     * @param delegate
+     * @param params
+     * @param action
+     */
+    private async saveAndRunAction<T>(delegate: ProjectLoader,
+                                      params: ProjectLoadingParameters,
+                                      action: WithLoadedProject): Promise<T> {
+        const p = await save(delegate, params);
+        if (params.context && params.context.lifecycle) {
+            params.context.lifecycle.registerDisposable(async () => this.cleanUp(p.baseDir, "disposal"));
+        } else {
+            // schedule a cleanup timer but don't block the Node.js event loop for this
+            setTimeout(() => this.cleanUp(p.baseDir, "timeout"), 10000).unref();
+            // also store a reference to this project to be deleted when we exit
+            this.deleteOnExit.push(p.baseDir);
+        }
+        return action(p);
+    }
+
+    /**
+     * Eviction callback to clean up file system resources.
+     * @param dir
+     * @param reason
+     */
+    private cleanUp(dir: string, reason: "timeout" | "disposal" | "eviction" | "shutdown"): void {
+        if (dir && fs.existsSync(dir)) {
+            if (reason === "timeout") {
+                logger.debug(`Deleting project '%s' because a timeout passed`, dir);
+            } else {
+                logger.debug(`Deleting project '%j' at '%s' because %s was triggered`, dir, reason);
+            }
+            try {
+                fs.removeSync(dir);
+                const ix = this.deleteOnExit.indexOf(dir);
+                if (ix >= 0) {
+                    this.deleteOnExit.slice(ix, 1);
+                }
+            } catch (err) {
+                logger.warn(err);
+            }
+        }
+    }
+
     constructor(
         private readonly delegate: ProjectLoader = CloningProjectLoader,
         maxEntries: number = 20) {
-        this.cache = new LruCache<GitProject>(maxEntries, p => cleanUp(p, "eviction"));
-    }
-}
+        this.cache = new LruCache<GitProject>(maxEntries, p => this.cleanUp(p.baseDir, "eviction"));
 
-/**
- * Save project and run provided WithLoadedProject action on it.
- * @param delegate
- * @param params
- * @param action
- */
-async function saveAndRunAction<T>(delegate: ProjectLoader,
-                                   params: ProjectLoadingParameters,
-                                   action: WithLoadedProject): Promise<T> {
-    const p = await save(delegate, params);
-    if (params.context && params.context.lifecycle) {
-        params.context.lifecycle.registerDisposable(async () => cleanUp(p, "disposal"));
-    } else {
-        // schedule a cleanup timer but don't block the Node.js event loop for this
-        setTimeout(() => cleanUp(p, "timeout"), 10000).unref();
-    }
-    return action(p);
-}
-
-/**
- * Eviction callback to clean up file system resources.
- * @param p
- */
-function cleanUp(p: GitProject, reason: "timeout" | "disposal" | "eviction"): void {
-    if (p && p.baseDir && fs.existsSync(p.baseDir)) {
-        if (reason === "timeout") {
-            logger.info(`Deleting project '%j' at '%s' because a timeout passed`, p.id, p.baseDir);
-        } else {
-            logger.debug(`Deleting project '%j' at '%s' because %s was triggered`, p.id, p.baseDir, reason);
-        }
-        try {
-            fs.removeSync(p.baseDir);
-        } catch (err) {
-            logger.warn(err);
-        }
+        registerShutdownHook(async () => {
+            if (this.deleteOnExit.length > 0) {
+                logger.debug("Deleting cached projects");
+            }
+            this.deleteOnExit.forEach(p => {
+                this.cleanUp(p, "shutdown");
+            });
+            return 0;
+        });
     }
 }
 

@@ -14,30 +14,36 @@
  * limitations under the License.
  */
 
-import { AutomationContextAware, HandlerContext } from "@atomist/automation-client";
+import {
+    AutomationContextAware,
+    HandlerContext,
+} from "@atomist/automation-client";
 import { CommandIncoming } from "@atomist/automation-client/internal/transport/RequestProcessor";
-import { Destination, MessageClient, MessageOptions, SlackMessageClient } from "@atomist/automation-client/spi/message/MessageClient";
+import {
+    Destination,
+    MessageClient,
+    MessageOptions,
+    SlackMessageClient,
+} from "@atomist/automation-client/spi/message/MessageClient";
 import { SlackMessage } from "@atomist/slack-messages";
 
 /**
  * Convenient function to allow creating fake contexts.
  * Useful for testing
- * @param {string} teamId
+ * @param {string} workspaceId
  * @return {any}
  */
-export function fakeContext(teamId: string = "T123"): HandlerContext & AutomationContextAware {
+export function fakeContext(workspaceId: string = "T123"): HandlerContext & AutomationContextAware {
     const correlationId = "foo";
     return {
-        teamId,
-        workspaceId: teamId,
+        workspaceId,
         messageClient: new DevNullMessageClient(),
         correlationId,
         context: {
             name: "test-context",
-            teamId,
-            workspaceId: teamId,
-            workspaceName: teamId,
-            teamName: teamId,
+            workspaceId,
+            workspaceName: workspaceId,
+            teamName: workspaceId,
             operation: "operation",
             version: "0.1.0",
             invocationId: "inv-id",

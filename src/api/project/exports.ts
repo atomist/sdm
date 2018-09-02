@@ -25,11 +25,11 @@ export { NodeFsLocalProject } from "@atomist/automation-client/project/local/Nod
 
 export * from "@atomist/automation-client/project/util/projectUtils";
 
+import * as validationPatterns from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 import * as parseUtils from "@atomist/automation-client/project/util/parseUtils";
+import * as astUtils from "@atomist/automation-client/tree/ast/astUtils";
 
 export { parseUtils };
-
-import * as astUtils from "@atomist/automation-client/tree/ast/astUtils";
 
 export { astUtils };
 
@@ -45,7 +45,6 @@ export {
     DefaultReviewComment, ProjectReview, ReviewComment, ReviewResult, Severity,
 } from "@atomist/automation-client/operations/review/ReviewResult";
 
-import * as validationPatterns from "@atomist/automation-client/operations/common/params/gitHubPatterns";
 export { validationPatterns };
 
 export { SeedDrivenGeneratorParameters } from "@atomist/automation-client/operations/generate/SeedDrivenGeneratorParameters";

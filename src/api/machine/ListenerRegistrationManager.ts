@@ -39,7 +39,6 @@ import { AutofixRegistration } from "../registration/AutofixRegistration";
 import { AutoInspectRegistration } from "../registration/AutoInspectRegistration";
 import { FingerprinterRegistration } from "../registration/FingerprinterRegistration";
 import { PushImpactListenerRegisterable } from "../registration/PushImpactListenerRegistration";
-import { ReviewerRegistration } from "../registration/ReviewerRegistration";
 import { ReviewListenerRegistration } from "../registration/ReviewListenerRegistration";
 
 /**
@@ -76,7 +75,7 @@ export interface ListenerRegistrationManager {
     addBuildListener(l: BuildListener);
 
     /**
-     * You probably mean to use addNewRepoWithCodeListener!
+     * You probably mean to use addFirstPushListener!
      * This responds to a repo creation, but there may be no
      * code in it. The invocation's addressChannels method with have no effect:
      * use the context if you want to send messages
@@ -101,7 +100,7 @@ export interface ListenerRegistrationManager {
      * @param {PushListener} pl
      * @return {this}
      */
-    addNewRepoWithCodeListener(pl: PushListener): this;
+    addFirstPushListener(pl: PushListener): this;
 
     addPullRequestListener(prl: PullRequestListener): this;
 
@@ -117,14 +116,7 @@ export interface ListenerRegistrationManager {
     addAutoInspectRegistration<R, PARAMS= NoParameters>(r: AutoInspectRegistration<R, PARAMS>): this;
 
     /**
-     * @deprecated use addAutoInspectRegistration
-     * @param {ReviewerRegistration} r
-     * @return {this}
-     */
-    addReviewerRegistration(r: ReviewerRegistration): this;
-
-    /**
-     * Add a registration to listen to reviews. Will be invoked during execution of a ReviewGoal
+     * Add a registration to listen to reviews. Will be invoked during execution of a CodeInspectionGoal
      * @param r registration
      * @return {this}
      */
@@ -185,7 +177,7 @@ export interface ListenerRegistrationManager {
 
     pullRequestListeners: PullRequestListener[];
 
-    newRepoWithCodeListeners: PushListener[];
+    firstPushListeners: PushListener[];
 
     channelLinkListeners: ChannelLinkListener[];
 

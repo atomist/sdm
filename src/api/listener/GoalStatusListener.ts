@@ -15,7 +15,10 @@
  */
 
 import { SdmGoalEvent } from "../goal/SdmGoalEvent";
-import { RepoListenerInvocation, SdmListener } from "./Listener";
+import {
+    RepoListenerInvocation,
+    SdmListener,
+} from "./Listener";
 
 /**
  * Invokes when an event occurs relating to execution of a goal

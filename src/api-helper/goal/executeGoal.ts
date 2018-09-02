@@ -22,7 +22,6 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { configurationValue } from "@atomist/automation-client/configuration";
-import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
@@ -35,7 +34,10 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
-import { GoalExecutionListener, GoalExecutionListenerInvocation } from "../../api/listener/GoalStatusListener";
+import {
+    GoalExecutionListener,
+    GoalExecutionListenerInvocation,
+} from "../../api/listener/GoalStatusListener";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
@@ -44,6 +46,7 @@ import { WriteToAllProgressLog } from "../log/WriteToAllProgressLog";
 import { toToken } from "../misc/credentials/toToken";
 import { stringifyError } from "../misc/errorPrinting";
 import { reportFailureInterpretation } from "../misc/reportFailureInterpretation";
+import { serializeResult } from "../misc/result";
 import { spawnAndWatch } from "../misc/spawned";
 import {
     descriptionFromState,
@@ -198,7 +201,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 env: {
                     ...process.env,
                     GITHUB_TOKEN: toToken(credentials),
-                    ATOMIST_TEAM: context.teamId,
+                    ATOMIST_TEAM: context.workspaceId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
                     ATOMIST_REPO: sdmGoal.push.repo.name,
                     ATOMIST_OWNER: sdmGoal.push.repo.owner,
@@ -217,7 +220,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 result = Success;
             }
 
-            progressLog.write(`Result: ${JSON.stringify(result, possibleAxiosObjectReplacer, 0)}`);
+            progressLog.write(`Result: ${serializeResult(result)}`);
             progressLog.write("\\--");
             await progressLog.flush();
             return result;
@@ -230,26 +233,33 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
     });
 }
 
-function goalToHookFile(sdmGoal: SdmGoalEvent, prefix: string): string {
+function goalToHookFile(sdmGoal: SdmGoalEvent,
+                        prefix: string): string {
     return `${prefix}-${sdmGoal.environment.toLocaleLowerCase().slice(2)}-${
         sdmGoal.name.toLocaleLowerCase().replace(" ", "_")}`;
 }
 
 export function markStatus(parameters: {
-    context: HandlerContext, sdmGoal: SdmGoalEvent, goal: Goal, result: ExecuteGoalResult,
-    error?: Error, progressLogUrl: string,
+    context: HandlerContext,
+    sdmGoal: SdmGoalEvent,
+    goal: Goal,
+    result: ExecuteGoalResult,
+    error?: Error,
+    progressLogUrl: string,
 }) {
     const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
     const newState = result.code !== 0 ? SdmGoalState.failure :
         result.requireApproval ? SdmGoalState.waiting_for_approval : SdmGoalState.success;
 
-    return updateGoal(context, sdmGoal,
+    return updateGoal(
+        context,
+        sdmGoal,
         {
             url: progressLogUrl,
             externalUrl: result.targetUrl,
             state: newState,
             phase: sdmGoal.phase,
-            description: descriptionFromState(goal, newState),
+            description: result.description ? result.description : descriptionFromState(goal, newState),
             error,
         });
 }
@@ -265,11 +275,13 @@ async function markGoalInProcess(parameters: {
     sdmGoal.description = goal.inProcessDescription;
     sdmGoal.url = progressLogUrl;
     try {
-        await updateGoal(ctx, sdmGoal, {
-            url: progressLogUrl,
-            description: goal.inProcessDescription,
-            state: SdmGoalState.in_process,
-        });
+        await updateGoal(ctx,
+            sdmGoal,
+            {
+                url: progressLogUrl,
+                description: goal.inProcessDescription,
+                state: SdmGoalState.in_process,
+            });
     } catch (err) {
         logger.warn("Failed to update %s goal to tell people we are working on it: \n%s", goal.name, err.stack);
     }
@@ -281,13 +293,13 @@ async function markGoalInProcess(parameters: {
  * @return {Promise<void>}
  */
 async function reportGoalError(parameters: {
-                                   goal: Goal,
-                                   implementationName: string,
-                                   addressChannels: AddressChannels,
-                                   progressLog: ProgressLog,
-                                   id: RemoteRepoRef,
-                                   logInterpreter: InterpretLog,
-                               },
+    goal: Goal,
+    implementationName: string,
+    addressChannels: AddressChannels,
+    progressLog: ProgressLog,
+    id: RemoteRepoRef,
+    logInterpreter: InterpretLog,
+},
                                err: GoalExecutionError) {
     const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
@@ -379,8 +391,8 @@ class ProgressReportingProgressLog implements ProgressLog {
                         description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
-                    // Intentionally empty
-                })
+                        // Intentionally empty
+                    })
                     .catch(err => {
                         logger.warn(`Error occurred reporting progress: %s`, err.message);
                     });

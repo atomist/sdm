@@ -19,7 +19,7 @@ import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitH
 import * as assert from "power-assert";
 import { PushTest, pushTest } from "../../../../src/api/mapping/PushTest";
 import { PushRules } from "../../../../src/api/mapping/support/PushRules";
-import { FalsePushTest, TruePushTest } from "./pushTestUtilsTest";
+import { FalsePushTest, TruePushTest } from "./pushTestUtils.test";
 
 export const UndefinedPushTest: PushTest = pushTest("true", async () => undefined);
 export const NullPushTest: PushTest = pushTest("true", async () => null);

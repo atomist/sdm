@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import { Builder } from "../../spi/build/Builder";
-import { Target } from "../../spi/deploy/Target";
 import { GoalSetter } from "../mapping/GoalSetter";
-import { PushRule } from "../mapping/support/PushRule";
-import { StaticPushMapping } from "../mapping/support/StaticPushMapping";
 import { EventRegistrationManager } from "../registration/EventRegistrationManager";
 import { IngesterRegistrationManager } from "../registration/IngesterRegistrationManager";
 import { EnforceableProjectInvariantRegistration } from "../registration/ProjectInvariantRegistration";
@@ -102,21 +98,5 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
     addExtensionPacks(...packs: ExtensionPack[]): this;
 
     readonly extensionPacks: ExtensionPack[];
-
-    /**
-     * Add build rules. *May be removed in future: only applicable to local SDM work*
-     * @param {PushRule<Builder> | Array<PushRule<Builder>>} rules
-     * @return {this}
-     * @deprecated
-     */
-    addBuildRules(...rules: Array<PushRule<Builder> | Array<PushRule<Builder>>>): this;
-
-    /**
-     * Add build rules. *May be removed in future: only applicable to local SDM work*
-     * @param {StaticPushMapping<Target> | Array<StaticPushMapping<Target>>} rules
-     * @return {this}
-     * @deprecated
-     */
-    addDeployRules(...rules: Array<StaticPushMapping<Target> | Array<StaticPushMapping<Target>>>): this;
 
 }

@@ -17,7 +17,10 @@
 import { logger } from "@atomist/automation-client";
 import { PredicateMapping } from "../PredicateMapping";
 import { DefaultPredicateMappingCostAnalyzer } from "./defaultPredicateMappingCostAnalyzer";
-import { ExpectedPredicateMappingCost, PredicateMappingCostAnalyzer } from "./PredicateMappingCostAnalyzer";
+import {
+    ExpectedPredicateMappingCost,
+    PredicateMappingCostAnalyzer,
+} from "./PredicateMappingCostAnalyzer";
 
 /**
  * Return the opposite of this predicate mapping

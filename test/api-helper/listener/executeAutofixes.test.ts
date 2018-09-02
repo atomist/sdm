@@ -29,7 +29,7 @@ import {
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
 import { SingleProjectLoader } from "../../../src/api-helper/test/SingleProjectLoader";
 import { GoalInvocation } from "../../../src/api/goal/GoalInvocation";
-import { SdmGoal } from "../../../src/api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../../src/api/goal/SdmGoalEvent";
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { pushTest } from "../../../src/api/mapping/PushTest";
 import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
@@ -80,7 +80,7 @@ const FakeRepoRefResolver: RepoRefResolver = {
         throw new Error("Not implemented");
     },
 
-    repoRefFromSdmGoal(sdmGoal: SdmGoal, provider: ScmProvider.ScmProvider): RemoteRepoRef {
+    repoRefFromSdmGoal(sdmGoal: SdmGoalEvent, provider: ScmProvider.ScmProvider): RemoteRepoRef {
         throw new Error("Not implemented");
     },
 

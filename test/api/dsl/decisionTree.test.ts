@@ -21,7 +21,7 @@ import { whenPushSatisfies } from "../../../src/api/dsl/goalDsl";
 import { Goal } from "../../../src/api/goal/Goal";
 import { Goals } from "../../../src/api/goal/Goals";
 import { PushMapping } from "../../../src/api/mapping/PushMapping";
-import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtilsTest";
+import { FalsePushTest, TruePushTest } from "../mapping/support/pushTestUtils.test";
 
 const FrogPushMapping: PushMapping<string> = {
     name: "frog",

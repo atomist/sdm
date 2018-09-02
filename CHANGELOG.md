@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 -   Added `EnforceableProjectInvariantRegistration`.
 -   Added `AutoInspectRegistration`.
+-   Register shutdown hooks to clean up cloned directories. [#494](https://github.com/atomist/sdm/issues/494)
+-   Allow to set description from a `ExecuteGoal`. [#1d18bf9](https://github.com/atomist/sdm/commit/1d18bf9a7da13a103d5364b4d5edb5aec6bb10c5)
+-   Add `IsPushToPullRequest` push test. [#496](https://github.com/atomist/sdm/issues/496)
+-   Add reason to a goal approval vote. [#eaf2f60](https://github.com/atomist/sdm/commit/eaf2f60cecc51f2b8c057307397721f7d3c0cb96)
 
 ### Changed
 
@@ -18,6 +22,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   **BREAKING** `CodeTransformRegistration.react` method renamed to `onTransformResults`.
 -   **BREAKING** `CodeInspectionRegistration.react` method renamed to `onInspectionResults`.
 -   **BREAKING** `ReviewerRegistration.action` renamed `inspect`.
+-   **BREAKING** Rename `ReviewGoal` -> \`CodeInspectionGoal. [#e30b6c1](https://github.com/atomist/sdm/commit/e30b6c15ffc3b35bf1fc09cd822f9a6fee1ee5a6)
+-   **BREAKING** Evaluate pushTest when selecting goal implementations. [#493](https://github.com/atomist/sdm/issues/493)
+-   **BREAKING** `addNewRepoWithCodeListener` renamed `addFirstPushListener`.
+-   Push tests for adding a goal implementation are not run. [#490](https://github.com/atomist/sdm/issues/490)
+-   Transform-testNaming. [#502](https://github.com/atomist/sdm/issues/502)
+-   **BREAKING** Remove unimplemented property observesOnly. [#501](https://github.com/atomist/sdm/issues/501)
+
+### Fixed
+
+-   Fix incorrect print statement. [#497](https://github.com/atomist/sdm/issues/497)
+-   SDM doesn't start with 1.0.0-M.1. [#495](https://github.com/atomist/sdm/issues/495)
 
 ## [1.0.0-M.1](https://github.com/atomist/sdm/compare/0.4.8...1.0.0-M.1) - 2018-08-27
 

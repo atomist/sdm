@@ -15,7 +15,7 @@
  */
 
 import { Goal } from "../../api/goal/Goal";
-import { SdmGoal } from "../../api/goal/SdmGoal";
+import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import { IsolatedGoalLauncher } from "../../api/goal/support/IsolatedGoalLauncher";
 import {
     GoalFulfillment,
@@ -38,18 +38,26 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
     constructor(private readonly goalLauncher: IsolatedGoalLauncher) {
     }
 
-    public findImplementationBySdmGoal(goal: SdmGoal): GoalImplementation {
+    public async findImplementationBySdmGoal(goal: SdmGoalEvent, inv: PushListenerInvocation): Promise<GoalImplementation> {
         const matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
             m.goal.context === goal.externalKey);
-        if (matchedNames.length > 1) {
+
+        const matchedGoalImplementations = [];
+        for (const implementation of matchedNames) {
+            if (await implementation.pushTest.mapping(inv)) {
+                matchedGoalImplementations.push(implementation);
+            }
+        }
+
+        if (matchedGoalImplementations.length > 1) {
             throw new Error("Multiple mappings for name " + goal.fulfillment.name);
         }
-        if (matchedNames.length === 0) {
+        if (matchedGoalImplementations.length === 0) {
             throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +
                 `Found ${this.implementations.map(impl => impl.implementationName)}`);
         }
-        return matchedNames[0];
+        return matchedGoalImplementations[0];
     }
 
     public addImplementation(implementation: GoalImplementation): this {
@@ -85,7 +93,7 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
         return undefined;
     }
 
-    public findFulfillmentCallbackForGoal(g: SdmGoal): GoalFulfillmentCallback[] {
+    public findFulfillmentCallbackForGoal(g: SdmGoalEvent): GoalFulfillmentCallback[] {
         return this.callbacks.filter(c =>
             c.goal.name === g.name &&
             // This slice is required because environment is suffixed with /

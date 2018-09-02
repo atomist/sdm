@@ -15,9 +15,15 @@
  */
 
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { ProjectReview, RemoteRepoRef } from "../project/exports";
+import {
+    ProjectReview,
+    RemoteRepoRef,
+} from "../project/exports";
 import { AutofixRegistration } from "./AutofixRegistration";
-import { CodeInspectionRegistration, InspectionActions } from "./CodeInspectionRegistration";
+import {
+    CodeInspectionRegistration,
+    InspectionActions,
+} from "./CodeInspectionRegistration";
 import { CodeTransformRegistration } from "./CodeTransformRegistration";
 
 /**

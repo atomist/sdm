@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { SdmGoalEvent } from "./SdmGoalEvent";
+import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
+import * as stringify from "json-stringify-safe";
+import * as _ from "lodash";
 
-/**
- * @deprecated Use SdmGoalEvent for most things. If you're storing/updating a goal, use SdmGoalMessage.
- */
-export type SdmGoal = SdmGoalEvent;
-
-export { SdmGoalKey } from "./SdmGoalMessage";
+export function serializeResult(result: any): string {
+    const safeResult = _.omit(result, "childProcess");
+    return stringify(safeResult, possibleAxiosObjectReplacer, 0);
+}

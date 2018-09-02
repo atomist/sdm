@@ -23,7 +23,7 @@ import {
     allPredicatesSatisfied,
     anyPredicateSatisfied, notPredicate,
 } from "../../../../src/api/mapping/support/projectPredicateUtils";
-import { BigProject, FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtilsTest";
+import { BigProject, FalseProjectPredicate, TrueProjectPredicate } from "./pushTestUtils.test";
 
 const id = new GitHubRepoRef("atomist", "github-sdm");
 

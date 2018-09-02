@@ -23,7 +23,7 @@ import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementati
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
-import { GoalApprovalRequestVote } from "../registration/GoalApprovalRequestVote";
+import { GoalApprovalRequestVoter } from "../registration/GoalApprovalRequestVoter";
 import { MachineConfiguration } from "./MachineConfiguration";
 import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineOptions";
 
@@ -39,14 +39,6 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * @return {PushMapping<Goals>}
      */
     pushMapping: PushMapping<Goals>;
-
-    /**
-     * Return if this SDM purely observes, rather than changes things in an org.
-     * Note that this cannot be 100% reliable, as arbitrary event handlers
-     * could be making commits, initiating deployments etc.
-     * @return {boolean}
-     */
-    observesOnly: boolean;
 
     /**
      * Provide the implementation for a goal.
@@ -104,6 +96,6 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * Add vote that gets to decide whether to deny or grant goal approval requests.
      * @param vote
      */
-    addGoalApprovalRequestVote(vote: GoalApprovalRequestVote): this;
+    addGoalApprovalRequestVoter(vote: GoalApprovalRequestVoter): this;
 
 }

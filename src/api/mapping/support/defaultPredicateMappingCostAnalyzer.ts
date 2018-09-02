@@ -16,7 +16,10 @@
 
 import { logger } from "@atomist/automation-client";
 import { PredicateMapping } from "../PredicateMapping";
-import { ExpectedPredicateMappingCost, PredicateMappingCostAnalyzer } from "./PredicateMappingCostAnalyzer";
+import {
+    ExpectedPredicateMappingCost,
+    PredicateMappingCostAnalyzer,
+} from "./PredicateMappingCostAnalyzer";
 
 /**
  * Indications that evaluating this test may be expensive
