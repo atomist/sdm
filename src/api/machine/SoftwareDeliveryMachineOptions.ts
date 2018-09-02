@@ -26,6 +26,7 @@ import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { IsolatedGoalLauncher } from "../goal/support/IsolatedGoalLauncher";
 import { RepoTargets } from "./RepoTargets";
 
 /**
@@ -80,6 +81,11 @@ export interface SoftwareDeliveryMachineOptions {
      * If set, can still be overridden by individual editor registrations.
      */
     targets?: Maker<RepoTargets>;
+
+    /**
+     * Strategy for launching goals in different infrastructure
+     */
+    goalLauncher?: IsolatedGoalLauncher;
 
 }
 

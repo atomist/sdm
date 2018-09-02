@@ -19,7 +19,7 @@ import { Goal } from "../goal/Goal";
 import { ExecuteGoal } from "../goal/GoalInvocation";
 import { Goals } from "../goal/Goals";
 import { ReportProgress } from "../goal/progress/ReportProgress";
-import { SdmGoalImplementationMapper } from "../goal/support/SdmGoalImplementationMapper";
+import { GoalImplementationMapper } from "../goal/support/GoalImplementationMapper";
 import { GoalSetter } from "../mapping/GoalSetter";
 import { PushMapping } from "../mapping/PushMapping";
 import { PushTest } from "../mapping/PushTest";
@@ -70,10 +70,10 @@ export interface GoalDrivenMachine<O extends SoftwareDeliveryMachineConfiguratio
      * @param {string} sideEffectName
      * @param {PushTest} pushTest
      */
-    addKnownSideEffect(goal: Goal, sideEffectName: string,
-                       pushTest: PushTest): this;
+    addGoalSideEffect(goal: Goal, sideEffectName: string,
+                      pushTest: PushTest): this;
 
-    readonly goalFulfillmentMapper: SdmGoalImplementationMapper;
+    readonly goalFulfillmentMapper: GoalImplementationMapper;
 
     /**
      * Add goal setting contributions that will be added into SDM goal setting.

@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    automationClientInstance,
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
@@ -217,8 +222,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      * @param {string} sideEffectName
      * @param {PushTest} pushTest
      */
-    public addKnownSideEffect(goal: Goal, sideEffectName: string,
-                              pushTest: PushTest = AnyPush): this {
+    public addGoalSideEffect(goal: Goal,
+                             sideEffectName: string,
+                             pushTest: PushTest = AnyPush): this {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
             sideEffectName, pushTest,
@@ -318,4 +324,8 @@ function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARA
             details: `Transform result edited returned ${result.edited}`,
         };
     };
+}
+
+export function sdmInstance(): SoftwareDeliveryMachine {
+    return (automationClientInstance() ? automationClientInstance().configuration.sdm : undefined) as SoftwareDeliveryMachine;
 }

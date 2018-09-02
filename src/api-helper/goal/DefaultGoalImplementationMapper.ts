@@ -16,51 +16,47 @@
 
 import { Goal } from "../../api/goal/Goal";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
-import { IsolatedGoalLauncher } from "../../api/goal/support/IsolatedGoalLauncher";
 import {
     GoalFulfillment,
     GoalFulfillmentCallback,
     GoalImplementation,
+    GoalImplementationMapper,
     GoalSideEffect,
-    SdmGoalImplementationMapper,
-} from "../../api/goal/support/SdmGoalImplementationMapper";
+} from "../../api/goal/support/GoalImplementationMapper";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 
 /**
- * Concrete implementation of SdmGoalImplementationMapper
+ * Concrete implementation of GoalImplementationMapper
  */
-export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMapper {
+export class DefaultGoalImplementationMapper implements GoalImplementationMapper {
 
     private readonly implementations: GoalImplementation[] = [];
     private readonly sideEffects: GoalSideEffect[] = [];
     private readonly callbacks: GoalFulfillmentCallback[] = [];
 
-    constructor(private readonly goalLauncher: IsolatedGoalLauncher) {
-    }
-
-    public async findImplementationBySdmGoal(goal: SdmGoalEvent, inv: PushListenerInvocation): Promise<GoalImplementation> {
+    public findImplementationBySdmGoal(goal: SdmGoalEvent): GoalImplementation {
         const matchedNames = this.implementations.filter(m =>
             m.implementationName === goal.fulfillment.name &&
             m.goal.context === goal.externalKey);
 
-        const matchedGoalImplementations = [];
-        for (const implementation of matchedNames) {
-            if (await implementation.pushTest.mapping(inv)) {
-                matchedGoalImplementations.push(implementation);
-            }
-        }
-
-        if (matchedGoalImplementations.length > 1) {
+        if (matchedNames.length > 1) {
             throw new Error("Multiple mappings for name " + goal.fulfillment.name);
         }
-        if (matchedGoalImplementations.length === 0) {
+        if (matchedNames.length === 0) {
             throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +
                 `Found ${this.implementations.map(impl => impl.implementationName)}`);
         }
-        return matchedGoalImplementations[0];
+        return matchedNames[0];
     }
 
     public addImplementation(implementation: GoalImplementation): this {
+        if (this.implementations.some(i =>
+            i.implementationName === implementation.implementationName &&
+            i.goal.name === implementation.goal.name &&
+            i.goal.environment === implementation.goal.environment)) {
+            throw new Error(`Implementation with name '${implementation.implementationName
+                }' already registered for goal '${implementation.goal.name}'`);
+        }
         this.implementations.push(implementation);
         return this;
     }
@@ -99,9 +95,5 @@ export class SdmGoalImplementationMapperImpl implements SdmGoalImplementationMap
             // This slice is required because environment is suffixed with /
             (c.goal.definition.environment.slice(0, -1) === g.environment
                 || c.goal.definition.environment === g.environment));
-    }
-
-    public getIsolatedGoalLauncher(): IsolatedGoalLauncher {
-        return this.goalLauncher;
     }
 }
