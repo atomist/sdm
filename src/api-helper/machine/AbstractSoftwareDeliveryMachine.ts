@@ -58,6 +58,7 @@ import {
     EnforceableProjectInvariantRegistration,
     InvarianceAssessment,
 } from "../../api/registration/ProjectInvariantRegistration";
+import { WellKnownGoals } from "../../pack/well-known-goals/addWellKnownGoals";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
     executeVerifyEndpoint,
@@ -274,10 +275,13 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                           goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         // If we didn't get any goal setters don't register a mapping
+        registrableManager().register(this);
+
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
-        registrableManager().register(this);
+
+        this.addExtensionPacks(WellKnownGoals);
     }
 
 }
