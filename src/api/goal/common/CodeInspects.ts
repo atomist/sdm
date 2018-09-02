@@ -15,32 +15,28 @@
  */
 
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
-import { sdmInstance } from "../../../api-helper/machine/AbstractSoftwareDeliveryMachine";
-import { SoftwareDeliveryMachine } from "../../machine/SoftwareDeliveryMachine";
 import { CodeInspectionGoal } from "../../machine/wellKnownGoals";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
-import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
+import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
+import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfillment";
 
 /**
  * Goal that runs code inspections
  */
-export class CodeInspects extends FulfillableGoalWithRegistrations<CodeInspectionRegistration<any>> {
+export class CodeInspects
+    extends FulfillableGoalWithRegistrationsAndListeners<CodeInspectionRegistration<any, any>, ReviewListenerRegistration> {
 
-    constructor(private readonly uniqueName: string,
-                sdm: SoftwareDeliveryMachine = sdmInstance()) {
+    constructor(private readonly uniqueName: string) {
 
         super({
             ...CodeInspectionGoal.definition,
             uniqueName,
             orderedName: `1-${uniqueName.toLowerCase()}`,
-        }, sdm);
+        });
 
         this.addFulfillment({
             name: `Inspect-${this.uniqueName}`,
-            goalExecutor:  executeAutoInspects(
-                this.sdm.configuration.sdm.projectLoader,
-                this.registrations,
-                this.sdm.reviewListenerRegistrations),
+            goalExecutor: executeAutoInspects(this.registrations, this.listeners),
         });
     }
 }

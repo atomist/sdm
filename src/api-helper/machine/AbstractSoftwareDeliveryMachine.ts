@@ -15,7 +15,6 @@
  */
 
 import {
-    automationClientInstance,
     HandleCommand,
     HandleEvent,
     logger,
@@ -33,6 +32,7 @@ import { Goals } from "../../api/goal/Goals";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
+import { registrableManager } from "../../api/machine/registrable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
@@ -277,6 +277,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
+        registrableManager().register(this);
     }
 
 }
@@ -326,6 +327,3 @@ function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARA
     };
 }
 
-export function sdmInstance(): SoftwareDeliveryMachine {
-    return (automationClientInstance() ? automationClientInstance().configuration.sdm : undefined) as SoftwareDeliveryMachine;
-}

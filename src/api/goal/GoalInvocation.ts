@@ -17,6 +17,7 @@
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RepoContext } from "../context/SdmContext";
+import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { ExecuteGoalResult } from "./ExecuteGoalResult";
 import { SdmGoalEvent } from "./SdmGoalEvent";
 
@@ -25,6 +26,8 @@ export type ExecuteGoal = (r: GoalInvocation) => Promise<ExecuteGoalResult>;
 export type PrepareForGoalExecution = (p: GitProject, r: GoalInvocation) => Promise<ExecuteGoalResult>;
 
 export interface GoalInvocation extends RepoContext {
+
+    sdm: SoftwareDeliveryMachine;
 
     sdmGoal: SdmGoalEvent;
 

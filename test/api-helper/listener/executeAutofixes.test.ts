@@ -34,7 +34,11 @@ import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { pushTest } from "../../../src/api/mapping/PushTest";
 import { AutofixRegistration } from "../../../src/api/registration/AutofixRegistration";
 import { RepoRefResolver } from "../../../src/spi/repo-ref/RepoRefResolver";
-import { CoreRepoFieldsAndChannels, OnPushToAnyBranch, ScmProvider } from "../../../src/typings/types";
+import {
+    CoreRepoFieldsAndChannels,
+    OnPushToAnyBranch,
+    ScmProvider,
+} from "../../../src/typings/types";
 
 export const AddThingAutofix: AutofixRegistration = {
     name: "AddThing",
@@ -118,9 +122,10 @@ describe("executeAutofixes", () => {
     it("should execute none", async () => {
         const id = new GitHubRepoRef("a", "b");
         const pl = new SingleProjectLoader({ id } as any);
-        const r = await executeAutofixes(pl,
-            [],
-            FakeRepoRefResolver)(fakeGoalInvocation(id));
+        const r = await executeAutofixes([])(fakeGoalInvocation(id, {
+            projectLoader: pl,
+            repoRefResolver: FakeRepoRefResolver,
+        } as any));
         assert.equal(r.code, 0);
     });
 
@@ -130,9 +135,10 @@ describe("executeAutofixes", () => {
         const f = new InMemoryFile("src/main/java/Thing.java", initialContent);
         const p = InMemoryProject.from(id, f);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl,
-            [AddThingAutofix],
-            FakeRepoRefResolver)(fakeGoalInvocation(id));
+        const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
+            projectLoader: pl,
+            repoRefResolver: FakeRepoRefResolver,
+        } as any));
         assert.equal(r.code, 0);
         assert.equal(p.findFileSync(f.path).getContentSync(), initialContent);
     });
@@ -145,9 +151,10 @@ describe("executeAutofixes", () => {
         (p as any as GitProject).revert = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl,
-            [AddThingAutofix],
-            FakeRepoRefResolver)(fakeGoalInvocation(id));
+        const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
+            projectLoader: pl,
+            repoRefResolver: FakeRepoRefResolver,
+        } as any));
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("thing");
@@ -163,9 +170,10 @@ describe("executeAutofixes", () => {
         (p as any as GitProject).revert = async () => null;
         (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
         const pl = new SingleProjectLoader(p);
-        const r = await executeAutofixes(pl,
-            [AddThingWithParamAutofix],
-            FakeRepoRefResolver)(fakeGoalInvocation(id));
+        const r = await executeAutofixes([AddThingWithParamAutofix])(fakeGoalInvocation(id, {
+            projectLoader: pl,
+            repoRefResolver: FakeRepoRefResolver,
+        } as any));
         assert.equal(r.code, 0);
         assert(!!p);
         const foundFile = p.findFileSync("bird");
@@ -190,9 +198,11 @@ describe("executeAutofixes", () => {
                 }],
             };
 
-            const filterAutofixes = filterImmediateAutofixes([autofix], { sdmGoal: {
+            const filterAutofixes = filterImmediateAutofixes([autofix], {
+                sdmGoal: {
                     push,
-                } } as any as GoalInvocation);
+                },
+            } as any as GoalInvocation);
 
             assert.strictEqual(filterAutofixes.length, 0);
         });
@@ -216,9 +226,11 @@ describe("executeAutofixes", () => {
                 }],
             };
 
-            const filterAutofixes = filterImmediateAutofixes([autofix1, autofix2], { sdmGoal: {
+            const filterAutofixes = filterImmediateAutofixes([autofix1, autofix2], {
+                sdmGoal: {
                     push,
-                } } as any as GoalInvocation);
+                },
+            } as any as GoalInvocation);
 
             assert.strictEqual(filterAutofixes.length, 1);
             assert.strictEqual(filterAutofixes[0].name, autofix2.name);

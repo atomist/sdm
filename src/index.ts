@@ -68,6 +68,7 @@ export * from "./api/machine/MachineConfigurer";
 export * from "./api/machine/RepoTargets";
 export * from "./api/machine/SoftwareDeliveryMachine";
 export * from "./api/machine/SoftwareDeliveryMachineOptions";
+export * from "./api/machine/registrable";
 export * from "./api/machine/wellKnownGoals";
 export * from "./api/mapping/GoalSetter";
 export * from "./api/mapping/Mapping";

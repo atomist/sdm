@@ -86,11 +86,13 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id);
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld], [{
+        const ge = executeAutoInspects([HatesTheWorld], [{
             name: "thing",
             listener: l,
         }]);
-        const r = await ge(fakeGoalInvocation(id));
+        const r = await ge(fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any));
         assert.equal(r.code, 0);
         assert(!r.requireApproval);
         assert.equal(reviewEvents.length, 1);
@@ -102,11 +104,13 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const l = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld], [{
+        const ge = executeAutoInspects([HatesTheWorld], [{
             name: "thing",
             listener: l,
         }]);
-        const rwlc = fakeGoalInvocation(id);
+        const rwlc = fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
@@ -120,11 +124,13 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithoutApproval(reviewEvents);
-        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld], [{
+        const ge = executeAutoInspects([HatesTheWorld], [{
             name: "thing",
             listener,
         }]);
-        const rwlc = fakeGoalInvocation(id);
+        const rwlc = fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 1);
@@ -138,12 +144,14 @@ describe("executeAutoInspects", () => {
         const p = InMemoryProject.from(id, new InMemoryFile("thing", "1"));
         const reviewEvents: ReviewListenerInvocation[] = [];
         const listener = loggingReviewListenerWithApproval(reviewEvents);
-        const ge = executeAutoInspects(new SingleProjectLoader(p), [HatesTheWorld, JustTheOne],
+        const ge = executeAutoInspects([HatesTheWorld, JustTheOne],
             [{
                 name: "thing",
                 listener,
             }]);
-        const rwlc = fakeGoalInvocation(id);
+        const rwlc = fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any);
         const r = await ge(rwlc);
         assert.equal(reviewEvents.length, 1);
         assert.equal(reviewEvents[0].review.comments.length, 2);

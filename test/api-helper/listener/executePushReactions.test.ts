@@ -17,7 +17,6 @@
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { TruePushTest } from "../../api/mapping/support/pushTestUtils.test";
-
 import * as assert from "power-assert";
 import { executePushReactions } from "../../../src/api-helper/listener/executePushReactions";
 import { fakeGoalInvocation } from "../../../src/api-helper/test/fakeGoalInvocation";
@@ -44,8 +43,10 @@ describe("executePushReactions", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
-        const ge = executePushReactions(new SingleProjectLoader(p), [react(invocations, true)]);
-        const r = await ge(fakeGoalInvocation(id));
+        const ge = executePushReactions([react(invocations, true)]);
+        const r = await ge(fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any));
         assert.equal(invocations.length, 1);
         assert(!r.requireApproval);
         assert.equal(r.code, 1);
@@ -55,8 +56,10 @@ describe("executePushReactions", () => {
         const id = new GitHubRepoRef("a", "b");
         const p = InMemoryProject.from(id);
         const invocations: PushListenerInvocation[] = [];
-        const ge = executePushReactions(new SingleProjectLoader(p), [react(invocations, false)]);
-        const r = await ge(fakeGoalInvocation(id));
+        const ge = executePushReactions([react(invocations, false)]);
+        const r = await ge(fakeGoalInvocation(id, {
+            projectLoader: new SingleProjectLoader(p),
+        } as any));
         assert.equal(invocations.length, 1);
         assert.equal(r.code, 0);
         assert(!r.requireApproval);

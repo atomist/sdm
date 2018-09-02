@@ -31,8 +31,6 @@ import {
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
-import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
@@ -41,24 +39,20 @@ import { relevantCodeActions } from "./relevantCodeActions";
 /**
  * Execute autofixes against this push
  * Throw an error on failure
- * @param projectLoader use to load projects
  * @param {AutofixRegistration[]} registrations
- * @param repoRefResolver RepoRefResolver
- * @return GoalExecutor
+ * @return ExecuteGoal
  */
-export function executeAutofixes(projectLoader: ProjectLoader,
-                                 registrations: AutofixRegistration[],
-                                 repoRefResolver: RepoRefResolver): ExecuteGoal {
+export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { sdmGoal, credentials, context, progressLog } = goalInvocation;
+        const { sdm, sdmGoal, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));
         try {
             if (registrations.length === 0) {
                 return Success;
             }
             const push = sdmGoal.push;
-            const editableRepoRef = repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
-            const editResult = await projectLoader.doWithProject<EditResult>({
+            const editableRepoRef = sdm.configuration.sdm.repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
+            const editResult = await sdm.configuration.sdm.projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,
                     context,

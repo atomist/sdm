@@ -44,23 +44,20 @@ export const WellKnownGoals: ExtensionPack = {
 
 function configure(sdm: SoftwareDeliveryMachine) {
     sdm.addGoalImplementation("Autofix", AutofixGoal,
-        executeAutofixes(
-            sdm.configuration.sdm.projectLoader,
-            sdm.autofixRegistrations,
-            sdm.configuration.sdm.repoRefResolver), {
+        executeAutofixes(sdm.autofixRegistrations),
+        {
             // Autofix errors should not be reported to the user
             logInterpreter: LogSuppressor,
         })
         .addGoalImplementation("DoNothing", NoGoal, executeImmaterial)
         .addGoalImplementation("FingerprinterRegistration", FingerprintGoal,
             executeFingerprinting(
-                sdm.configuration.sdm.projectLoader,
                 sdm.fingerprinterRegistrations,
                 sdm.fingerprintListeners))
         .addGoalImplementation("CodeReactions", PushReactionGoal,
-            executePushReactions(sdm.configuration.sdm.projectLoader, sdm.pushImpactListenerRegistrations))
+            executePushReactions(sdm.pushImpactListenerRegistrations))
         .addGoalImplementation("CodeInspections", CodeInspectionGoal,
-            executeAutoInspects(sdm.configuration.sdm.projectLoader, sdm.autoInspectRegistrations, sdm.reviewListenerRegistrations))
+            executeAutoInspects(sdm.autoInspectRegistrations, sdm.reviewListenerRegistrations))
         .addVerifyImplementation();
     sdm.addGoalSideEffect(ArtifactGoal, sdm.configuration.name, AnyPush);
 }

@@ -25,28 +25,25 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { computeFingerprints } from "./computeFingerprints";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
 /**
  * Execute fingerprinting and send fingerprints to Atomist
- * @param projectLoader project loader
  * @param {FingerprinterRegistration} fingerprinters
  * @param listeners listeners to fingerprints
  */
-export function executeFingerprinting(projectLoader: ProjectLoader,
-                                      fingerprinters: FingerprinterRegistration[],
+export function executeFingerprinting(fingerprinters: FingerprinterRegistration[],
                                       listeners: FingerprintListener[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const {id, credentials, context} = goalInvocation;
+        const { sdm, id, credentials, context } = goalInvocation;
         if (fingerprinters.length === 0) {
             return Success;
         }
 
         logger.debug("About to fingerprint %j using %d fingerprinters", id, fingerprinters.length);
-        await projectLoader.doWithProject({credentials, id, readOnly: true}, async project => {
+        await sdm.configuration.sdm.projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
             const cri = await createPushImpactListenerInvocation(goalInvocation, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",

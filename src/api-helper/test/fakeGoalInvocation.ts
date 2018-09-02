@@ -22,6 +22,7 @@ import {
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { SdmGoalState } from "../../typings/types";
 import { fakeContext } from "./fakeContext";
 
@@ -30,7 +31,7 @@ import { fakeContext } from "./fakeContext";
  * @param {RemoteRepoRef} id
  * @return {GoalInvocation}
  */
-export function fakeGoalInvocation(id: RemoteRepoRef): GoalInvocation {
+export function fakeGoalInvocation(id: RemoteRepoRef, options?: SoftwareDeliveryMachineOptions): GoalInvocation {
     return {
         credentials: { token: "foobar" },
         context: fakeContext("T1111"),
@@ -40,6 +41,13 @@ export function fakeGoalInvocation(id: RemoteRepoRef): GoalInvocation {
         },
         progressLog: new LoggingProgressLog("fake"),
         sdmGoal: fakeSdmGoal(id),
+        sdm: {
+            configuration: {
+                sdm: {
+                    ...options,
+                },
+            },
+        } as any,
     };
 }
 

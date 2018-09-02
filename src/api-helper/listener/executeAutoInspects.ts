@@ -34,26 +34,22 @@ import {
     ReviewerError,
 } from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
- * @param {ProjectLoader} projectLoader
  * @param autoInspectRegistrations
- * @param {ReviewListener[]} reviewListeners
  * @return {ExecuteGoal}
  */
-export function executeAutoInspects(projectLoader: ProjectLoader,
-                                    autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
+export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
                                     reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { credentials, id, addressChannels } = goalInvocation;
+        const { sdm, credentials, id, addressChannels } = goalInvocation;
         try {
             if (autoInspectRegistrations.length > 0) {
                 logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
-                return projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
+                return sdm.configuration.sdm.projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
                     const cri = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant AutoInspects: [%s] of [%s]",

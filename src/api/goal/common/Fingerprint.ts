@@ -15,32 +15,29 @@
  */
 
 import { executeFingerprinting } from "../../../api-helper/listener/executeFingerprinting";
-import { sdmInstance } from "../../../api-helper/machine/AbstractSoftwareDeliveryMachine";
-import { SoftwareDeliveryMachine } from "../../machine/SoftwareDeliveryMachine";
+import { FingerprintListener } from "../../listener/FingerprintListener";
 import { FingerprintGoal } from "../../machine/wellKnownGoals";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
-import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
+import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfillment";
 
 /**
  * Goal that performs fingerprinting. Typically invoked early in a delivery flow.
  */
-export class Fingerprint extends FulfillableGoalWithRegistrations<FingerprinterRegistration> {
+export class Fingerprint
+    extends FulfillableGoalWithRegistrationsAndListeners<FingerprinterRegistration, FingerprintListener> {
 
-    constructor(private readonly uniqueName: string,
-                sdm: SoftwareDeliveryMachine = sdmInstance()) {
+    constructor(private readonly uniqueName: string) {
 
         super({
             ...FingerprintGoal.definition,
             uniqueName,
             orderedName: `0.1-${uniqueName.toLowerCase()}`,
-        }, sdm);
+        });
 
         this.addFulfillment({
             name: `Fingerprint-${this.uniqueName}`,
-            goalExecutor: executeFingerprinting(
-                this.sdm.configuration.sdm.projectLoader,
-                this.registrations,
-                this.sdm.fingerprintListeners),
+            goalExecutor: executeFingerprinting(this.registrations,
+                this.listeners),
         });
     }
 }
