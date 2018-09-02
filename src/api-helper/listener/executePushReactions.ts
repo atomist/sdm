@@ -39,15 +39,14 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @param {PushImpactListenerRegistration[]} registrations
  * @return {ExecuteGoal}
  */
-export function executePushReactions(projectLoader: ProjectLoader,
-                                     registrations: PushImpactListenerRegisterable[]): ExecuteGoal {
+export function executePushReactions(registrations: PushImpactListenerRegisterable[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         if (registrations.length === 0) {
             return Success;
         }
 
-        const {credentials, id, context} = goalInvocation;
-        return projectLoader.doWithProject({credentials, id, context, readOnly: true}, async project => {
+        const { configuration, credentials, id, context } = goalInvocation;
+        return configuration.sdm.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
             const relevantCodeReactions: PushImpactListenerRegistration[] = await relevantCodeActions<PushImpactListenerRegistration>(regs, cri);

@@ -18,7 +18,11 @@ import { SdmGoalState } from "../../typings/types";
 
 export const GoalRootType = "SdmGoal";
 
-export type SdmGoalFulfillmentMethod = "SDM fulfill on requested" | "side-effect" | "other";
+export enum SdmGoalFulfillmentMethod {
+    Sdm = "sdm",
+    SideEffect = "side-effect",
+    Other = "other",
+}
 
 export interface SdmGoalFulfillment {
     method: SdmGoalFulfillmentMethod;

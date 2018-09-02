@@ -71,8 +71,6 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
         IngesterRegistrationManager,
         FunctionalUnit {
 
-    addDisposalRules(...goalSetters: GoalSetter[]): this;
-
     addVerifyImplementation(): this;
 
     /**

@@ -30,11 +30,12 @@ import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
 import {
     GoalRootType,
     SdmGoalFulfillment,
+    SdmGoalFulfillmentMethod,
     SdmGoalKey,
     SdmGoalMessage,
     SdmProvenance,
 } from "../../api/goal/SdmGoalMessage";
-import { GoalImplementation } from "../../api/goal/support/SdmGoalImplementationMapper";
+import { GoalImplementation } from "../../api/goal/support/GoalImplementationMapper";
 import {
     OnAnyRequestedSdmGoal,
     OnPushToAnyBranch,
@@ -100,7 +101,7 @@ export function goalCorrespondsToSdmGoal(goal: Goal, sdmGoal: SdmGoalKey): boole
 
 export function constructSdmGoalImplementation(gi: GoalImplementation): SdmGoalFulfillment {
     return {
-        method: "SDM fulfill on requested",
+        method: SdmGoalFulfillmentMethod.Sdm,
         name: gi.implementationName,
     };
 }
@@ -115,8 +116,8 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     url?: string,
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoalMessage {
-    const {goalSet, goal, goalSetId, state, id, providerId, url} = parameters;
-    const fulfillment = parameters.fulfillment || {method: "other", name: "unspecified"};
+    const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
+    const fulfillment = parameters.fulfillment || { method: SdmGoalFulfillmentMethod.Other, name: "unknown" };
 
     if (!id.branch) {
         throw new Error(sprintf("Please provide a branch in the RemoteRepoRef %j", parameters));

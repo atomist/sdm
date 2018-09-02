@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
+import {
+    HandleCommand,
+    HandleEvent,
+    logger,
+} from "@atomist/automation-client";
 import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
@@ -28,6 +32,7 @@ import { Goals } from "../../api/goal/Goals";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
+import { registrableManager } from "../../api/machine/registrable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
@@ -53,6 +58,7 @@ import {
     EnforceableProjectInvariantRegistration,
     InvarianceAssessment,
 } from "../../api/registration/ProjectInvariantRegistration";
+import { WellKnownGoals } from "../../pack/well-known-goals/addWellKnownGoals";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
     executeVerifyEndpoint,
@@ -217,8 +223,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      * @param {string} sideEffectName
      * @param {PushTest} pushTest
      */
-    public addKnownSideEffect(goal: Goal, sideEffectName: string,
-                              pushTest: PushTest = AnyPush): this {
+    public addGoalSideEffect(goal: Goal,
+                             sideEffectName: string,
+                             pushTest: PushTest = AnyPush): this {
         this.goalFulfillmentMapper.addSideEffect({
             goal,
             sideEffectName, pushTest,
@@ -268,6 +275,8 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                           goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
         // If we didn't get any goal setters don't register a mapping
+        registrableManager().register(this);
+
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
