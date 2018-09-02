@@ -73,7 +73,7 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
 
     public readonly pullRequestListeners: PullRequestListener[] = [];
 
-    public readonly newRepoWithCodeListeners: PushListener[] = [];
+    public readonly firstPushListeners: PushListener[] = [];
 
     public readonly channelLinkListeners: ChannelLinkListener[] = [];
 
@@ -144,8 +144,8 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
         return this;
     }
 
-    public addNewRepoWithCodeListener(pls: PushListener): this {
-        this.newRepoWithCodeListeners.push(pls);
+    public addFirstPushListener(pls: PushListener): this {
+        this.firstPushListeners.push(pls);
         return this;
     }
 
