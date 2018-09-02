@@ -44,6 +44,10 @@ class RegistrableManager implements Registrable {
 
 (global as any).__registrable = new RegistrableManager();
 
+export function resetRegistrableManager(): void {
+    (global as any).__registrable = new RegistrableManager();
+}
+
 export function registrableManager(): Registrable {
     return (global as any).__registrable;
 }
