@@ -1,19 +1,3 @@
-/*
- * Copyright © 2018 Atomist, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
     registerRegistrable,
@@ -59,8 +43,9 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  */
 export abstract class FulfillableGoal extends GoalWithPrecondition implements Registrable {
 
-    private readonly fulfillments: Fulfillment[] = [];
-    private readonly callbacks: GoalFulfillmentCallback[] = [];
+    private fulfillments: Fulfillment[] = [];
+    private callbacks: GoalFulfillmentCallback[] = [];
+    private sdm: SoftwareDeliveryMachine;
 
     constructor(public definition: GoalDefinition) {
         super(definition);
@@ -68,37 +53,52 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
     }
 
     public register(sdm: SoftwareDeliveryMachine): void {
+        this.sdm = sdm;
         this.fulfillments.forEach(fulfillment => {
-            if (isImplementation(fulfillment)) {
-                sdm.addGoalImplementation(
-                    fulfillment.name,
-                    this,
-                    fulfillment.goalExecutor,
-                    {
-                        pushTest: fulfillment.pushTest || AnyPush,
-                        progressReporter: fulfillment.progressReporter,
-                        logInterpreter: fulfillment.logInterpreter,
-                    });
-            } else if (isSideEffect(fulfillment)) {
-                sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);
-            }
+            this.registerFulfillment(fulfillment);
         });
-        this.callbacks.forEach(cb => sdm.goalFulfillmentMapper.addFulfillmentCallback(cb));
+        this.callbacks.forEach(cb => this.registerCallback(cb));
     }
 
     protected addFulfillmentCallback(cb: GoalFulfillmentCallback): this {
+        if (this.sdm) {
+            this.registerCallback(cb);
+        }
         this.callbacks.push(cb);
         return this;
     }
 
     protected addFulfillment(fulfillment: Fulfillment): this {
+        if (this.sdm) {
+            this.registerFulfillment(fulfillment);
+        }
         this.fulfillments.push(fulfillment);
         return this;
+    }
+
+    private registerFulfillment(fulfillment: Fulfillment): void {
+        if (isImplementation(fulfillment)) {
+            this.sdm.addGoalImplementation(
+                fulfillment.name,
+                this,
+                fulfillment.goalExecutor,
+                {
+                    pushTest: fulfillment.pushTest || AnyPush,
+                    progressReporter: fulfillment.progressReporter,
+                    logInterpreter: fulfillment.logInterpreter,
+                });
+        } else if (isSideEffect(fulfillment)) {
+            this.sdm.addGoalSideEffect(this, fulfillment.name, fulfillment.pushTest);
+        }
+    }
+
+    private registerCallback(cb: GoalFulfillmentCallback): void {
+        this.sdm.goalFulfillmentMapper.addFulfillmentCallback(cb);
     }
 }
 
 /**
- * Goal that accepts registrations of T.
+ * Goal that accepts registrations of R.
  */
 export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoal {
 
@@ -115,7 +115,7 @@ export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoa
 }
 
 /**
- * Goal that accepts registrations of T.
+ * Goal that accepts registrations of R and listeners of L.
  */
 export abstract class FulfillableGoalWithRegistrationsAndListeners<R, L> extends FulfillableGoalWithRegistrations<R> {
 
