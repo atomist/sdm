@@ -341,7 +341,7 @@ function addParametersDefinedInBuilder<PARAMS>(c: CommandRegistration<PARAMS>) {
 
 function isMappedParameterOrSecretDeclaration(x: any): x is MappedParameterOrSecretDeclaration {
     const maybe = x as MappedParameterOrSecretDeclaration;
-    return !!maybe && !!maybe.type;
+    return !!maybe && !!maybe.declarationType;
 }
 
 function isParametersListing(p: ParametersDefinition): p is ParametersListing {
@@ -357,7 +357,7 @@ export function toParametersListing(p: ParametersDefinition): ParametersListing 
     for (const name of Object.getOwnPropertyNames(p)) {
         const value = p[name];
         if (isMappedParameterOrSecretDeclaration(value)) {
-            switch (value.type) {
+            switch (value.declarationType) {
                 case DeclarationType.mapped:
                     builder.addMappedParameters({ name, uri: value.uri, required: value.required });
                     break;

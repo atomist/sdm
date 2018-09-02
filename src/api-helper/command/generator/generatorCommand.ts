@@ -207,7 +207,13 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
         return repoLoader(repoRef);
     } else {
         // It's a function that takes the parameters and returns either a project or a RemoteRepoRef
-        const rr: RemoteRepoRef | Project = (startingPoint as any)(params);
+        const rr: RemoteRepoRef | Project | Promise<Project> = (startingPoint as any)(params);
+        if (isProjectPromise(rr)) {
+            rr.then(async (p: Project) => {
+                await ctx.messageClient.respond(`Using dynamically chosen starting point project \`${p.id.owner}:${p.id.repo}\``);
+            });
+            return rr;
+        }
         if (isProject(rr)) {
             await ctx.messageClient.respond(`Using dynamically chosen starting point project \`${rr.id.owner}:${rr.id.repo}\``);
             // params.source will remain undefined in this case
@@ -218,6 +224,10 @@ async function computeStartingPoint<P extends SeedDrivenGeneratorParameters>(par
             return repoLoader(rr);
         }
     }
+}
+
+function isProjectPromise(a: any): a is Promise<Project> {
+    return !!a.then;
 }
 
 function defaultDetails<P extends SeedDrivenGeneratorParameters>(opts: SoftwareDeliveryMachineOptions, name: string): GeneratorCommandDetails<P> {

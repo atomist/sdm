@@ -152,8 +152,8 @@ describe("command registrations", () => {
                 {
                     foo: {},
                     bar: { required: true },
-                    x: { type: DeclarationType.secret, uri: "http://thing1" },
-                    y: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
+                    x: { declarationType: DeclarationType.secret, uri: "http://thing1" },
+                    y: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
                 },
             listener: async ci => {
                 return ci.addressChannels(ci.parameters.foo + ci.parameters.bar);
@@ -179,8 +179,8 @@ describe("command registrations", () => {
     it("parameter builder should set mapped parameter and secret via indexed property, with spread", () => {
         const halfOfParameters: ParametersObject = {
             bar: { required: true },
-            x1: { type: DeclarationType.secret, uri: "http://thing1" },
-            y1: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
+            x1: { declarationType: DeclarationType.secret, uri: "http://thing1" },
+            y1: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
 
         };
         const reg: CommandHandlerRegistration<any> = {
@@ -188,8 +188,8 @@ describe("command registrations", () => {
             parameters:
                 {
                     foo: {},
-                    x2: { type: DeclarationType.secret, uri: "http://thing1" },
-                    y2: { type: DeclarationType.mapped, uri: "http://thing2", required: false },
+                    x2: { declarationType: DeclarationType.secret, uri: "http://thing1" },
+                    y2: { declarationType: DeclarationType.mapped, uri: "http://thing2", required: false },
                     ...halfOfParameters,
                 },
             listener: async ci => {
