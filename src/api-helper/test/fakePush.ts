@@ -22,6 +22,12 @@ import { AddressNoChannels } from "../../api/context/addressChannels";
 import { PushListenerInvocation } from "../../api/listener/PushListener";
 import { fakeContext } from "./fakeContext";
 
+/**
+ * Used for testing
+ * @param {Project} project
+ * @param {Partial<PushListenerInvocation>} pli
+ * @return {PushListenerInvocation}
+ */
 export function fakePush(project?: Project, pli: Partial<PushListenerInvocation> = {}): PushListenerInvocation {
     return {
         id: project ? project.id as RemoteRepoRef : new GitHubRepoRef("my", "test"),

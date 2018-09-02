@@ -35,7 +35,6 @@ import { relevantCodeActions } from "./relevantCodeActions";
 
 /**
  * Execute arbitrary code reactions against a codebase
- * @param {ProjectLoader} projectLoader
  * @param {PushImpactListenerRegistration[]} registrations
  * @return {ExecuteGoal}
  */
@@ -60,7 +59,7 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
                 code: allReactions.includes(PushReactionResponse.failGoals) ? 1 : 0,
                 requireApproval: allReactions.includes(PushReactionResponse.requireApprovalToProceed),
             };
-            logger.info("Code reaction responses are %j, result=%j", allReactions, result);
+            logger.info("PushReaction responses are %j, result=%j", allReactions, result);
             return result;
         });
     };

@@ -40,6 +40,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
 /**
  * Execute auto inspections and route or react to review results using review listeners
  * @param autoInspectRegistrations
+ * @param reviewListeners listeners to respond to reviews
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,

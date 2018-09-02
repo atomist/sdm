@@ -16,8 +16,8 @@
 
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
-    registerRegistrable,
     Registerable,
+    registerRegistrable,
 } from "../machine/Registerable";
 import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
