@@ -32,7 +32,7 @@ import { Goals } from "../../api/goal/Goals";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
-import { registrableManager } from "../../api/machine/registrable";
+import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";

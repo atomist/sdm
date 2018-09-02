@@ -17,8 +17,8 @@
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
     registerRegistrable,
-    Registrable,
-} from "../machine/registrable";
+    Registerable,
+} from "../machine/Registerable";
 import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
@@ -57,7 +57,7 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
  * Goal that registers goal implementations, side effects and callbacks on the
  * current SDM. No additional registration with the SDM is needed.
  */
-export abstract class FulfillableGoal extends GoalWithPrecondition implements Registrable {
+export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable {
 
     private readonly fulfillments: Fulfillment[] = [];
     private readonly callbacks: GoalFulfillmentCallback[] = [];

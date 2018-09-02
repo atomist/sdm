@@ -16,27 +16,28 @@
 
 import { SoftwareDeliveryMachine } from "./SoftwareDeliveryMachine";
 
-export interface Registrable {
+export interface Registerable {
+
     register(sdm: SoftwareDeliveryMachine): void;
 }
 
-class RegistrableManager implements Registrable {
+class RegistrableManager implements Registerable {
 
-    public readonly registrables: Registrable[] = [];
+    public readonly registerables: Registerable[] = [];
     public sdm: SoftwareDeliveryMachine;
 
-    public addRegistrable(registrable: Registrable): void {
+    public addRegisterable(registrable: Registerable): void {
         if (this.sdm) {
             registrable.register(this.sdm);
         } else {
-            this.registrables.push(registrable);
+            this.registerables.push(registrable);
         }
     }
 
     public register(sdm: SoftwareDeliveryMachine): void {
-        this.registrables.forEach(r => {
+        this.registerables.forEach(r => {
             r.register(sdm);
-            this.registrables.splice(this.registrables.indexOf(r), 1);
+            this.registerables.splice(this.registerables.indexOf(r), 1);
         });
         this.sdm = sdm;
     }
@@ -48,10 +49,10 @@ export function resetRegistrableManager(): void {
     (global as any).__registrable = new RegistrableManager();
 }
 
-export function registrableManager(): Registrable {
+export function registrableManager(): Registerable {
     return (global as any).__registrable;
 }
 
-export function registerRegistrable(registrable: Registrable): void {
-    (registrableManager() as any).addRegistrable(registrable);
+export function registerRegistrable(registrable: Registerable): void {
+    (registrableManager() as any).addRegisterable(registrable);
 }
