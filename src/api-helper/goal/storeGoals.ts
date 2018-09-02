@@ -117,7 +117,7 @@ export function constructSdmGoal(ctx: HandlerContext, parameters: {
     fulfillment?: SdmGoalFulfillment,
 }): SdmGoalMessage {
     const { goalSet, goal, goalSetId, state, id, providerId, url } = parameters;
-    const fulfillment = parameters.fulfillment || { method: SdmGoalFulfillmentMethod.Other, name: "unkown" };
+    const fulfillment = parameters.fulfillment || { method: SdmGoalFulfillmentMethod.Other, name: "unknown" };
 
     if (!id.branch) {
         throw new Error(sprintf("Please provide a branch in the RemoteRepoRef %j", parameters));
