@@ -15,7 +15,6 @@
  */
 
 import { executeAutoInspects } from "../../../api-helper/listener/executeAutoInspects";
-import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { sdmInstance } from "../../../api-helper/machine/AbstractSoftwareDeliveryMachine";
 import { SoftwareDeliveryMachine } from "../../machine/SoftwareDeliveryMachine";
 import { CodeInspectionGoal } from "../../machine/wellKnownGoals";
@@ -38,7 +37,6 @@ export class CodeInspects extends FulfillableGoalWithRegistrations<CodeInspectio
 
         this.addFulfillment({
             name: `Inspect-${this.uniqueName}`,
-            logInterpreter: LogSuppressor,
             goalExecutor:  executeAutoInspects(
                 this.sdm.configuration.sdm.projectLoader,
                 this.registrations,
