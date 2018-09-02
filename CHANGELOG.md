@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Add `IsPushToPullRequest` push test. [#496](https://github.com/atomist/sdm/issues/496)
 -   Add reason to a goal approval vote. [#eaf2f60](https://github.com/atomist/sdm/commit/eaf2f60cecc51f2b8c057307397721f7d3c0cb96)
 -   Allow goals to receive implementations and listeners. [#504](https://github.com/atomist/sdm/issues/504)
+-   Starting point should be able to handle a Promise returning function. [#500](https://github.com/atomist/sdm/issues/500)
 
 ### Changed
 
