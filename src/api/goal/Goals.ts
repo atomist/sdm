@@ -95,7 +95,7 @@ export interface GoalsAndPreConditionBuilder extends GoalsBuilder {
  *
  *  const simpleGoals = goals("Simple Goals")
  *     .plan(CodeInspectionGoal)
- *     .plan(BuildGoal, AutofixGoal).after(CodeInspectionGoal)
+ *     .plan(BuildGoal, Autofix).after(CodeInspectionGoal)
  *     .plan(StagingEndpointGoal).after(BuildGoal)
  *     .plan(ProductionDeploymentGoal).after(BuildGoal, StagingEndpointGoal);
  *

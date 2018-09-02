@@ -249,7 +249,7 @@ export function markStatus(parameters: {
 }) {
     const { context, sdmGoal, goal, result, error, progressLogUrl } = parameters;
     const newState = result.code !== 0 ? SdmGoalState.failure :
-        result.requireApproval ? SdmGoalState.waiting_for_approval : SdmGoalState.success;
+        (result.requireApproval || goal.definition.approvalRequired ? SdmGoalState.waiting_for_approval : SdmGoalState.success);
 
     return updateGoal(
         context,

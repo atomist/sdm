@@ -35,13 +35,14 @@ import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import {
     SdmGoalFulfillment,
+    SdmGoalFulfillmentMethod,
     SdmGoalMessage,
 } from "../../api/goal/SdmGoalMessage";
 import {
+    GoalImplementationMapper,
     isGoalImplementation,
-    isSideEffect,
-    SdmGoalImplementationMapper,
-} from "../../api/goal/support/SdmGoalImplementationMapper";
+    isGoalSideEffect,
+} from "../../api/goal/support/GoalImplementationMapper";
 import {
     GoalsSetListener,
     GoalsSetListenerInvocation,
@@ -73,7 +74,7 @@ export interface ChooseAndSetGoalsRules {
 
     goalSetter: GoalSetter;
 
-    implementationMapping: SdmGoalImplementationMapper;
+    implementationMapping: GoalImplementationMapper;
 }
 
 /**
@@ -121,7 +122,7 @@ export async function determineGoals(rules: {
                                          projectLoader: ProjectLoader,
                                          repoRefResolver: RepoRefResolver,
                                          goalSetter: GoalSetter,
-                                         implementationMapping: SdmGoalImplementationMapper,
+                                         implementationMapping: GoalImplementationMapper,
                                      },
                                      circumstances: {
                                          credentials: ProjectOperationCredentials,
@@ -155,7 +156,7 @@ export async function determineGoals(rules: {
 
 }
 
-async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMapper,
+async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper,
                                  repoRefResolver: RepoRefResolver,
                                  pli: PushListenerInvocation,
                                  determinedGoals: Goals,
@@ -173,19 +174,19 @@ async function sdmGoalsFromGoals(implementationMapping: SdmGoalImplementationMap
 }
 
 async function fulfillment(rules: {
-    implementationMapping: SdmGoalImplementationMapper,
+    implementationMapping: GoalImplementationMapper,
 },                         g: Goal, inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const { implementationMapping } = rules;
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
         return constructSdmGoalImplementation(plan);
     }
-    if (isSideEffect(plan)) {
-        return { method: "side-effect", name: plan.sideEffectName };
+    if (isGoalSideEffect(plan)) {
+        return { method: SdmGoalFulfillmentMethod.SideEffect, name: plan.sideEffectName };
     }
 
-    logger.warn("FYI, no implementation found for '%s'", g.name);
-    return { method: "other", name: "unspecified-yo" };
+    logger.warn("No implementation found for '%s'", g.name);
+    return { method: SdmGoalFulfillmentMethod.Other, name: "unknown" };
 }
 
 /**

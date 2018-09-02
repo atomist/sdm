@@ -22,7 +22,6 @@ import { Goal } from "../Goal";
 import { ExecuteGoal } from "../GoalInvocation";
 import { ReportProgress } from "../progress/ReportProgress";
 import { SdmGoalEvent } from "../SdmGoalEvent";
-import { IsolatedGoalLauncher } from "./IsolatedGoalLauncher";
 
 export type GoalFulfillment = GoalImplementation | GoalSideEffect;
 
@@ -45,7 +44,7 @@ export interface GoalSideEffect {
     pushTest: PushTest;
 }
 
-export function isSideEffect(f: GoalFulfillment): f is GoalSideEffect {
+export function isGoalSideEffect(f: GoalFulfillment): f is GoalSideEffect {
     return !!f && (f as GoalSideEffect).sideEffectName && true;
 }
 
@@ -62,15 +61,13 @@ export interface GoalFulfillmentCallback {
 /**
  * Registers and looks up goal implementations
  */
-export interface SdmGoalImplementationMapper {
+export interface GoalImplementationMapper {
 
     addSideEffect(sideEffect: GoalSideEffect): this;
 
     addFulfillmentCallback(callback: GoalFulfillmentCallback): this;
 
-    findImplementationBySdmGoal(goal: SdmGoalEvent, inv: PushListenerInvocation): Promise<GoalImplementation>;
-
-    getIsolatedGoalLauncher(): IsolatedGoalLauncher;
+    findImplementationBySdmGoal(goal: SdmGoalEvent): GoalImplementation;
 
     findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined>;
 
