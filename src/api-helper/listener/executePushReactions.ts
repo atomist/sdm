@@ -45,8 +45,8 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             return Success;
         }
 
-        const { sdm, credentials, id, context } = goalInvocation;
-        return sdm.configuration.sdm.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
+        const { configuration, credentials, id, context } = goalInvocation;
+        return configuration.sdm.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
             const relevantCodeReactions: PushImpactListenerRegistration[] = await relevantCodeActions<PushImpactListenerRegistration>(regs, cri);

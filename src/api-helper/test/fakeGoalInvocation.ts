@@ -41,11 +41,9 @@ export function fakeGoalInvocation(id: RemoteRepoRef, options?: SoftwareDelivery
         },
         progressLog: new LoggingProgressLog("fake"),
         sdmGoal: fakeSdmGoal(id),
-        sdm: {
-            configuration: {
-                sdm: {
-                    ...options,
-                },
+        configuration: {
+            sdm: {
+                ...options,
             },
         } as any,
     };

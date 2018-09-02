@@ -44,15 +44,15 @@ import { relevantCodeActions } from "./relevantCodeActions";
  */
 export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
-        const { sdm, sdmGoal, credentials, context, progressLog } = goalInvocation;
+        const { configuration, sdmGoal, credentials, context, progressLog } = goalInvocation;
         progressLog.write(sprintf("Executing %d autofixes", registrations.length));
         try {
             if (registrations.length === 0) {
                 return Success;
             }
             const push = sdmGoal.push;
-            const editableRepoRef = sdm.configuration.sdm.repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
-            const editResult = await sdm.configuration.sdm.projectLoader.doWithProject<EditResult>({
+            const editableRepoRef = configuration.sdm.repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
+            const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,
                     context,

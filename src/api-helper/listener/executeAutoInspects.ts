@@ -45,11 +45,11 @@ import { relevantCodeActions } from "./relevantCodeActions";
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
                                     reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { sdm, credentials, id, addressChannels } = goalInvocation;
+        const { configuration, credentials, id, addressChannels } = goalInvocation;
         try {
             if (autoInspectRegistrations.length > 0) {
                 logger.info("Planning inspection of %j with %d AutoInspects", id, autoInspectRegistrations.length);
-                return sdm.configuration.sdm.projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
+                return configuration.sdm.projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
                     const cri = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
                     logger.info("Executing review of %j with %d relevant AutoInspects: [%s] of [%s]",
