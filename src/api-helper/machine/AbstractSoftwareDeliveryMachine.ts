@@ -280,8 +280,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
-
-        this.addExtensionPacks(WellKnownGoals);
     }
 
 }
