@@ -37,8 +37,8 @@ class RegistrableManager implements Registerable {
     public register(sdm: SoftwareDeliveryMachine): void {
         this.registerables.forEach(r => {
             r.register(sdm);
-            this.registerables.splice(this.registerables.indexOf(r), 1);
         });
+        this.registerables.splice(0, this.registerables.length);
         this.sdm = sdm;
     }
 }
