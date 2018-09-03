@@ -138,9 +138,12 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         }>): this {
         const implementation = {
             implementationName, goal, goalExecutor,
-            pushTest: options.pushTest || AnyPush,
-            logInterpreter: options.logInterpreter || lastLinesLogInterpreter(implementationName, 10),
-            progressReporter: options.progressReporter || NoProgressReport,
+            pushTest: options && options.pushTest ? options.pushTest :
+                AnyPush,
+            logInterpreter: options && options.logInterpreter ? options.logInterpreter :
+                lastLinesLogInterpreter(implementationName, 10),
+            progressReporter: options && options.progressReporter ? options.progressReporter :
+                NoProgressReport,
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
         return this;
