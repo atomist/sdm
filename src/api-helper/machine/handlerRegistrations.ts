@@ -306,7 +306,12 @@ function toCommandListenerInvocation<P>(c: CommandRegistration<P>, context: Hand
         context,
         parameters,
         addressChannels,
-        credentials,
+        get credentials() {
+            if (!credentials) {
+                throw new Error("Credentials are only populated on generator and transform commands");
+            }
+            return credentials;
+        },
         ids,
     };
 }
