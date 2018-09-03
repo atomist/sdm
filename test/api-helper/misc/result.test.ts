@@ -45,8 +45,8 @@ describe("result", () => {
             foo: {
                 bar: {
                     childProcess: "bla",
-                }
-            }
+                },
+            },
         } as any;
         const safeResult = JSON.parse(serializeResult(result));
         delete result.childProcess;

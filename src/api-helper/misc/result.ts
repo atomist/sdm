@@ -25,8 +25,7 @@ const KeysToIgnore = ["childProcess"];
 function replacer(key: string, value: any): any {
     if ((key === "request" || key === "response") && !!value && stringify(value).length > 200) {
         return `<...elided because it might be a really long axios ${key}...>`;
-    }
-    else if (!KeysToIgnore.includes(key)) {
+    } else if (!KeysToIgnore.includes(key)) {
         return value;
     }
     return undefined;
