@@ -48,7 +48,7 @@ export const AddThingAutofix: AutofixRegistration = {
     ),
     transform: async (project, ci) => {
         await project.addFile("thing", "1");
-        assert(!!ci.teamId);
+        assert(!!ci.context.workspaceId);
         assert(!ci.parameters);
         return { edited: true, success: true, target: project };
     },
@@ -66,7 +66,7 @@ export const AddThingWithParamAutofix: AutofixRegistration<BirdParams> = {
     ),
     transform: async (project, ci) => {
         await project.addFile("bird", ci.parameters.bird);
-        assert(!!ci.teamId);
+        assert(!!ci.context.workspaceId);
         assert(!ci.parameters);
         return { edited: true, success: true, target: project };
     },
