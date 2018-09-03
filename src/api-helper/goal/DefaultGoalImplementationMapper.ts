@@ -40,7 +40,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             m.goal.context === goal.externalKey);
 
         if (matchedNames.length > 1) {
-            throw new Error("Multiple mappings for name " + goal.fulfillment.name);
+            throw new Error(`Multiple implementations found for name '${goal.fulfillment.name}' on goal '${goal.name}'`);
         }
         if (matchedNames.length === 0) {
             throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +
@@ -74,11 +74,20 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
         const implementationsForGoal = this.implementations.filter(m => m.goal.name === goal.name
             && m.goal.environment === goal.environment);
+        const matchingFulfillments: GoalImplementation[] = [];
         for (const implementation of implementationsForGoal) {
             if (await implementation.pushTest.mapping(inv)) {
-                return implementation;
+                matchingFulfillments.push(implementation);
             }
         }
+
+        if (matchingFulfillments.length > 1) {
+            throw new Error(`Multiple matching implementations for goal '${goal.name}' found: '${
+                matchingFulfillments.map(f => f.implementationName)}'`);
+        } else {
+            return matchingFulfillments[0];
+        }
+
         const knownSideEffects = this.sideEffects.filter(m => m.goal.name === goal.name
             && m.goal.environment === goal.environment);
         for (const sideEffect of knownSideEffects) {
