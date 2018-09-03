@@ -21,8 +21,8 @@ import {
 } from "../project/exports";
 import { AutofixRegistration } from "./AutofixRegistration";
 import {
-    CodeInspectionRegistration,
     CodeInspectionActions,
+    CodeInspectionRegistration,
 } from "./CodeInspectionRegistration";
 import { CodeTransformRegistration } from "./CodeTransformRegistration";
 
