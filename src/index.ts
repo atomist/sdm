@@ -25,7 +25,7 @@ export * from "./api/goal/SdmGoalEvent";
 export * from "./api/goal/SdmGoalMessage";
 export * from "./api/goal/common/Autofix";
 export * from "./api/goal/common/Build";
-export * from "./api/goal/common/CodeInspection";
+export * from "./api/goal/common/AutoCodeInspection";
 export * from "./api/goal/common/Fingerprint";
 export * from "./api/goal/common/GenericGoal";
 export * from "./api/goal/common/MessageGoal";

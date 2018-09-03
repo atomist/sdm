@@ -49,7 +49,7 @@ import { AutofixRegistration } from "../../api/registration/AutofixRegistration"
 import {
     CodeInspection,
     CodeInspectionRegistration,
-    InspectionResult,
+    CodeInspectionResult,
 } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
@@ -305,7 +305,7 @@ function toCodeInspectionCommand<PARAMS>(
 }
 
 function defaultOnInspectionResults<PARAMS>(name: string) {
-    return async (results: Array<InspectionResult<InvarianceAssessment>>, ci: CommandListenerInvocation<PARAMS>) => {
+    return async (results: Array<CodeInspectionResult<InvarianceAssessment>>, ci: CommandListenerInvocation<PARAMS>) => {
         const messages = results.map(r =>
             // TODO cast will go with automation-client upgrade
             `${(r.repoId as RemoteRepoRef).url}: Satisfies invariant _${name}_: \`${r.result.holds}\``);
@@ -314,7 +314,7 @@ function defaultOnInspectionResults<PARAMS>(name: string) {
 }
 
 /**
- * Return a CodeInspection that runs a transform and sees whether or it made
+ * Return a AutoCodeInspection that runs a transform and sees whether or it made
  * an edit
  * @param {CodeTransformOrTransforms<PARAMS>} transform
  * @return {CodeInspection<InvarianceAssessment, PARAMS>}

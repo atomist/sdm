@@ -22,7 +22,7 @@ import {
 import { AutofixRegistration } from "./AutofixRegistration";
 import {
     CodeInspectionRegistration,
-    InspectionActions,
+    CodeInspectionActions,
 } from "./CodeInspectionRegistration";
 import { CodeTransformRegistration } from "./CodeTransformRegistration";
 
@@ -37,12 +37,11 @@ export interface ProjectInvariantRegistration<PARAMS = NoParameters>
 /**
  * An invariant that can be enforced via an autofix.
  * Based around a CodeTransform which can be used as a command or an autofix.
- * If the CodeInspection isn't specified,
- * a CodeInspection will be created based on running the transform and seeing if
- * it makes changes.
+ * If the CodeInspection isn't specified, a CodeInspection will be created
+ * based on running the transform and seeing if it makes changes.
  */
 export interface EnforceableProjectInvariantRegistration<PARAMS = NoParameters>
-    extends Partial<InspectionActions<InvarianceAssessment, PARAMS>>,
+    extends Partial<CodeInspectionActions<InvarianceAssessment, PARAMS>>,
         CodeTransformRegistration<PARAMS>,
         AutofixRegistration<PARAMS> {
 

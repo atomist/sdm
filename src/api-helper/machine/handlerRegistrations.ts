@@ -64,7 +64,7 @@ import {
 import { ProjectPredicate } from "../../api/mapping/PushTest";
 import {
     CodeInspectionRegistration,
-    InspectionResult,
+    CodeInspectionResult,
 } from "../../api/registration/CodeInspectionRegistration";
 import {
     CodeTransform,
@@ -174,7 +174,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                         `Code Inspection`,
                         `Invalid parameters to code inspection '${ci.commandName}': \n\n${vr.message}`, ci.context));
             }
-            const action: (p: Project, params: any) => Promise<InspectionResult<R>> = async p => {
+            const action: (p: Project, params: any) => Promise<CodeInspectionResult<R>> = async p => {
                 if (!!cir.projectTest && !(await cir.projectTest(p))) {
                     return { repoId: p.id, result: undefined };
                 }
@@ -190,7 +190,7 @@ export function codeInspectionRegistrationToCommand<R>(sdm: MachineOrMachineOpti
                     (ci.parameters as RepoTargetingParameters).targets.credentials,
                     true,
                     ci.context);
-            const results = await doWithAllRepos<InspectionResult<R>, any>(
+            const results = await doWithAllRepos<CodeInspectionResult<R>, any>(
                 ci.context,
                 ci.credentials,
                 action,

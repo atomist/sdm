@@ -23,7 +23,7 @@ import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfill
 /**
  * Goal that runs code inspections
  */
-export class CodeInspection
+export class AutoCodeInspection
     extends FulfillableGoalWithRegistrationsAndListeners<CodeInspectionRegistration<any, any>, ReviewListenerRegistration> {
 
     constructor(private readonly uniqueName: string) {
