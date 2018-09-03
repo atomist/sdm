@@ -41,4 +41,4 @@ export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;
 /**
  * Don't report any progress
  */
-export const NoProgressReport: ReportProgress = () => { return undefined };
+export const NoProgressReport: ReportProgress = () => undefined;
