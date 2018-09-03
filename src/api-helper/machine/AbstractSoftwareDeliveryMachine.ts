@@ -31,11 +31,15 @@ import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
 import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
+import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import { StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
+import {
+    StagingEndpointGoal,
+    StagingVerifiedGoal,
+} from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
@@ -58,14 +62,12 @@ import {
     EnforceableProjectInvariantRegistration,
     InvarianceAssessment,
 } from "../../api/registration/ProjectInvariantRegistration";
-import { WellKnownGoals } from "../../pack/well-known-goals/addWellKnownGoals";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import {
     executeVerifyEndpoint,
     SdmVerification,
 } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
-import { validateRequiredConfigurationValues } from "../misc/extensionPack";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { toScalarProjectEditor } from "./handlerRegistrations";
 
@@ -257,7 +259,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     private addExtensionPack(pack: ExtensionPack): this {
         logger.info("Adding extension pack '%s' version %s from %s",
             pack.name, pack.version, pack.vendor);
-        validateRequiredConfigurationValues(this.configuration, pack);
+        validateConfigurationValues(this.configuration, pack);
         pack.configure(this);
         this.extensionPacks.push(pack);
         return this;

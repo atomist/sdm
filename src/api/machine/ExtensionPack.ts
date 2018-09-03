@@ -15,6 +15,7 @@
  */
 
 import { GoalSetter } from "../mapping/GoalSetter";
+import { ConfigurationValues } from "./ConfigurationValues";
 import { MachineConfigurer } from "./MachineConfigurer";
 
 export interface ExtensionPackMetadata {
@@ -34,7 +35,7 @@ export interface ExtensionPackMetadata {
  * For example, a Node module can export an ExtensionPack.
  * ExtensionPacks can optional contribute goal setting, which will be added to existing goal setting.
  */
-export interface ExtensionPack extends MachineConfigurer, ExtensionPackMetadata {
+export interface ExtensionPack extends MachineConfigurer, ExtensionPackMetadata, ConfigurationValues {
 
     /**
      * Human-readable description of this extension pack
@@ -46,11 +47,4 @@ export interface ExtensionPack extends MachineConfigurer, ExtensionPackMetadata 
      * Decorates other goal setting behavior.
      */
     goalContributions?: GoalSetter;
-
-    /**
-     * Optional configuration value paths that this extension pack requires to
-     * be present on the Configuration instance.
-     */
-    requiredConfigurationValues?: string | string[];
-
 }
