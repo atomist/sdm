@@ -21,19 +21,17 @@ import {
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
 import { Builder } from "../../spi/build/Builder";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
 
 /**
  * Execute build with the appropriate builder
  * @param projectLoader used to load projects
  * @param builder builder to user
  */
-export function executeBuild(projectLoader: ProjectLoader,
-                             builder: Builder): ExecuteGoal {
+export function executeBuild(builder: Builder): ExecuteGoal {
     return async (goalInvocation: GoalInvocation): Promise<ExecuteGoalResult> => {
         const { sdmGoal, credentials, id, context, progressLog, addressChannels } = goalInvocation;
 
-        logger.info("Building project %s:%s with builder [%s]", id.owner, id.repo, builder.name);
+        logger.info("Building project '%s/%s' with builder '%s'", id.owner, id.repo, builder.name);
 
         // the builder is expected to result in a complete Build event (which will update the build status)
         // and an ImageLinked event (which will update the artifact status).
