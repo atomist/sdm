@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   Allow goals to receive implementations and listeners. [#504](https://github.com/atomist/sdm/issues/504)
 -   Starting point should be able to handle a Promise returning function. [#500](https://github.com/atomist/sdm/issues/500)
 -   Add typed `Build` goal to register `Builder` instances. [#506](https://github.com/atomist/sdm/issues/506)
+-   Goal names are not automatically generated based on source code location. [#507](https://github.com/atomist/sdm/issues/507)
 
 ### Changed
 
