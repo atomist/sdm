@@ -26,6 +26,7 @@ import {
     Goal,
     GoalDefinition,
     GoalWithPrecondition,
+    isGoalDefiniton,
 } from "./Goal";
 import { ExecuteGoal } from "./GoalInvocation";
 import { ReportProgress } from "./progress/ReportProgress";
@@ -88,8 +89,8 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
     private readonly callbacks: GoalFulfillmentCallback[] = [];
     private sdm: SoftwareDeliveryMachine;
 
-    constructor(public definition: GoalDefinition, ...dependsOn: Goal[]) {
-        super(definition, ...dependsOn);
+    constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
+        super(isGoalDefiniton(definitionOrGoal) ? definitionOrGoal : definitionOrGoal.definition, ...dependsOn);
         registerRegistrable(this);
     }
 
@@ -145,8 +146,8 @@ export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoa
 
     protected registrations: R[] = [];
 
-    constructor(public definition: GoalDefinition, ...dependsOn: Goal[]) {
-        super(definition, ...dependsOn);
+    constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
+        super(definitionOrGoal, ...dependsOn);
     }
 
     public with(registration: R): this {
@@ -162,8 +163,8 @@ export abstract class FulfillableGoalWithRegistrationsAndListeners<R, L> extends
 
     protected listeners: L[] = [];
 
-    constructor(public definition: GoalDefinition, ...dependsOn: Goal[]) {
-        super(definition, ...dependsOn);
+    constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
+        super(definitionOrGoal, ...dependsOn);
     }
 
     public withListener(listener: L): this {
