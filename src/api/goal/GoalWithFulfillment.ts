@@ -102,6 +102,11 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         this.callbacks.forEach(cb => this.registerCallback(cb));
     }
 
+    public after(goal: Goal): this {
+        this.dependsOn.push(goal);
+        return this;
+    }
+
     protected addFulfillmentCallback(cb: GoalFulfillmentCallback): this {
         if (this.sdm) {
             this.registerCallback(cb);
