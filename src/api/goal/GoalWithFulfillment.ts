@@ -23,6 +23,7 @@ import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { PushTest } from "../mapping/PushTest";
 import { AnyPush } from "../mapping/support/commonPushTests";
 import {
+    Goal,
     GoalDefinition,
     GoalWithPrecondition,
 } from "./Goal";
@@ -87,8 +88,8 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
     private readonly callbacks: GoalFulfillmentCallback[] = [];
     private sdm: SoftwareDeliveryMachine;
 
-    constructor(public definition: GoalDefinition) {
-        super(definition);
+    constructor(public definition: GoalDefinition, ...dependsOn: Goal[]) {
+        super(definition, ...dependsOn);
         registerRegistrable(this);
     }
 
@@ -144,8 +145,8 @@ export abstract class FulfillableGoalWithRegistrations<R> extends FulfillableGoa
 
     protected registrations: R[] = [];
 
-    constructor(public definition: GoalDefinition) {
-        super(definition);
+    constructor(public definition: GoalDefinition, ...dependsOn: Goal[]) {
+        super(definition, ...dependsOn);
     }
 
     public with(registration: R): this {
@@ -161,8 +162,8 @@ export abstract class FulfillableGoalWithRegistrationsAndListeners<R, L> extends
 
     protected listeners: L[] = [];
 
-    constructor(public definition: GoalDefinition) {
-        super(definition);
+    constructor(public definition: GoalDefinition, ...dependsOn: Goal[]) {
+        super(definition, ...dependsOn);
     }
 
     public withListener(listener: L): this {
