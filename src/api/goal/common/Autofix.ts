@@ -32,7 +32,6 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
             ...AutofixGoal.definition,
             uniqueName,
             displayName: "autofix",
-            orderedName: `0.2-${uniqueName.toLowerCase()}`,
         });
 
         this.addFulfillment({

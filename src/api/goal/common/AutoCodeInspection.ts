@@ -33,7 +33,6 @@ export class AutoCodeInspection
             ...CodeInspectionGoal.definition,
             uniqueName,
             displayName: "code-inspections",
-            orderedName: `1-${uniqueName.toLowerCase()}`,
         });
 
         this.addFulfillment({

@@ -29,7 +29,6 @@ export class GenericGoal extends Goal {
         super({
             uniqueName: params.uniqueName,
             environment: IndependentOfEnvironment,
-            orderedName: `99-${params.uniqueName}`,
             workingDescription: `Working: ${description}`,
             completedDescription: `${description} succeeded`,
             failedDescription: `${description} failed`,

@@ -32,7 +32,6 @@ import {
 export const NoGoal = new Goal({
     uniqueName: "Nevermind",
     environment: IndependentOfEnvironment,
-    orderedName: "1-immaterial",
     displayName: "immaterial",
     completedDescription: "No material changes",
 });
@@ -45,7 +44,6 @@ export const NoGoal = new Goal({
 export const LockingGoal = new Goal({
     uniqueName: "Lock",
     environment: IndependentOfEnvironment,
-    orderedName: "1-locking",
     displayName: "lock",
     completedDescription: "Lock goals",
 });
@@ -59,7 +57,6 @@ export const FingerprintGoal = new Goal({
     uniqueName: "Fingerprint",
     displayName: "Fingerprint",
     environment: IndependentOfEnvironment,
-    orderedName: "0.1-fingerprint",
     workingDescription: "Running fingerprint calculations",
     completedDescription: "Fingerprinted",
 });
@@ -72,7 +69,6 @@ export const FingerprintGoal = new Goal({
 export const AutofixGoal = new Goal({
     uniqueName: "Autofix",
     environment: IndependentOfEnvironment,
-    orderedName: "0.2-autofix",
     workingDescription: "Running autofixes",
     completedDescription: "Autofixed",
     failedDescription: "Autofixes applied",
@@ -86,7 +82,6 @@ export const AutofixGoal = new Goal({
 export const CodeInspectionGoal = new Goal({
     uniqueName: "CodeInspection",
     environment: IndependentOfEnvironment,
-    orderedName: "1-inspect",
     workingDescription: "Running code inspections",
     completedDescription: "Code inspections passed",
 });
@@ -98,7 +93,6 @@ export const CodeInspectionGoal = new Goal({
 export const PushReactionGoal = new Goal({
     uniqueName: "CodeReaction",
     environment: IndependentOfEnvironment,
-    orderedName: "1.5-react",
     workingDescription: "Running code reactions",
     completedDescription: "Code reactions passed",
 });
@@ -110,7 +104,6 @@ export const PushReactionGoal = new Goal({
 export const JustBuildGoal = new Goal({
     uniqueName: "JustBuild",
     environment: IndependentOfEnvironment,
-    orderedName: "2-just-build ",
     displayName: "build",
     workingDescription: "Building",
     completedDescription: "Build successful",
@@ -121,7 +114,6 @@ export const JustBuildGoal = new Goal({
 export const BuildGoal = new GoalWithPrecondition({
     uniqueName: "Build",
     environment: IndependentOfEnvironment,
-    orderedName: "2-build",
     displayName: "build",
     workingDescription: "Building",
     completedDescription: "Build successful",
@@ -135,7 +127,6 @@ export const BuildGoal = new GoalWithPrecondition({
 export const ArtifactGoal = new GoalWithPrecondition({
     uniqueName: "Artifact",
     environment: IndependentOfEnvironment,
-    orderedName: "2.5-artifact",
     displayName: "store artifact",
     completedDescription: "Stored artifact",
 }, BuildGoal);
@@ -150,7 +141,6 @@ export const LocalDeploymentGoal = new Goal({
 export const StagingDeploymentGoal = new GoalWithPrecondition({
     uniqueName: "DeployToTest",
     environment: StagingEnvironment,
-    orderedName: "3-deploy",
     displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
     failedDescription: "Test deployment failure",
@@ -163,7 +153,6 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
 export const StagingEndpointGoal = new GoalWithPrecondition({
     uniqueName: "FindTestEndpoint",
     environment: StagingEnvironment,
-    orderedName: "4-endpoint",
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
     failedDescription: "Couldn't locate service endpoint in Test",
@@ -172,20 +161,18 @@ export const StagingEndpointGoal = new GoalWithPrecondition({
 export const StagingVerifiedGoal = new GoalWithPrecondition({
     uniqueName: "VerifyTest",
     environment: StagingEnvironment,
-    orderedName: "5-verifyEndpoint",
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
     waitingForApprovalDescription: "Test endpoint verified! Approve for production deploy.",
 }, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
-        uniqueName: "DeployToProduction",
-        environment: ProductionEnvironment,
-        orderedName: "3-prod-deploy",
-        displayName: "deploy to Prod",
-        completedDescription: "Deployed to Prod",
-    },
-    ArtifactGoal, StagingVerifiedGoal);
+    uniqueName: "DeployToProduction",
+    environment: ProductionEnvironment,
+    displayName: "deploy to Prod",
+    completedDescription: "Deployed to Prod",
+},
+ArtifactGoal, StagingVerifiedGoal);
 
 // this one won't be set up to trigger on its precondition;
 // rather, the deploy goal also sets this one, currently.
@@ -194,7 +181,6 @@ export const ProductionDeploymentGoal = new GoalWithPrecondition({
 export const ProductionEndpointGoal = new GoalWithPrecondition({
     uniqueName: "FindProductionEndpoint",
     environment: ProductionEnvironment,
-    orderedName: "4-endpoint",
     displayName: "locate service endpoint in Prod",
     completedDescription: "Here is the service endpoint in Prod",
 }, ProductionDeploymentGoal);
@@ -202,7 +188,6 @@ export const ProductionEndpointGoal = new GoalWithPrecondition({
 export const ProductionUndeploymentGoal = new Goal({
     uniqueName: "UndeployFromProduction",
     environment: ProjectDisposalEnvironment,
-    orderedName: "3-prod-undeploy",
     displayName: "undeploy from Prod",
     completedDescription: "not deployed in Prod",
 });
@@ -210,13 +195,11 @@ export const ProductionUndeploymentGoal = new Goal({
 export const DeleteAfterUndeploysGoal = new GoalWithPrecondition({
     uniqueName: "DeleteRepositoryAfterUndeployed",
     environment: ProjectDisposalEnvironment,
-    orderedName: "8-delete-repo",
     completedDescription: "Repository deleted",
 }, ProductionUndeploymentGoal);
 
 export const DeleteRepositoryGoal = new Goal({
     uniqueName: "DeleteRepository",
     environment: ProjectDisposalEnvironment,
-    orderedName: "8-delete-repo",
     completedDescription: "Offered to delete repository",
 });
