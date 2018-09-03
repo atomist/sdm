@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-import { possibleAxiosObjectReplacer } from "@atomist/automation-client/internal/transport/AbstractRequestProcessor";
 import * as stringify from "json-stringify-safe";
-import * as _ from "lodash";
 
 export function serializeResult(result: any): string {
-    const safeResult = _.omit(result, "childProcess");
-    return stringify(safeResult, possibleAxiosObjectReplacer, 0);
+    return stringify(result, replacer, 0);
+}
+
+const KeysToIgnore = ["childProcess"];
+
+function replacer(key: string, value: any): any {
+    if ((key === "request" || key === "response") && !!value && stringify(value).length > 200) {
+        return `<...elided because it might be a really long axios ${key}...>`;
+    } else if (!KeysToIgnore.includes(key)) {
+        return value;
+    }
+    return undefined;
 }

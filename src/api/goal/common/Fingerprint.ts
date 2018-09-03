@@ -33,7 +33,6 @@ export class Fingerprint
             ...FingerprintGoal.definition,
             uniqueName,
             displayName: "fingerprint",
-            orderedName: `0.1-${uniqueName.toLowerCase()}`,
         });
 
         this.addFulfillment({

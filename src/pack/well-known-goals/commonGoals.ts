@@ -33,9 +33,9 @@ import {
  * @ModuleExport
  */
 export const VersionGoal = new Goal({
-    uniqueName: "Version",
+    uniqueName: "version",
+    displayName: "version",
     environment: IndependentOfEnvironment,
-    orderedName: "0.1-version",
     workingDescription: "Calculating project version",
     completedDescription: "Versioned",
 });
@@ -44,10 +44,9 @@ export const VersionGoal = new Goal({
  * @ModuleExport
  */
 export const DockerBuildGoal = new GoalWithPrecondition({
-    uniqueName: "DockerBuild",
-    environment: IndependentOfEnvironment,
-    orderedName: "3-docker",
+    uniqueName: "docker-build",
     displayName: "docker build",
+    environment: IndependentOfEnvironment,
     workingDescription: "Running docker build",
     completedDescription: "Docker build successful",
     failedDescription: "Docker build failed",
@@ -58,10 +57,9 @@ export const DockerBuildGoal = new GoalWithPrecondition({
  * @ModuleExport
  */
 export const TagGoal = new GoalWithPrecondition({
-    uniqueName: "Tag",
-    environment: IndependentOfEnvironment,
-    orderedName: "4-tag",
+    uniqueName: "tag",
     displayName: "tag",
+    environment: IndependentOfEnvironment,
     workingDescription: "Tagging",
     completedDescription: "Tagged",
     failedDescription: "Failed to create Tag",
@@ -71,10 +69,9 @@ export const TagGoal = new GoalWithPrecondition({
  * @ModuleExport
  */
 export const StagingUndeploymentGoal = new Goal({
-    uniqueName: "UndeployFromTest",
-    environment: ProjectDisposalEnvironment,
-    orderedName: "2-staging-undeploy",
+    uniqueName: "undeploy-from-test",
     displayName: "undeploy from test",
+    environment: ProjectDisposalEnvironment,
     completedDescription: "not deployed in test",
 });
 
@@ -82,9 +79,9 @@ export const StagingUndeploymentGoal = new Goal({
  * @ModuleExport
  */
 export const LocalUndeploymentGoal = new Goal({
-    uniqueName: "UndeployHere",
+    uniqueName: "undeploy-locally",
+    displayName: "undeploy locally test",
     environment: ProjectDisposalEnvironment,
-    orderedName: "1-undeploy-locally",
     failedDescription: "Failed at local undeploy",
     completedDescription: "not deployed locally",
 });
@@ -94,12 +91,10 @@ export const LocalUndeploymentGoal = new Goal({
  */
 // not an enforced precondition, but it's real enough to graph
 export const LocalEndpointGoal = new GoalWithPrecondition({
-    uniqueName: "FindLocalEndpoint",
-    environment: IndependentOfEnvironment,
-    orderedName: "2-endpoint",
+    uniqueName: "find-local-endpoint",
     displayName: "locate local service endpoint",
+    environment: IndependentOfEnvironment,
     completedDescription: "Here is the local service endpoint",
-
 }, LocalDeploymentGoal);
 
 /**

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import {
     BaseContext,
     GitHubStatusContext,
@@ -33,8 +32,14 @@ export interface GoalDefinition {
     uniqueName: string;
 
     environment: GoalEnvironment;
-    orderedName: string;
+
+    /**
+     * Not used any more
+     * @deprecated
+     */
+    orderedName?: string;
     displayName?: string;
+
     completedDescription?: string;
     workingDescription?: string;
     failedDescription?: string;
@@ -58,7 +63,6 @@ export class Goal {
     public readonly context: GitHubStatusContext;
     public readonly name: string;
     public readonly definition: GoalDefinition;
-    public readonly uniqueCamelCaseName: string;
 
     get environment() {
         return this.definition.environment;
@@ -90,18 +94,8 @@ export class Goal {
 
     constructor(definition: GoalDefinition) {
         this.definition = definition;
-        this.context = BaseContext + definition.environment + definition.orderedName;
-
-        this.uniqueCamelCaseName = definition.uniqueName;
-
-        const numberAndName = /([0-9\.]+)-(.*)/;
-        const matchGoal = definition.orderedName.match(numberAndName);
-        if (!matchGoal) {
-            logger.debug(`Ordered name was not '#-name'. Did not find number and name in ${definition.orderedName}`);
-        }
-
-        this.name = definition.displayName || (matchGoal && matchGoal[2]) || definition.orderedName;
-
+        this.context = BaseContext + definition.environment + definition.uniqueName;
+        this.name = definition.displayName || definition.uniqueName;
     }
 }
 

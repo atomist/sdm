@@ -33,4 +33,24 @@ describe("result", () => {
         delete result.childProcess;
         assert.deepEqual(safeResult, result);
     });
+
+    it("should strip nested childProcess from string", () => {
+        const result: any = {
+            childProcess: {
+                foo: "bar",
+            },
+            message: "test",
+            error: "error",
+            code: 100,
+            foo: {
+                bar: {
+                    childProcess: "bla",
+                },
+            },
+        } as any;
+        const safeResult = JSON.parse(serializeResult(result));
+        delete result.childProcess;
+        delete result.foo.bar.childProcess;
+        assert.deepEqual(safeResult, result);
+    });
 });

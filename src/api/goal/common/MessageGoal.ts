@@ -27,7 +27,6 @@ export class MessageGoal extends Goal {
             uniqueName,
             displayName: name ? name : uniqueName,
             environment: IndependentOfEnvironment,
-            orderedName: `0-message-${uniqueName}`,
             completedDescription: "Sent",
         });
     }
