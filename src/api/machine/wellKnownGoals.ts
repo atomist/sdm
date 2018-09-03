@@ -30,9 +30,9 @@ import {
  */
 
 export const NoGoal = new Goal({
-    uniqueName: "Nevermind",
-    environment: IndependentOfEnvironment,
+    uniqueName: "nevermind",
     displayName: "immaterial",
+    environment: IndependentOfEnvironment,
     completedDescription: "No material changes",
 });
 
@@ -42,10 +42,10 @@ export const NoGoal = new Goal({
  * @type {Goal}
  */
 export const LockingGoal = new Goal({
-    uniqueName: "Lock",
-    environment: IndependentOfEnvironment,
+    uniqueName: "lock",
     displayName: "lock",
     completedDescription: "Lock goals",
+    environment: IndependentOfEnvironment,
 });
 
 /**
@@ -54,8 +54,8 @@ export const LockingGoal = new Goal({
  * @type {Goal}
  */
 export const FingerprintGoal = new Goal({
-    uniqueName: "Fingerprint",
-    displayName: "Fingerprint",
+    uniqueName: "fingerprint",
+    displayName: "fingerprint",
     environment: IndependentOfEnvironment,
     workingDescription: "Running fingerprint calculations",
     completedDescription: "Fingerprinted",
@@ -67,7 +67,8 @@ export const FingerprintGoal = new Goal({
  * @type {Goal}
  */
 export const AutofixGoal = new Goal({
-    uniqueName: "Autofix",
+    uniqueName: "autofix",
+    displayName: "autofix",
     environment: IndependentOfEnvironment,
     workingDescription: "Running autofixes",
     completedDescription: "Autofixed",
@@ -80,7 +81,8 @@ export const AutofixGoal = new Goal({
  * @type {Goal}
  */
 export const CodeInspectionGoal = new Goal({
-    uniqueName: "CodeInspection",
+    uniqueName: "code-inspection",
+    displayName: "code inspection",
     environment: IndependentOfEnvironment,
     workingDescription: "Running code inspections",
     completedDescription: "Code inspections passed",
@@ -91,7 +93,8 @@ export const CodeInspectionGoal = new Goal({
  * @type {Goal}
  */
 export const PushReactionGoal = new Goal({
-    uniqueName: "CodeReaction",
+    uniqueName: "code-reaction",
+    displayName: "code reaction",
     environment: IndependentOfEnvironment,
     workingDescription: "Running code reactions",
     completedDescription: "Code reactions passed",
@@ -102,7 +105,7 @@ export const PushReactionGoal = new Goal({
  * @type {Goal}
  */
 export const JustBuildGoal = new Goal({
-    uniqueName: "JustBuild",
+    uniqueName: "just-build",
     environment: IndependentOfEnvironment,
     displayName: "build",
     workingDescription: "Building",
@@ -112,7 +115,7 @@ export const JustBuildGoal = new Goal({
 });
 
 export const BuildGoal = new GoalWithPrecondition({
-    uniqueName: "Build",
+    uniqueName: "build",
     environment: IndependentOfEnvironment,
     displayName: "build",
     workingDescription: "Building",
@@ -125,21 +128,21 @@ export const BuildGoal = new GoalWithPrecondition({
 // This one is actually satisfied in an ImageLinked event,
 // which happens to be a result of the build.
 export const ArtifactGoal = new GoalWithPrecondition({
-    uniqueName: "Artifact",
+    uniqueName: "artifact",
     environment: IndependentOfEnvironment,
     displayName: "store artifact",
     completedDescription: "Stored artifact",
 }, BuildGoal);
 
 export const LocalDeploymentGoal = new Goal({
-    uniqueName: "DeployHere",
+    uniqueName: "deploy-locally",
+    displayName: "deploy locally",
     environment: IndependentOfEnvironment,
-    orderedName: "1-deploy-locally",
     completedDescription: "Deployed locally",
 });
 
 export const StagingDeploymentGoal = new GoalWithPrecondition({
-    uniqueName: "DeployToTest",
+    uniqueName: "deploy-to-test",
     environment: StagingEnvironment,
     displayName: "deploy to Test",
     completedDescription: "Deployed to Test",
@@ -151,7 +154,7 @@ export const StagingDeploymentGoal = new GoalWithPrecondition({
 // Setting the precondition lets FailDownstream know that this
 // one is never gonna succeed if the deploy failed.
 export const StagingEndpointGoal = new GoalWithPrecondition({
-    uniqueName: "FindTestEndpoint",
+    uniqueName: "find-test-endpoint",
     environment: StagingEnvironment,
     displayName: "locate service endpoint in Test",
     completedDescription: "Here is the service endpoint in Test",
@@ -159,7 +162,7 @@ export const StagingEndpointGoal = new GoalWithPrecondition({
 }, StagingDeploymentGoal);
 
 export const StagingVerifiedGoal = new GoalWithPrecondition({
-    uniqueName: "VerifyTest",
+    uniqueName: "verify-test",
     environment: StagingEnvironment,
     displayName: "verify Test deployment",
     completedDescription: "Verified endpoint in Test",
@@ -167,7 +170,7 @@ export const StagingVerifiedGoal = new GoalWithPrecondition({
 }, StagingEndpointGoal);
 
 export const ProductionDeploymentGoal = new GoalWithPrecondition({
-    uniqueName: "DeployToProduction",
+    uniqueName: "deploy-to-production",
     environment: ProductionEnvironment,
     displayName: "deploy to Prod",
     completedDescription: "Deployed to Prod",
@@ -179,27 +182,29 @@ ArtifactGoal, StagingVerifiedGoal);
 // Setting the precondition lets FailDownstream know that this
 // one is never gonna succeed if the deploy failed.
 export const ProductionEndpointGoal = new GoalWithPrecondition({
-    uniqueName: "FindProductionEndpoint",
+    uniqueName: "find-production-endpoint",
     environment: ProductionEnvironment,
     displayName: "locate service endpoint in Prod",
     completedDescription: "Here is the service endpoint in Prod",
 }, ProductionDeploymentGoal);
 
 export const ProductionUndeploymentGoal = new Goal({
-    uniqueName: "UndeployFromProduction",
+    uniqueName: "undeploy-from-production",
     environment: ProjectDisposalEnvironment,
     displayName: "undeploy from Prod",
     completedDescription: "not deployed in Prod",
 });
 
 export const DeleteAfterUndeploysGoal = new GoalWithPrecondition({
-    uniqueName: "DeleteRepositoryAfterUndeployed",
+    uniqueName: "delete-repository-after-undeployed",
+    displayName: "delete repository after undeploy",
     environment: ProjectDisposalEnvironment,
     completedDescription: "Repository deleted",
 }, ProductionUndeploymentGoal);
 
 export const DeleteRepositoryGoal = new Goal({
-    uniqueName: "DeleteRepository",
+    uniqueName: "delete-repository",
+    displayName: "delete repository",
     environment: ProjectDisposalEnvironment,
     completedDescription: "Offered to delete repository",
 });
