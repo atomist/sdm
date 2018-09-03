@@ -35,7 +35,6 @@ export * from "./api/goal/progress/ReportProgress";
 export * from "./api/goal/support/GoalImplementationMapper";
 export * from "./api/goal/support/IsolatedGoalLauncher";
 export * from "./api/goal/support/environment";
-export * from "./api/goal/support/executeSendMessageToSlack";
 export * from "./api/listener/ArtifactListener";
 export * from "./api/listener/BuildListener";
 export * from "./api/listener/ChannelLinkListenerInvocation";

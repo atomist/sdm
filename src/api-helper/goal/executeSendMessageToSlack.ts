@@ -16,11 +16,11 @@
 
 import { Success } from "@atomist/automation-client";
 import { SlackMessage } from "@atomist/slack-messages";
-import { ExecuteGoalResult } from "../ExecuteGoalResult";
+import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
     GoalInvocation,
-} from "../GoalInvocation";
+} from "../../api/goal/GoalInvocation";
 
 /***
  * Execute a goal by sending a message to the linked Slack channels
