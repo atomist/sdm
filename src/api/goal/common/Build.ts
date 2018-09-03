@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    Builder,
-    BuildGoal,
-    ImplementationRegistration,
-} from "../../..";
 import { executeBuild } from "../../../api-helper/goal/executeBuild";
+import { Builder } from "../../../spi/build/Builder";
+import { BuildGoal } from "../../machine/wellKnownGoals";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
+import {
+    FulfillableGoalWithRegistrations,
+    ImplementationRegistration,
+} from "../GoalWithFulfillment";
 
 /**
  * Register a Builder for a certain type of push

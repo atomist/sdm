@@ -15,7 +15,7 @@
  */
 
 import assert = require("power-assert");
-import { Autofix } from "../../../src";
+import { Autofix } from "../../../src/api/goal/common/Autofix";
 
 describe("GoalNameGenerator", () => {
 
