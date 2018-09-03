@@ -14,65 +14,10 @@
  * limitations under the License.
  */
 
-import { HandlerLifecycle } from "@atomist/automation-client/HandlerContext";
-import { Source } from "@atomist/automation-client/internal/transport/RequestProcessor";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
-import { GraphClient } from "@atomist/automation-client/spi/graph/GraphClient";
-import {
-    MessageClient,
-    SlackMessageClient,
-} from "@atomist/automation-client/spi/message/MessageClient";
 import { ParametersInvocation } from "../listener/ParametersInvocation";
-
-/**
- * This interface contains methods from HandlerContext.
- * They are duplicated here so that they can be individually deprecated.
- * @deprecated Use CommandListenerInvocation
- */
-export interface HandlerContextMethods {
-
-    /**
-     * @deprecated use context.teamId
-     */
-    teamId?: string;
-
-    /**
-     * @deprecated use context.workspaceId
-     */
-    workspaceId: string;
-
-    /**
-     * @deprecated use context.teamId
-     */
-    correlationId: string;
-
-    /**
-     * @deprecated use context.teamId
-     */
-    invocationId?: string;
-
-    /**
-     * @deprecated use context.source
-     */
-    source?: Source;
-
-    /**
-     * @deprecated use context.graphClient
-     */
-    graphClient?: GraphClient;
-
-    /**
-     * @deprecated use context.messageClient
-     */
-    messageClient: MessageClient & SlackMessageClient;
-
-    /**
-     * @deprecated use context.lifecycle
-     */
-    lifecycle?: HandlerLifecycle;
-}
 
 /**
  * Function that can transform a project. Mixing HandlerContextMethods into second
@@ -80,7 +25,7 @@ export interface HandlerContextMethods {
  * New code should use (Project, Command ParametersInvocation).
  */
 export type CodeTransform<P = NoParameters> = (p: Project,
-                                               sdmc: ParametersInvocation<P> & HandlerContextMethods,
+                                               sdmc: ParametersInvocation<P>,
                                                params?: P) => Promise<Project | EditResult>;
 
 /**
