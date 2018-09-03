@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-import * as assert from "power-assert";
-import { MessageGoal } from "../../../../src/api/goal/common/MessageGoal";
+import assert = require("power-assert");
+import { Autofix } from "../../../src";
 
-describe("Goal", () => {
+describe("GoalNameGenerator", () => {
 
-    it("should require camel case name", () => {
-        [" bad name", "#234029384", "1tttt", "3Ter"].forEach(rejectName);
-    });
+    describe("SourceLocalGoalNameGenerator", () => {
 
-    it("should accept camel case name", () => {
-        ["camelCase", "UpperCamel"].forEach(name => new MessageGoal(name));
+        it("should correctly generate a goal name", () => {
+            const goal = new Autofix();
+            const name = goal.definition.uniqueName;
+            assert(name.startsWith("autofix"));
+            assert(name.includes("GoalNameGenerator.test.ts:"));
+        });
     });
 });
-
-function rejectName(name: string) {
-    assert.throws(() => new MessageGoal(name),
-        `Should reject goal name '${name}'`);
-}

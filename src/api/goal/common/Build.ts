@@ -20,6 +20,7 @@ import {
     ImplementationRegistration,
 } from "../../..";
 import { executeBuild } from "../../../api-helper/goal/executeBuild";
+import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
 
 /**
@@ -34,7 +35,7 @@ export interface BuilderRegistration extends ImplementationRegistration {
  */
 export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration> {
 
-    constructor(private readonly uniqueName: string) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("build")) {
 
         super({
             ...BuildGoal.definition,

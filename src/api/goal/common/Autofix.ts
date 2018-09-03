@@ -18,6 +18,7 @@ import { executeAutofixes } from "../../../api-helper/listener/executeAutofixes"
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutofixGoal } from "../../machine/wellKnownGoals";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
+import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
 
 /**
@@ -25,7 +26,7 @@ import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
  */
 export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration> {
 
-    constructor(private readonly uniqueName: string) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("autofix")) {
 
         super({
             ...AutofixGoal.definition,
