@@ -54,7 +54,7 @@ export class SourceLocationGoalNameGenerator implements GoalNameGenerator {
         const creatorLineNumber = creator.getLineNumber();
         const name = `${creatorFileName}:${creatorLineNumber}`;
 
-        return `${prefix ? prefix : goalName}-${name}`;
+        return `${prefix ? prefix : goalName}#${name}`;
     }
 }
 
