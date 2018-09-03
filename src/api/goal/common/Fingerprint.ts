@@ -32,6 +32,7 @@ export class Fingerprint
         super({
             ...FingerprintGoal.definition,
             uniqueName,
+            displayName: "fingerprint",
             orderedName: `0.1-${uniqueName.toLowerCase()}`,
         });
 

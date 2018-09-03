@@ -32,6 +32,7 @@ export class AutoCodeInspection
         super({
             ...CodeInspectionGoal.definition,
             uniqueName,
+            displayName: "code-inspections",
             orderedName: `1-${uniqueName.toLowerCase()}`,
         });
 

@@ -31,6 +31,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
         super({
             ...AutofixGoal.definition,
             uniqueName,
+            displayName: "autofix",
             orderedName: `0.2-${uniqueName.toLowerCase()}`,
         });
 

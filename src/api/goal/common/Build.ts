@@ -40,6 +40,7 @@ export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration>
         super({
             ...BuildGoal.definition,
             uniqueName,
+            displayName: "build",
             orderedName: `2-${uniqueName.toLowerCase()}`,
         });
     }

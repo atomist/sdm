@@ -30,6 +30,7 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
         super({
             ...PushReactionGoal.definition,
             uniqueName,
+            displayName: "push-impact",
             orderedName: `1.5-${uniqueName.toLowerCase()}`,
         });
 
