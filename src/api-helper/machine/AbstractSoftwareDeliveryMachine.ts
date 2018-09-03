@@ -63,6 +63,7 @@ import {
     InvarianceAssessment,
 } from "../../api/registration/ProjectInvariantRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
+import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
 import {
     executeVerifyEndpoint,
     SdmVerification,
@@ -94,6 +95,15 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
 
     private pushMap: GoalSetter;
 
+    private fulfillmentMapper;
+
+    public get goalFulfillmentMapper() {
+        if (!this.fulfillmentMapper) {
+            this.fulfillmentMapper = new DefaultGoalImplementationMapper();
+        }
+        return this.fulfillmentMapper;
+    }
+
     /**
      * Return the PushMapping that will be used on pushes.
      * Useful in testing goal setting.
@@ -102,11 +112,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     get pushMapping(): PushMapping<Goals> {
         return this.pushMap;
     }
-
-    /*
-     * Store all the implementations we know
-     */
-    public abstract readonly goalFulfillmentMapper;
 
     /**
      * Provide the implementation for a goal.
@@ -128,11 +133,10 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             logInterpreter: InterpretLog,
             progressReporter: ReportProgress,
         }>): this {
-        const optsToUse = {
-            pushTest: AnyPush,
-            logInterpreter: lastLinesLogInterpreter(implementationName, 10),
-            ...options,
-        };
+        const optsToUse = _.merge({
+                pushTest: AnyPush,
+                logInterpreter: lastLinesLogInterpreter(implementationName, 10),
+            }, options);
         const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: optsToUse.pushTest,

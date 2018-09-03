@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import {
-    Builder,
-    BuildGoal,
-    ImplementationRegistration,
-} from "../../..";
 import { executeBuild } from "../../../api-helper/goal/executeBuild";
-import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
+import { Builder } from "../../../spi/build/Builder";
+import { BuildGoal } from "../../machine/wellKnownGoals";
+import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
+import {
+    FulfillableGoalWithRegistrations,
+    ImplementationRegistration,
+} from "../GoalWithFulfillment";
 
 /**
  * Register a Builder for a certain type of push
@@ -34,7 +35,7 @@ export interface BuilderRegistration extends ImplementationRegistration {
  */
 export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration> {
 
-    constructor(private readonly uniqueName: string) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("build")) {
 
         super({
             ...BuildGoal.definition,

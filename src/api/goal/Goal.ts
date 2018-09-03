@@ -50,8 +50,6 @@ export interface GoalDefinition {
     retryFeasible?: boolean;
 }
 
-const ValidGoalName = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
-
 /**
  * Represents a delivery action, such as Build or Deploy.
  */
@@ -91,9 +89,6 @@ export class Goal {
     }
 
     constructor(definition: GoalDefinition) {
-        if (!ValidGoalName.test(definition.uniqueName)) {
-            throw new Error(`${definition.uniqueName} is not a valid goal name: Must be camel case`);
-        }
         this.definition = definition;
         this.context = BaseContext + definition.environment + definition.orderedName;
 
@@ -119,6 +114,10 @@ export class GoalWithPrecondition extends Goal {
         this.dependsOn = dependsOn;
     }
 
+}
+
+export function isGoalDefiniton(f: Goal | GoalDefinition): f is GoalDefinition {
+    return (f as GoalDefinition).uniqueName && true;
 }
 
 export function hasPreconditions(goal: Goal): goal is GoalWithPrecondition {

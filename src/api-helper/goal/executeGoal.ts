@@ -201,7 +201,7 @@ export async function executeHook(rules: { projectLoader: ProjectLoader },
                 env: {
                     ...process.env,
                     GITHUB_TOKEN: toToken(credentials),
-                    ATOMIST_TEAM: context.workspaceId,
+                    ATOMIST_WORKSPACE: context.workspaceId,
                     ATOMIST_CORRELATION_ID: context.correlationId,
                     ATOMIST_REPO: sdmGoal.push.repo.name,
                     ATOMIST_OWNER: sdmGoal.push.repo.owner,
