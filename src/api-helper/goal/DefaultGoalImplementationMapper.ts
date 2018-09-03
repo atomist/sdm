@@ -72,8 +72,9 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     }
 
     public async findFulfillmentByPush(goal: Goal, inv: PushListenerInvocation): Promise<GoalFulfillment | undefined> {
-        const implementationsForGoal = this.implementations.filter(m => m.goal.name === goal.name
-            && m.goal.environment === goal.environment);
+        const implementationsForGoal = this.implementations.filter(
+            m => m.goal.definition.uniqueName === goal.definition.uniqueName &&
+                m.goal.environment === goal.environment);
         const matchingFulfillments: GoalImplementation[] = [];
         for (const implementation of implementationsForGoal) {
             if (await implementation.pushTest.mapping(inv)) {
