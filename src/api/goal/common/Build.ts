@@ -46,7 +46,7 @@ export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration>
     public with(registration: BuilderRegistration): this {
         this.addFulfillment({
             goalExecutor: executeBuild(registration.builder),
-            ...registration as ImplementationRegistration, 
+            ...registration as ImplementationRegistration,
         });
         return this;
     }
