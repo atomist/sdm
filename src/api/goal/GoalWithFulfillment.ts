@@ -32,12 +32,36 @@ import { GoalFulfillmentCallback } from "./support/GoalImplementationMapper";
 
 export type Fulfillment = Implementation | SideEffect;
 
-export interface Implementation {
+/**
+ * Register a goal implementation with required details
+ */
+export interface ImplementationRegistration {
+
+    /**
+     * Name of goal implementation
+     */
     name: string;
-    goalExecutor: ExecuteGoal;
-    logInterpreter: InterpretLog;
-    progressReporter?: ReportProgress;
+
+    /**
+     * Optional push test to identify the types of projects and pushes this implementation
+     * should get invoked on when the goal gets scheduled
+     */
     pushTest?: PushTest;
+
+    /**
+     * Optional log interpreter for this goal implementations log output
+     */
+    logInterpreter?: InterpretLog;
+
+    /**
+     * Optional progress reporter for this goal implementation
+     */
+    progressReporter?: ReportProgress;
+
+}
+
+export interface Implementation extends ImplementationRegistration {
+    goalExecutor: ExecuteGoal;
 }
 
 export function isImplementation(f: Fulfillment): f is Implementation {

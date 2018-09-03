@@ -31,7 +31,7 @@ export type CodeInspection<R, P = NoParameters> = (p: Project,
 /**
  * Result of inspecting a single project
  */
-export interface InspectionResult<R> {
+export interface CodeInspectionResult<R> {
 
     repoId: RepoRef;
 
@@ -45,7 +45,7 @@ export interface InspectionResult<R> {
 /**
  * Actions added by inspections. For internal use.
  */
-export interface InspectionActions<R, PARAMS> {
+export interface CodeInspectionActions<R, PARAMS> {
 
     /**
      * Inspection function to run on each project
@@ -58,15 +58,15 @@ export interface InspectionActions<R, PARAMS> {
      * @param ci context
      * @return {Promise<any>}
      */
-    onInspectionResults?(results: Array<InspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onInspectionResults?(results: Array<CodeInspectionResult<R>>, ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 }
 
 /**
- * Register a CodeInspection that can run against any number of projects.
+ * Register a AutoCodeInspection that can run against any number of projects.
  * Include an optional react method that can react to review results.
  */
 export interface CodeInspectionRegistration<R, PARAMS = NoParameters>
     extends ProjectsOperationRegistration<PARAMS>,
-        InspectionActions<R, PARAMS> {
+        CodeInspectionActions<R, PARAMS> {
 
 }
