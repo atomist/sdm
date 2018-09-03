@@ -37,3 +37,8 @@ export interface Progress {
  * phase will be reset on goal completion.
  */
 export type ReportProgress = (log: string, sdmGoal: SdmGoalEvent) => Progress;
+
+/**
+ * Don't report any progress
+ */
+export const NoProgressReport: ReportProgress = () => { return undefined };

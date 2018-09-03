@@ -35,7 +35,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
         });
 
         this.addFulfillment({
-            name: `Autofix-${this.uniqueName}`,
+            name: "autofix",
             logInterpreter: LogSuppressor,
             goalExecutor: executeAutofixes(this.registrations),
         });

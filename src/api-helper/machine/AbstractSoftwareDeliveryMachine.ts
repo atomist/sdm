@@ -29,7 +29,10 @@ import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
-import { ReportProgress } from "../../api/goal/progress/ReportProgress";
+import {
+    NoProgressReport,
+    ReportProgress,
+} from "../../api/goal/progress/ReportProgress";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
@@ -133,15 +136,11 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             logInterpreter: InterpretLog,
             progressReporter: ReportProgress,
         }>): this {
-        const optsToUse = _.merge({
-                pushTest: AnyPush,
-                logInterpreter: lastLinesLogInterpreter(implementationName, 10),
-            }, options);
         const implementation = {
             implementationName, goal, goalExecutor,
-            pushTest: optsToUse.pushTest,
-            logInterpreter: optsToUse.logInterpreter,
-            progressReporter: optsToUse.progressReporter,
+            pushTest: options.pushTest || AnyPush,
+            logInterpreter: options.logInterpreter || lastLinesLogInterpreter(implementationName, 10),
+            progressReporter: options.progressReporter || NoProgressReport,
         };
         this.goalFulfillmentMapper.addImplementation(implementation);
         return this;
