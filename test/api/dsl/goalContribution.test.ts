@@ -120,7 +120,7 @@ describe("goalContribution", () => {
             const goals: Goals = await gs.mapping(p);
             assert.equal(goals.goals.length, 3);
             assert.deepEqual(goals.goals, SomeGoalSet.goals.concat([mg, FingerprintGoal] as any));
-            assert.equal(goals.name, "SomeGoalSet, Sending message, Fingerprint");
+            assert.equal(goals.name, "SomeGoalSet, Sending message, fingerprint");
         });
 
         it("should respect sealed goals", async () => {
