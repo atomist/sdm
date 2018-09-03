@@ -133,11 +133,10 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
             logInterpreter: InterpretLog,
             progressReporter: ReportProgress,
         }>): this {
-        const optsToUse = {
-            pushTest: AnyPush,
-            logInterpreter: lastLinesLogInterpreter(implementationName, 10),
-            ...options,
-        };
+        const optsToUse = _.merge({
+                pushTest: AnyPush,
+                logInterpreter: lastLinesLogInterpreter(implementationName, 10),
+            }, options);
         const implementation = {
             implementationName, goal, goalExecutor,
             pushTest: optsToUse.pushTest,
