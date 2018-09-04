@@ -16,6 +16,7 @@
 
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import assert = require("power-assert");
 import { DefaultGoalImplementationMapper } from "../../../src/api-helper/goal/DefaultGoalImplementationMapper";
 import { fakePush } from "../../../src/api-helper/test/fakePush";
 import { Goal } from "../../../src/api/goal/Goal";
@@ -25,7 +26,6 @@ import { IndependentOfEnvironment } from "../../../src/api/goal/support/environm
 import { PushListenerInvocation } from "../../../src/api/listener/PushListener";
 import { AnyPush } from "../../../src/api/mapping/support/commonPushTests";
 import { not } from "../../../src/api/mapping/support/pushTestUtils";
-import assert = require("power-assert");
 
 describe("DefaultGoalImplementationMapper", () => {
 
