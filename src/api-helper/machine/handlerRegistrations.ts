@@ -372,6 +372,12 @@ export function toParametersListing(p: ParametersDefinition): ParametersListing 
     return builder;
 }
 
+/**
+ * Convert to legacy automation-client "editor" signature
+ * @param {CodeTransformOrTransforms<PARAMS>} ctot
+ * @param {ProjectPredicate} projectPredicate
+ * @return {ProjectEditor<PARAMS>}
+ */
 export function toScalarProjectEditor<PARAMS>(ctot: CodeTransformOrTransforms<PARAMS>, projectPredicate?: ProjectPredicate): ProjectEditor<PARAMS> {
     const unguarded = Array.isArray(ctot) ?
         chainEditors(...ctot.map(toProjectEditor)) :
