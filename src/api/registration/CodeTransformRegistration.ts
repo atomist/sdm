@@ -37,7 +37,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
     transformPresentation?: (ci: CommandListenerInvocation<PARAMS>, p: Project) => EditMode;
 
     /**
-     * React to results from running edits across one or more projects
+     * React to results from running transform across one or more projects
      * @param results
      * @param ci context
      * @return {Promise<any>}
