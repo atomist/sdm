@@ -85,7 +85,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
         if (matchingFulfillments.length > 1) {
             throw new Error(`Multiple matching implementations for goal '${goal.name}' found: '${
                 matchingFulfillments.map(f => f.implementationName).join(", ")}'`);
-        } else {
+        } else if (matchingFulfillments.length === 1) {
             return matchingFulfillments[0];
         }
 
