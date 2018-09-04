@@ -21,8 +21,16 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import {
+    codeLine,
+    italic,
+} from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
+import {
+    Goal,
+    ReportProgress,
+} from "../..";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
 import {
     ExecuteGoal,
@@ -32,6 +40,10 @@ import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListe
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
+import {
+    ProgressTest,
+    testProgressReporter,
+} from "../goal/progress/progress";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
@@ -52,6 +64,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             }
             const push = sdmGoal.push;
             const editableRepoRef = configuration.sdm.repoRefResolver.toRemoteRepoRef(sdmGoal.push.repo, { branch: push.branch });
+            const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
                     credentials,
                     id: editableRepoRef,
@@ -71,8 +84,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                         success: true,
                         edited: false,
                     };
+
                     for (const autofix of _.flatten(relevantAutofixes)) {
                         const thisEdit = await runOne(cri, autofix, progressLog);
+                        if (thisEdit.edited) {
+                            appliedAutofixes.push(autofix);
+                        }
                         cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
                     }
                     if (cumulativeResult.edited) {
@@ -82,7 +99,11 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                 });
             if (editResult.edited) {
                 // Send back an error code, because we want to stop execution of goals after this
-                return { code: 1, message: "Edited" };
+                return {
+                    code: 1,
+                    message: "Edited",
+                    description: detailMessage(goalInvocation.goal, appliedAutofixes),
+                };
             }
             return Success;
         } catch (err) {
@@ -91,6 +112,15 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             return Success;
         }
     };
+}
+
+function detailMessage(goal: Goal, appliedAutofixes: AutofixRegistration[]): string {
+    // We show only two autofixes by name here as otherwise the message is going to get too long
+    if (appliedAutofixes.length <= 2) {
+        return `${goal.failureDescription} ${appliedAutofixes.map(af => codeLine(af.name)).join(", ")}`;
+    } else {
+        return `${goal.failureDescription} ${italic(`${appliedAutofixes.length} autofixes`)}`;
+    }
 }
 
 async function runOne(cri: PushImpactListenerInvocation,
@@ -155,3 +185,13 @@ export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
 export function generateCommitMessageForAutofix(autofix: AutofixRegistration): string {
     return `Autofix: ${autofix.name}\n\n[atomist:generated] [atomist:autofix=${autofix.name}]`;
 }
+
+export const AutofixProgressTests: ProgressTest[] = [{
+    test: /About to edit .* autofix (.*)/i,
+    phase: "$1",
+}];
+
+/**
+ * Default ReportProgress for running autofixes
+ */
+export const AutofixProgressReporter: ReportProgress = testProgressReporter(...AutofixProgressTests);

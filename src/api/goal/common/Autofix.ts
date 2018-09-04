@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { executeAutofixes } from "../../../api-helper/listener/executeAutofixes";
+import {
+    AutofixProgressReporter,
+    executeAutofixes,
+} from "../../../api-helper/listener/executeAutofixes";
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutofixGoal } from "../../machine/wellKnownGoals";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
@@ -38,6 +41,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
             name: "autofix",
             logInterpreter: LogSuppressor,
             goalExecutor: executeAutofixes(this.registrations),
+            progressReporter: AutofixProgressReporter,
         });
     }
 }

@@ -84,13 +84,13 @@ describe("executing the goal", () => {
                 context: fakeContext(),
                 progressLog,
                 credentials: fakeCredentials,
+                goal: fakeGoal,
+                sdmGoal: fakeSdmGoal,
             } as any as GoalInvocation;
 
             return executeGoal({ projectLoader, goalExecutionListeners: [] },
                 helloWorldGoalExecutor,
                 fakeRWLC,
-                fakeSdmGoal,
-                fakeGoal,
                 lastLinesLogInterpreter("hi"),
                 null)
                 .then(async result => {

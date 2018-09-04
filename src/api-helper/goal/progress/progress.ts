@@ -31,10 +31,22 @@ export interface ProgressTest {
  */
 export function testProgressReporter(...tests: ProgressTest[]): ReportProgress {
     return log => {
-        // TODO CD we could add match groups and markers in the label
-        const match = tests.find(t => t.test.test(log));
-        if (match) {
-            return { phase: match.phase };
+        const test = tests.find(t => t.test.test(log));
+        if (test) {
+            let phase = test.phase;
+            // Bail early
+            if (!phase.includes("$1")) {
+                return { phase };
+            }
+
+            const match = test.test.exec(log);
+            let counter = 1;
+            while (phase.includes(`$${counter}`) && match.length > counter) {
+                phase = phase.replace(new RegExp( `\\$${counter}`, "gi"), match[counter]);
+                counter++;
+            }
+
+            return { phase };
         }
         return {};
     };
