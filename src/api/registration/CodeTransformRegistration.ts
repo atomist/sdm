@@ -15,12 +15,12 @@
  */
 
 import { EditMode } from "@atomist/automation-client/operations/edit/editModes";
-import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { Project } from "@atomist/automation-client/project/Project";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { CommandListenerInvocation } from "../listener/CommandListener";
 import { ProjectOperationRegistration } from "./ProjectOperationRegistration";
 import { ProjectsOperationRegistration } from "./ProjectsOperationRegistration";
+import { TransformResult } from "./CodeTransform";
 
 /**
  * Type for registering a project transform, which can make changes
@@ -42,7 +42,7 @@ export interface CodeTransformRegistration<PARAMS = NoParameters>
      * @param ci context
      * @return {Promise<any>}
      */
-    onTransformResults?(results: EditResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
+    onTransformResults?(results: TransformResult[], ci: CommandListenerInvocation<PARAMS>): Promise<any>;
 
 }
 
