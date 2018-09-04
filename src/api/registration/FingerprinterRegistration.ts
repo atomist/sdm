@@ -17,6 +17,11 @@
 import { Fingerprint } from "@atomist/automation-client/project/fingerprint/Fingerprint";
 import { PushImpactListenerRegistration } from "./PushImpactListenerRegistration";
 
+/**
+ * Result of fingerprinting. Can be either one or many fingerprints, as
+ * some fingerprinters can produce multiple results more efficiently
+ * than separate computation would be.
+ */
 export type FingerprinterResult = Fingerprint | Fingerprint[];
 
 export type FingerprinterRegistration = PushImpactListenerRegistration<FingerprinterResult>;
