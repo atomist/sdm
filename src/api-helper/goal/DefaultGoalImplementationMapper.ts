@@ -52,7 +52,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
     public addImplementation(implementation: GoalImplementation): this {
         if (this.implementations.some(i =>
             i.implementationName === implementation.implementationName &&
-            i.goal.name === implementation.goal.name &&
+            i.goal.definition.uniqueName === implementation.goal.definition.uniqueName &&
             i.goal.environment === implementation.goal.environment)) {
             throw new Error(`Implementation with name '${implementation.implementationName
                 }' already registered for goal '${implementation.goal.name}'`);
@@ -75,6 +75,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
         const implementationsForGoal = this.implementations.filter(
             m => m.goal.definition.uniqueName === goal.definition.uniqueName &&
                 m.goal.environment === goal.environment);
+
         const matchingFulfillments: GoalImplementation[] = [];
         for (const implementation of implementationsForGoal) {
             if (await implementation.pushTest.mapping(inv)) {
