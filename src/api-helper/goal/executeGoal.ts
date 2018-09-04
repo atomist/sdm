@@ -77,8 +77,6 @@ class GoalExecutionError extends Error {
  * @param {{projectLoader: ProjectLoader}} rules
  * @param {ExecuteGoal} execute
  * @param {GoalInvocation} goalInvocation
- * @param {SdmGoal} sdmGoal
- * @param {Goal} goal
  * @param {InterpretLog} logInterpreter
  * @param progressReporter
  * @return {Promise<ExecuteGoalResult>}
@@ -86,10 +84,11 @@ class GoalExecutionError extends Error {
 export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExecutionListeners: GoalExecutionListener[] },
                                   execute: ExecuteGoal,
                                   goalInvocation: GoalInvocation,
-                                  sdmGoal: SdmGoalEvent,
-                                  goal: Goal,
                                   logInterpreter: InterpretLog,
                                   progressReporter: ReportProgress): Promise<ExecuteGoalResult> {
+    const { goal, sdmGoal, addressChannels, progressLog, id, context, credentials } = goalInvocation;
+    const implementationName = sdmGoal.fulfillment.name;
+
     if (!!progressReporter) {
         goalInvocation.progressLog = new WriteToAllProgressLog(
             sdmGoal.name,
@@ -97,8 +96,6 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
             new ProgressReportingProgressLog(progressReporter, sdmGoal, goalInvocation.context),
         );
     }
-    const { addressChannels, progressLog, id, context, credentials } = goalInvocation;
-    const implementationName = sdmGoal.fulfillment.name;
 
     logger.info(`Running ${sdmGoal.name}. Triggered by ${sdmGoal.state} status: ${sdmGoal.externalKey}: ${sdmGoal.description}`);
 

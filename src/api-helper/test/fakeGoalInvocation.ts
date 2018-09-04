@@ -19,6 +19,10 @@ import {
     RemoteRepoRef,
     RepoId,
 } from "@atomist/automation-client/operations/common/RepoId";
+import {
+    Goal,
+    IndependentOfEnvironment,
+} from "../..";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
@@ -41,6 +45,7 @@ export function fakeGoalInvocation(id: RemoteRepoRef, options?: SoftwareDelivery
         },
         progressLog: new LoggingProgressLog("fake"),
         sdmGoal: fakeSdmGoal(id),
+        goal: fakeGoal("fake goal"),
         configuration: {
             sdm: {
                 ...options,
@@ -90,4 +95,12 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
             },
         },
     };
+}
+
+function fakeGoal(name: string): Goal {
+    return new Goal({
+        uniqueName: name,
+        displayName: name,
+        environment: IndependentOfEnvironment,
+    });
 }

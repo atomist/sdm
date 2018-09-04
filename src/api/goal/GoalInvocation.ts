@@ -19,6 +19,7 @@ import { ProgressLog } from "../../spi/log/ProgressLog";
 import { RepoContext } from "../context/SdmContext";
 import { SoftwareDeliveryMachineConfiguration } from "../machine/SoftwareDeliveryMachineOptions";
 import { ExecuteGoalResult } from "./ExecuteGoalResult";
+import { Goal } from "./Goal";
 import { SdmGoalEvent } from "./SdmGoalEvent";
 
 /**
@@ -31,10 +32,26 @@ export type PrepareForGoalExecution = (p: GitProject, r: GoalInvocation) => Prom
 
 export interface GoalInvocation extends RepoContext {
 
+    /**
+     * This SDM's current configuration
+     */
     configuration: SoftwareDeliveryMachineConfiguration;
 
+    /**
+     * The goal that we are currently executing
+     */
+    goal: Goal;
+
+    /**
+     * The goal event that triggered this execution
+     */
     sdmGoal: SdmGoalEvent;
 
+    /**
+     * Progress log to write output to
+     *
+     * Use this to write user-level log messages that you want to see in the log stream
+     */
     progressLog: ProgressLog;
 
 }
