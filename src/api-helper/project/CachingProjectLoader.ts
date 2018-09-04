@@ -105,7 +105,7 @@ export class CachingProjectLoader implements ProjectLoader {
             if (reason === "timeout") {
                 logger.debug(`Deleting project '%s' because a timeout passed`, dir);
             } else {
-                logger.debug(`Deleting project '%j' at '%s' because %s was triggered`, dir, reason);
+                logger.debug(`Deleting project '%s' because %s was triggered`, dir, reason);
             }
             try {
                 fs.removeSync(dir);
