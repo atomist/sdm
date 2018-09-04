@@ -89,8 +89,9 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             return matchingFulfillments[0];
         }
 
-        const knownSideEffects = this.sideEffects.filter(m => m.goal.name === goal.name
-            && m.goal.environment === goal.environment);
+        const knownSideEffects = this.sideEffects.filter(
+            m => m.goal.definition.uniqueName === goal.definition.uniqueName &&
+                m.goal.environment === goal.environment);
         for (const sideEffect of knownSideEffects) {
             if (await sideEffect.pushTest.mapping(inv)) {
                 return sideEffect;
