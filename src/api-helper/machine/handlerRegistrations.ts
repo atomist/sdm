@@ -38,6 +38,7 @@ import { doWithAllRepos } from "@atomist/automation-client/operations/common/rep
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import {
+    EditResult,
     failedEdit,
     ProjectEditor,
     successfulEdit,
@@ -399,11 +400,16 @@ function toProjectEditor<P>(ct: CodeTransform<P>): ProjectEditor<P> {
     return async (p, ctx, params) => {
         const ci = toCommandListenerInvocation(p, ctx, params);
         // Mix in handler context for old style callers
-        const r = await ct(p, {
+        const n = await ct(p, {
             ...ctx,
             ...ci,
         } as CommandListenerInvocation<P> & HandlerContext,
             params);
+        if (n === undefined) {
+            // The transform returned void
+            return { target: p, edited: await isDirty(p), success: true };
+        }
+        const r: Project | EditResult = n as any;
         try {
             return isProject(r) ? successfulEdit(r, await isDirty(r)) : r;
         } catch (e) {

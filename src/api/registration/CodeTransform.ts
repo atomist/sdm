@@ -25,10 +25,11 @@ export type TransformResult = EditResult;
  * Function that can transform a project. Mixing HandlerContextMethods into second
  * parameter, and third parameter are only for backward compatibility.
  * New code should use (Project, Command ParametersInvocation).
+ * Projects are naturally mutable.
  */
 export type CodeTransform<P = NoParameters> = (p: Project,
                                                sdmc: ParametersInvocation<P>,
-                                               params?: P) => Promise<Project | TransformResult>;
+                                               params?: P) => Promise<Project | TransformResult | void>;
 
 /**
  * One or many CodeTransforms
