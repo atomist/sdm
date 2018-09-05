@@ -21,6 +21,7 @@ import { SimpleProjectEditor } from "@atomist/automation-client/operations/edit/
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import { Project } from "@atomist/automation-client/project/Project";
 import axios from "axios";
+import { CodeTransform } from "../../api/registration/CodeTransform";
 
 /**
  * Add the downloaded content to the given project
@@ -28,7 +29,7 @@ import axios from "axios";
  * @param {string} path
  * @return {SimpleProjectEditor}
  */
-export function copyFileFromUrl(url: string, path: string): SimpleProjectEditor {
+export function copyFileFromUrl(url: string, path: string): CodeTransform {
     return async p => {
         const response = await axios.get(url);
         return p.addFile(path, response.data);
@@ -49,15 +50,15 @@ export interface FileMapping {
  */
 export function copyFilesFrom(donorProjectId: RemoteRepoRef,
                               fileMappings: Array<FileMapping | string>,
-                              credentials: ProjectOperationCredentials): SimpleProjectEditor {
-    return async p => {
+                              credentials: ProjectOperationCredentials): CodeTransform {
+    return async (p, i) => {
         const donorProject = await GitCommandGitProject.cloned(credentials, donorProjectId);
-        return copyFiles(donorProject, fileMappings)(p);
+        return copyFiles(donorProject, fileMappings)(p, i);
     };
 }
 
 export function copyFiles(donorProject: Project,
-                          fileMappings: Array<FileMapping | string>): SimpleProjectEditor {
+                          fileMappings: Array<FileMapping | string>): CodeTransform {
     return async p => {
         for (const m of fileMappings) {
             const fm = typeof m === "string" ? {donorPath: m, recipientPath: m} : m;

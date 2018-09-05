@@ -23,7 +23,7 @@ describe("fileCopy", () => {
 
     it("should copy file from url", async () => {
         const recipient = InMemoryProject.of();
-        await (copyFileFromUrl("https://raw.githubusercontent.com/spring-team/spring-rest-seed/master/pom.xml", "pom.xml"))(recipient);
+        await (copyFileFromUrl("https://raw.githubusercontent.com/spring-team/spring-rest-seed/master/pom.xml", "pom.xml"))(recipient, undefined);
         assert(!!(await recipient.getFile("pom.xml")));
     }).timeout(5000);
 
@@ -31,7 +31,7 @@ describe("fileCopy", () => {
         const donorId = new GitHubRepoRef("spring-team", "spring-rest-seed");
         const filesToSteal = [ "pom.xml"];
         const recipient = InMemoryProject.of();
-        await (copyFilesFrom(donorId, filesToSteal, { token: process.env.GITHUB_TOKEN}))(recipient);
+        await (copyFilesFrom(donorId, filesToSteal, { token: process.env.GITHUB_TOKEN}))(recipient, undefined);
         assert(!!(await recipient.getFile(filesToSteal[0])));
     }).timeout(5000);
 
@@ -39,7 +39,7 @@ describe("fileCopy", () => {
         const donorId = new GitHubRepoRef("spring-team", "spring-rest-seed");
         const filesToSteal = [ { donorPath: "pom.xml", recipientPath: "foo" }];
         const recipient = InMemoryProject.of();
-        await (copyFilesFrom(donorId, filesToSteal, { token: process.env.GITHUB_TOKEN}))(recipient);
+        await (copyFilesFrom(donorId, filesToSteal, { token: process.env.GITHUB_TOKEN}))(recipient, undefined);
         assert(!(await recipient.getFile(filesToSteal[0].donorPath)));
         assert(!!(await recipient.getFile(filesToSteal[0].recipientPath)));
     }).timeout(5000);
