@@ -42,7 +42,7 @@ describe("LazyProjectLoader", () => {
     });
 
     it("should get file first", async () => {
-        const id = new GitHubRepoRef("spring-team", "spring-rest-seed");
+        const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new LazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
@@ -52,7 +52,7 @@ describe("LazyProjectLoader", () => {
     }).timeout(10000);
 
     it("should get file after stream", async () => {
-        const id = new GitHubRepoRef("spring-team", "spring-rest-seed");
+        const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new LazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
@@ -69,7 +69,7 @@ describe("LazyProjectLoader", () => {
     }).timeout(10000);
 
     it("should load for files", async () => {
-        const id = new GitHubRepoRef("spring-team", "spring-rest-seed");
+        const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new LazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         let count = 0;
@@ -83,7 +83,7 @@ describe("LazyProjectLoader", () => {
 
     it("should materialize once", async () => {
         // Look at log output
-        const id = new GitHubRepoRef("spring-team", "spring-rest-seed");
+        const id = GitHubRepoRef.from({ owner: "spring-team", repo: "spring-rest-seed", branch: "master" });
         const lpl = new LazyProjectLoader(CloningProjectLoader);
         const p: Project = await save(lpl, { credentials, id, readOnly: false });
         const f1 = await p.getFile("not-there");
@@ -95,7 +95,7 @@ describe("LazyProjectLoader", () => {
     }).timeout(10000);
 
     it("should commit and push", async () => {
-        const id = new GitHubRepoRef("this.is.invalid", "nonsense");
+        const id = GitHubRepoRef.from({ owner: "this.is.invalid", repo: "nonsense", branch: "master" });
         const raw = InMemoryProject.from(id, new InMemoryFile("a", "b")) as any as GitProject;
         let commits = 0;
         let pushes = 0;

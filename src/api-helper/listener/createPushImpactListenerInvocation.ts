@@ -23,10 +23,7 @@ import { Destination } from "@atomist/automation-client/spi/message/MessageClien
 import { messageDestinationsFor } from "../../api/context/addressChannels";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
-import {
-    filesChangedSince,
-    filesChangedSinceParentCommit,
-} from "../misc/git/filesChangedSince";
+import { filesChangedSince } from "../misc/git/filesChangedSince";
 import { filteredView } from "../misc/project/filteredView";
 
 /**
@@ -42,9 +39,7 @@ export async function createPushImpactListenerInvocation(goalInvocation: GoalInv
     const smartContext = teachToRespondInEventHandler(context, ...messageDestinationsFor(sdmGoal.push.repo, context));
 
     const push = sdmGoal.push;
-    const filesChanged = push.before ?
-        await filesChangedSince(project, push.before.sha) :
-        await filesChangedSinceParentCommit(project);
+    const filesChanged = await filesChangedSince(project, push);
     const impactedSubProject = !filesChanged ? project : filteredView(project, path => filesChanged.includes(path));
     return {
         id,

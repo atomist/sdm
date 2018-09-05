@@ -32,6 +32,9 @@ export interface ProjectLoadingParameters {
 
     /** Return true to get optimized behavior for read only */
     readOnly: boolean;
+
+    /** Indicate how many commits of the history are required */
+    depth?: number;
 }
 
 /**
