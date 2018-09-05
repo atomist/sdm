@@ -188,8 +188,7 @@ async function fulfillment(rules: {
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
         return constructSdmGoalImplementation(plan);
-    }
-    else if (isGoalSideEffect(plan)) {
+    } else if (isGoalSideEffect(plan)) {
         return { method: SdmGoalFulfillmentMethod.SideEffect, name: plan.sideEffectName };
     } else {
         throw new Error(`No implementation or side-effect found for goal '${g.name}' `);

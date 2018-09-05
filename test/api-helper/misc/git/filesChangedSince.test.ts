@@ -62,7 +62,6 @@ describe("filesChanged", () => {
             assert.deepEqual(files, expectedChanges);
         });
 
-
         it("should correctly find all files within two commits on a branch", async () => {
             const p = await GitCommandGitProject.cloned(
                 { token: null },
