@@ -22,7 +22,7 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
  */
 export const CloningProjectLoader: ProjectLoader = {
     async doWithProject(coords, action) {
-        const p = await GitCommandGitProject.cloned(coords.credentials, coords.id);
+        const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, { depth: coords.depth });
         return action(p);
     },
 };

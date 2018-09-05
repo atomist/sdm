@@ -137,22 +137,28 @@ export async function determineGoals(rules: {
 }> {
     const { projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
     const { credentials, id, context, push, addressChannels, goalSetId } = circumstances;
-    return projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
-        const pli: PushListenerInvocation = {
-            project,
+    return projectLoader.doWithProject({
             credentials,
-            id,
-            push,
-            context,
-            addressChannels,
-        };
-        const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
-        if (!determinedGoals) {
-            return { determinedGoals: undefined, goalsToSave: [] };
-        }
-        const goalsToSave = await sdmGoalsFromGoals(implementationMapping, repoRefResolver, pli, determinedGoals, goalSetId);
-        return { determinedGoals, goalsToSave };
-    });
+            id, context,
+            readOnly: true,
+            depth: push.commits.length + 1, // we need at least the commits of the push + 1 to be able to diff it
+        },
+        async project => {
+            const pli: PushListenerInvocation = {
+                project,
+                credentials,
+                id,
+                push,
+                context,
+                addressChannels,
+            };
+            const determinedGoals = await chooseGoalsForPushOnProject({ goalSetter }, pli);
+            if (!determinedGoals) {
+                return { determinedGoals: undefined, goalsToSave: [] };
+            }
+            const goalsToSave = await sdmGoalsFromGoals(implementationMapping, repoRefResolver, pli, determinedGoals, goalSetId);
+            return { determinedGoals, goalsToSave };
+        });
 
 }
 

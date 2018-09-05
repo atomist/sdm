@@ -14,15 +14,52 @@
  * limitations under the License.
  */
 
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
-import { anyFileChangedSuchThat, anyFileChangedWithExtension } from "../../../../src/api-helper/misc/git/filesChangedSince";
+import { PushFields } from "../../../../src/typings/types";
+import {
+    anyFileChangedSuchThat,
+    anyFileChangedWithExtension,
+    filesChangedSince,
+} from "../../../../src/api-helper/misc/git/filesChangedSince";
 
 describe("filesChanged", () => {
 
     describe("changesSince", () => {
 
-        it.skip("parse valid file", () => {
-            // TODO not done yet
+        it("should correctly find all files within two commits", async () => {
+            const p = await GitCommandGitProject.cloned(
+                { token: null },
+                new GitHubRepoRef("atomist-seeds", "spring-rest-seed"),
+                {
+                    depth: 6, // 5 commits in the push + one extra to be able to diff
+                },
+            );
+            const push: PushFields.Fragment = {
+                after: {
+                    sha: "917ad5340a1c03f86633f64032226b277ab366ee",
+                },
+                commits: [{
+                    sha: "917ad5340a1c03f86633f64032226b277ab366ee",
+                }, {
+                    sha: "72cdbbe7c553fc006b5a75ac203e0678575bb314",
+                }, {
+                    sha: "8c55376fb2ceb5f57fbfe111073327cb0adb32c9",
+                }, {
+                    sha: "119820a9de1ab0840a0be2c7fd71ef8f3cd24367",
+                }, {
+                    sha: "50bed8bff0ae8273302d2926e924148d57bad831",
+                }],
+            };
+
+            const files = await filesChangedSince(p, push);
+            const expectedChanges = [".travis.yml",
+                ".travis/controller.patch",
+                ".travis/travis-build.bash",
+                "README.md",
+                "src/main/java/com/atomist/spring/SpringRestSeedController.java"];
+            assert.deepEqual(files, expectedChanges);
         });
 
     });
