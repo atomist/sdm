@@ -62,6 +62,37 @@ describe("filesChanged", () => {
             assert.deepEqual(files, expectedChanges);
         });
 
+
+        it("should correctly find all files within two commits on a branch", async () => {
+            const p = await GitCommandGitProject.cloned(
+                { token: null },
+                GitHubRepoRef.from({
+                    owner: "atomist",
+                    repo: "lifecycle-automation",
+                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
+                    branch: "test",
+                }),
+                {
+                    depth: 3, // 2 commits in the push + one extra to be able to diff
+                },
+            );
+            const push: PushFields.Fragment = {
+                after: {
+                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
+                },
+                commits: [{
+                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
+                }, {
+                    sha: "4a725eff5dbfd35f213b97d9c204b402fe45106e",
+                }],
+            };
+
+            const files = await filesChangedSince(p, push);
+            const expectedChanges = [ "README.md",
+                "src/atomist.config.ts"];
+            assert.deepEqual(files, expectedChanges);
+        });
+
     });
 
     describe("anyFileChangedSuchThat", () => {
