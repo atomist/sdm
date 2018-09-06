@@ -38,10 +38,10 @@ import { doWithAllRepos } from "@atomist/automation-client/operations/common/rep
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import {
+    EditResult,
     failedEdit,
     ProjectEditor,
     successfulEdit,
-    EditResult,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
@@ -245,7 +245,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
 }
 
 export function commandHandlerRegistrationToCommand<P = NoParameters>(sdm: MachineOrMachineOptions,
-    c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
+                                                                      c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
     return () => createCommand(
         sdm,
         toOnCommand(c),
@@ -439,7 +439,7 @@ function isGitProject(p: Project): p is GitProject {
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
 export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-    targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
+                                                       targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isRepoTargetingParameters(sampleParams) ?
         paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
