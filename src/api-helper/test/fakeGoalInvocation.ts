@@ -94,7 +94,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     },
                 }],
             },
-            commits: [{ sha: guid() }]
+            commits: [{ sha: guid() }],
         },
     };
 }
