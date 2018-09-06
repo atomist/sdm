@@ -15,6 +15,7 @@
  */
 
 import { logger } from "@atomist/automation-client";
+import { guid } from "@atomist/automation-client/internal/util/string";
 import {
     RemoteRepoRef,
     RepoId,
@@ -93,6 +94,7 @@ function fakeSdmGoal(id: RepoId): SdmGoalEvent {
                     },
                 }],
             },
+            commits: [{ sha: guid() }]
         },
     };
 }
