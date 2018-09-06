@@ -23,9 +23,9 @@ import {
     toEditor,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
-import { confirmEditedness } from "./confirmEditedness";
 import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
 import { TransformResult } from "../../../api/registration/CodeTransform";
+import { confirmEditedness } from "./confirmEditedness";
 
 /**
  * By default, the result of a code transform is a message about its activity.
@@ -51,7 +51,7 @@ export function reportTransformResults(editorName) {
     return (results: TransformResult[], ci: CommandListenerInvocation) => {
         const messages = results.map(messageAboutEditResult);
         return ci.addressChannels(messages.sort().join("\n"));
-    }
+    };
 }
 
 function committedToBranch(editResult): string | undefined {
