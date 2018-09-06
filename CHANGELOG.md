@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-M.3...HEAD)
 
+### Fixed
+
+-   No such file or directory `~/.atomist.log`. [#514](https://github.com/atomist/sdm/issues/514)
+
 ## [1.0.0-M.3](https://github.com/atomist/sdm/compare/1.0.0-M.1...1.0.0-M.3) - 2018-09-04
 
 ### Added
