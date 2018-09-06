@@ -29,7 +29,6 @@ import {
     PushReactionResponse,
     toPushReactionRegistration,
 } from "../../api/registration/PushImpactListenerRegistration";
-import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
@@ -44,8 +43,14 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             return Success;
         }
 
-        const { configuration, credentials, id, context } = goalInvocation;
-        return configuration.sdm.projectLoader.doWithProject({ credentials, id, context, readOnly: true }, async project => {
+        const { sdmGoal, configuration, credentials, id, context } = goalInvocation;
+        return configuration.sdm.projectLoader.doWithProject({
+            credentials,
+            id,
+            context,
+            readOnly: true,
+            depth: sdmGoal.push.commits.length + 1,
+        }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
             const relevantCodeReactions: PushImpactListenerRegistration[] = await relevantCodeActions<PushImpactListenerRegistration>(regs, cri);

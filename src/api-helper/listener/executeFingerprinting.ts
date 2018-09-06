@@ -37,13 +37,18 @@ import { relevantCodeActions } from "./relevantCodeActions";
 export function executeFingerprinting(fingerprinters: FingerprinterRegistration[],
                                       listeners: FingerprintListener[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
-        const { configuration, id, credentials, context } = goalInvocation;
+        const { sdmGoal, configuration, id, credentials, context } = goalInvocation;
         if (fingerprinters.length === 0) {
             return Success;
         }
 
         logger.debug("About to fingerprint %j using %d fingerprinters", id, fingerprinters.length);
-        await configuration.sdm.projectLoader.doWithProject({ credentials, id, readOnly: true }, async project => {
+        await configuration.sdm.projectLoader.doWithProject({
+            credentials,
+            id,
+            readOnly: true,
+            depth: sdmGoal.push.commits.length + 1,
+        }, async project => {
             const cri = await createPushImpactListenerInvocation(goalInvocation, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
             logger.info("Will invoke %d eligible fingerprinters of %d to %j",
