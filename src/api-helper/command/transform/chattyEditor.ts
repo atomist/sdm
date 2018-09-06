@@ -24,9 +24,46 @@ import {
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { confirmEditedness } from "./confirmEditedness";
+import { CommandListenerInvocation } from "../../../api/listener/CommandListener";
+import { TransformResult } from "../../../api/registration/CodeTransform";
 
 /**
- * Wrap this editor to make it chatty, so it responds to
+ * By default, the result of a code transform is a message about its activity.
+ */
+export function reportTransformResults(editorName) {
+
+    function messageAboutEditResult(editResult: TransformResult): string {
+        const target = editResult.target.id;
+        const targetDescription = `${target.owner}/${target.repo}` +
+            (looksDefault(target.branch) ? "" : "#" + target.branch);
+        if (!editResult.success) {
+            return `${targetDescription}: *${editorName}*: Nothing done`;
+        }
+        if (!editResult.edited) {
+            return `${targetDescription}: *${editorName}*: Nothing to do`;
+        }
+        if (committedToBranch(editResult)) {
+            return `${targetDescription}: *${editorName}*: Commit made on branch ${committedToBranch(editResult)}`;
+        }
+        return `${targetDescription}: *${editorName}* Success`;
+    }
+
+    return (results: TransformResult[], ci: CommandListenerInvocation) => {
+        const messages = results.map(messageAboutEditResult);
+        return ci.addressChannels(messages.sort().join("\n"));
+    }
+}
+
+function committedToBranch(editResult): string | undefined {
+    return editResult.editMode && editResult.editMode.branch;
+}
+
+function looksDefault(branch: string) {
+    return !branch || ["HEAD", "master"].includes(branch);
+}
+
+/**
+ * Wrap this transform to make it chatty, so it responds to
  * Slack if there's nothing to do
  * @param editorName name of the editor
  * @param {AnyProjectEditor} underlyingEditor

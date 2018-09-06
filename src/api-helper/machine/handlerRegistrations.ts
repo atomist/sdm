@@ -38,10 +38,10 @@ import { doWithAllRepos } from "@atomist/automation-client/operations/common/rep
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import {
-    EditResult,
     failedEdit,
     ProjectEditor,
     successfulEdit,
+    EditResult,
 } from "@atomist/automation-client/operations/edit/projectEditor";
 import { chainEditors } from "@atomist/automation-client/operations/edit/projectEditorOps";
 import { GitHubRepoCreationParameters } from "@atomist/automation-client/operations/generate/GitHubRepoCreationParameters";
@@ -88,7 +88,7 @@ import {
     generatorCommand,
     isSeedDrivenGeneratorParameters,
 } from "../command/generator/generatorCommand";
-import { chattyEditor } from "../command/transform/chattyEditor";
+import { chattyEditor, reportTransformResults } from "../command/transform/chattyEditor";
 import { error } from "../misc/slack/messages";
 import { projectLoaderRepoLoader } from "./projectLoaderRepoLoader";
 import {
@@ -111,6 +111,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
     ctr.paramsMaker = toRepoTargetingParametersMaker(
         ctr.paramsMaker || NoParameters,
         ctr.targets || mo.targets || GitHubRepoTargets);
+    const onTransformResults = ctr.onTransformResults || reportTransformResults(ctr.name);
     const description = ctr.description || ctr.name;
     const asCommand: CommandHandlerRegistration = {
         description,
@@ -145,11 +146,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
                 repoFinder,
                 andFilter(targets.test, ctr.repoFilter),
                 repoLoader);
-            if (!!ctr.onTransformResults) {
-                await ctr.onTransformResults(results, ci);
-            } else {
-                logger.info("No react function to react to results of code transformation '%s'", ctr.name);
-            }
+            await onTransformResults(results, ci);
         },
     };
     return commandHandlerRegistrationToCommand(sdm, asCommand);
@@ -248,7 +245,7 @@ export function generatorRegistrationToCommand<P = any>(sdm: MachineOrMachineOpt
 }
 
 export function commandHandlerRegistrationToCommand<P = NoParameters>(sdm: MachineOrMachineOptions,
-                                                                      c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
+    c: CommandHandlerRegistration<P>): Maker<HandleCommand<P>> {
     return () => createCommand(
         sdm,
         toOnCommand(c),
@@ -442,7 +439,7 @@ function isGitProject(p: Project): p is GitProject {
  * @return {Maker<EditorOrReviewerParameters & PARAMS>}
  */
 export function toRepoTargetingParametersMaker<PARAMS>(paramsMaker: Maker<PARAMS>,
-                                                       targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
+    targets: Maker<RepoTargets>): Maker<RepoTargetingParameters & PARAMS> {
     const sampleParams = toFactory(paramsMaker)();
     return isRepoTargetingParameters(sampleParams) ?
         paramsMaker as Maker<RepoTargetingParameters & PARAMS> :
