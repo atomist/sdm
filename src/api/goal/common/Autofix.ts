@@ -24,6 +24,7 @@ import { AutofixRegistration } from "../../registration/AutofixRegistration";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
+import { CodeTransform } from "../../registration/CodeTransform";
 
 /**
  * Goal that performs autofixes: For example, linting and adding license headers.
@@ -31,7 +32,7 @@ import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
 export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration> {
 
     constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("autofix"),
-                ...dependsOn: Goal[]) {
+        ...dependsOn: Goal[]) {
 
         super({
             ...AutofixGoal.definition,
@@ -44,6 +45,13 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
             logInterpreter: LogSuppressor,
             goalExecutor: executeAutofixes(this.registrations),
             progressReporter: AutofixProgressReporter,
+        });
+    }
+
+    public withTransform(transform: CodeTransform<any>) {
+        this.with({
+            name: DefaultGoalNameGenerator.generateName("autofix"),
+            transform,
         });
     }
 }
