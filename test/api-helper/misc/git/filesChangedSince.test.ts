@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { setLogLevel } from "@atomist/automation-client/internal/util/logger";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
@@ -24,6 +25,8 @@ import {
 } from "../../../../src/api-helper/misc/git/filesChangedSince";
 import { PushFields } from "../../../../src/typings/types";
 
+setLogLevel("debug");
+
 describe("filesChanged", () => {
 
     describe("changesSince", () => {
@@ -31,7 +34,12 @@ describe("filesChanged", () => {
         it("should correctly find all files within two commits", async () => {
             const p = await GitCommandGitProject.cloned(
                 { token: null },
-                new GitHubRepoRef("atomist-seeds", "spring-rest-seed"),
+                GitHubRepoRef.from({ 
+                    owner: "atomist-seeds", 
+                    repo: "spring-rest-seed", 
+                    branch: "master", 
+                    sha: "917ad5340a1c03f86633f64032226b277ab366ee",
+                }),
                 {
                     depth: 6, // 5 commits in the push + one extra to be able to diff
                 },
@@ -60,7 +68,7 @@ describe("filesChanged", () => {
                 "README.md",
                 "src/main/java/com/atomist/spring/SpringRestSeedController.java"];
             assert.deepEqual(files, expectedChanges);
-        });
+        }).timeout(20000);
 
         it("should correctly find all files within two commits on a branch", async () => {
             const p = await GitCommandGitProject.cloned(

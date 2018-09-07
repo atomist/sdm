@@ -16,13 +16,16 @@
 
 import { executePushReactions } from "../../../api-helper/listener/executePushReactions";
 import { PushReactionGoal } from "../../machine/wellKnownGoals";
-import { PushImpactListenerRegistration } from "../../registration/PushImpactListenerRegistration";
+import { 
+    PushImpactListener, 
+    PushImpactListenerRegistration,
+} from "../../registration/PushImpactListenerRegistration";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
 
 /**
- * Goal that performs fingerprinting. Typically invoked early in a delivery flow.
+ * Goal that invokes PushImpactListener instances. Typically invoked early in a delivery flow.
  */
 export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListenerRegistration> {
 
@@ -38,6 +41,13 @@ export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListe
         this.addFulfillment({
             name: `PushImpact-${this.uniqueName}`,
             goalExecutor: executePushReactions(this.registrations),
+        });
+    }
+
+    public withListener(listener: PushImpactListener<any>) {
+        return this.with({
+            name: DefaultGoalNameGenerator.generateName("push-impact-listener"),
+            action: listener,
         });
     }
 }
