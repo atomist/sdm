@@ -14,46 +14,33 @@
  * limitations under the License.
  */
 
-import {
-    HandleCommand,
-    HandleEvent,
-    logger,
-} from "@atomist/automation-client";
+import { HandleCommand, HandleEvent, logger } from "@atomist/automation-client";
 import { toStringArray } from "@atomist/automation-client/internal/util/string";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
+import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
 import { Goals } from "../../api/goal/Goals";
-import {
-    NoProgressReport,
-    ReportProgress,
-} from "../../api/goal/progress/ReportProgress";
+import { NoProgressReport, ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
 import { SoftwareDeliveryMachine } from "../../api/machine/SoftwareDeliveryMachine";
 import { SoftwareDeliveryMachineConfiguration } from "../../api/machine/SoftwareDeliveryMachineOptions";
-import {
-    StagingEndpointGoal,
-    StagingVerifiedGoal,
-} from "../../api/machine/wellKnownGoals";
+import { StagingEndpointGoal, StagingVerifiedGoal } from "../../api/machine/wellKnownGoals";
 import { GoalSetter } from "../../api/mapping/GoalSetter";
 import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRules } from "../../api/mapping/support/PushRules";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import {
-    CodeInspection,
-    CodeInspectionRegistration,
-    CodeInspectionResult,
-} from "../../api/registration/CodeInspectionRegistration";
+import { CodeInspection, CodeInspectionRegistration, CodeInspectionResult } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
@@ -61,16 +48,10 @@ import { EventHandlerRegistration } from "../../api/registration/EventHandlerReg
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { GoalApprovalRequestVoter } from "../../api/registration/GoalApprovalRequestVoter";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
-import {
-    EnforceableProjectInvariantRegistration,
-    InvarianceAssessment,
-} from "../../api/registration/ProjectInvariantRegistration";
+import { EnforceableProjectInvariantRegistration, InvarianceAssessment } from "../../api/registration/ProjectInvariantRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
-import {
-    executeVerifyEndpoint,
-    SdmVerification,
-} from "../listener/executeVerifyEndpoint";
+import { executeVerifyEndpoint, SdmVerification } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
 import { toScalarProjectEditor } from "./handlerRegistrations";
@@ -285,6 +266,12 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         // If we didn't get any goal setters don't register a mapping
         registrableManager().register(this);
 
+        const i: AdminCommunicationContext = configuration.sdm.adminCommunicationContext || {
+            addressAdmin: async (msg, args) => logger.warn("SETUP PROBLEM " + msg, args),
+        };
+
+        // tslint:disable-next-line:no-floating-promises
+        Promise.all(this.startupListeners.map(l => l(i)));
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
