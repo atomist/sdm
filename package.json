@@ -43,7 +43,7 @@
     "@atomist/automation-client": "*"
   },
   "devDependencies": {
-    "@atomist/automation-client": "1.0.0-master.20180907111850",
+    "@atomist/automation-client": "1.0.0-master.20180905201706",
     "@types/mocha": "^5.2.5",
     "@types/power-assert": "^1.4.29",
     "axios-mock-adapter": "^1.15.0",
