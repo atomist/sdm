@@ -40,7 +40,7 @@ export class DefaultGoalImplementationMapper implements GoalImplementationMapper
             m.goal.context === goal.externalKey);
 
         if (matchedNames.length > 1) {
-            throw new Error(`Multiple implementations found for name '${goal.fulfillment.name}' on goal '${goal.name}'`);
+            throw new Error(`Multiple implementations found for name '${goal.fulfillment.name}' on goal '${goal.uniqueName}'`);
         }
         if (matchedNames.length === 0) {
             throw new Error(`No implementation found with name '${goal.fulfillment.name}': ` +

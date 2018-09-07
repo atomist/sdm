@@ -85,7 +85,7 @@ export class Goal {
     }
 
     get waitingForApprovalDescription() {
-        return this.definition.waitingForApprovalDescription || (this.successDescription + "(but needs approval)");
+        return this.definition.waitingForApprovalDescription || `Approval required: ${this.successDescription}`;
     }
 
     get retryIntent() {

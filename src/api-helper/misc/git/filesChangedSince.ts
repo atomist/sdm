@@ -17,49 +17,37 @@
 import { logger } from "@atomist/automation-client";
 import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { PushFields } from "../../../typings/types";
 
 /**
  * Use git to list the files changed since the given sha
  * or undefined if we cannot determine it
  * @param {GitProject} project
- * @param {string} sha
+ * @param {PushFields.Fragment} push
  * @return {Promise<string[]>}
  */
-export async function filesChangedSince(project: GitProject, sha: string): Promise<string[] | undefined> {
-    if (!sha) {
-        logger.info(`No sha passed in on ${JSON.stringify(project.id)}: Looking for parent sha`);
-        return filesChangedSinceParentCommit(project);
-    }
+export async function filesChangedSince(project: GitProject, push: PushFields.Fragment): Promise<string[] | undefined> {
+    // get the number of commits from the after
+    const commitCount = push && push.commits ? push.commits.length : 1;
+    const sha = push && push.after ? push.after.sha : "HEAD";
 
-    const command = `git diff --name-only ${sha}`;
+    const command = `git diff --name-only ${sha}~${commitCount}`;
     try {
         const cr = await runCommand(command, { cwd: project.baseDir });
         // stdout is nothing but a list of files, one per line
-        logger.debug(`$Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
+        logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
         return cr.stdout.split("\n")
             .filter(n => !!n);
     } catch (err) {
-        logger.warn("Error diffing project %j since %s: %s", project.id, sha, err.message);
-        logger.warn("Project sha = %s, branch = %s", project.id.sha, project.id.branch);
+        logger.warn("Error diffing project %j since '%s': %s", project.id, sha, err.message);
         try {
             const gs = await project.gitStatus();
-            logger.warn("Git status sha = %s, branch = %s", gs.sha, gs.branch);
+            logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
             const timeOfLastChange = await runCommand("ls -ltr .", { cwd: project.baseDir });
             logger.info("Files with dates: " + timeOfLastChange.stdout);
         } catch (err) {
             logger.warn("Error while trying extra logging: " + err.stack);
         }
-        return undefined;
-    }
-}
-
-// TODO: we should use the earliest commit in the push, and find its parent. See: https://github.com/atomist/github-sdm/issues/293
-// we're using this to list changes for code reactions, and that should include all changes in the push.
-export async function filesChangedSinceParentCommit(project: GitProject): Promise<string[] | undefined> {
-    try {
-        return filesChangedSince(project, "HEAD^");
-    } catch (err) {
-        logger.warn("Error diffing project %j finding parent: %s", project.id, err.message);
         return undefined;
     }
 }
@@ -77,18 +65,6 @@ export class Rename implements Change {
 
     constructor(public name: string, public newName: string) {
     }
-}
-
-export async function changesSince(project: GitProject, sha: string): Promise<string[]> {
-    const command = `git diff --name-status ${sha}`;
-    const cr = await runCommand(command, { cwd: project.baseDir });
-    // stdout is nothing but a list of files, one per line
-    logger.debug(`$Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
-    if (1 === 1) {
-        throw new Error("Not yet implemented");
-    }
-    return cr.stdout.split("\n")
-        .filter(n => !!n);
 }
 
 /**

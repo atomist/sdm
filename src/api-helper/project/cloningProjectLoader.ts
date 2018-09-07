@@ -22,7 +22,12 @@ import { ProjectLoader } from "../../spi/project/ProjectLoader";
  */
 export const CloningProjectLoader: ProjectLoader = {
     async doWithProject(coords, action) {
-        const p = await GitCommandGitProject.cloned(coords.credentials, coords.id);
+        // This is breaking old internal code but we need the branch, so this error gives us an opportunity
+        // to fix all lingering cloning issues
+        if (!coords.id.branch) {
+            throw new Error(`Repository reference '${JSON.stringify(coords.id)}' is missing required branch`);
+        }
+        const p = await GitCommandGitProject.cloned(coords.credentials, coords.id, { depth: coords.depth });
         return action(p);
     },
 };

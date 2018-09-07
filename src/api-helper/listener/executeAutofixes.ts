@@ -70,6 +70,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                     id: editableRepoRef,
                     context,
                     readOnly: false,
+                    depth: push.commits.length + 1,
                 },
                 async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
