@@ -56,6 +56,7 @@ export * from "./api/listener/PushImpactListener";
 export * from "./api/listener/PushListener";
 export * from "./api/listener/RepoCreationListener";
 export * from "./api/listener/ReviewListener";
+export * from "./api/listener/StartupListener";
 export * from "./api/listener/TagListener";
 export * from "./api/listener/UpdatedIssueListener";
 export * from "./api/listener/UserJoiningChannelListener";

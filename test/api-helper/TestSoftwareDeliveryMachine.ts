@@ -20,7 +20,7 @@ import { AbstractSoftwareDeliveryMachine } from "../../src/api-helper/machine/Ab
 import { GoalSetter } from "../../src/api/mapping/GoalSetter";
 
 /**
- * SDM instance for use in tests
+ * SDM implementation for use in tests
  */
 export class TestSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine {
 
@@ -30,7 +30,12 @@ export class TestSoftwareDeliveryMachine extends AbstractSoftwareDeliveryMachine
     public readonly ingesters: string[];
 
     constructor(name: string, ...goalSetters: Array<GoalSetter | GoalSetter[]>) {
-        super("name", undefined, goalSetters);
+        super("name", {
+            // Pass in just enough config for adding listeners not to blow up
+            sdm: {
+            } as any,
+            listeners: undefined,
+        }, goalSetters);
     }
 
 }
