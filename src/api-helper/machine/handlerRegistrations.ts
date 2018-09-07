@@ -140,7 +140,7 @@ export function codeTransformRegistrationToCommand(sdm: MachineOrMachineOptions,
             const results = await editAll<any, any>(
                 ci.context,
                 ci.credentials,
-                chattyEditor(ctr.name, toScalarProjectEditor(ctr.transform, ctr.projectTest)),
+                toScalarProjectEditor(ctr.transform, ctr.projectTest),
                 editMode,
                 ci.parameters,
                 repoFinder,
