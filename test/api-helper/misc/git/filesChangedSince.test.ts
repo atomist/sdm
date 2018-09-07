@@ -34,10 +34,10 @@ describe("filesChanged", () => {
         it("should correctly find all files within two commits", async () => {
             const p = await GitCommandGitProject.cloned(
                 { token: null },
-                GitHubRepoRef.from({ 
-                    owner: "atomist-seeds", 
-                    repo: "spring-rest-seed", 
-                    branch: "master", 
+                GitHubRepoRef.from({
+                    owner: "atomist-seeds",
+                    repo: "spring-rest-seed",
+                    branch: "master",
                     sha: "917ad5340a1c03f86633f64032226b277ab366ee",
                 }),
                 {
