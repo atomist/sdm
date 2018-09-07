@@ -16,7 +16,7 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 |[Custom: https://github.com/douglascrockford/JSON-js](#custom-httpsgithubcomdouglascrockfordjson-js)|1|
 |[GPL-3.0](#gpl-30)|4|
 |[ISC](#isc)|36|
-|[MIT](#mit)|452|
+|[MIT](#mit)|453|
 |[Public Domain](#public-domain)|1|
 |[Unlicense](#unlicense)|1|
 
@@ -40,7 +40,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`forever-agent`|`0.6.1`|Mikeal Rogers|[https://github.com/mikeal/forever-agent](https://github.com/mikeal/forever-agent)|
 |`oauth-sign`|`0.8.2`|Mikeal Rogers|[https://github.com/mikeal/oauth-sign](https://github.com/mikeal/oauth-sign)|
 |`request`|`2.85.0`|Mikeal Rogers|[https://github.com/request/request](https://github.com/request/request)|
-|`rxjs`|`6.3.1`|Ben Lesh|[https://github.com/reactivex/rxjs](https://github.com/reactivex/rxjs)|
+|`rxjs`|`6.3.2`|Ben Lesh|[https://github.com/reactivex/rxjs](https://github.com/reactivex/rxjs)|
 |`tslib`|`1.9.3`|Microsoft Corp.|[https://github.com/Microsoft/tslib](https://github.com/Microsoft/tslib)|
 |`tunnel-agent`|`0.6.0`|Mikeal Rogers|[https://github.com/mikeal/tunnel-agent](https://github.com/mikeal/tunnel-agent)|
 
@@ -101,7 +101,7 @@ GNU General Public License v3.0 only - [http://www.gnu.org/licenses/gpl-3.0-stan
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/automation-client`|`1.0.0-M.3`|Atomist|[https://github.com/atomist/automation-client-ts](https://github.com/atomist/automation-client-ts)|
+|`@atomist/automation-client`|`1.0.0-master.20180905201706`|Atomist|[https://github.com/atomist/automation-client-ts](https://github.com/atomist/automation-client-ts)|
 |`@atomist/microgrammar`|`0.7.0`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/microgrammar`|`0.8.1`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/tree-path`|`0.1.9`|Atomist, Inc.|[https://github.com/atomist/tree-path-ts](https://github.com/atomist/tree-path-ts)|
@@ -180,6 +180,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`@types/mime`|`2.0.0`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/minimatch`|`3.0.3`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/node`|`10.7.1`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
+|`@types/node`|`10.9.4`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/passport-http-bearer`|`1.0.33`||[https://github.com/DefinitelyTyped/DefinitelyTyped.git](https://github.com/DefinitelyTyped/DefinitelyTyped.git)|
 |`@types/passport-http`|`0.3.6`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/passport`|`0.4.6`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
