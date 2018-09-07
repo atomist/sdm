@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   No such file or directory `~/.atomist.log`. [#514](https://github.com/atomist/sdm/issues/514)
+-   Pass depth down to `git clone` in order to correctly diff the changes. [#513](https://github.com/atomist/sdm/issues/513)
 
 ## [1.0.0-M.3](https://github.com/atomist/sdm/compare/1.0.0-M.1...1.0.0-M.3) - 2018-09-04
 
