@@ -18,6 +18,7 @@ import { executeFingerprinting } from "../../../api-helper/listener/executeFinge
 import { FingerprintListener } from "../../listener/FingerprintListener";
 import { FingerprintGoal } from "../../machine/wellKnownGoals";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
+import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfillment";
 
@@ -27,13 +28,14 @@ import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfill
 export class Fingerprint
     extends FulfillableGoalWithRegistrationsAndListeners<FingerprinterRegistration, FingerprintListener> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("fingerprint")) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("fingerprint"),
+                ...dependsOn: Goal[]) {
 
         super({
             ...FingerprintGoal.definition,
             uniqueName,
             displayName: "fingerprint",
-        });
+        }, ...dependsOn);
 
         this.addFulfillment({
             name: `Fingerprint-${this.uniqueName}`,

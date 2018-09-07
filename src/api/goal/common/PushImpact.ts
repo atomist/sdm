@@ -17,6 +17,7 @@
 import { executePushReactions } from "../../../api-helper/listener/executePushReactions";
 import { PushReactionGoal } from "../../machine/wellKnownGoals";
 import { PushImpactListenerRegistration } from "../../registration/PushImpactListenerRegistration";
+import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
 
@@ -25,13 +26,14 @@ import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
  */
 export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListenerRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("push-impact")) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("push-impact"),
+                ...dependsOn: Goal[]) {
 
         super({
             ...PushReactionGoal.definition,
             uniqueName,
             displayName: "push-impact",
-        });
+        }, ...dependsOn);
 
         this.addFulfillment({
             name: `PushImpact-${this.uniqueName}`,

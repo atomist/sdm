@@ -17,6 +17,7 @@
 import { executeBuild } from "../../../api-helper/goal/executeBuild";
 import { Builder } from "../../../spi/build/Builder";
 import { BuildGoal } from "../../machine/wellKnownGoals";
+import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
     FulfillableGoalWithRegistrations,
@@ -35,13 +36,14 @@ export interface BuilderRegistration extends ImplementationRegistration {
  */
 export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("build")) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("build"),
+                ...dependsOn: Goal[]) {
 
         super({
             ...BuildGoal.definition,
             uniqueName,
             displayName: "build",
-        });
+        }, ...dependsOn);
     }
 
     public with(registration: BuilderRegistration): this {

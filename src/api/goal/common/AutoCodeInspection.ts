@@ -18,6 +18,7 @@ import { executeAutoInspects } from "../../../api-helper/listener/executeAutoIns
 import { CodeInspectionGoal } from "../../machine/wellKnownGoals";
 import { CodeInspectionRegistration } from "../../registration/CodeInspectionRegistration";
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
+import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfillment";
 
@@ -27,13 +28,14 @@ import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfill
 export class AutoCodeInspection
     extends FulfillableGoalWithRegistrationsAndListeners<CodeInspectionRegistration<any, any>, ReviewListenerRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("code-inspections")) {
+    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("code-inspections"),
+                ...dependsOn: Goal[]) {
 
         super({
             ...CodeInspectionGoal.definition,
             uniqueName,
             displayName: "code-inspections",
-        });
+        }, ...dependsOn);
 
         this.addFulfillment({
             name: `Inspect-${this.uniqueName}`,
