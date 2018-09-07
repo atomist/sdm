@@ -31,26 +31,39 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
     const commitCount = push && push.commits ? push.commits.length : 1;
     const sha = push && push.after ? push.after.sha : "HEAD";
 
-    const command = `git diff --name-only ${sha}~${commitCount}`;
     try {
-        const cr = await runCommand(command, { cwd: project.baseDir });
-        // stdout is nothing but a list of files, one per line
-        logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
-        return cr.stdout.split("\n")
-            .filter(n => !!n);
+        return await gitDiff(sha, commitCount, project);
     } catch (err) {
-        logger.warn("Error diffing project %j since '%s': %s", project.id, sha, err.message);
+
         try {
-            const gs = await project.gitStatus();
-            logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
-            const timeOfLastChange = await runCommand("ls -ltr .", { cwd: project.baseDir });
-            logger.info("Files with dates: " + timeOfLastChange.stdout);
+            const fallback = `git fetch --unshallow --no-tags`;
+            await runCommand(fallback, { cwd: project.baseDir });
+
+            return await gitDiff(sha, commitCount, project);
+
         } catch (err) {
-            logger.warn("Error while trying extra logging: " + err.stack);
+            logger.warn("Error diffing project %j since '%s': %s", project.id, sha, err.message);
+            try {
+                const gs = await project.gitStatus();
+                logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
+                const timeOfLastChange = await runCommand("ls -ltr .", { cwd: project.baseDir });
+                logger.info("Files with dates: " + timeOfLastChange.stdout);
+            } catch (err) {
+                logger.warn("Error while trying extra logging: " + err.stack);
+            }
+            return undefined;
         }
-        return undefined;
     }
 }
+
+async function gitDiff(sha: string, commitCount: number, project: GitProject) {
+    const command = `git diff --name-only ${sha}~${commitCount}`;
+    const cr = await runCommand(command, { cwd: project.baseDir });
+    // stdout is nothing but a list of files, one per line
+    logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
+    return cr.stdout.split("\n")
+        .filter(n => !!n);
+};
 
 export type Mod = "added" | "deleted" | "modified" | "renamed";
 
