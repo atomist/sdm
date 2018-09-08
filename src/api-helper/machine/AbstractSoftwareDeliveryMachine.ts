@@ -253,13 +253,12 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     /**
-     * Invoke StartupListeners. Subclasses should could this after setup is complete.
+     * Invoke StartupListeners. Subclasses should call this after setup is complete.
      */
     protected async notifyStartupListeners(): Promise<any> {
         const i: AdminCommunicationContext = this.configuration.sdm.adminCommunicationContext || {
-            addressAdmin: async msg => logger.warn("SETUP PROBLEM - " + msg),
+            addressAdmin: async msg => logger.warn("SETUP PROBLEM %j", msg),
         };
-
         return Promise.all(this.startupListeners.map(l => l(i)));
     }
 
