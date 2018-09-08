@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   When a new-style goal has no implementation, fail it. [#512](https://github.com/atomist/sdm/issues/512)
+-   Fingerprint listeners should get all of the fingerprints delivered to…. [#519](https://github.com/atomist/sdm/issues/519)
 
 ### Fixed
 
