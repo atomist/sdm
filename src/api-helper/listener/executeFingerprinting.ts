@@ -55,13 +55,13 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
                 relevantFingerprinters.length, fingerprinters.length, cri.project.id);
             const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             await Promise.all(listeners.map(l =>
-                Promise.all(fingerprints.map(fingerprint => l({
-                    id,
-                    context,
-                    credentials,
-                    addressChannels: cri.addressChannels,
-                    fingerprint,
-                })))));
+                l({
+                id,
+                context,
+                credentials,
+                addressChannels: cri.addressChannels,
+                fingerprints,
+            })));
         });
         return Success;
     };
