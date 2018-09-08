@@ -24,8 +24,7 @@ import {
  * Event raised on a computed fingerprint
  */
 export interface FingerprintListenerInvocation extends RepoListenerInvocation {
-
-    fingerprint: Fingerprint;
+    fingerprints: Fingerprint[];
 }
 
 /**
