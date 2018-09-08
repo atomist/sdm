@@ -1,6 +1,8 @@
 /**
  * Context allowing us to communicate with an admin
  */
+import { AddressChannels } from "./addressChannels";
+
 export interface AdminCommunicationContext {
 
     /**
@@ -9,5 +11,5 @@ export interface AdminCommunicationContext {
      * @param args
      * @return {Promise<any>}
      */
-    addressAdmin(message: string, ...args: any[]): Promise<any>;
+    addressAdmin: AddressChannels;
 }

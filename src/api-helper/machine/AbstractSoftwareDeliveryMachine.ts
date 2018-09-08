@@ -257,7 +257,7 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
      */
     protected async notifyStartupListeners(): Promise<any> {
         const i: AdminCommunicationContext = this.configuration.sdm.adminCommunicationContext || {
-            addressAdmin: async (msg, args) => logger.warn("SETUP PROBLEM " + msg, args),
+            addressAdmin: async msg => logger.warn("SETUP PROBLEM - " + msg),
         };
 
         return Promise.all(this.startupListeners.map(l => l(i)));
