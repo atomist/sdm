@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   When a new-style goal has no implementation, fail it. [#512](https://github.com/atomist/sdm/issues/512)
+-   Old style functions related to specific goals like `addAutofix` deprecated on `SoftwareDeliveryMachine`
 
 ### Fixed
 

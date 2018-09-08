@@ -21,10 +21,10 @@ import {
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutofixGoal } from "../../machine/wellKnownGoals";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
+import { CodeTransform } from "../../registration/CodeTransform";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
-import { CodeTransform } from "../../registration/CodeTransform";
 
 /**
  * Goal that performs autofixes: For example, linting and adding license headers.
@@ -32,7 +32,7 @@ import { CodeTransform } from "../../registration/CodeTransform";
 export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration> {
 
     constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("autofix"),
-        ...dependsOn: Goal[]) {
+                ...dependsOn: Goal[]) {
 
         super({
             ...AutofixGoal.definition,
