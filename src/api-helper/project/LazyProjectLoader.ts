@@ -61,7 +61,6 @@ export class LazyProjectLoader implements ProjectLoader {
  */
 class LazyProject extends AbstractProject implements GitProject {
 
-
     private projectPromise: QueryablePromise<GitProject>;
 
     constructor(id: RemoteRepoRef,
