@@ -253,6 +253,17 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     /**
+     * Invoke StartupListeners. Subclasses should could this after setup is complete.
+     */
+    protected async notifyStartupListeners(): Promise<any> {
+        const i: AdminCommunicationContext = this.configuration.sdm.adminCommunicationContext || {
+            addressAdmin: async (msg, args) => logger.warn("SETUP PROBLEM " + msg, args),
+        };
+
+        return Promise.all(this.startupListeners.map(l => l(i)));
+    }
+
+    /**
      * Construct a new software delivery machine, with zero or
      * more goal setters.
      * @param {string} name
@@ -266,12 +277,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         // If we didn't get any goal setters don't register a mapping
         registrableManager().register(this);
 
-        const i: AdminCommunicationContext = configuration.sdm.adminCommunicationContext || {
-            addressAdmin: async (msg, args) => logger.warn("SETUP PROBLEM " + msg, args),
-        };
-
-        // tslint:disable-next-line:no-floating-promises
-        Promise.all(this.startupListeners.map(l => l(i)));
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }
