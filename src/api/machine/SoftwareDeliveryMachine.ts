@@ -17,7 +17,7 @@
 import { GoalSetter } from "../mapping/GoalSetter";
 import { EventRegistrationManager } from "../registration/EventRegistrationManager";
 import { IngesterRegistrationManager } from "../registration/IngesterRegistrationManager";
-import { EnforceableProjectInvariantRegistration } from "../registration/ProjectInvariantRegistration";
+import { EnforceableProjectInvariantRegistration } from "../../pack/invariant/ProjectInvariantRegistration";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
@@ -71,19 +71,11 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
         IngesterRegistrationManager,
         FunctionalUnit {
 
-    addVerifyImplementation(): this;
-
     /**
-     * Add an enforceable invariant registration. This will export
-     * a CodeTransform, CodeInspection and Autofix.
-     * If a ProjectInvariant is not enforceable, it can be
-     * registered with addCodeInspection.
-     * The transform command is exposed via "transform <intent>"
-     * The inspection command is exposed via "verify <intent>"
-     * @param {EnforceableProjectInvariantRegistration<PARAMS>} eir
+     * @deprecated
      * @return {this}
      */
-    addEnforceableInvariant<PARAMS>(eir: EnforceableProjectInvariantRegistration<PARAMS>): this;
+    addVerifyImplementation(): this;
 
     /**
      * Add capabilities from these extension packs.
