@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist/sdm/compare/1.0.0-M.3...HEAD)
 
+### Changed
+
+-   When a new-style goal has no implementation, fail it. [#512](https://github.com/atomist/sdm/issues/512)
+
 ### Fixed
 
 -   No such file or directory `~/.atomist.log`. [#514](https://github.com/atomist/sdm/issues/514)
