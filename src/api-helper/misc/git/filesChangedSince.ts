@@ -63,7 +63,7 @@ async function gitDiff(sha: string, commitCount: number, project: GitProject) {
     logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
     return cr.stdout.split("\n")
         .filter(n => !!n);
-};
+}
 
 export type Mod = "added" | "deleted" | "modified" | "renamed";
 

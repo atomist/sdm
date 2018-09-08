@@ -16,8 +16,8 @@
 
 import { executePushReactions } from "../../../api-helper/listener/executePushReactions";
 import { PushReactionGoal } from "../../machine/wellKnownGoals";
-import { 
-    PushImpactListener, 
+import {
+    PushImpactListener,
     PushImpactListenerRegistration,
 } from "../../registration/PushImpactListenerRegistration";
 import { Goal } from "../Goal";

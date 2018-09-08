@@ -31,6 +31,7 @@ import { ProjectListener } from "../../api/listener/ProjectListener";
 import { PullRequestListener } from "../../api/listener/PullRequestListener";
 import { PushListener } from "../../api/listener/PushListener";
 import { RepoCreationListener } from "../../api/listener/RepoCreationListener";
+import { StartupListener } from "../../api/listener/StartupListener";
 import { TagListener } from "../../api/listener/TagListener";
 import { UpdatedIssueListener } from "../../api/listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../../api/listener/UserJoiningChannelListener";
@@ -48,6 +49,8 @@ import { ReviewListenerRegistration } from "../../api/registration/ReviewListene
  * This class is purely a registration store, and has no other behavior.
  */
 export class ListenerRegistrationManagerSupport implements ListenerRegistrationManager {
+
+    public readonly startupListeners: StartupListener[] = [];
 
     public readonly autofixRegistrations: AutofixRegistration[] = [];
 
@@ -98,6 +101,11 @@ export class ListenerRegistrationManagerSupport implements ListenerRegistrationM
     protected readonly verifiedDeploymentListeners: VerifiedDeploymentListener[] = [];
 
     protected readonly endpointVerificationListeners: EndpointVerificationListener[] = [];
+
+    public addStartupListener(l: StartupListener): this {
+        this.startupListeners.push(l);
+        return this;
+    }
 
     public addNewIssueListener(e: NewIssueListener): this {
         this.newIssueListeners.push(e);
