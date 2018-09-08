@@ -35,7 +35,7 @@ const HatesTheWorld: ReviewerRegistration = {
     pushTest: TruePushTest,
     inspection: async project => ({
         repoId: project.id,
-        comments: await saveFromFiles(project, "**/*", f =>
+        comments: await saveFromFiles(project, "**/*", async f =>
             new DefaultReviewComment("info", "hater",
                 `Found a file at \`${f.path}\`: We hate all files`,
                 {
