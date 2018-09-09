@@ -20,13 +20,11 @@ import {
     RemoteRepoRef,
     RepoId,
 } from "@atomist/automation-client/operations/common/RepoId";
-import {
-    Goal,
-    IndependentOfEnvironment,
-} from "../..";
 import { LoggingProgressLog } from "../../api-helper/log/LoggingProgressLog";
+import { Goal } from "../../api/goal/Goal";
 import { GoalInvocation } from "../../api/goal/GoalInvocation";
 import { SdmGoalEvent } from "../../api/goal/SdmGoalEvent";
+import { IndependentOfEnvironment } from "../../api/goal/support/environment";
 import { SoftwareDeliveryMachineOptions } from "../../api/machine/SoftwareDeliveryMachineOptions";
 import { SdmGoalState } from "../../typings/types";
 import { fakeContext } from "./fakeContext";

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SoftwareDeliveryMachine } from "../..";
+import { SoftwareDeliveryMachine } from "../machine/SoftwareDeliveryMachine";
 import { AddressChannels } from "./addressChannels";
 
 /**
