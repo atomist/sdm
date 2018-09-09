@@ -25,6 +25,7 @@ import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
 import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
+import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
 import { ExecuteGoal } from "../../api/goal/GoalInvocation";
@@ -272,6 +273,17 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
     }
 
     /**
+     * Invoke StartupListeners.
+     */
+    public async notifyStartupListeners(): Promise<any> {
+        const i: AdminCommunicationContext = {
+            addressAdmin: this.configuration.sdm.adminAddressChannels || (async msg => logger.warn("STARTUP PROBLEM: %j", msg)),
+            sdm: this,
+        };
+        return Promise.all(this.startupListeners.map(l => l(i)));
+    }
+
+    /**
      * Construct a new software delivery machine, with zero or
      * more goal setters.
      * @param {string} name
@@ -282,9 +294,9 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
                           public readonly configuration: O,
                           goalSetters: Array<GoalSetter | GoalSetter[]>) {
         super();
-        // If we didn't get any goal setters don't register a mapping
         registrableManager().register(this);
 
+        // If we didn't get any goal setters don't register a mapping
         if (goalSetters.length > 0) {
             this.pushMap = new PushRules("Goal setters", _.flatten(goalSetters));
         }

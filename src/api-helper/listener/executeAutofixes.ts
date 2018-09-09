@@ -27,15 +27,13 @@ import {
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
-import {
-    Goal,
-    ReportProgress,
-} from "../..";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";
+import { Goal } from "../../api/goal/Goal";
 import {
     ExecuteGoal,
     GoalInvocation,
 } from "../../api/goal/GoalInvocation";
+import { ReportProgress } from "../../api/goal/progress/ReportProgress";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";

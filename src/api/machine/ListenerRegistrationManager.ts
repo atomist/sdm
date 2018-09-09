@@ -31,6 +31,7 @@ import { ProjectListener } from "../listener/ProjectListener";
 import { PullRequestListener } from "../listener/PullRequestListener";
 import { PushListener } from "../listener/PushListener";
 import { RepoCreationListener } from "../listener/RepoCreationListener";
+import { StartupListener } from "../listener/StartupListener";
 import { TagListener } from "../listener/TagListener";
 import { UpdatedIssueListener } from "../listener/UpdatedIssueListener";
 import { UserJoiningChannelListener } from "../listener/UserJoiningChannelListener";
@@ -45,6 +46,13 @@ import { ReviewListenerRegistration } from "../registration/ReviewListenerRegist
  * Listener management offering a fluent builder pattern for registrations.
  */
 export interface ListenerRegistrationManager {
+
+    /**
+     * Add a listener that will be notified of machine startup
+     * @param {StartupListener} l
+     * @return {this}
+     */
+    addStartupListener(l: StartupListener): this;
 
     /**
      * Add a listener that reacts to new issues
@@ -160,6 +168,8 @@ export interface ListenerRegistrationManager {
     addEndpointVerificationListener(l: EndpointVerificationListener): this;
 
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
+
+    startupListeners: StartupListener[];
 
     userJoiningChannelListeners: UserJoiningChannelListener[];
 

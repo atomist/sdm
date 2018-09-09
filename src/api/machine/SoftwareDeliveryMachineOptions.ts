@@ -26,6 +26,7 @@ import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
+import { AddressChannels } from "../context/addressChannels";
 import { IsolatedGoalLauncher } from "../goal/support/IsolatedGoalLauncher";
 import { RepoTargets } from "./RepoTargets";
 
@@ -86,6 +87,12 @@ export interface SoftwareDeliveryMachineOptions {
      * Strategy for launching goals in different infrastructure
      */
     goalLauncher?: IsolatedGoalLauncher;
+
+    /**
+     * AddressChannels for communicating with system administrator.
+     * Defaults to logging a warning unless this is set.
+     */
+    adminAddressChannels?: AddressChannels;
 
 }
 
