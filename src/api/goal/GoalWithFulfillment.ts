@@ -101,8 +101,8 @@ export interface FulfillableGoalDetails {
  */
 export abstract class FulfillableGoal extends GoalWithPrecondition implements Registerable {
 
-    private readonly fulfillments: Fulfillment[] = [];
-    private readonly callbacks: GoalFulfillmentCallback[] = [];
+    protected readonly fulfillments: Fulfillment[] = [];
+    protected readonly callbacks: GoalFulfillmentCallback[] = [];
     public sdm: SoftwareDeliveryMachine;
 
     constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
