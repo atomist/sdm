@@ -20,7 +20,11 @@ import { FingerprintGoal } from "../../machine/wellKnownGoals";
 import { FingerprinterRegistration } from "../../registration/FingerprinterRegistration";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfillment";
+import {
+    FulfillableGoalDetails,
+    FulfillableGoalWithRegistrationsAndListeners,
+    getGoalDefintionFrom,
+} from "../GoalWithFulfillment";
 
 /**
  * Goal that performs fingerprinting. Typically invoked early in a delivery flow.
@@ -28,17 +32,17 @@ import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfill
 export class Fingerprint
     extends FulfillableGoalWithRegistrationsAndListeners<FingerprinterRegistration, FingerprintListener> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("fingerprint"),
+    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("fingerprint"),
                 ...dependsOn: Goal[]) {
 
         super({
             ...FingerprintGoal.definition,
-            uniqueName,
+            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("fingerprint")),
             displayName: "fingerprint",
         }, ...dependsOn);
 
         this.addFulfillment({
-            name: `Fingerprint-${this.uniqueName}`,
+            name: `fingerprint-${this.definition.uniqueName}`,
             goalExecutor: executeFingerprinting(this.registrations,
                 this.listeners),
         });

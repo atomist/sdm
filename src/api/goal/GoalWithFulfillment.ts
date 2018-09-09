@@ -86,6 +86,16 @@ export function isSideEffect(f: Fulfillment): f is SideEffect {
 }
 
 /**
+ * Subset of the GoalDefinition interface to use by typed Goals to allow
+ * specifying some aspect of the Goal that are specific to the current use case.
+ */
+export interface FulfillableGoalDetails {
+    uniqueName?: string;
+    approval?: boolean;
+    retry?: boolean;
+}
+
+/**
  * Goal that registers goal implementations, side effects and callbacks on the
  * current SDM. No additional registration with the SDM is needed.
  */
@@ -122,10 +132,6 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         }
         this.fulfillments.push(fulfillment);
         return this;
-    }
-
-    protected defaultFulfillment(): Fulfillment | undefined {
-        return undefined;
     }
 
     private registerFulfillment(fulfillment: Fulfillment): void {
@@ -197,5 +203,20 @@ export class GoalWithFulfillment extends FulfillableGoal {
     public with(fulfillment: Fulfillment): this {
         this.addFulfillment(fulfillment);
         return this;
+    }
+}
+
+export function getGoalDefintionFrom(goalDetails: FulfillableGoalDetails | string,
+                                     uniqueName: string): Partial<GoalDefinition> {
+    if (typeof goalDetails === "string") {
+        return {
+            uniqueName : goalDetails || uniqueName,
+        };
+    } else {
+        return {
+            uniqueName: goalDetails.uniqueName || uniqueName,
+            approvalRequired: goalDetails.approval,
+            retryFeasible: goalDetails.retry,
+        };
     }
 }

@@ -20,7 +20,9 @@ import { BuildGoal } from "../../machine/wellKnownGoals";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
 import {
+    FulfillableGoalDetails,
     FulfillableGoalWithRegistrations,
+    getGoalDefintionFrom,
     ImplementationRegistration,
 } from "../GoalWithFulfillment";
 
@@ -36,12 +38,12 @@ export interface BuilderRegistration extends ImplementationRegistration {
  */
 export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("build"),
+    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("build"),
                 ...dependsOn: Goal[]) {
 
         super({
             ...BuildGoal.definition,
-            uniqueName,
+            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("build")),
             displayName: "build",
         }, ...dependsOn);
     }

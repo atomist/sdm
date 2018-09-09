@@ -20,7 +20,11 @@ import { CodeInspectionRegistration } from "../../registration/CodeInspectionReg
 import { ReviewListenerRegistration } from "../../registration/ReviewListenerRegistration";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfillment";
+import {
+    FulfillableGoalDetails,
+    FulfillableGoalWithRegistrationsAndListeners,
+    getGoalDefintionFrom,
+} from "../GoalWithFulfillment";
 
 /**
  * Goal that runs code inspections
@@ -28,17 +32,16 @@ import { FulfillableGoalWithRegistrationsAndListeners } from "../GoalWithFulfill
 export class AutoCodeInspection
     extends FulfillableGoalWithRegistrationsAndListeners<CodeInspectionRegistration<any, any>, ReviewListenerRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("code-inspections"),
+    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("code-inspection"),
                 ...dependsOn: Goal[]) {
-
         super({
             ...CodeInspectionGoal.definition,
-            uniqueName,
+            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("code-inspection")),
             displayName: "code-inspections",
         }, ...dependsOn);
 
         this.addFulfillment({
-            name: `Inspect-${this.uniqueName}`,
+            name: `code-inspections-${this.definition.uniqueName}`,
             goalExecutor: executeAutoInspects(this.registrations, this.listeners),
         });
     }

@@ -22,24 +22,28 @@ import {
 } from "../../registration/PushImpactListenerRegistration";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
+import {
+    FulfillableGoalDetails,
+    FulfillableGoalWithRegistrations,
+    getGoalDefintionFrom,
+} from "../GoalWithFulfillment";
 
 /**
  * Goal that invokes PushImpactListener instances. Typically invoked early in a delivery flow.
  */
 export class PushImpact extends FulfillableGoalWithRegistrations<PushImpactListenerRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("push-impact"),
+    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("push-impact"),
                 ...dependsOn: Goal[]) {
 
         super({
             ...PushReactionGoal.definition,
-            uniqueName,
+            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("push-impact")),
             displayName: "push-impact",
         }, ...dependsOn);
 
         this.addFulfillment({
-            name: `PushImpact-${this.uniqueName}`,
+            name: `push-impact-${this.definition.uniqueName}`,
             goalExecutor: executePushReactions(this.registrations),
         });
     }

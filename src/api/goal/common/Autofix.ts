@@ -21,27 +21,31 @@ import {
 import { LogSuppressor } from "../../../api-helper/log/logInterpreters";
 import { AutofixGoal } from "../../machine/wellKnownGoals";
 import { AutofixRegistration } from "../../registration/AutofixRegistration";
+import { CodeTransform } from "../../registration/CodeTransform";
 import { Goal } from "../Goal";
 import { DefaultGoalNameGenerator } from "../GoalNameGenerator";
-import { FulfillableGoalWithRegistrations } from "../GoalWithFulfillment";
-import { CodeTransform } from "../../registration/CodeTransform";
+import {
+    FulfillableGoalDetails,
+    FulfillableGoalWithRegistrations,
+    getGoalDefintionFrom,
+} from "../GoalWithFulfillment";
 
 /**
  * Goal that performs autofixes: For example, linting and adding license headers.
  */
 export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistration> {
 
-    constructor(private readonly uniqueName: string = DefaultGoalNameGenerator.generateName("autofix"),
-        ...dependsOn: Goal[]) {
+    constructor(private readonly goalDetailsOrUniqueName: FulfillableGoalDetails | string = DefaultGoalNameGenerator.generateName("autofix"),
+                ...dependsOn: Goal[]) {
 
         super({
             ...AutofixGoal.definition,
-            uniqueName,
+            ...getGoalDefintionFrom(goalDetailsOrUniqueName, DefaultGoalNameGenerator.generateName("autofix")),
             displayName: "autofix",
         }, ...dependsOn);
 
         this.addFulfillment({
-            name: "autofix",
+            name: `autofix-${this.definition.uniqueName}`,
             logInterpreter: LogSuppressor,
             goalExecutor: executeAutofixes(this.registrations),
             progressReporter: AutofixProgressReporter,
@@ -50,7 +54,7 @@ export class Autofix extends FulfillableGoalWithRegistrations<AutofixRegistratio
 
     public withTransform(transform: CodeTransform<any>) {
         this.with({
-            name: DefaultGoalNameGenerator.generateName("autofix"),
+            name: DefaultGoalNameGenerator.generateName("autofix-transform"),
             transform,
         });
     }
