@@ -124,6 +124,10 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
         return this;
     }
 
+    protected defaultFulfillment(): Fulfillment | undefined {
+        return undefined;
+    }
+
     private registerFulfillment(fulfillment: Fulfillment): void {
         if (isImplementation(fulfillment)) {
             this.sdm.addGoalImplementation(
