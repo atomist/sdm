@@ -207,7 +207,7 @@ export class GoalWithFulfillment extends FulfillableGoal {
 }
 
 export function getGoalDefintionFrom(goalDetails: FulfillableGoalDetails | string,
-                                     uniqueName: string): Partial<GoalDefinition> {
+                                     uniqueName: string): { uniqueName: string, approvalRequired?: boolean, retryFeasible?: boolean} {
     if (typeof goalDetails === "string") {
         return {
             uniqueName : goalDetails || uniqueName,
