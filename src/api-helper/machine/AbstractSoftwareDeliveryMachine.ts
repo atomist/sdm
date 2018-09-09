@@ -325,8 +325,7 @@ function toCodeInspectionCommand<PARAMS>(
 function defaultOnInspectionResults<PARAMS>(name: string) {
     return async (results: Array<CodeInspectionResult<InvarianceAssessment>>, ci: CommandListenerInvocation<PARAMS>) => {
         const messages = results.map(r =>
-            // TODO cast will go with automation-client upgrade
-            `${(r.repoId as RemoteRepoRef).url}: Satisfies invariant _${name}_: \`${r.result.holds}\``);
+            `${r.repoId.url}: Satisfies invariant _${name}_: \`${r.result.holds}\``);
         return ci.addressChannels(messages.join("\n"));
     };
 }

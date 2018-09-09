@@ -24,5 +24,5 @@ import { sprintf } from "sprintf-js";
  * @return {any}
  */
 export function cacheKeyForSha(id: RemoteRepoRef) {
-    return sprintf("%s:%s:%s@%s", id.owner, id.repo, id.sha, id.url);
+    return sprintf("%s:%s:%s:%s@%s", id.owner, id.repo, id.branch, id.sha, id.url);
 }
