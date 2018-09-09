@@ -21,12 +21,12 @@ import {
 import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { ProjectPersister } from "@atomist/automation-client/operations/generate/generatorUtils";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
+import { AddressChannels } from "../..";
 import { ArtifactStore } from "../../spi/artifact/ArtifactStore";
 import { CredentialsResolver } from "../../spi/credentials/CredentialsResolver";
 import { ProgressLogFactory } from "../../spi/log/ProgressLog";
 import { ProjectLoader } from "../../spi/project/ProjectLoader";
 import { RepoRefResolver } from "../../spi/repo-ref/RepoRefResolver";
-import { AdminCommunicationContext } from "../context/AdminCommunicationContext";
 import { IsolatedGoalLauncher } from "../goal/support/IsolatedGoalLauncher";
 import { RepoTargets } from "./RepoTargets";
 
@@ -89,10 +89,10 @@ export interface SoftwareDeliveryMachineOptions {
     goalLauncher?: IsolatedGoalLauncher;
 
     /**
-     * Context for communicating with system administrator.
+     * AddressChannels for communicating with system administrator.
      * Defaults to logging a warning unless this is set.
      */
-    adminCommunicationContext?: AdminCommunicationContext;
+    adminAddressChannels?: AddressChannels;
 
 }
 

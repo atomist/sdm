@@ -98,7 +98,7 @@ describe("filesChanged", () => {
             const expectedChanges = [ "README.md",
                 "src/atomist.config.ts"];
             assert.deepEqual(files, expectedChanges);
-        });
+        }).timeout(20000);
 
     });
 

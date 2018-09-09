@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SoftwareDeliveryMachine } from "../..";
 import { AddressChannels } from "./addressChannels";
 
 /**
@@ -28,4 +29,9 @@ export interface AdminCommunicationContext {
      * @return {Promise<any>}
      */
     addressAdmin: AddressChannels;
+
+    /**
+     * The SDM that is currently running
+     */
+    sdm: SoftwareDeliveryMachine;
 }

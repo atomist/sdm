@@ -61,12 +61,11 @@ export class LazyProjectLoader implements ProjectLoader {
  */
 class LazyProject extends AbstractProject implements GitProject {
 
-
     private projectPromise: QueryablePromise<GitProject>;
 
     constructor(id: RemoteRepoRef,
-        private readonly delegate: ProjectLoader,
-        private readonly params: ProjectLoadingParameters) {
+                private readonly delegate: ProjectLoader,
+                private readonly params: ProjectLoadingParameters) {
         super(id);
     }
 
@@ -181,7 +180,7 @@ class LazyProject extends AbstractProject implements GitProject {
 
     public streamFilesRaw(globPatterns: string[], opts: {}): FileStream {
         const resultStream = new stream.Transform({ objectMode: true });
-        resultStream._transform = function (chunk, encoding, done) {
+        resultStream._transform = function(chunk, encoding, done) {
             // tslint:disable-next-line:no-invalid-this
             this.push(chunk);
             done();
