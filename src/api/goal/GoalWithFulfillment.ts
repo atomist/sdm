@@ -93,7 +93,7 @@ export abstract class FulfillableGoal extends GoalWithPrecondition implements Re
 
     private readonly fulfillments: Fulfillment[] = [];
     private readonly callbacks: GoalFulfillmentCallback[] = [];
-    private sdm: SoftwareDeliveryMachine;
+    public sdm: SoftwareDeliveryMachine;
 
     constructor(public definitionOrGoal: GoalDefinition | Goal, ...dependsOn: Goal[]) {
         super(isGoalDefiniton(definitionOrGoal) ? definitionOrGoal : definitionOrGoal.definition, ...dependsOn);
