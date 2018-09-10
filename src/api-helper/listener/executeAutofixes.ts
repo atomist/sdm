@@ -63,12 +63,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
             const push = sdmGoal.push;
             const appliedAutofixes: AutofixRegistration[] = [];
             const editResult = await configuration.sdm.projectLoader.doWithProject<EditResult>({
-                    credentials,
-                    id,
-                    context,
-                    readOnly: false,
-                    depth: push.commits.length + 1,
-                },
+                credentials,
+                id,
+                context,
+                readOnly: false,
+                cloneOptions: { depth: push.commits.length + 1 },
+            },
                 async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutofixes: AutofixRegistration[] =
@@ -107,7 +107,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
         } catch (err) {
             logger.warn("Autofixes failed with %s: Ignoring failure.\n%s", err.message, err.stack);
             progressLog.write(sprintf("Autofixes failed with %s: Ignoring failure", err.message));
-            return Success;
+            return { code: 0, description: "Warning: Autofixes completed with error" };
         }
     };
 }

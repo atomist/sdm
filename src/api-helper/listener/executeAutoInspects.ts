@@ -54,7 +54,7 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
                     credentials,
                     id,
                     readOnly: true,
-                    depth: sdmGoal.push.commits.length + 1,
+                    cloneOptions: { depth: sdmGoal.push.commits.length + 1 },
                 }, async project => {
                     const cri = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);

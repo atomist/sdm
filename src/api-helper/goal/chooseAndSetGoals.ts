@@ -85,10 +85,10 @@ export interface ChooseAndSetGoalsRules {
  */
 export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
                                         parameters: {
-                                            context: HandlerContext,
-                                            credentials: ProjectOperationCredentials,
-                                            push: PushFields.Fragment,
-                                        }): Promise<Goals | undefined> {
+        context: HandlerContext,
+        credentials: ProjectOperationCredentials,
+        push: PushFields.Fragment,
+    }): Promise<Goals | undefined> {
     const { projectLoader, goalsListeners, goalSetter, implementationMapping, repoRefResolver } = rules;
     const { context, credentials, push } = parameters;
     const id = repoRefResolver.repoRefFromPush(push);
@@ -119,30 +119,30 @@ export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
 }
 
 export async function determineGoals(rules: {
-                                         projectLoader: ProjectLoader,
-                                         repoRefResolver: RepoRefResolver,
-                                         goalSetter: GoalSetter,
-                                         implementationMapping: GoalImplementationMapper,
-                                     },
+    projectLoader: ProjectLoader,
+    repoRefResolver: RepoRefResolver,
+    goalSetter: GoalSetter,
+    implementationMapping: GoalImplementationMapper,
+},
                                      circumstances: {
-                                         credentials: ProjectOperationCredentials,
-                                         id: RemoteRepoRef,
-                                         context: HandlerContext,
-                                         push: PushFields.Fragment,
-                                         addressChannels: AddressChannels,
-                                         goalSetId: string,
-                                     }): Promise<{
-    determinedGoals: Goals | undefined,
-    goalsToSave: SdmGoalMessage[],
-}> {
+        credentials: ProjectOperationCredentials,
+        id: RemoteRepoRef,
+        context: HandlerContext,
+        push: PushFields.Fragment,
+        addressChannels: AddressChannels,
+        goalSetId: string,
+    }): Promise<{
+        determinedGoals: Goals | undefined,
+        goalsToSave: SdmGoalMessage[],
+    }> {
     const { projectLoader, repoRefResolver, goalSetter, implementationMapping } = rules;
     const { credentials, id, context, push, addressChannels, goalSetId } = circumstances;
     return projectLoader.doWithProject({
-            credentials,
-            id, context,
-            readOnly: true,
-            depth: push.commits.length + 1, // we need at least the commits of the push + 1 to be able to diff it
-        },
+        credentials,
+        id, context,
+        readOnly: true,
+        cloneOptions: { depth: push.commits.length + 1 }, // we need at least the commits of the push + 1 to be able to diff it
+    },
         async project => {
             const pli: PushListenerInvocation = {
                 project,
@@ -180,8 +180,8 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
 }
 
 async function fulfillment(rules: {
-                                implementationMapping: GoalImplementationMapper,
-                            },
+    implementationMapping: GoalImplementationMapper,
+},
                            g: Goal,
                            inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const { implementationMapping } = rules;
