@@ -69,7 +69,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                 id,
                 context,
                 readOnly: false,
-                cloneOptions: { depth: push.commits.length + 1 }
+                cloneOptions: { depth: push.commits.length + 1 },
             },
                 async project => {
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
@@ -142,7 +142,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
         } catch (err) {
             logger.warn("Autofixes failed with %s: Ignoring failure.\n%s", err.message, err.stack);
             progressLog.write(sprintf("Autofixes failed with %s: Ignoring failure", err.message));
-            return { code: 0, description: "Warning: Autofixes completed with error", };
+            return { code: 0, description: "Warning: Autofixes completed with error" };
         }
     };
 }
@@ -157,8 +157,8 @@ function detailMessage(goal: Goal, appliedAutofixes: AutofixRegistration[]): str
 }
 
 async function runOne(cri: PushImpactListenerInvocation,
-    autofix: AutofixRegistration,
-    progressLog: ProgressLog): Promise<EditResult> {
+                      autofix: AutofixRegistration,
+                      progressLog: ProgressLog): Promise<EditResult> {
     const project = cri.project;
     progressLog.write(sprintf("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name));
     try {
@@ -204,7 +204,7 @@ async function runOne(cri: PushImpactListenerInvocation,
  * @returns {AutofixRegistration[]}
  */
 export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
-    gi: GoalInvocation): AutofixRegistration[] {
+                                         gi: GoalInvocation): AutofixRegistration[] {
     return autofixes.filter(
         af => !(gi.sdmGoal.push.commits || [])
             .some(c => c.message === generateCommitMessageForAutofix(af)));

@@ -49,7 +49,7 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             id,
             context,
             readOnly: true,
-            cloneOptions: { depth: sdmGoal.push.commits.length + 1 }
+            cloneOptions: { depth: sdmGoal.push.commits.length + 1 },
         }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);
