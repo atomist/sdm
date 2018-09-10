@@ -35,7 +35,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @param listeners listeners to fingerprints
  */
 export function executeFingerprinting(fingerprinters: FingerprinterRegistration[],
-                                      listeners: FingerprintListener[]): ExecuteGoal {
+    listeners: FingerprintListener[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, id, credentials, context } = goalInvocation;
         if (fingerprinters.length === 0) {
@@ -47,7 +47,7 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
             credentials,
             id,
             readOnly: true,
-            depth: sdmGoal.push.commits.length + 1,
+            cloneOptions: { depth: sdmGoal.push.commits.length + 1 }
         }, async project => {
             const cri = await createPushImpactListenerInvocation(goalInvocation, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
@@ -56,12 +56,12 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
             const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             await Promise.all(listeners.map(l =>
                 l({
-                id,
-                context,
-                credentials,
-                addressChannels: cri.addressChannels,
-                fingerprints,
-            })));
+                    id,
+                    context,
+                    credentials,
+                    addressChannels: cri.addressChannels,
+                    fingerprints,
+                })));
         });
         return Success;
     };
