@@ -18,6 +18,7 @@ import { HandlerContext } from "@atomist/automation-client";
 import { ProjectOperationCredentials } from "@atomist/automation-client/operations/common/ProjectOperationCredentials";
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { CloneOptions } from "@atomist/automation-client/spi/clone/DirectoryManager";
 
 /**
  * Operation on loaded project
@@ -28,12 +29,15 @@ export interface ProjectLoadingParameters {
 
     credentials: ProjectOperationCredentials;
     id: RemoteRepoRef;
+    cloneOptions?: CloneOptions;
     context?: HandlerContext;
 
     /** Return true to get optimized behavior for read only */
     readOnly: boolean;
 
-    /** Indicate how many commits of the history are required */
+    /**
+     * @deprecated use cloneOptions.depth
+     */
     depth?: number;
 }
 
