@@ -29,7 +29,7 @@ import {
 /**
  * Register a Builder for a certain type of push
  */
-export interface BuilderRegistration extends ImplementationRegistration {
+export interface BuilderRegistration extends Partial<ImplementationRegistration> {
     builder: Builder;
 }
 
@@ -50,6 +50,7 @@ export class Build extends FulfillableGoalWithRegistrations<BuilderRegistration>
 
     public with(registration: BuilderRegistration): this {
         this.addFulfillment({
+            name: DefaultGoalNameGenerator.generateName("builder"),
             goalExecutor: executeBuild(registration.builder),
             ...registration as ImplementationRegistration,
         });
