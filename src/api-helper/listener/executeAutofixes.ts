@@ -107,7 +107,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
         } catch (err) {
             logger.warn("Autofixes failed with %s: Ignoring failure.\n%s", err.message, err.stack);
             progressLog.write(sprintf("Autofixes failed with %s: Ignoring failure", err.message));
-            return Success;
+            return { code: 0, description: "Warning: Autofixes completed with error", };
         }
     };
 }
