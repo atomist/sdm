@@ -34,6 +34,11 @@ export interface ProjectLoadingParameters {
 
     /** Return true to get optimized behavior for read only */
     readOnly: boolean;
+
+    /**
+     * @deprecated use cloneOptions.depth
+     */
+    depth?: number;
 }
 
 /**
