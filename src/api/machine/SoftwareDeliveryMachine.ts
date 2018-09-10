@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import { GoalSetter } from "../mapping/GoalSetter";
 import { EventRegistrationManager } from "../registration/EventRegistrationManager";
 import { IngesterRegistrationManager } from "../registration/IngesterRegistrationManager";
-import { EnforceableProjectInvariantRegistration } from "../registration/ProjectInvariantRegistration";
 import { CommandRegistrationManager } from "./CommandRegistrationManager";
 import { ExtensionPack } from "./ExtensionPack";
 import { FunctionalUnit } from "./FunctionalUnit";
@@ -30,38 +28,10 @@ import { SoftwareDeliveryMachineConfiguration } from "./SoftwareDeliveryMachineO
  * Combines commands and delivery event handling using _goals_.
  *
  * Goals and goal "implementations" can be defined by users.
- * However, certain well known goals are built into the TheSoftwareDeliveryMachine
- * for convenience, with their own associated listeners.
- *
- * Well known goal support is based around a delivery process spanning
- * common goals of fingerprinting, reacting to fingerprint diffs,
- * code review, build, deployment, endpoint verification and
- * promotion to a production environment.
  *
  * The most important element of a software delivery machine is setting
- * zero or more _push rules_ in the constructor.
- * This is normally done using the internal DSL as follows:
- *
- * ```
- * const sdm = new TheSoftwareDeliveryMachine(
- *    "MyMachine",
- *    options,
- *    whenPushSatisfies(IsMaven, HasSpringBootApplicationClass, not(MaterialChangeToJavaRepo))
- *      .itMeans("No material change to Java")
- *      .setGoals(NoGoals),
- *    whenPushSatisfies(ToDefaultBranch, IsMaven, HasSpringBootApplicationClass, HasCloudFoundryManifest)
- *      .itMeans("Spring Boot service to deploy")
- *      .setGoals(HttpServiceGoals));
- * ```
- *
- * Uses the builder pattern to allow fluent construction. For example:
- *
- * ```
- * softwareDeliveryMachine
- *    .addPushReactions(async pu => ...)
- *    .addNewIssueListeners(async i => ...)
- *    .add...;
- * ```
+ * zero or more _push rules_.
+ * This is normally done using an internal DSL
  */
 export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfiguration = SoftwareDeliveryMachineConfiguration>
     extends GoalDrivenMachine<O>,
@@ -71,19 +41,11 @@ export interface SoftwareDeliveryMachine<O extends SoftwareDeliveryMachineConfig
         IngesterRegistrationManager,
         FunctionalUnit {
 
-    addVerifyImplementation(): this;
-
     /**
-     * Add an enforceable invariant registration. This will export
-     * a CodeTransform, CodeInspection and Autofix.
-     * If a ProjectInvariant is not enforceable, it can be
-     * registered with addCodeInspection.
-     * The transform command is exposed via "transform <intent>"
-     * The inspection command is exposed via "verify <intent>"
-     * @param {EnforceableProjectInvariantRegistration<PARAMS>} eir
+     * @deprecated
      * @return {this}
      */
-    addEnforceableInvariant<PARAMS>(eir: EnforceableProjectInvariantRegistration<PARAMS>): this;
+    addVerifyImplementation(): this;
 
     /**
      * Add capabilities from these extension packs.

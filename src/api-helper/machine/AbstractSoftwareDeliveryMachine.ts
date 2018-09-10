@@ -19,8 +19,6 @@ import {
     HandleEvent,
     logger,
 } from "@atomist/automation-client";
-import { toStringArray } from "@atomist/automation-client/internal/util/string";
-import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { NoParameters } from "@atomist/automation-client/SmartParameters";
 import { Maker } from "@atomist/automation-client/util/constructionUtils";
 import * as _ from "lodash";
@@ -34,7 +32,6 @@ import {
     NoProgressReport,
     ReportProgress,
 } from "../../api/goal/progress/ReportProgress";
-import { CommandListenerInvocation } from "../../api/listener/CommandListener";
 import { validateConfigurationValues } from "../../api/machine/ConfigurationValues";
 import { ExtensionPack } from "../../api/machine/ExtensionPack";
 import { registrableManager } from "../../api/machine/Registerable";
@@ -49,23 +46,13 @@ import { PushMapping } from "../../api/mapping/PushMapping";
 import { PushTest } from "../../api/mapping/PushTest";
 import { AnyPush } from "../../api/mapping/support/commonPushTests";
 import { PushRules } from "../../api/mapping/support/PushRules";
-import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
-import {
-    CodeInspection,
-    CodeInspectionRegistration,
-    CodeInspectionResult,
-} from "../../api/registration/CodeInspectionRegistration";
-import { CodeTransformOrTransforms } from "../../api/registration/CodeTransform";
+import { CodeInspectionRegistration } from "../../api/registration/CodeInspectionRegistration";
 import { CodeTransformRegistration } from "../../api/registration/CodeTransformRegistration";
 import { CommandHandlerRegistration } from "../../api/registration/CommandHandlerRegistration";
 import { EventHandlerRegistration } from "../../api/registration/EventHandlerRegistration";
 import { GeneratorRegistration } from "../../api/registration/GeneratorRegistration";
 import { GoalApprovalRequestVoter } from "../../api/registration/GoalApprovalRequestVoter";
 import { IngesterRegistration } from "../../api/registration/IngesterRegistration";
-import {
-    EnforceableProjectInvariantRegistration,
-    InvarianceAssessment,
-} from "../../api/registration/ProjectInvariantRegistration";
 import { InterpretLog } from "../../spi/log/InterpretedLog";
 import { DefaultGoalImplementationMapper } from "../goal/DefaultGoalImplementationMapper";
 import {
@@ -74,7 +61,6 @@ import {
 } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
-import { toScalarProjectEditor } from "./handlerRegistrations";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.
@@ -164,27 +150,6 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         return this.addGoalImplementation("VerifyInStaging",
             StagingVerifiedGoal,
             executeVerifyEndpoint(stagingVerification));
-    }
-
-    public addEnforceableInvariant<PARAMS>(eir: EnforceableProjectInvariantRegistration<PARAMS>): this {
-        const ctr: CodeTransformRegistration = {
-            ...eir,
-            // Update the name and set an intent
-            name: `transform-${eir.name}`,
-            intent: !!eir.intent ? toStringArray(eir.intent).map(i => `transform ${i}`) : `transform ${eir.name}`,
-        } as CodeTransformRegistration;
-        this.addCodeTransformCommand(ctr);
-        const afr: AutofixRegistration = {
-            ...eir,
-            name: `autofix-${eir.name}`,
-        } as AutofixRegistration;
-        this.addAutofix(afr);
-        return this.addCodeInspectionCommand(toCodeInspectionCommand(eir));
-    }
-
-    public addDisposalRules(...goalSetters: GoalSetter[]): this {
-        this.disposalGoalSetters.push(...goalSetters);
-        return this;
     }
 
     public addCommand<P>(cmd: CommandHandlerRegistration<P>): this {
@@ -302,48 +267,4 @@ export abstract class AbstractSoftwareDeliveryMachine<O extends SoftwareDelivery
         }
     }
 
-}
-
-function toCodeInspectionCommand<PARAMS>(
-    eir: EnforceableProjectInvariantRegistration<PARAMS>): CodeInspectionRegistration<InvarianceAssessment, PARAMS> {
-    return {
-        name: `verify-${eir.name}`,
-        intent: !!eir.intent ? toStringArray(eir.intent).map(i => `verify ${i}`) : `verify ${eir.name}`,
-        parameters: eir.parameters,
-        projectTest: eir.projectTest,
-        onInspectionResults: eir.onInspectionResults || defaultOnInspectionResults(eir.name),
-        description: eir.description,
-        tags: eir.tags,
-        targets: eir.targets,
-        repoFinder: eir.repoFinder,
-        repoFilter: eir.repoFilter,
-        repoLoader: eir.repoLoader,
-        inspection: eir.inspection || transformToInspection(eir.transform),
-    };
-}
-
-function defaultOnInspectionResults<PARAMS>(name: string) {
-    return async (results: Array<CodeInspectionResult<InvarianceAssessment>>, ci: CommandListenerInvocation<PARAMS>) => {
-        const messages = results.map(r =>
-            `${r.repoId.url}: Satisfies invariant _${name}_: \`${r.result.holds}\``);
-        return ci.addressChannels(messages.join("\n"));
-    };
-}
-
-/**
- * Return a AutoCodeInspection that runs a transform and sees whether or it made
- * an edit
- * @param {CodeTransformOrTransforms<PARAMS>} transform
- * @return {CodeInspection<InvarianceAssessment, PARAMS>}
- */
-function transformToInspection<PARAMS>(transform: CodeTransformOrTransforms<PARAMS>): CodeInspection<InvarianceAssessment, PARAMS> {
-    const editor = toScalarProjectEditor(transform);
-    return async (p, i) => {
-        const result = await editor(p, i.context, i.parameters);
-        return {
-            id: p.id as RemoteRepoRef,
-            holds: !result.edited,
-            details: `Transform result edited returned ${result.edited}`,
-        };
-    };
 }

@@ -144,27 +144,65 @@ export interface ListenerRegistrationManager {
      * Add a transform automatically invoked on eligible commits.
      * Note: be sure that the transform checks and cannot cause
      * infinite recursion!!
+     * @deprecated add autofixes to Autofix goal instance
      */
     addAutofix<P>(fix: AutofixRegistration<P>): this;
 
+    /**
+     * @deprecated
+     */
     autofixRegistrations: AutofixRegistration[];
 
+    /**
+     * @param {FingerprinterRegistration} f
+     * @return {this}
+     * @deprecated add to goal instance
+     */
     addFingerprinterRegistration(f: FingerprinterRegistration): this;
 
+    /**
+     * @deprecated
+     */
     fingerprinterRegistrations: FingerprinterRegistration[];
 
+    /**
+     * @deprecated add to goal instance
+     */
     addFingerprintListener(l: FingerprintListener): this;
 
+    /**
+     * @deprecated add to goal instance
+     */
     fingerprintListeners: FingerprintListener[];
 
     goalExecutionListeners: GoalExecutionListener[];
 
+    /**
+     * @deprecated add to goal instance
+     * @param {FingerprintDifferenceListener} fh
+     * @return {this}
+     */
     addFingerprintDifferenceListener(fh: FingerprintDifferenceListener): this;
 
+    /**
+     * @deprecated add to goal instance
+     * @param {DeploymentListener} l
+     * @return {this}
+     */
     addDeploymentListener(l: DeploymentListener): this;
 
+    /**
+     * @deprecated add to goal instance
+     * @param {VerifiedDeploymentListener} l
+     * @return {this}
+     */
     addVerifiedDeploymentListener(l: VerifiedDeploymentListener): this;
 
+    /**
+     * @deprecated add to goal instance
+     * @param {EndpointVerificationListener} l
+     * @return {this}
+     */
     addEndpointVerificationListener(l: EndpointVerificationListener): this;
 
     addUserJoiningChannelListener(l: UserJoiningChannelListener): this;
@@ -199,8 +237,14 @@ export interface ListenerRegistrationManager {
 
     reviewListenerRegistrations: ReviewListenerRegistration[];
 
+    /**
+     * @deprecated
+     */
     pushImpactListenerRegistrations: PushImpactListenerRegisterable[];
 
+    /**
+     * @deprecated
+     */
     artifactListenerRegistrations: ArtifactListenerRegisterable[];
 
 }
