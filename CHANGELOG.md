@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 -   When a new-style goal has no implementation, fail it. [#512](https://github.com/atomist/sdm/issues/512)
 -   Fingerprint listeners should get all of the fingerprints delivered to…. [#519](https://github.com/atomist/sdm/issues/519)
 
+### Deprecated
+
+-   **BREAKING** Deprecate per SDM methods related to specific goals. [#518](https://github.com/atomist/sdm/issues/518)
+
 ### Fixed
 
 -   No such file or directory `~/.atomist.log`. [#514](https://github.com/atomist/sdm/issues/514)
