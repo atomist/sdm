@@ -262,7 +262,7 @@ export function markStatus(parameters: {
             url: progressLogUrl,
             externalUrl: result.targetUrl,
             state: newState,
-            phase: sdmGoal.phase,
+            phase: result.phase ? result.phase : sdmGoal.phase,
             description: result.description ? result.description : descriptionFromState(goal, newState),
             error,
         });

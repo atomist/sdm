@@ -142,7 +142,8 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                 return {
                     code: 1,
                     message: "Edited",
-                    description: detailMessage(goalInvocation.goal, appliedAutofixes),
+                    description: goalInvocation.goal.failureDescription,
+                    phase: detailMessage(appliedAutofixes),
                 };
             }
             return { code: 0, description: (editResult as any).description };
@@ -154,12 +155,12 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
     };
 }
 
-function detailMessage(goal: Goal, appliedAutofixes: AutofixRegistration[]): string {
+function detailMessage(appliedAutofixes: AutofixRegistration[]): string {
     // We show only two autofixes by name here as otherwise the message is going to get too long
     if (appliedAutofixes.length <= 2) {
-        return `${goal.failureDescription} ${appliedAutofixes.map(af => codeLine(af.name)).join(", ")}`;
+        return `${appliedAutofixes.map(af => af.name).join(", ")}`;
     } else {
-        return `${goal.failureDescription} ${italic(`${appliedAutofixes.length} autofixes`)}`;
+        return `${appliedAutofixes.length} autofixes`;
     }
 }
 
