@@ -31,6 +31,7 @@ import {
 } from "../../api/registration/PushImpactListenerRegistration";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
+import { minimalClone } from "../goal/minimalClone";
 
 /**
  * Execute arbitrary code reactions against a codebase
@@ -49,7 +50,7 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             id,
             context,
             readOnly: true,
-            cloneOptions: { depth: sdmGoal.push.commits.length + 1 },
+            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
         }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);

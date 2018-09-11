@@ -36,6 +36,7 @@ import {
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
+import { minimalClone } from "../goal/minimalClone";
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
@@ -44,7 +45,7 @@ import { relevantCodeActions } from "./relevantCodeActions";
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id, addressChannels } = goalInvocation;
         try {
@@ -54,7 +55,7 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
                     credentials,
                     id,
                     readOnly: true,
-                    cloneOptions: { depth: sdmGoal.push.commits.length + 1 },
+                    cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
                 }, async project => {
                     const cri = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
@@ -75,19 +76,19 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
                                 };
                                 return autoInspect.inspection(project, cli)
                                     .then(async inspectionResult => {
-                                            try {
-                                                if (!!autoInspect.onInspectionResult) {
-                                                    const r = await autoInspect.onInspectionResult(inspectionResult, cli);
-                                                    if (!!r) {
-                                                        responsesFromOnInspectionResult.push(r);
-                                                    }
+                                        try {
+                                            if (!!autoInspect.onInspectionResult) {
+                                                const r = await autoInspect.onInspectionResult(inspectionResult, cli);
+                                                if (!!r) {
+                                                    responsesFromOnInspectionResult.push(r);
                                                 }
-                                            } catch {
-                                                // Ignore errors
                                             }
-                                            // Suppress non reviews
-                                            return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
-                                        },
+                                        } catch {
+                                            // Ignore errors
+                                        }
+                                        // Suppress non reviews
+                                        return { review: isProjectReview(inspectionResult) ? inspectionResult : undefined };
+                                    },
                                         error => ({ error }));
                             }));
                     const reviews: ProjectReview[] = reviewsAndErrors.filter(r => !!r.review)
