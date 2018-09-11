@@ -25,6 +25,7 @@ import {
 } from "../../api/goal/GoalInvocation";
 import { FingerprintListener } from "../../api/listener/FingerprintListener";
 import { FingerprinterRegistration } from "../../api/registration/FingerprinterRegistration";
+import { minimalClone } from "../goal/minimalClone";
 import { computeFingerprints } from "./computeFingerprints";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
@@ -47,7 +48,7 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
             credentials,
             id,
             readOnly: true,
-            depth: sdmGoal.push.commits.length + 1,
+            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
         }, async project => {
             const cri = await createPushImpactListenerInvocation(goalInvocation, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
@@ -56,12 +57,12 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
             const fingerprints: Fingerprint[] = await computeFingerprints(cri, relevantFingerprinters.map(fp => fp.action));
             await Promise.all(listeners.map(l =>
                 l({
-                id,
-                context,
-                credentials,
-                addressChannels: cri.addressChannels,
-                fingerprints,
-            })));
+                    id,
+                    context,
+                    credentials,
+                    addressChannels: cri.addressChannels,
+                    fingerprints,
+                })));
         });
         return Success;
     };

@@ -14,30 +14,10 @@
  * limitations under the License.
  */
 
-import { HandlerResult } from "@atomist/automation-client";
+import { CloneOptions } from "@atomist/automation-client/spi/clone/DirectoryManager";
+import { PushFields } from "../../typings/types";
 
-/**
- * Result from goal execution
- */
-export interface ExecuteGoalResult extends HandlerResult {
-
-    /**
-     * Optional description to be set on the goal
-     */
-    description?: string;
-
-    /**
-     * Optional phase to return from the goal execution
-     */
-    phase?: string;
-
-    /**
-     * Optional targetUrl to be set on the goal as externalUrl
-     */
-    targetUrl?: string;
-
-    /**
-     * Optional flag to indicate if this goal requires approval now
-     */
-    requireApproval?: boolean;
+export function minimalClone(push: PushFields.Fragment, extras: Partial<CloneOptions> = {}): CloneOptions {
+    // we need at least the commits of the push + 1 to be able to diff it
+    return { depth: push.commits.length + 1, ...extras };
 }

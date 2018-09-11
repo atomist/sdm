@@ -37,7 +37,6 @@ describe("filesChanged", () => {
                 GitHubRepoRef.from({
                     owner: "atomist-seeds",
                     repo: "spring-rest-seed",
-                    branch: "master",
                     sha: "917ad5340a1c03f86633f64032226b277ab366ee",
                 }),
                 {
@@ -76,8 +75,8 @@ describe("filesChanged", () => {
                 GitHubRepoRef.from({
                     owner: "atomist",
                     repo: "lifecycle-automation",
-                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
                     branch: "test",
+                    sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
                 }),
                 {
                     depth: 3, // 2 commits in the push + one extra to be able to diff
@@ -95,7 +94,7 @@ describe("filesChanged", () => {
             };
 
             const files = await filesChangedSince(p, push);
-            const expectedChanges = [ "README.md",
+            const expectedChanges = ["README.md",
                 "src/atomist.config.ts"];
             assert.deepEqual(files, expectedChanges);
         }).timeout(20000);

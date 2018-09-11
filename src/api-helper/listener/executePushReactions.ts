@@ -29,6 +29,7 @@ import {
     PushReactionResponse,
     toPushReactionRegistration,
 } from "../../api/registration/PushImpactListenerRegistration";
+import { minimalClone } from "../goal/minimalClone";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
@@ -49,7 +50,7 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             id,
             context,
             readOnly: true,
-            depth: sdmGoal.push.commits.length + 1,
+            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
         }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);

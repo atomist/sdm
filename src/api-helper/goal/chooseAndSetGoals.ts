@@ -55,6 +55,7 @@ import {
     PushFields,
     SdmGoalState,
 } from "../../typings/types";
+import { minimalClone } from "./minimalClone";
 import {
     constructSdmGoal,
     constructSdmGoalImplementation,
@@ -139,9 +140,10 @@ export async function determineGoals(rules: {
     const { credentials, id, context, push, addressChannels, goalSetId } = circumstances;
     return projectLoader.doWithProject({
             credentials,
-            id, context,
+            id,
+            context,
             readOnly: true,
-            depth: push.commits.length + 1, // we need at least the commits of the push + 1 to be able to diff it
+            cloneOptions: minimalClone(push, { detachHead: true }),
         },
         async project => {
             const pli: PushListenerInvocation = {
