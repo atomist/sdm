@@ -93,7 +93,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                         cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
                     }
                     if (cumulativeResult.edited) {
-                        await spawnAndWatch({
+                        /* await spawnAndWatch({
                                 command: "git",
                                 args: ["branch", "autofix"],
                             }, {
@@ -124,7 +124,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                             progressLog,
                             {
                                 errorFinder: SuccessIsReturn0ErrorFinder,
-                            });
+                            });  */
 
                         await cri.project.push();
                     }
