@@ -50,7 +50,7 @@ export function executePushReactions(registrations: PushImpactListenerRegisterab
             id,
             context,
             readOnly: true,
-            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true, cloneBranch: id.branch }),
+            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
         }, async project => {
             const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
             const regs = registrations.map(toPushReactionRegistration);

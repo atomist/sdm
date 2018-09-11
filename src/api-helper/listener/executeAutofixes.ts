@@ -70,7 +70,7 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                 id,
                 context,
                 readOnly: false,
-                cloneOptions: minimalClone(push, { cloneBranch: id.branch }),
+                cloneOptions: minimalClone(push),
             },
                 async project => {
                     if ((await project.gitStatus()).sha !== id.sha) {

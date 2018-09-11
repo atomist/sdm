@@ -143,7 +143,7 @@ export async function determineGoals(rules: {
             id,
             context,
             readOnly: true,
-            cloneOptions: minimalClone(push, { detachHead: true, cloneBranch: id.branch }),
+            cloneOptions: minimalClone(push, { detachHead: true }),
         },
         async project => {
             const pli: PushListenerInvocation = {

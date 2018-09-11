@@ -55,7 +55,7 @@ export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectR
                     credentials,
                     id,
                     readOnly: true,
-                    cloneOptions: minimalClone(sdmGoal.push, { detachHead: true, cloneBranch: id.branch }),
+                    cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
                 }, async project => {
                     const cri = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutoInspects = await relevantCodeActions(autoInspectRegistrations, cri);
