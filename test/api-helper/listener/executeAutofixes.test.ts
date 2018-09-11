@@ -144,12 +144,12 @@ describe("executeAutofixes", () => {
     });
 
     it("should execute header adder and find a match and add a header", async () => {
-        const id = new GitHubRepoRef("a", "b");
+        const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => null;
-        (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
+        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
@@ -163,21 +163,21 @@ describe("executeAutofixes", () => {
     });
 
     it("should execute with parameter and find a match and add a header", async () => {
-        const id = new GitHubRepoRef("a", "b");
+        const id = GitHubRepoRef.from({ owner: "a", repo: "b", sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" });
         const initialContent = "public class Thing {}";
         const f = new InMemoryFile("src/Thing.ts", initialContent);
         const p = InMemoryProject.from(id, f, { path: "LICENSE", content: "Apache License" });
         (p as any as GitProject).revert = async () => null;
-        (p as any as GitProject).gitStatus = async () => ({ isClean: false } as any);
+        (p as any as GitProject).gitStatus = async () => ({ isClean: false, sha: "ec7fe33f7ee33eee84b3953def258d4e7ccb6783" } as any);
         const pl = new SingleProjectLoader(p);
         const r = await executeAutofixes([AddThingWithParamAutofix])(fakeGoalInvocation(id, {
             projectLoader: pl,
             repoRefResolver: FakeRepoRefResolver,
         } as any));
-        assert.equal(r.code, 0);
-        assert(!!p);
+        assert.equal(r.code, 0, "Did not return 0");
+        assert(!!p, r.description);
         const foundFile = p.findFileSync("bird");
-        assert(!!foundFile);
+        assert(!!foundFile, r.description);
         assert.equal(foundFile.getContentSync(), "ibis");
     });
 
