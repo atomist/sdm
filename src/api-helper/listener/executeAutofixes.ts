@@ -21,6 +21,7 @@ import {
 import { RemoteRepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { EditResult } from "@atomist/automation-client/operations/edit/projectEditor";
 import { combineEditResults } from "@atomist/automation-client/operations/edit/projectEditorOps";
+import { SuccessIsReturn0ErrorFinder } from "@atomist/automation-client/util/spawned";
 import {
     codeLine,
     italic,
@@ -43,6 +44,7 @@ import {
     testProgressReporter,
 } from "../goal/progress/progress";
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
+import { spawnAndWatch } from "../misc/spawned";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
 
@@ -91,6 +93,39 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                         cumulativeResult = combineEditResults(cumulativeResult, thisEdit);
                     }
                     if (cumulativeResult.edited) {
+                        await spawnAndWatch({
+                                command: "git",
+                                args: ["branch", "autofix"],
+                            }, {
+                                cwd: project.baseDir,
+                            },
+                            progressLog,
+                            {
+                                errorFinder: SuccessIsReturn0ErrorFinder,
+                            });
+
+                        await spawnAndWatch({
+                                command: "git",
+                                args: ["checkout", cri.id.branch],
+                            }, {
+                                cwd: project.baseDir,
+                            },
+                            progressLog,
+                            {
+                                errorFinder: SuccessIsReturn0ErrorFinder,
+                            });
+
+                        await spawnAndWatch({
+                                command: "git",
+                                args: ["merge", "autofix"],
+                            }, {
+                                cwd: project.baseDir,
+                            },
+                            progressLog,
+                            {
+                                errorFinder: SuccessIsReturn0ErrorFinder,
+                            });
+
                         await cri.project.push();
                     }
                     return cumulativeResult;
