@@ -152,10 +152,10 @@ async function runOne(cri: PushImpactListenerInvocation,
                 return { target: project, edited: false, success: false };
             }
         } else if (editResult.edited) {
-            progressLog.write(sprintf("Autofix '%s' made changes", autofix.name))
+            progressLog.write(sprintf("Autofix '%s' made changes", autofix.name));
             await project.commit(generateCommitMessageForAutofix(autofix));
         } else {
-            progressLog.write(sprintf("Autofix '%s' made no changes", autofix.name))
+            progressLog.write(sprintf("Autofix '%s' made no changes", autofix.name));
             logger.debug("No changes were made by autofix %s", autofix.name);
         }
         return editResult;
