@@ -164,7 +164,14 @@ export async function executeGoal(rules: { projectLoader: ProjectLoader, goalExe
         await reportGoalError({
             goal, implementationName, addressChannels, progressLog, id, logInterpreter,
         }, err);
-        await markStatus({ context, sdmGoal, goal, result: { code: 1 }, error: err, progressLogUrl: progressLog.url });
+        await markStatus({
+            context,
+            sdmGoal,
+            goal,
+            result: { code: 1, ...(err.result ? err.result : {}) },
+            error: err,
+            progressLogUrl: progressLog.url,
+        });
         return failure(err);
     }
 }
@@ -290,13 +297,13 @@ async function markGoalInProcess(parameters: {
  * @return {Promise<void>}
  */
 async function reportGoalError(parameters: {
-    goal: Goal,
-    implementationName: string,
-    addressChannels: AddressChannels,
-    progressLog: ProgressLog,
-    id: RemoteRepoRef,
-    logInterpreter: InterpretLog,
-},
+                                   goal: Goal,
+                                   implementationName: string,
+                                   addressChannels: AddressChannels,
+                                   progressLog: ProgressLog,
+                                   id: RemoteRepoRef,
+                                   logInterpreter: InterpretLog,
+                               },
                                err: GoalExecutionError) {
     const { goal, implementationName, addressChannels, progressLog, id, logInterpreter } = parameters;
 
@@ -388,8 +395,8 @@ class ProgressReportingProgressLog implements ProgressLog {
                         description: this.sdmGoal.description,
                         url: this.sdmGoal.url,
                     }).then(() => {
-                        // Intentionally empty
-                    })
+                    // Intentionally empty
+                })
                     .catch(err => {
                         logger.warn(`Error occurred reporting progress: %s`, err.message);
                     });
