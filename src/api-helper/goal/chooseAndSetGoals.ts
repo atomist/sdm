@@ -180,8 +180,8 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
 }
 
 async function fulfillment(rules: {
-                                implementationMapping: GoalImplementationMapper,
-                            },
+                               implementationMapping: GoalImplementationMapper,
+                           },
                            g: Goal,
                            inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const { implementationMapping } = rules;
@@ -191,7 +191,7 @@ async function fulfillment(rules: {
     } else if (isGoalSideEffect(plan)) {
         return { method: SdmGoalFulfillmentMethod.SideEffect, name: plan.sideEffectName };
     } else {
-        throw new Error(`No implementation or side-effect found for goal '${g.definition.uniqueName}' `);
+        return { method: SdmGoalFulfillmentMethod.Other, name: "unknown" };
     }
 }
 
