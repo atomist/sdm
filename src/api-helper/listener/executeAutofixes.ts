@@ -38,6 +38,7 @@ import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListe
 import { AutofixRegistration } from "../../api/registration/AutofixRegistration";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { confirmEditedness } from "../command/transform/confirmEditedness";
+import { minimalClone } from "../goal/minimalClone";
 import {
     ProgressTest,
     testProgressReporter,
@@ -45,7 +46,6 @@ import {
 import { toScalarProjectEditor } from "../machine/handlerRegistrations";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { minimalClone } from "../goal/minimalClone";
 
 /**
  * Execute autofixes against this push
@@ -74,8 +74,8 @@ export function executeAutofixes(registrations: AutofixRegistration[]): ExecuteG
                     if ((await project.gitStatus()).sha !== id.sha) {
                         return {
                             success: true, edited: false, target: project,
-                            description: "Autofixes skipped: the branch has moved on."
-                        }
+                            description: "Autofixes skipped: the branch has moved on.",
+                        };
                     }
                     const cri: PushImpactListenerInvocation = await createPushImpactListenerInvocation(goalInvocation, project);
                     const relevantAutofixes: AutofixRegistration[] =
@@ -129,8 +129,8 @@ function detailMessage(goal: Goal, appliedAutofixes: AutofixRegistration[]): str
 }
 
 async function runOne(cri: PushImpactListenerInvocation,
-    autofix: AutofixRegistration,
-    progressLog: ProgressLog): Promise<EditResult> {
+                      autofix: AutofixRegistration,
+                      progressLog: ProgressLog): Promise<EditResult> {
     const project = cri.project;
     progressLog.write(sprintf("About to edit %s with autofix %s", (project.id as RemoteRepoRef).url, autofix.name));
     try {
@@ -176,7 +176,7 @@ async function runOne(cri: PushImpactListenerInvocation,
  * @returns {AutofixRegistration[]}
  */
 export function filterImmediateAutofixes(autofixes: AutofixRegistration[],
-    gi: GoalInvocation): AutofixRegistration[] {
+                                         gi: GoalInvocation): AutofixRegistration[] {
     return autofixes.filter(
         af => !(gi.sdmGoal.push.commits || [])
             .some(c => c.message === generateCommitMessageForAutofix(af)));
