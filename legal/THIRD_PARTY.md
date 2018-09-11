@@ -16,7 +16,7 @@ This page details all runtime OSS dependencies of `@atomist/sdm`.
 |[Custom: https://github.com/douglascrockford/JSON-js](#custom-httpsgithubcomdouglascrockfordjson-js)|1|
 |[GPL-3.0](#gpl-30)|4|
 |[ISC](#isc)|36|
-|[MIT](#mit)|461|
+|[MIT](#mit)|462|
 |[Public Domain](#public-domain)|1|
 |[Unlicense](#unlicense)|1|
 
@@ -101,7 +101,7 @@ GNU General Public License v3.0 only - [http://www.gnu.org/licenses/gpl-3.0-stan
 
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
-|`@atomist/automation-client`|`1.0.0-master.20180907111850`|Atomist|[https://github.com/atomist/automation-client-ts](https://github.com/atomist/automation-client-ts)|
+|`@atomist/automation-client`|`1.0.0-master.20180911085654`|Atomist|[https://github.com/atomist/automation-client-ts](https://github.com/atomist/automation-client-ts)|
 |`@atomist/microgrammar`|`0.7.0`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/microgrammar`|`0.8.1`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/tree-path`|`0.1.9`|Atomist, Inc.|[https://github.com/atomist/tree-path-ts](https://github.com/atomist/tree-path-ts)|
@@ -323,7 +323,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`encodeurl`|`1.0.2`||[https://github.com/pillarjs/encodeurl](https://github.com/pillarjs/encodeurl)|
 |`end-of-stream`|`1.4.1`|Mathias Buus|[https://github.com/mafintosh/end-of-stream](https://github.com/mafintosh/end-of-stream)|
 |`err-code`|`1.1.2`|IndigoUnited|[https://github.com/IndigoUnited/js-err-code](https://github.com/IndigoUnited/js-err-code)|
-|`es6-promise`|`4.2.4`|Yehuda Katz, Tom Dale, Stefan Penner and contributors|[https://github.com/stefanpenner/es6-promise](https://github.com/stefanpenner/es6-promise)|
+|`es6-promise`|`4.2.5`|Yehuda Katz, Tom Dale, Stefan Penner and contributors|[https://github.com/stefanpenner/es6-promise](https://github.com/stefanpenner/es6-promise)|
 |`es6-promisify`|`5.0.0`|Mike Hall|[https://github.com/digitaldesignlabs/es6-promisify](https://github.com/digitaldesignlabs/es6-promisify)|
 |`escape-html`|`1.0.3`||[https://github.com/component/escape-html](https://github.com/component/escape-html)|
 |`escape-string-regexp`|`1.0.5`|Sindre Sorhus|[https://github.com/sindresorhus/escape-string-regexp](https://github.com/sindresorhus/escape-string-regexp)|
@@ -502,6 +502,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`pause`|`0.0.1`|TJ Holowaychuk||
 |`performance-now`|`2.1.0`|Braveg1rl|[https://github.com/braveg1rl/performance-now](https://github.com/braveg1rl/performance-now)|
 |`platform`|`1.3.5`|Benjamin Tan|[https://github.com/bestiejs/platform.js](https://github.com/bestiejs/platform.js)|
+|`portfinder`|`1.0.17`|Charlie Robbins|[https://github.com/indexzero/node-portfinder](https://github.com/indexzero/node-portfinder)|
 |`power-assert-context-formatter`|`1.2.0`|Takuto Wada|[https://github.com/twada/power-assert-runtime](https://github.com/twada/power-assert-runtime)|
 |`power-assert-context-reducer-ast`|`1.2.0`|Takuto Wada|[https://github.com/twada/power-assert-runtime](https://github.com/twada/power-assert-runtime)|
 |`power-assert-context-traversal`|`1.2.0`|Takuto Wada|[https://github.com/twada/power-assert-runtime](https://github.com/twada/power-assert-runtime)|
