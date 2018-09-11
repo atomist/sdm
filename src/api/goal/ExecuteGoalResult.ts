@@ -27,6 +27,11 @@ export interface ExecuteGoalResult extends HandlerResult {
     description?: string;
 
     /**
+     * Optional phase to return from the goal execution
+     */
+    phase?: string;
+
+    /**
      * Optional targetUrl to be set on the goal as externalUrl
      */
     targetUrl?: string;
