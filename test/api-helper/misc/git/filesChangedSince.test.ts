@@ -80,6 +80,7 @@ describe("filesChanged", () => {
                 }),
                 {
                     depth: 3, // 2 commits in the push + one extra to be able to diff
+                    cloneBranch: "test",
                 },
             );
             const push: PushFields.Fragment = {
