@@ -48,7 +48,7 @@ export function executeFingerprinting(fingerprinters: FingerprinterRegistration[
             credentials,
             id,
             readOnly: true,
-            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true }),
+            cloneOptions: minimalClone(sdmGoal.push, { detachHead: true, cloneBranch: id.branch }),
         }, async project => {
             const cri = await createPushImpactListenerInvocation(goalInvocation, project);
             const relevantFingerprinters: FingerprinterRegistration[] = await relevantCodeActions(fingerprinters, cri);
