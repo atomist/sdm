@@ -55,12 +55,12 @@ import {
     PushFields,
     SdmGoalState,
 } from "../../typings/types";
+import { minimalClone } from "./minimalClone";
 import {
     constructSdmGoal,
     constructSdmGoalImplementation,
     storeGoal,
 } from "./storeGoals";
-import { minimalClone } from "./minimalClone";
 
 /**
  * Configuration for handling incoming pushes
@@ -85,7 +85,7 @@ export interface ChooseAndSetGoalsRules {
  * @return {Promise<Goals | undefined>}
  */
 export async function chooseAndSetGoals(rules: ChooseAndSetGoalsRules,
-    parameters: {
+                                        parameters: {
         context: HandlerContext,
         credentials: ProjectOperationCredentials,
         push: PushFields.Fragment,
@@ -125,7 +125,7 @@ export async function determineGoals(rules: {
     goalSetter: GoalSetter,
     implementationMapping: GoalImplementationMapper,
 },
-    circumstances: {
+                                     circumstances: {
         credentials: ProjectOperationCredentials,
         id: RemoteRepoRef,
         context: HandlerContext,
@@ -164,10 +164,10 @@ export async function determineGoals(rules: {
 }
 
 async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper,
-    repoRefResolver: RepoRefResolver,
-    pli: PushListenerInvocation,
-    determinedGoals: Goals,
-    goalSetId: string) {
+                                 repoRefResolver: RepoRefResolver,
+                                 pli: PushListenerInvocation,
+                                 determinedGoals: Goals,
+                                 goalSetId: string) {
     return Promise.all(determinedGoals.goals.map(async g =>
         constructSdmGoal(pli.context, {
             goalSet: determinedGoals.name,
@@ -183,8 +183,8 @@ async function sdmGoalsFromGoals(implementationMapping: GoalImplementationMapper
 async function fulfillment(rules: {
     implementationMapping: GoalImplementationMapper,
 },
-    g: Goal,
-    inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
+                           g: Goal,
+                           inv: PushListenerInvocation): Promise<SdmGoalFulfillment> {
     const { implementationMapping } = rules;
     const plan = await implementationMapping.findFulfillmentByPush(g, inv);
     if (isGoalImplementation(plan)) {
@@ -206,7 +206,7 @@ export const executeImmaterial: ExecuteGoal = async () => {
 };
 
 async function chooseGoalsForPushOnProject(rules: { goalSetter: GoalSetter },
-    pi: PushListenerInvocation): Promise<Goals> {
+                                           pi: PushListenerInvocation): Promise<Goals> {
     const { goalSetter } = rules;
     const { push, id, addressChannels } = pi;
 

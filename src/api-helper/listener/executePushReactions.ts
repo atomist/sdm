@@ -29,9 +29,9 @@ import {
     PushReactionResponse,
     toPushReactionRegistration,
 } from "../../api/registration/PushImpactListenerRegistration";
+import { minimalClone } from "../goal/minimalClone";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { minimalClone } from "../goal/minimalClone";
 
 /**
  * Execute arbitrary code reactions against a codebase

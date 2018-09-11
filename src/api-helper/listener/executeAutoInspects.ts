@@ -34,9 +34,9 @@ import {
     ReviewerError,
 } from "../../api/registration/ReviewerError";
 import { ReviewListenerRegistration } from "../../api/registration/ReviewListenerRegistration";
+import { minimalClone } from "../goal/minimalClone";
 import { createPushImpactListenerInvocation } from "./createPushImpactListenerInvocation";
 import { relevantCodeActions } from "./relevantCodeActions";
-import { minimalClone } from "../goal/minimalClone";
 
 /**
  * Execute auto inspections and route or react to review results using review listeners
@@ -45,7 +45,7 @@ import { minimalClone } from "../goal/minimalClone";
  * @return {ExecuteGoal}
  */
 export function executeAutoInspects(autoInspectRegistrations: Array<AutoInspectRegistration<any, any>>,
-    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
+                                    reviewListeners: ReviewListenerRegistration[]): ExecuteGoal {
     return async (goalInvocation: GoalInvocation) => {
         const { sdmGoal, configuration, credentials, id, addressChannels } = goalInvocation;
         try {

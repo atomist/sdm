@@ -75,11 +75,11 @@ describe("filesChanged", () => {
                 GitHubRepoRef.from({
                     owner: "atomist",
                     repo: "lifecycle-automation",
+                    branch: "test",
                     sha: "1005bdaa2b849f97abd4c45784cf84eba5a34b2e",
                 }),
                 {
                     depth: 3, // 2 commits in the push + one extra to be able to diff
-                    cloneBranch: "test",
                 },
             );
             const push: PushFields.Fragment = {
