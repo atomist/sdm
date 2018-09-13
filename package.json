@@ -72,7 +72,7 @@
   "scripts": {
     "autostart": "npm-run-all --print-label --parallel watch:compile watch",
     "autotest": "supervisor --watch lib,test --extensions ts --no-restart-on exit --quiet --exec npm -- test",
-    "build": "npm-run-all generate:barrels compile test",
+    "build": "npm-run-all gql:gen generate:barrels compile test",
     "clean": "run-p clean:compile clean:test clean:doc clean:run",
     "clean:compile": "rimraf git-info.json build \"index.{d.ts,js{,.map}}\" \"{src,lib,test}/**/*.{d.ts,js{,.map}}\" {src,lib}/typings/types.ts",
     "clean:dist": "run-s clean clean:npm",
