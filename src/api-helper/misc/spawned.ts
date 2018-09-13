@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { configurationValue } from "@atomist/automation-client/configuration";
-import * as clientSpawned from "@atomist/automation-client/util/spawned";
-// tslint:disable-next-line:no-duplicate-imports
 import {
     asSpawnCommand,
     ChildProcessResult,
     ErrorFinder,
     poisonAndWait,
+    spawnAndWatch as clientSpawnAndWatch,
     SpawnCommand,
     SpawnWatchOptions,
     stringifySpawnCommand,
-} from "@atomist/automation-client/util/spawned";
+} from "@atomist/automation-client";
+import { configurationValue } from "@atomist/automation-client/configuration";
+// tslint:disable-next-line:no-duplicate-imports
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";
@@ -59,5 +59,5 @@ export async function spawnAndWatch(spawnCommand: SpawnCommand,
         spOpts.timeout = configurationValue<number>("sdm.goal.timeout", 1000 * 60 * 10);
     }
 
-    return clientSpawned.spawnAndWatch(spawnCommand, options, delimitedLog, spOpts);
+    return clientSpawnAndWatch(spawnCommand, options, delimitedLog, spOpts);
 }

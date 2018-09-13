@@ -194,27 +194,27 @@ class LazyProject extends AbstractProject implements GitProject {
         return resultStream;
     }
 
-    public checkout(sha: string): Promise<ActionResult<this>> {
+    public checkout(sha: string): Promise<this> {
         this.materializeIfNecessary(`checkout(${sha})`);
         return this.projectPromise.then(mp => mp.checkout(sha)) as any;
     }
 
-    public commit(message: string): Promise<ActionResult<this>> {
+    public commit(message: string): Promise<this> {
         this.materializeIfNecessary(`commit(${message})`);
         return this.projectPromise.then(mp => mp.commit(message)) as any;
     }
 
-    public configureFromRemote(): Promise<ActionResult<this>> {
+    public configureFromRemote(): Promise<this> {
         this.materializeIfNecessary("configureFromRemote");
         return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
-    public createAndSetRemote(gid: RemoteRepoRef, description: string, visibility): Promise<ActionResult<this>> {
+    public createAndSetRemote(gid: RemoteRepoRef, description: string, visibility): Promise<this> {
         this.materializeIfNecessary("createAndSetRemote");
         return this.projectPromise.then(mp => mp.createAndSetRemote(gid, description, visibility)) as any;
     }
 
-    public createBranch(name: string): Promise<ActionResult<this>> {
+    public createBranch(name: string): Promise<this> {
         this.materializeIfNecessary(`createBranch(${name})`);
         return this.projectPromise.then(mp => mp.createBranch(name)) as any;
     }
@@ -229,37 +229,37 @@ class LazyProject extends AbstractProject implements GitProject {
         return this.projectPromise.then(mp => mp.hasBranch(name));
     }
 
-    public init(): Promise<ActionResult<this>> {
+    public init(): Promise<this> {
         this.materializeIfNecessary("init");
         return this.projectPromise.then(mp => mp.init()) as any;
     }
 
-    public isClean(): Promise<ActionResult<this>> {
+    public isClean(): Promise<boolean> {
         this.materializeIfNecessary("isClean");
         return this.projectPromise.then(mp => mp.isClean()) as any;
     }
 
-    public push(options?: GitPushOptions): Promise<ActionResult<this>> {
+    public push(options?: GitPushOptions): Promise<this> {
         this.materializeIfNecessary("push");
         return this.projectPromise.then(mp => mp.configureFromRemote()) as any;
     }
 
-    public raisePullRequest(title: string, body: string): Promise<ActionResult<this>> {
+    public raisePullRequest(title: string, body: string): Promise<this> {
         this.materializeIfNecessary("raisePullRequest");
         return this.projectPromise.then(mp => mp.raisePullRequest(title, body)) as any;
     }
 
-    public revert(): Promise<ActionResult<this>> {
+    public revert(): Promise<this> {
         this.materializeIfNecessary("revert");
         return this.projectPromise.then(mp => mp.revert()) as any;
     }
 
-    public setRemote(remote: string): Promise<ActionResult<this>> {
+    public setRemote(remote: string): Promise<this> {
         this.materializeIfNecessary("setRemote");
         return this.projectPromise.then(mp => mp.setRemote(remote)) as any;
     }
 
-    public setUserConfig(user: string, email: string): Promise<ActionResult<this>> {
+    public setUserConfig(user: string, email: string): Promise<this> {
         this.materializeIfNecessary("setUserConfig");
         return this.projectPromise.then(mp => mp.setUserConfig(user, email)) as any;
     }

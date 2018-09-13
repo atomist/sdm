@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ChildProcessResult } from "@atomist/automation-client/util/spawned";
+import { ChildProcessResult } from "@atomist/automation-client";
 import * as assert from "power-assert";
 import { serializeResult } from "../../../src/api-helper/misc/result";
 

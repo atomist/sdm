@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { runCommand } from "@atomist/automation-client/action/cli/commandLine";
+import {
+    execIn,
+    logger,
+} from "@atomist/automation-client";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { PushFields } from "../../../typings/types";
 
@@ -36,8 +38,7 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
     } catch (err) {
 
         try {
-            const fallback = `git fetch --unshallow --no-tags`;
-            await runCommand(fallback, { cwd: project.baseDir });
+            await execIn(project.baseDir, "git", ["fetch", "--unshallow", "--no-tags"]);
 
             return await gitDiff(sha, commitCount, project);
 
@@ -46,7 +47,7 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
             try {
                 const gs = await project.gitStatus();
                 logger.warn("Git status sha '%s' and branch '%s'", gs.sha, gs.branch);
-                const timeOfLastChange = await runCommand("ls -ltr .", { cwd: project.baseDir });
+                const timeOfLastChange = await execIn(project.baseDir, "ls", ["-ltr", "."]);
                 logger.info("Files with dates: " + timeOfLastChange.stdout);
             } catch (err) {
                 logger.warn("Error while trying extra logging: " + err.stack);
@@ -57,8 +58,7 @@ export async function filesChangedSince(project: GitProject, push: PushFields.Fr
 }
 
 async function gitDiff(sha: string, commitCount: number, project: GitProject) {
-    const command = `git diff --name-only ${sha}~${commitCount}`;
-    const cr = await runCommand(command, { cwd: project.baseDir });
+    const cr = await execIn(project.baseDir, "git", ["diff", "--name-only", `${sha}~${commitCount}`]);
     // stdout is nothing but a list of files, one per line
     logger.debug(`Output from filesChangedSince ${sha} on ${JSON.stringify(project.id)}:\n${cr.stdout}`);
     return cr.stdout.split("\n")

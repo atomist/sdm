@@ -101,17 +101,17 @@ describe("LazyProjectLoader", () => {
         let pushes = 0;
         raw.commit = async () => {
             ++commits;
-            return successOn(raw);
+            return raw;
         };
         raw.push = async () => {
             ++pushes;
-            return successOn(raw);
+            return raw;
         };
         const lpl = new SingleProjectLoader(raw);
         const p: GitProject = await save(lpl, { credentials, id, readOnly: false });
         assert.equal(p.name, id.repo);
         assert.equal(p.id, id);
-        await p.commit("foo bar").then(x => x.target.push());
+        await p.commit("foo bar").then(x => x.push());
         assert.equal(commits, 1);
         assert.equal(pushes, 1);
         await p.commit("foo baz").then(() => p.push());
