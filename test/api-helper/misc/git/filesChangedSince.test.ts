@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { setLogLevel } from "@atomist/automation-client/internal/util/logger";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { GitCommandGitProject } from "@atomist/automation-client/project/git/GitCommandGitProject";
 import * as assert from "power-assert";
@@ -24,8 +23,6 @@ import {
     filesChangedSince,
 } from "../../../../src/api-helper/misc/git/filesChangedSince";
 import { PushFields } from "../../../../src/typings/types";
-
-setLogLevel("debug");
 
 describe("filesChanged", () => {
 
