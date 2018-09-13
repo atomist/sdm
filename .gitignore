@@ -1,5 +1,5 @@
 /build/
-/lib/typings
+/lib/typings/*
 node_modules/
 *.js
 npm-debug.log
