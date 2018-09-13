@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { HandlerContext } from "@atomist/automation-client";
-import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
+import {
+    HandlerContext,
+    RemoteRepoRef,
+    RepoFinder,
+} from "@atomist/automation-client";
 import * as _ from "lodash";
 import { RepoRefResolver } from "../../../spi/repo-ref/RepoRefResolver";
 import { ReposInTeam } from "../../../typings/types";

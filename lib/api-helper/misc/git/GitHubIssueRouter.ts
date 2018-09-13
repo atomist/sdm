@@ -15,14 +15,12 @@
  */
 
 import {
+    Issue,
     isTokenCredentials,
     ProjectOperationCredentials,
-} from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import {
-    Issue,
     raiseIssue,
-} from "@atomist/automation-client/lib/util/gitHub";
+    RemoteRepoRef,
+} from "@atomist/automation-client";
 import { IssueRouter } from "../../../spi/issue/IssueRouter";
 
 /**

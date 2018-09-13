@@ -17,10 +17,10 @@
 import {
     HandlerContext,
     logger,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import * as _ from "lodash";
 import { findSdmGoalOnCommit } from "../../api-helper/goal/fetchGoalsOnCommit";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";

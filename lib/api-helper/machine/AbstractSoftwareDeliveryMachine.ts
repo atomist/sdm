@@ -18,11 +18,10 @@ import {
     HandleCommand,
     HandleEvent,
     logger,
+    Maker,
+    NoParameters,
 } from "@atomist/automation-client";
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
-import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
 import * as _ from "lodash";
-import { ListenerRegistrationManagerSupport } from "../../api-helper/machine/ListenerRegistrationManagerSupport";
 import { AdminCommunicationContext } from "../../api/context/AdminCommunicationContext";
 import { enrichGoalSetters } from "../../api/dsl/goalContribution";
 import { Goal } from "../../api/goal/Goal";
@@ -61,6 +60,7 @@ import {
 } from "../listener/executeVerifyEndpoint";
 import { lastLinesLogInterpreter } from "../log/logInterpreters";
 import { HandlerRegistrationManagerSupport } from "./HandlerRegistrationManagerSupport";
+import { ListenerRegistrationManagerSupport } from "./ListenerRegistrationManagerSupport";
 
 /**
  * Abstract support class for implementing a SoftwareDeliveryMachine.

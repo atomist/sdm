@@ -15,12 +15,12 @@
  */
 
 import {
+    combineEditResults,
+    EditResult,
     logger,
+    RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { combineEditResults } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import { ExecuteGoalResult } from "../../api/goal/ExecuteGoalResult";

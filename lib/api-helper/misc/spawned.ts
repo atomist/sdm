@@ -17,6 +17,7 @@
 import {
     asSpawnCommand,
     ChildProcessResult,
+    configurationValue,
     ErrorFinder,
     poisonAndWait,
     spawnAndWatch as clientSpawnAndWatch,
@@ -24,8 +25,6 @@ import {
     SpawnWatchOptions,
     stringifySpawnCommand,
 } from "@atomist/automation-client";
-import { configurationValue } from "@atomist/automation-client/lib/configuration";
-// tslint:disable-next-line:no-duplicate-imports
 import { SpawnOptions } from "child_process";
 import { ProgressLog } from "../../spi/log/ProgressLog";
 import { DelimitedWriteProgressLogDecorator } from "../log/DelimitedWriteProgressLogDecorator";

@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { EditResult } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
+import {
+    EditResult,
+    GitProject,
+    logger,
+} from "@atomist/automation-client";
 import * as stringify from "json-stringify-safe";
 
 /**

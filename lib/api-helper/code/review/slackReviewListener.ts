@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-import { HandlerContext, Success } from "@atomist/automation-client";
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { SourceLocation } from "@atomist/automation-client/lib/operations/common/SourceLocation";
-import { ProjectReview, ReviewComment } from "@atomist/automation-client/lib/operations/review/ReviewResult";
-import { buttonForCommand } from "@atomist/automation-client/lib/spi/message/MessageClient";
-import { deepLink as githubDeepLink } from "@atomist/automation-client/lib/util/gitHub";
+import {
+    buttonForCommand,
+    deepLink as githubDeepLink,
+    GitHubRepoRef,
+    HandlerContext,
+    ProjectReview,
+    RemoteRepoRef,
+    ReviewComment,
+    SourceLocation,
+    Success,
+} from "@atomist/automation-client";
 import * as slack from "@atomist/slack-messages";
 import { AddressChannels } from "../../../api/context/addressChannels";
 import { ReviewListener } from "../../../api/listener/ReviewListener";

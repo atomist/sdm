@@ -15,38 +15,31 @@
  */
 
 import {
+    addAtomistWebhook,
+    AnyProjectEditor,
+    CommandDetails,
+    commandHandlerFrom,
+    generate,
+    GitProject,
     HandleCommand,
     HandlerContext,
-    RedirectResult,
-} from "@atomist/automation-client";
-import {
-    commandHandlerFrom,
-    OnCommand,
-} from "@atomist/automation-client/lib/onCommand";
-import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
-import { isGitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { ProjectAction } from "@atomist/automation-client/lib/operations/common/projectAction";
-import {
-    isRemoteRepoRef,
-    RemoteRepoRef,
-    RepoRef,
-} from "@atomist/automation-client/lib/operations/common/RepoId";
-import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
-import { AnyProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { generate, ProjectPersister } from "@atomist/automation-client/lib/operations/generate/generatorUtils";
-import { RepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/RepoCreationParameters";
-import { SeedDrivenGeneratorParameters } from "@atomist/automation-client/lib/operations/generate/SeedDrivenGeneratorParameters";
-import { addAtomistWebhook } from "@atomist/automation-client/lib/operations/generate/support/addAtomistWebhook";
-import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
-import {
+    isGitHubRepoRef,
     isProject,
-    Project,
-} from "@atomist/automation-client/lib/project/Project";
-import { QueryNoCacheOptions } from "@atomist/automation-client/lib/spi/graph/GraphClient";
-import {
+    isRemoteRepoRef,
     Maker,
+    OnCommand,
+    Project,
+    ProjectAction,
+    ProjectPersister,
+    QueryNoCacheOptions,
+    RedirectResult,
+    RemoteRepoRef,
+    RepoCreationParameters,
+    RepoLoader,
+    RepoRef,
+    SeedDrivenGeneratorParameters,
     toFactory,
-} from "@atomist/automation-client/lib/util/constructionUtils";
+} from "@atomist/automation-client";
 import * as _ from "lodash";
 import { SoftwareDeliveryMachineOptions } from "../../../api/machine/SoftwareDeliveryMachineOptions";
 import { StartingPoint } from "../../../api/registration/GeneratorRegistration";

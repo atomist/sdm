@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
 import {
+    doWithFiles,
+    logger,
     ProjectReview,
     Severity,
-} from "@atomist/automation-client/lib/operations/review/ReviewResult";
-import { doWithFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
+} from "@atomist/automation-client";
 import * as _ from "lodash";
 import { PushTest } from "../../../api/mapping/PushTest";
 import { ReviewerRegistration } from "../../../api/registration/ReviewerRegistration";

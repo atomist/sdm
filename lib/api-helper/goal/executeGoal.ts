@@ -15,14 +15,14 @@
  */
 
 import {
+    configurationValue,
     failure,
     HandlerContext,
     HandlerResult,
     logger,
+    RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
-import { configurationValue } from "@atomist/automation-client/lib/configuration";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import * as path from "path";
 import { sprintf } from "sprintf-js";
 import { AddressChannels } from "../../api/context/addressChannels";

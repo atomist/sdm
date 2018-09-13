@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { SimpleProjectEditor } from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { GitCommandGitProject } from "@atomist/automation-client/lib/project/git/GitCommandGitProject";
-import { Project } from "@atomist/automation-client/lib/project/Project";
+import {
+    GitCommandGitProject,
+    logger,
+    Project,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
+    SimpleProjectEditor,
+} from "@atomist/automation-client";
 import axios from "axios";
 import { CodeTransform } from "../../api/registration/CodeTransform";
 

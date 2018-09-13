@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { HandleCommand } from "@atomist/automation-client";
 import {
+    CommandDetails,
     commandHandlerFrom,
+    HandleCommand,
+    Maker,
+    NoParameters,
     OnCommand,
-} from "@atomist/automation-client/lib/onCommand";
-import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
-import { Maker } from "@atomist/automation-client/lib/util/constructionUtils";
+} from "@atomist/automation-client";
 import { MachineOrMachineOptions } from "../machine/toMachineOptions";
 
 /**

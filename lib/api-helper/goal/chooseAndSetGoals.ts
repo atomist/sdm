@@ -15,13 +15,13 @@
  */
 
 import {
+    guid,
     HandlerContext,
     logger,
+    ProjectOperationCredentials,
+    RemoteRepoRef,
     Success,
 } from "@atomist/automation-client";
-import { guid } from "@atomist/automation-client/lib/internal/util/string";
-import { ProjectOperationCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
 import {
     AddressChannels,
     addressChannelsFor,

@@ -15,10 +15,10 @@
  */
 
 import {
+    Fingerprint,
     logger,
     Success,
 } from "@atomist/automation-client";
-import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
 import {
     ExecuteGoal,
     GoalInvocation,

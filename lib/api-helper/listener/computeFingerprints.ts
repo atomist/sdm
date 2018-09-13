@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { logger } from "@atomist/automation-client";
-import { Fingerprint } from "@atomist/automation-client/lib/project/fingerprint/Fingerprint";
+import {
+    Fingerprint,
+    logger,
+} from "@atomist/automation-client";
 import * as _ from "lodash";
 import { PushImpactListenerInvocation } from "../../api/listener/PushImpactListener";
 import { FingerprinterResult } from "../../api/registration/FingerprinterRegistration";

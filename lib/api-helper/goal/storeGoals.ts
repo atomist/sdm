@@ -15,11 +15,11 @@
  */
 
 import {
+    addressEvent,
     AutomationContextAware,
     HandlerContext,
+    RemoteRepoRef,
 } from "@atomist/automation-client";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { addressEvent } from "@atomist/automation-client/lib/spi/message/MessageClient";
 import * as _ from "lodash";
 import { sprintf } from "sprintf-js";
 import {

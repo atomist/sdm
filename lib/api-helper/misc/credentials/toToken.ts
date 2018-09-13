@@ -17,7 +17,7 @@
 import {
     isTokenCredentials,
     ProjectOperationCredentials,
-} from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
+} from "@atomist/automation-client";
 
 /**
  * Convert the given credentials or token string to a token string

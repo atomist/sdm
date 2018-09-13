@@ -15,46 +15,38 @@
  */
 
 import {
-    HandleCommand,
-    HandleEvent,
-    HandlerContext,
-    logger,
-    Success,
-} from "@atomist/automation-client";
-import {
+    andFilter,
+    chainEditors,
+    CommandDetails,
     declareMappedParameter,
     declareParameter,
     declareSecret,
-} from "@atomist/automation-client/lib/internal/metadata/decoratorSupport";
-import { OnCommand } from "@atomist/automation-client/lib/onCommand";
-import { eventHandlerFrom } from "@atomist/automation-client/lib/onEvent";
-import { CommandDetails } from "@atomist/automation-client/lib/operations/CommandDetails";
-import { GitHubRepoRef } from "@atomist/automation-client/lib/operations/common/GitHubRepoRef";
-import { andFilter } from "@atomist/automation-client/lib/operations/common/repoFilter";
-import { RepoFinder } from "@atomist/automation-client/lib/operations/common/repoFinder";
-import { RemoteRepoRef } from "@atomist/automation-client/lib/operations/common/RepoId";
-import { RepoLoader } from "@atomist/automation-client/lib/operations/common/repoLoader";
-import { doWithAllRepos } from "@atomist/automation-client/lib/operations/common/repoUtils";
-import { editAll } from "@atomist/automation-client/lib/operations/edit/editAll";
-import { PullRequest } from "@atomist/automation-client/lib/operations/edit/editModes";
-import {
+    doWithAllRepos,
+    editAll,
     EditResult,
+    eventHandlerFrom,
     failedEdit,
-    ProjectEditor,
-    successfulEdit,
-} from "@atomist/automation-client/lib/operations/edit/projectEditor";
-import { chainEditors } from "@atomist/automation-client/lib/operations/edit/projectEditorOps";
-import { GitHubRepoCreationParameters } from "@atomist/automation-client/lib/operations/generate/GitHubRepoCreationParameters";
-import { GitProject } from "@atomist/automation-client/lib/project/git/GitProject";
-import {
+    GitHubRepoCreationParameters,
+    GitHubRepoRef,
+    GitProject,
+    HandleCommand,
+    HandleEvent,
+    HandlerContext,
     isProject,
-    Project,
-} from "@atomist/automation-client/lib/project/Project";
-import { NoParameters } from "@atomist/automation-client/lib/SmartParameters";
-import {
+    logger,
     Maker,
+    NoParameters,
+    OnCommand,
+    Project,
+    ProjectEditor,
+    PullRequest,
+    RemoteRepoRef,
+    RepoFinder,
+    RepoLoader,
+    Success,
+    successfulEdit,
     toFactory,
-} from "@atomist/automation-client/lib/util/constructionUtils";
+} from "@atomist/automation-client";
 import { GitHubRepoTargets } from "../../api/command/target/GitHubRepoTargets";
 import { isTransformModeSuggestion } from "../../api/command/target/TransformModeSuggestion";
 import { CommandListenerInvocation } from "../../api/listener/CommandListener";
