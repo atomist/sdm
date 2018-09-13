@@ -21,11 +21,11 @@ import { InMemoryProject } from "@atomist/automation-client/lib/project/mem/InMe
 import { Project } from "@atomist/automation-client/lib/project/Project";
 import { doWithFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import * as assert from "power-assert";
-import { InMemoryFile } from "../../../node_modules/@atomist/automation-client/lib/project/mem/InMemoryFile";
 import { save } from "../../../lib/api-helper/project/CachingProjectLoader";
 import { CloningProjectLoader } from "../../../lib/api-helper/project/cloningProjectLoader";
 import { LazyProjectLoader } from "../../../lib/api-helper/project/LazyProjectLoader";
 import { SingleProjectLoader } from "../../../lib/api-helper/test/SingleProjectLoader";
+import { InMemoryFile } from "../../../node_modules/@atomist/automation-client/lib/project/mem/InMemoryFile";
 
 const credentials = {
     token: process.env.GITHUB_TOKEN,
